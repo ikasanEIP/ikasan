@@ -15,7 +15,8 @@ WITH IDENTITY_GAP=1
 CREATE TABLE IkasanModule
 (
    Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
-   Name		      				VARCHAR(256) 		NOT NULL,
+   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+   ContextRoot     				VARCHAR(256) 		NOT NULL,
    Description		      		VARCHAR(1024) 		NOT NULL,
    DiagramUrl      				VARCHAR(256) 		default 'placeholder' NOT NULL,
    ServerId						NUMERIC(18, 0) 		NOT NULL,

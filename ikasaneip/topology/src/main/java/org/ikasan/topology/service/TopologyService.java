@@ -130,4 +130,11 @@ public interface TopologyService
 	 * @param businessStreamFlow
 	 */
 	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow);
+
+	/**
+	 * Method to get a Module by its name. 
+	 * @param name
+	 * @return
+	 */
+	public Module getModuleByName(String name);
 }

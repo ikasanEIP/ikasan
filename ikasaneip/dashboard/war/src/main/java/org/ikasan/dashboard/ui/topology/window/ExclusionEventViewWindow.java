@@ -58,15 +58,16 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
+import org.ikasan.topology.service.TopologyService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -100,12 +101,13 @@ public class ExclusionEventViewWindow extends Window
 	private SerialiserFactory serialiserFactory;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private TopologyService topologyService;
 
 	/**
 	 * @param policy
 	 */
 	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction> hospitalManagementService)
+			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
@@ -113,6 +115,7 @@ public class ExclusionEventViewWindow extends Window
 		this.serialiserFactory = serialiserFactory;
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
+		this.topologyService = topologyService;
 		
 		this.init();
 	}
@@ -235,10 +238,11 @@ public class ExclusionEventViewWindow extends Window
             	
             	Client client = ClientBuilder.newClient(clientConfig);
             	
-            	Serialiser serialiser = serialiserFactory.getSerialiser(String.class);
+            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+            	Server server = module.getServer();
         		
-        		String url = "http://svc-stewmi:8380/"
-        				+ exclusionEvent.getModuleName()
+        		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
+        				+ module.getContextRoot() 
         				+ "/rest/resubmission/resubmit/"
         	    		+ exclusionEvent.getModuleName() 
         	    		+ "/"
@@ -294,7 +298,12 @@ public class ExclusionEventViewWindow extends Window
             	
             	Client client = ClientBuilder.newClient(clientConfig);
             	
-            	String url = "http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/ignore/";
+            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+            	Server server = module.getServer();
+        		
+        		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
+        				+ module.getContextRoot() 
+        				+ "/rest/resubmission/ignore/";
         		
         		logger.info("Url: " + url);
         		

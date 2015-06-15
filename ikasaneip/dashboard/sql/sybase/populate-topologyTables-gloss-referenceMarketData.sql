@@ -8,10 +8,12 @@ select @serverId = Id from Server where
 
 insert into IkasanModule (
   Name
+  ,ContextRoot
   ,Description
   ,ServerId
 ) VALUES (
-  'gloss-referencemarketDataTgt'  -- Name - IN varchar(256)
+  'gloss-referencemarketDataTgt'
+  ,'gloss-referencemarketDataTgt'  -- Name - IN varchar(256)
   ,'Gloss Reference Market Data Module'
   ,@serverId   -- ServerId - IN numeric(18, 0)
 )

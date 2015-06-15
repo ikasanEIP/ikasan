@@ -53,6 +53,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
@@ -601,8 +602,39 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             this.notifyMonitor();
         }
     }
+    
+    
 
-    private void configureDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+    /* (non-Javadoc)
+	 * @see org.ikasan.spec.event.EventListener#invoke(org.ikasan.spec.event.Resubmission)
+	 */
+	@Override
+	public void invoke(Resubmission<FlowEvent<?,?>> event)
+	{
+		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+
+        try
+        {
+            configureDynamicConfiguredResources(flowInvocationContext);
+            invoke(moduleName, name, flowInvocationContext, event.getEvent(), this.flowConfiguration.getConsumerFlowElement());
+            updateDynamicConfiguredResources(flowInvocationContext);
+            if(this.recoveryManager.isRecovering())
+            {
+                this.recoveryManager.cancel();
+            }
+                
+        }
+        catch(Throwable throwable)
+        {
+            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent());
+        }
+        finally
+        {
+            this.notifyMonitor();
+        }
+	}
+
+	private void configureDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
     {
         for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
         {

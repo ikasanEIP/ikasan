@@ -157,6 +157,8 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
 				ExclusionEventAction.IGNORED);
 		
+		exclusionManagementService.delete(errorUri);
+
 		this.hospitalDao.saveOrUpdate(action);
 	}
 }

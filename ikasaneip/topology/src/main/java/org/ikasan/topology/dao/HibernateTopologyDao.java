@@ -50,6 +50,7 @@ import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
@@ -191,6 +192,18 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow)
 	{
 		this.getHibernateTemplate().delete(businessStreamFlow);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getModuleByName(java.lang.String)
+	 */
+	@Override
+	public Module getModuleByName(String name)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Module.class);
+		criteria.add(Restrictions.eq("name", name));
+
+        return (Module)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
     
