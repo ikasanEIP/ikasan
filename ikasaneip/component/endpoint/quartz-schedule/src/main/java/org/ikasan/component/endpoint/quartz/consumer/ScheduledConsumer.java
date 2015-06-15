@@ -40,6 +40,12 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import java.text.ParseException;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -49,17 +55,19 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.resubmission.ResubmissionService;
-import org.quartz.*;
-
-import java.text.ParseException;
-import java.util.Date;
-
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 
 /**
  * This test class supports the <code>Consumer</code> class.
@@ -255,6 +263,35 @@ public class ScheduledConsumer<T>
             }
         }
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
+	 */
+	@Override
+	public void submit(T event)
+	{
+		if (event != null)
+        {
+            FlowEvent<?, ?> flowEvent = createFlowEvent(event);
+
+            Resubmission resubmission = new Resubmission(flowEvent);
+            
+            this.eventListener.invoke(resubmission);
+        }
+        else
+        {
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("'null' returned from MessageProvider. Flow not invoked");
+            }
+
+            if(managedResourceRecoveryManager.isRecovering())
+            {
+                // cancel the recovery schedule
+                managedResourceRecoveryManager.cancel();
+            }
+        }
+	}
 
     /**
      * Override this is you want control over the flow event created by this
@@ -401,14 +438,4 @@ public class ScheduledConsumer<T>
         this.jobDetail = jobDetail;
     }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
-	 */
-	@Override
-	public void submit(T event)
-	{
-		logger.info("attempting to submit event: " + event);
-		
-		this.invoke(event);
-	}
 }

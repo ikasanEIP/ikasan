@@ -58,4 +58,11 @@ public interface EventListener<EVENT>
      * @param throwable
      */
     public void invoke(Throwable throwable);
+    
+    /**
+     * Invoke the listener for the resubmission of a business event.
+     * @param event
+     */
+    public void invoke(Resubmission<EVENT> event);
+
 }

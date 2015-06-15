@@ -1400,7 +1400,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
 		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
-		    			, action, hospitalManagementService);
+		    			, action, hospitalManagementService, topologyService);
 		    
 		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    }
