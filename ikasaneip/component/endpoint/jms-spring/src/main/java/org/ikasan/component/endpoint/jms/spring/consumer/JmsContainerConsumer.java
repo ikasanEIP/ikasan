@@ -56,6 +56,7 @@ import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
@@ -156,6 +157,34 @@ public class JmsContainerConsumer
         }
 
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
+	 */
+	@Override
+	public void submit(Message event)
+	{
+		logger.info("attempting to submit event: " + event);
+
+		if (this.eventListener == null)
+        {
+            throw new RuntimeException("No active eventListeners registered!");
+        }
+        try
+        {
+        	 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                     ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
+                     event);
+            
+            Resubmission resubmission = new Resubmission(flowEvent);
+            
+            this.eventListener.invoke(resubmission);
+        }
+        catch (ManagedEventIdentifierException e)
+        {
+            this.eventListener.invoke(e);
+        }
+	}
 
     @Override
     public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
@@ -246,15 +275,4 @@ public class JmsContainerConsumer
             ((Configured<SpringMessageConsumerConfiguration>)this.messageProvider).setConfiguration(configuration);
         }
     }
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
-	 */
-	@Override
-	public void submit(Message event)
-	{
-		logger.info("attempting to submit event: " + event);
-
-		this.onMessage(event);
-	}
 }

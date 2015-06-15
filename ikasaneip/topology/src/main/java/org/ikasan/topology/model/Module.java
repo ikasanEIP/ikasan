@@ -56,6 +56,7 @@ public class Module
     private Long id;
     private String name; 
     private String description;
+    private String contextRoot;
     private String diagramUrl;
     private Server server;
     private Set<Flow> flows;
@@ -78,10 +79,11 @@ public class Module
 	 * @param description
 	 * @param server
 	 */
-	public Module(String name, String description, Server server, String diagramUrl)
+	public Module(String name, String contextRoot, String description, Server server, String diagramUrl)
 	{
 		super();
 		this.name = name;
+		this.contextRoot = contextRoot;
 		this.description = description;
 		this.server = server;
 		this.diagramUrl = diagramUrl;
@@ -246,6 +248,22 @@ public class Module
 	{
 		this.diagramUrl = diagramUrl;
 	}
-    
+
+	/**
+	 * @return the contextRoot
+	 */
+	public String getContextRoot()
+	{
+		return contextRoot;
+	}
+
+	/**
+	 * @param contextRoot the contextRoot to set
+	 */
+	public void setContextRoot(String contextRoot)
+	{
+		this.contextRoot = contextRoot;
+	}
+	
     
 }

@@ -19,10 +19,12 @@ select @serverId = Id from Server where
 
 insert into IkasanModule (
   Name
+  ,ContextRoot
   ,Description
   ,ServerId
 ) VALUES (
   'cdw-asset'  -- Name - IN varchar(256)
+  ,'cdw-asset'
   ,'CDW Asset publication and (re)consolidation.'
   ,@serverId   -- ServerId - IN numeric(18, 0)
 )
@@ -101,10 +103,12 @@ insert into Component (
 
 insert into IkasanModule (
   Name
+  ,ContextRoot
   ,Description
   ,ServerId
 ) VALUES (
-  'cdw-eod'  -- Name - IN varchar(256)
+  'cdw-eod'
+  ,'cdw-eod'  -- Name - IN varchar(256)
   ,'CDW EndOfDay for sourcing file events from Murex Datamart and Xenomorph and publishing into CDW.'
   ,@serverId   -- ServerId - IN numeric(18, 0)
 )
@@ -877,10 +881,12 @@ insert into Component (
 
 insert into IkasanModule (
   Name
+  ,ContextRoot
   ,Description
   ,ServerId
 ) VALUES (
-  'cdw-cashbalance'  -- Name - IN varchar(256)
+  'cdw-cashbalance'
+  ,'cdw-cashbalance'  -- Name - IN varchar(256)
   ,'CDW Cash Balance publication. '
   ,@serverId   -- ServerId - IN numeric(18, 0)
 )
@@ -953,10 +959,12 @@ insert into Component (
 
 insert into IkasanModule (
   Name
+  ,ContextRoot
   ,Description
   ,ServerId
 ) VALUES (
-  'cdw-trade'  -- Name - IN varchar(256)
+  'cdw-trade'
+  ,'cdw-trade'  -- Name - IN varchar(256)
   ,'CDW Trade publication and (re)consolidation.'
   ,@serverId   -- ServerId - IN numeric(18, 0)
 )
