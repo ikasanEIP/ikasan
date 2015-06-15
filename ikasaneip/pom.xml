@@ -67,69 +67,9 @@
     </organization>
     <inceptionYear>2007</inceptionYear>
 
-    <modules>
-        <!--
-            You have to keep the order correct here, dependent projects first, not alphabetical!
-        -->
+ 
 
-        <!-- ikasan eip core -->
-        <module>spec</module>
-        <module>system-event</module>
-        <module>module</module>
-        <module>bootstrap</module>  <!-- TODO - is this still required ? -->
-        <module>scheduler</module>
-        <module>serialiser</module>
-        <module>exclusion</module>
-        <module>error-reporting</module>
-        <module>recovery-manager</module>
-        <module>flow</module>
-        <module>configuration-service</module>
-        <module>wiretap</module>
-        <module>security</module>
-        <module>filter</module>
-		<module>rest</module>
-		
-
-        <!-- ikasan test harness -->
-        <module>test</module>
-
-        <!-- add ons -->
-        <module>monitor</module>
-        <module>marshaller</module>
-        <module>component</module>
-        <module>jca</module>
-
-        <!-- uber jar platform packaging -->
-        <module>platform</module>
-
-        <!-- builders -->
-        <module>builder</module>
-
-        <!-- version compatibility glue -->
-        <module>compatibility</module>
-
-	    <!-- top level services / applications -->
-        <module>mapping</module>
-        <module>management</module>
-        <module>hospital</module>
-        <module>webconsole</module>
-        <module>console</module>
-		<module>topology</module>
-        <module>dashboard</module>
-
-        <!-- developer tooling -->
-        <module>developer</module>
-
-        <module>filetransfer</module>
-
-        <!-- samples -->
-        <module>sample</module>
-        <module>transaction</module>
-
-        <!-- documentation -->
-        <!--module>documentation</module-->
-    </modules>
-
+ 
     <scm>
         <connection>scm:git:https://github.com/ikasanEIP/ikasan.git</connection>
         <developerConnection>scm:git:https://github.com/ikasanEIP/ikasan.git</developerConnection>
@@ -762,6 +702,101 @@
                 </plugins>
             </build>
         </profile>
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+       <!-- ikasan eip core -->
+        <module>spec</module>
+        <module>system-event</module>
+        <module>module</module>
+        <module>bootstrap</module>  <!-- TODO - is this still required ? -->
+        <module>scheduler</module>
+        <module>serialiser</module>
+        <module>exclusion</module>
+        <module>error-reporting</module>
+        <module>recovery-manager</module>
+        <module>flow</module>
+        <module>configuration-service</module>
+        <module>wiretap</module>
+        <module>security</module>
+        <module>filter</module>
+		<module>rest</module>
+        <module>test</module>
+        <module>monitor</module>
+        <module>marshaller</module>
+        <module>component</module>
+        <module>jca</module>
+        <module>platform</module>
+        <module>builder</module>
+        <module>compatibility</module>
+   		<module>filetransfer</module>
+        <module>mapping</module>
+        <module>management</module>
+        <module>hospital</module>
+        <module>webconsole</module>
+        <module>console</module>
+		<module>topology</module>
+        <module>dashboard</module>
+        <module>developer</module>
+        <module>sample</module>
+        <module>transaction</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>core-and-components</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+    	<module>spec</module>
+        <module>system-event</module>
+        <module>module</module>
+        <module>bootstrap</module>
+        <module>scheduler</module>
+        <module>serialiser</module>
+        <module>exclusion</module>
+        <module>error-reporting</module>
+        <module>recovery-manager</module>
+        <module>flow</module>
+        <module>configuration-service</module>
+        <module>wiretap</module>
+        <module>security</module>
+        <module>filter</module>
+		<module>rest</module>
+        <module>test</module>
+        <module>monitor</module>
+        <module>marshaller</module>
+        <module>component</module>
+        <module>jca</module>
+        <module>platform</module>
+        <module>builder</module>
+        <module>compatibility</module>
+		<module>filetransfer</module>
+      </modules>
+    </profile>
+    
+    <profile>
+      <id>top-level-services-and-applications</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>mapping</module>
+        <module>management</module>
+        <module>hospital</module>
+        <module>webconsole</module>
+        <module>console</module>
+		<module>topology</module>
+        <module>dashboard</module>
+        <module>developer</module>
+        <module>sample</module>
+        <module>transaction</module>
+      </modules>
+    </profile>
     </profiles>
 
     <dependencyManagement>
