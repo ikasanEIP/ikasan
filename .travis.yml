@@ -1,7 +1,7 @@
 language: java
 jdk:
   - oraclejdk7
-install:true
+install: true
 script:  
   - echo "<settings><servers><server><id>ikasaneip-snapshots</id><username>\${env.OSS_IKASAN_USER}</username><password>\${env.OSS_IKASAN_PASS}</password></server></servers></settings>" > ~/settings.xml
   - "[[ $TRAVIS_BRANCH == \"master\" ]] && { mvn clean deploy -Dmaven.javadoc.skip=true -B -V --settings ~/settings.xml; };"
