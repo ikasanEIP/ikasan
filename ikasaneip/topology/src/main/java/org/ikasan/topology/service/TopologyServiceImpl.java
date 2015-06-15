@@ -173,5 +173,14 @@ public class TopologyServiceImpl implements TopologyService
 	{
 		this.topologyDao.deleteBusinessStreamFlow(businessStreamFlow);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getModuleByName(java.lang.String)
+	 */
+	@Override
+	public Module getModuleByName(String name)
+	{
+		return this.topologyDao.getModuleByName(name);
+	}
 	
 }

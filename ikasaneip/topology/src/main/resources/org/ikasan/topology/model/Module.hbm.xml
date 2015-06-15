@@ -31,6 +31,12 @@
                   column="Name"
                   not-null="true"
                   unique="true"/>
+                  
+        <property name="contextRoot"
+                  type="java.lang.String"
+                  column="ContextRoot"
+                  not-null="true"
+                  unique="false"/>
 
         <property name="description"
                   type="java.lang.String"
