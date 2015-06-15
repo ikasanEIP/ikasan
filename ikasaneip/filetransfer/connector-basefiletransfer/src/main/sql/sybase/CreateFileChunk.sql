@@ -55,7 +55,7 @@ CREATE TABLE FTFileChunk
     Content         image  NOT NULL,
     Ordinal         numeric(18,0) NOT NULL,
     Md5Hash  		char(32) NULL,
-    FTFileChunkHeader_Id numeric(18,0) NOT NULL references FTFileChunkHeader(Id)
+    FileChunkHeaderId numeric(18,0) NOT NULL references FTFileChunkHeader(Id)
 
 )
 LOCK DATAROWS
