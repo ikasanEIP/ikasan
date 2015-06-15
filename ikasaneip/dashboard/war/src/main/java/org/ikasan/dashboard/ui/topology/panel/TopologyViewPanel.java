@@ -179,13 +179,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TextField payloadContent;
 	
 	private ErrorReportingService errorReportingService;
-	private ExclusionManagementService<ExclusionEvent> exclusionManagementService;
+	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	
 	private SerialiserFactory serialiserFactory;
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent> exclusionManagementService,
+			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService)
 	{
 		this.topologyService = topologyService;
