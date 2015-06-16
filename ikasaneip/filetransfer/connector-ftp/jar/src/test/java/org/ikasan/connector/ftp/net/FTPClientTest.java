@@ -3,13 +3,17 @@ package org.ikasan.connector.ftp.net;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.*;
 import java.net.InetAddress;
 
 public class FTPClientTest {
 
-    public static void main(String[] args) throws Exception {
+    @Test
+    @Ignore
+    public void test() throws Exception {
 
         String server = "adl-cmi10";
         String username = "majean";
