@@ -75,16 +75,6 @@
             <artifactId>ikasan-connector-base</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-filetransfer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-connection</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- The FTP library -->
         <dependency>

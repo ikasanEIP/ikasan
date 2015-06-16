@@ -54,7 +54,6 @@
 
     <modules>
         <module>common</module>
-        <module>client-connection</module>
         <module>connector-base</module>
         <module>client-filetransfer</module>
         <module>connector-basefiletransfer</module>

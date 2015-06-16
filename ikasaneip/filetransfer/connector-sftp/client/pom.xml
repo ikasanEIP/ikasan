@@ -73,12 +73,6 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-connection</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-sftp-classes</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
