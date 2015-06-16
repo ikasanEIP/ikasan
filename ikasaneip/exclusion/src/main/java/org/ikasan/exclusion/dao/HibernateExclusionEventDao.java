@@ -44,6 +44,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
@@ -111,6 +112,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	public List<ExclusionEvent> findAll()
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		criteria.addOrder(Order.desc("timestamp"));		
 		
         return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}

@@ -88,6 +88,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -98,6 +99,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextField;
@@ -276,10 +278,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		tab3.addComponent(createErrorOccurencePanel());
 		tabsheet.addTab(tab3, "Errors");
 
-		VerticalLayout tab4 = new VerticalLayout();
+		final VerticalLayout tab4 = new VerticalLayout();
 		tab4.setSizeFull();
 		tab4.addComponent(createExclusionPanel());
 		tabsheet.addTab(tab4, "Exclusions");
+		
+		tabsheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
+	           
+            public void selectedTabChange(SelectedTabChangeEvent event) 
+            {
+            	refreshExcludedEventsTable();
+            }
+        });
 
 		this.tabsheetPanel.setContent(tabsheet);
 	}
@@ -300,6 +310,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setSizeFull();
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
+		this.treeViewBusinessStreamCombo.setHeight(40, Unit.PIXELS);
 		
 		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() {
             public void valueChange(ValueChangeEvent event) {
@@ -417,9 +428,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 
 		layout.addComponent(this.treeViewBusinessStreamCombo);
-		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.08f);
+		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.12f);
 		layout.addComponent(this.moduleTree);
-		layout.setExpandRatio(this.moduleTree, 0.92f);
+		layout.setExpandRatio(this.moduleTree, 0.88f);
 
 		this.topologyTreePanel.setContent(layout);
 	}
@@ -1363,7 +1374,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		hListSelectLayout.addComponent(listSelectLayout);
 		layout.addComponent(hListSelectLayout);
 		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(30, Unit.PIXELS);
+		hDateSelectLayout.setHeight(50, Unit.PIXELS);
 		hDateSelectLayout.setWidth("100%");
 		hDateSelectLayout.addComponent(dateSelectLayout);
 		layout.addComponent(hDateSelectLayout);
@@ -1393,14 +1404,25 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.exclusionsTable.addContainerProperty("Actioned By", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
 		
-		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+		{
 		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) {
+		    public void itemClick(ItemClickEvent itemClickEvent) 
+		    {
 		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
 		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
 		    			, action, hospitalManagementService, topologyService);
+		    	
+		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
+		    	{
+		            // inline close-listener
+		            public void windowClose(CloseEvent e) 
+		            {
+		            	refreshExcludedEventsTable();
+		            }
+		        });
 		    
 		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    }
@@ -1413,30 +1435,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
-            	exclusionsTable.removeAllItems();
-            	
-            	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
-
-            	for(ExclusionEvent exclusionEvent: exclusionEvents)
-            	{
-            		Date date = new Date(exclusionEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            	    String timestamp = format.format(date);
-            	    
-            	    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-            	    
-            	    String actionString = "";
-            	    String actionedByString = "";
-            	    
-            	    if(action != null)
-            	    {
-            	    	actionString = action.getAction();
-            	    	actionedByString = action.getActionedBy();
-            	    }
-            	    
-            	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(), actionString, actionedByString,
-            				timestamp}, exclusionEvent);
-            	}
+            	refreshExcludedEventsTable();
             }
         });
 		
@@ -1460,6 +1459,34 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setSizeFull();
 		
 		return layout;
+	}
+	
+	protected void refreshExcludedEventsTable()
+	{
+		exclusionsTable.removeAllItems();
+    	
+    	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
+
+    	for(ExclusionEvent exclusionEvent: exclusionEvents)
+    	{
+    		Date date = new Date(exclusionEvent.getTimestamp());
+    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    	    String timestamp = format.format(date);
+    	    
+    	    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+    	    
+    	    String actionString = "";
+    	    String actionedByString = "";
+    	    
+    	    if(action != null)
+    	    {
+    	    	actionString = action.getAction();
+    	    	actionedByString = action.getActionedBy();
+    	    }
+    	    
+    	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(), actionString, actionedByString,
+    				timestamp}, exclusionEvent);
+    	}
 	}
 
 	/* (non-Javadoc)

@@ -66,8 +66,8 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -78,6 +78,7 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
 /**
@@ -131,7 +132,7 @@ public class ExclusionEventViewWindow extends Window
 		layout.setSizeFull();
 		layout.setMargin(true);
 		
-		layout.addComponent( createExclusionEventDetailsPanel());
+		layout.addComponent(createExclusionEventDetailsPanel());
 			
 		this.setContent(layout);
 	}
@@ -143,10 +144,8 @@ public class ExclusionEventViewWindow extends Window
 		exclusionEventDetailsPanel.setStyleName("dashboard");
 		
 		GridLayout layout = new GridLayout(4, 6);
-		layout.setSizeFull();
-		layout.setMargin(true);
-//		layout.setColumnExpandRatio(0, 0.3f);
-//		layout.setColumnExpandRatio(1, 0.7f);
+		layout.setWidth("100%");
+		layout.setHeight(140, Unit.PIXELS);
 		layout.addComponent(new Label("Module Name"), 0, 0);
 		
 		TextField tf1 = new TextField();
@@ -250,7 +249,7 @@ public class ExclusionEventViewWindow extends Window
         	    		+ "/"
         	    		+ exclusionEvent.getErrorUri();
         		
-        		logger.info("Url: " + url);
+        		logger.info("Resubmission Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
         	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
@@ -303,12 +302,13 @@ public class ExclusionEventViewWindow extends Window
         		
         		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
         				+ module.getContextRoot() 
-        				+ "/rest/resubmission/ignore/";
+        				+ "/rest/resubmission/ignore/"
+        	    		+ exclusionEvent.getErrorUri();
         		
-        		logger.info("Url: " + url);
+        		logger.info("Ignore Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
-        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getErrorUri(), MediaType.TEXT_PLAIN));
+        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
         	    
         	    if(response.getStatus()  != 200)
         	    {
@@ -350,19 +350,6 @@ public class ExclusionEventViewWindow extends Window
 			layout.addComponent(buttonLayout, 0, 5, 1, 5);
 		}
 		
-		GridLayout wrapperLayout = new GridLayout(1, 4);
-		wrapperLayout.setMargin(true);
-		wrapperLayout.setSizeFull();
-		
-		AceEditor editor = new AceEditor();
-		editor.setCaption("Error Details");
-		editor.setValue(this.errorOccurrence.getErrorDetail());
-		editor.setReadOnly(true);
-		editor.setMode(AceMode.xml);
-		editor.setTheme(AceTheme.eclipse);
-		editor.setWidth("100%");
-		editor.setHeight(250, Unit.PIXELS);
-		
 		AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
@@ -372,19 +359,39 @@ public class ExclusionEventViewWindow extends Window
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
 		eventEditor.setWidth("100%");
-		eventEditor.setHeight(250, Unit.PIXELS);
+		eventEditor.setHeight(600, Unit.PIXELS);
+		
+		HorizontalLayout eventEditorLayout = new HorizontalLayout();
+		eventEditorLayout.setSizeFull();
+		eventEditorLayout.setMargin(true);
+		eventEditorLayout.addComponent(eventEditor);
+		
+		AceEditor errorEditor = new AceEditor();
+		errorEditor.setCaption("Error Details");
+		errorEditor.setValue(this.errorOccurrence.getErrorDetail());
+		errorEditor.setReadOnly(true);
+		errorEditor.setMode(AceMode.xml);
+		errorEditor.setTheme(AceTheme.eclipse);
+		errorEditor.setWidth("100%");
+		errorEditor.setHeight(600, Unit.PIXELS);
+		
+		HorizontalLayout errorEditorLayout = new HorizontalLayout();
+		errorEditorLayout.setSizeFull();
+		errorEditorLayout.setMargin(true);
+		errorEditorLayout.addComponent(errorEditor);
 
-		HorizontalLayout formLayout = new HorizontalLayout();
-		formLayout.setWidth("100%");
-		formLayout.setHeight(180, Unit.PIXELS);
-		formLayout.addComponent(layout);
-		wrapperLayout.addComponent(formLayout, 0, 0);
-		Label seperator = new Label("<hr />",ContentMode.HTML);
-//		wrapperLayout.addComponent(seperator, 0, 1);
-//		wrapperLayout.addComponent(eventEditor, 0, 2);
-//		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
-//		wrapperLayout.addComponent(editor, 0, 3);
-//		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
+		
+		VerticalSplitPanel splitPanel = new VerticalSplitPanel();
+		splitPanel.setWidth("100%");
+		splitPanel.setHeight(600, Unit.PIXELS);
+		splitPanel.setFirstComponent(eventEditorLayout);
+		splitPanel.setSecondComponent(errorEditorLayout);
+		
+		VerticalLayout wrapperLayout = new VerticalLayout();
+		wrapperLayout.setSizeFull();
+		wrapperLayout.setMargin(true);
+		wrapperLayout.addComponent(layout);
+		wrapperLayout.addComponent(splitPanel);
 
 		exclusionEventDetailsPanel.setContent(wrapperLayout);
 		return exclusionEventDetailsPanel;

@@ -123,12 +123,12 @@ public class ResubmissionApplication
 	 * @return
 	 */
 	@PUT
-	@Path("/ignore")
-	@Consumes("text/plain")	
-	public Response ignore(@Context SecurityContext context, String errorUri)
+	@Path("/ignore/{errorUri}")
+	@Consumes("application/octet-stream")	
+	public Response ignore(@Context SecurityContext context, @PathParam("errorUri") String errorUri, byte[] event)
 	{
 		logger.info("ignoring event " + errorUri);
-		if(!context.isUserInRole("WebServiceAdminUser"))
+		if(!context.isUserInRole("WebServiceAdmin"))
 		{
 			return Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build();
@@ -136,7 +136,7 @@ public class ResubmissionApplication
 		
 		try
 		{
-			this.hospitalService.ignore(errorUri, context.getUserPrincipal());
+			this.hospitalService.ignore(errorUri, context.getUserPrincipal(), event);
 		}
 		catch (Exception e)
 		{
