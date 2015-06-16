@@ -422,6 +422,7 @@
         <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
         <version.dom4j.dom4j>1.6.1</version.dom4j.dom4j>
         <version.com.jcraft.jsch>0.1.51</version.com.jcraft.jsch>
+        <version.org.mockftpserver>2.6</version.org.mockftpserver>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -1562,6 +1563,13 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
                 <version>${version.cglib.cglib-nodep}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockftpserver</groupId>
+                <artifactId>MockFtpServer</artifactId>
+                <version>${version.org.mockftpserver}</version>
                 <scope>test</scope>
             </dependency>
 
