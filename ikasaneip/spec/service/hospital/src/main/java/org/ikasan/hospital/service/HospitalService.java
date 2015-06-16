@@ -68,5 +68,5 @@ public interface HospitalService<EVENT>
 	 * @param errorUri The error uri of the event being resubmitted.
 	 * @param principal The principal object of the user we are ignoring on behalf of.
 	 */
-	public void ignore(String errorUri, Principal principal);
+	public void ignore(String errorUri, Principal principal, EVENT event);
 }

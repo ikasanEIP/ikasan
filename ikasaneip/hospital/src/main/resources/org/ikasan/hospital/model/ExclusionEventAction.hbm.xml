@@ -59,6 +59,7 @@
 		<property name="errorUri" column="ErrorUri" type="java.lang.String" not-null="true"/>
 		<property name="actionedBy" column="ActionedBy" type="java.lang.String" not-null="true"/>
 		<property name="action" column="Action" type="java.lang.String" not-null="true"/>
+		<property name="event" column="Event" type="byte[]" not-null="true"/>
 		<property name="timestamp" column="Timestamp" type="java.util.Date" not-null="true"/>
 		
 	</class>

@@ -40,6 +40,7 @@
  */
 package org.ikasan.hospital.model;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -56,7 +57,8 @@ public class ExclusionEventAction
 	private String errorUri;
 	private String actionedBy;
 	private String action;
-	private Date timestamp;	
+    private byte[] event;
+    private Date timestamp;	
 	
 	/**
 	 * Default constructor for Hibernate
@@ -77,12 +79,13 @@ public class ExclusionEventAction
 	 * @param timestamp
 	 */
 	public ExclusionEventAction(String errorUri, String actionedBy,
-			String action)
+			String action, byte[] event)
 	{
 		super();
 		this.errorUri = errorUri;
 		this.actionedBy = actionedBy;
 		this.action = action;
+		this.event = event;
 		this.timestamp = new Date();
 	}
 
@@ -166,6 +169,34 @@ public class ExclusionEventAction
 		this.action = action;
 	}
 
+	/**
+	 * @return the event
+	 */
+	public byte[] getEvent()
+	{
+		return event;
+	}
+	
+	/**
+	 * @param event the event to set
+	 */
+	public void setEvent(byte[] event)
+	{
+		this.event = event;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ExclusionEventAction [id=" + id + ", errorUri=" + errorUri
+				+ ", actionedBy=" + actionedBy + ", action=" + action
+				+ ", event=" + Arrays.toString(event) + ", timestamp="
+				+ timestamp + "]";
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -179,6 +210,7 @@ public class ExclusionEventAction
 				+ ((actionedBy == null) ? 0 : actionedBy.hashCode());
 		result = prime * result
 				+ ((errorUri == null) ? 0 : errorUri.hashCode());
+		result = prime * result + Arrays.hashCode(event);
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((timestamp == null) ? 0 : timestamp.hashCode());
@@ -216,6 +248,8 @@ public class ExclusionEventAction
 				return false;
 		} else if (!errorUri.equals(other.errorUri))
 			return false;
+		if (!Arrays.equals(event, other.event))
+			return false;
 		if (id == null)
 		{
 			if (other.id != null)
@@ -229,17 +263,6 @@ public class ExclusionEventAction
 		} else if (!timestamp.equals(other.timestamp))
 			return false;
 		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "ExclusionEventAction [id=" + id + ", errorUri=" + errorUri
-				+ ", actionedBy=" + actionedBy + ", action=" + action
-				+ ", timestamp=" + timestamp + "]";
 	}
 
 }

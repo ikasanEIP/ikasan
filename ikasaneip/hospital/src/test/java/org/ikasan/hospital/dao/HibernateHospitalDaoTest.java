@@ -69,7 +69,7 @@ public class HibernateHospitalDaoTest
 	@Test
 	public void testSaveExclusionEvent_success()
 	{
-		ExclusionEventAction action = new ExclusionEventAction("errorUri", "actionedBy", "state");
+		ExclusionEventAction action = new ExclusionEventAction("errorUri", "actionedBy", "state", "event".getBytes());
 		
 		this.hospitalDao.saveOrUpdate(action);
 	}

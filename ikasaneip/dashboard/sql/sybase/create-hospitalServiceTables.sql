@@ -4,6 +4,7 @@ CREATE TABLE ExclusionEventAction
    ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
    ActionedBy		      		VARCHAR(256) 		NOT NULL,
    Action		      			VARCHAR(32) 		NOT NULL,
+   Event		      			IMAGE 				NOT NULL,
    Timestamp		      		DATETIME 			default getdate() NOT NULL,
    PRIMARY KEY (Id)
 ) 

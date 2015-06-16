@@ -240,4 +240,31 @@ public class JmsMapMessageDefaultImpl extends JmsMessageDefaultImpl implements M
 			return false;
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		stringBuffer.append("JmsMapMessageDefaultImpl [\n");
+		
+		for(Object key: content.keySet())
+		{
+			if(content.get(key) instanceof byte[])
+			{
+				stringBuffer.append(key).append(" = ").append(new String((byte[])content.get(key))).append("\n");
+			}
+			else
+			{
+				stringBuffer.append(key).append(" = ").append(content.get(key)).append("\n");
+			}
+		}
+		
+		stringBuffer.append("]");
+		
+		return stringBuffer.toString();	
+	}
 }

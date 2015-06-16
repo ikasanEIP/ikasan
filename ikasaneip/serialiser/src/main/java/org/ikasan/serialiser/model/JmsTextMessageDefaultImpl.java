@@ -51,7 +51,7 @@ import javax.jms.TextMessage;
  */
 public class JmsTextMessageDefaultImpl extends JmsMessageDefaultImpl implements TextMessage
 {
-    /** text msg content */
+   	/** text msg content */
     String content;
     
     public JmsTextMessageDefaultImpl()
@@ -102,5 +102,14 @@ public class JmsTextMessageDefaultImpl extends JmsMessageDefaultImpl implements 
 		} else if (!content.equals(other.content))
 			return false;
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "JmsTextMessageDefaultImpl [content=" + content + "]";
 	}
 }
