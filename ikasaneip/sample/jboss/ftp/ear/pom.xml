@@ -110,6 +110,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-client-filetransfer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- web console -->
         <dependency>
             <groupId>org.ikasan</groupId>
