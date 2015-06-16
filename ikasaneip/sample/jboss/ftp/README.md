@@ -29,13 +29,10 @@ mvn clean install```
 		<resource-root path="hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
 		<resource-root path="hibernate-validator-4.3.2.Final.jar"/>
 		<resource-root path="validation-api-1.0.0.GA.jar"/>
-
 	    <resource-root path="javassist-3.18.1-GA.jar"/>
         <resource-root path="jandex-1.1.0.Final.jar"/>
 		<resource-root path="antlr-2.7.7.jar"/>
         <resource-root path="xstream-1.3.1.jar"/>
-    	<resource-root path="ikasan-client-connection-1.0.0-rc5-SNAPSHOT.jar"/>
-		<resource-root path="ikasan-client-filetransfer-1.0.0-rc5-SNAPSHOT.jar"/>
 		<resource-root path="ikasan-connector-base-1.0.0-rc5-SNAPSHOT.jar"/>
         <resource-root path="ikasan-connector-basefiletransfer-1.0.0-rc5-SNAPSHOT.jar"/>
         <resource-root path="ikasan-connector-ftp-classes-1.0.0-rc5-SNAPSHOT.jar"/>
