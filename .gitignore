@@ -22,3 +22,4 @@ ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.BAC
 ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.BASE.11832.xml
 ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.LOCAL.11832.xml
 ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.REMOTE.11832.xml
+ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/WEB-INF/deploy/org.ikasan.dashboard.ui.AppWidgetSet/rpcPolicyManifest/manifest.txt

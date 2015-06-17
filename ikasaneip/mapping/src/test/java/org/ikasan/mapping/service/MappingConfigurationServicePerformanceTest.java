@@ -144,7 +144,7 @@ public class MappingConfigurationServicePerformanceTest
 //        for(int i=15001; i<20000; i++)
 //        {
 //            Long configurationServiceClientId = this.addConfigurationServiceClient("client" + i, 
-//                "com.mizuho.cmi2.mappingConfiguration.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+//                "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
 //            Long dealerToDealerId = this.addConfigurationType("Dealer and Product to Account" + i);
 //    
 //            Long contextId1 = this.addConfigurationContext("Tradeweb" + i, "Tradeweb" + i);

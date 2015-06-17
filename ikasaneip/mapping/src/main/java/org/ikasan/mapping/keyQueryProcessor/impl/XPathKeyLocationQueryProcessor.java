@@ -66,7 +66,7 @@ public class XPathKeyLocationQueryProcessor implements KeyLocationQueryProcessor
     private DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.keyQueryProcessor.KeyLocationQueryProcessor#getKeyValueFromPayload(java.lang.String, byte[])
+     * @see org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessor#getKeyValueFromPayload(java.lang.String, byte[])
      */
     @Override
     public String getKeyValueFromPayload(String keyLocation, byte[] payload) throws KeyLocationQueryProcessorException

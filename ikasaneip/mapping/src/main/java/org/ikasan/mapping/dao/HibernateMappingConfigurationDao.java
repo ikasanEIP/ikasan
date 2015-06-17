@@ -77,8 +77,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 	private static final Long ID = new Long(1);
 	
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
      */
     @Override
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem
@@ -117,8 +118,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         });
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
+    /**
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getKeyLocationQuery(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -159,8 +161,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return query.toString();
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationServiceClientByName(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationServiceClientByName(java.lang.String)
      */
     @Override
     public ConfigurationServiceClient getConfigurationServiceClientByName(String configurationServiceClientName)
@@ -170,9 +173,10 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return (ConfigurationServiceClient) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeConfigurationType(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType)
-     */
+   /*
+    * /(non-Javadoc)
+    * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationType(org.ikasan.mapping.model.ConfigurationType)
+    */
     @Override
     public Long storeConfigurationType(ConfigurationType configurationType)
     {
@@ -182,8 +186,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return configurationType.getId();
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeConfigurationContext(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
      */
     @Override
     public Long storeMappingConfiguration(MappingConfiguration configurationContext) throws DataAccessException
@@ -194,8 +199,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return configurationContext.getId();
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeSourceConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
      */
     @Override
     public Long storeSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -206,8 +212,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return sourceConfigurationValue.getId();
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeTargetConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
      */
     @Override
     public Long storeTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -218,8 +225,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return targetConfigurationValue.getId();
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeConfigurationServiceClient(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationServiceClient(org.ikasan.mapping.model.ConfigurationServiceClient)
      */
     @Override
     public Long storeConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient)
@@ -231,7 +239,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeKeyLocationQuery(com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeKeyLocationQuery(org.ikasan.mapping.model.KeyLocationQuery)
      */
     @Override
     public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery)
@@ -243,7 +251,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#storeConfigurationContext(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationContext(org.ikasan.mapping.model.ConfigurationContext)
      */
     @Override
     public Long storeConfigurationContext(ConfigurationContext configurationContext)
@@ -255,7 +263,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getAllConfigurationTypes()
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getAllConfigurationTypes()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -267,7 +275,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getAllConfigurationContexts()
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getAllConfigurationContexts()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -279,7 +287,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getAllConfigurationServiceClients()
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getAllConfigurationServiceClients()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -291,7 +299,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getMappingConfigurationById(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getMappingConfigurationById(java.lang.Long)
      */
     @Override
     public MappingConfiguration getMappingConfigurationById(Long id)
@@ -303,7 +311,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getMappingConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getMappingConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public MappingConfiguration getMappingConfiguration(final String clientName, final String mappingConfigurationType,
@@ -455,7 +463,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getMappingConfigurationsByConfigurationServiceClientId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getMappingConfigurationsByConfigurationServiceClientId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -469,7 +477,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getMappingConfigurationsByConfigurationTypeId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getMappingConfigurationsByConfigurationTypeId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -482,7 +490,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getMappingConfigurationsBySourceContextId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getMappingConfigurationsBySourceContextId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -495,7 +503,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getMappingConfigurationsByTargetContextId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getMappingConfigurationsByTargetContextId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -508,7 +516,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationContextById(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationContextById(java.lang.Long)
      */
     @Override
     public ConfigurationContext getConfigurationContextById(Long id)
@@ -520,7 +528,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationServiceClientById(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationServiceClientById(java.lang.Long)
      */
     @Override
     public ConfigurationServiceClient getConfigurationServiceClientById(Long id)
@@ -532,7 +540,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationTypeById(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationTypeById(java.lang.Long)
      */
     @Override
     public ConfigurationType getConfigurationTypeById(Long id)
@@ -544,7 +552,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getKeyLocationQueriesByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getKeyLocationQueriesByMappingConfigurationId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -557,7 +565,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getSourceConfigurationValueByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getSourceConfigurationValueByMappingConfigurationId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -571,7 +579,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getTargetConfigurationValueById(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getTargetConfigurationValueById(java.lang.Long)
      */
     @Override
     public TargetConfigurationValue getTargetConfigurationValueById(Long id)
@@ -583,7 +591,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getAllMappingCongigurations()
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getAllMappingCongigurations()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -595,7 +603,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getTargetConfigurationValueByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getTargetConfigurationValueByMappingConfigurationId(java.lang.Long)
      */
     @Override
     public List<SourceConfigurationValue> getSourceConfigurationValuesByTargetConfigurationValueId(
@@ -608,7 +616,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#deleteSourceConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
      */
     @Override
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -617,7 +625,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#deleteTargetConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
      */
     @Override
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -648,7 +656,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
      */
     @Override
     public Long getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(
@@ -668,7 +676,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#mappingConfigurationExists(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#mappingConfigurationExists(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public Long getNumberOfMappingConfigurations(final String clientName, final String mappingConfigurationType,
@@ -691,7 +699,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#deleteMappingConfiguration(com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
      */
     @Override
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration)
@@ -707,7 +715,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationTypeByName(java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationTypeByName(java.lang.String)
      */
     @Override
     public ConfigurationType getConfigurationTypeByName(String name)
@@ -719,7 +727,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationContextByName(java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationContextByName(java.lang.String)
      */
     @Override
     public ConfigurationContext getConfigurationContextByName(String name)
@@ -730,7 +738,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getConfigurationTypesByClientName(java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getConfigurationTypesByClientName(java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -750,7 +758,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getSourceConfigurationContextByClientNameAndType(java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getSourceConfigurationContextByClientNameAndType(java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -790,7 +798,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.dao.MappingConfigurationDao#getTargetConfigurationContextByClientNameTypeAndSourceContext(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getTargetConfigurationContextByClientNameTypeAndSourceContext(java.lang.String, java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override
