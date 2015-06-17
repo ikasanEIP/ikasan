@@ -71,6 +71,17 @@
 				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
 				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
 				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
+                <!-- FileTransfer tables-->
+                <prop key="drop.checksumCommand">DROP TABLE FTChecksumCommand;</prop>
+                <prop key="drop.cleanupChunksCommand">DROP TABLE FTCleanupChunksCommand;</prop>
+                <prop key="drop.deliverBatchCommand">DROP TABLE FTDeliverBatchCommand;</prop>
+                <prop key="drop.deliverFileCommand">DROP TABLE FTDeliverFileCommand;</prop>
+                <prop key="drop.fileChunk">DROP TABLE FTFileChunk;</prop>
+                <prop key="drop.fileChunkHeader">DROP TABLE FTFileChunkHeader;</prop>
+                <prop key="drop.fileFilter">DROP TABLE FTFileFilter;</prop>
+                <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
+                <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
+                <prop key="drop.xid">DROP TABLE FTXid;</prop>
 
 				<!--prop key="driver">com.sybase.jdbc4.jdbc.SybDataSource</prop -->
 				<!--prop key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</prop -->
@@ -443,8 +454,8 @@
 					Username 			VARCHAR(50) NOT NULL UNIQUE,
 					Password			VARCHAR(50) NOT NULL,
 					Email 				VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled 			BIT NOT NULL
 					)
@@ -800,7 +811,175 @@
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
 				</prop>
-				
+
+                <prop key="create.checksumCommand">CREATE TABLE FTChecksumCommand
+                    (
+                    Id                   numeric(18,0),
+                    Destructive          bit NOT NULL,
+                    ChecksumFilePath     varchar(255) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTChecksumCommand01u
+                    ON FTChecksumCommand(Id)
+				</prop>
+
+                <prop key="create.cleanupChunksCommand">CREATE TABLE FTCleanupChunksCommand
+                    (
+                    Id                  numeric(18,0),
+                    FileChunkHeaderId   numeric(18,0) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTCleanupChunksCommand01u
+                    ON FTCleanupChunksCommand(Id)
+                </prop>
+
+                <prop key="create.deliverBatchCommand">CREATE TABLE FTDeliverBatchCommand
+                    (
+                    Id                     numeric(18,0),
+                    OutputDirectory        varchar(255) NULL,
+                    TempDirectory          varchar(255) NULL,
+                    BatchFolder            varchar(255) NULL,
+                    PutAttempted           bit NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTDeliverBatchCommand01u
+                    ON FTDeliverBatchCommand(Id)
+                </prop>
+
+
+                <prop key="create.deliverFileCommand">CREATE TABLE FTDeliverFileCommand
+                    (
+                    Id                     numeric(18,0),
+                    FileName               varchar(255) NULL,
+                    TempFileName           varchar(255) NULL,
+                    OutputDirectory        varchar(255) NULL,
+                    OverwriteExisting      bit NOT NULL,
+                    PutAttempted           bit NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTDeliverFileCommand01u
+                    ON FTDeliverFileCommand(Id)
+                </prop>
+
+
+                <prop key="create.fileChunkHeader">CREATE TABLE FTFileChunkHeader
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    SequenceLength  numeric(18,0) NOT NULL,
+                    InternalMd5Hash  char(32) NULL,
+                    ExternalMd5Hash  char(32) NULL,
+                    FileName        varchar(255) NOT NULL,
+                    ChunkTimeStamp  numeric(18,0) NOT NULL,
+                    ClientId  varchar(255) NULL
+
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTFileChunkHeader01u
+                    ON FTFileChunkHeader(Id)
+                </prop>
+
+                <prop key="create.fileChunk">CREATE TABLE FTFileChunk
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    Content         image  NOT NULL,
+                    Ordinal         numeric(18,0) NOT NULL,
+                    Md5Hash  		char(32) NULL,
+                    FileChunkHeaderId numeric(18,0) NOT NULL references FTFileChunkHeader(Id)
+
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTFileChunk01u
+                    ON FTFileChunk(Id)
+                </prop>
+
+                <prop key="create.fileFilter">CREATE TABLE FTFileFilter
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    ClientId        varchar(255)  NOT NULL,
+                    Criteria        varchar(255)  NOT NULL,
+                    LastModified    datetime      NOT NULL,
+                    LastAccessed    datetime      NOT NULL,
+                    Size            numeric(18,0) NOT NULL,
+                    CreatedDateTime numeric(18, 0) NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTFileFilter01u
+                    ON FTFileFilter(Id)
+
+                    CREATE UNIQUE INDEX FTFileFilter02u
+                    ON FTFileFilter(ClientId,Criteria,LastModified,Size)
+
+                    CREATE INDEX FTFileFilter03u
+                    ON FTFileFilter(ClientId,CreatedDateTime)
+                </prop>
+
+                <prop key="create.retrieveFileCommand">CREATE TABLE FTRetrieveFileCommand
+                    (
+                    Id                   numeric(18,0),
+                    Destructive          bit NOT NULL,
+                    RenameOnSuccess      bit NOT NULL,
+                    RenameExtension      varchar(255) NULL,
+                    MoveOnSuccess        bit NOT NULL,
+                    MoveNewPath          varchar(255) NULL,
+                    SourcePath           varchar(255) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTRetrieveFileCommand01u
+                    ON FTRetrieveFileCommand(Id)
+                </prop>
+
+                <prop key="create.xid">CREATE TABLE FTXid
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    State           varchar(255)  NOT NULL,
+                    GlobalTransactionId      varchar(255)  NOT NULL,
+                    BranchQualifier          varchar (255)  NOT NULL,
+                    FormatId          numeric(18,0)  NOT NULL,
+                    ClientId           varchar(255)  NOT NULL,
+                    CreatedDateTime  numeric(18,0) NOT NULL,
+                    LastUpdatedDateTime  numeric(18,0) NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTXid01u
+                    ON FTXid(Id)
+
+                    CREATE UNIQUE INDEX FTXid02u
+                    ON FTXid(GlobalTransactionId, BranchQualifier)
+                </prop>
+
+                <prop key="create.transactionalResourceCommand">CREATE TABLE FTTransactionalResourceCommand
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    State           varchar(255)  NOT NULL,
+                    Xid_Id numeric(18,0) NOT NULL references FTXid(Id),
+                    Type           varchar(255)  NOT NULL,
+                    ExecutionTimestamp char(24) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX TransResCommand01u
+                    ON FTTransactionalResourceCommand(Id)
+                </prop>
+
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
 					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
 					
@@ -1024,6 +1203,18 @@
 				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
 				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
 				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
+                <!-- FileTransfer tables-->
+                <prop key="drop.checksumCommand">DROP TABLE FTChecksumCommand;</prop>
+                <prop key="drop.cleanupChunksCommand">DROP TABLE FTCleanupChunksCommand;</prop>
+                <prop key="drop.deliverBatchCommand">DROP TABLE FTDeliverBatchCommand;</prop>
+                <prop key="drop.deliverFileCommand">DROP TABLE FTDeliverFileCommand;</prop>
+                <prop key="drop.fileChunk">DROP TABLE FTFileChunk;</prop>
+                <prop key="drop.fileChunkHeader">DROP TABLE FTFileChunkHeader;</prop>
+                <prop key="drop.fileFilter">DROP TABLE FTFileFilter;</prop>
+                <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
+                <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
+                <prop key="drop.xid">DROP TABLE FTXid;</prop>
+
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
 
@@ -1601,7 +1792,7 @@
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
 				</prop>
-				
+
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
 					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
 					
@@ -1908,6 +2099,174 @@
 					  ,100)
 				   SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
 				</prop>
+
+                <prop key="create.checksumCommand">CREATE TABLE FTChecksumCommand
+                    (
+                    Id                   numeric(18,0),
+                    Destructive          bit NOT NULL,
+                    ChecksumFilePath     varchar(255) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTChecksumCommand01u
+                    ON FTChecksumCommand(Id)
+                </prop>
+
+                <prop key="create.cleanupChunksCommand">CREATE TABLE FTCleanupChunksCommand
+                    (
+                    Id                  numeric(18,0),
+                    FileChunkHeaderId   numeric(18,0) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTCleanupChunksCommand01u
+                    ON FTCleanupChunksCommand(Id)
+                </prop>
+
+                <prop key="create.deliverBatchCommand">CREATE TABLE FTDeliverBatchCommand
+                    (
+                    Id                     numeric(18,0),
+                    OutputDirectory        varchar(255) NULL,
+                    TempDirectory          varchar(255) NULL,
+                    BatchFolder            varchar(255) NULL,
+                    PutAttempted           bit NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTDeliverBatchCommand01u
+                    ON FTDeliverBatchCommand(Id)
+                </prop>
+
+
+                <prop key="create.deliverFileCommand">CREATE TABLE FTDeliverFileCommand
+                    (
+                    Id                     numeric(18,0),
+                    FileName               varchar(255) NULL,
+                    TempFileName           varchar(255) NULL,
+                    OutputDirectory        varchar(255) NULL,
+                    OverwriteExisting      bit NOT NULL,
+                    PutAttempted           bit NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTDeliverFileCommand01u
+                    ON FTDeliverFileCommand(Id)
+                </prop>
+
+
+                <prop key="create.fileChunkHeader">CREATE TABLE FTFileChunkHeader
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    SequenceLength  numeric(18,0) NOT NULL,
+                    InternalMd5Hash  char(32) NULL,
+                    ExternalMd5Hash  char(32) NULL,
+                    FileName        varchar(255) NOT NULL,
+                    ChunkTimeStamp  numeric(18,0) NOT NULL,
+                    ClientId  varchar(255) NULL
+
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTFileChunkHeader01u
+                    ON FTFileChunkHeader(Id)
+                </prop>
+
+                <prop key="create.fileChunk">CREATE TABLE FTFileChunk
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    Content         image  NOT NULL,
+                    Ordinal         numeric(18,0) NOT NULL,
+                    Md5Hash  		char(32) NULL,
+                    FileChunkHeaderId numeric(18,0) NOT NULL references FTFileChunkHeader(Id)
+
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTFileChunk01u
+                    ON FTFileChunk(Id)
+                </prop>
+
+                <prop key="create.fileFilter">CREATE TABLE FTFileFilter
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    ClientId        varchar(255)  NOT NULL,
+                    Criteria        varchar(255)  NOT NULL,
+                    LastModified    datetime      NOT NULL,
+                    LastAccessed    datetime      NOT NULL,
+                    Size            numeric(18,0) NOT NULL,
+                    CreatedDateTime numeric(18, 0) NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTFileFilter01u
+                    ON FTFileFilter(Id)
+
+                    CREATE UNIQUE INDEX FTFileFilter02u
+                    ON FTFileFilter(ClientId,Criteria,LastModified,Size)
+
+                    CREATE INDEX FTFileFilter03u
+                    ON FTFileFilter(ClientId,CreatedDateTime)
+                </prop>
+
+                <prop key="create.retrieveFileCommand">CREATE TABLE FTRetrieveFileCommand
+                    (
+                    Id                   numeric(18,0),
+                    Destructive          bit NOT NULL,
+                    RenameOnSuccess      bit NOT NULL,
+                    RenameExtension      varchar(255) NULL,
+                    MoveOnSuccess        bit NOT NULL,
+                    MoveNewPath          varchar(255) NULL,
+                    SourcePath           varchar(255) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTRetrieveFileCommand01u
+                    ON FTRetrieveFileCommand(Id)
+                </prop>
+
+                <prop key="create.xid">CREATE TABLE FTXid
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    State           varchar(255)  NOT NULL,
+                    GlobalTransactionId      varchar(255)  NOT NULL,
+                    BranchQualifier          varchar (255)  NOT NULL,
+                    FormatId          numeric(18,0)  NOT NULL,
+                    ClientId           varchar(255)  NOT NULL,
+                    CreatedDateTime  numeric(18,0) NOT NULL,
+                    LastUpdatedDateTime  numeric(18,0) NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FTXid01u
+                    ON FTXid(Id)
+
+                    CREATE UNIQUE INDEX FTXid02u
+                    ON FTXid(GlobalTransactionId, BranchQualifier)
+                </prop>
+
+                <prop key="create.transactionalResourceCommand">CREATE TABLE FTTransactionalResourceCommand
+                    (
+                    Id              numeric(18,0) IDENTITY,
+                    State           varchar(255)  NOT NULL,
+                    Xid_Id numeric(18,0) NOT NULL references FTXid(Id),
+                    Type           varchar(255)  NOT NULL,
+                    ExecutionTimestamp char(24) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX TransResCommand01u
+                    ON FTTransactionalResourceCommand(Id)
+                </prop>
 				
 				<prop key="create.platformConfiguration">CREATE TABLE PlatformConfiguration
 					(
@@ -2006,6 +2365,18 @@
 				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
 				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
 				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
+                <!-- FileTransfer tables-->
+                <prop key="drop.checksumCommand">DROP TABLE FTChecksumCommand;</prop>
+                <prop key="drop.cleanupChunksCommand">DROP TABLE FTCleanupChunksCommand;</prop>
+                <prop key="drop.deliverBatchCommand">DROP TABLE FTDeliverBatchCommand;</prop>
+                <prop key="drop.deliverFileCommand">DROP TABLE FTDeliverFileCommand;</prop>
+                <prop key="drop.fileChunk">DROP TABLE FTFileChunk;</prop>
+                <prop key="drop.fileChunkHeader">DROP TABLE FTFileChunkHeader;</prop>
+                <prop key="drop.fileFilter">DROP TABLE FTFileFilter;</prop>
+                <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
+                <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
+                <prop key="drop.xid">DROP TABLE FTXid;</prop>
+
                 <prop key="driver">com.microsoft.sqlserver.jdbc.SQLServerDriver</prop>
                 <prop key="url">jdbc:sqlserver://HOSTNAME:PORT/DATABASE</prop>
 
@@ -2655,6 +3026,156 @@
 	                   )
 					) 
 				</prop>
+                <prop key="create.checksumCommand">CREATE TABLE [FTChecksumCommand]
+                    (
+                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
+                    [Destructive]           [bit]         NOT NULL,
+                    [ChecksumFilePath]      [varchar](255) NULL,
+                    CONSTRAINT              [PK_FTChecksumCommand_Id] PRIMARY KEY CLUSTERED
+                    (
+                    [Id] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.cleanupChunksCommand">CREATE TABLE [FTCleanupChunksCommand]
+                    (
+                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
+                    [FileChunkHeaderId]     [numeric](18)  NULL,
+                    CONSTRAINT              [PK_FTCleanupChunksCommand_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.deliverBatchCommand">CREATE TABLE [FTDeliverBatchCommand]
+                    (
+                    [Id]                     [numeric](18)  IDENTITY NOT NULL,
+                    [OutputDirectory]        [varchar](255) NULL,
+                    [TempDirectory]          [varchar](255) NULL,
+                    [BatchFolder]            [varchar](255) NULL,
+                    [PutAttempted]           [bit] NOT NULL,
+                    CONSTRAINT              [PK_FTDeliverBatchCommand_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.deliverFileCommand">CREATE TABLE [FTDeliverFileCommand]
+                    (
+                    [Id]                     [numeric](18)  IDENTITY NOT NULL,
+                    [FileName]               [varchar](255) NULL,
+                    [TempFileName]           [varchar](255) NULL,
+                    [OutputDirectory]        [varchar](255) NULL,
+                    [OverwriteExisting]      [bit] NOT NULL,
+                    [PutAttempted]           [bit] NOT NULL,
+                    CONSTRAINT              [PK_FTDeliverFileCommand_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.fileChunkHeader">CREATE TABLE [FTFileChunkHeader]
+                    (
+                    [Id]                [numeric](18)  IDENTITY NOT NULL,
+                    [SequenceLength]    [numeric](18) NOT NULL,
+                    [InternalMd5Hash]   [varchar](32) NULL,
+                    [ExternalMd5Hash]   [varchar](32) NULL,
+                    [FileName]          [varchar](255) NOT NULL,
+                    [ChunkTimeStamp]    [numeric](18) NOT NULL,
+                    [ClientId]          [varchar](255) NULL,
+                    CONSTRAINT          [PK_FTFileChunkHeader_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.fileChunk">CREATE TABLE [FTFileChunk]
+                    (
+                    [Id]                [numeric](18)  IDENTITY NOT NULL,
+                    [Content]           [image]  NOT NULL,
+                    [Ordinal]           [numeric](18) NOT NULL,
+                    [Md5Hash]  		    [varchar](32) NULL,
+                    [FileChunkHeaderId] [numeric](18)) NOT NULL,
+                    CONSTRAINT          [PK_FTFileChunk_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    ),
+                    CONSTRAINT [FK_FTFileChunk_FileChunkHeaderId] FOREIGN KEY (FileChunkHeaderId) REFERENCES FTFileChunkHeader(Id)
+                    )
+                </prop>
+
+                <prop key="create.fileFilter">CREATE TABLE [FTFileFilter]
+                    (
+                    [Id]                [numeric](18)  IDENTITY NOT NULL,
+                    [ClientId]          [varchar](255)  NOT NULL,
+                    [Criteria]          [varchar](255)  NOT NULL,
+                    [LastModified]      [datetime]      NOT NULL,
+                    [LastAccessed]      [datetime]      NOT NULL,
+                    [Size]              [numeric](18) NOT NULL,
+                    [CreatedDateTime]  [numeric](18) NOT NULL,
+                    CONSTRAINT          [PK_FTFileFilter_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+
+                    CREATE UNIQUE INDEX [IX_FTFileFilter_02] ON [FTFileFilter](ClientId,Criteria,LastModified,Size)
+                    CREATE UNIQUE INDEX [IX_FTFileFilter_03] ON [FTFileFilter](ClientId,CreatedDateTime)
+                </prop>
+
+                <prop key="create.retrieveFileCommand">CREATE TABLE [FTRetrieveFileCommand]
+                    (
+                    [Id]                   [numeric](18)  IDENTITY NOT NULL,
+                    [Destructive]          [bit]          NOT NULL,
+                    [RenameOnSuccess]      [bit]          NOT NULL,
+                    [RenameExtension]      [varchar](255) NULL,
+                    [MoveOnSuccess]        [bit]          NOT NULL,
+                    [MoveNewPath]          [varchar](255) NULL,
+                    [SourcePath]           [varchar](255) NULL,
+                    CONSTRAINT             [PK_FTRetrieveFileCommand_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.xid">CREATE TABLE [FTXid]
+                    (
+                    [Id]                       [numeric](18)   IDENTITY NOT NULL,
+                    [State]                    [varchar](255)  NOT NULL,
+                    [GlobalTransactionId]      [varchar](255)  NOT NULL,
+                    [BranchQualifier]          [varchar] (255) NOT NULL,
+                    [FormatId]                 [numeric](18    NOT NULL,
+                    [ClientId]                 [varchar](255)  NOT NULL,
+                    [CreatedDateTime]          [numeric](18)   NOT NULL,
+                    [LastUpdatedDateTime]      [numeric](18)   NOT NULL,
+                    CONSTRAINT                 [PK_FTXid_Id]   PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    )
+                    )
+                    CREATE UNIQUE INDEX [IX_FTXid_02] ON [FTXid](GlobalTransactionId, BranchQualifier)
+                </prop>
+
+                <prop key="create.transactionalResourceCommand">CREATE TABLE [FTTransactionalResourceCommand]
+                    (
+                    [Id]                  [numeric](18)   IDENTITY NOT NULL,
+                    [State]               [varchar](255)  NOT NULL,
+                    [Xid_Id]              [numeric](18)   NOT NULL,
+                    [Type]                [varchar](255)  NOT NULL,
+                    [ExecutionTimestamp]  [varchar](24)   NULL,
+                    CONSTRAINT            [PK_FTTransactionalResourceCommand_Id] PRIMARY KEY CLUSTERED
+                    (
+                        [Id] ASC
+                    ),
+                    CONSTRAINT [FK_FTTransactionalResourceCommand_Xid_Id] FOREIGN KEY (Xid_Id) REFERENCES FTXid(Id)
+                    )
+                </prop>
                 
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
 					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
@@ -2884,6 +3405,18 @@
 				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
 				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
 				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
+                <!-- FileTransfer tables-->
+                <prop key="drop.checksumCommand">DROP TABLE FTChecksumCommand;</prop>
+                <prop key="drop.cleanupChunksCommand">DROP TABLE FTCleanupChunksCommand;</prop>
+                <prop key="drop.deliverBatchCommand">DROP TABLE FTDeliverBatchCommand;</prop>
+                <prop key="drop.deliverFileCommand">DROP TABLE FTDeliverFileCommand;</prop>
+                <prop key="drop.fileChunk">DROP TABLE FTFileChunk;</prop>
+                <prop key="drop.fileChunkHeader">DROP TABLE FTFileChunkHeader;</prop>
+                <prop key="drop.fileFilter">DROP TABLE FTFileFilter;</prop>
+                <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
+                <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
+                <prop key="drop.xid">DROP TABLE FTXid;</prop>
+
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
 					Id IDENTITY NOT NULL,
@@ -3420,6 +3953,129 @@
 					   PRIMARY KEY (Id) 
 					);
 				</prop>
+
+                <prop key="create.checksumCommand">CREATE TABLE FTChecksumCommand
+                    (
+                    Id                   NUMERIC(18,0) IDENTITY NOT NULL,
+                    Destructive          BOOLEAN NOT NULL,
+                    ChecksumFilePath     VARCHAR(255) NULL,
+                    PRIMARY KEY (Id)
+                    );
+                </prop>
+
+                <prop key="create.cleanupChunksCommand">CREATE TABLE FTCleanupChunksCommand
+                    (
+                    Id                  NUMERIC(18,0) IDENTITY NOT NULL,
+                    FileChunkHeaderId   NUMERIC(18,0) NULL,
+                    PRIMARY KEY (Id)
+                    );
+                </prop>
+
+                <prop key="create.deliverBatchCommand">CREATE TABLE FTDeliverBatchCommand
+                    (
+                    Id                     NUMERIC(18,0) IDENTITY NOT NULL,
+                    OutputDirectory        VARCHAR(255) NULL,
+                    TempDirectory          VARCHAR(255) NULL,
+                    BatchFolder            VARCHAR(255) NULL,
+                    PutAttempted           BOOLEAN NOT NULL,
+                    PRIMARY KEY (Id)
+                    );
+                </prop>
+
+                <prop key="create.deliverFileCommand">CREATE TABLE FTDeliverFileCommand
+                    (
+                    Id                     NUMERIC(18,0) IDENTITY NOT NULL,
+                    FileName               VARCHAR(255) NULL,
+                    TempFileName           VARCHAR(255) NULL,
+                    OutputDirectory        VARCHAR(255) NULL,
+                    OverwriteExisting      BOOLEAN NOT NULL,
+                    PutAttempted           BOOLEAN NOT NULL,
+                    PRIMARY KEY (Id)
+                    );
+                </prop>
+
+                <prop key="create.fileChunkHeader">CREATE TABLE FTFileChunkHeader
+                    (
+                    Id              NUMERIC(18,0) IDENTITY NOT NULL,
+                    SequenceLength  NUMERIC(18,0) NOT NULL,
+                    InternalMd5Hash  CHAR(32) NULL,
+                    ExternalMd5Hash  CHAR(32) NULL,
+                    FileName        VARCHAR(255) NOT NULL,
+                    ChunkTimeStamp  NUMERIC(18,0) NOT NULL,
+                    ClientId  VARCHAR(255) NULL,
+                    PRIMARY KEY (Id)
+                    );
+                </prop>
+
+                <prop key="create.fileChunk">CREATE TABLE FTFileChunk
+                    (
+                    Id              NUMERIC(18,0) IDENTITY NOT NULL,
+                    Content         BINARY  NOT NULL,
+                    Ordinal         NUMERIC(18,0) NOT NULL,
+                    Md5Hash  		CHAR(32) NULL,
+                    FileChunkHeaderId NUMERIC(18,0) NOT NULL,
+                    PRIMARY KEY (Id) ,
+                    FOREIGN KEY (FileChunkHeaderId) REFERENCES FTFileChunkHeader(Id)
+                    )
+                </prop>
+
+                <prop key="create.fileFilter">CREATE TABLE FTFileFilter
+                    (
+                    Id              NUMERIC(18,0) IDENTITY NOT NULL,
+                    ClientId        VARCHAR(255)  NOT NULL,
+                    Criteria        VARCHAR(255)  NOT NULL,
+                    LastModified    datetime      NOT NULL,
+                    LastAccessed    datetime      NOT NULL,
+                    Size            NUMERIC(18,0) NOT NULL,
+                    CreatedDateTime NUMERIC(18, 0) NOT NULL,
+                    PRIMARY KEY (Id),
+                    );
+                    CREATE UNIQUE INDEX FTFileFilter02u
+                    ON FTFileFilter(ClientId,Criteria,LastModified,Size);
+                    CREATE INDEX FTFileFilter03u
+                    ON FTFileFilter(ClientId,CreatedDateTime);
+                </prop>
+
+                <prop key="create.retrieveFileCommand">CREATE TABLE FTRetrieveFileCommand
+                    (
+                    Id                   NUMERIC(18,0) IDENTITY NOT NULL,
+                    Destructive          BOOLEAN NOT NULL,
+                    RenameOnSuccess      BOOLEAN NOT NULL,
+                    RenameExtension      VARCHAR(255) NULL,
+                    MoveOnSuccess        BOOLEAN NOT NULL,
+                    MoveNewPath          VARCHAR(255) NULL,
+                    SourcePath           VARCHAR(255) NULL,
+                    PRIMARY KEY (Id)
+                    );
+                </prop>
+
+                <prop key="create.xid">CREATE TABLE FTXid
+                    (
+                    Id                   NUMERIC(18,0) IDENTITY NOT NULL,
+                    State                VARCHAR(255)  NOT NULL,
+                    GlobalTransactionId  VARCHAR(255)  NOT NULL,
+                    BranchQualifier      VARCHAR (255)  NOT NULL,
+                    FormatId             NUMERIC(18,0)  NOT NULL,
+                    ClientId             VARCHAR(255)  NOT NULL,
+                    CreatedDateTime  	 NUMERIC(18,0) NOT NULL,
+                    LastUpdatedDateTime  NUMERIC(18,0) NOT NULL,
+                    PRIMARY KEY (Id)
+                    );
+                    CREATE UNIQUE INDEX FTXid02u
+                    ON FTXid(GlobalTransactionId, BranchQualifier)
+                </prop>
+
+                <prop key="create.transactionalResourceCommand">CREATE TABLE FTTransactionalResourceCommand
+                    (
+                    Id              NUMERIC(18,0) IDENTITY NOT NULL,
+                    State           VARCHAR(255)  NOT NULL,
+                    Xid_Id 			NUMERIC(18,0) NOT NULL,
+                    Type            VARCHAR(255)  NOT NULL,
+                    ExecutionTimestamp CHAR(24) NULL,
+                    PRIMARY KEY (Id),
+                    FOREIGN KEY (Xid_Id) REFERENCES FTXid(Id)
+                    );
+                </prop>
 				
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(

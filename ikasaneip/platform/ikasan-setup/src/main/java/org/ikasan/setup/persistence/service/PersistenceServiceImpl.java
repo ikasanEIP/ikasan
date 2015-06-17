@@ -104,7 +104,19 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String MAPPING_SOURCE_VALUE = "mappingSourceValue";
     private static String MAPPING_KEY_LOCATION_QUERY = "mappingKeyLocationQuery";
     private static String MAPPING_SOURCE_CONFIG_GROUP_SEQ = "mappingSourceConfigGroupSeq";
-    
+
+    private static String FILE_TRANSFER_CHECKSUM_COMMAND = "checksumCommand";
+    private static String FILE_TRANSFER_CLEANUP_CHUNKS_COMMAND = "cleanupChunksCommand";
+    private static String FILE_TRANSFER_DELIVERY_BATCH_COMMAND = "deliverBatchCommand";
+    private static String FILE_TRANSFER_DELIVERY_FILE_COMMAND = "deliverFileCommand";
+    private static String FILE_TRANSFER_FILE_CHUNK_HEADER_COMMAND = "fileChunkHeader";
+    private static String FILE_TRANSFER_FILE_CHUNK_COMMAND = "fileChunk";
+    private static String FILE_TRANSFER_FILE_FILTER = "fileFilter";
+    private static String FILE_TRANSFER_RETRIEVE_FILE_COMMAND = "retrieveFileCommand";
+    private static String FILE_TRANSFER_TRANSACTIONAL_RESOURCE_COMMAND = "transactionalResourceCommand";
+    private static String FILE_TRANSFER_XID = "xid";
+
+
     private static String VERSION = "version";
     private static String VERSION_ENTRY = "version.entry";
     private static String EXCLUSION_EVENT = "exclusionEvent";
@@ -227,4 +239,21 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(DEFAULT_ADMIN_USER);
         this.providerDAO.create(DEFAULT_PRINCIPAL);
     }
+
+    @Override
+    public void createFileTransferPersistence() {
+
+        this.providerDAO.create(FILE_TRANSFER_CHECKSUM_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_CLEANUP_CHUNKS_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_DELIVERY_BATCH_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_DELIVERY_FILE_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_FILE_CHUNK_HEADER_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_FILE_CHUNK_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_FILE_FILTER);
+        this.providerDAO.create(FILE_TRANSFER_RETRIEVE_FILE_COMMAND);
+        this.providerDAO.create(FILE_TRANSFER_XID);
+        this.providerDAO.create(FILE_TRANSFER_TRANSACTIONAL_RESOURCE_COMMAND);
+
+    }
+
 }

@@ -59,6 +59,11 @@ public interface PersistenceService
     public void createPersistence();
 
     /**
+     * Create the fileTransfer related persistence used by ftp and sftp.
+     */
+    public void createFileTransferPersistence();
+
+    /**
      * Does an administration account exist in the current persistence
      * @return boolean
      */
