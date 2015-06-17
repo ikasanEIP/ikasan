@@ -103,7 +103,7 @@ public class NewClientPanel extends Panel implements View
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(NewClientFieldGroup.NAME, new ObjectProperty<String>(""));
         item.addItemProperty(NewClientFieldGroup.KEY_LOCATION_QUERY_PROCESSOR_TYPE,
-            new ObjectProperty<String>("com.mizuho.cmi2.mappingConfiguration.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"));
+            new ObjectProperty<String>("org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"));
         
         FormLayout form = new FormLayout();
 
