@@ -97,7 +97,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#saveMappingConfiguration(com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
      */
     @Override
     public Long saveMappingConfiguration(MappingConfiguration mappingConfiguration) throws MappingConfigurationServiceException
@@ -117,7 +117,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#saveSourceConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
      */
     @Override
     public Long saveSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -126,7 +126,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#saveTargetConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
      */
     @Override
     public Long saveTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -145,7 +145,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public String getTargetConfigurationValue(final String clientName, String configurationType, String sourceSystem, String targetSystem,
@@ -158,7 +158,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, byte[])
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, byte[])
      */
     @Override
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceContext,
@@ -223,7 +223,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getAllConfigurationTypes()
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationTypes()
      */
     @Override
     public List<ConfigurationType> getAllConfigurationTypes()
@@ -232,7 +232,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getAllConfigurationContexts()
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationContexts()
      */
     @Override
     public List<ConfigurationContext> getAllConfigurationContexts()
@@ -241,7 +241,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getAllConfigurationServiceClients()
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationServiceClients()
      */
     @Override
     public List<ConfigurationServiceClient> getAllConfigurationServiceClients()
@@ -250,7 +250,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#addConfigurationType(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationType(org.ikasan.mapping.model.ConfigurationType)
      */
     @Override
     public Long saveConfigurationType(ConfigurationType configurationType)
@@ -259,7 +259,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#addConfigurationConext(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationConext(org.ikasan.mapping.model.ConfigurationContext)
      */
     @Override
     public Long saveConfigurationConext(ConfigurationContext configurationContext)
@@ -268,7 +268,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#addConfigurationServiceClient(com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationServiceClient(org.ikasan.mapping.model.ConfigurationServiceClient)
      */
     @Override
     public Long saveConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient)
@@ -277,7 +277,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#addMappingConfiguration(java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.util.List, java.util.List, java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addMappingConfiguration(java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.util.List, java.util.List, java.lang.String)
      */
     @Override
     public Long addMappingConfiguration(Long sourceContextId, Long targetContextId, Long numberOfParams,
@@ -326,7 +326,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
 	/* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getMappingConfigurationById(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationById(java.lang.Long)
      */
     @Override
     public MappingConfiguration getMappingConfigurationById(Long id)
@@ -335,7 +335,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getMappingConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public MappingConfiguration getMappingConfiguration(String clientName, String mappingConfigurationType,
@@ -345,7 +345,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getMappingConfigurationsByConfigurationServiceClientId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsByConfigurationServiceClientId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsByConfigurationServiceClientId(
@@ -355,7 +355,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getMappingConfigurationsByConfigurationTypeId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsByConfigurationTypeId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsByConfigurationTypeId(Long configurationTypeId)
@@ -364,7 +364,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getMappingConfigurationsBySourceContextId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsBySourceContextId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsBySourceContextId(Long sourceContextId)
@@ -373,7 +373,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getMappingConfigurationsByTargetContextId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getMappingConfigurationsByTargetContextId(java.lang.Long)
      */
     @Override
     public List<MappingConfiguration> getMappingConfigurationsByTargetContextId(Long targetContextId)
@@ -382,7 +382,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getConfigurationContextById(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationContextById(java.lang.Long)
      */
     @Override
     public ConfigurationContext getConfigurationContextById(Long id)
@@ -391,7 +391,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getConfigurationServiceClientById(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationServiceClientById(java.lang.Long)
      */
     @Override
     public ConfigurationServiceClient getConfigurationServiceClientById(Long id)
@@ -400,7 +400,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getConfigurationTypeById(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationTypeById(java.lang.Long)
      */
     @Override
     public ConfigurationType getConfigurationTypeById(Long id)
@@ -409,7 +409,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getKeyLocationQueriesByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getKeyLocationQueriesByMappingConfigurationId(java.lang.Long)
      */
     @Override
     public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId)
@@ -418,7 +418,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getSourceConfigurationValueByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getSourceConfigurationValueByMappingConfigurationId(java.lang.Long)
      */
     @Override
     public List<SourceConfigurationValue> getSourceConfigurationValueByMappingConfigurationId(
@@ -428,7 +428,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueById(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValueById(java.lang.Long)
      */
     @Override
     public TargetConfigurationValue getTargetConfigurationValueById(Long id)
@@ -437,7 +437,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getSourceConfigurationValuesByTargetConfigurationValueId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getSourceConfigurationValuesByTargetConfigurationValueId(java.lang.Long)
      */
     @Override
     public List<SourceConfigurationValue> getSourceConfigurationValuesByTargetConfigurationValueId(
@@ -447,7 +447,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#deleteSourceConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
      */
     @Override
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -456,7 +456,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#deleteTargetConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
      */
     @Override
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -484,7 +484,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
      */
     @Override
     public Long getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(
@@ -494,7 +494,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#saveKeyLocationQuery(com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveKeyLocationQuery(org.ikasan.mapping.model.KeyLocationQuery)
      */
     @Override
     public Long saveKeyLocationQuery(KeyLocationQuery query)
@@ -503,7 +503,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#mappingConfigurationExists(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#mappingConfigurationExists(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public boolean mappingConfigurationExists(String clientName, String mappingConfigurationType,
@@ -524,7 +524,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#deleteMappingConfiguration(com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
      */
     @Override
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration)
@@ -533,7 +533,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getAllConfigurationTypeByName(java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationTypeByName(java.lang.String)
      */
     @Override
     public ConfigurationType getAllConfigurationTypeByName(String name)
@@ -542,7 +542,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getAllConfigurationContextByName(java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationContextByName(java.lang.String)
      */
     @Override
     public ConfigurationContext getAllConfigurationContextByName(String name)
@@ -551,7 +551,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getAllConfigurationClientByName(java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getAllConfigurationClientByName(java.lang.String)
      */
     @Override
     public ConfigurationServiceClient getAllConfigurationClientByName(String name)
@@ -560,7 +560,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getConfigurationTypesByClientName(java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getConfigurationTypesByClientName(java.lang.String)
      */
     @Override
     public List<ConfigurationType> getConfigurationTypesByClientName(String clientname)
@@ -569,7 +569,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getSourceConfigurationContextByClientNameAndType(java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getSourceConfigurationContextByClientNameAndType(java.lang.String, java.lang.String)
      */
     @Override
     public List<ConfigurationContext> getSourceConfigurationContextsByClientNameAndType(String clientName, String type)
@@ -578,7 +578,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationContextByClientNameTypeAndSourceContext(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationContextByClientNameTypeAndSourceContext(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(String clientName,
