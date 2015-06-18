@@ -38,46 +38,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup.persistence.service;
+package org.ikasan.component.endpoint.filetransfer;
+
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.spec.event.ManagedEventIdentifierException;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 
 /**
- * Contract for persistence creation.
- *
- * Ikasan Development Team
+ * Manages the event identifier setting/getting for Payload content
+ * Ikasan Developmnet Team.
  */
-public interface PersistenceService
+public class ManagedEventFileTransferIdentifierService implements ManagedEventIdentifierService<String, Payload>
 {
-    /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
-     */
-    public String getVersion();
+    private static String FILE_NAME_ATTRIBUTE = "fileName";
+    private static String ID_ATTRIBUTE = "id";
 
-    /**
-     * Create the core engine underlying persistence
-     */
-    public void createPersistence();
+    @Override
+    public void setEventIdentifier(String identifier, Payload payload) throws ManagedEventIdentifierException
+    {
+        payload.setAttribute(ID_ATTRIBUTE,identifier);
+    }
 
-    /**
-     * Create the fileTransfer related persistence used by ftp and sftp.
-     */
-    public void createFileTransferPersistence();
+    @Override
+    public String getEventIdentifier(Payload payload) throws ManagedEventIdentifierException
+    {
+        String eventId = payload.getAttribute(FILE_NAME_ATTRIBUTE);
+        return eventId;
 
-    /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
-     */
-    public boolean adminAccountExists();
-
-    /**
-     * Create the default administration account and associated dependencies
-     */
-    public void createAdminAccount();
-
-    /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
-     */
-    public boolean userTablesExist();
+    }
 }

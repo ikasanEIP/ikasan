@@ -10,6 +10,7 @@
         <property name="moduleName"        ref="moduleName" />
         <property name="name"               value="Sftp to Log" />
         <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
         <property name="consumer">
             <bean class="org.ikasan.builder.FlowElementFactory">
                 <property name="name"       value="Sftp Consumer"/>

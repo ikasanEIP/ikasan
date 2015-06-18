@@ -58,13 +58,6 @@
     <description>A default client for developers to use with File transfer based connectors in the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
-        <!-- Common functionality for Ikasan Connector Clients-->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-connection</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- base connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
