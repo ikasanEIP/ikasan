@@ -263,7 +263,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // add to exclusion list
-                exactly(1).of(exclusionService).addBlacklisted(flowEvent, "errorUri");
+                exactly(1).of(exclusionService).addBlacklisted("identifier", "errorUri");
             }
         });
 
@@ -272,7 +272,7 @@ public class ScheduledRecoveryManagerTest
 
         try
         {
-            recoveryManager.recover("componentName", exception, flowEvent);
+            recoveryManager.recover("componentName", exception, flowEvent, "identifier");
         }
         catch(RuntimeException e)
         {

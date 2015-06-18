@@ -8,6 +8,7 @@
 
     <util:list id="module1-config-files">
         <value>ikasan-transaction-pointcut-quartz.xml</value>
+        <value>ikasan-transaction-pointcut-resubmission.xml</value>
         <value>demo-flow-conf.xml</value>
         <value>demo-component-conf.xml</value>
         <value>demo-exclusion-flow-conf.xml</value>
