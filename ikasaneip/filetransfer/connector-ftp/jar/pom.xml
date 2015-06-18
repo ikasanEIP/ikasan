@@ -86,13 +86,7 @@
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
             <version>${project.version}</version>
         </dependency>
-		<dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-filetransfer</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- The FTP library -->
+		<!-- The FTP library -->
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>

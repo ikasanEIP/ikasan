@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
     <deployment>
+        <exclude-subsystems>
+            <subsystem name="jaxrs" />
+        </exclude-subsystems>
         <!-- Exclusions allow you to prevent the server from automatically adding some dependencies -->
         <exclusions>
             <module name="org.apache.commons.logging" />
