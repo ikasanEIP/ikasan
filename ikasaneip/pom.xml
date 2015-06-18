@@ -788,10 +788,11 @@
       <modules>
         <module>mapping</module>
         <module>management</module>
+        <module>platform</module>
+        <module>console</module>
         <module>hospital</module>
         <module>webconsole</module>
-        <module>console</module>
-		<module>topology</module>
+        <module>topology</module>
         <module>dashboard</module>
         <module>developer</module>
         <module>sample</module>
