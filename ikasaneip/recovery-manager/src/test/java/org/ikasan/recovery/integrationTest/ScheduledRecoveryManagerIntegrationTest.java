@@ -230,7 +230,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         try
         {
-            recoveryManager.recover(componentName, new Exception(), new String());
+            recoveryManager.recover(componentName, new Exception(), new String(), new String());
         }
         catch (Exception e)
         {
@@ -550,7 +550,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
-        public void park(Object o) {
+        public void park(Object event, Object id) {
 
         }
 

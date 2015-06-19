@@ -1968,6 +1968,10 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
                 // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1986,7 +1990,7 @@ public class VisitingInvokerFlowTest
                 one(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
-                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
@@ -2036,6 +2040,10 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
                 // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -2053,13 +2061,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("dynamicComponentName"));
                 one(flowInvocationContext).addInvokedComponentName("dynamicComponentName");
 
-                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
                 // pass the exception to the recovery manager
                 one(flowInvocationContext).getLastComponentName();
                 will(returnValue("dynamicComponentName"));
-                one(recoveryManager).recover("dynamicComponentName", exception, flowEvent);
+                one(recoveryManager).recover("dynamicComponentName", exception, flowEvent, "identifier");
             }
         });
 
@@ -2095,6 +2103,10 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
                 // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -2106,7 +2118,7 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
 
-                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
                 // invoke the flow elements
@@ -2122,7 +2134,7 @@ public class VisitingInvokerFlowTest
                 // pass the exception to the recovery manager
                 one(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
-                one(recoveryManager).recover("componentName", exception, flowEvent);
+                one(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
             }
         });
 
@@ -2159,6 +2171,10 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
                 // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -2170,7 +2186,7 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
 
-                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
                 // invoke the flow elements
@@ -2186,7 +2202,7 @@ public class VisitingInvokerFlowTest
                 // pass the exception to the recovery manager
                 one(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
-                one(recoveryManager).recover("componentName", exception, flowEvent);
+                one(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
             }
         });
 
@@ -2224,6 +2240,10 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
                 // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -2235,7 +2255,7 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
 
-                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
                 // invoke the flow elements
@@ -2251,7 +2271,7 @@ public class VisitingInvokerFlowTest
                 // pass the exception to the recovery manager
                 one(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
-                one(recoveryManager).recover("componentName", exception, flowEvent);
+                one(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
             }
         });
 
