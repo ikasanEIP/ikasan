@@ -53,7 +53,7 @@ import org.ikasan.spec.serialiser.Serialiser;
  *
  * @author Ikasan Development Team
  */
-public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<String,?>>
+public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<String,?>, String>
 {
     /** module name */
     String moduleName;
@@ -110,16 +110,16 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
         }
     }
 
+
     @Override
-    public boolean isBlackListed(FlowEvent<String,?> event)
+    public boolean isBlackListed(String identifier)
     {
-        return this.blackListDao.contains(this.moduleName, this.flowName, event.getIdentifier());
+        return this.blackListDao.contains(this.moduleName, this.flowName, identifier);
     }
 
     @Override
-    public void park(FlowEvent<String,?> event)
+    public void park(FlowEvent<String,?> event, String identifier)
     {
-        String identifier = event.getIdentifier();
         BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, identifier);
         byte[] bytes = serialiser.serialise(event.getPayload());
         String uri = blacklistEvent.getErrorUri();
@@ -128,16 +128,16 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     }
 
     @Override
-    public void addBlacklisted(FlowEvent<String,?> event, String errorUri)
+    public void addBlacklisted(String identifier, String errorUri)
     {
-        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, event.getIdentifier(), errorUri, this.timeToLive);
+        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, identifier, errorUri, this.timeToLive);
         this.blackListDao.insert(blackListEvent);
     }
 
     @Override
-    public String getErrorUri(FlowEvent<String, ?> event) {
-
-        BlackListEvent blackListEvent = this.blackListDao.find(this.moduleName, this.flowName, event.getIdentifier());
+    public String getErrorUri(String identifier)
+    {
+        BlackListEvent blackListEvent = this.blackListDao.find(this.moduleName, this.flowName, identifier);
 
         if (blackListEvent == null) {
             return null;
@@ -147,9 +147,9 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     }
 
     @Override
-    public void removeBlacklisted(FlowEvent<String,?> event)
+    public void removeBlacklisted(String identifier)
     {
-        this.blackListDao.delete(this.moduleName, this.flowName, event.getIdentifier());
+        this.blackListDao.delete(this.moduleName, this.flowName, identifier);
     }
 
     @Override

@@ -127,7 +127,7 @@ public class SimpleExample
         }
 
         @Override
-        public void park(Object o) {
+        public void park(Object event, Object id) {
 
         }
 

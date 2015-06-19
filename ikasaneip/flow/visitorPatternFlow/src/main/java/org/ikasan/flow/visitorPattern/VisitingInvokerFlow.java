@@ -125,7 +125,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     private EventFactory eventFactory = new FlowEventFactory();
 
     /** Event Exclusion Service */
-    private ExclusionService<FlowEvent> exclusionService;
+    private ExclusionService<FlowEvent,Object> exclusionService;
 
     /** flow configuration implementation */
     private ExclusionFlowConfiguration exclusionFlowConfiguration;
@@ -568,18 +568,21 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     {
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
 
+        // keep a handle on the original assigned eventLifeId as this could change within the flow
+        Object originalEventLifeIdentifier = event.getIdentifier();
+
         try
         {
             // TODO part of flow configuration should also disable of exclusionService
 
-            if(this.exclusionService.isBlackListed(event))
+            if(this.exclusionService.isBlackListed(originalEventLifeIdentifier))
             {
-                this.exclusionService.park(event);
+                this.exclusionService.park(event, originalEventLifeIdentifier);
                 if(this.exclusionFlowConfiguration != null)
                 {
                     invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 }
-                this.exclusionService.removeBlacklisted(event);
+                this.exclusionService.removeBlacklisted(originalEventLifeIdentifier);
             }
             else
             {
@@ -595,7 +598,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         catch(Throwable throwable)
         {
-            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event);
+            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event, originalEventLifeIdentifier);
         }
         finally
         {
@@ -603,8 +606,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
     }
     
-    
-
     /* (non-Javadoc)
 	 * @see org.ikasan.spec.event.EventListener#invoke(org.ikasan.spec.event.Resubmission)
 	 */
@@ -626,7 +627,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         catch(Throwable throwable)
         {
-            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent());
+            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent(), event.getEvent().getIdentifier());
         }
         finally
         {
