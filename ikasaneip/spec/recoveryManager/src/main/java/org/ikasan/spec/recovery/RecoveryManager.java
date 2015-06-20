@@ -40,8 +40,6 @@
  */
 package org.ikasan.spec.recovery;
 
-import java.util.List;
-
 /**
  * Recovery Manager contract.
  * 
@@ -59,7 +57,8 @@ public interface RecoveryManager<RESOLVER>
     /**
      * Set a resolver which translates the incoming exception and component name
      * in to an action to be taken by the recovery manager.
-     * @param resolver
+     * @param managedResources
+     * @param <MANAGED_RESOURCES>
      */
     public <MANAGED_RESOURCES> void setManagedResources(MANAGED_RESOURCES managedResources);
     
@@ -68,16 +67,22 @@ public interface RecoveryManager<RESOLVER>
      * @return  resolver
      */
     public RESOLVER getResolver();
-    
+
     /**
-     * Start or continue a recovery based on the passed CRITERIA.
-     * @param criteria
+     * Start or continue a recovery based on the passed CRITERIA
+     * @param component
+     * @param throwable
+     * @param event
+     * @param identifier
+     * @param <EVENT>
+     * @param <IDENTIFIER>
      */
-    public <EVENT> void recover(String component, Throwable throwable, EVENT event);
-    
+    public <EVENT,IDENTIFIER> void recover(String component, Throwable throwable, EVENT event, IDENTIFIER identifier);
+
     /**
      * Start or continue a recovery based on the passed CRITERIA.
-     * @param criteria
+     * @param component
+     * @param throwable
      */
     public void recover(String component, Throwable throwable);
     
