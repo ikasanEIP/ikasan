@@ -135,62 +135,26 @@ public class ExclusionServiceDefaultImplTest
 
         final FlowEvent expiredFlowEvent = mockery.mock(FlowEvent.class, "expired-flow-event");
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // when checked in the backlist
-                exactly(4).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
+        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
+        exclusionService.addBlacklisted("123456", "uri");
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
-                // when added to the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
+        exclusionService.addBlacklisted("123456", "uri");
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
-                // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when removed from the backlist
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when retrieved from backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                exactly(1).of(expiredFlowEvent).getIdentifier();
-                will(returnValue("11111"));
-
-                // when re-checked in the backlist
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-            }
-        });
-
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
-        exclusionService.addBlacklisted(flowEvent, "uri");
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        exclusionService.addBlacklisted(flowEvent, "uri");
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        exclusionService.addBlacklisted(flowEvent, "uri");
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+        exclusionService.addBlacklisted("123456", "uri");
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
         // this flowEvent should exist in blacklist
-        Assert.assertEquals("uri", exclusionService.getErrorUri(flowEvent));
+        Assert.assertEquals("uri", exclusionService.getErrorUri("123456"));
 
         // this flowEvent does not exist in blacklist
-        String errorUri = exclusionService.getErrorUri(expiredFlowEvent);
+        String errorUri = exclusionService.getErrorUri("111111");
         Assert.assertEquals(null, errorUri);
 
-        exclusionService.removeBlacklisted(flowEvent);
-        exclusionService.removeBlacklisted(flowEvent);
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        this.mockery.assertIsSatisfied();
+        exclusionService.removeBlacklisted("123456");
+        exclusionService.removeBlacklisted("123456");
+        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
     }
 
     /**
@@ -203,37 +167,13 @@ public class ExclusionServiceDefaultImplTest
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(-1L);
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
+        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
 
-                // when added to the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // housekeep with remove from the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-            }
-        });
-
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        exclusionService.addBlacklisted(flowEvent, "uri");
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+        exclusionService.addBlacklisted("123456", "uri");
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
         exclusionService.housekeep();
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        this.mockery.assertIsSatisfied();
+        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
     }
 
     /**
@@ -246,37 +186,13 @@ public class ExclusionServiceDefaultImplTest
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(10000L);
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
+        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
 
-                // when added to the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // housekeep with remove from the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-            }
-        });
-
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        exclusionService.addBlacklisted(flowEvent, "uri");
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+        exclusionService.addBlacklisted("123456", "uri");
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
         exclusionService.housekeep();
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
-
-        this.mockery.assertIsSatisfied();
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
     }
 
     /**
@@ -294,20 +210,14 @@ public class ExclusionServiceDefaultImplTest
         mockery.checking(new Expectations()
         {
             {
-                // when pulling from blacklist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
                 // when creating exclusionEvent
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
            }
         });
 
-        exclusionService.addBlacklisted(flowEvent, "uri");
-        exclusionService.park(flowEvent);
+        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.park(flowEvent, "123456");
         ExclusionEvent exclusionEvent = exclusionServiceExclusionEventDao.find("moduleName", "flowName", "123456");
         Object exclusionEventPayloadBytes = exclusionEvent.getEvent();
         Object exclusionEventPayload = serialiserFactory.getDefaultSerialiser().deserialise(exclusionEventPayloadBytes);

@@ -327,10 +327,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * @param componentName
      * @param throwable
      */
+    @Override
     public void recover(String componentName, Throwable throwable)
     {
         ExceptionAction action = resolveAction(componentName, throwable);
-        logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
         if(action instanceof IgnoreAction)
         {
             return;
@@ -341,16 +341,18 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
-     * Execute recovery based on the specified component name, exception,
-     * and event.
+     * Execute recovery based on the specified component name, exception, event and event identifier.
      * @param componentName
      * @param throwable
      * @param event
+     * @param identifier
+     * @param <T>
+     * @param <TID>
      */
-    public <T> void recover(String componentName, Throwable throwable, T event)
+    @Override
+    public <T,TID> void recover(String componentName, Throwable throwable, T event, TID identifier)
     {
         ExceptionAction action = resolveAction(componentName, throwable);
-        logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
         if(action instanceof IgnoreAction)
         {
             return;
@@ -359,7 +361,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         String errorUri = this.errorReportingService.notify(componentName, event, throwable, action.toString());
         if(action instanceof ExcludeEventAction)
         {
-            this.exclusionService.addBlacklisted(event, errorUri);
+            this.exclusionService.addBlacklisted(identifier, errorUri);
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 
@@ -517,14 +519,20 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     private ExceptionAction resolveAction(String componentName, Throwable throwable)
     {
-    	logger.info("resolving action: " + exceptionResolver, new Throwable());
-    	
+        ExceptionAction action;
         if(this.exceptionResolver == null)
         {
-            return StopAction.instance();
+            action = StopAction.instance();
+        }
+        else
+        {
+            action = this.exceptionResolver.resolve(componentName, throwable);
         }
 
-        return this.exceptionResolver.resolve(componentName, throwable);
+        logger.info("RecoveryManager resolving to [" + action.toString()
+                + "] for componentName[" + componentName + "] exception", throwable);
+
+        return action;
     }
     
     /**

@@ -45,42 +45,42 @@ package org.ikasan.spec.exclusion;
  * 
  * @author Ikasan Development Team
  */
-public interface ExclusionService<ENTITY>
+public interface ExclusionService<ENTITY, IDENTIFIER>
 {
     /** one year default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
 
     /**
-     * Is this entity on the blacklist.
+     * Is this identifier on the blacklist.
      *
-     * @param entity
+     * @param identifier
      * @return
      */
-    public boolean isBlackListed(ENTITY entity);
+    public boolean isBlackListed(IDENTIFIER identifier);
 
     /**
-     * Add this entity to the blacklist
-     * @param entity
-     * @param uri of the associated error
+     * Add this identifier to the blacklist based on a specified identifier and associated URI
+     * @param identifier
+     * @param uri
      */
-    public void addBlacklisted(ENTITY entity, String uri);
+    public void addBlacklisted(IDENTIFIER identifier, String uri);
 
     /**
-     * Get the errorUri from the blacklist associated with the entity.
+     * Get the errorUri from the blacklist associated with the identifier.
      */
-    public String getErrorUri(ENTITY entity);
+    public String getErrorUri(IDENTIFIER identifier);
 
     /**
      * Park this entity
      * @param entity
      */
-    public void park(ENTITY entity);
+    public void park(ENTITY entity, IDENTIFIER identifier);
 
     /**
      * Remove this entity from the blacklist
-     * @param entity
+     * @param identifier
      */
-    public void removeBlacklisted(ENTITY entity);
+    public void removeBlacklisted(IDENTIFIER identifier);
 
     /**
      * Allow entities blacklisted to be marked with a timeToLive.
