@@ -206,6 +206,18 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
         return (Module)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getBusinessStreamsByUserId(java.util.List)
+	 */
+	@Override
+	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(BusinessStream.class);
+		criteria.add(Restrictions.in("id", ids));
+
+        return (List<BusinessStream>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
     
    
 }

@@ -92,7 +92,7 @@ public class ResubmissionApplication
 			@PathParam("errorUri") String errorUri, byte[] event)
 	{
 		logger.info("re-submitting event " + errorUri);
-		if(!context.isUserInRole("WebServiceAdminUser"))
+		if(!context.isUserInRole("WebServiceAdmin"))
 		{
 			return Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build();
@@ -123,9 +123,10 @@ public class ResubmissionApplication
 	 * @return
 	 */
 	@PUT
-	@Path("/ignore/{errorUri}")
+	@Path("/ignore/{moduleName}/{flowName}/{errorUri}")
 	@Consumes("application/octet-stream")	
-	public Response ignore(@Context SecurityContext context, @PathParam("errorUri") String errorUri, byte[] event)
+	public Response ignore(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
+			@PathParam("errorUri") String errorUri, byte[] event)
 	{
 		logger.info("ignoring event " + errorUri);
 		if(!context.isUserInRole("WebServiceAdmin"))
@@ -136,7 +137,7 @@ public class ResubmissionApplication
 		
 		try
 		{
-			this.hospitalService.ignore(errorUri, context.getUserPrincipal(), event);
+			this.hospitalService.ignore(moduleName, flowName, errorUri, event, context.getUserPrincipal());
 		}
 		catch (Exception e)
 		{

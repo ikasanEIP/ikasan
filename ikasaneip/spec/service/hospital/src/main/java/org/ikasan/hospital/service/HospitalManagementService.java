@@ -40,6 +40,9 @@
  */
 package org.ikasan.hospital.service;
 
+import java.util.Date;
+import java.util.List;
+
 
 /**
  * 
@@ -54,4 +57,15 @@ public interface HospitalManagementService<ACTION>
 	 * @return
 	 */
 	public ACTION getExclusionEventActionByErrorUri(String errorUri);
+	
+	/**
+	 * Get actioned exclusions
+	 * 
+	 * @param moduleName
+	 * @param flowName
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<ACTION> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
 }

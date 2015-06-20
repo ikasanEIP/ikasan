@@ -137,4 +137,12 @@ public interface TopologyService
 	 * @return
 	 */
 	public Module getModuleByName(String name);
+	
+	/**
+	 * Get all BusinessStreams by a list of ids.
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
 }

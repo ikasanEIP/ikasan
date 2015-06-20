@@ -58,6 +58,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationVal
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -114,15 +115,14 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup newMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "New Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, newMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper);
+            mappingConfigurationValuesExportHelper, systemEventService);
 
-//        this.init();
         this.registerListeners();
     }
 
@@ -290,7 +290,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     }
 
     /**
-     * Adds key location query fileds to the UI. 
+     * Adds key location query fields to the UI. 
      */
     public void addParamQueryFields()
     {

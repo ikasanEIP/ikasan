@@ -91,24 +91,28 @@
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="newConfigurationTypePanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationTypePanel" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="typeComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="newClientPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewClientPanel" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="clientComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="newContextPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationContextPanel" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="contextComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="existingMappingConfigurationPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.ExistingMappingConfigurationPanel" scope="session">
@@ -130,6 +134,7 @@
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="mappingConfigurationExportHelper"/>
         <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="newMappingConfigurationPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationPanel" scope="session">
@@ -151,6 +156,7 @@
         <constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="mappingConfigurationExportHelper"/>
         <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="mappingConfigurationExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper" scope="session">
@@ -167,9 +173,7 @@
         <constructor-arg ref="newActionsPanel"/>
     </bean>
 
-    <!-- bean id="componentContainerViewDisplay" class="com.vaadin.navigator.Navigator.ComponentContainerViewDisplay" scope="session">
-        <constructor-arg ref="mappingViewComponentContainer"/>
-    </bean -->
+
 
     <bean id="searchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable" scope="session">
         <constructor-arg ref="searchResultTableItemClickListener"/>
@@ -178,11 +182,13 @@
     <bean id="mappingConfigurationConfigurationValuesTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="newMappingConfigurationConfigurationValuesTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="mappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">
@@ -307,6 +313,7 @@
         <constructor-arg ref="searchResultsTable"/>
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
 
     <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchResultTableItemClickListener" scope="session">

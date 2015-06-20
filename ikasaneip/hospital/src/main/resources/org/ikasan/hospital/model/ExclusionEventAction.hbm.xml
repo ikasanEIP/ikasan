@@ -55,12 +55,42 @@
 		<id name="id" type="java.lang.Long" column="Id">
 			<generator class="identity" />
 		</id>
+		
+		<property name="moduleName"
+                  type="java.lang.String"
+                  column="ModuleName"
+                  not-null="true" />
 
-		<property name="errorUri" column="ErrorUri" type="java.lang.String" not-null="true"/>
-		<property name="actionedBy" column="ActionedBy" type="java.lang.String" not-null="true"/>
-		<property name="action" column="Action" type="java.lang.String" not-null="true"/>
-		<property name="event" column="Event" type="byte[]" not-null="true"/>
-		<property name="timestamp" column="Timestamp" type="java.util.Date" not-null="true"/>
+        <property name="flowName"
+                  type="java.lang.String"
+                  column="FlowName"
+                  not-null="true" />
+
+		<property name="errorUri" 
+				  column="ErrorUri" 
+				  type="java.lang.String" 
+				  not-null="true"/>
+				  
+				  
+		<property name="actionedBy" 
+		          column="ActionedBy" 
+		          type="java.lang.String" 
+		          not-null="true"/>
+		          
+		<property name="action" 
+		          column="Action" 
+		          type="java.lang.String" 
+		          not-null="true"/>
+		          
+		<property name="event" 
+		          column="Event" 
+		          type="byte[]" 
+		          not-null="true"/>
+		          
+		<property name="timestamp" 
+				  column="Timestamp" 
+				  type="long" 
+				  not-null="true"/>
 		
 	</class>
 </hibernate-mapping>

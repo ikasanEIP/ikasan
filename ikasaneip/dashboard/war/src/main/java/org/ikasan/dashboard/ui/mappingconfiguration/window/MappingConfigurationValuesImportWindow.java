@@ -50,13 +50,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -65,6 +69,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -98,6 +103,7 @@ public class MappingConfigurationValuesImportWindow extends Window
     private HorizontalLayout progressLayout = new HorizontalLayout();
     private Label uploadLabel = new Label();
     private List<MappingConfigurationValue> mappingConfigurationValues;
+    private SystemEventService systemEventService;
     
     /**
      * Constructor
@@ -108,12 +114,13 @@ public class MappingConfigurationValuesImportWindow extends Window
      */
     public MappingConfigurationValuesImportWindow(MappingConfigurationService mappingConfigurationService
             , MappingConfiguration mappingConfiguration, MappingConfigurationConfigurationValuesTable 
-            mappingConfigurationConfigurationValuesTable)
+            mappingConfigurationConfigurationValuesTable, SystemEventService systemEventService)
     {
         super();
         this.mappingConfigurationService = mappingConfigurationService;
         this.mappingConfiguration = mappingConfiguration;
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
+        this.systemEventService = systemEventService;
         init();
     }
 
@@ -170,10 +177,24 @@ public class MappingConfigurationValuesImportWindow extends Window
                 try
                 {
                     saveImportedMappingConfigurationValues();
+                    
+                    IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                        	.getAttribute(DashboardSessionValueConstants.USER);
+
+                    systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+                    		"Imported mapping configuration values for mapping configuration: [Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
+                    		+"] [Source Context=" + mappingConfiguration.getSourceContext().getName() + "] [Target Context=" 
+                    		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
+                    		+ "]", authentication.getName());
+
+                    logger.info("User: " + authentication.getName() 
+                        + " successfully imported the following Mapping Configuration: " 
+                            + mappingConfiguration);
                 }
-                catch (MappingConfigurationServiceException e)
+                catch (Exception e)
                 {
-                    e.printStackTrace();
+                    Notification.show("An error occurred trying to import a mapping configuration: " + e.getMessage()
+                    		, Notification.Type.ERROR_MESSAGE);
                 }
                 mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
                 close();
@@ -193,8 +214,10 @@ public class MappingConfigurationValuesImportWindow extends Window
         Button cancelButton = new Button("Cancel");
         cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
 
-        cancelButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        cancelButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 close();
             }
         });
@@ -306,7 +329,6 @@ public class MappingConfigurationValuesImportWindow extends Window
 
         for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
         {
-            logger.info("Source value: " + sourceConfigurationValue.getSourceSystemValue());
             sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
             sourceConfigurationValue.setMappingConfigurationId(this.mappingConfiguration.getId());
         }
@@ -332,7 +354,6 @@ public class MappingConfigurationValuesImportWindow extends Window
 
         for(int i=0; i<sourceConfigurationValues.getLength(); i++)
         {
-            logger.info("Source value: " + sourceConfigurationValues.item(i).getTextContent());
             SourceConfigurationValue value = new SourceConfigurationValue();
             value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
             value.setSourceConfigGroupId(sourceConfigurationGroupId);
@@ -350,7 +371,6 @@ public class MappingConfigurationValuesImportWindow extends Window
      */
     protected TargetConfigurationValue getTargetConfigurationValue(Node targetConfigurationValue)
     {
-        logger.info("Target value: " + targetConfigurationValue.getTextContent());
         TargetConfigurationValue value = new TargetConfigurationValue();
         value.setTargetSystemValue(targetConfigurationValue.getTextContent());
         return value;

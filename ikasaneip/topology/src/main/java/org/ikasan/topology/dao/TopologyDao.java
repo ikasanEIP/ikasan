@@ -122,10 +122,19 @@ public interface TopologyDao
 
 	/**
 	 * Get all BusinessStreams associated with a given user.
+	 * 
 	 * @param userId
 	 * @return
 	 */
 	public List<BusinessStream> getBusinessStreamsByUserId(Long userId);
+	
+	/**
+	 * Get all BusinessStreams by a list of ids.
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
 
 	/**
 	 * Delete a business stream flow

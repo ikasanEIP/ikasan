@@ -51,6 +51,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -60,8 +61,8 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurati
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationValuesImportWindow;
 import org.ikasan.mapping.model.ConfigurationContext;
@@ -73,6 +74,7 @@ import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -135,6 +137,7 @@ public class MappingConfigurationPanel extends Panel implements View
     protected FunctionalGroup mappingConfigurationFunctionalGroup;
     protected MappingConfigurationExportHelper mappingConfigurationExportHelper;
     protected MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
+    protected SystemEventService systemEventService;
     
 
     /**
@@ -164,7 +167,7 @@ public class MappingConfigurationPanel extends Panel implements View
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup mappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
     {
         super(name);
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
@@ -185,6 +188,7 @@ public class MappingConfigurationPanel extends Panel implements View
         this.mappingConfigurationFunctionalGroup = mappingConfigurationFunctionalGroup;
         this.mappingConfigurationExportHelper = mappingConfigurationExportHelper;
         this.mappingConfigurationValuesExportHelper = mappingConfigurationValuesExportHelper;
+        this.systemEventService = systemEventService;
     }
 
     /**
@@ -485,7 +489,7 @@ public class MappingConfigurationPanel extends Panel implements View
         this.importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 MappingConfigurationValuesImportWindow dialog = new MappingConfigurationValuesImportWindow(mappingConfigurationService
-                    , mappingConfiguration, mappingConfigurationConfigurationValuesTable);
+                    , mappingConfiguration, mappingConfigurationConfigurationValuesTable, systemEventService);
 
                 UI.getCurrent().addWindow(dialog);
             }
@@ -522,7 +526,8 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     private StreamResource getMappingConfigurationValuesExportStream() 
     {
-        StreamResource.StreamSource source = new StreamResource.StreamSource() {
+        StreamResource.StreamSource source = new StreamResource.StreamSource()
+        {
 
                 public InputStream getStream() {
                     ByteArrayOutputStream stream = null;
@@ -550,7 +555,8 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     private StreamResource getMappingConfigurationExportStream() 
     {
-        StreamResource.StreamSource source = new StreamResource.StreamSource() {
+        StreamResource.StreamSource source = new StreamResource.StreamSource() 
+        {
 
                 public InputStream getStream() {
                     ByteArrayOutputStream stream = null;
@@ -580,7 +586,7 @@ public class MappingConfigurationPanel extends Panel implements View
     public void save() throws InvalidValueException, Exception
     {
     	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+                .getAttribute(DashboardSessionValueConstants.USER);
 
         try 
         {
@@ -597,7 +603,9 @@ public class MappingConfigurationPanel extends Panel implements View
                 {
                     tf.validate();
                 }
-            } catch (InvalidValueException e) {
+            } 
+            catch (InvalidValueException e) 
+            {
                 this.clientComboBox.setValidationVisible(true);
                 this.typeComboBox.setValidationVisible(true);
                 this.sourceContextComboBox.setValidationVisible(true);
@@ -638,9 +646,19 @@ public class MappingConfigurationPanel extends Panel implements View
 
             try
             {
+               
                 logger.info("User: " + principal.getName() + " saving Mapping Configuration: " +
                 		this.mappingConfiguration);
                 this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+                
+                String message = "[Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
+                		+"] [Source Context=" + mappingConfiguration.getSourceContext().getName() + "] [Target Context=" 
+                		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
+                		+ "] [Description=" + mappingConfiguration.getDescription() +"] [Number of source params=" 
+                		+ mappingConfiguration.getNumberOfParams() + "]";
+                
+                systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+                		"Saving Mapping Configuration: " + message, principal.getName());
             }
             catch(MappingConfigurationServiceException e)
             {
@@ -656,6 +674,9 @@ public class MappingConfigurationPanel extends Panel implements View
                 logger.info("User: " + principal.getName() + " saving Key Location Query: " +
                         query);
                 this.mappingConfigurationService.saveKeyLocationQuery(query);
+                
+                systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+                		"Saving Key Location Query: " + query, principal.getName());
             }
 
             this.mappingConfigurationConfigurationValuesTable.save();

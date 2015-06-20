@@ -41,9 +41,13 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewClientFieldGroup;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -52,6 +56,7 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -74,7 +79,8 @@ public class NewClientPanel extends Panel implements View
     private RefreshGroup refreshGroup;
     private MappingConfigurationService mappingConfigurationService;
     private SaveRequiredMonitor saveRequiredMonitor;
-    final TextField nameField = new TextField("Name");
+    private final TextField nameField = new TextField("Name");
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -84,12 +90,13 @@ public class NewClientPanel extends Panel implements View
      * @param saveRequiredMonitor
      */
     public NewClientPanel(MappingConfigurationService mappingConfigurationService, RefreshGroup refreshGroup,
-            SaveRequiredMonitor saveRequiredMonitor)
+            SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
     {
         super("Create new client");
         this.refreshGroup = refreshGroup;
         this.mappingConfigurationService = mappingConfigurationService;
         this.saveRequiredMonitor = saveRequiredMonitor;
+        this.systemEventService = systemEventService;
         init();
     }
 
@@ -120,7 +127,8 @@ public class NewClientPanel extends Panel implements View
         keyLocationQueryProcessorTypeField.setWidth(500, Unit.PIXELS);
         form.addComponent(keyLocationQueryProcessorTypeField);
 
-        final NewClientFieldGroup binder = new NewClientFieldGroup(item, this.refreshGroup, this.mappingConfigurationService);
+        final NewClientFieldGroup binder = new NewClientFieldGroup(item, this.refreshGroup
+        		, this.mappingConfigurationService, this.systemEventService);
         binder.bind(nameField, "name");
         binder.bind(keyLocationQueryProcessorTypeField, "keyLocationQueryProcessorType");
 
@@ -132,22 +140,31 @@ public class NewClientPanel extends Panel implements View
         saveButton.setStyleName(Reindeer.BUTTON_SMALL);
         saveButton.addClickListener(new ClickListener() {
             @Override
-            public void buttonClick(ClickEvent event) {
-                try {
+            public void buttonClick(ClickEvent event)
+            {
+                try 
+                {
                     nameField.validate();
-                } catch (InvalidValueException e) {
+                } 
+                catch (InvalidValueException e) 
+                {
                     nameField.setValidationVisible(true);
                     return;
                 }
 
-                try {
+                try 
+                {
                     binder.commit();
                     UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+                    
                     nameField.setValue("");
+                    
                     Notification.show("New Mapping Configuration Client Successfully Created!");
                     saveRequiredMonitor.setSaveRequired(false);
-                } catch (CommitException e) {
-                    Notification.show("You fail!");
+                } 
+                catch (CommitException e) 
+                {
+                    Notification.show("An error has occurred saving a new client: " + e.getMessage());
                 }
             }
         });

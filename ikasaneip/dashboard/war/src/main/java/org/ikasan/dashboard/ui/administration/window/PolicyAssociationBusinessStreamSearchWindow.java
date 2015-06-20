@@ -40,13 +40,26 @@
  */
 package org.ikasan.dashboard.ui.administration.window;
 
-import org.ikasan.mapping.model.MappingConfigurationLite;
+import java.util.List;
+
+import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -64,10 +77,10 @@ public class PolicyAssociationBusinessStreamSearchWindow extends Window
 
 	private TopologyService topologyService;
 	private HorizontalSplitPanel horizontalSplitPanel;
-	private MappingConfigurationLite mappingConfiguration;
 	private Panel searchPanel;
 	private Panel resultsPanel;
-	private ComboBox serverCombo;
+	private Table resultsTable;
+	private BusinessStream businessStream;
 
 	/**
 	 * @param mappingConfigurationSearchPanel
@@ -93,47 +106,104 @@ public class PolicyAssociationBusinessStreamSearchWindow extends Window
      */
     protected void init()
     {
-//    	this.setSizeFull();
-//    	this.setModal(true);
-//    	
-//    	this.mappingConfigurationSearchPanel.setWidth("100%");
-//    	VerticalLayout leftPanelLayout = new VerticalLayout();
-//    	leftPanelLayout.setWidth(320, Unit.PIXELS);
-//    	leftPanelLayout.setHeight("100%");
-//    	leftPanelLayout.addComponent(this.mappingConfigurationSearchPanel);
-//    	
-//    	HorizontalLayout rightPanelLayout = new HorizontalLayout();
-//    	rightPanelLayout.setSizeFull();
-//    	rightPanelLayout.addComponent(this.mappingConfigurationSearchResultsPanel);
-//    	
-//    	this.horizontalSplitPanel 
-//        	= new HorizontalSplitPanel(leftPanelLayout, rightPanelLayout);
-//	    this.horizontalSplitPanel.setSizeFull();
-//	    this.horizontalSplitPanel.setSplitPosition(320, Unit.PIXELS);
-//	    this.horizontalSplitPanel.setLocked(true);
-//	    this.horizontalSplitPanel.addStyleName("ikasansplitpanel");
-//	    this.setContent(horizontalSplitPanel);
+    	this.setSizeFull();
+    	this.setModal(true);
+    	
+    	this.createSearchPanel();
+    	this.createResultsPanel();
+    	
+    	VerticalLayout leftPanelLayout = new VerticalLayout();
+    	leftPanelLayout.setWidth(320, Unit.PIXELS);
+    	leftPanelLayout.setHeight("100%");
+    	leftPanelLayout.addComponent(this.searchPanel);
+    	
+    	HorizontalLayout rightPanelLayout = new HorizontalLayout();
+    	rightPanelLayout.setSizeFull();
+    	rightPanelLayout.addComponent(this.resultsPanel);
+    	
+    	this.horizontalSplitPanel 
+        	= new HorizontalSplitPanel(leftPanelLayout, rightPanelLayout);
+	    this.horizontalSplitPanel.setSizeFull();
+	    this.horizontalSplitPanel.setSplitPosition(320, Unit.PIXELS);
+	    this.horizontalSplitPanel.setLocked(true);
+	    this.horizontalSplitPanel.addStyleName("ikasansplitpanel");
+	    this.setContent(horizontalSplitPanel);
     }
     
     public void clear()
     {
-//    	this.mappingConfigurationSearchPanel.clear();
-//    	this.mappingConfigurationSearchResultsPanel.clear();
+    	this.businessStream = null;
+    	this.resultsTable.removeAllItems();
+    }
+
+   
+    
+    private void createSearchPanel()
+    {
+    	this.searchPanel = new Panel();
+    	this.searchPanel.setSizeFull();
+    	this.searchPanel.setStyleName("dashboard");
+    	
+    	GridLayout layout = new GridLayout(2, 3);
+    	layout.setWidth("100%");
+    	layout.setHeight("180px");
+    	layout.setMargin(true);
+    	
+    	Button searchButton = new Button("Search");    	
+    	searchButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {           	
+            	List<BusinessStream> businessStreams = topologyService.getAllBusinessStreams();
+            	resultsTable.removeAllItems();
+            	
+            	for(BusinessStream businessStream: businessStreams)
+            	{
+            		resultsTable.addItem(new Object[]{businessStream.getName(), businessStream.getDescription()}, businessStream);
+            	}
+            }
+        });
+    	
+    	layout.addComponent(searchButton, 0, 2, 1, 2);
+    	layout.setComponentAlignment(searchButton, Alignment.MIDDLE_CENTER);
+    	
+    	this.searchPanel.setContent(layout);
+    }
+    
+    private void createResultsPanel()
+    {
+    	this.resultsPanel = new Panel();
+    	this.resultsPanel.setSizeFull();
+    	this.resultsPanel.setStyleName("dashboard");
+    	
+    	this.resultsTable = new Table();
+    	this.resultsTable.setSizeFull();
+    	this.resultsTable.addContainerProperty("Name", String.class,  null);
+    	this.resultsTable.addContainerProperty("Description", String.class,  null);
+
+    	this.resultsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+    	{
+    	    @Override
+    	    public void itemClick(ItemClickEvent itemClickEvent) 
+    	    {
+    	      businessStream = (BusinessStream)itemClickEvent.getItemId();
+    	      UI.getCurrent().removeWindow(PolicyAssociationBusinessStreamSearchWindow.this);
+    	    }
+    	});
+    	
+    	HorizontalLayout layout = new HorizontalLayout();
+    	layout.addComponent(this.resultsTable);
+    	layout.setSizeFull();
+    	layout.setMargin(true);
+    	
+    	this.resultsPanel.setContent(layout);
     }
 
 	/**
-	 * @return the mappingConfiguration
+	 * @return the businessStream
 	 */
-	public MappingConfigurationLite getMappingConfiguration()
+	public BusinessStream getBusinessStream()
 	{
-		return mappingConfiguration;
-	}
-
-	/**
-	 * @param mappingConfiguration the mappingConfiguration to set
-	 */
-	public void setMappingConfiguration(MappingConfigurationLite mappingConfiguration)
-	{
-		this.mappingConfiguration = mappingConfiguration;
+		return businessStream;
 	}
 }

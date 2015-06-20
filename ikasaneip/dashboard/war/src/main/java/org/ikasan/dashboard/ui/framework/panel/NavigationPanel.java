@@ -53,9 +53,9 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.Navigation;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 
@@ -263,7 +263,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		// Another top-level item
 		
 		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+	        	.getAttribute(DashboardSessionValueConstants.USER);
 	    	
     	if(authentication != null)
     	{
@@ -309,7 +309,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 				"policyManagementView");
 		
 		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+	        	.getAttribute(DashboardSessionValueConstants.USER);
 	    	
     	if(authentication != null 
     			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
@@ -318,7 +318,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
     				"images/gear.png"), null);
     		admin.setStyleName("ikasan");
     		admin.addItem("Manage Users", null, userCommand);
-    		admin.addItem("Manage Principals", null, principalManagementCommand);
+    		admin.addItem("Manage Groups", null, principalManagementCommand);
     		admin.addItem("Manage Roles", null, roleManagementCommand);
     		admin.addItem("Manage Policies", null, policyManagementCommand);
     		admin.addItem("Security Administration", null, authenticationMethodCommand);

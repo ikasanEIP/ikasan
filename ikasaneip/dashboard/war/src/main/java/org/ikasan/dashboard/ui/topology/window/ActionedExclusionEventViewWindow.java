@@ -55,7 +55,6 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -67,7 +66,6 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -87,9 +85,9 @@ import com.vaadin.ui.Window;
  * @author Ikasan Development Team
  *
  */
-public class ExclusionEventViewWindow extends Window
+public class ActionedExclusionEventViewWindow extends Window
 {
-	private static Logger logger = Logger.getLogger(ExclusionEventViewWindow.class);
+	private static Logger logger = Logger.getLogger(ActionedExclusionEventViewWindow.class);
 	
 	/**
 	 * 
@@ -98,7 +96,6 @@ public class ExclusionEventViewWindow extends Window
 	
 	private TextField roleName;
 	private TextField roleDescription;
-	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
 	private SerialiserFactory serialiserFactory;
 	private ExclusionEventAction action;
@@ -108,11 +105,10 @@ public class ExclusionEventViewWindow extends Window
 	/**
 	 * @param policy
 	 */
-	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
+	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
-		this.exclusionEvent = exclusionEvent;
 		this.errorOccurrence = errorOccurrence;
 		this.serialiserFactory = serialiserFactory;
 		this.action = action;
@@ -150,7 +146,7 @@ public class ExclusionEventViewWindow extends Window
 		layout.addComponent(new Label("Module Name"), 0, 0);
 		
 		TextField tf1 = new TextField();
-		tf1.setValue(this.exclusionEvent.getModuleName());
+		tf1.setValue(this.action.getModuleName());
 		tf1.setReadOnly(true);
 		tf1.setWidth("80%");
 		layout.addComponent(tf1, 1, 0);
@@ -158,7 +154,7 @@ public class ExclusionEventViewWindow extends Window
 		layout.addComponent(new Label("Flow Name"), 0, 1);
 		
 		TextField tf2 = new TextField();
-		tf2.setValue(this.exclusionEvent.getFlowName());
+		tf2.setValue(this.action.getFlowName());
 		tf2.setReadOnly(true);
 		tf2.setWidth("80%");
 		layout.addComponent(tf2, 1, 1);
@@ -174,7 +170,7 @@ public class ExclusionEventViewWindow extends Window
 		layout.addComponent(new Label("Date/Time"), 0, 3);
 		
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.exclusionEvent.getTimestamp()).toString());
+		tf4.setValue(new Date(this.action.getTimestamp()).toString());
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 3);
@@ -182,7 +178,7 @@ public class ExclusionEventViewWindow extends Window
 		layout.addComponent(new Label("Error URI"), 0, 4);
 		
 		TextField tf5 = new TextField();
-		tf5.setValue(exclusionEvent.getErrorUri());
+		tf5.setValue(this.action.getErrorUri());
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 4);
@@ -220,156 +216,11 @@ public class ExclusionEventViewWindow extends Window
 		tf8.setWidth("80%");
 		layout.addComponent(tf8, 3, 2);
 		
-		final Button resubmitButton = new Button("Re-submit");
-		final Button ignoreButton = new Button("Ignore");
-		
-		resubmitButton.addClickListener(new Button.ClickListener() 
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event) 
-            {
-            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-        	        	.getAttribute(DashboardSessionValueConstants.USER);
-            	
-            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-            	
-            	ClientConfig clientConfig = new ClientConfig();
-            	clientConfig.register(feature) ;
-            	
-            	Client client = ClientBuilder.newClient(clientConfig);
-            	
-            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
-            	Server server = module.getServer();
-        		
-        		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
-        				+ module.getContextRoot() 
-        				+ "/rest/resubmission/resubmit/"
-        	    		+ exclusionEvent.getModuleName() 
-        	    		+ "/"
-        	    		+ exclusionEvent.getFlowName()
-        	    		+ "/"
-        	    		+ exclusionEvent.getErrorUri();
-        		
-        		logger.info("Resubmission Url: " + url);
-        		
-        	    WebTarget webTarget = client.target(url);
-        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
-        	    
-        	    if(response.getStatus()  != 200)
-        	    {
-        	    	response.bufferEntity();
-        	        
-        	        String responseMessage = response.readEntity(String.class);
-        	    	Notification.show("An error was received trying to resubmit event: " 
-        	    			+ responseMessage, Type.ERROR_MESSAGE);
-        	    }
-        	    else
-        	    {
-        	    	Notification.show("Event resumitted successfully.");
-        	    	resubmitButton.setVisible(false);
-        	    	ignoreButton.setVisible(false);
-        	    	
-        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-        	    	tf6.setReadOnly(false);
-        			tf7.setReadOnly(false);
-        			tf8.setReadOnly(false);
-        	    	tf6.setValue(action.getAction());
-        			tf7.setValue(action.getActionedBy());
-        			tf8.setValue(new Date(action.getTimestamp()).toString());
-        			tf6.setReadOnly(true);
-        			tf7.setReadOnly(true);
-        			tf8.setReadOnly(true);
-        	    }
-            }
-        });
-		
-		ignoreButton.addClickListener(new Button.ClickListener() 
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event) 
-            {
-            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-        	        	.getAttribute(DashboardSessionValueConstants.USER);
-            	
-            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-            	
-            	ClientConfig clientConfig = new ClientConfig();
-            	clientConfig.register(feature) ;
-            	
-            	Client client = ClientBuilder.newClient(clientConfig);
-            	
-            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
-            	Server server = module.getServer();
-        		
-        		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
-        				+ module.getContextRoot() 
-        				+ "/rest/resubmission/ignore/"
-        				+ exclusionEvent.getModuleName() 
-        	    		+ "/"
-        	    		+ exclusionEvent.getFlowName()
-        	    		+ "/"
-        	    		+ exclusionEvent.getErrorUri();
-        		
-        		logger.info("Ignore Url: " + url);
-        		
-        	    WebTarget webTarget = client.target(url);
-        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
-        	    
-        	    if(response.getStatus()  != 200)
-        	    {
-        	    	response.bufferEntity();
-        	        
-        	        String responseMessage = response.readEntity(String.class);
-        	    	Notification.show("An error was received trying to resubmit event: " 
-        	    			+ responseMessage, Type.ERROR_MESSAGE);
-        	    }
-        	    else
-        	    {
-        	    	Notification.show("Event ignored successfully.");
-        	    	resubmitButton.setVisible(false);
-        	    	ignoreButton.setVisible(false);
-        	    	
-        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-        	    	tf6.setReadOnly(false);
-        			tf7.setReadOnly(false);
-        			tf8.setReadOnly(false);
-        	    	tf6.setValue(action.getAction());
-        			tf7.setValue(action.getActionedBy());
-        			tf8.setValue(new Date(action.getTimestamp()).toString());
-        			tf6.setReadOnly(true);
-        			tf7.setReadOnly(true);
-        			tf8.setReadOnly(true);
-        	    }
-            }
-        });
-		
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setHeight("100%");
-		buttonLayout.setWidth(200, Unit.PIXELS);
-		buttonLayout.setMargin(true);
-		buttonLayout.addComponent(resubmitButton);
-		buttonLayout.addComponent(ignoreButton);
-		
-		if(this.action == null)
-		{
-			layout.addComponent(buttonLayout, 0, 5, 1, 5);
-		}
-		
-		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-		
-		if(authentication != null 
-    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					&& !authentication.hasGrantedAuthority(SecurityConstants.ACTION_EXCLUSIONS_AUTHORITY)))
-    	{
-			resubmitButton.setVisible(false);
-			ignoreButton.setVisible(false);
-    	}
 		
 		AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
-		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
-		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.exclusionEvent.getEvent());
+
+		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.action.getEvent());
 		eventEditor.setValue(event.toString());
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);

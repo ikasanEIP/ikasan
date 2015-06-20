@@ -112,6 +112,7 @@ public class PolicyAssociationMappingSearchWindow extends Window
     
     public void clear()
     {
+    	this.mappingConfiguration = null;
     	this.mappingConfigurationSearchPanel.clear();
     	this.mappingConfigurationSearchResultsPanel.clear();
     }

@@ -48,6 +48,7 @@ import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewConfigurationTypeFieldGroup;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewContextFieldGroup;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -78,7 +79,8 @@ public class NewMappingConfigurationTypePanel extends Panel implements View
     private RefreshGroup refreshGroup;
     private MappingConfigurationService mappingConfigurationService;
     private SaveRequiredMonitor saveRequiredMonitor;
-    final TextField nameField = new TextField("Name");
+    private final TextField nameField = new TextField("Name");
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -88,12 +90,13 @@ public class NewMappingConfigurationTypePanel extends Panel implements View
      * @param saveRequiredMonitor
      */
     public NewMappingConfigurationTypePanel(MappingConfigurationService mappingConfigurationService
-            , RefreshGroup refreshGroup, SaveRequiredMonitor saveRequiredMonitor)
+            , RefreshGroup refreshGroup, SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
     {
         super("Create new configuration type");
         this.refreshGroup = refreshGroup;
         this.mappingConfigurationService = mappingConfigurationService;
         this.saveRequiredMonitor = saveRequiredMonitor;
+        this.systemEventService = systemEventService;
         init();
     }
 
@@ -118,7 +121,7 @@ public class NewMappingConfigurationTypePanel extends Panel implements View
         form.addComponent(nameField);
 
         final NewConfigurationTypeFieldGroup binder = new NewConfigurationTypeFieldGroup(item, this.refreshGroup
-            , this.mappingConfigurationService);
+            , this.mappingConfigurationService, systemEventService);
         binder.bind(nameField, NewContextFieldGroup.NAME);
 
         HorizontalLayout buttons = new HorizontalLayout();

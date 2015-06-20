@@ -46,12 +46,14 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.action.Action;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
@@ -68,7 +70,8 @@ public class DeleteRowAction implements Action
     private List<SourceConfigurationValue> sourceConfigurationValues;
     private MappingConfiguration mappingConfiguration;
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
-    MappingConfigurationService mappingConfigurationService;
+    private MappingConfigurationService mappingConfigurationService;
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -80,13 +83,14 @@ public class DeleteRowAction implements Action
     public DeleteRowAction(List<SourceConfigurationValue> sourceConfigurationValues,
             MappingConfiguration mappingConfiguration,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationService mappingConfigurationService)
+            MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
     {
         super();
         this.sourceConfigurationValues = sourceConfigurationValues;
         this.mappingConfiguration = mappingConfiguration;
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.mappingConfigurationService = mappingConfigurationService;
+        this.systemEventService = systemEventService;
     }
 
     /* (non-Javadoc)
@@ -95,11 +99,23 @@ public class DeleteRowAction implements Action
     @Override
     public void exectuteAction()
     {
-    	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                .getAttribute(MappingConfigurationUISessionValueConstants.USER);
-
-        logger.info("User: " + principal.getName() 
-            +" attempting to delete: " + this.sourceConfigurationValues.size() + " configuration values.");
+    	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+            	.getAttribute(DashboardSessionValueConstants.USER);
+        
+        StringBuilder sb =  new StringBuilder("Deleted mapping configuration value(s): [Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
+        		+"] [Source Context=" + mappingConfiguration.getSourceContext().getName() + "] [Target Context=" 
+        		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
+        		+ "]");
+        
+        for(SourceConfigurationValue sourceConfigurationValue: this.sourceConfigurationValues)
+        {
+        	sb.append(" [Src Value=" + sourceConfigurationValue.getSourceSystemValue() 
+        			+ "] [Tgt Value=" + sourceConfigurationValue.getTargetConfigurationValue()
+        			.getTargetSystemValue() + "]");
+        }
+        
+        logger.info("User: " + authentication.getName() 
+                +" attempting to delete: " + this.sourceConfigurationValues.size() + " configuration values.");
 
         this.mappingConfiguration.getSourceConfigurationValues().removeAll(this.sourceConfigurationValues);
 
@@ -107,8 +123,11 @@ public class DeleteRowAction implements Action
         {
             this.mappingConfigurationConfigurationValuesTable.save();
             this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+            
+            systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+            		sb.toString(), authentication.getName());
 
-            logger.info("User: " + principal.getName() 
+            logger.info("User: " + authentication.getName() 
                 + " successfully deleted the following configuration values: " 
                     + this.sourceConfigurationValues);
         }

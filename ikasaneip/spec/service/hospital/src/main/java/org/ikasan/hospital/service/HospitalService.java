@@ -63,10 +63,13 @@ public interface HospitalService<EVENT>
 	public void resubmit(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
 
 	/**
-	 * Method to ignore an exclusion event.
+	 * Method to ignore an excluded event
 	 * 
+	 * @param moduleName The name of the module we are re-submitting to.
+	 * @param flowName The name of the flow we are re-submitting to.
 	 * @param errorUri The error uri of the event being resubmitted.
-	 * @param principal The principal object of the user we are ignoring on behalf of.
+	 * @param event The event we are resubmitting.
+	 * @param principal The principal object of the user we are resubmitting on behalf of.
 	 */
-	public void ignore(String errorUri, Principal principal, EVENT event);
+	public void ignore(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
 }

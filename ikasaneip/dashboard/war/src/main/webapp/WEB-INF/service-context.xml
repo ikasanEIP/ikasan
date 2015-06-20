@@ -144,6 +144,18 @@
     <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
+    
+    <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
+        <constructor-arg ref="systemEventDao" />
+        <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
+    </bean>
+    
+    <bean id="systemEventDao"
+        class="org.ikasan.systemevent.dao.HibernateSystemEventDao">
+        <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
+        <constructor-arg value="true"/>
+        <constructor-arg value="100"/>
+    </bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -180,6 +192,7 @@
 			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
 			   <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
 			   <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
+			   <value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

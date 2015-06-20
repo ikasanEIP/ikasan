@@ -54,11 +54,13 @@ public class ExclusionEventAction
 	public static final String IGNORED = "ignored";
 
 	private Long id;
+    private String moduleName;
+    private String flowName;
 	private String errorUri;
 	private String actionedBy;
 	private String action;
     private byte[] event;
-    private Date timestamp;	
+    private long timestamp;	
 	
 	/**
 	 * Default constructor for Hibernate
@@ -79,14 +81,16 @@ public class ExclusionEventAction
 	 * @param timestamp
 	 */
 	public ExclusionEventAction(String errorUri, String actionedBy,
-			String action, byte[] event)
+			String action, byte[] event, String moduleName, String flowName)
 	{
 		super();
 		this.errorUri = errorUri;
 		this.actionedBy = actionedBy;
 		this.action = action;
 		this.event = event;
-		this.timestamp = new Date();
+		this.moduleName = moduleName;
+		this.flowName = flowName;
+		this.timestamp = new Date().getTime();
 	}
 
 	/**
@@ -138,22 +142,6 @@ public class ExclusionEventAction
 	}
 
 	/**
-	 * @return the timestamp
-	 */
-	public Date getTimestamp()
-	{
-		return timestamp;
-	}
-
-	/**
-	 * @param timestamp the timestamp to set
-	 */
-	public void setTimestamp(Date timestamp)
-	{
-		this.timestamp = timestamp;
-	}
-
-	/**
 	 * @return the action
 	 */
 	public String getAction()
@@ -185,16 +173,52 @@ public class ExclusionEventAction
 		this.event = event;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the moduleName
 	 */
-	@Override
-	public String toString()
+	public String getModuleName()
 	{
-		return "ExclusionEventAction [id=" + id + ", errorUri=" + errorUri
-				+ ", actionedBy=" + actionedBy + ", action=" + action
-				+ ", event=" + Arrays.toString(event) + ", timestamp="
-				+ timestamp + "]";
+		return moduleName;
+	}
+
+	/**
+	 * @param moduleName the moduleName to set
+	 */
+	public void setModuleName(String moduleName)
+	{
+		this.moduleName = moduleName;
+	}
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName()
+	{
+		return flowName;
+	}
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(String flowName)
+	{
+		this.flowName = flowName;
+	}
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp)
+	{
+		this.timestamp = timestamp;
+	}
+	
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp()
+	{
+		return timestamp;
 	}
 
 	/* (non-Javadoc)
@@ -211,9 +235,12 @@ public class ExclusionEventAction
 		result = prime * result
 				+ ((errorUri == null) ? 0 : errorUri.hashCode());
 		result = prime * result + Arrays.hashCode(event);
+		result = prime * result
+				+ ((flowName == null) ? 0 : flowName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
-				+ ((timestamp == null) ? 0 : timestamp.hashCode());
+				+ ((moduleName == null) ? 0 : moduleName.hashCode());
+		result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
 		return result;
 	}
 
@@ -250,19 +277,39 @@ public class ExclusionEventAction
 			return false;
 		if (!Arrays.equals(event, other.event))
 			return false;
+		if (flowName == null)
+		{
+			if (other.flowName != null)
+				return false;
+		} else if (!flowName.equals(other.flowName))
+			return false;
 		if (id == null)
 		{
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (timestamp == null)
+		if (moduleName == null)
 		{
-			if (other.timestamp != null)
+			if (other.moduleName != null)
 				return false;
-		} else if (!timestamp.equals(other.timestamp))
+		} else if (!moduleName.equals(other.moduleName))
+			return false;
+		if (timestamp != other.timestamp)
 			return false;
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ExclusionEventAction [id=" + id + ", moduleName=" + moduleName
+				+ ", flowName=" + flowName + ", errorUri=" + errorUri
+				+ ", actionedBy=" + actionedBy + ", action=" + action
+				+ ", event=" + Arrays.toString(event) + ", timestamp="
+				+ timestamp + "]";
+	}
 }
