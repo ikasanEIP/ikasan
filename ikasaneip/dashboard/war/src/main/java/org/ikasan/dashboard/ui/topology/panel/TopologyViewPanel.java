@@ -2049,6 +2049,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	systemEventTable.removeAllItems();
+            	
             	PagedSearchResult<SystemEvent> systemEvents = systemEventService.listSystemEvents(0, 10000, "timestamp", true, null, null, systemEventFromDate.getValue()
             			, systemEventToDate.getValue(), null);
             	
