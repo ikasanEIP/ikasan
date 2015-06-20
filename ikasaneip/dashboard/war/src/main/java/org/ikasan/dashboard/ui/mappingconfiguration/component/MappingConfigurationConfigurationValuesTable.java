@@ -48,15 +48,17 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -89,6 +91,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     private MappingConfiguration mappingConfiguration;
     private IndexedContainer container;
     private VisibilityGroup visibilityGroup;
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -97,10 +100,11 @@ public class MappingConfigurationConfigurationValuesTable extends Table
      * @param visibilityGroup
      */
     public MappingConfigurationConfigurationValuesTable(MappingConfigurationService mappingConfigurationService,
-            VisibilityGroup visibilityGroup)
+            VisibilityGroup visibilityGroup, SystemEventService systemEventService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.visibilityGroup = visibilityGroup;
+        this.systemEventService = systemEventService;
         init();
     }
 
@@ -214,12 +218,15 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             }
             else
             {
-            	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                        .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                        .getAttribute(DashboardSessionValueConstants.USER);
 
-                logger.info("User: " + principal.getName() + " saving Target Configuration Value: " +
+                logger.info("User: " + authentication.getName() + " saving Target Configuration Value: " +
                         value);
                 this.mappingConfigurationService.saveTargetConfigurationValue(value.getTargetConfigurationValue());
+                
+                systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+                		"Saving Target Configuration Value: " + value, authentication.getName());
             }
         }
     }
@@ -264,14 +271,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(sourceConfigurationValue);
             final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
 
-//            tf.addFocusListener(new FieldEvents.FocusListener() {
-//                @Override
-//                public void focus(com.vaadin.event.FieldEvents.FocusEvent event)
-//                {
-//                    tf.selectAll();
-//                }
-//            });
-
             tableCellLayout.addComponent(tf);
             tf.setReadOnly(true);
             tf.setWidth(300, Unit.PIXELS);
@@ -281,16 +280,9 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
         targetConfigurationTextField.setReadOnly(true);
         targetConfigurationTextField.setWidth(300, Unit.PIXELS);
-//        targetConfigurationTextField.addFocusListener(new FieldEvents.FocusListener() {
-//            @Override
-//            public void focus(com.vaadin.event.FieldEvents.FocusEvent event)
-//            {
-//                targetConfigurationTextField.selectAll();
-//            }
-//        });
 
         final DeleteRowAction action = new DeleteRowAction(sourceConfigurationValues, this.mappingConfiguration
-            , this, this.mappingConfigurationService);
+            , this, this.mappingConfigurationService, this.systemEventService);
 
         deleteButton.setStyleName(Reindeer.BUTTON_LINK);
         deleteButton.addClickListener(new Button.ClickListener() {
@@ -318,11 +310,14 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         this.setEditable(true);
 
         IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+                .getAttribute(DashboardSessionValueConstants.USER);
 
         logger.info("User: " + principal.getName() 
             + " added new mapping configuration value for Mapping Configuration " 
                 + this.mappingConfiguration);
+        
+        systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+        		"Added new mapping configuration value for Mapping Configuration: " + this.mappingConfiguration, principal.getName());
     }
 
     /**
@@ -394,7 +389,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     targetConfigurationTextField.setWidth(300, Unit.PIXELS);
 
                     final DeleteRowAction action = new DeleteRowAction(groupedSourceSystemValues
-                        , this.mappingConfiguration, this, this.mappingConfigurationService);
+                        , this.mappingConfiguration, this, this.mappingConfigurationService, this.systemEventService);
 
                     final Button deleteButton = new Button("Delete");
                     deleteButton.setData(value);
@@ -440,10 +435,19 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         }
 
         IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+                .getAttribute(DashboardSessionValueConstants.USER);
 
         logger.info("User: " + principal.getName()
             + " deleted all records for Mapping Configuration " + this.mappingConfiguration);
+        
+        String message = "[Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
+        		+"] [Source Context=" + mappingConfiguration.getSourceContext().getName() + "] [Target Context=" 
+        		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
+        		+ "] [Description=" + mappingConfiguration.getDescription() +"] [Number of source params=" 
+        		+ mappingConfiguration.getNumberOfParams() + "]";
+        
+        systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+        		"Deleted all configuration values for Mapping Configuration " + message, principal.getName());
         
         return super.removeAllItems();
     }

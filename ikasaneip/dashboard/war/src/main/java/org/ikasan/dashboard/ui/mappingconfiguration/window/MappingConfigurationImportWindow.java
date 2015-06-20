@@ -52,11 +52,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
@@ -67,6 +69,8 @@ import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -74,6 +78,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -110,7 +115,8 @@ public class MappingConfigurationImportWindow extends Window
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     private MappingConfigurationPanel mappingConfigurationPanel;
     private List<KeyLocationQuery> keyLocationQueries;
-
+    private SystemEventService systemEventService;
+    
     /**
      * Constructor
      * 
@@ -120,11 +126,12 @@ public class MappingConfigurationImportWindow extends Window
      */
     public MappingConfigurationImportWindow(MappingConfigurationService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationPanel mappingConfigurationPanel)
+            MappingConfigurationPanel mappingConfigurationPanel, SystemEventService systemEventService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.mappingConfigurationPanel = mappingConfigurationPanel;
+        this.systemEventService = systemEventService;
         init();
     }
 
@@ -196,6 +203,15 @@ public class MappingConfigurationImportWindow extends Window
                     mappingConfiguration = null;
                     progressLayout.setVisible(false);
                     upload.setVisible(true);
+                    
+                    IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                        	.getAttribute(DashboardSessionValueConstants.USER);
+
+                    systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+                    		"Imported mapping configuration: [Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
+                    		+"] [Source Context=" + mappingConfiguration.getSourceContext().getName() + "] [Target Context=" 
+                    		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
+                    		+ "]", authentication.getName());
                 }
                 catch (MappingConfigurationServiceException e)
                 {

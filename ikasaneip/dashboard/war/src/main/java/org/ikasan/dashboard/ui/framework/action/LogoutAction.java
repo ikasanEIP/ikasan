@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui.framework.action;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -99,7 +99,7 @@ public class LogoutAction implements Action
     public void exectuteAction()
     {
     	VaadinService.getCurrentRequest().getWrappedSession()
-        	.setAttribute(MappingConfigurationUISessionValueConstants.USER, null);
+        	.setAttribute(DashboardSessionValueConstants.USER, null);
         this.visibilityGroup.setVisible(false);
         this.editableGroup.setEditable(false);
 

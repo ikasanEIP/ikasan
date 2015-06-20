@@ -228,6 +228,7 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	this.serverCombo.removeAllItems();
     	this.moduleCombo.removeAllItems();
     	this.resultsTable.removeAllItems();
+    	this.flow = null;
     	
     	List<Server> servers = this.topologyService.getAllServers();
     	

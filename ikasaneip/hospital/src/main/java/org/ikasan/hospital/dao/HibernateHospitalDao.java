@@ -40,6 +40,9 @@
  */
 package org.ikasan.hospital.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -73,10 +76,43 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
         criteria.add(Restrictions.eq("errorUri", errorUri));
-        ExclusionEventAction principal = (ExclusionEventAction) DataAccessUtils
+        ExclusionEventAction excludedEventAction = (ExclusionEventAction) DataAccessUtils
         		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 
-        return principal;
+        return excludedEventAction;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.dao.HospitalDao#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ExclusionEventAction> getActionedExclusions(
+			List<String> moduleName, List<String> flowName, Date startDate,
+			Date endDate)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
+		
+		if(moduleName != null && moduleName.size() > 0)
+		{
+			criteria.add(Restrictions.in("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.size() > 0)
+		{
+			criteria.add(Restrictions.in("flowName", flowName));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+       
+		return (List<ExclusionEventAction>) this.getHibernateTemplate().findByCriteria(criteria);
 	}
     
 }

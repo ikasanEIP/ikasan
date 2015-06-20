@@ -182,5 +182,14 @@ public class TopologyServiceImpl implements TopologyService
 	{
 		return this.topologyDao.getModuleByName(name);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getBusinessStreamsByUserId(java.util.List)
+	 */
+	@Override
+	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids)
+	{
+		return this.topologyDao.getBusinessStreamsByUserId(ids);
+	}
 	
 }

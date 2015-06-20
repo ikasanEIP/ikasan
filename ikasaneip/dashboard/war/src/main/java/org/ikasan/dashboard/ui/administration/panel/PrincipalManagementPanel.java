@@ -131,7 +131,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		layout.setMargin(true);
 		layout.setSizeFull();
 
-		Panel securityAdministrationPanel = new Panel("Principal Management");
+		Panel securityAdministrationPanel = new Panel("Group Management");
 		securityAdministrationPanel.setStyleName("dashboard");
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
@@ -142,7 +142,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
 
-		Label principalNameLabel = new Label("Principal Name");
+		Label principalNameLabel = new Label("Group Name");
 
 		principalNameField = new AutocompleteField<IkasanPrincipal>();
 		principalNameField.setWidth("40%");
@@ -198,7 +198,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		formLayout.addComponent(principalNameLabel, 0, 0);
 		formLayout.addComponent(principalNameFieldWrap, 1, 0);
 
-		Label principalTypeLabel = new Label("Principal Type");
+		Label principalTypeLabel = new Label("Group Type");
 		formLayout.addComponent(principalTypeLabel, 0, 1);
 		formLayout.addComponent(principalTypeField, 1, 1);
 

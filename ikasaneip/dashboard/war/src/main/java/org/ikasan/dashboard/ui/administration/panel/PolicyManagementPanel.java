@@ -50,6 +50,7 @@ import org.ikasan.dashboard.ui.administration.window.PolicyAssociationBusinessSt
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationFlowSearchWindow;
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow;
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationModuleSearchWindow;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
@@ -135,7 +136,8 @@ public class PolicyManagementPanel extends Panel implements View
 	public PolicyManagementPanel(UserService userService, SecurityService securityService,
 			PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow,
 			PolicyAssociationFlowSearchWindow policyAssociationFlowSearchWindow,
-			PolicyAssociationModuleSearchWindow policyAssociationModuleSearchWindow)
+			PolicyAssociationModuleSearchWindow policyAssociationModuleSearchWindow,
+			PolicyAssociationBusinessStreamSearchWindow policyAssociationBusinessStreamSearchWindow)
 	{
 		super();
 		this.userService = userService;
@@ -166,6 +168,12 @@ public class PolicyManagementPanel extends Panel implements View
 		{
 			throw new IllegalArgumentException(
 					"policyAssociationModuleSearchWindow cannot be null!");
+		}
+		this.policyAssociationBusinessStreamSearchWindow = policyAssociationBusinessStreamSearchWindow;
+		if (this.policyAssociationBusinessStreamSearchWindow == null)
+		{
+			throw new IllegalArgumentException(
+					"policyAssociationBusinessStreamSearchWindow cannot be null!");
 		}
 
 		init();
@@ -248,24 +256,24 @@ public class PolicyManagementPanel extends Panel implements View
             {
             	PolicyLinkType policyLinkType = (PolicyLinkType)PolicyManagementPanel.this.linkTypeCombo.getValue();
             	
-            	if(policyLinkType.getName().equals("Mapping Configuration"))
+            	if(policyLinkType.getName().equals(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE))
             	{
             		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
             		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationMappingSearchWindow);
             	}
-            	else if(policyLinkType.getName().equals("Module"))
+            	else if(policyLinkType.getName().equals(PolicyLinkTypeConstants.MODULE_LINK_TYPE))
             	{
             		PolicyManagementPanel.this.policyAssociationModuleSearchWindow.clear();
             		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationModuleSearchWindow);
             	}
-            	else if(policyLinkType.getName().equals("Flow"))
+            	else if(policyLinkType.getName().equals(PolicyLinkTypeConstants.FLOW_LINK_TYPE))
             	{
             		PolicyManagementPanel.this.policyAssociationFlowSearchWindow.clear();
             		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationFlowSearchWindow);
             	}
-            	else if(policyLinkType.getName().equals("Business Stream"))
+            	else if(policyLinkType.getName().equals(PolicyLinkTypeConstants.BUSINESS_STREAM_LINK_TYPE))
             	{
-            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow.clear();
             		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow);
             	}
             }
@@ -282,34 +290,65 @@ public class PolicyManagementPanel extends Panel implements View
 		linkedEntityLabel.setVisible(false);
 		linkedEntity.setVisible(false);
     	
-    	this.policyAssociationMappingSearchWindow.addCloseListener(new Window.CloseListener() {
+    	this.policyAssociationMappingSearchWindow.addCloseListener(new Window.CloseListener() 
+    	{
             // inline close-listener
-            public void windowClose(CloseEvent e) {
-            	PolicyManagementPanel.this.linkedEntity.setValue
-            		(policyAssociationMappingSearchWindow.getMappingConfiguration().toStringLite());
-            	PolicyManagementPanel.this.associatedEntityId 
-            		= PolicyManagementPanel.this.policyAssociationMappingSearchWindow.getMappingConfiguration().getId();
+            public void windowClose(CloseEvent e) 
+            {
+            	if(policyAssociationMappingSearchWindow.getMappingConfiguration() != null)
+            	{
+	            	PolicyManagementPanel.this.linkedEntity.setValue
+	            		(policyAssociationMappingSearchWindow.getMappingConfiguration().toStringLite());
+	            	PolicyManagementPanel.this.associatedEntityId 
+	            		= PolicyManagementPanel.this.policyAssociationMappingSearchWindow.getMappingConfiguration().getId();
+            	}
             }
         });
 
-    	this.policyAssociationFlowSearchWindow.addCloseListener(new Window.CloseListener() {
+    	this.policyAssociationFlowSearchWindow.addCloseListener(new Window.CloseListener() 
+    	{
             // inline close-listener
-            public void windowClose(CloseEvent e) {
-            	PolicyManagementPanel.this.linkedEntity.setValue
-            		(policyAssociationFlowSearchWindow.getFlow().toString());
-            	PolicyManagementPanel.this.associatedEntityId 
-            		= PolicyManagementPanel.this.policyAssociationFlowSearchWindow.getFlow().getId();
+            public void windowClose(CloseEvent e) 
+            {
+            	if(policyAssociationFlowSearchWindow.getFlow() != null)
+            	{
+	            	PolicyManagementPanel.this.linkedEntity.setValue
+	            		(policyAssociationFlowSearchWindow.getFlow().toString());
+	            	PolicyManagementPanel.this.associatedEntityId 
+	            		= PolicyManagementPanel.this.policyAssociationFlowSearchWindow.getFlow().getId();
+            	}
             }
         });
     	
-    	this.policyAssociationModuleSearchWindow.addCloseListener(new Window.CloseListener() {
+    	this.policyAssociationModuleSearchWindow.addCloseListener(new Window.CloseListener() 
+    	{
             // inline close-listener
-            public void windowClose(CloseEvent e) {
-            	PolicyManagementPanel.this.linkedEntity.setValue
-            		(policyAssociationModuleSearchWindow.getModule().toString());
-            	PolicyManagementPanel.this.associatedEntityId 
-            		= PolicyManagementPanel.this.policyAssociationModuleSearchWindow.getModule().getId();
+            public void windowClose(CloseEvent e) 
+            {
+            	if(policyAssociationModuleSearchWindow.getModule() != null)
+            	{
+	            	PolicyManagementPanel.this.linkedEntity.setValue
+	            		(policyAssociationModuleSearchWindow.getModule().toString());
+	            	PolicyManagementPanel.this.associatedEntityId 
+	            		= PolicyManagementPanel.this.policyAssociationModuleSearchWindow.getModule().getId();
+            	}
             }
+        });
+    	
+    	this.policyAssociationBusinessStreamSearchWindow.addCloseListener(new Window.CloseListener() 
+    	{
+            // inline close-listener
+            public void windowClose(CloseEvent e) 
+            {
+            	if(policyAssociationBusinessStreamSearchWindow.getBusinessStream() != null)
+        		{
+	            	PolicyManagementPanel.this.linkedEntity.setValue
+	            		(policyAssociationBusinessStreamSearchWindow.getBusinessStream().toString());
+	            	PolicyManagementPanel.this.associatedEntityId 
+	            		= PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow.getBusinessStream().getId();
+        		}
+            }
+    		
         });
 		
 		this.linkTypeCombo.addValueChangeListener(new Property.ValueChangeListener() {

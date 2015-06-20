@@ -44,6 +44,7 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewContextFieldGroup;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -75,8 +76,9 @@ public class NewMappingConfigurationContextPanel extends Panel implements View
     private MappingConfigurationService mappingConfigurationService;
     private RefreshGroup refreshGroup;
     private SaveRequiredMonitor saveRequiredMonitor;
-    final TextField nameField = new TextField("Name");
-    final TextArea descriptionField = new TextArea("Description");
+    private final TextField nameField = new TextField("Name");
+    private final TextArea descriptionField = new TextArea("Description");
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -86,12 +88,13 @@ public class NewMappingConfigurationContextPanel extends Panel implements View
      * @param saveRequiredMonitor
      */
     public NewMappingConfigurationContextPanel(MappingConfigurationService mappingConfigurationService, 
-            RefreshGroup refreshGroup, SaveRequiredMonitor saveRequiredMonitor)
+            RefreshGroup refreshGroup, SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
     {
         super("Create new configuration context");
         this.refreshGroup = refreshGroup;
         this.saveRequiredMonitor = saveRequiredMonitor;
-
+        this.systemEventService = systemEventService;
+        
         this.mappingConfigurationService = mappingConfigurationService;
         init();
     }
@@ -128,7 +131,7 @@ public class NewMappingConfigurationContextPanel extends Panel implements View
         form.addComponent(descriptionField);
 
         final NewContextFieldGroup binder = new NewContextFieldGroup(item, this.refreshGroup
-            , this.mappingConfigurationService);
+            , this.mappingConfigurationService, this.systemEventService);
         binder.bind(nameField, NewContextFieldGroup.NAME);
         binder.bind(descriptionField, NewContextFieldGroup.DESCRIPTION);
 

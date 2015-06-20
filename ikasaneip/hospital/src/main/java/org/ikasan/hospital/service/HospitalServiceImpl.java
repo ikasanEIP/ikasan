@@ -140,7 +140,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 		resubmissionService.submit(deserialisedEvent);
 		
 		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
-				ExclusionEventAction.RESUBMIT, event);
+				ExclusionEventAction.RESUBMIT, event, moduleName, flowName);
 		
 		exclusionManagementService.delete(errorUri);
 		
@@ -152,10 +152,10 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 	 * @see org.ikasan.hospital.service.HospitalService#ignore(java.lang.String, java.security.Principal)
 	 */
 	@Override
-	public void ignore(String errorUri, Principal principal, byte[] event)
+	public void ignore(String moduleName, String flowName, String errorUri, byte[] event, Principal principal)
 	{
 		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
-				ExclusionEventAction.IGNORED, event);
+				ExclusionEventAction.IGNORED, event, moduleName, flowName);
 		
 		exclusionManagementService.delete(errorUri);
 

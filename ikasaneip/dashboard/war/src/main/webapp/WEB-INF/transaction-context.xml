@@ -35,6 +35,8 @@
                 expression="execution(* org.ikasan.wiretap.dao.*.*(..))"/>
         <aop:pointcut id="triggerDaoMethods"
                 expression="execution(* org.ikasan.trigger.dao.*.*(..))"/>
+        <aop:pointcut id="systemEventServiceMethods"
+                expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
@@ -44,6 +46,7 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="wiretapDaoMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>
         
     </aop:config>
 

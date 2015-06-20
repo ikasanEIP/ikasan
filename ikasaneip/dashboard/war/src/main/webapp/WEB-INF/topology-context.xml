@@ -45,6 +45,7 @@
         <constructor-arg ref="exclusionManagementService" />
         <constructor-arg ref="ikasanSerialiserFactory" />
         <constructor-arg ref="hospitalManagementService" />
+        <constructor-arg ref="systemEventService"/>
     </bean>
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">

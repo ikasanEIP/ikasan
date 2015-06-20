@@ -45,10 +45,12 @@ import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -72,6 +74,7 @@ public class NewClientFieldGroup extends FieldGroup
 
     private RefreshGroup refreshGroup;
     private MappingConfigurationService mappingConfigurationService;
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -79,11 +82,13 @@ public class NewClientFieldGroup extends FieldGroup
      * @param refreshGroup
      * @param mappingConfigurationService
      */
-    public NewClientFieldGroup(RefreshGroup refreshGroup, MappingConfigurationService mappingConfigurationService)
+    public NewClientFieldGroup(RefreshGroup refreshGroup, MappingConfigurationService mappingConfigurationService,
+    		SystemEventService systemEventService)
     {
         super();
         this.refreshGroup = refreshGroup;
         this.mappingConfigurationService = mappingConfigurationService;
+        this.systemEventService = systemEventService;
     }
 
     /**
@@ -93,11 +98,13 @@ public class NewClientFieldGroup extends FieldGroup
      * @param refreshGroup
      * @param mappingConfigurationService
      */
-    public NewClientFieldGroup(Item itemDataSource, RefreshGroup refreshGroup, MappingConfigurationService mappingConfigurationService)
+    public NewClientFieldGroup(Item itemDataSource, RefreshGroup refreshGroup, MappingConfigurationService mappingConfigurationService,
+    		SystemEventService systemEventService)
     {
         super(itemDataSource);
         this.refreshGroup = refreshGroup;
         this.mappingConfigurationService = mappingConfigurationService;
+        this.systemEventService = systemEventService;
     }
 
     /* (non-Javadoc)
@@ -118,7 +125,10 @@ public class NewClientFieldGroup extends FieldGroup
             this.mappingConfigurationService.saveConfigurationServiceClient(client);
 
             IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+                	.getAttribute(DashboardSessionValueConstants.USER);
+
+            systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+            		"Created new mapping configuration client: " + client.getName(), authentication.getName());
 
             logger.info("User: " + authentication.getName() 
                 + " added a new Mapping Configuration Client:  " 

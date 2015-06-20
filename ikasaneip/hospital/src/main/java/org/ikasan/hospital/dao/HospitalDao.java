@@ -40,6 +40,9 @@
  */
 package org.ikasan.hospital.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import org.ikasan.hospital.model.ExclusionEventAction;
 
 
@@ -64,4 +67,15 @@ public interface HospitalDao
 	 * @return
 	 */
 	public ExclusionEventAction getExclusionEventActionByErrorUri(String errorUri);
+	
+	/**
+	 * Get actioned exclusions
+	 * 
+	 * @param moduleName
+	 * @param flowName
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
 }

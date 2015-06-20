@@ -207,10 +207,6 @@ public class UserManagementPanel extends Panel implements View
 						.findPrincipalByName(user.getUsername());
 
 				roleTable.removeAllItems();
-				
-				logger.info("principal = " + principal);
-				logger.info("user.getUsername() = " + user.getUsername());
-				logger.info("principal.getRoles() = " + principal.getRoles());
 
 				for (final Role role : principal.getRoles())
 				{
@@ -526,7 +522,7 @@ public class UserManagementPanel extends Panel implements View
 		
 		gridLayout.addComponent(roleTable, 0, 2);
 		
-		this.associatedPrincipalsTable.addContainerProperty("Associated Principals", String.class, null);
+		this.associatedPrincipalsTable.addContainerProperty("Member of", String.class, null);
 		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
 		associatedPrincipalsTable.setHeight("400px");
 		associatedPrincipalsTable.setWidth("450px");

@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui.framework.data;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -126,7 +126,7 @@ public class LoginFieldGroup extends FieldGroup
             }
 
             VaadinService.getCurrentRequest().getWrappedSession()
-                .setAttribute(MappingConfigurationUISessionValueConstants.USER, authentication);
+                .setAttribute(DashboardSessionValueConstants.USER, authentication);
         }
         catch (AuthenticationServiceException e)
         {

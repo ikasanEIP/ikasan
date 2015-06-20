@@ -42,10 +42,12 @@ package org.ikasan.dashboard.ui.mappingconfiguration.data;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -68,6 +70,7 @@ public class NewConfigurationTypeFieldGroup extends FieldGroup
 
     private RefreshGroup refreshGroup;
     private MappingConfigurationService mappingConfigurationService;
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -76,10 +79,12 @@ public class NewConfigurationTypeFieldGroup extends FieldGroup
      * @param mappingConfigurationService
      */
     public NewConfigurationTypeFieldGroup(RefreshGroup refreshGroup
-            , MappingConfigurationService mappingConfigurationService)
+            , MappingConfigurationService mappingConfigurationService
+            , SystemEventService systemEventService)
     {
         super();
         this.refreshGroup = refreshGroup;
+        this.systemEventService = systemEventService;
 
         this.mappingConfigurationService = mappingConfigurationService;
     }
@@ -92,10 +97,11 @@ public class NewConfigurationTypeFieldGroup extends FieldGroup
      * @param mappingConfigurationService
      */
     public NewConfigurationTypeFieldGroup(Item itemDataSource, RefreshGroup refreshGroup
-            , MappingConfigurationService mappingConfigurationService)
+            , MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
     {
         super(itemDataSource);
         this.refreshGroup = refreshGroup;
+        this.systemEventService = systemEventService;
         this.mappingConfigurationService = mappingConfigurationService;
     }
 
@@ -114,10 +120,13 @@ public class NewConfigurationTypeFieldGroup extends FieldGroup
         {
             this.mappingConfigurationService.saveConfigurationType(type);
 
-            IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                    .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+            IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                	.getAttribute(DashboardSessionValueConstants.USER);
 
-            logger.info("User: " + principal.getName() 
+            systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
+            		"Created new mapping configuration type: " + type.getName(), authentication.getName());
+
+            logger.info("User: " + authentication.getName() 
                 + " added a new Mapping Configuration Type:  " 
                     + type);
         }

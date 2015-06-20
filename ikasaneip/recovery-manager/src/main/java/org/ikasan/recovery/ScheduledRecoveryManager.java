@@ -517,6 +517,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     private ExceptionAction resolveAction(String componentName, Throwable throwable)
     {
+    	logger.info("resolving action: " + exceptionResolver, new Throwable());
+    	
         if(this.exceptionResolver == null)
         {
             return StopAction.instance();

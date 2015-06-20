@@ -57,6 +57,7 @@ import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.MappingConfigurationLite;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -83,6 +84,7 @@ public class MappingSearchButtonClickListener implements ClickListener
     private MappingConfigurationSearchResultsTable searchResultsTable;
     protected SaveRequiredMonitor saveRequiredMonitor;
     private VisibilityGroup visibilityGroup;
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -98,7 +100,7 @@ public class MappingSearchButtonClickListener implements ClickListener
     public MappingSearchButtonClickListener(MappingConfigurationService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
             TargetContextComboBox targetContextComboBox, MappingConfigurationSearchResultsTable searchResultsTable,
-            SaveRequiredMonitor saveRequiredMonitor, VisibilityGroup visibilityGroup)
+            SaveRequiredMonitor saveRequiredMonitor, VisibilityGroup visibilityGroup, SystemEventService systemEventService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.clientComboBox = clientComboBox;
@@ -108,6 +110,7 @@ public class MappingSearchButtonClickListener implements ClickListener
         this.searchResultsTable = searchResultsTable;
         this.saveRequiredMonitor = saveRequiredMonitor;
         this.visibilityGroup = visibilityGroup;
+        this.systemEventService = systemEventService;
     }
 
     /* (non-Javadoc)
@@ -155,7 +158,7 @@ public class MappingSearchButtonClickListener implements ClickListener
         for(MappingConfigurationLite mappingConfiguration : mappingConfigurations)
         {
             final DeleteMappingConfigurationAction action = new DeleteMappingConfigurationAction( mappingConfiguration.getId()
-                , this.searchResultsTable, this.mappingConfigurationService);
+                , this.searchResultsTable, this.mappingConfigurationService, this.systemEventService);
 
             final Button deleteButton = new Button("Delete");
             deleteButton.setStyleName(Reindeer.BUTTON_LINK);

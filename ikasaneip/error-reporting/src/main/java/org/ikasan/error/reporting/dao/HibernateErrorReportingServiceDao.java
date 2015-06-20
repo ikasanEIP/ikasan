@@ -111,12 +111,12 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		
 		if(startDate != null)
 		{
-			criteria.add(Restrictions.gt("expiry", startDate.getTime()));
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
 		}
 		
 		if(endDate != null)
 		{
-			criteria.add(Restrictions.gt("expiry", endDate.getTime()));
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
 		
 		criteria.addOrder(Order.desc("expiry"));

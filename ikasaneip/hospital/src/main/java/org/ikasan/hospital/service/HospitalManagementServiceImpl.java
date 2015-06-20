@@ -40,6 +40,9 @@
  */
 package org.ikasan.hospital.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.module.ModuleContainer;
@@ -79,5 +82,17 @@ public class HospitalManagementServiceImpl implements
 	{
 		return hospitalDao.getExclusionEventActionByErrorUri(errorUri);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.service.HospitalManagementService#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ExclusionEventAction> getActionedExclusions(
+			List<String> moduleName, List<String> flowName, Date startDate,
+			Date endDate)
+	{
+		return this.hospitalDao.getActionedExclusions(moduleName, flowName, startDate, endDate);
+	}
+
 
 }

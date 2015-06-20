@@ -51,6 +51,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Button;
@@ -90,13 +91,13 @@ public class ExistingMappingConfigurationPanel extends MappingConfigurationPanel
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, existingMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper);
+            mappingConfigurationValuesExportHelper, systemEventService);
 
         super.init();
     }

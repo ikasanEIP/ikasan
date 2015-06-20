@@ -43,9 +43,9 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -95,7 +95,7 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
     public void itemClick(ItemClickEvent event)
     {
     	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+        	.getAttribute(DashboardSessionValueConstants.USER);
     	
     	if(authentication.canAccessLinkedItem(SecurityConstants.MAPPING_CONFIGURATION_LINKED_TYPE, (Long)event.getItemId()) 
     			|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))

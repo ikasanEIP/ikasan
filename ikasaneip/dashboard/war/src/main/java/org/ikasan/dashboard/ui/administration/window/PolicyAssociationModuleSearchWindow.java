@@ -222,6 +222,7 @@ public class PolicyAssociationModuleSearchWindow extends Window
     
     public void clear()
     {
+    	this.module =	 null;
     	this.serverCombo.removeAllItems();
     	
     	List<Server> servers = this.topologyService.getAllServers();

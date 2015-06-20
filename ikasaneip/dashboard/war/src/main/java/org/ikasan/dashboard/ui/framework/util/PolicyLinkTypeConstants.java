@@ -38,24 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.constants;
+package org.ikasan.dashboard.ui.framework.util;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class SecurityConstants
+public class PolicyLinkTypeConstants
 {
-	public static String ALL_AUTHORITY = "ALL";
-	public static String VIEW_BUSINESS_STREAM_AUTHORITY = "ViewBusinessStream";
-	public static String VIEW_WIRETAP_AUTHORITY = "ViewWiretap";
-	public static String VIEW_EXCLUSION_AUTHORITY = "ViewExclusion";
-	public static String VIEW_ERRORS_AUTHORITY = "ViewErrors";
-	public static String ACTION_EXCLUSIONS_AUTHORITY = "ActionExclusion";
-	public static String CREATE_BUSINESS_STREAM_AUTHORITY = "CreateBusinessStream";
-	public static String MODIFY_BUSINESS_STREAM_AUTHORITY = "ModifyBusinessStream";
-	public static String DELETE_BUSINESS_STREAM_AUTHORITY = "DeleteBusinessStream";
-	
-	public static String MAPPING_CONFIGURATION_LINKED_TYPE = "Mapping Configuration";
+	public static final String BUSINESS_STREAM_LINK_TYPE = "Business Stream";
+	public static final String MAPPING_CONFIGURATION_LINK_TYPE = "Mapping Configuration";
+	public static final String MODULE_LINK_TYPE = "Module";
+	public static final String FLOW_LINK_TYPE = "Flow";
 }

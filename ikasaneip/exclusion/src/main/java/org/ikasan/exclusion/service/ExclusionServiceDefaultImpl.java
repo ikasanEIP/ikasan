@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.service;
 
+import org.apache.log4j.Logger;
 import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.exclusion.model.BlackListEvent;
@@ -55,6 +56,9 @@ import org.ikasan.spec.serialiser.Serialiser;
  */
 public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<String,?>>
 {
+	/** logger instance */
+    private static Logger logger = Logger.getLogger(ExclusionServiceDefaultImpl.class);
+    
     /** module name */
     String moduleName;
 
