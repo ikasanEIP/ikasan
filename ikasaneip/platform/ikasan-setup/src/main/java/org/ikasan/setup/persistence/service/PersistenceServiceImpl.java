@@ -115,6 +115,15 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String FILE_TRANSFER_RETRIEVE_FILE_COMMAND = "retrieveFileCommand";
     private static String FILE_TRANSFER_TRANSACTIONAL_RESOURCE_COMMAND = "transactionalResourceCommand";
     private static String FILE_TRANSFER_XID = "xid";
+    
+    private static String SERVER = "server";
+    private static String IKASAN_MODULE = "ikasanModule";
+    private static String FLOW = "flow";
+    private static String COMPONENT = "component";
+    private static String BUSINESS_STREAM = "businessStream";
+    private static String BUSINESS_STREAM_FLOW = "businessStreamFlow";
+    private static String USER_BUSINESS_STREAM = "userBusinessStream";
+    private static String EXCLUSION_EVENT_ACTION = "exclusionEventAction";
 
 
     private static String VERSION = "version";
@@ -229,6 +238,14 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(MAPPING_SOURCE_VALUE);
         this.providerDAO.create(MAPPING_KEY_LOCATION_QUERY);
         this.providerDAO.create(MAPPING_SOURCE_CONFIG_GROUP_SEQ);
+        this.providerDAO.create(SERVER);
+        this.providerDAO.create(IKASAN_MODULE);
+        this.providerDAO.create(FLOW);
+        this.providerDAO.create(COMPONENT);
+        this.providerDAO.create(BUSINESS_STREAM);
+        this.providerDAO.create(BUSINESS_STREAM_FLOW);
+        this.providerDAO.create(USER_BUSINESS_STREAM);
+        this.providerDAO.create(EXCLUSION_EVENT_ACTION);
         this.providerDAO.create(AUTHENTICATION_METHOD);
     }
 
