@@ -82,6 +82,18 @@
                 <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
                 <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
                 <prop key="drop.xid">DROP TABLE FTXid;</prop>
+				
+				<!-- Topology tables-->
+				<prop key="drop.userBusinessStream">DROP TABLE UserBusinessStream;</prop>
+				<prop key="drop.businessStreamFlow">DROP TABLE BusinessStreamFlow;</prop>
+				<prop key="drop.businessStream">DROP TABLE BusinessStream;</prop>
+				<prop key="drop.component">DROP TABLE Component;</prop>
+				<prop key="drop.flow">DROP TABLE Flow;</prop>
+				<prop key="drop.ikasanModule">DROP TABLE IkasanModule;</prop>
+				<prop key="drop.server">DROP TABLE Server;</prop>
+				
+				<!-- Hospital tables-->
+				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
 
 				<!--prop key="driver">com.sybase.jdbc4.jdbc.SybDataSource</prop -->
 				<!--prop key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</prop -->
@@ -979,6 +991,132 @@
                     CREATE UNIQUE INDEX TransResCommand01u
                     ON FTTransactionalResourceCommand(Id)
                 </prop>
+                
+                <!--  Topology Service Tables -->
+                <prop key="create.server">CREATE TABLE Server
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   Url		      				VARCHAR(256) 		NOT NULL,
+					   Port							NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.ikasanModule">CREATE TABLE IkasanModule
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ContextRoot     				VARCHAR(256) 		NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   DiagramUrl      				VARCHAR(256) 		default 'placeholder' NOT NULL,
+					   ServerId						NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (ServerId) REFERENCES Server(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.flow">CREATE TABLE Flow
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	    NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   ModuleId						NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.component">CREATE TABLE Component
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	    NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   IsConfigurable 				BIT DEFAULT 0,
+					   FlowId						NUMERIC(18, 0) 		NOT NULL,
+					   ConfigurationId				VARCHAR(256) 		NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (FlowId) REFERENCES Flow(Id),
+					   FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.businessStream">CREATE TABLE BusinessStream
+					(
+					   Id             				NUMERIC(18, 0) 	IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	UNIQUE NOT NULL,
+					   Description		      		VARCHAR(1024) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.businessStreamFlow">CREATE TABLE BusinessStreamFlow
+					(
+					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
+					   FlowId						NUMERIC(18, 0) 	NOT NULL,
+					   FlowOrder						NUMERIC(18, 0) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (BusinessStreamId, FlowId),
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id),
+					   FOREIGN KEY (FlowId) REFERENCES Flow(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.userBusinessStream">CREATE TABLE UserBusinessStream
+					(
+					   UserId						NUMERIC(18, 0) 	NOT NULL,
+					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, BusinessStreamId),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id),
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <!--  Hospital Service Tables -->
+                <prop key="create.exclusionEventAction">CREATE TABLE ExclusionEventAction
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ActionedBy		      		VARCHAR(256) 		NOT NULL,
+					   Action		      			VARCHAR(32) 		NOT NULL,
+					   Event		      			IMAGE 				NOT NULL,
+					   Timestamp		      		NUMERIC(18, 0)       NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX ExclEventAction_ErrorUri ON ExclusionEventAction(ErrorUri)
+                </prop>
 
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
 					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
@@ -1214,6 +1352,18 @@
                 <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
                 <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
                 <prop key="drop.xid">DROP TABLE FTXid;</prop>
+				
+				<!-- Topology tables-->
+				<prop key="drop.userBusinessStream">DROP TABLE UserBusinessStream;</prop>
+				<prop key="drop.businessStreamFlow">DROP TABLE BusinessStreamFlow;</prop>
+				<prop key="drop.businessStream">DROP TABLE BusinessStream;</prop>
+				<prop key="drop.component">DROP TABLE Component;</prop>
+				<prop key="drop.flow">DROP TABLE Flow;</prop>
+				<prop key="drop.ikasanModule">DROP TABLE IkasanModule;</prop>
+				<prop key="drop.server">DROP TABLE Server;</prop>
+				
+				<!-- Hospital tables-->
+				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
 
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
@@ -1792,6 +1942,132 @@
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
 				</prop>
+
+				<!--  Hospital Service Tables -->
+                <prop key="create.server">CREATE TABLE Server
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   Url		      				VARCHAR(256) 		NOT NULL,
+					   Port							NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.ikasanModule">CREATE TABLE IkasanModule
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ContextRoot     				VARCHAR(256) 		NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   DiagramUrl      				VARCHAR(256) 		default 'placeholder' NOT NULL,
+					   ServerId						NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (ServerId) REFERENCES Server(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.flow">CREATE TABLE Flow
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	    NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   ModuleId						NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.component">CREATE TABLE Component
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	    NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   IsConfigurable 				BIT DEFAULT 0,
+					   FlowId						NUMERIC(18, 0) 		NOT NULL,
+					   ConfigurationId				VARCHAR(256) 		NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (FlowId) REFERENCES Flow(Id),
+					   FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.businessStream">CREATE TABLE BusinessStream
+					(
+					   Id             				NUMERIC(18, 0) 	IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	UNIQUE NOT NULL,
+					   Description		      		VARCHAR(1024) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.businessStreamFlow">CREATE TABLE BusinessStreamFlow
+					(
+					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
+					   FlowId						NUMERIC(18, 0) 	NOT NULL,
+					   FlowOrder						NUMERIC(18, 0) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (BusinessStreamId, FlowId),
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id),
+					   FOREIGN KEY (FlowId) REFERENCES Flow(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <prop key="create.userBusinessStream">CREATE TABLE UserBusinessStream
+					(
+					   UserId						NUMERIC(18, 0) 	NOT NULL,
+					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, BusinessStreamId),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id),
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+                </prop>
+                
+                <!--  Hospital Service Tables -->
+                <prop key="create.exclusionEventAction">CREATE TABLE ExclusionEventAction
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ActionedBy		      		VARCHAR(256) 		NOT NULL,
+					   Action		      			VARCHAR(32) 		NOT NULL,
+					   Event		      			IMAGE 				NOT NULL,
+					   Timestamp		      		NUMERIC(18, 0) 		NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX ExclEventAction_ErrorUri ON ExclusionEventAction(ErrorUri)
+                </prop>
 
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
 					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
@@ -2376,6 +2652,18 @@
                 <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
                 <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
                 <prop key="drop.xid">DROP TABLE FTXid;</prop>
+				
+				<!-- Topology tables-->
+				<prop key="drop.userBusinessStream">DROP TABLE UserBusinessStream;</prop>
+				<prop key="drop.businessStreamFlow">DROP TABLE BusinessStreamFlow;</prop>
+				<prop key="drop.businessStream">DROP TABLE BusinessStream;</prop>
+				<prop key="drop.component">DROP TABLE Component;</prop>
+				<prop key="drop.flow">DROP TABLE Flow;</prop>
+				<prop key="drop.ikasanModule">DROP TABLE IkasanModule;</prop>
+				<prop key="drop.server">DROP TABLE Server;</prop>
+				
+				<!-- Hospital tables-->
+				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
 
                 <prop key="driver">com.microsoft.sqlserver.jdbc.SQLServerDriver</prop>
                 <prop key="url">jdbc:sqlserver://HOSTNAME:PORT/DATABASE</prop>
@@ -3177,6 +3465,141 @@
                     )
                 </prop>
                 
+				<!--  Hospital Service Tables -->
+                <prop key="create.server">CREATE TABLE Server
+					(
+					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
+					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
+					   [Description]	      		[varchar](1024) 	NOT NULL,
+					   [Url]		      			[varchar](256) 		NOT NULL,
+					   [Port]						[numeric](18) 		NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT            [PK_Server_Id] PRIMARY KEY CLUSTERED
+						(
+							[Id] ASC
+						)
+					) 
+
+                </prop>
+                
+                <prop key="create.ikasanModule">CREATE TABLE IkasanModule
+					(
+					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
+					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
+					   [ContextRoot]     			[varchar](256) 		NOT NULL,
+					   [Description]		      	[varchar](1024) 	NOT NULL,
+					   [DiagramUrl]      			[varchar](256) 		default 'placeholder' NOT NULL,
+					   [ServerId]					[numeric](18) 		NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT            [PK_IkasanModule_Id] PRIMARY KEY CLUSTERED
+						(
+							[Id] ASC
+						),
+					   CONSTRAINT [FK_IkasanModule_ServerId] FOREIGN KEY (ServerId) REFERENCES Server(Id)
+					) 
+                </prop>
+                
+                <prop key="create.flow">CREATE TABLE Flow
+					(
+					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
+					   [Name]		      			[varchar](256) 		NOT NULL,
+					   [Description]		      	[varchar](1024) 	NOT NULL,
+					   [ModuleId]					[numeric](18) 		NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT            [PK_Flow_Id] PRIMARY KEY CLUSTERED
+						(
+							[Id] ASC
+						),
+					   CONSTRAINT [FK_Flow_ModuleId] FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+					) 
+                </prop>
+                
+                <prop key="create.component">CREATE TABLE Component
+					(
+					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
+					   [Name]		      			[varchar](256) 		NOT NULL,
+					   [Description]		      	[varchar](1024) 	NOT NULL,
+					   [IsConfigurable]				[bit] 				DEFAULT 0,
+					   [FlowId]						[numeric](18) 		NOT NULL,
+					   [ConfigurationId]			[varchar](256) 		NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT            [PK_Component_Id] PRIMARY KEY CLUSTERED
+						(
+							[Id] ASC
+						),
+					   CONSTRAINT [FK_Component_FlowId] FOREIGN KEY (FlowId) REFERENCES Flow(Id),
+					   CONSTRAINT [FK_Component_ConfigurationId] FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					) 
+                </prop>
+                
+                <prop key="create.businessStream">CREATE TABLE BusinessStream
+					(
+					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
+					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
+					   [Description]		      	[varchar](1024) 	NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT            [PK_BusinessStream_Id] PRIMARY KEY CLUSTERED
+						(
+							[Id] ASC
+						)
+					) 
+                </prop>
+                
+                <prop key="create.businessStreamFlow">CREATE TABLE BusinessStreamFlow
+					(
+					   [BusinessStreamId]			[numeric](18) 	NOT NULL,
+					   [FlowId]						[numeric](18) 	NOT NULL,
+					   [FlowOrder]					[numeric](18) 	NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT PK_BusinessStreamFlow PRIMARY KEY CLUSTERED 
+					   (
+							[BusinessStreamId], [FlowId]
+					   ),
+					   CONSTRAINT [FK_BusinessStreamFlow_FlowId] FOREIGN KEY (FlowId) REFERENCES Flow(Id),
+					   CONSTRAINT [FK_BusinessStreamFlow_BusinessStreamId] FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
+					) 
+                </prop>
+                
+                <prop key="create.userBusinessStream">CREATE TABLE UserBusinessStream
+					(
+					   [UserId]						[numeric](18) 	NOT NULL,
+					   [BusinessStreamId]			[numeric](18) 	NOT NULL,
+					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   CONSTRAINT PK_UserBusinessStream PRIMARY KEY CLUSTERED 
+					   (
+							 [UserId], [BusinessStreamId]
+					   ),
+					   CONSTRAINT [FK_UserBusinessStream_UserId] FOREIGN KEY (UserId) REFERENCES Users(Id),
+					   CONSTRAINT [FK_UserBusinessStream_BusinessStreamId] FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
+					) 
+                </prop>
+                
+                <!--  Hospital Service Tables -->
+                <prop key="create.exclusionEventAction">CREATE TABLE ExclusionEventAction
+					(
+					   [Id]							[numeric](18) 		NOT NULL,
+					   [ErrorUri]	      			[varchar](256) 		UNIQUE NOT NULL,
+					   [ActionedBy]		      		[varchar](256) 		NOT NULL,
+					   [Action]		      			[varchar](32) 		NOT NULL,
+					   [Event]                 		[varbinary](max) 	NOT NULL,
+					   [Timestamp]		      		[numeric](18) 		NOT NULL,
+					   CONSTRAINT            [PK_ExclusionEventAction_Id] PRIMARY KEY CLUSTERED
+						(
+							[Id] ASC
+						)
+					) 
+					
+					CREATE NONCLUSTERED INDEX [ExclEventAction_ErrorUri] ON [ExclusionEventAction](ErrorUri)
+                </prop>
+
+				
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
 					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
 					
@@ -3416,6 +3839,18 @@
                 <prop key="drop.retrieveFileCommand">DROP TABLE FTRetrieveFileCommand;</prop>
                 <prop key="drop.transactionalResourceCommand">DROP TABLE FTTransactionalResourceCommand;</prop>
                 <prop key="drop.xid">DROP TABLE FTXid;</prop>
+				
+				<!-- Topology tables-->
+				<prop key="drop.userBusinessStream">DROP TABLE UserBusinessStream;</prop>
+				<prop key="drop.businessStreamFlow">DROP TABLE BusinessStreamFlow;</prop>
+				<prop key="drop.businessStream">DROP TABLE BusinessStream;</prop>
+				<prop key="drop.component">DROP TABLE Component;</prop>
+				<prop key="drop.flow">DROP TABLE Flow;</prop>
+				<prop key="drop.ikasanModule">DROP TABLE IkasanModule;</prop>
+				<prop key="drop.server">DROP TABLE Server;</prop>
+				
+				<!-- Hospital tables-->
+				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
@@ -4102,6 +4537,114 @@
 					   PRIMARY KEY (Id)
 					);
 				</prop>
+				
+				<!--  Topology Service Tables -->
+                <prop key="create.server">CREATE TABLE Server
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   Url		      				VARCHAR(256) 		NOT NULL,
+					   Port							NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+                </prop>
+                
+                <prop key="create.ikasanModule">CREATE TABLE IkasanModule
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ContextRoot     				VARCHAR(256) 		NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   DiagramUrl      				VARCHAR(256) 		default 'placeholder' NOT NULL,
+					   ServerId						NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (ServerId) REFERENCES Server(Id)
+					);
+                </prop>
+                
+                <prop key="create.flow">CREATE TABLE Flow
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	    NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   ModuleId						NUMERIC(18, 0) 		NOT NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+					);
+                </prop>
+                
+                <prop key="create.component">CREATE TABLE Component
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	    NOT NULL,
+					   Description		      		VARCHAR(1024) 		NOT NULL,
+					   IsConfigurable 				BOOLEAN 			DEFAULT 0,
+					   FlowId						NUMERIC(18, 0) 		NOT NULL,
+					   ConfigurationId				VARCHAR(256) 		NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (FlowId) REFERENCES Flow(Id),
+					   FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					);
+                </prop>
+                
+                <prop key="create.businessStream">CREATE TABLE BusinessStream
+					(
+					   Id             				NUMERIC(18, 0) 	IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) 	UNIQUE NOT NULL,
+					   Description		      		VARCHAR(1024) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+                </prop>
+                
+                <prop key="create.businessStreamFlow">CREATE TABLE BusinessStreamFlow
+					(
+					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
+					   FlowId						NUMERIC(18, 0) 	NOT NULL,
+					   FlowOrder					NUMERIC(18, 0) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
+					   PRIMARY KEY (BusinessStreamId, FlowId),
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id),
+					   FOREIGN KEY (FlowId) REFERENCES Flow(Id)
+					);
+                </prop>
+                
+                <prop key="create.userBusinessStream">CREATE TABLE UserBusinessStream
+					(
+					   UserId						NUMERIC(18, 0) 	NOT NULL,
+					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
+					   PRIMARY KEY (UserId, BusinessStreamId),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id),
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
+					);
+                </prop>
+                
+                <!--  Hospital Service Tables -->
+                <prop key="create.exclusionEventAction">CREATE TABLE ExclusionEventAction
+					(
+					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
+					   ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ActionedBy		      		VARCHAR(256) 		NOT NULL,
+					   Action		      			VARCHAR(32) 		NOT NULL,
+					   Event		      			IMAGE 				NOT NULL,
+					   Timestamp		      		NUMERIC(18, 0)       NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+                </prop>
+				
 			</props>
 
 		</property>
