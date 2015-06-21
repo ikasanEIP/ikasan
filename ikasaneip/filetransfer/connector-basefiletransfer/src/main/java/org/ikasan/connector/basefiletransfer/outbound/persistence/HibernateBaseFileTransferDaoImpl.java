@@ -86,7 +86,7 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
     protected SessionFactory sessionFactory;
     
     /** Hibernate name of the mapped object */
-    protected static final String filterTableName = "FileFilter";
+    protected static final String filterTableName = "FTFileFilter";
 
     /** Logger */
     private static Logger logger = Logger.getLogger(HibernateBaseFileTransferDaoImpl.class);
