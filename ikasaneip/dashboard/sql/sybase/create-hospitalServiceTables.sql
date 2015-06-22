@@ -5,7 +5,7 @@ CREATE TABLE ExclusionEventAction
    ActionedBy		      		VARCHAR(256) 		NOT NULL,
    Action		      			VARCHAR(32) 		NOT NULL,
    Event		      			IMAGE 				NOT NULL,
-   Timestamp		      		DATETIME 			default getdate() NOT NULL,
+   Timestamp		      		NUMERIC(18, 0) 		default getdate() NOT NULL,
    PRIMARY KEY (Id)
 ) 
 

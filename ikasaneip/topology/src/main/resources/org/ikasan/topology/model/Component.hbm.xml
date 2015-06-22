@@ -62,7 +62,7 @@
                   type="java.lang.String"
                   column="Name"
                   not-null="true"
-                  unique="true"/>
+                  unique="false"/>
 
         <property name="description"
                   type="java.lang.String"

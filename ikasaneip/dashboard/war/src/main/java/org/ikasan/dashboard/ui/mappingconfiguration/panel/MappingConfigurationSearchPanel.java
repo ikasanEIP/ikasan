@@ -222,10 +222,10 @@ public class MappingConfigurationSearchPanel extends Panel implements View
 
         contentLayout.addComponent(button, 1, 4);
         
-        this.clientComboBox.loadClientSelectValues();
-        this.sourceContextComboBox.loadContextValues();
-        this.targetContextComboBox.loadContextValues();
-        this.typeComboBox.loadClientTypeValues();
+//        this.clientComboBox.loadClientSelectValues();
+//        this.sourceContextComboBox.loadContextValues();
+//        this.targetContextComboBox.loadContextValues();
+//        this.typeComboBox.loadClientTypeValues();
         
         this.setContent(contentLayout);
     }

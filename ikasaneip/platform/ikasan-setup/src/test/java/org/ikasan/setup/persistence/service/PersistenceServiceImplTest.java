@@ -40,6 +40,8 @@
  */
 package org.ikasan.setup.persistence.service;
 
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
 
 import org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl;
@@ -49,10 +51,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * JUnit based test class for testing HibernatePointToPointFlowProfileDao
@@ -122,6 +123,7 @@ public class PersistenceServiceImplTest
      * Test
      */
     @Test
+    @DirtiesContext
     public void test_persistenceService_getVersion()
     {
         String version = persistenceService.getVersion();
