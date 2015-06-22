@@ -142,7 +142,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	}
 
     @Override
-    protected void init(VaadinRequest request) {
+    protected void init(VaadinRequest request)
+    {
         final GridLayout layout = new GridLayout(1, 4);	
         layout.setSizeFull();   
         layout.setMargin(true);

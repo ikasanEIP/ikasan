@@ -131,8 +131,7 @@ public class LdapServiceImpl implements LdapService
 		FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(
 				authenticationMethod.getLdapUserSearchBaseDn(), "CN={0}",
 				contextSource);
-
-		logger.info("Attempting to get Ldap User: " + userName);
+		
 		DirContextOperations dir = null;
 		try
 		{
@@ -210,7 +209,6 @@ public class LdapServiceImpl implements LdapService
 		do
 		{
 			result = getAllGroups(cookie, ldapTemplate);
-			System.out.println(result.getResultList());
 			results.addAll(result.getResultList());
 			cookie = result.getCookie();
 		} while (cookie.getCookie() != null);
@@ -235,9 +233,7 @@ public class LdapServiceImpl implements LdapService
 
 	public IkasanPrincipal getApplicationSecurity(String userName)
 			throws LdapServiceException
-	{
-		logger.info("Attempting to get Application Security: " + userName);
-		
+	{		
 		AuthenticationMethod authenticationMethod = this.getAuthenticationMethod();
 
 		DefaultSpringSecurityContextSource contextSource = this.getContextSource();
@@ -256,7 +252,6 @@ public class LdapServiceImpl implements LdapService
 		} 
 		catch (RuntimeException e)
 		{
-			e.printStackTrace();
 			throw new LdapServiceException(e);
 		}
 
@@ -307,7 +302,6 @@ public class LdapServiceImpl implements LdapService
 
 			if(principal != null)
 			{
-				logger.info("Adding application Principal: " + principal);
 				this.securityDao.saveOrUpdatePrincipal(principal);
 			}
 		}
@@ -320,8 +314,6 @@ public class LdapServiceImpl implements LdapService
 		{
 			LdapUser ldapUser = getLdapUser(username.substring(3, username.length()));
 			
-			logger.info("Synchronizing Ldap User: " + ldapUser);
-
 			if (ldapUser == null)
 			{
 				continue;
@@ -332,7 +324,6 @@ public class LdapServiceImpl implements LdapService
 			
 			if(user == null)
 			{
-				logger.info("Attempting to create user: " + ldapUser);
 				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
 				user.setDepartment(ldapUser.department);
 				user.setFirstName(ldapUser.firstName);
@@ -380,7 +371,6 @@ public class LdapServiceImpl implements LdapService
 					
 					if(principal != null)
 					{
-						logger.info("Adding app security principal: " + principal + " for user: " + ldapUser);
 						ikasanPrincipals.add(principal);
 					}
 				}
@@ -392,7 +382,6 @@ public class LdapServiceImpl implements LdapService
 			user.setDepartment(ldapUser.department);
 			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 
-			logger.info("Attempting to update user: " + user);
 			this.userDao.save(user);
 				
 		}
