@@ -180,8 +180,10 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         sourceContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         sourceContextComboBoxLayout.setWidth(180, Unit.PIXELS);
         this.sourceContextComboBox.setWidth(180, Unit.PIXELS);
-        this.sourceContextComboBox.addValueChangeListener(new ValueChangeListener() {
-            public void valueChange(ValueChangeEvent event) {
+        this.sourceContextComboBox.addValueChangeListener(new ValueChangeListener() 
+        {
+            public void valueChange(ValueChangeEvent event) 
+            {
                 String type = null;
                 String client = null;
 

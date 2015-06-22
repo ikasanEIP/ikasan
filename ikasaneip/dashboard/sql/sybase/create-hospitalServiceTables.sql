@@ -2,6 +2,8 @@ CREATE TABLE ExclusionEventAction
 (
    Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
    ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+   ModuleName		      		VARCHAR(256) 		NOT NULL,
+   FlowName		      			VARCHAR(256) 		NOT NULL,
    ActionedBy		      		VARCHAR(256) 		NOT NULL,
    Action		      			VARCHAR(32) 		NOT NULL,
    Event		      			IMAGE 				NOT NULL,

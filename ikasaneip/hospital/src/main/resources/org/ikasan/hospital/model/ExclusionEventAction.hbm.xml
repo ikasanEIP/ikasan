@@ -53,7 +53,7 @@
 		table="ExclusionEventAction">
 		
 		<id name="id" type="java.lang.Long" column="Id">
-			<generator class="identity" />
+			<generator class="native" />
 		</id>
 		
 		<property name="moduleName"

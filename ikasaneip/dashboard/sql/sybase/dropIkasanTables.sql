@@ -36,3 +36,8 @@ DROP TABLE MCSSourceConfigValue
 DROP TABLE MCSTargetConfigValue
 DROP TABLE MCSConfigServiceClient
 DROP TABLE AuthenticationMethod
+DROP TABLE PolicyLinkType
+DROP TABLE PolicyLink
+DROP TABLE UserPrincipal
+DROP TABLE SecurityPrincipal
+DROP TABLE Users
