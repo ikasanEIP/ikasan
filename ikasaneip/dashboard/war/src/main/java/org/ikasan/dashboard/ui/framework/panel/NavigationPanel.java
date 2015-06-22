@@ -93,8 +93,9 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 	private VisibilityGroup visibilityGroup;
 	private Button loginButton;
 	private Button logoutButton;
+	private Button setupButton;
 	private EditableGroup editableGroup;
-	private GridLayout layout = new GridLayout(4, 1);
+	private GridLayout layout = new GridLayout(5, 1);
 	private FunctionalGroup newMappingConfigurationFunctionalGroup;
 	private FunctionalGroup existingMappingConfigurationFunctionalGroup;
 	private Button collapseButton;
@@ -148,9 +149,10 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		this.setHeight(30, Unit.PIXELS);
 		this.setStyleName("navigation");
 		this.layout.setColumnExpandRatio(0, 45f);
-		this.layout.setColumnExpandRatio(1, 50f);
+		this.layout.setColumnExpandRatio(1, 47.5f);
 		this.layout.setColumnExpandRatio(2, 2.5f);
 		this.layout.setColumnExpandRatio(3, 2.5f);
+		this.layout.setColumnExpandRatio(4, 2.5f);
 		
 		this.actionMenu.setStyleName("ikasan");
 		this.utilityMenu.setStyleName("ikasan");
@@ -193,11 +195,27 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 				manageLogout();
 			}
 		});
+		
+		this.setupButton = new Button("Setup");
+		this.setupButton.setStyleName(BaseTheme.BUTTON_LINK);
+		this.setupButton.addStyleName("white");
+		this.setupButton.addClickListener(new ClickListener()
+		{
+			@Override
+			public void buttonClick(ClickEvent event)
+			{
+				loadTopLevelNavigator();
+				UI.getCurrent().getNavigator().navigateTo("persistanceSetupView");
+			}
+		});
+		this.layout.addComponent(this.setupButton, 3, 0);
+		this.layout.setComponentAlignment(this.setupButton,
+				Alignment.MIDDLE_RIGHT);
 
 		this.collapseButton = new Button("^");
 		this.collapseButton.setStyleName(BaseTheme.BUTTON_LINK);
 		this.collapseButton.addStyleName("white");
-		this.layout.addComponent(this.collapseButton, 3, 0);
+		this.layout.addComponent(this.collapseButton, 4, 0);
 		this.layout.setComponentAlignment(this.collapseButton,
 				Alignment.MIDDLE_RIGHT);
 		this.collapseButton.addClickListener(new ClickListener()
@@ -207,7 +225,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 			{
 				imagePanelLayout.setVisible(false);
 				layout.removeComponent(collapseButton);
-				layout.addComponent(expandButton, 3, 0);
+				layout.addComponent(expandButton, 4, 0);
 				layout.setComponentAlignment(expandButton,
 						Alignment.MIDDLE_RIGHT);
 			}
@@ -223,7 +241,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 			{
 				imagePanelLayout.setVisible(true);
 				layout.removeComponent(expandButton);
-				layout.addComponent(collapseButton, 3, 0);
+				layout.addComponent(collapseButton, 4, 0);
 				layout.setComponentAlignment(collapseButton,
 						Alignment.MIDDLE_RIGHT);
 			}
@@ -348,8 +366,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 	protected void manageLogout()
 	{
 		LogoutAction action = new LogoutAction(this.visibilityGroup,
-				this.editableGroup, this.layout,
-				this.loginButton, this.utilityMenu, this.loggedInUserLabel, this);
+				this.editableGroup, this.layout, this.loginButton, 
+				this.setupButton, this.utilityMenu, this.loggedInUserLabel, this);
 
 		IkasanMessageDialog dialog = new IkasanMessageDialog("Logout",
 				"You are about to log out. Any unsaved data will be lost. "
@@ -366,6 +384,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 	public void postCommit() throws CommitException
 	{
 		this.layout.removeComponent(this.loginButton);
+		this.layout.removeComponent(this.setupButton);
 		loggedInUserLabel = new Label("");
 		loggedInUserLabel.setStyleName("ikasan-white");
 		loggedInUserLabel.setVisible(false);
@@ -382,6 +401,9 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		
 		this.createUtilityMenuItems();
 		this.createActionMenuItems();
+		
+		loadTopLevelNavigator();
+		UI.getCurrent().getNavigator().navigateTo("landingView");
 	}
 
 	public void loadTopLevelNavigator()

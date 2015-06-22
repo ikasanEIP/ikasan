@@ -58,7 +58,7 @@
             <list>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="landingView"/>
-                   <constructor-arg ref="emptyPanel"/>
+                   <constructor-arg ref="landingViewPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="emptyPanel"/>
@@ -129,6 +129,8 @@
         </bean>
       </property>
     </bean>
+    
+    <bean id="landingViewPanel" class=" org.ikasan.dashboard.ui.framework.panel.LandingViewPanel"/>
     
     <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
 		<constructor-arg ref="authenticationService"/>
