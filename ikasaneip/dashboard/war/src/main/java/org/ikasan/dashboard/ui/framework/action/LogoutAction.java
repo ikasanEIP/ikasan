@@ -66,6 +66,7 @@ public class LogoutAction implements Action
     private EditableGroup editableGroup;
     private GridLayout layout;
     private Button loginButton;
+    private Button setupButton;
     private Label userLabel;
     private Component logOutButton;
     private NavigationPanel navigationPanel;
@@ -79,7 +80,7 @@ public class LogoutAction implements Action
      * @param loginButton
      */
     public LogoutAction(VisibilityGroup visibilityGroup,
-            EditableGroup editableGroup, GridLayout layout, Button loginButton, Component logOutButton,
+            EditableGroup editableGroup, GridLayout layout, Button loginButton, Button setupButton, Component logOutButton,
             Label userLabel, NavigationPanel navigationPanel)
     {
         super();
@@ -87,6 +88,7 @@ public class LogoutAction implements Action
         this.editableGroup = editableGroup;
         this.layout = layout;
         this.loginButton = loginButton;
+        this.setupButton = setupButton;
         this.logOutButton = logOutButton;
         this.userLabel = userLabel;
         this.navigationPanel = navigationPanel;
@@ -105,20 +107,22 @@ public class LogoutAction implements Action
 
         layout.removeComponent(this.logOutButton);
         layout.addComponent(this.loginButton, 2, 0);
+        layout.addComponent(this.setupButton, 3, 0);
+        layout.setComponentAlignment(this.setupButton, Alignment.MIDDLE_RIGHT);
         layout.setComponentAlignment(this.loginButton, Alignment.MIDDLE_RIGHT);
         this.layout.removeComponent(userLabel);
-
-        this.navigationPanel.loadTopLevelNavigator();
-        this.navigationPanel.reset();
-        UI.getCurrent().getNavigator().navigateTo("emptyPanel");
         
         VaadinSession vSession = VaadinSession.getCurrent();
         WrappedSession httpSession = vSession.getSession();
+        
+        this.navigationPanel.loadTopLevelNavigator();
+        this.navigationPanel.reset();
+        
        //Invalidate HttpSession
-        httpSession.invalidate();
+//        httpSession.invalidate();
+//        vSession.close();
        //Redirect the user to the login/default Page
         Page.getCurrent().setLocation("/ikasan-dashboard");
-//        UI.getCurrent().getNavigator().navigateTo("emptyPanel");
     }
 
     /* (non-Javadoc)

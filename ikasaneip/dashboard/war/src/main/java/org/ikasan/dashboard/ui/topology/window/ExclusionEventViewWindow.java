@@ -239,6 +239,15 @@ public class ExclusionEventViewWindow extends Window
             	Client client = ClientBuilder.newClient(clientConfig);
             	
             	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+            	
+            	if(module == null)
+            	{
+            		Notification.show("Unable to find server information for module we are attempting to re-submit to: " + exclusionEvent.getModuleName() 
+            				, Type.ERROR_MESSAGE);
+            		
+            		return;
+            	}
+            	
             	Server server = module.getServer();
         		
         		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
@@ -299,6 +308,15 @@ public class ExclusionEventViewWindow extends Window
             	Client client = ClientBuilder.newClient(clientConfig);
             	
             	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+            	
+            	if(module == null)
+            	{
+            		Notification.show("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName() 
+            				, Type.ERROR_MESSAGE);
+            		
+            		return;
+            	}
+            	
             	Server server = module.getServer();
         		
         		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
