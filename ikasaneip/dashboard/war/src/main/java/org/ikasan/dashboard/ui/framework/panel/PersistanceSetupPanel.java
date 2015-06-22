@@ -44,9 +44,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.setup.persistence.service.PersistenceService;
 import org.ikasan.setup.persistence.service.PersistenceServiceFactory;
 
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -54,6 +59,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
@@ -69,6 +75,7 @@ public class PersistanceSetupPanel extends Panel implements View
     private Logger logger = Logger.getLogger(PersistanceSetupPanel.class);
     private PersistenceServiceFactory<String> persistenceServiceFactory;
     private ComboBox persistanceStoreTypeCombo = new ComboBox("Select database type");
+    private boolean userTablesAlreadyExist;
 
     /**
      * Constructor
@@ -83,36 +90,75 @@ public class PersistanceSetupPanel extends Panel implements View
     }
 
     protected void init()
-    {
-        this.setWidth("100%");
-        this.setHeight("100%");
+    {       
+    	initPersistanceStoreTypeCombo();
+    	
+        this.persistanceStoreTypeCombo.addValueChangeListener(new ValueChangeListener() 
+        {
+            public void valueChange(ValueChangeEvent event) 
+            {
+           	
+            	try
+            	{
+            		String persistenceProvider = (String)PersistanceSetupPanel
+                			.this.persistanceStoreTypeCombo.getValue();
 
-        VerticalLayout verticalLayout = new VerticalLayout();
+                	PersistenceService persistanceService 
+                		= persistenceServiceFactory.getPersistenceService(persistenceProvider);
+                	
+            		userTablesAlreadyExist = persistanceService.userTablesExist();
+            	}
+            	catch (Exception e)
+            	{
+            		Notification.show("An error has occurred detecting database: " 
+            				+ e.getMessage(), Type.ERROR_MESSAGE);
+            	}
+            	
+            	if(userTablesAlreadyExist == true)
+            	{
+            		createAlreadyCreatedView();
+            	}
+            	else
+            	{
+            		createNotCreatedView();
+            	}
+            }
+        });
+
+        this.createNotCreatedView();
+    }
+    
+    protected void createNotCreatedView()
+    {
+    	VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidth("100%");
         verticalLayout.setHeight("100%");
         verticalLayout.setMargin(true);
-        
-        initPersistanceStoreTypeCombo();
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.setStyleName("xlarge");
         ikasanWelcomeLabel1.setWidth("100%");
+        ikasanWelcomeLabel1.setHeight("30px");
         
         Label ikasanWelcomeLabel2 = new Label("It appears that you are setting up Ikasan for the" +
         		" first time and we need to create some database tables. If this is not the first time accessing the " +
         		"Ikasan Console, it appears that there is an issue with the Ikasan database. If this is the case please " +
         		"contact your local database administrator.");
+        
         ikasanWelcomeLabel2.setStyleName("large");
-        ikasanWelcomeLabel2.setWidth("100%");
+        ikasanWelcomeLabel2.setWidth("60%");
+        ikasanWelcomeLabel2.setHeight("70px");
        
 
         verticalLayout.addComponent(ikasanWelcomeLabel1);
         verticalLayout.addComponent(ikasanWelcomeLabel2);
         
         verticalLayout.addComponent(persistanceStoreTypeCombo);
+        persistanceStoreTypeCombo.setHeight("30px");
         
         Button button = new Button("Create");
         button.setStyleName(Reindeer.BUTTON_SMALL);
+        button.setHeight("30px");
 
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) 
@@ -151,9 +197,38 @@ public class PersistanceSetupPanel extends Panel implements View
         verticalLayout.addComponent(button);
         this.setContent(verticalLayout);
     }
+
+    protected void createAlreadyCreatedView()
+    {
+    	VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setWidth("100%");
+        verticalLayout.setHeight("100%");
+        verticalLayout.setMargin(true);
+
+        Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
+        ikasanWelcomeLabel1.setStyleName("xlarge");
+        ikasanWelcomeLabel1.setWidth("100%");
+        ikasanWelcomeLabel1.setHeight("30px");
+        
+        Label ikasanWelcomeLabel2 = new Label("It appears as thoug the Ikasan database has already been created. If you believe that this is not the case there may be an issue. " +
+        		"Please contact your local database administrator or Ikasan/Middleware support.");
+        
+        ikasanWelcomeLabel2.setStyleName("large");
+        ikasanWelcomeLabel2.setWidth("60%");
+        ikasanWelcomeLabel2.setHeight("60px");       
+
+        verticalLayout.addComponent(ikasanWelcomeLabel1);
+        verticalLayout.addComponent(ikasanWelcomeLabel2);
+        
+//        verticalLayout.addComponent(persistanceStoreTypeCombo);
+        
+        this.setContent(verticalLayout);
+    }
     
     protected void initPersistanceStoreTypeCombo()
     {
+    	persistanceStoreTypeCombo.removeAllItems();
+    	
     	persistanceStoreTypeCombo.addItem("Sybase12");
     	persistanceStoreTypeCombo.addItem("Sybase15");
     	persistanceStoreTypeCombo.addItem("MySQL");

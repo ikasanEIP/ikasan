@@ -1105,6 +1105,8 @@
 					(
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
 					   ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ModuleName		      		VARCHAR(256) 		NOT NULL,
+					   FlowName		      			VARCHAR(256) 		NOT NULL,
 					   ActionedBy		      		VARCHAR(256) 		NOT NULL,
 					   Action		      			VARCHAR(32) 		NOT NULL,
 					   Event		      			IMAGE 				NOT NULL,
@@ -2056,6 +2058,8 @@
 					(
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
 					   ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ModuleName		      		VARCHAR(256) 		NOT NULL,
+					   FlowName		      			VARCHAR(256) 		NOT NULL,
 					   ActionedBy		      		VARCHAR(256) 		NOT NULL,
 					   Action		      			VARCHAR(32) 		NOT NULL,
 					   Event		      			IMAGE 				NOT NULL,
@@ -2705,13 +2709,13 @@
                     )
                     )
                 </prop>
-
+					
                 <prop key="create.errorOccurrence">CREATE TABLE [ErrorOccurrence]
                     (
                     [Uri]                   [varchar](255) NOT NULL,
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
-                    [FlowComponentName]     [varchar](255) NOT NULL,
+                    [FlowElementName]     	[varchar](255) NOT NULL,
                     [ErrorDetail]           [text] NULL,
                     [EventLifeIdentifier]   [varchar](255) NULL,
                     [EventRelatedIdentifier] [varchar](255) NULL,
@@ -2721,7 +2725,7 @@
                     [Expiry]                [numeric] NOT NULL,
                     CONSTRAINT              [PK_ErrorOccurrence_Module_Flow_Uri] PRIMARY KEY CLUSTERED
                     (
-                    [ModuleName],[FlowName],[FlowComponentName],[Uri],[Timestamp] ASC
+                    [ModuleName],[FlowName],[FlowElementName],[Uri],[Timestamp] ASC
                     )
                     )
                 </prop>
@@ -3584,8 +3588,10 @@
                 <!--  Hospital Service Tables -->
                 <prop key="create.exclusionEventAction">CREATE TABLE ExclusionEventAction
 					(
-					   [Id]							[numeric](18) 		NOT NULL,
+					   [Id]							[numeric](18) 		IDENTITY NOT NULL,
 					   [ErrorUri]	      			[varchar](256) 		UNIQUE NOT NULL,
+					   [ModuleName]		      		[varchar](256) 		NOT NULL,
+					   [FlowName]	      			[varchar](256)		NOT NULL,
 					   [ActionedBy]		      		[varchar](256) 		NOT NULL,
 					   [Action]		      			[varchar](32) 		NOT NULL,
 					   [Event]                 		[varbinary](max) 	NOT NULL,
@@ -4637,6 +4643,8 @@
 					(
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
 					   ErrorUri	      				VARCHAR(256) 		UNIQUE NOT NULL,
+					   ModuleName		      		VARCHAR(256) 		NOT NULL,
+					   FlowName		      			VARCHAR(256) 		NOT NULL,
 					   ActionedBy		      		VARCHAR(256) 		NOT NULL,
 					   Action		      			VARCHAR(32) 		NOT NULL,
 					   Event		      			IMAGE 				NOT NULL,
