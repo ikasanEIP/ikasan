@@ -119,8 +119,8 @@ public class LogoutAction implements Action
         this.navigationPanel.reset();
         
        //Invalidate HttpSession
-//        httpSession.invalidate();
-//        vSession.close();
+        httpSession.invalidate();
+        vSession.close();
        //Redirect the user to the login/default Page
         Page.getCurrent().setLocation("/ikasan-dashboard");
     }
