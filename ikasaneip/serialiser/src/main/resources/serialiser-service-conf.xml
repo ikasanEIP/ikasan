@@ -7,13 +7,7 @@
     <bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl">
         <constructor-arg name="serializers">
             <map>
-            	<entry key="javax.jms.TextMessage">
-                    <bean class="org.ikasan.serialiser.service.JmsTextMessageKryoSerialiser"/>
-                </entry>
-                <entry key="javax.jms.MapMessage">
-                    <bean class="org.ikasan.serialiser.service.JmsMapMessageKryoSerialiser"/>
-                </entry>
-                <entry key="java.io.File">
+            	 <entry key="java.io.File">
                     <bean class="org.ikasan.serialiser.service.FileKryoSerialiser"/>
                 </entry>            
             </map>
