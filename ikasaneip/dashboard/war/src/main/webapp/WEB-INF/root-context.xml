@@ -130,7 +130,7 @@
       </property>
     </bean>
     
-    <bean id="landingViewPanel" class=" org.ikasan.dashboard.ui.framework.panel.LandingViewPanel"/>
+    <bean id="landingViewPanel" class=" org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session"/>
     
     <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
 		<constructor-arg ref="authenticationService"/>
