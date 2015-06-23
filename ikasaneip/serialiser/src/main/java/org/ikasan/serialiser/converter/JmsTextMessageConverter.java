@@ -59,7 +59,7 @@ public class JmsTextMessageConverter implements Converter<TextMessage, JmsTextMe
 	    	jmsTextMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
 	    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
 	    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
+	    	//jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
 	    	jmsTextMessageDefault.setJMSExpiration(jmsTextMessageDefault.getJMSExpiration());
 	    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
 	    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
@@ -73,8 +73,8 @@ public class JmsTextMessageConverter implements Converter<TextMessage, JmsTextMe
 	    	while(names.hasMoreElements())
 	    	{
 	    		String name = names.nextElement();
-	
-	    		jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+
+                jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
 	    	}
 	    	
 	    	jmsTextMessageDefault.setText(message.getText());
