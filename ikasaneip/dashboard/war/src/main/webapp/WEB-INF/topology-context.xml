@@ -14,11 +14,11 @@
 		<constructor-arg value="topology"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="topologyPanel"/>
                    <constructor-arg ref="topologyViewPanel"/>
                 </bean>
@@ -32,10 +32,6 @@
 	<bean id="topologyViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
-
-	<!-- bean id="estateViewPanel" class="org.ikasan.dashboard.ui.topology.panel.EstateViewPanel">
-        <constructor-arg ref="ikasanModuleService" />
-    </bean -->
 
 	<bean id="topologyViewPanel" class="org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel" scope="session">
         <constructor-arg ref="topologyService" />
@@ -51,106 +47,4 @@
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
     </bean>
-
-    <!-- bean id="httpTransport" class="org.ikasan.module.util.HttpTransport">
-    </bean>
-
-    <bean id="ikasanModuleService" class="org.ikasan.module.IkasanModuleServiceImpl">
-        <constructor-arg ref="httpTransport" />
-        <constructor-arg value="stewmi" />
-        <constructor-arg value="flower" />
-        <constructor-arg>
-        <list>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="blbgToms-mhiCmfTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="blbgToms-mhiTradeFeedSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="blbgToms-mhiTradeReportingSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="ion-tradeReportingTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="intellimatch-labPositionFileTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="tradeweb-jgbPostTradeSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="tradeWeb-postTradeSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="murex-bondTradeTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="cityFios-equityTradeTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="derivation-equityTradeTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-              </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="derivation-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-counterpartyTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-equityReportingSrc" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-postEquityTradeSrc" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="murex-convertibleBondTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="murex-equityTradeTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="mhiSupport-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="miCore-misReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="miCore-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="stratus-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="swiftAlliance-swiftGateway" />
-                <property name="serverName" value="http://svc-swiftgweaid:60000" />
-            </bean>
-        </list>
-    </constructor-arg> 
-    </bean-->
-
 </beans>

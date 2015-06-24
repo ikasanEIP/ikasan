@@ -53,7 +53,7 @@
 		table="AuthenticationMethod">
 		
 		<id name="id" type="java.lang.Long" column="Id">
-			<generator class="assigned" />
+			<generator class="native" />
 		</id>
 
 		<property name="method" column="Method" type="java.lang.String"/>

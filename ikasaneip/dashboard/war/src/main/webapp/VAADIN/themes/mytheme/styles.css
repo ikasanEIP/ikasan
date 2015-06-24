@@ -121,8 +121,9 @@
 .mytheme .v-panel-dashboard {
 	 border-style:solid;
 	 /* border-width:thick; */
+	  border-width: 1px;
 	 border-color:LightGrey;
-	 border-radius: 25px;
+	 /*border-radius: 25px;*/
 	 overflow: hidden;
 }
 
@@ -130,7 +131,8 @@
 	 border-style:solid;
 	 /* border-width:thick; */
 	 border-color:LightGrey;
-	 border-radius: 25px;
+	 border-width: 1px;
+	 /*border-radius: 25px;*/
 	 overflow: hidden;
 	 background-color: LightGrey;
 }
@@ -2314,9 +2316,9 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-panel-dashboard {
 	 border-style:solid;
-	 /* border-width:thick; */
+	 border-width: 1px;
 	 border-color:LightGrey;
-	 border-radius: 25px;
+	 /*border-radius: 25px;*/
 	 overflow: hidden;
 }
 

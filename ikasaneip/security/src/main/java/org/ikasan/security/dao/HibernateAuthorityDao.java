@@ -68,7 +68,7 @@ public class HibernateAuthorityDao extends HibernateDaoSupport implements Author
     @SuppressWarnings("unchecked")
     public Authority getAuthority(String authority)
     {
-        List<Authority> results = (List<Authority>) getHibernateTemplate().find("from Authority where authority  = ?",authority);
+        List<Authority> results = (List<Authority>) getHibernateTemplate().findByNamedParam("from Authority where authority  = :authority", "authority", authority);
         Authority result = null;
         if (!results.isEmpty()){
             result = results.get(0);

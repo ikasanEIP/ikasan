@@ -121,58 +121,50 @@ public interface SecurityDao
 
     /**
      * 
-     * @return
-     * @throws SecurityDaoException
+     * @return     
      */
     public List<Policy> getAllPolicies();
 
     /**
      * 
-     * @return
-     * @throws SecurityDaoException
+     * @return     
      */
     public List<Role> getAllRoles();
 
     /**
      * 
-     * @return
-     * @throws SecurityDaoException
+     * @return     
      */
     public List<IkasanPrincipal> getAllPrincipals();
 
     /**
      * 
-     * @return
-     * @throws SecurityDaoException
+     * @return     
      */
     public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
     
     /**
      * 
-     * @return
-     * @throws SecurityDaoException
+     * @return    
      */
     public List<Policy> getAllPoliciesWithRole(String roleName);
 
     /**
      * 
-     * @return
-     * @throws SecurityDaoException
+     * @return    
      */
     public Policy getPolicyByName(String name);
 
     /**
      * 
      * @param name
-     * @return
-     * @throws SecurityDaoException
+     * @return    
      */
     public Role getRoleByName(String name);
 
     /**
      * 
-     * @param authenticationMethod
-     * @throws SecurityDaoException
+     * @param authenticationMethod     
      */
     public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
@@ -180,9 +172,14 @@ public interface SecurityDao
      * 
      * @param id
      * @return
-     * @throws SecurityDaoException
      */
     public AuthenticationMethod getAuthenticationMethod(Long id);
+    
+    /**
+     * 
+     * @return
+     */
+    public List<AuthenticationMethod> getAuthenticationMethods();
     
     /**
      * 
@@ -191,6 +188,12 @@ public interface SecurityDao
      */
     public List<IkasanPrincipal> getPrincipalByNameLike(String name);
     
+    /**
+     * 
+     * @param authenticationMethod
+     */
+    public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
+ 
     /**
      * 
      * @return

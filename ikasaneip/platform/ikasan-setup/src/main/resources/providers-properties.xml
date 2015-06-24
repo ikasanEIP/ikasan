@@ -651,7 +651,7 @@
 				
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
-					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Method    		          	VARCHAR(128) NOT NULL,
 					   LdapServerUrl    		  	VARCHAR(256) NULL,
 					   LdapBindUserDn		      	VARCHAR(256) NULL,

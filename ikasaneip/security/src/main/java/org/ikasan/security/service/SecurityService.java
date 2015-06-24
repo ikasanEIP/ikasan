@@ -191,11 +191,24 @@ public interface SecurityService
 
     /**
      * 
+     * @return
+     * @throws SecurityDaoException
+     */
+    public List<AuthenticationMethod> getAuthenticationMethods();
+    
+    /**
+     * 
      * @param id
      * @return
      * @throws SecurityDaoException
      */
-    public AuthenticationMethod getAuthenticationMethod();
+    public AuthenticationMethod getAuthenticationMethod(Long id);
+
+    /**
+     * 
+     * @param authenticationMethod
+     */
+    public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
      * 

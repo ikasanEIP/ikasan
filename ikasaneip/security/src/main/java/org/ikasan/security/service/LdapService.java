@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.service;
 
+import org.ikasan.security.model.AuthenticationMethod;
+
 
 
 /**
@@ -54,6 +56,6 @@ public interface LdapService
 	 * 
 	 * @throws LdapServiceException
 	 */
-	public void synchronize() throws LdapServiceException;
+	public void synchronize(AuthenticationMethod authenticationMethod) throws LdapServiceException;
 
 }

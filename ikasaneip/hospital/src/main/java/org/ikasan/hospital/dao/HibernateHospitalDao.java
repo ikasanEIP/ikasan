@@ -85,6 +85,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	/* (non-Javadoc)
 	 * @see org.ikasan.hospital.dao.HospitalDao#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExclusionEventAction> getActionedExclusions(
 			List<String> moduleName, List<String> flowName, Date startDate,
