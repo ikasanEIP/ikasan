@@ -315,9 +315,17 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         }
         // Username
         String username = null;
+        String password = null;
+
         if (this.scri.getUsername() != null)
         {
             username = this.scri.getUsername();
+            // Username
+            if (this.scri.getPassword() != null)
+            {
+                password = this.scri.getPassword();
+            }
+
         }
         else
         {
@@ -365,7 +373,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         Integer connectionTimeout = this.scri.getConnectionTimeout();
 
         //Create a SFTPClient
-        this.sftpClient = new SFTPClient(privateKey, knownHosts, username, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
+        this.sftpClient = new SFTPClient(privateKey, knownHosts, username, password, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
         try
         {
             this.sftpClient.validateConstructorArgs();

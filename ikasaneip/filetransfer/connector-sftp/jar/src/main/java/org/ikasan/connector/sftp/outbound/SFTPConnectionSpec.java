@@ -75,6 +75,9 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     /** The username */
     private String username = null;
 
+    /** The password */
+    private String password = null;
+
     /** The authentication order */
     private String preferredAuthentications = new String();
 
@@ -112,6 +115,8 @@ public class SFTPConnectionSpec extends EISConnectionSpec
         this.setPrivateKeyFilename(prop);
         prop = bundle.getString(SFTPConnectionProperties.USERNAME.toString());
         this.setUsername(prop);
+        prop = bundle.getString(SFTPConnectionProperties.USERNAME.toString());
+        this.setPassword(prop);
         prop = bundle.getString(SFTPConnectionProperties.HOST.toString());
         this.setRemoteHostname(prop);
         prop = bundle.getString(SFTPConnectionProperties.PORT.toString());
@@ -264,6 +269,27 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     {
         this.username = username;
     }
+
+    /**
+     * Get the password
+     *
+     * @return the password
+     */
+    public String getPassword()
+    {
+        return password;
+    }
+
+    /**
+     * Set the password
+     *
+     * @param password
+     */
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
 
     /**
      * Getter for pollTime

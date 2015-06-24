@@ -236,6 +236,7 @@ public class SFTPConnectionFactory extends EISConnectionFactoryImpl
             scri.setRemotePort(sftpConnectionSpec.getRemotePort());
             scri.setPrivateKeyFilename(sftpConnectionSpec.getPrivateKeyFilename());
             scri.setUsername(sftpConnectionSpec.getUsername());
+            scri.setPassword(sftpConnectionSpec.getPassword());
             scri.setRemoteHostname(sftpConnectionSpec.getRemoteHostname());
             scri.setRemotePort(sftpConnectionSpec.getRemotePort());
             scri.setPollTime(sftpConnectionSpec.getPollTime());

@@ -77,6 +77,8 @@ public enum SFTPConnectionProperties
     PRIVATE_KEY("privateKey"), //$NON-NLS-1$
     /** Username */
     USERNAME("username"), //$NON-NLS-1$
+    /** Password */
+    PASSWORD("password"), //$NON-NLS-1$
     /** XA Connection Factory Handle */
     XA_CF_HANDLE("sftpXAConnectionFactoryHandle");
 
