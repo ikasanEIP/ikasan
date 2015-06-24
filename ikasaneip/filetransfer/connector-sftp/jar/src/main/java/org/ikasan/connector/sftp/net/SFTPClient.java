@@ -114,6 +114,9 @@ public class SFTPClient implements FileTransferClient
     /** User name */
     private String username;
 
+    /** Password */
+    private String password;
+
     /** Remote host name */
     private String remoteHostname;
 
@@ -188,7 +191,7 @@ public class SFTPClient implements FileTransferClient
      * @param connectionTimeout - socket connection timeout
      * @param preferredAuthentications 
      */
-    public SFTPClient(File prvKey, File knownHosts, String username, String remoteHostname, 
+    public SFTPClient(File prvKey, File knownHosts, String username, String password, String remoteHostname,
             int remotePort, String localHostname,
             Integer maxRetryAttempts, String preferredAuthentications, Integer connectionTimeout)
     {
@@ -196,6 +199,7 @@ public class SFTPClient implements FileTransferClient
         this.prvKey = prvKey;
         this.knownHosts = knownHosts;
         this.username = username;
+        this.password = password;
         this.remoteHostname = remoteHostname;
         this.remotePort = remotePort;
         this.getDestructive = false;
@@ -264,7 +268,8 @@ public class SFTPClient implements FileTransferClient
     public void validateConstructorArgs() throws ClientInitialisationException
     {
         // If all values seem OK, log the info and return
-        if (this.prvKey.exists() && this.knownHosts.exists() && this.username != null && this.remoteHostname != null)
+        //if (this.prvKey.exists() && this.knownHosts.exists() && this.username != null && this.remoteHostname != null)
+        if ( this.username != null && this.remoteHostname != null)
         {
             echoConfig(Level.DEBUG);
             return;
@@ -393,16 +398,25 @@ public class SFTPClient implements FileTransferClient
         logger.debug(msg);
         try
         {
-            JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
-            msg = new String("Adding private key to identity..."); //$NON-NLS-1$
-            logger.debug(msg);
-            this.jsch.addIdentity(this.prvKey.getAbsolutePath());
-            msg = new String("Setting the known hosts..."); //$NON-NLS-1$
-            logger.debug(msg);
-            this.jsch.setKnownHosts(this.knownHosts.getAbsolutePath());
-            msg = new String("Getting the session and connecting..."); //$NON-NLS-1$
-            logger.debug(msg);
-            this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
+
+            if (password != null)
+            {
+                JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
+                this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
+                session.setPassword(password);
+            } else {
+                JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
+                msg = new String("Adding private key to identity..."); //$NON-NLS-1$
+                logger.debug(msg);
+                this.jsch.addIdentity(this.prvKey.getAbsolutePath());
+                msg = new String("Setting the known hosts..."); //$NON-NLS-1$
+                logger.debug(msg);
+                this.jsch.setKnownHosts(this.knownHosts.getAbsolutePath());
+                msg = new String("Getting the session and connecting..."); //$NON-NLS-1$
+                logger.debug(msg);
+                this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
+            }
+
             this.session.connect(this.connectionTimeout);
             if (this.localHostname != null)
             {
