@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.service;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -90,32 +92,38 @@ public class AuthenticationServiceImpl implements AuthenticationService
 		Authentication authentication = null;
 		
 		
-		AuthenticationMethod authMethod = securityService.getAuthenticationMethod();
-		AuthenticationProvider authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
+		List<AuthenticationMethod> authMethods = securityService.getAuthenticationMethods();
+		List<AuthenticationProvider> authProviders = authenticationProviderFactory.getAuthenticationProvider(authMethods);
 
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
 		
+		for(AuthenticationProvider authProvider: authProviders)
+		{
+			try
+			{
+				authentication = authProvider.authenticate(auth);
+				
+				if(authentication != null)
+				{
+					return authentication;
+				}
+			}
+			catch (Exception e)
+			{
+				// We are going to ignore these exception because we will try local authentication as a back stop below.
+			}
+		}
+
+		AuthenticationProvider authProvider = authenticationProviderFactory.getLocalAuthenticationProvider();
+			
 		try
 		{
-			logger.info("Attempting authentication using method " + authMethod.getMethod() + " for user " + username);
-			authentication = authProvider.authenticate(auth);				
-			logger.info("Authentication successful for user " + username + " authentication = " + authentication);
+			authentication = authProvider.authenticate(auth);
 		}
 		catch (Exception e)
 		{
-			// If the the authentication is not local and has failed, this try local authentication. 
-			if(!authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LOCAL))
-			{
-				logger.info("Attempting local authentication for user " + username);
-				
-				AuthenticationMethod authenticationMethod = new AuthenticationMethod();
-				
-				authenticationMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
-
-				authProvider = authenticationProviderFactory.getAuthenticationProvider(authenticationMethod);
-				
-				authentication = authProvider.authenticate(auth);
-			}
+			logger.info("Authentication failed for user " + username);
+			throw new AuthenticationServiceException("Error authenticating!");
 		}
 
 		if(authentication == null)

@@ -40,6 +40,9 @@
  */
 package org.ikasan.security.service.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -89,48 +92,64 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#getAuthenticationProvider(java.lang.Object)
 	 */
 	@Override
-	public AuthenticationProvider getAuthenticationProvider(AuthenticationMethod authMethod)
+	public List<AuthenticationProvider> getAuthenticationProvider(List<AuthenticationMethod> authMethods)
 	{
-		if(authMethod == null)
+		ArrayList<AuthenticationProvider> authenticationProviders = new ArrayList<AuthenticationProvider>();
+		
+		for(AuthenticationMethod authMethod: authMethods)
 		{
-			return createLocalAuthenticationProvider(authMethod);
-		}
-		else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LOCAL))
-		{
-			return createLocalAuthenticationProvider(authMethod);
-		}
-		else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP))
-		{
-			AuthenticationProvider authProvider = null;
-			try
+			if(authMethod == null)
 			{
-				authProvider =  createLdapAuthenticationProvider(authMethod);
-			} 
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
+				authenticationProviders.add(createLocalAuthenticationProvider());
 			}
-			
-			return authProvider;
-		}
-		else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP_LOCAL))
-		{
-			AuthenticationProvider authProvider = null;
-			try
+			else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LOCAL))
 			{
-				authProvider =  createLdapLocalAuthenticationProvider(authMethod);
-			} 
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
+				authenticationProviders.add(createLocalAuthenticationProvider());
 			}
-			
-			return authProvider;
+			else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP))
+			{
+				AuthenticationProvider authProvider = null;
+				try
+				{
+					authProvider =  createLdapAuthenticationProvider(authMethod);
+				} 
+				catch (Exception e)
+				{
+					throw new RuntimeException(e);
+				}
+				
+				authenticationProviders.add(authProvider);
+			}
+			else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP_LOCAL))
+			{
+				AuthenticationProvider authProvider = null;
+				try
+				{
+					authProvider =  createLdapLocalAuthenticationProvider(authMethod);
+				} 
+				catch (Exception e)
+				{
+					throw new RuntimeException(e);
+				}
+				
+				authenticationProviders.add(authProvider);
+			}
+			else
+			{
+				throw new IllegalArgumentException("authMethod not supported: " + authMethod.getMethod());
+			}
 		}
-		else
-		{
-			throw new IllegalArgumentException("authMethod not supported: " + authMethod.getMethod());
-		}
+		
+		return authenticationProviders;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#getLocalAuthenticationProvider()
+	 */
+	@Override
+	public AuthenticationProvider getLocalAuthenticationProvider()
+	{
+		return this.createLocalAuthenticationProvider();
 	}
 
 	/*
@@ -242,7 +261,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 * @param authMethod
 	 * @return
 	 */
-	private LocalAuthenticationProvider createLocalAuthenticationProvider(AuthenticationMethod authMethod)
+	private LocalAuthenticationProvider createLocalAuthenticationProvider()
 	{
 		return new LocalAuthenticationProvider(this.securityService, this.userService);
 	}

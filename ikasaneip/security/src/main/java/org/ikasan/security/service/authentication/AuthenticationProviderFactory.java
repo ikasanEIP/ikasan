@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.service.authentication;
 
+import java.util.List;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 
 /**
@@ -55,7 +57,7 @@ public interface AuthenticationProviderFactory<AUTH_METHOD>
 	 * @param authMethod
 	 * @return
 	 */
-	public AuthenticationProvider getAuthenticationProvider(AUTH_METHOD authMethod);
+	public List<AuthenticationProvider> getAuthenticationProvider(List<AUTH_METHOD> authMethods);
 	
 	/**
 	 * Method to test the authentication connection.
@@ -64,4 +66,11 @@ public interface AuthenticationProviderFactory<AUTH_METHOD>
 	 * @return
 	 */
 	public void testAuthenticationConnection(AUTH_METHOD authMethod) throws Exception;
+
+	/**
+	 * Get the local authentication provider.
+	 * 
+	 * @return
+	 */
+	public AuthenticationProvider getLocalAuthenticationProvider();
 }

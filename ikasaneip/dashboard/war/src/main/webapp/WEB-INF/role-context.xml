@@ -14,7 +14,7 @@
 		<constructor-arg value="roleManagement"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="roleManagementPanel"/>
                    <constructor-arg ref="roleManagementPanel"/>
                 </bean>

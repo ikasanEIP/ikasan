@@ -45,8 +45,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
@@ -60,7 +58,9 @@ import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,6 +89,7 @@ public class MappingConfigurationServiceTest
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
 
@@ -105,7 +106,7 @@ public class MappingConfigurationServiceTest
             "<PGRP>JGB</PGRP><TRDDT>20130701</TRDDT></SOH><SPTM attr=\"1\"><SOH><VERS>1.00</VERS><MTYP>TRDCONF</MTYP>" +
                     "<DATE>20130701</DATE><TIME>08:15:37</TIME><TSTMSG>YES</TSTMSG><DLR>MZHO</DLR><USER>mzhojgbeu</USER>" +
                     "<PGRP>JGB</PGRP><TRDTYP>OUTRIGHT</TRDTYP><TSRC>TW</TSRC><TRDDT>20130701</TRDDT><TNUM>1</TNUM></SOH><SLSPRSN>azehra</SLSPRSN>" +
-                    "<CUST>mstewartc</CUST><CUSTNAME>Michael Stewart</CUSTNAME><UCNTRY>UK</UCNTRY><COMPANY>Mizuho Trust Bk1</COMPANY>" +
+                    "<CUST>mstewartc</CUST><CUSTNAME>Michael Stewart</CUSTNAME><UCNTRY>UK</UCNTRY><COMPANY>acme Trust Bk1</COMPANY>" +
                     "<COACR>CBKUAE</COACR><ODDMARK>NO</ODDMARK><LOCC>LDN</LOCC><LOCD>LDN</LOCD><CLRCD>BOJ-NET</CLRCD><STYPE>REGJNOTE</STYPE>" +
                     "<WI>NO</WI><TOSHO>01440069</TOSHO><ISIN>JP1201441D44</ISIN><CPN>1.50</CPN><AUCDT>20130418</AUCDT><MATDT>20330320</MATDT>" +
                     "<ROPN>0</ROPN><ISMN>240</ISMN><OTR>2</OTR><DTDDT>20130320</DTDDT><ISSDT>20130422</ISSDT><FCDT>20130920</FCDT>" +
@@ -123,7 +124,7 @@ public class MappingConfigurationServiceTest
             "<PGRP>JGB</PGRP><TRDDT>20130701</TRDDT></SOH><SPTM attr=\"1\"><SOH><VERS>1.00</VERS><MTYP>TRDCONF</MTYP>" +
                     "<DATE>20130701</DATE><TIME>08:15:37</TIME><TSTMSG>YES</TSTMSG><DLR>MZHO</DLR><USER>mzhojgbeu</USER>" +
                     "<PGRP>JGB</PGRP><TRDTYP>OUTRIGHT</TRDTYP><TSRC>TW</TSRC><TRDDT>20130701</TRDDT><TNUM>1</TNUM></SOH><SLSPRSN></SLSPRSN>" +
-                    "<CUST>mstewartc</CUST><CUSTNAME>Michael Stewart</CUSTNAME><UCNTRY>UK</UCNTRY><COMPANY>Mizuho Trust Bk1</COMPANY>" +
+                    "<CUST>mstewartc</CUST><CUSTNAME>Michael Stewart</CUSTNAME><UCNTRY>UK</UCNTRY><COMPANY>acme Trust Bk1</COMPANY>" +
                     "<COACR>CBKUAE</COACR><ODDMARK>NO</ODDMARK><LOCC>LDN</LOCC><LOCD>LDN</LOCD><CLRCD>BOJ-NET</CLRCD><STYPE>REGJNOTE</STYPE>" +
                     "<WI>NO</WI><TOSHO>01440069</TOSHO><ISIN>JP1201441D44</ISIN><CPN>1.50</CPN><AUCDT>20130418</AUCDT><MATDT>20330320</MATDT>" +
                     "<ROPN>0</ROPN><ISMN>240</ISMN><OTR>2</OTR><DTDDT>20130320</DTDDT><ISSDT>20130422</ISSDT><FCDT>20130920</FCDT>" +
@@ -141,7 +142,7 @@ public class MappingConfigurationServiceTest
             "<PGRP>JGB</PGRP><TRDDT>20130701</TRDDT></SOH><SPTM attr=\"1\"><SOH><VERS>1.00</VERS><MTYP>TRDCONF</MTYP>" +
                     "<DATE>20130701</DATE><TIME>08:15:37</TIME><TSTMSG>YES</TSTMSG><DLR>MZHO</DLR><USER>mzhojgbeu</USER>" +
                     "<PGRP>JGB</PGRP><TRDTYP>OUTRIGHT</TRDTYP><TSRC>TW</TSRC><TRDDT>20130701</TRDDT><TNUM>1</TNUM></SOH>" +
-                    "<CUST>mstewartc</CUST><CUSTNAME>Michael Stewart</CUSTNAME><UCNTRY>UK</UCNTRY><COMPANY>Mizuho Trust Bk1</COMPANY>" +
+                    "<CUST>mstewartc</CUST><CUSTNAME>Michael Stewart</CUSTNAME><UCNTRY>UK</UCNTRY><COMPANY>acme Trust Bk1</COMPANY>" +
                     "<COACR>CBKUAE</COACR><ODDMARK>NO</ODDMARK><LOCC>LDN</LOCC><LOCD>LDN</LOCD><CLRCD>BOJ-NET</CLRCD><STYPE>REGJNOTE</STYPE>" +
                     "<WI>NO</WI><TOSHO>01440069</TOSHO><ISIN>JP1201441D44</ISIN><CPN>1.50</CPN><AUCDT>20130418</AUCDT><MATDT>20330320</MATDT>" +
                     "<ROPN>0</ROPN><ISMN>240</ISMN><OTR>2</OTR><DTDDT>20130320</DTDDT><ISSDT>20130422</ISSDT><FCDT>20130920</FCDT>" +
@@ -239,7 +240,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals(null, result);
     }
 
@@ -253,7 +253,6 @@ public class MappingConfigurationServiceTest
         MappingConfiguration result = this.xaMappingConfigurationService.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg");
 
-        System.out.println(result);
         Assert.assertNotNull(result);
     }
 
@@ -267,7 +266,6 @@ public class MappingConfigurationServiceTest
         MappingConfiguration result = this.xaMappingConfigurationService.getMappingConfiguration("BAD CLIENT", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg");
 
-        System.out.println(result);
         Assert.assertNull(result);
     }
 
@@ -281,7 +279,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("BEN", result);
     }
 
@@ -292,7 +289,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg", "briordan2");
 
-        System.out.println(result);
         Assert.assertEquals("BEN", result);
     }
 
@@ -307,7 +303,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue("CMI2", "Dealer and Product to Account", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("BARCLON", result);
     }
 
@@ -321,7 +316,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue("CMI2","Product Type to Tradebook Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("YENTBFB", result);
 
         sourceSystemValues = new ArrayList<String>();
@@ -330,7 +324,6 @@ public class MappingConfigurationServiceTest
         result = this.xaMappingConfigurationService.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("YENGOVT", result);
     }
 
@@ -341,7 +334,6 @@ public class MappingConfigurationServiceTest
     {
         List<ConfigurationContext> result = this.xaMappingConfigurationService.getAllConfigurationContexts();
 
-        System.out.println(result);
         Assert.assertEquals(2, result.size());
     }
 
@@ -351,7 +343,6 @@ public class MappingConfigurationServiceTest
     {
         List<ConfigurationType> result = this.xaMappingConfigurationService.getAllConfigurationTypes();
 
-        System.out.println(result);
         Assert.assertEquals(3, result.size());
     }
 
@@ -361,7 +352,6 @@ public class MappingConfigurationServiceTest
     {
         List<ConfigurationServiceClient> result = this.xaMappingConfigurationService.getAllConfigurationServiceClients();
 
-        System.out.println(result);
         Assert.assertEquals(1, result.size());
     }
 
@@ -372,7 +362,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue
                 ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
 
-        System.out.println(result);
         Assert.assertEquals("ZEKRAA", result);
     }
 
@@ -383,7 +372,6 @@ public class MappingConfigurationServiceTest
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue
                 ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML_EMPTY_SALESPERSON.getBytes());
 
-        System.out.println(result);
         Assert.assertEquals("ZEKRAA", result);
     }
 
