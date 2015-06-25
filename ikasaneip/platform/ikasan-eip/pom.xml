@@ -112,13 +112,18 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter</artifactId>
         </dependency>
-        
-       <!--dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-consumer</artifactId>
-        </dependency-->
-        
-       <dependency>
+            <artifactId>ikasan-component-multiRecipient-router</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-splitter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
          </dependency>
@@ -171,6 +176,11 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-orm</artifactId>
            </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-quartz-endpoint</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
