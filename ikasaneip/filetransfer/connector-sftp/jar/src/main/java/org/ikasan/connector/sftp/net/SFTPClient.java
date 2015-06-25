@@ -401,7 +401,8 @@ public class SFTPClient implements FileTransferClient
 
             if (password != null)
             {
-                JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
+                //JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
+                JSch.setConfig("StrictHostKeyChecking", "no");
                 this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
                 session.setPassword(password);
             } else {
@@ -1808,14 +1809,20 @@ public class SFTPClient implements FileTransferClient
         sb.append("SFTP configuration information:"); //$NON-NLS-1$
         sb.append("\nHostname         = ["); //$NON-NLS-1$
         sb.append(remoteHostname);
-        sb.append("]\nKnown hosts file = ["); //$NON-NLS-1$
-        sb.append(knownHosts.getAbsolutePath());
+        if(knownHosts!=null)
+        {
+            sb.append("]\nKnown hosts file = ["); //$NON-NLS-1$
+            sb.append(knownHosts.getAbsolutePath());
+        }
         sb.append("]\nLocal Host       = ["); //$NON-NLS-1$
         sb.append(localHostname);
         sb.append("]\nRemote Port      = ["); //$NON-NLS-1$
         sb.append(remotePort);
-        sb.append("]\nPrivate key file = ["); //$NON-NLS-1$
-        sb.append(prvKey.getAbsolutePath());
+        if (prvKey!=null)
+        {
+            sb.append("]\nPrivate key file = ["); //$NON-NLS-1$
+            sb.append(prvKey.getAbsolutePath());
+        }
         sb.append("]\nUsername         = ["); //$NON-NLS-1$
         sb.append(username);
         sb.append("]"); //$NON-NLS-1$
