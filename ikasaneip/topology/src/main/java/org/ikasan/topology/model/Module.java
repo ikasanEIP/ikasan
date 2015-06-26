@@ -58,6 +58,7 @@ public class Module
     private String description;
     private String contextRoot;
     private String diagramUrl;
+    private String version;
     private Server server;
     private Set<Flow> flows;
 
@@ -79,12 +80,13 @@ public class Module
 	 * @param description
 	 * @param server
 	 */
-	public Module(String name, String contextRoot, String description, Server server, String diagramUrl)
+	public Module(String name, String contextRoot, String description, String version, Server server, String diagramUrl)
 	{
 		super();
 		this.name = name;
 		this.contextRoot = contextRoot;
 		this.description = description;
+		this.version = version;
 		this.server = server;
 		this.diagramUrl = diagramUrl;
 		
@@ -153,9 +155,23 @@ public class Module
 		this.description = description;
 	}
 
+    /**
+     * @return the version
+     */
+    public String getVersion()
+    {
+        return version;
+    }
 
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(String version)
+    {
+        this.version = version;
+    }
 
-	/**
+    /**
 	 * @return the flows
 	 */
 	public Set<Flow> getFlows()
