@@ -314,6 +314,7 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
             alternateSpec.setPrivateKeyFilename(alternateCofnig.getAlternatePrivateKeyFilename());
             alternateSpec.setConnectionTimeout(alternateCofnig.getAlternateConnectionTimeout());
             alternateSpec.setUsername(alternateCofnig.getAlternateUsername());
+            alternateSpec.setPassword(alternateCofnig.getAlternatePassword());
             alternateSpec.setCleanupJournalOnComplete(alternateCofnig.getCleanupJournalOnComplete());
         }
 

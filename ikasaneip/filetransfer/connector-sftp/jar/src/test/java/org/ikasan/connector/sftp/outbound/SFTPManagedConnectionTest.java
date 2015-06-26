@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
+import javax.resource.ResourceException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -53,6 +54,7 @@ import org.ikasan.connector.base.journal.TransactionJournalingException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -63,15 +65,22 @@ import org.junit.Test;
  */
 public class SFTPManagedConnectionTest
 {
+    // Mock the
+    private Mockery classMockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
     /**
      * Tests the function of the recover method. When called with the TMSTARTRSCAN flag, it should return any executed,
      * but uncommitted transactions it finds in the TransactionJournal
-     * 
+     *
      * @throws XAException
      * @throws TransactionJournalingException
      */
-    @Test
-    public void testRecover() throws XAException, TransactionJournalingException
+    @Test public void testRecover() throws XAException, TransactionJournalingException
     {
         Mockery interfaceMockery = new Mockery();
         final TransactionJournal transactionJournal = interfaceMockery.mock(TransactionJournal.class);
@@ -86,29 +95,28 @@ public class SFTPManagedConnectionTest
             }
         });
         // setup the managed connection
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
         // execute the recover method
         Xid[] executedTransactions = managedConnection.recover(XAResource.TMSTARTRSCAN);
         // check the results
-        assertEquals("recover method should return all the executed Xids returned from the transaction journal", xids, //$NON-NLS-1$
-            executedTransactions);
+        assertEquals("recover method should return all the executed Xids returned from the transaction journal", xids,
+                //$NON-NLS-1$
+                executedTransactions);
     }
 
     /**
      * Tests the function of the recover method. Should throw an appropriate XAException if the TransactionJournal
      * itself fell over
-     * 
+     *
      * @throws TransactionJournalingException
      */
-    @Test
-    public void testRecover_handlesJournalingException() throws TransactionJournalingException
+    @Test public void testRecover_handlesJournalingException() throws TransactionJournalingException
     {
         Mockery interfaceMockery = new Mockery();
         final TransactionJournal transactionJournal = interfaceMockery.mock(TransactionJournal.class);
         final TransactionJournalingException journalingException = new TransactionJournalingException(
-            "A journaling exception", null); //$NON-NLS-1$
+                "A journaling exception", null); //$NON-NLS-1$
         // mock the TransactionJournal
         interfaceMockery.checking(new Expectations()
         {
@@ -118,8 +126,7 @@ public class SFTPManagedConnectionTest
             }
         });
         // setup the managed connection
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
         // execute the recover method
         try
@@ -130,19 +137,18 @@ public class SFTPManagedConnectionTest
         catch (XAException e)
         {
             assertTrue(
-                "As XAException cannot wrap other Throwables, message should end with message of underlying exception", //$NON-NLS-1$
-                e.getMessage().endsWith(journalingException.getMessage()));
+                    "As XAException cannot wrap other Throwables, message should end with message of underlying exception",
+                    //$NON-NLS-1$
+                    e.getMessage().endsWith(journalingException.getMessage()));
         }
     }
 
     /**
      * Tests the function of the recover method when an invalid flag is passed
      */
-    @Test
-    public void testRecover_handlesInvalidFlag()
+    @Test public void testRecover_handlesInvalidFlag()
     {
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         int invalidFlag = 99;
         boolean xaExceptionFound = false;
         try
@@ -155,21 +161,19 @@ public class SFTPManagedConnectionTest
             xaExceptionFound = true;
         }
         assertTrue("XAException should be thrown when an invalid flag is passed to the recover method", //$NON-NLS-1$
-            xaExceptionFound);
+                xaExceptionFound);
     }
 
     /**
      * Tests the function of the recover method when the timer end scan flag is passed
-     * 
+     * <p/>
      * TODO: What else should the ManagedConnection be doing on this method call?
-     * 
+     *
      * @throws XAException
      */
-    @Test
-    public void testRecover_WithTimerEndScanFlag() throws XAException
+    @Test public void testRecover_WithTimerEndScanFlag() throws XAException
     {
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         int flag = XAResource.TMENDRSCAN;
         Xid[] xids = managedConnection.recover(flag);
         assertEquals("No Xids should be returned when TimerEndScan flag is passed to recover", 0, xids.length); //$NON-NLS-1$
@@ -177,7 +181,7 @@ public class SFTPManagedConnectionTest
 
     /**
      * Simply mocks the SFTPManagedConnectioFactory
-     * 
+     *
      * @return SFTPManagedConnectionFactory
      */
     private SFTPManagedConnectionFactory getMockedManagedConnectionFactory()
@@ -190,19 +194,12 @@ public class SFTPManagedConnectionTest
             }
         };
         final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
-            .mock(SFTPManagedConnectionFactory.class);
+                .mock(SFTPManagedConnectionFactory.class);
         return managedConnectionFactory;
     }
 
     private SFTPConnectionRequestInfo getMockedConnectionRequestInfo()
     {
-        // Mock the
-        Mockery classMockery = new Mockery()
-        {
-            {
-                setImposteriser(ClassImposteriser.INSTANCE);
-            }
-        };
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
         classMockery.checking(new Expectations()
         {
@@ -212,5 +209,50 @@ public class SFTPManagedConnectionTest
             }
         });
         return connectionRequestInfo;
+    }
+
+    @Ignore
+    @Test
+    public void testOpenSession_when_user_password_provided() throws ResourceException
+    {
+        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+        final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
+                .mock(SFTPManagedConnectionFactory.class);
+
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // Dont care what this returns
+                atLeast(1).of(connectionRequestInfo).getClientID();
+                will(returnValue("testClientId"));
+                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                will(returnValue("hostname"));
+                atLeast(1).of(connectionRequestInfo).getRemotePort();
+                will(returnValue(22));
+                exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                will(returnValue(null));
+                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                will(returnValue(null));
+                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                will(returnValue(1));
+                atLeast(1).of(connectionRequestInfo).getUsername();
+                will(returnValue("username"));
+                atLeast(1).of(connectionRequestInfo).getPassword();
+                will(returnValue("password"));
+                atLeast(1).of(managedConnectionFactory).getLocalHostname();
+                will(returnValue("locaalhost"));
+                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                will(returnValue("publickey,password,gssapi-with-mic"));
+                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                will(returnValue(300000));
+            }
+        });
+
+        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                managedConnectionFactory, connectionRequestInfo);
+
+        managedConnection.openSession();
+
     }
 }

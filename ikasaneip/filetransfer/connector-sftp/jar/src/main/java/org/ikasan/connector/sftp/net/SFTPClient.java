@@ -399,13 +399,8 @@ public class SFTPClient implements FileTransferClient
         try
         {
 
-            if (password != null)
+            if (password == null)
             {
-                //JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
-                JSch.setConfig("StrictHostKeyChecking", "no");
-                this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
-                session.setPassword(password);
-            } else {
                 JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
                 msg = new String("Adding private key to identity..."); //$NON-NLS-1$
                 logger.debug(msg);
@@ -416,6 +411,11 @@ public class SFTPClient implements FileTransferClient
                 msg = new String("Getting the session and connecting..."); //$NON-NLS-1$
                 logger.debug(msg);
                 this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
+
+            } else {
+                JSch.setConfig("StrictHostKeyChecking", "no");
+                this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
+                session.setPassword(password);
             }
 
             this.session.connect(this.connectionTimeout);
