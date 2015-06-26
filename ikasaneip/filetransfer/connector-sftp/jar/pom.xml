@@ -112,6 +112,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${version.org.hamcrest.hamcrest-all}</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 

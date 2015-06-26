@@ -115,7 +115,7 @@ public class SFTPConnectionSpec extends EISConnectionSpec
         this.setPrivateKeyFilename(prop);
         prop = bundle.getString(SFTPConnectionProperties.USERNAME.toString());
         this.setUsername(prop);
-        prop = bundle.getString(SFTPConnectionProperties.USERNAME.toString());
+        prop = bundle.getString(SFTPConnectionProperties.PASSWORD.toString());
         this.setPassword(prop);
         prop = bundle.getString(SFTPConnectionProperties.HOST.toString());
         this.setRemoteHostname(prop);

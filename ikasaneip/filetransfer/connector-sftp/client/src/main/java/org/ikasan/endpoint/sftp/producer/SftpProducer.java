@@ -258,6 +258,7 @@ public class SftpProducer implements Producer<Payload>,
             alternateSpec.setPrivateKeyFilename(alternateConfig.getAlternatePrivateKeyFilename());
             alternateSpec.setConnectionTimeout(alternateConfig.getAlternateConnectionTimeout());
             alternateSpec.setUsername(alternateConfig.getAlternateUsername());
+            alternateSpec.setPassword(alternateConfig.getAlternatePassword());
             alternateSpec.setCleanupJournalOnComplete(alternateConfig.getCleanupJournalOnComplete());
         }
 
