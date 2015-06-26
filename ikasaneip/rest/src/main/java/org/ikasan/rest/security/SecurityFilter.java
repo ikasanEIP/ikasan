@@ -71,8 +71,6 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 @PreMatching
 public class SecurityFilter implements ContainerRequestFilter {
  
-	private static Logger logger = Logger.getLogger(SecurityFilter.class);
- 
     @Context
     UriInfo uriInfo;
  
@@ -86,16 +84,10 @@ public class SecurityFilter implements ContainerRequestFilter {
      * Perform the required authentication checks, and return the User instance
      * for the authenticated user.
      */
-    private Authentication authenticate(ContainerRequest request) {
+    private Authentication authenticate(ContainerRequest request) 
+    {
     	
     	String auth = request.getHeaderValue("Authorization");
-
-    	logger.info("auth = " + auth);
-    	
-    	for(String key :request.getRequestHeaders().keySet())
-    	{
-    		logger.info("key = " + key + " value = " + request.getRequestHeaders().get(key));
-    	}
     	
         if (auth == null || !auth.startsWith("Basic ")) 
         {
@@ -154,12 +146,15 @@ public class SecurityFilter implements ContainerRequestFilter {
             return false;
         }
  
-        public boolean isSecure() {
+        public boolean isSecure() 
+        {
             return "https".equals(uriInfo.getRequestUri().getScheme());
         }
  
-        public String getAuthenticationScheme() {
-            if (authentication == null) {
+        public String getAuthenticationScheme() 
+        {
+            if (authentication == null) 
+            {
                 return null;
             }
             return SecurityContext.BASIC_AUTH;
@@ -168,8 +163,9 @@ public class SecurityFilter implements ContainerRequestFilter {
     }
 	
 	@Override
-	public ContainerRequest filter(ContainerRequest request) {
-		logger.info("Attempting to authenitcate");
+	public ContainerRequest filter(ContainerRequest request) 
+	{
+
 		Authentication authentication = authenticate(request);
 	
 		if(authentication != null)

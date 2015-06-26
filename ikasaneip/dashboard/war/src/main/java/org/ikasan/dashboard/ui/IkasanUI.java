@@ -196,46 +196,6 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	       	 navigator.navigateTo("landingView");  
 	       	 navigationPanel.setVisible(true);
         }
-        
-//        if(!this.navigationPanel.isCurrentViewNull())
-//        {
-//        	this.navigationPanel.navigateToCurrentView();
-//        }
-//        else
-//        {
-//        	 Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
-//
-//             List<IkasanUIView> mappingViews = this.views.get("topLevel").getIkasanViews();
-//             
-//             for(IkasanUIView view: mappingViews)
-//             {
-//                 navigator.addView(view.getPath(), view.getView());
-//             }
-//            
-//             if(!usersTablesExist)
-//             {
-//             	navigator.navigateTo("persistanceSetupView");
-//             	navigationPanel.setVisible(false);
-//             }
-//             else
-//             {
-//            	 navigator.navigateTo("landingView");  
-//            	 navigationPanel.setVisible(true);
-//             }
-//        }
-
-//        VerticalLayout vlayout = new VerticalLayout();
-//
-//        Button button = new Button("Start Alerts");
-//
-//        button.addClickListener(new Button.ClickListener() {
-//            public void buttonClick(ClickEvent event) {
-//            	feederThread.start();
-//            }
-//        });
-//        
-//        vlayout.addComponent(button);
-//        layout.addComponent(vlayout);
     }
     
     static class FeederThread extends Thread {

@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.model;
 
+import java.util.Date;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -48,24 +50,31 @@ package org.ikasan.security.model;
 public class AuthenticationMethod 
 {
 	private Long id;
+	private String name = "";
 	private String method = "";
+	private Integer order;
+	private Date lastSynchronised;
 	private String ldapServerUrl = "";
 	private String ldapBindUserDn = "";
 	private String ldapBindUserPassword = "";
 	private String ldapUserSearchBaseDn = "";
-	private String ldapUserSearchFilter = "";
 	private String applicationSecurityBaseDn = "";
-	private String accountTypeAttributeName = "";
-	private String userAccountNameAttributeName = "";
-	private String emailAttributeName = "";
-	private String applicationSecurityGroupAttributeName = "";
-	private String firstNameAttributeName = "";
-	private String surnameAttributeName = "";
-	private String departmentAttributeName = "";
-	private String ldapUserDescriptionAttributeName = "";
-	private String applicationSecurityDescriptionAttributeName = "";
-	private String memberofAttributeName = "";
+	private String applicationSecurityGroupAttributeName = "sAMAccountName";
+	private String ldapUserSearchFilter = "(sAMAccountName={0})";
+	private String accountTypeAttributeName = "accountType";
+	private String userAccountNameAttributeName = "sAMAccountName";
+	private String emailAttributeName = "mail";
+	private String firstNameAttributeName = "givenName";
+	private String surnameAttributeName = "sn";
+	private String departmentAttributeName = "department";
+	private String ldapUserDescriptionAttributeName = "description";
+	private String applicationSecurityDescriptionAttributeName = "description";
+	private String memberofAttributeName = "memberOf";
 	
+	public AuthenticationMethod()
+	{
+		
+	}
 	
 	/**
 	 * @return the id
@@ -358,6 +367,84 @@ public class AuthenticationMethod
 		this.memberofAttributeName = memberofAttributeName;
 	}
 
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/**
+	 * @return the order
+	 */
+	public Integer getOrder()
+	{
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(Integer order)
+	{
+		this.order = order;
+	}
+
+	/**
+	 * @return the lastSynchronised
+	 */
+	public Date getLastSynchronised()
+	{
+		return lastSynchronised;
+	}
+
+	/**
+	 * @param lastSynchronised the lastSynchronised to set
+	 */
+	public void setLastSynchronised(Date lastSynchronised)
+	{
+		this.lastSynchronised = lastSynchronised;
+	}
+
+//	/* (non-Javadoc)
+//	 * @see java.lang.Object#toString()
+//	 */
+//	@Override
+//	public String toString()
+//	{
+//		return "AuthenticationMethod [id=" + id + ", name=" + name
+//				+ ", method=" + method + ", order=" + order
+//				+ ", lastSynchronised=" + lastSynchronised + ", ldapServerUrl="
+//				+ ldapServerUrl + ", ldapBindUserDn=" + ldapBindUserDn
+//				+ ", ldapBindUserPassword=" + ldapBindUserPassword
+//				+ ", ldapUserSearchBaseDn=" + ldapUserSearchBaseDn
+//				+ ", applicationSecurityBaseDn=" + applicationSecurityBaseDn
+//				+ ", applicationSecurityGroupAttributeName="
+//				+ applicationSecurityGroupAttributeName
+//				+ ", ldapUserSearchFilter=" + ldapUserSearchFilter
+//				+ ", accountTypeAttributeName=" + accountTypeAttributeName
+//				+ ", userAccountNameAttributeName="
+//				+ userAccountNameAttributeName + ", emailAttributeName="
+//				+ emailAttributeName + ", firstNameAttributeName="
+//				+ firstNameAttributeName + ", surnameAttributeName="
+//				+ surnameAttributeName + ", departmentAttributeName="
+//				+ departmentAttributeName
+//				+ ", ldapUserDescriptionAttributeName="
+//				+ ldapUserDescriptionAttributeName
+//				+ ", applicationSecurityDescriptionAttributeName="
+//				+ applicationSecurityDescriptionAttributeName
+//				+ ", memberofAttributeName=" + memberofAttributeName + "]";
+//	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -396,6 +483,9 @@ public class AuthenticationMethod
 				+ ((firstNameAttributeName == null) ? 0
 						: firstNameAttributeName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime
+				* result
+				+ ((lastSynchronised == null) ? 0 : lastSynchronised.hashCode());
 		result = prime * result
 				+ ((ldapBindUserDn == null) ? 0 : ldapBindUserDn.hashCode());
 		result = prime
@@ -421,6 +511,8 @@ public class AuthenticationMethod
 				+ ((memberofAttributeName == null) ? 0 : memberofAttributeName
 						.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime
 				* result
 				+ ((surnameAttributeName == null) ? 0 : surnameAttributeName
@@ -498,6 +590,12 @@ public class AuthenticationMethod
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (lastSynchronised == null)
+		{
+			if (other.lastSynchronised != null)
+				return false;
+		} else if (!lastSynchronised.equals(other.lastSynchronised))
+			return false;
 		if (ldapBindUserDn == null)
 		{
 			if (other.ldapBindUserDn != null)
@@ -547,6 +645,18 @@ public class AuthenticationMethod
 				return false;
 		} else if (!method.equals(other.method))
 			return false;
+		if (name == null)
+		{
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (order == null)
+		{
+			if (other.order != null)
+				return false;
+		} else if (!order.equals(other.order))
+			return false;
 		if (surnameAttributeName == null)
 		{
 			if (other.surnameAttributeName != null)
@@ -561,34 +671,6 @@ public class AuthenticationMethod
 				.equals(other.userAccountNameAttributeName))
 			return false;
 		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "AuthenticationMethod [id=" + id + ", method=" + method
-				+ ", ldapServerUrl=" + ldapServerUrl + ", ldapBindUserDn="
-				+ ldapBindUserDn + ", ldapBindUserPassword="
-				+ ldapBindUserPassword + ", ldapUserSearchBaseDn="
-				+ ldapUserSearchBaseDn + ", ldapUserSearchFilter="
-				+ ldapUserSearchFilter + ", applicationSecurityBaseDn="
-				+ applicationSecurityBaseDn + ", accountTypeAttributeName="
-				+ accountTypeAttributeName + ", userAccountNameAttributeName="
-				+ userAccountNameAttributeName + ", emailAttributeName="
-				+ emailAttributeName
-				+ ", applicationSecurityGroupAttributeName="
-				+ applicationSecurityGroupAttributeName
-				+ ", firstNameAttributeName=" + firstNameAttributeName
-				+ ", surnameAttributeName=" + surnameAttributeName
-				+ ", departmentAttributeName=" + departmentAttributeName
-				+ ", ldapUserDescriptionAttributeName="
-				+ ldapUserDescriptionAttributeName
-				+ ", applicationSecurityDescriptionAttributeName="
-				+ applicationSecurityDescriptionAttributeName
-				+ ", memberofAttributeName=" + memberofAttributeName + "]";
 	}
 
 

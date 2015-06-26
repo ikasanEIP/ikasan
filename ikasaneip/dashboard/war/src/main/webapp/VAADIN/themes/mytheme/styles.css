@@ -112,6 +112,12 @@
 	font-size: 15px;
 }
 
+.mytheme .v-panel-content .v-label-ikasan-maroon-large {
+	font-family: "Calibri";
+	color: #99141B;
+	font-size: 15px;
+}
+
 .mytheme .v-panel-content .v-label-xlarge {
 	font-family: "Calibri";
 	color: #666;
@@ -7198,6 +7204,14 @@ body .mytheme.v-app .v-app-loading {
 	color: #666;
 	font-size: 15px;
 }
+
+.mytheme .v-panel-content .v-label-large-bold {
+	font-family: "Calibri";
+	font-weight: bold;
+	color: #666;
+	font-size: 15px;
+}
+
 
 .mytheme .v-panel-content .v-label-xlarge {
 	font-family: "Calibri";

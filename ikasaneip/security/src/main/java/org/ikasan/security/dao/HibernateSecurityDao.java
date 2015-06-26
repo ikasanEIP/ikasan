@@ -212,6 +212,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
 	{
+		
 		this.getHibernateTemplate().saveOrUpdate(authenticationMethod);
 	}
 
