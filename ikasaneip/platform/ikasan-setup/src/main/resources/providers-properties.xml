@@ -652,7 +652,10 @@
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name    		          		VARCHAR(128) NOT NULL,
 					   Method    		          	VARCHAR(128) NOT NULL,
+					   AuthOrder					NUMERIC(18,0) NOT NULL,
+					   LastSynchronised      		DATETIME NULL,
 					   LdapServerUrl    		  	VARCHAR(256) NULL,
 					   LdapBindUserDn		      	VARCHAR(256) NULL,
 					   LdapBindUserPassword   		VARCHAR(256) NULL,
@@ -1919,24 +1922,27 @@
 				</prop>				
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
-					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name    		          		VARCHAR(128) NOT NULL,
 					   Method    		          	VARCHAR(128) NOT NULL,
+					   AuthOrder					NUMERIC(18,0) NOT NULL,
+					   LastSynchronised      		DATETIME NULL,
 					   LdapServerUrl    		  	VARCHAR(256) NULL,
 					   LdapBindUserDn		      	VARCHAR(256) NULL,
-					   LdapBindUserPassword   		VARCHAR(64) NULL,
+					   LdapBindUserPassword   		VARCHAR(256) NULL,
 					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
-					   LdapUserSearchFilter   		VARCHAR(64) NULL,
-					   EmailAttributeName 			VARCHAR(64) NULL,
-					   UserAccNameAttributeName 	VARCHAR(64) NULL,
-					   AccountTypeAttributeName   	VARCHAR(64) NULL,
+					   LdapUserSearchFilter   		VARCHAR(256) NULL,
+					   EmailAttributeName 			VARCHAR(256) NULL,
+					   UserAccNameAttributeName 	VARCHAR(256) NULL,
+					   AccountTypeAttributeName   	VARCHAR(256) NULL,
 					   AppSecBaseDn   				VARCHAR(256) NULL,
-					   AppSecGroupAttributeName 	VARCHAR(64) NULL,
-					   FirstNameAttributeName 		VARCHAR(64) NULL,
-					   SurnameAttributeName 		VARCHAR(64) NULL,
-					   DepartmentAttributeName	 	VARCHAR(64) NULL,
-					   AppSecDescAttributeName		VARCHAR(64) NULL,
-					   LdapUserDescAttributeName	VARCHAR(64) NULL,
-					   MemberofAttributeName		VARCHAR(64) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(256) NULL,
+					   FirstNameAttributeName 		VARCHAR(256) NULL,
+					   SurnameAttributeName 		VARCHAR(256) NULL,
+					   DepartmentAttributeName	 	VARCHAR(256) NULL,
+					   AppSecDescAttributeName		VARCHAR(256) NULL,
+					   LdapUserDescAttributeName	VARCHAR(256) NULL,
+					   MemberofAttributeName		VARCHAR(256) NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
@@ -3146,7 +3152,10 @@
 				<prop key="create.authenticationMethod">CREATE TABLE [AuthenticationMethod]
 					(
 					   [Id]               			[NUMERIC](18) 	IDENTITY NOT NULL,
+					   [Name]    		          	[VARCHAR](128) 	NOT NULL,
 					   [Method]    		          	[VARCHAR](128) 	NOT NULL,
+					   [AuthOrder]               		[NUMERIC](18) 	NOT NULL,
+					   [LastSynchronised]      		[DATETIME] 		NULL,
 					   [LdapServerUrl]    		  	[VARCHAR](256) 	NULL,
 					   [LdapBindUserDn]		      	[VARCHAR](256) 	NULL,
 					   [LdapBindUserPassword]   	[VARCHAR](64) 	NULL,
@@ -4520,8 +4529,11 @@
 				
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
-					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name    		          		VARCHAR(128) NOT NULL,
 					   Method    		          	VARCHAR(128) NOT NULL,
+					   AuthOrder					NUMERIC(18,0) NOT NULL,
+					   LastSynchronised      		DATETIME NULL,
 					   LdapServerUrl    		  	VARCHAR(256) NULL,
 					   LdapBindUserDn		      	VARCHAR(256) NULL,
 					   LdapBindUserPassword   		VARCHAR(256) NULL,
@@ -4536,10 +4548,10 @@
 					   SurnameAttributeName 		VARCHAR(256) NULL,
 					   DepartmentAttributeName	 	VARCHAR(256) NULL,
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
-					   LdapUserDescAttributeName	VARCHAR(256) NULL, 
+					   LdapUserDescAttributeName	VARCHAR(256) NULL,
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
-					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>

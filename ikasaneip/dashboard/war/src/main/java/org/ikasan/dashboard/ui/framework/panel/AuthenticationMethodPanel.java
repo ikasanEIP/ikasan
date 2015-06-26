@@ -46,29 +46,28 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.LdapService;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
-import org.springframework.transaction.UnexpectedRollbackException;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.TabSheet.Tab;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -76,7 +75,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Ikasan Development Team
  *
  */
-public class AuthenticationMethodPanel extends Panel implements View
+public class AuthenticationMethodPanel extends Panel
 {
     private static final long serialVersionUID = 6005593259860222561L;
 
@@ -93,9 +92,10 @@ public class AuthenticationMethodPanel extends Panel implements View
 		= new AuthenticationMethodDropdownValue("LDAP Authentication", SecurityConstants.AUTH_METHOD_LDAP);
     
     private SecurityService securityService;
+    private TextField directoryName;
     private TextField ldapServerUrl;
     private TextField ldapBindUserDn;
-    private TextField ldapBindUserPassword;
+    private PasswordField ldapBindUserPassword;
     private TextField ldapUserSearchDn;
     private TextField ldapUserSearchFilter;
 	private TextField accountTypeAttributeName;
@@ -152,17 +152,30 @@ public class AuthenticationMethodPanel extends Panel implements View
 
     protected void init()
     {
+    	logger.info("init method called");
+    	
+    	try
+    	{
+    		throw new Throwable();
+    	}
+    	catch(Throwable t)
+    	{
+    		t.printStackTrace();
+    	}
+    	
         this.setWidth("100%");
         this.setHeight("100%");
         
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Panel securityAdministrationPanel = new Panel("Authentication Configuration");
+        Panel securityAdministrationPanel = new Panel();
+        securityAdministrationPanel.setStyleName("dashboard");
         securityAdministrationPanel.setWidth("100%");
         securityAdministrationPanel.setHeight("100%");
         
-        GridLayout gridLayout = new GridLayout(2, 18);
+        GridLayout gridLayout = new GridLayout(2, 25);
+        gridLayout.setSpacing(true);
         gridLayout.setWidth("100%");
         gridLayout.setHeight("100%");
         gridLayout.setMargin(true);
@@ -182,124 +195,221 @@ public class AuthenticationMethodPanel extends Panel implements View
         authenticationMethodDropdownValuesMap.put(LDAP_LOCAL_AUTHENTICATION.getValue(), LDAP_LOCAL_AUTHENTICATION);
         authenticationMethodDropdownValuesMap.put(LDAP_AUTHENTICATION.getValue(), LDAP_AUTHENTICATION);
         
-        gridLayout.addComponent(authMethodLabel, 0, 0);
-        gridLayout.addComponent(authenticationMethodCombo, 1, 0);
+        final Label serverSettings = new Label("Server Settings");
+        serverSettings.setStyleName("large-bold");
+        
+        gridLayout.addComponent(serverSettings, 0, 0);
 
-        final Label ldapServerUrlLabel = new Label("LDAP Server URL");
+        final Label directoryNameLabel = new Label("Directory Name:");
+        directoryNameLabel.setSizeUndefined();
+        this.directoryName = new TextField();
+        this.directoryName.setWidth("400px");
+        this.directoryName.setRequired(true);
+        
+        gridLayout.addComponent(directoryNameLabel, 0, 1);
+        gridLayout.addComponent(this.directoryName, 1, 1);
+        gridLayout.setComponentAlignment(directoryNameLabel, Alignment.MIDDLE_RIGHT);
+        
+
+        final Label ldapServerUrlLabel = new Label("LDAP Server URL:");
+        ldapServerUrlLabel.setSizeUndefined();
         this.ldapServerUrl = new TextField();
-        this.ldapServerUrl.setWidth("70%");
+        this.ldapServerUrl.setWidth("400px");
         
-        gridLayout.addComponent(ldapServerUrlLabel, 0, 1);
-        gridLayout.addComponent(this.ldapServerUrl, 1, 1);
+        gridLayout.addComponent(ldapServerUrlLabel, 0, 2);
+        gridLayout.addComponent(this.ldapServerUrl, 1, 2);
+        this.ldapServerUrl.setRequired(true);
+        gridLayout.setComponentAlignment(ldapServerUrlLabel, Alignment.MIDDLE_RIGHT);
         
-        final Label ldapBindUserDnLabel = new Label("LDAP Bind User DN");
+        Label hostnameExample = new Label("Hostname of server running LDAP. Example: ldap://ldap.example.com:389");
+        gridLayout.addComponent(hostnameExample, 1, 3);
+        
+        final Label ldapBindUserDnLabel = new Label("Username:");
+        ldapBindUserDnLabel.setSizeUndefined();
         this.ldapBindUserDn = new TextField();
-        this.ldapBindUserDn.setWidth("70%");
+        this.ldapBindUserDn.setWidth("400px");
+        this.ldapBindUserDn.setRequired(true);
         
-        gridLayout.addComponent(ldapBindUserDnLabel, 0, 2);
-        gridLayout.addComponent(this.ldapBindUserDn, 1, 2);
+        gridLayout.addComponent(ldapBindUserDnLabel, 0, 4);
+        gridLayout.addComponent(this.ldapBindUserDn, 1, 4);
+        gridLayout.setComponentAlignment(ldapBindUserDnLabel, Alignment.MIDDLE_RIGHT);
         
-        final Label ldapBindUserPasswordLabel = new Label("LDAP Bind User Password");
-        this.ldapBindUserPassword = new TextField();
-        this.ldapBindUserPassword.setWidth("70%");
+        Label usernameExample = new Label("User to log into LDAP. Example: cn=user,DC=domain,DC=name");
+        gridLayout.addComponent(usernameExample, 1, 5);
         
-        gridLayout.addComponent(ldapBindUserPasswordLabel, 0, 3);
-        gridLayout.addComponent(this.ldapBindUserPassword, 1, 3);
+        final Label ldapBindUserPasswordLabel = new Label("Password:");
+        ldapBindUserPasswordLabel.setSizeUndefined();
+        this.ldapBindUserPassword = new PasswordField();
+        this.ldapBindUserPassword.setWidth("100px");
+        this.ldapBindUserPassword.setRequired(true);
         
-        final Label ldapUserSearchDnLabel = new Label("LDAP User Search DN");
+        gridLayout.addComponent(ldapBindUserPasswordLabel, 0, 6);
+        gridLayout.addComponent(this.ldapBindUserPassword, 1, 6);
+        gridLayout.setComponentAlignment(ldapBindUserPasswordLabel, Alignment.MIDDLE_RIGHT);
+        
+        final Label ldapSchema = new Label("LDAP Schema");
+        ldapSchema.setStyleName("large-bold");
+        
+        gridLayout.addComponent(ldapSchema, 0, 7);
+        
+        final Label ldapUserSearchDnLabel = new Label("User DN:");
+        ldapUserSearchDnLabel.setSizeUndefined();
         this.ldapUserSearchDn = new TextField();
-        this.ldapUserSearchDn.setWidth("70%");
+        this.ldapUserSearchDn.setRequired(true);
+        this.ldapUserSearchDn.setWidth("400px");
         
-        gridLayout.addComponent(ldapUserSearchDnLabel, 0, 4);
-        gridLayout.addComponent(this.ldapUserSearchDn, 1, 4);
+        gridLayout.addComponent(ldapUserSearchDnLabel, 0, 8);
+        gridLayout.setComponentAlignment(ldapUserSearchDnLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.ldapUserSearchDn, 1, 8);
         
-        final Label ldapUserSearchFilterLabel = new Label("LDAP User Search Filter");
-        this.ldapUserSearchFilter = new TextField();
-        this.ldapUserSearchFilter.setWidth("70%");
-
-        gridLayout.addComponent(ldapUserSearchFilterLabel, 0, 5);
-        gridLayout.addComponent(this.ldapUserSearchFilter, 1, 5);
-
-        final Label emailAttributeNameLabel = new Label("LDAP User Email Attribute Name");
-        this.emailAttributeName = new TextField();
-        this.emailAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(emailAttributeNameLabel, 0, 6);
-        gridLayout.addComponent(this.emailAttributeName, 1, 6);
+        Label userDnExample = new Label("The base DN to use when searching for users.");
+        gridLayout.addComponent(userDnExample, 1, 9);
         
-        final Label userAccountNameAttributeNameLabel = new Label("LDAP User Account Name Attribute Name");
-        this.userAccountNameAttributeName = new TextField();
-        this.userAccountNameAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(userAccountNameAttributeNameLabel, 0, 7);
-        gridLayout.addComponent(this.userAccountNameAttributeName, 1, 7);
-
-        final Label accountTypeAttributeNameLabel = new Label("LDAP User Account Type Attribute Name");
-        this.accountTypeAttributeName = new TextField();
-        this.accountTypeAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(accountTypeAttributeNameLabel, 0, 8);
-        gridLayout.addComponent(this.accountTypeAttributeName, 1, 8);
-        
-        final Label firstNameAttributeNameLabel = new Label("LDAP User First Name Attribute Name");
-        this.firstNameAttributeName = new TextField();
-        this.firstNameAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(firstNameAttributeNameLabel, 0, 9);
-        gridLayout.addComponent(this.firstNameAttributeName, 1, 9);
-        
-        final Label surnameAttributeNameLabel = new Label("LDAP User Surname Attribute Name");
-        this.surnameAttributeName = new TextField();
-        this.surnameAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(surnameAttributeNameLabel, 0, 10);
-        gridLayout.addComponent(this.surnameAttributeName, 1, 10);
-
-        final Label departmentAttributeNameLabel = new Label("LDAP User Department Attribute Name");
-        this.departmentAttributeName = new TextField();
-        this.departmentAttributeName.setWidth("70%");
-        
-        gridLayout.addComponent(departmentAttributeNameLabel, 0, 11);
-        gridLayout.addComponent(this.departmentAttributeName, 1, 11);
-        
-        final Label ldapUserDescriptionAttributeNameLabel = new Label("LDAP User Description Attribute Name");
-        this.ldapUserDescriptionAttributeName = new TextField();
-        this.ldapUserDescriptionAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(ldapUserDescriptionAttributeNameLabel, 0, 12);
-        gridLayout.addComponent(this.ldapUserDescriptionAttributeName, 1, 12);
-        
-        final Label memberOfAttributeNameLabel = new Label("LDAP Member Of Attribute Name");
-        this.memberofAttributeName = new TextField();
-        this.memberofAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(memberOfAttributeNameLabel, 0, 13);
-        gridLayout.addComponent(this.memberofAttributeName, 1, 13);
-
-        final Label applicationSecurityBaseDnLabel = new Label("Application Security Base DN");
+        final Label applicationSecurityBaseDnLabel = new Label("Group DN:");
+        applicationSecurityBaseDnLabel.setSizeUndefined();
         this.applicationSecurityBaseDn = new TextField();
-        this.applicationSecurityBaseDn.setWidth("70%");
-
-        gridLayout.addComponent(applicationSecurityBaseDnLabel, 0, 14);
-        gridLayout.addComponent(this.applicationSecurityBaseDn, 1, 14);
+        this.applicationSecurityBaseDn.setRequired(true);
+        this.applicationSecurityBaseDn.setWidth("400px");
+        gridLayout.addComponent(applicationSecurityBaseDnLabel, 0, 10);
+        gridLayout.setComponentAlignment(applicationSecurityBaseDnLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.applicationSecurityBaseDn, 1, 10);
         
-        final Label applicationSecurityGroupAttributeNameLabel = new Label("Application Security Group Attribute Name");
+        Label groupDnExample = new Label("The base DN to use when searching for groups.");
+        gridLayout.addComponent(groupDnExample, 1, 11);
+        
+        final Label ldapAttributes = new Label("LDAP Attributes");
+        ldapAttributes.setStyleName("large-bold");
+        
+        CheckBox checkbox = new CheckBox("Populate default attributes");
+        checkbox.setValue(false);
+        
+        checkbox.addValueChangeListener(new Property.ValueChangeListener() 
+        {
+            public void valueChange(ValueChangeEvent event)
+            {
+                boolean value = (Boolean) event.getProperty().getValue();
+            }
+        });
+        checkbox.setImmediate(true);
+        
+        gridLayout.addComponent(ldapAttributes, 0, 12);
+        gridLayout.addComponent(checkbox, 1, 12);
+        
+        final Label userSearchFieldLabel = new Label("User Search Filter:");
+        userSearchFieldLabel.setSizeUndefined();
+        this.ldapUserSearchFilter = new TextField();
+        this.ldapUserSearchFilter.setWidth("300px");
+        this.ldapUserSearchFilter.setRequired(true);
+        
+        gridLayout.addComponent(userSearchFieldLabel, 0, 13);
+        gridLayout.setComponentAlignment(userSearchFieldLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.ldapUserSearchFilter, 1, 13);
+
+        final Label emailAttributeNameLabel = new Label("Email:");
+        emailAttributeNameLabel.setSizeUndefined();
+        this.emailAttributeName = new TextField();
+        this.emailAttributeName.setWidth("300px");
+        this.emailAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(emailAttributeNameLabel, 0, 14);
+        gridLayout.setComponentAlignment(emailAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.emailAttributeName, 1, 14);
+        
+        final Label userAccountNameAttributeNameLabel = new Label("Account Name:");
+        userAccountNameAttributeNameLabel.setSizeUndefined();
+        this.userAccountNameAttributeName = new TextField();
+        this.userAccountNameAttributeName.setWidth("300px");
+        this.userAccountNameAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(userAccountNameAttributeNameLabel, 0, 15);
+        gridLayout.setComponentAlignment(userAccountNameAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.userAccountNameAttributeName, 1, 15);
+
+        final Label accountTypeAttributeNameLabel = new Label("Account Type:");
+        accountTypeAttributeNameLabel.setSizeUndefined();
+        this.accountTypeAttributeName = new TextField();
+        this.accountTypeAttributeName.setWidth("300px");
+        this.accountTypeAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(accountTypeAttributeNameLabel, 0, 16);
+        gridLayout.setComponentAlignment(accountTypeAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.accountTypeAttributeName, 1, 16);
+        
+        final Label firstNameAttributeNameLabel = new Label("First Name:");
+        firstNameAttributeNameLabel.setSizeUndefined();
+        this.firstNameAttributeName = new TextField();
+        this.firstNameAttributeName.setWidth("300px");
+        this.firstNameAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(firstNameAttributeNameLabel, 0, 17);
+        gridLayout.setComponentAlignment(firstNameAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.firstNameAttributeName, 1, 17);
+        
+        final Label surnameAttributeNameLabel = new Label("Surname:");
+        surnameAttributeNameLabel.setSizeUndefined();
+        this.surnameAttributeName = new TextField();
+        this.surnameAttributeName.setWidth("300px");
+        this.surnameAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(surnameAttributeNameLabel, 0, 18);
+        gridLayout.setComponentAlignment(surnameAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.surnameAttributeName, 1, 18);
+       
+        final Label departmentAttributeNameLabel = new Label("User Department:");
+        departmentAttributeNameLabel.setSizeUndefined();
+        this.departmentAttributeName = new TextField();
+        this.departmentAttributeName.setWidth("300px");
+        this.departmentAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(departmentAttributeNameLabel, 0, 19);
+        gridLayout.setComponentAlignment(departmentAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.departmentAttributeName, 1, 19);
+       
+        final Label ldapUserDescriptionAttributeNameLabel = new Label("User Description:");
+        ldapUserDescriptionAttributeNameLabel.setSizeUndefined();
+        this.ldapUserDescriptionAttributeName = new TextField();
+        this.ldapUserDescriptionAttributeName.setWidth("300px");
+        this.ldapUserDescriptionAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(ldapUserDescriptionAttributeNameLabel, 0, 20);
+        gridLayout.setComponentAlignment(ldapUserDescriptionAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.ldapUserDescriptionAttributeName, 1, 20);
+        
+        
+        final Label memberOfAttributeNameLabel = new Label("Member Of:");
+        memberOfAttributeNameLabel.setSizeUndefined();
+        this.memberofAttributeName = new TextField();
+        this.memberofAttributeName.setWidth("300px");
+        this.memberofAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(memberOfAttributeNameLabel, 0, 21);
+        gridLayout.setComponentAlignment(memberOfAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.memberofAttributeName, 1, 21);
+        
+        final Label applicationSecurityGroupAttributeNameLabel = new Label("Group Name:");
+        applicationSecurityGroupAttributeNameLabel.setSizeUndefined();
         this.applicationSecurityGroupAttributeName = new TextField();
-        this.applicationSecurityGroupAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(applicationSecurityGroupAttributeNameLabel, 0, 15);
-        gridLayout.addComponent(this.applicationSecurityGroupAttributeName, 1, 15);
+        this.applicationSecurityGroupAttributeName.setWidth("300px");
+        this.applicationSecurityGroupAttributeName.setRequired(true);
         
-        final Label applicationSecurityAttributeNameLabel = new Label("Application Security Description Attribute Name");
+        gridLayout.addComponent(applicationSecurityGroupAttributeNameLabel, 0, 22);
+        gridLayout.setComponentAlignment(applicationSecurityGroupAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.applicationSecurityGroupAttributeName, 1, 22);
+
+        final Label applicationSecurityAttributeNameLabel = new Label("Group Description:");
+        applicationSecurityAttributeNameLabel.setSizeUndefined();
         this.applicationSecurityDescriptionAttributeName = new TextField();
-        this.applicationSecurityDescriptionAttributeName.setWidth("70%");
-
-        gridLayout.addComponent(applicationSecurityAttributeNameLabel, 0, 16);
-        gridLayout.addComponent(this.applicationSecurityDescriptionAttributeName, 1, 16);
+        this.applicationSecurityDescriptionAttributeName.setWidth("300px");
+        this.applicationSecurityDescriptionAttributeName.setRequired(true);
+        
+        gridLayout.addComponent(applicationSecurityAttributeNameLabel, 0, 23);
+        gridLayout.setComponentAlignment(applicationSecurityAttributeNameLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.applicationSecurityDescriptionAttributeName, 1, 23);
 
         
-        BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
+        final BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
 		
+        this.directoryName.setPropertyDataSource(authenticationMethodItem.getItemProperty("name"));
         this.ldapServerUrl.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapServerUrl"));
         this.ldapBindUserDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserDn"));
         this.ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
@@ -324,10 +434,10 @@ public class AuthenticationMethodPanel extends Panel implements View
             {
             	try
             	{
-            		logger.info("method combo value: " + authenticationMethodCombo.getValue());
-            		logger.info("authenticationMethod: " + authenticationMethod);
-            		logger.info("method combo value: " + ((AuthenticationMethodDropdownValue)authenticationMethodCombo.getValue()).getValue());
-            		authenticationMethod.setMethod(((AuthenticationMethodDropdownValue)authenticationMethodCombo.getValue()).getValue());
+            		logger.info("saving auth method: " + authenticationMethod);
+            		authenticationMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+            		// TODO need to set out order
+            		authenticationMethod.setOrder(1);
             		securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
             	}
             	catch(RuntimeException e)
@@ -346,125 +456,11 @@ public class AuthenticationMethodPanel extends Panel implements View
             }
         });
         
-        Button deleteButton = new Button("Delete");
-        deleteButton.addClickListener(new Button.ClickListener() 
+                
+        this.authenticationMethodCombo.addValueChangeListener(new ValueChangeListener() 
         {
-            public void buttonClick(ClickEvent event) 
+            public void valueChange(ValueChangeEvent event) 
             {
-            	try
-            	{
-            		securityService.deleteAuthenticationMethod(authenticationMethod);
-            		
-            		UI.getCurrent().getNavigator().navigateTo("authenticationMethodView");
-            	}
-            	catch(RuntimeException e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-
-                    Notification.show("Error trying to delete the authentication method!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-                    
-                    return;
-            	}
-
-                Notification.show("Deleted!");
-            }
-        });
-
-        final Button testConnectionButton = new Button("Test Connection");
-        testConnectionButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {
-            	try
-            	{
-            		authenticationMethod.setMethod(((AuthenticationMethodDropdownValue)authenticationMethodCombo.getValue()).getValue());
-
-            		authenticationProviderFactory.testAuthenticationConnection(authenticationMethod);
-            	}
-            	catch(RuntimeException e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-
-                    Notification.show("Error occurred while testing connection!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-                    
-                    return;
-            	}
-            	catch(Exception e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-
-                    Notification.show("Error occurred while testing connection!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-                    
-                    return;
-            	}
-
-                Notification.show("Connection Successful!");
-            }
-        });
-        
-        final Button sychronizeButton = new Button("Synchronize");
-        sychronizeButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {
-            	try
-            	{
-            		ldapService.synchronize(authenticationMethod);
-            	}
-            	catch(UnexpectedRollbackException e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-                    
-                    logger.error("Most specific cause: " + e.getMostSpecificCause());
-                    e.getMostSpecificCause().printStackTrace();
-                    logger.error("Most specific cause: " + e.getRootCause());
-                    e.getRootCause().printStackTrace();
-
-                    Notification.show("Error occurred while synchronizing!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-                    
-                    return;
-            	}
-            	catch(RuntimeException e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-
-                    Notification.show("Error occurred while synchronizing!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-                    
-                    return;
-            	}
-            	catch(Exception e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-
-                    Notification.show("Error occurred while synchronizing!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-                    
-                    return;
-            	}
-
-                Notification.show("Synchronized!");
-            }
-        });
-        
-        this.authenticationMethodCombo.addValueChangeListener(new ValueChangeListener() {
-            public void valueChange(ValueChangeEvent event) {
                 if(event.getProperty() != null && event.getProperty().getValue() != null)
                 {
                    AuthenticationMethodDropdownValue value 
@@ -480,47 +476,45 @@ public class AuthenticationMethodPanel extends Panel implements View
                        ldapBindUserPasswordLabel.setVisible(false);
                        ldapBindUserPassword.setVisible(false);
                        
-                       ldapUserSearchDnLabel.setVisible(false);
-                       ldapUserSearchDn.setVisible(false);
+//                       ldapUserSearchDnLabel.setVisible(false);
+//                       ldapUserSearchDn.setVisible(false);
+//                       
+//                       ldapUserSearchFilterLabel.setVisible(false);
+//                       ldapUserSearchFilter.setVisible(false);
+//
+//                       emailAttributeNameLabel.setVisible(false);
+//                       emailAttributeName.setVisible(false);
+//
+//                       userAccountNameAttributeNameLabel.setVisible(false);
+//                       userAccountNameAttributeName.setVisible(false);
+//                       
+//                       accountTypeAttributeNameLabel.setVisible(false);
+//                       accountTypeAttributeName.setVisible(false);
+//                   
+//                       firstNameAttributeNameLabel.setVisible(false);
+//                       firstNameAttributeName.setVisible(false);
+//
+//                       surnameAttributeNameLabel.setVisible(false);
+//                       surnameAttributeName.setVisible(false);
+//
+//                       departmentAttributeNameLabel.setVisible(false);
+//                       departmentAttributeName.setVisible(false);
+//                       
+//                       ldapUserDescriptionAttributeNameLabel.setVisible(false);
+//                       ldapUserDescriptionAttributeName.setVisible(false);
+//                       
+//                       memberOfAttributeNameLabel.setVisible(false);
+//                       memberofAttributeName.setVisible(false);
+//
+//                       applicationSecurityBaseDnLabel.setVisible(false);
+//                       applicationSecurityBaseDn.setVisible(false);
+//                       
+//                       applicationSecurityGroupAttributeNameLabel.setVisible(false);
+//                       applicationSecurityGroupAttributeName.setVisible(false);
+//                       
+//                       applicationSecurityAttributeNameLabel.setVisible(false);
+//                       applicationSecurityDescriptionAttributeName.setVisible(false);
                        
-                       ldapUserSearchFilterLabel.setVisible(false);
-                       ldapUserSearchFilter.setVisible(false);
-
-                       emailAttributeNameLabel.setVisible(false);
-                       emailAttributeName.setVisible(false);
-
-                       userAccountNameAttributeNameLabel.setVisible(false);
-                       userAccountNameAttributeName.setVisible(false);
-                       
-                       accountTypeAttributeNameLabel.setVisible(false);
-                       accountTypeAttributeName.setVisible(false);
-                   
-                       firstNameAttributeNameLabel.setVisible(false);
-                       firstNameAttributeName.setVisible(false);
-
-                       surnameAttributeNameLabel.setVisible(false);
-                       surnameAttributeName.setVisible(false);
-
-                       departmentAttributeNameLabel.setVisible(false);
-                       departmentAttributeName.setVisible(false);
-                       
-                       ldapUserDescriptionAttributeNameLabel.setVisible(false);
-                       ldapUserDescriptionAttributeName.setVisible(false);
-                       
-                       memberOfAttributeNameLabel.setVisible(false);
-                       memberofAttributeName.setVisible(false);
-
-                       applicationSecurityBaseDnLabel.setVisible(false);
-                       applicationSecurityBaseDn.setVisible(false);
-                       
-                       applicationSecurityGroupAttributeNameLabel.setVisible(false);
-                       applicationSecurityGroupAttributeName.setVisible(false);
-                       
-                       applicationSecurityAttributeNameLabel.setVisible(false);
-                       applicationSecurityDescriptionAttributeName.setVisible(false);
-                       
-                       testConnectionButton.setVisible(false);
-                       sychronizeButton.setVisible(false);
                    }
                    else
                    {
@@ -533,121 +527,119 @@ public class AuthenticationMethodPanel extends Panel implements View
                        ldapBindUserPasswordLabel.setVisible(true);
                        ldapBindUserPassword.setVisible(true);
                        
-                       ldapUserSearchDnLabel.setVisible(true);
-                       ldapUserSearchDn.setVisible(true);
-                       
-                       ldapUserSearchFilterLabel.setVisible(true);
-                       ldapUserSearchFilter.setVisible(true);
-
-                       emailAttributeNameLabel.setVisible(true);
-                       emailAttributeName.setVisible(true);
-
-                       userAccountNameAttributeNameLabel.setVisible(true);
-                       userAccountNameAttributeName.setVisible(true);
-                       
-                       accountTypeAttributeNameLabel.setVisible(true);
-
-                       firstNameAttributeNameLabel.setVisible(true);
-                       firstNameAttributeName.setVisible(true);
-
-                       surnameAttributeNameLabel.setVisible(true);
-                       surnameAttributeName.setVisible(true);
-
-                       departmentAttributeNameLabel.setVisible(true);
-                       departmentAttributeName.setVisible(true);
-                       
-                       ldapUserDescriptionAttributeNameLabel.setVisible(true);
-                       ldapUserDescriptionAttributeName.setVisible(true);
-                       
-                       memberOfAttributeNameLabel.setVisible(true);
-                       memberofAttributeName.setVisible(true);
-
-                       applicationSecurityBaseDnLabel.setVisible(true);
-                       applicationSecurityBaseDn.setVisible(true);
-                       
-                       applicationSecurityGroupAttributeNameLabel.setVisible(true);
-                       applicationSecurityGroupAttributeName.setVisible(true);
-                       
-                       applicationSecurityAttributeNameLabel.setVisible(true);
-                       applicationSecurityDescriptionAttributeName.setVisible(true);
-                       
-                       testConnectionButton.setVisible(true);
-                       sychronizeButton.setVisible(true);
+	//                       ldapUserSearchDnLabel.setVisible(true);
+	//                       ldapUserSearchDn.setVisible(true);
+	//                       
+	//                       ldapUserSearchFilterLabel.setVisible(true);
+	//                       ldapUserSearchFilter.setVisible(true);
+	//
+	//                       emailAttributeNameLabel.setVisible(true);
+	//                       emailAttributeName.setVisible(true);
+	//
+	//                       userAccountNameAttributeNameLabel.setVisible(true);
+	//                       userAccountNameAttributeName.setVisible(true);
+	//                       
+	//                       accountTypeAttributeNameLabel.setVisible(true);
+	//
+	//                       firstNameAttributeNameLabel.setVisible(true);
+	//                       firstNameAttributeName.setVisible(true);
+	//
+	//                       surnameAttributeNameLabel.setVisible(true);
+	//                       surnameAttributeName.setVisible(true);
+	//
+	//                       departmentAttributeNameLabel.setVisible(true);
+	//                       departmentAttributeName.setVisible(true);
+	//                       
+	//                       ldapUserDescriptionAttributeNameLabel.setVisible(true);
+	//                       ldapUserDescriptionAttributeName.setVisible(true);
+	//                       
+	//                       memberOfAttributeNameLabel.setVisible(true);
+	//                       memberofAttributeName.setVisible(true);
+	//
+	//                       applicationSecurityBaseDnLabel.setVisible(true);
+	//                       applicationSecurityBaseDn.setVisible(true);
+	//                       
+	//                       applicationSecurityGroupAttributeNameLabel.setVisible(true);
+	//                       applicationSecurityGroupAttributeName.setVisible(true);
+	//                       
+	//                       applicationSecurityAttributeNameLabel.setVisible(true);
+	//                       applicationSecurityDescriptionAttributeName.setVisible(true);
                    }
                 }
             }
         });
 
-        GridLayout buttonLayout = new GridLayout(4, 1);
+        GridLayout buttonLayout = new GridLayout(1, 1);
         buttonLayout.setWidth("200px");
         buttonLayout.setHeight("20px");
         buttonLayout.addComponent(saveButton);
-        buttonLayout.addComponent(deleteButton);
-        buttonLayout.addComponent(sychronizeButton);
-        buttonLayout.addComponent(testConnectionButton);
         
-        gridLayout.addComponent(buttonLayout, 0, 17, 1, 17);
+        gridLayout.addComponent(buttonLayout, 0, 24, 1, 24);
 
-        securityAdministrationPanel.setContent(gridLayout);        
+        VerticalLayout wrapperLayout = new VerticalLayout();
+        wrapperLayout.addComponent(gridLayout);
+        wrapperLayout.setComponentAlignment(gridLayout, Alignment.TOP_CENTER);
+        
+        securityAdministrationPanel.setContent(wrapperLayout);        
         layout.addComponent(securityAdministrationPanel);
         this.setContent(layout);
     }
 
-    /* (non-Javadoc)
-     * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
-     */
-    @Override
-    public void enter(ViewChangeEvent event)
-    {
-    	try
-		{
-    		AuthenticationMethod loadedAuthenticationMethod = null;
-    		
-    		if(this.authenticationMethod != null)
-    		{
-    			loadedAuthenticationMethod= securityService.getAuthenticationMethod(authenticationMethod.getId());
-    		}
-    		
-    		List<AuthenticationMethod> loadedAuthenticationMethods = securityService.getAuthenticationMethods();
-    		
-			if(loadedAuthenticationMethod != null)
-			{
-				this.authenticationMethod = loadedAuthenticationMethod;
-
-				BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
-
-				this.authenticationMethodCombo.setValue(this.authenticationMethodDropdownValuesMap.get(loadedAuthenticationMethod.getMethod()));
-
-		    	this.ldapServerUrl.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapServerUrl"));
-		    	this.ldapBindUserDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserDn"));
-		    	this.ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
-		    	this.ldapUserSearchDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchBaseDn"));
-		    	this.ldapUserSearchFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchFilter"));
-		    	this.emailAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("emailAttributeName"));
-		        this.userAccountNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("userAccountNameAttributeName"));
-		        this.accountTypeAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("accountTypeAttributeName"));
-		        this.applicationSecurityBaseDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityBaseDn"));
-		        this.applicationSecurityGroupAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityGroupAttributeName"));
-		        this.departmentAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("departmentAttributeName"));
-		        this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
-		        this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
-		        this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
-		        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityDescriptionAttributeName"));
-		        this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
-			}
-		}
-		catch (RuntimeException e)
-		{
-			logger.error("Error occurred trying to load authentication method: ", e);
-			
-			StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-
-            Notification.show("Error trying to load the authentication method. ", sw.toString()
-                , Notification.Type.ERROR_MESSAGE);
-		}
-    }
+//    /* (non-Javadoc)
+//     * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+//     */
+//    @Override
+//    public void enter(ViewChangeEvent event)
+//    {
+//    	try
+//		{
+//    		AuthenticationMethod loadedAuthenticationMethod = null;
+//    		
+//    		if(this.authenticationMethod != null)
+//    		{
+//    			loadedAuthenticationMethod= securityService.getAuthenticationMethod(authenticationMethod.getId());
+//    		}
+//    		
+//    		List<AuthenticationMethod> loadedAuthenticationMethods = securityService.getAuthenticationMethods();
+//    		
+//			if(loadedAuthenticationMethod != null)
+//			{
+//				this.authenticationMethod = loadedAuthenticationMethod;
+//
+//				BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
+//
+//				this.authenticationMethodCombo.setValue(this.authenticationMethodDropdownValuesMap.get(loadedAuthenticationMethod.getMethod()));
+//
+//		    	this.ldapServerUrl.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapServerUrl"));
+//		    	this.ldapBindUserDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserDn"));
+//		    	this.ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
+//		    	this.ldapUserSearchDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchBaseDn"));
+//		    	this.ldapUserSearchFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchFilter"));
+//		    	this.emailAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("emailAttributeName"));
+//		        this.userAccountNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("userAccountNameAttributeName"));
+//		        this.accountTypeAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("accountTypeAttributeName"));
+//		        this.applicationSecurityBaseDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityBaseDn"));
+//		        this.applicationSecurityGroupAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityGroupAttributeName"));
+//		        this.departmentAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("departmentAttributeName"));
+//		        this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
+//		        this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
+//		        this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+//		        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityDescriptionAttributeName"));
+//		        this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
+//			}
+//		}
+//		catch (RuntimeException e)
+//		{
+//			logger.error("Error occurred trying to load authentication method: ", e);
+//			
+//			StringWriter sw = new StringWriter();
+//            PrintWriter pw = new PrintWriter(sw);
+//            e.printStackTrace(pw);
+//
+//            Notification.show("Error trying to load the authentication method. ", sw.toString()
+//                , Notification.Type.ERROR_MESSAGE);
+//		}
+//    }
  
     private class AuthenticationMethodDropdownValue
     {
@@ -678,4 +670,12 @@ public class AuthenticationMethodPanel extends Panel implements View
 			return value;
 		}
     }
+
+	/**
+	 * @return the authenticationMethod
+	 */
+	public AuthenticationMethod getAuthenticationMethod()
+	{
+		return authenticationMethod;
+	}
 }

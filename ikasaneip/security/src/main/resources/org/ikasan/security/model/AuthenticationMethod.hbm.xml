@@ -56,7 +56,10 @@
 			<generator class="native" />
 		</id>
 
-		<property name="method" column="Method" type="java.lang.String"/>
+		<property name="method" column="Method" type="java.lang.String" not-null="true"/>
+		<property name="name" column="Name" type="java.lang.String" not-null="true"/>
+		<property name="order" column="AuthOrder" type="java.lang.Integer" not-null="true"/>
+		<property name="lastSynchronised" column="LastSynchronised" type="java.util.Date" not-null="false"/>
 		<property name="ldapServerUrl" column="LdapServerUrl" type="java.lang.String" not-null="false"/>
 		<property name="ldapBindUserDn" column="LdapBindUserDn" type="java.lang.String" not-null="false"/>
 		<property name="ldapBindUserPassword" column="LdapBindUserPassword" type="java.lang.String" not-null="false"/>

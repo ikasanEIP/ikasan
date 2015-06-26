@@ -40,25 +40,40 @@
  */
 package org.ikasan.dashboard.ui.framework.panel;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.LdapService;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.springframework.transaction.UnexpectedRollbackException;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
-import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
-import com.vaadin.ui.TabSheet.Tab;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.Align;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.BaseTheme;
 
 /**
  * 
@@ -72,9 +87,8 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 	private SecurityService securityService;
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
     private LdapService ldapService;
-    private TabSheet tabsheet = new TabSheet();
-    private SelectedTabChangeListener listener;
-    private VerticalLayout mainLayout = new VerticalLayout();
+    private GridLayout mainLayout = new GridLayout(1, 4);
+    private Table directoryTable;
 	
 	/**
      * Constructor
@@ -105,42 +119,81 @@ public class AuthenticationMethodTabPanel extends Panel implements View
     }
 
     protected void init()
-    {
-    	this.listener = new TabSheet.SelectedTabChangeListener() 
-		{
-		    public void selectedTabChange(SelectedTabChangeEvent event) 
-		    {
-		        // Find the tabsheet
-		        TabSheet tabsheet = event.getTabSheet();
-		        
-		        if(tabsheet.getTab(tabsheet.getSelectedTab()).getCaption().equals("+"))
-		        {
-		        	AuthenticationMethodPanel authMethodPanel = new AuthenticationMethodPanel(new AuthenticationMethod(), 
-							securityService, authenticationProviderFactory, ldapService);
-		        	
-		        	tabsheet.removeTab(tabsheet.getTab(tabsheet.getSelectedTab()));
-		        	
-		        	tabsheet.addTab(authMethodPanel, "Authentication Configuration");
-		        	logger.info("selectedTabChange adding new tab: " + tabsheet.getComponentCount());
-		        	tabsheet.setSelectedTab(authMethodPanel);	
-		        	
-		        	VerticalLayout newTab = new VerticalLayout();
-					newTab.setSizeFull();
-					tabsheet.addTab(newTab, "+");
-					
-					logger.info("selectedTabChange adding new + tab: " + tabsheet.getComponentCount());
-		        }
-		    }
-		};
-		
-		this.tabsheet.addSelectedTabChangeListener(listener);
-    	
+    {        
+        Label parapraphOne = new Label("The table below shows the user directories currently configured for Ikasan.");
+        parapraphOne.setStyleName("large");
+        parapraphOne.setHeight("30px");
+        parapraphOne.setWidth("50%");
+        Label parapraphTwo = new Label("The order of the directory is the order in which it will be searched for users and groups." +
+        		" It is recommended that each user exists in a single directory.");
+        parapraphTwo.setStyleName("large");
+        parapraphTwo.setHeight("60px");
+        parapraphTwo.setWidth("50%");
+        
+        this.mainLayout.setWidth("100%");
+        
+        this.mainLayout.addComponent(parapraphOne);
+        this.mainLayout.addComponent(parapraphTwo);
+        
+        Button newDirectoryButton = new Button("Add Directory");
+        newDirectoryButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	final AuthenticationMethodPanel authMethodPanel = new AuthenticationMethodPanel(new AuthenticationMethod(), 
+    					securityService, authenticationProviderFactory, ldapService);
+        		
+        		Window window = new Window("Configure User Directory");
+        		window.setModal(true);
+        		window.setHeight("90%");
+        		window.setWidth("90%");
+        		
+        		window.setContent(authMethodPanel);
+        		
+        		UI.getCurrent().addWindow(window);
+        		
+        		window.addCloseListener(new Window.CloseListener() 
+        		{
+					@Override
+					public void windowClose(Window.CloseEvent e)
+					{
+						populateDirectoryTable(authMethodPanel.getAuthenticationMethod());
+					}
+                });
+            }
+        });
+        
+        this.mainLayout.addComponent(newDirectoryButton);
+        
         this.setWidth("100%");
         this.setHeight("100%");
         
+        this.directoryTable = new Table();
+		this.directoryTable.setSizeFull();
+		this.directoryTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.directoryTable.addContainerProperty("Directory Name", String.class,  null);
+		this.directoryTable.addContainerProperty("Type", String.class,  null);
+		this.directoryTable.addContainerProperty("Order", Layout.class,  null);
+		this.directoryTable.addContainerProperty("Operations", Layout.class,  null);
+		
+		this.directoryTable.setColumnAlignment("Order",
+                Align.CENTER);
+		
+		this.mainLayout.addComponent(this.directoryTable);
+        
         this.mainLayout.setMargin(true);
         
-        this.setContent(this.mainLayout);
+        Panel wrapperPanel = new Panel("User Directories");
+        wrapperPanel.setSizeFull();
+        wrapperPanel.setStyleName("dashboard");
+        wrapperPanel.setContent(this.mainLayout);
+        
+        HorizontalLayout wrapperLayout = new HorizontalLayout();
+        wrapperLayout.setSizeFull();
+        wrapperLayout.setMargin(true);
+        wrapperLayout.addComponent(wrapperPanel);
+        
+        this.setContent(wrapperLayout);
     }
 
 	/* (non-Javadoc)
@@ -148,70 +201,214 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 	 */
 	@Override
 	public void enter(ViewChangeEvent event)
-	{
-		this.tabsheet.removeSelectedTabChangeListener(listener);
-		
-		for(int i=0; i<this.tabsheet.getComponentCount(); i++)
-		{
-			Tab tab = this.tabsheet.getTab(i);
-			this.tabsheet.removeTab(tab);
-		}
-		
-		this.tabsheet.removeAllComponents();
-		
-		logger.info("Event method removing all components: " + tabsheet.getComponentCount());
-		
-		tabsheet = new TabSheet();
-		
-		Panel securityAdministrationPanel = new Panel("Security Administration");
-        securityAdministrationPanel.setStyleName("dashboard");
-        securityAdministrationPanel.setWidth("100%");
-        securityAdministrationPanel.setHeight("100%");
-        
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.addComponent(securityAdministrationPanel);
-        
-        
-		this.tabsheet.setSizeFull();
-		
-		securityAdministrationPanel.setContent(tabsheet);
-		this.mainLayout.removeAllComponents();
-		this.mainLayout.addComponent(securityAdministrationPanel);
-		
-		logger.info("Event method removing all components: " + tabsheet.getComponentCount());
-		
+	{		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 
 		List<AuthenticationMethod> authenticationMethods = this.securityService.getAuthenticationMethods();
 		
-		for(AuthenticationMethod authenticationMethod: authenticationMethods)
-		{
-			AuthenticationMethodPanel authMethodPanel = new AuthenticationMethodPanel(authenticationMethod, 
-					this.securityService, this.authenticationProviderFactory, this.ldapService);
-			
-			VerticalLayout tab = new VerticalLayout();
-			tab.setSizeFull();
-			tab.addComponent(authMethodPanel);
-			tabsheet.addTab(tab, "Authentication Configuration");
-			
-			logger.info("Event method adding new tab: " + tab);
-			
-			authMethodPanel.enter(event);
-		}  
-	
-		Tab tab = tabsheet.getTab(tabsheet.getComponentCount() - 1);
+		this.directoryTable.removeAllItems();
 		
-		if(!tab.getCaption().equals("+"))
+		for(final AuthenticationMethod authenticationMethod: authenticationMethods)
 		{
-			logger.info("Event method adding new + tab: " + tab);
-			VerticalLayout newTab = new VerticalLayout();
-			newTab.setSizeFull();
-			newTab.addComponent(new Panel());
-			tabsheet.addTab(newTab, "+");
+			this.populateDirectoryTable(authenticationMethod);
+		}
+	}
+	
+	protected void populateDirectoryTable(final AuthenticationMethod authenticationMethod)
+	{
+		Button test = new Button("Test");
+		test.setStyleName(BaseTheme.BUTTON_LINK);
+		test.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		authenticationProviderFactory.testAuthenticationConnection(authenticationMethod);
+            	}
+            	catch(RuntimeException e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while testing connection!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            	catch(Exception e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while testing connection!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+
+                Notification.show("Connection Successful!");
+            }
+        });
+		
+		Button disable = new Button("Disable");
+		disable.setStyleName(BaseTheme.BUTTON_LINK);
+		Button delete = new Button("Delete");
+		delete.setStyleName(BaseTheme.BUTTON_LINK);
+		delete.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		securityService.deleteAuthenticationMethod(authenticationMethod);
+            		
+            		List<AuthenticationMethod> authenticationMethods = securityService.getAuthenticationMethods();
+            		
+            		directoryTable.removeAllItems();
+            		
+            		for(final AuthenticationMethod authenticationMethod: authenticationMethods)
+            		{
+            			populateDirectoryTable(authenticationMethod);
+            		}
+            	}
+            	catch(RuntimeException e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error trying to delete the authentication method!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+
+                Notification.show("Deleted!");
+            }
+        });
+		
+		Button edit = new Button("Edit");
+		edit.setStyleName(BaseTheme.BUTTON_LINK);
+		edit.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {            	
+        		AuthenticationMethodPanel authMethodPanel = new AuthenticationMethodPanel(authenticationMethod, 
+    					securityService, authenticationProviderFactory, ldapService);
+        		
+        		Window window = new Window("Configure User Directory");
+        		window.setModal(true);
+        		window.setHeight("90%");
+        		window.setWidth("90%");
+        		
+        		window.setContent(authMethodPanel);
+        		
+        		UI.getCurrent().addWindow(window);
+            }
+        });
+		
+		Button synchronise = new Button("Synchronise");
+		synchronise.setStyleName(BaseTheme.BUTTON_LINK);
+		
+		synchronise.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		ldapService.synchronize(authenticationMethod);
+            		
+            		authenticationMethod.setLastSynchronised(new Date());
+	            	securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+            	}
+            	catch(UnexpectedRollbackException e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    
+                    logger.error("Most specific cause: " + e.getMostSpecificCause());
+                    e.getMostSpecificCause().printStackTrace();
+                    logger.error("Most specific cause: " + e.getRootCause());
+                    e.getRootCause().printStackTrace();
+
+                    Notification.show("Error occurred while synchronizing!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            	catch(RuntimeException e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while synchronizing!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            	catch(Exception e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while synchronizing!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            
+                Notification.show("Synchronized!");
+            }
+        });
+		
+		GridLayout operationsLayout = new GridLayout(9, 2);
+		operationsLayout.setWidth("100%");
+		operationsLayout.addComponent(disable, 0, 0);
+		operationsLayout.addComponent(new Label(" "), 1, 0);
+		operationsLayout.addComponent(edit, 2, 0);
+		operationsLayout.addComponent(new Label(" "), 3, 0);
+		operationsLayout.addComponent(delete, 4, 0);
+		operationsLayout.addComponent(new Label(" "), 5, 0);
+		operationsLayout.addComponent(test, 6, 0);
+		operationsLayout.addComponent(new Label(" "), 7, 0);
+		operationsLayout.addComponent(synchronise, 8, 0);
+
+		TextArea synchronisedTextArea = new TextArea();			
+		synchronisedTextArea.setRows(3);
+		synchronisedTextArea.setWordwrap(true);
+		
+		if(authenticationMethod.getLastSynchronised() != null)
+		{
+			synchronisedTextArea.setValue("This directory was last synchronised at " + authenticationMethod.getLastSynchronised());
+		}
+		else
+		{
+			synchronisedTextArea.setValue("This directory has not been synchronised");
 		}
 		
-		this.tabsheet.addSelectedTabChangeListener(listener);
+		synchronisedTextArea.setSizeFull();
+		synchronisedTextArea.setReadOnly(true);
+		
+		operationsLayout.addComponent(synchronisedTextArea, 0, 1, 8, 1);
+		
+		Image upArrow = new Image("",new ThemeResource("images/arrow-up-2.png"));
+		Image downArrow = new Image("",new ThemeResource("images/arrow-down-2.png"));
+		
+		HorizontalLayout orderLayout = new HorizontalLayout();
+		orderLayout.setWidth("50%");
+		orderLayout.addComponent(upArrow);
+		orderLayout.addComponent(downArrow);
+		
+		this.directoryTable.addItem(new Object[]{authenticationMethod.getName(), "Microsoft Active Directory"
+				, orderLayout, operationsLayout}, authenticationMethod);
 	}
+
+	
 }
