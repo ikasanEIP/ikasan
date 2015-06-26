@@ -421,7 +421,7 @@
         <version.org.jboss.logging.jboss-logging-annotations>1.2.0.Beta1</version.org.jboss.logging.jboss-logging-annotations>
         <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
         <version.dom4j.dom4j>1.6.1</version.dom4j.dom4j>
-        <version.com.jcraft.jsch>0.1.51</version.com.jcraft.jsch>
+        <version.com.jcraft.jsch>0.1.53</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
     </properties>
     <!-- Distribution for releases -->
