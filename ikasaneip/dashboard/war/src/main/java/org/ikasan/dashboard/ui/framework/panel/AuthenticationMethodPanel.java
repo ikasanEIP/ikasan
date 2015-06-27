@@ -436,8 +436,12 @@ public class AuthenticationMethodPanel extends Panel
             	{
             		logger.info("saving auth method: " + authenticationMethod);
             		authenticationMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
-            		// TODO need to set out order
-            		authenticationMethod.setOrder(1);
+            		
+            		if(authenticationMethod.getOrder() == null)
+            		{
+            			authenticationMethod.setOrder(securityService.getNumberOfAuthenticationMethods() + 1);
+            		}
+            		
             		securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
             	}
             	catch(RuntimeException e)

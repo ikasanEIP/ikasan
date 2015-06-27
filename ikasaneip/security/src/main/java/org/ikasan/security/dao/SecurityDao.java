@@ -220,4 +220,17 @@ public interface SecurityDao
      * @return
      */
     public List<Role> getRoleByNameLike(String name);
+    
+    /**
+     * 
+     * @return
+     */
+    public long getNumberOfAuthenticationMethods();
+    
+    /**
+     * 
+     * @param order
+     * @return
+     */
+    public AuthenticationMethod getAuthenticationMethodByOrder(long order);
 }

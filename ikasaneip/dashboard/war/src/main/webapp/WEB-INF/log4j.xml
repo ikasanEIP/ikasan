@@ -57,7 +57,7 @@
     ================================================
   -->
   <appender name="all" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="${jboss.server.home.dir}/log/server.log"/>
+    <param name="File" value="${jboss.server.log.dir}/server.log"/>
     <param name="Threshold" value="INFO"/>
     <param name="Append" value="true"/>
     <param name="MaxFileSize" value="2MB"/>
@@ -68,7 +68,7 @@
   </appender>
 
   <appender name="ikasan-dashboard" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="${jboss.server.home.dir}/log/ikasan-dashboard.log"/>
+  	<param name="File" value="${jboss.server.log.dir}/ikasan-dashboard.log"/>
     <param name="Threshold" value="INFO"/>
     <param name="Append" value="true"/>
     <param name="MaxFileSize" value="2MB"/>

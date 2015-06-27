@@ -157,7 +157,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 					@Override
 					public void windowClose(Window.CloseEvent e)
 					{
-						populateDirectoryTable(authMethodPanel.getAuthenticationMethod());
+						populateAll();
 					}
                 });
             }
@@ -178,6 +178,9 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		
 		this.directoryTable.setColumnAlignment("Order",
                 Align.CENTER);
+		this.directoryTable.setColumnAlignment("Operations",
+                Align.CENTER);
+		this.directoryTable.setColumnExpandRatio("Operations", .2f);
 		
 		this.mainLayout.addComponent(this.directoryTable);
         
@@ -202,6 +205,11 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 	@Override
 	public void enter(ViewChangeEvent event)
 	{		
+		this.populateAll();
+	}
+	
+	protected void populateAll()
+	{
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 
@@ -212,7 +220,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		for(final AuthenticationMethod authenticationMethod: authenticationMethods)
 		{
 			this.populateDirectoryTable(authenticationMethod);
-		}
+		}	
 	}
 	
 	protected void populateDirectoryTable(final AuthenticationMethod authenticationMethod)
@@ -270,10 +278,15 @@ public class AuthenticationMethodTabPanel extends Panel implements View
             		
             		directoryTable.removeAllItems();
             		
+            		long order = 1;
+            		
             		for(final AuthenticationMethod authenticationMethod: authenticationMethods)
             		{
-            			populateDirectoryTable(authenticationMethod);
+            			authenticationMethod.setOrder(order++);
+            			securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
             		}
+            		
+            		populateAll();
             	}
             	catch(RuntimeException e)
             	{
@@ -369,7 +382,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
         });
 		
 		GridLayout operationsLayout = new GridLayout(9, 2);
-		operationsLayout.setWidth("100%");
+		operationsLayout.setWidth("250px");
 		operationsLayout.addComponent(disable, 0, 0);
 		operationsLayout.addComponent(new Label(" "), 1, 0);
 		operationsLayout.addComponent(edit, 2, 0);
@@ -398,13 +411,65 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		
 		operationsLayout.addComponent(synchronisedTextArea, 0, 1, 8, 1);
 		
-		Image upArrow = new Image("",new ThemeResource("images/arrow-up-2.png"));
-		Image downArrow = new Image("",new ThemeResource("images/arrow-down-2.png"));
-		
 		HorizontalLayout orderLayout = new HorizontalLayout();
 		orderLayout.setWidth("50%");
-		orderLayout.addComponent(upArrow);
-		orderLayout.addComponent(downArrow);
+		
+		if(authenticationMethod.getOrder() != 1)
+		{
+			Button upArrow = new Button(new ThemeResource("images/arrow-up-2.png"));
+			upArrow.setStyleName(BaseTheme.BUTTON_LINK);
+			upArrow.addClickListener(new Button.ClickListener() 
+	        {
+	            public void buttonClick(ClickEvent event) 
+	            {            	
+	        		if(authenticationMethod.getOrder() != 1)
+	        		{
+	        			AuthenticationMethod upAuthMethod = securityService.getAuthenticationMethodByOrder(authenticationMethod.getOrder() -1);
+	        			
+	        			upAuthMethod.setOrder(authenticationMethod.getOrder());
+	        			authenticationMethod.setOrder(authenticationMethod.getOrder() - 1);
+	        			
+	        			securityService.saveOrUpdateAuthenticationMethod(upAuthMethod);
+	        			securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+	        			
+	        			populateAll();
+	        		}
+	            }
+	        });
+			
+			orderLayout.addComponent(upArrow);
+		}
+		
+		
+		long numberOfAuthMethods = securityService.getNumberOfAuthenticationMethods();
+		
+		if(authenticationMethod.getOrder() != numberOfAuthMethods)
+		{
+			Button downArrow = new Button(new ThemeResource("images/arrow-down-2.png"));
+			downArrow.setStyleName(BaseTheme.BUTTON_LINK);
+			downArrow.addClickListener(new Button.ClickListener() 
+	        {
+	            public void buttonClick(ClickEvent event) 
+	            {        
+	            	long numberOfAuthMethods = securityService.getNumberOfAuthenticationMethods();
+	            	
+	            	if(authenticationMethod.getOrder() != numberOfAuthMethods)
+	        		{
+	        			AuthenticationMethod downAuthMethod = securityService.getAuthenticationMethodByOrder(authenticationMethod.getOrder()  + 1);
+	        			
+	        			downAuthMethod.setOrder(authenticationMethod.getOrder());
+	        			authenticationMethod.setOrder(authenticationMethod.getOrder() + 1);
+	        			
+	        			securityService.saveOrUpdateAuthenticationMethod(downAuthMethod);
+	        			securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+	        			
+	        			populateAll();
+	        		}
+	            }
+	        });
+			
+			orderLayout.addComponent(downArrow);
+		}
 		
 		this.directoryTable.addItem(new Object[]{authenticationMethod.getName(), "Microsoft Active Directory"
 				, orderLayout, operationsLayout}, authenticationMethod);

@@ -43,7 +43,11 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
@@ -52,6 +56,7 @@ import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 
@@ -239,6 +244,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<AuthenticationMethod> getAuthenticationMethods()
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
+		criteria.addOrder(Order.asc("order"));
 		
 		return (List<AuthenticationMethod>) this.getHibernateTemplate().findByCriteria(criteria);
 	}
@@ -366,5 +372,37 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 		this.getHibernateTemplate().delete(authenticationMethod);
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getNumberOfAuthenticationMethods()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public long getNumberOfAuthenticationMethods()
+	{
+		return (Long)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery("select count(*) from AuthenticationMethod");
+
+                return (Long)query.uniqueResult();
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethodByOrder(int)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
+        criteria.add(Restrictions.eq("order", order));
+        @SuppressWarnings("unchecked")
+		AuthenticationMethod authenticationMethod = (AuthenticationMethod) DataAccessUtils
+        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+        return authenticationMethod;
+	}
 }
