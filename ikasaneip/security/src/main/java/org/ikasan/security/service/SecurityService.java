@@ -254,5 +254,18 @@ public interface SecurityService
      * @return
      */
     public List<Role> getRoleByNameLike(String name);
+    
+    /**
+     * Get the number of AuthenticationMethod records in the database.
+     * @return
+     */
+    public long getNumberOfAuthenticationMethods();
+    
+    /**
+     * 
+     * @param order
+     * @return
+     */
+    public AuthenticationMethod getAuthenticationMethodByOrder(long order);
 }
 

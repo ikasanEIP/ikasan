@@ -52,7 +52,7 @@ public class AuthenticationMethod
 	private Long id;
 	private String name = "";
 	private String method = "";
-	private Integer order;
+	private Long order;
 	private Date lastSynchronised;
 	private String ldapServerUrl = "";
 	private String ldapBindUserDn = "";
@@ -386,7 +386,7 @@ public class AuthenticationMethod
 	/**
 	 * @return the order
 	 */
-	public Integer getOrder()
+	public Long getOrder()
 	{
 		return order;
 	}
@@ -394,7 +394,7 @@ public class AuthenticationMethod
 	/**
 	 * @param order the order to set
 	 */
-	public void setOrder(Integer order)
+	public void setOrder(Long order)
 	{
 		this.order = order;
 	}

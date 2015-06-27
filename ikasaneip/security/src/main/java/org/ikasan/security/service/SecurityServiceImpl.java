@@ -361,4 +361,22 @@ public class SecurityServiceImpl implements SecurityService
 	{
 		this.securityDao.deleteAuthenticationMethod(authenticationMethod);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getNumberOfAuthenticationMethods()
+	 */
+	@Override
+	public long getNumberOfAuthenticationMethods()
+	{
+		return this.securityDao.getNumberOfAuthenticationMethods();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAuthenticationMethodByOrder(int)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
+	{
+		return this.securityDao.getAuthenticationMethodByOrder(order);
+	}
 }

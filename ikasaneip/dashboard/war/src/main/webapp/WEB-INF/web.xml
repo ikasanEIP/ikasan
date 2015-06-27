@@ -36,8 +36,7 @@
         			 classpath:providers-properties.xml
         </param-value>
     </context-param>
-    <!--  classpath:providers-properties.xml ,
-        			 classpath:providers-conf.xml-->
+
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
@@ -87,7 +86,7 @@
 	      <param-name>closeIdleSessions</param-name>
 	      <param-value>true</param-value>
 	    </init-param>
-        <async-supported>true</async-supported>
+        <!-- async-supported>true</async-supported -->
     </servlet>
     <servlet-mapping>
         <servlet-name>Ikasan Dashboard</servlet-name>
@@ -129,7 +128,7 @@
 	</context-param>
 
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>60</session-timeout>
     </session-config>
 
 </web-app>
