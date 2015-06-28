@@ -54,6 +54,7 @@ public class AuthenticationMethod
 	private String method = "";
 	private Long order;
 	private Date lastSynchronised;
+	private boolean enabled;
 	private String ldapServerUrl = "";
 	private String ldapBindUserDn = "";
 	private String ldapBindUserPassword = "";
@@ -415,35 +416,21 @@ public class AuthenticationMethod
 		this.lastSynchronised = lastSynchronised;
 	}
 
-//	/* (non-Javadoc)
-//	 * @see java.lang.Object#toString()
-//	 */
-//	@Override
-//	public String toString()
-//	{
-//		return "AuthenticationMethod [id=" + id + ", name=" + name
-//				+ ", method=" + method + ", order=" + order
-//				+ ", lastSynchronised=" + lastSynchronised + ", ldapServerUrl="
-//				+ ldapServerUrl + ", ldapBindUserDn=" + ldapBindUserDn
-//				+ ", ldapBindUserPassword=" + ldapBindUserPassword
-//				+ ", ldapUserSearchBaseDn=" + ldapUserSearchBaseDn
-//				+ ", applicationSecurityBaseDn=" + applicationSecurityBaseDn
-//				+ ", applicationSecurityGroupAttributeName="
-//				+ applicationSecurityGroupAttributeName
-//				+ ", ldapUserSearchFilter=" + ldapUserSearchFilter
-//				+ ", accountTypeAttributeName=" + accountTypeAttributeName
-//				+ ", userAccountNameAttributeName="
-//				+ userAccountNameAttributeName + ", emailAttributeName="
-//				+ emailAttributeName + ", firstNameAttributeName="
-//				+ firstNameAttributeName + ", surnameAttributeName="
-//				+ surnameAttributeName + ", departmentAttributeName="
-//				+ departmentAttributeName
-//				+ ", ldapUserDescriptionAttributeName="
-//				+ ldapUserDescriptionAttributeName
-//				+ ", applicationSecurityDescriptionAttributeName="
-//				+ applicationSecurityDescriptionAttributeName
-//				+ ", memberofAttributeName=" + memberofAttributeName + "]";
-//	}
+	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+
+	/**
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled)
+	{
+		this.enabled = enabled;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -478,6 +465,7 @@ public class AuthenticationMethod
 				* result
 				+ ((emailAttributeName == null) ? 0 : emailAttributeName
 						.hashCode());
+		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime
 				* result
 				+ ((firstNameAttributeName == null) ? 0
@@ -578,6 +566,8 @@ public class AuthenticationMethod
 				return false;
 		} else if (!emailAttributeName.equals(other.emailAttributeName))
 			return false;
+		if (enabled != other.enabled)
+			return false;
 		if (firstNameAttributeName == null)
 		{
 			if (other.firstNameAttributeName != null)
@@ -671,6 +661,37 @@ public class AuthenticationMethod
 				.equals(other.userAccountNameAttributeName))
 			return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "AuthenticationMethod [id=" + id + ", name=" + name
+				+ ", method=" + method + ", order=" + order
+				+ ", lastSynchronised=" + lastSynchronised + ", enabled="
+				+ enabled + ", ldapServerUrl=" + ldapServerUrl
+				+ ", ldapBindUserDn=" + ldapBindUserDn
+				+ ", ldapBindUserPassword=" + ldapBindUserPassword
+				+ ", ldapUserSearchBaseDn=" + ldapUserSearchBaseDn
+				+ ", applicationSecurityBaseDn=" + applicationSecurityBaseDn
+				+ ", applicationSecurityGroupAttributeName="
+				+ applicationSecurityGroupAttributeName
+				+ ", ldapUserSearchFilter=" + ldapUserSearchFilter
+				+ ", accountTypeAttributeName=" + accountTypeAttributeName
+				+ ", userAccountNameAttributeName="
+				+ userAccountNameAttributeName + ", emailAttributeName="
+				+ emailAttributeName + ", firstNameAttributeName="
+				+ firstNameAttributeName + ", surnameAttributeName="
+				+ surnameAttributeName + ", departmentAttributeName="
+				+ departmentAttributeName
+				+ ", ldapUserDescriptionAttributeName="
+				+ ldapUserDescriptionAttributeName
+				+ ", applicationSecurityDescriptionAttributeName="
+				+ applicationSecurityDescriptionAttributeName
+				+ ", memberofAttributeName=" + memberofAttributeName + "]";
 	}
 
 

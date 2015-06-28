@@ -90,27 +90,30 @@ public class AuthenticationServiceImpl implements AuthenticationService
 			throws AuthenticationServiceException
 	{
 		Authentication authentication = null;
-		
-		
+			
 		List<AuthenticationMethod> authMethods = securityService.getAuthenticationMethods();
-		List<AuthenticationProvider> authProviders = authenticationProviderFactory.getAuthenticationProvider(authMethods);
-
+		
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
 		
-		for(AuthenticationProvider authProvider: authProviders)
+		for(AuthenticationMethod authMethod: authMethods)
 		{
-			try
+			if(authMethod.isEnabled())
 			{
-				authentication = authProvider.authenticate(auth);
-				
-				if(authentication != null)
+				try
 				{
-					return authentication;
+					AuthenticationProvider authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
+					
+					authentication = authProvider.authenticate(auth);
+					
+					if(authentication != null)
+					{
+						return authentication;
+					}
 				}
-			}
-			catch (Exception e)
-			{
-				// We are going to ignore these exception because we will try local authentication as a back stop below.
+				catch (Exception e)
+				{
+					// We are going to ignore these exception because we will try local authentication as a back stop below.
+				}
 			}
 		}
 

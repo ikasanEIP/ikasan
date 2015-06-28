@@ -60,6 +60,7 @@
 		<property name="name" column="Name" type="java.lang.String" not-null="true"/>
 		<property name="order" column="AuthOrder" type="java.lang.Long" not-null="true"/>
 		<property name="lastSynchronised" column="LastSynchronised" type="java.util.Date" not-null="false"/>
+		<property name="enabled" column="Enabled" type="boolean"/>
 		<property name="ldapServerUrl" column="LdapServerUrl" type="java.lang.String" not-null="false"/>
 		<property name="ldapBindUserDn" column="LdapBindUserDn" type="java.lang.String" not-null="false"/>
 		<property name="ldapBindUserPassword" column="LdapBindUserPassword" type="java.lang.String" not-null="false"/>

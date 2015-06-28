@@ -92,23 +92,16 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#getAuthenticationProvider(java.lang.Object)
 	 */
 	@Override
-	public List<AuthenticationProvider> getAuthenticationProvider(List<AuthenticationMethod> authMethods)
+	public AuthenticationProvider getAuthenticationProvider(AuthenticationMethod authMethod)
 	{
-		ArrayList<AuthenticationProvider> authenticationProviders = new ArrayList<AuthenticationProvider>();
+			AuthenticationProvider authProvider = null;
 		
-		for(AuthenticationMethod authMethod: authMethods)
-		{
-			if(authMethod == null)
+			if(authMethod == null || authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LOCAL))
 			{
-				authenticationProviders.add(createLocalAuthenticationProvider());
-			}
-			else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LOCAL))
-			{
-				authenticationProviders.add(createLocalAuthenticationProvider());
+				authProvider = createLocalAuthenticationProvider();
 			}
 			else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP))
 			{
-				AuthenticationProvider authProvider = null;
 				try
 				{
 					authProvider =  createLdapAuthenticationProvider(authMethod);
@@ -117,12 +110,9 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 				{
 					throw new RuntimeException(e);
 				}
-				
-				authenticationProviders.add(authProvider);
 			}
 			else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP_LOCAL))
 			{
-				AuthenticationProvider authProvider = null;
 				try
 				{
 					authProvider =  createLdapLocalAuthenticationProvider(authMethod);
@@ -131,16 +121,13 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 				{
 					throw new RuntimeException(e);
 				}
-				
-				authenticationProviders.add(authProvider);
 			}
 			else
 			{
 				throw new IllegalArgumentException("authMethod not supported: " + authMethod.getMethod());
 			}
-		}
 		
-		return authenticationProviders;
+		return authProvider;
 	}
 	
 	/* (non-Javadoc)

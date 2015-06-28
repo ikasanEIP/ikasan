@@ -63,7 +63,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
@@ -180,7 +179,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
                 Align.CENTER);
 		this.directoryTable.setColumnAlignment("Operations",
                 Align.CENTER);
-		this.directoryTable.setColumnExpandRatio("Operations", .2f);
+		this.directoryTable.setColumnWidth("Operations", 250);
 		
 		this.mainLayout.addComponent(this.directoryTable);
         
@@ -262,8 +261,61 @@ public class AuthenticationMethodTabPanel extends Panel implements View
             }
         });
 		
-		Button disable = new Button("Disable");
-		disable.setStyleName(BaseTheme.BUTTON_LINK);
+		final Button enableDisableButton = new Button();
+		
+		if(authenticationMethod.isEnabled())
+		{
+			enableDisableButton.setCaption("Disable");
+		}
+		else
+		{
+			enableDisableButton.setCaption("Enable");
+		}
+		enableDisableButton.setStyleName(BaseTheme.BUTTON_LINK);
+		enableDisableButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		if(authenticationMethod.isEnabled())
+            		{
+            			authenticationMethod.setEnabled(false);
+            		}
+            		else
+            		{
+            			authenticationMethod.setEnabled(true);
+            		}
+            		
+            		securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+            		
+            		populateAll();
+            	}
+            	catch(RuntimeException e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error trying to enable/disable the authentication method!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            	
+            	if(authenticationMethod.isEnabled())
+        		{
+        			enableDisableButton.setCaption("Disable");
+        			Notification.show("Enabled!");
+        		}
+        		else
+        		{
+        			enableDisableButton.setCaption("Enable");
+        			Notification.show("Disabled!");
+        		}
+            }
+        });
+		
 		Button delete = new Button("Delete");
 		delete.setStyleName(BaseTheme.BUTTON_LINK);
 		delete.addClickListener(new Button.ClickListener() 
@@ -383,7 +435,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		
 		GridLayout operationsLayout = new GridLayout(9, 2);
 		operationsLayout.setWidth("250px");
-		operationsLayout.addComponent(disable, 0, 0);
+		operationsLayout.addComponent(enableDisableButton, 0, 0);
 		operationsLayout.addComponent(new Label(" "), 1, 0);
 		operationsLayout.addComponent(edit, 2, 0);
 		operationsLayout.addComponent(new Label(" "), 3, 0);

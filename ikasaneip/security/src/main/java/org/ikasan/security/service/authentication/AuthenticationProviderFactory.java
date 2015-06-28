@@ -57,7 +57,7 @@ public interface AuthenticationProviderFactory<AUTH_METHOD>
 	 * @param authMethod
 	 * @return
 	 */
-	public List<AuthenticationProvider> getAuthenticationProvider(List<AUTH_METHOD> authMethods);
+	public AuthenticationProvider getAuthenticationProvider(AUTH_METHOD authMethod);
 	
 	/**
 	 * Method to test the authentication connection.
