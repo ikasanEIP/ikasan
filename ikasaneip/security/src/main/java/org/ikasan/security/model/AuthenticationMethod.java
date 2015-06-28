@@ -60,17 +60,17 @@ public class AuthenticationMethod
 	private String ldapBindUserPassword = "";
 	private String ldapUserSearchBaseDn = "";
 	private String applicationSecurityBaseDn = "";
-	private String applicationSecurityGroupAttributeName = "sAMAccountName";
-	private String ldapUserSearchFilter = "(sAMAccountName={0})";
-	private String accountTypeAttributeName = "accountType";
-	private String userAccountNameAttributeName = "sAMAccountName";
-	private String emailAttributeName = "mail";
-	private String firstNameAttributeName = "givenName";
-	private String surnameAttributeName = "sn";
-	private String departmentAttributeName = "department";
-	private String ldapUserDescriptionAttributeName = "description";
-	private String applicationSecurityDescriptionAttributeName = "description";
-	private String memberofAttributeName = "memberOf";
+	private String applicationSecurityGroupAttributeName = "";
+	private String ldapUserSearchFilter = "";
+	private String accountTypeAttributeName = "";
+	private String userAccountNameAttributeName = "";
+	private String emailAttributeName = "";
+	private String firstNameAttributeName = "";
+	private String surnameAttributeName = "";
+	private String departmentAttributeName = "";
+	private String ldapUserDescriptionAttributeName = "";
+	private String applicationSecurityDescriptionAttributeName = "";
+	private String memberofAttributeName = "";
 	
 	public AuthenticationMethod()
 	{
