@@ -77,8 +77,20 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class AuthenticationMethodPanel extends Panel
 {
-    private static final long serialVersionUID = 6005593259860222561L;
-
+	private static final long serialVersionUID = 6005593259860222561L;
+	
+	private static final String APPLICATION_SECURITY_GROUP_ATTRIBUTE_NAME = "sAMAccountName";
+	private static final String LDAP_USER_SEARCH_FILTER = "(sAMAccountName={0})";
+	private static final String ACCOUNT_TYPE_ATTRIBUTE_NAME = "accountType";
+	private static final String USER_ACCOUNT_NAME_ATTRIBUTE_NAME = "sAMAccountName";
+	private static final String EMAIL_ATTRIBUTE_NAME = "mail";
+	private static final String FIRST_NAME_ATTRIBUTE_NAME = "givenName";
+	private static final String SURNAME_ATTRIBUTE_NAME = "sn";
+	private static final String DEPARTMENT_ATTRIBUTE_NAME = "department";
+	private static final String LDAP_USER_DESCRIPTION_ATTRIBUTE_NAME = "description";
+	private static final String APPLICATION_SECURITY_DESCRIPTION_ATTRIBUTE_NAME = "description";
+	private static final String MEMBER_OF_ATTRIBUTE_NAME = "memberOf";
+	
     private Logger logger = Logger.getLogger(AuthenticationMethodPanel.class);
 
     private HashMap<String, AuthenticationMethodDropdownValue> authenticationMethodDropdownValuesMap 
@@ -288,6 +300,35 @@ public class AuthenticationMethodPanel extends Panel
             public void valueChange(ValueChangeEvent event)
             {
                 boolean value = (Boolean) event.getProperty().getValue();
+                
+                if(value == true)
+                {
+                	ldapUserSearchFilter.setValue(LDAP_USER_SEARCH_FILTER);
+                	emailAttributeName.setValue(EMAIL_ATTRIBUTE_NAME);
+                	userAccountNameAttributeName.setValue(USER_ACCOUNT_NAME_ATTRIBUTE_NAME);
+                	accountTypeAttributeName.setValue(ACCOUNT_TYPE_ATTRIBUTE_NAME);
+                	firstNameAttributeName.setValue(FIRST_NAME_ATTRIBUTE_NAME);
+                	surnameAttributeName.setValue(SURNAME_ATTRIBUTE_NAME);
+                	departmentAttributeName.setValue(DEPARTMENT_ATTRIBUTE_NAME);
+                	ldapUserDescriptionAttributeName.setValue(LDAP_USER_DESCRIPTION_ATTRIBUTE_NAME);
+                	memberofAttributeName.setValue(MEMBER_OF_ATTRIBUTE_NAME);
+                	applicationSecurityGroupAttributeName.setValue(APPLICATION_SECURITY_GROUP_ATTRIBUTE_NAME);
+                	applicationSecurityDescriptionAttributeName.setValue(APPLICATION_SECURITY_DESCRIPTION_ATTRIBUTE_NAME);
+                }
+                else
+                {
+                	ldapUserSearchFilter.setValue("");
+                	emailAttributeName.setValue("");
+                	userAccountNameAttributeName.setValue("");
+                	accountTypeAttributeName.setValue("");
+                	firstNameAttributeName.setValue("");
+                	surnameAttributeName.setValue("");
+                	departmentAttributeName.setValue("");
+                	ldapUserDescriptionAttributeName.setValue("");
+                	memberofAttributeName.setValue("");
+                	applicationSecurityGroupAttributeName.setValue("");
+                	applicationSecurityDescriptionAttributeName.setValue("");
+                }
             }
         });
         checkbox.setImmediate(true);
@@ -461,118 +502,6 @@ public class AuthenticationMethodPanel extends Panel
         });
         
                 
-        this.authenticationMethodCombo.addValueChangeListener(new ValueChangeListener() 
-        {
-            public void valueChange(ValueChangeEvent event) 
-            {
-                if(event.getProperty() != null && event.getProperty().getValue() != null)
-                {
-                   AuthenticationMethodDropdownValue value 
-                   	= (AuthenticationMethodDropdownValue)event.getProperty().getValue();
-                   if((value.getCaption()).equals(LOCAL_AUTHENTICATION.getCaption()))
-                   {
-                	   ldapServerUrlLabel.setVisible(false);
-                       ldapServerUrl.setVisible(false);
-                       
-                       ldapBindUserDnLabel.setVisible(false);
-                       ldapBindUserDn.setVisible(false);
-                       
-                       ldapBindUserPasswordLabel.setVisible(false);
-                       ldapBindUserPassword.setVisible(false);
-                       
-//                       ldapUserSearchDnLabel.setVisible(false);
-//                       ldapUserSearchDn.setVisible(false);
-//                       
-//                       ldapUserSearchFilterLabel.setVisible(false);
-//                       ldapUserSearchFilter.setVisible(false);
-//
-//                       emailAttributeNameLabel.setVisible(false);
-//                       emailAttributeName.setVisible(false);
-//
-//                       userAccountNameAttributeNameLabel.setVisible(false);
-//                       userAccountNameAttributeName.setVisible(false);
-//                       
-//                       accountTypeAttributeNameLabel.setVisible(false);
-//                       accountTypeAttributeName.setVisible(false);
-//                   
-//                       firstNameAttributeNameLabel.setVisible(false);
-//                       firstNameAttributeName.setVisible(false);
-//
-//                       surnameAttributeNameLabel.setVisible(false);
-//                       surnameAttributeName.setVisible(false);
-//
-//                       departmentAttributeNameLabel.setVisible(false);
-//                       departmentAttributeName.setVisible(false);
-//                       
-//                       ldapUserDescriptionAttributeNameLabel.setVisible(false);
-//                       ldapUserDescriptionAttributeName.setVisible(false);
-//                       
-//                       memberOfAttributeNameLabel.setVisible(false);
-//                       memberofAttributeName.setVisible(false);
-//
-//                       applicationSecurityBaseDnLabel.setVisible(false);
-//                       applicationSecurityBaseDn.setVisible(false);
-//                       
-//                       applicationSecurityGroupAttributeNameLabel.setVisible(false);
-//                       applicationSecurityGroupAttributeName.setVisible(false);
-//                       
-//                       applicationSecurityAttributeNameLabel.setVisible(false);
-//                       applicationSecurityDescriptionAttributeName.setVisible(false);
-                       
-                   }
-                   else
-                   {
-                	   ldapServerUrlLabel.setVisible(true);
-                       ldapServerUrl.setVisible(true);
-                       
-                       ldapBindUserDnLabel.setVisible(true);
-                       ldapBindUserDn.setVisible(true);
-                       
-                       ldapBindUserPasswordLabel.setVisible(true);
-                       ldapBindUserPassword.setVisible(true);
-                       
-	//                       ldapUserSearchDnLabel.setVisible(true);
-	//                       ldapUserSearchDn.setVisible(true);
-	//                       
-	//                       ldapUserSearchFilterLabel.setVisible(true);
-	//                       ldapUserSearchFilter.setVisible(true);
-	//
-	//                       emailAttributeNameLabel.setVisible(true);
-	//                       emailAttributeName.setVisible(true);
-	//
-	//                       userAccountNameAttributeNameLabel.setVisible(true);
-	//                       userAccountNameAttributeName.setVisible(true);
-	//                       
-	//                       accountTypeAttributeNameLabel.setVisible(true);
-	//
-	//                       firstNameAttributeNameLabel.setVisible(true);
-	//                       firstNameAttributeName.setVisible(true);
-	//
-	//                       surnameAttributeNameLabel.setVisible(true);
-	//                       surnameAttributeName.setVisible(true);
-	//
-	//                       departmentAttributeNameLabel.setVisible(true);
-	//                       departmentAttributeName.setVisible(true);
-	//                       
-	//                       ldapUserDescriptionAttributeNameLabel.setVisible(true);
-	//                       ldapUserDescriptionAttributeName.setVisible(true);
-	//                       
-	//                       memberOfAttributeNameLabel.setVisible(true);
-	//                       memberofAttributeName.setVisible(true);
-	//
-	//                       applicationSecurityBaseDnLabel.setVisible(true);
-	//                       applicationSecurityBaseDn.setVisible(true);
-	//                       
-	//                       applicationSecurityGroupAttributeNameLabel.setVisible(true);
-	//                       applicationSecurityGroupAttributeName.setVisible(true);
-	//                       
-	//                       applicationSecurityAttributeNameLabel.setVisible(true);
-	//                       applicationSecurityDescriptionAttributeName.setVisible(true);
-                   }
-                }
-            }
-        });
-
         GridLayout buttonLayout = new GridLayout(1, 1);
         buttonLayout.setWidth("200px");
         buttonLayout.setHeight("20px");
@@ -588,62 +517,6 @@ public class AuthenticationMethodPanel extends Panel
         layout.addComponent(securityAdministrationPanel);
         this.setContent(layout);
     }
-
-//    /* (non-Javadoc)
-//     * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
-//     */
-//    @Override
-//    public void enter(ViewChangeEvent event)
-//    {
-//    	try
-//		{
-//    		AuthenticationMethod loadedAuthenticationMethod = null;
-//    		
-//    		if(this.authenticationMethod != null)
-//    		{
-//    			loadedAuthenticationMethod= securityService.getAuthenticationMethod(authenticationMethod.getId());
-//    		}
-//    		
-//    		List<AuthenticationMethod> loadedAuthenticationMethods = securityService.getAuthenticationMethods();
-//    		
-//			if(loadedAuthenticationMethod != null)
-//			{
-//				this.authenticationMethod = loadedAuthenticationMethod;
-//
-//				BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
-//
-//				this.authenticationMethodCombo.setValue(this.authenticationMethodDropdownValuesMap.get(loadedAuthenticationMethod.getMethod()));
-//
-//		    	this.ldapServerUrl.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapServerUrl"));
-//		    	this.ldapBindUserDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserDn"));
-//		    	this.ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
-//		    	this.ldapUserSearchDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchBaseDn"));
-//		    	this.ldapUserSearchFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchFilter"));
-//		    	this.emailAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("emailAttributeName"));
-//		        this.userAccountNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("userAccountNameAttributeName"));
-//		        this.accountTypeAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("accountTypeAttributeName"));
-//		        this.applicationSecurityBaseDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityBaseDn"));
-//		        this.applicationSecurityGroupAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityGroupAttributeName"));
-//		        this.departmentAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("departmentAttributeName"));
-//		        this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
-//		        this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
-//		        this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
-//		        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityDescriptionAttributeName"));
-//		        this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
-//			}
-//		}
-//		catch (RuntimeException e)
-//		{
-//			logger.error("Error occurred trying to load authentication method: ", e);
-//			
-//			StringWriter sw = new StringWriter();
-//            PrintWriter pw = new PrintWriter(sw);
-//            e.printStackTrace(pw);
-//
-//            Notification.show("Error trying to load the authentication method. ", sw.toString()
-//                , Notification.Type.ERROR_MESSAGE);
-//		}
-//    }
  
     private class AuthenticationMethodDropdownValue
     {
@@ -674,12 +547,4 @@ public class AuthenticationMethodPanel extends Panel
 			return value;
 		}
     }
-
-	/**
-	 * @return the authenticationMethod
-	 */
-	public AuthenticationMethod getAuthenticationMethod()
-	{
-		return authenticationMethod;
-	}
 }
