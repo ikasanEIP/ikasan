@@ -117,8 +117,8 @@ public class HomeTab extends VerticalLayout implements View
             = new HorizontalSplitPanel(leftContainer, rightContainer);
         this.horizontalSplitPanel.setSizeFull();
         this.horizontalSplitPanel.setSplitPosition(385, Unit.PIXELS);
-        this.horizontalSplitPanel.setLocked(true);
-        this.horizontalSplitPanel.addStyleName("ikasansplitpanel");
+//        this.horizontalSplitPanel.setLocked(true);
+//        this.horizontalSplitPanel.addStyleName("ikasansplitpanel");
         panel.setContent(horizontalSplitPanel);
         super.addComponent(panel);
     }

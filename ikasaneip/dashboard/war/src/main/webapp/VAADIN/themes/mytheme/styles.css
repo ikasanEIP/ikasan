@@ -112,6 +112,12 @@
 	font-size: 15px;
 }
 
+.mytheme .v-panel-content .v-label-ikasan-maroon-large {
+	font-family: "Calibri";
+	color: #99141B;
+	font-size: 15px;
+}
+
 .mytheme .v-panel-content .v-label-xlarge {
 	font-family: "Calibri";
 	color: #666;
@@ -121,8 +127,9 @@
 .mytheme .v-panel-dashboard {
 	 border-style:solid;
 	 /* border-width:thick; */
+	  border-width: 1px;
 	 border-color:LightGrey;
-	 border-radius: 25px;
+	 /*border-radius: 25px;*/
 	 overflow: hidden;
 }
 
@@ -130,7 +137,8 @@
 	 border-style:solid;
 	 /* border-width:thick; */
 	 border-color:LightGrey;
-	 border-radius: 25px;
+	 border-width: 1px;
+	 /*border-radius: 25px;*/
 	 overflow: hidden;
 	 background-color: LightGrey;
 }
@@ -2314,9 +2322,9 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-panel-dashboard {
 	 border-style:solid;
-	 /* border-width:thick; */
+	 border-width: 1px;
 	 border-color:LightGrey;
-	 border-radius: 25px;
+	 /*border-radius: 25px;*/
 	 overflow: hidden;
 }
 
@@ -7196,6 +7204,14 @@ body .mytheme.v-app .v-app-loading {
 	color: #666;
 	font-size: 15px;
 }
+
+.mytheme .v-panel-content .v-label-large-bold {
+	font-family: "Calibri";
+	font-weight: bold;
+	color: #666;
+	font-size: 15px;
+}
+
 
 .mytheme .v-panel-content .v-label-xlarge {
 	font-family: "Calibri";

@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.model;
 
+import java.util.Date;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -48,17 +50,21 @@ package org.ikasan.security.model;
 public class AuthenticationMethod 
 {
 	private Long id;
+	private String name = "";
 	private String method = "";
+	private Long order;
+	private Date lastSynchronised;
+	private boolean enabled;
 	private String ldapServerUrl = "";
 	private String ldapBindUserDn = "";
 	private String ldapBindUserPassword = "";
 	private String ldapUserSearchBaseDn = "";
-	private String ldapUserSearchFilter = "";
 	private String applicationSecurityBaseDn = "";
+	private String applicationSecurityGroupAttributeName = "";
+	private String ldapUserSearchFilter = "";
 	private String accountTypeAttributeName = "";
 	private String userAccountNameAttributeName = "";
 	private String emailAttributeName = "";
-	private String applicationSecurityGroupAttributeName = "";
 	private String firstNameAttributeName = "";
 	private String surnameAttributeName = "";
 	private String departmentAttributeName = "";
@@ -66,6 +72,10 @@ public class AuthenticationMethod
 	private String applicationSecurityDescriptionAttributeName = "";
 	private String memberofAttributeName = "";
 	
+	public AuthenticationMethod()
+	{
+		
+	}
 	
 	/**
 	 * @return the id
@@ -358,6 +368,70 @@ public class AuthenticationMethod
 		this.memberofAttributeName = memberofAttributeName;
 	}
 
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/**
+	 * @return the order
+	 */
+	public Long getOrder()
+	{
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(Long order)
+	{
+		this.order = order;
+	}
+
+	/**
+	 * @return the lastSynchronised
+	 */
+	public Date getLastSynchronised()
+	{
+		return lastSynchronised;
+	}
+
+	/**
+	 * @param lastSynchronised the lastSynchronised to set
+	 */
+	public void setLastSynchronised(Date lastSynchronised)
+	{
+		this.lastSynchronised = lastSynchronised;
+	}
+
+	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+
+	/**
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled)
+	{
+		this.enabled = enabled;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -391,11 +465,15 @@ public class AuthenticationMethod
 				* result
 				+ ((emailAttributeName == null) ? 0 : emailAttributeName
 						.hashCode());
+		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime
 				* result
 				+ ((firstNameAttributeName == null) ? 0
 						: firstNameAttributeName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime
+				* result
+				+ ((lastSynchronised == null) ? 0 : lastSynchronised.hashCode());
 		result = prime * result
 				+ ((ldapBindUserDn == null) ? 0 : ldapBindUserDn.hashCode());
 		result = prime
@@ -421,6 +499,8 @@ public class AuthenticationMethod
 				+ ((memberofAttributeName == null) ? 0 : memberofAttributeName
 						.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime
 				* result
 				+ ((surnameAttributeName == null) ? 0 : surnameAttributeName
@@ -486,6 +566,8 @@ public class AuthenticationMethod
 				return false;
 		} else if (!emailAttributeName.equals(other.emailAttributeName))
 			return false;
+		if (enabled != other.enabled)
+			return false;
 		if (firstNameAttributeName == null)
 		{
 			if (other.firstNameAttributeName != null)
@@ -497,6 +579,12 @@ public class AuthenticationMethod
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (lastSynchronised == null)
+		{
+			if (other.lastSynchronised != null)
+				return false;
+		} else if (!lastSynchronised.equals(other.lastSynchronised))
 			return false;
 		if (ldapBindUserDn == null)
 		{
@@ -547,6 +635,18 @@ public class AuthenticationMethod
 				return false;
 		} else if (!method.equals(other.method))
 			return false;
+		if (name == null)
+		{
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (order == null)
+		{
+			if (other.order != null)
+				return false;
+		} else if (!order.equals(other.order))
+			return false;
 		if (surnameAttributeName == null)
 		{
 			if (other.surnameAttributeName != null)
@@ -569,21 +669,24 @@ public class AuthenticationMethod
 	@Override
 	public String toString()
 	{
-		return "AuthenticationMethod [id=" + id + ", method=" + method
-				+ ", ldapServerUrl=" + ldapServerUrl + ", ldapBindUserDn="
-				+ ldapBindUserDn + ", ldapBindUserPassword="
-				+ ldapBindUserPassword + ", ldapUserSearchBaseDn="
-				+ ldapUserSearchBaseDn + ", ldapUserSearchFilter="
-				+ ldapUserSearchFilter + ", applicationSecurityBaseDn="
-				+ applicationSecurityBaseDn + ", accountTypeAttributeName="
-				+ accountTypeAttributeName + ", userAccountNameAttributeName="
-				+ userAccountNameAttributeName + ", emailAttributeName="
-				+ emailAttributeName
+		return "AuthenticationMethod [id=" + id + ", name=" + name
+				+ ", method=" + method + ", order=" + order
+				+ ", lastSynchronised=" + lastSynchronised + ", enabled="
+				+ enabled + ", ldapServerUrl=" + ldapServerUrl
+				+ ", ldapBindUserDn=" + ldapBindUserDn
+				+ ", ldapBindUserPassword=" + ldapBindUserPassword
+				+ ", ldapUserSearchBaseDn=" + ldapUserSearchBaseDn
+				+ ", applicationSecurityBaseDn=" + applicationSecurityBaseDn
 				+ ", applicationSecurityGroupAttributeName="
 				+ applicationSecurityGroupAttributeName
-				+ ", firstNameAttributeName=" + firstNameAttributeName
-				+ ", surnameAttributeName=" + surnameAttributeName
-				+ ", departmentAttributeName=" + departmentAttributeName
+				+ ", ldapUserSearchFilter=" + ldapUserSearchFilter
+				+ ", accountTypeAttributeName=" + accountTypeAttributeName
+				+ ", userAccountNameAttributeName="
+				+ userAccountNameAttributeName + ", emailAttributeName="
+				+ emailAttributeName + ", firstNameAttributeName="
+				+ firstNameAttributeName + ", surnameAttributeName="
+				+ surnameAttributeName + ", departmentAttributeName="
+				+ departmentAttributeName
 				+ ", ldapUserDescriptionAttributeName="
 				+ ldapUserDescriptionAttributeName
 				+ ", applicationSecurityDescriptionAttributeName="

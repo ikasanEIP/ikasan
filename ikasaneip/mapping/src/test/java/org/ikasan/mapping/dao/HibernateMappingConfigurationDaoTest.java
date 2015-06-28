@@ -47,8 +47,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
@@ -56,6 +54,7 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -156,7 +155,6 @@ public class HibernateMappingConfigurationDaoTest
         String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals(null, result);
     }
 
@@ -175,7 +173,6 @@ public class HibernateMappingConfigurationDaoTest
         String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("BEN", result);
     }
 
@@ -194,7 +191,6 @@ public class HibernateMappingConfigurationDaoTest
         MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg");
 
-        System.out.println(result);
         Assert.assertNotNull(result);
     }
 
@@ -213,7 +209,6 @@ public class HibernateMappingConfigurationDaoTest
         MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg");
 
-        System.out.println(result);
         Assert.assertNotNull(result);
 
         this.xaMappingConfigurationDao.deleteMappingConfiguration(result);       
@@ -221,7 +216,6 @@ public class HibernateMappingConfigurationDaoTest
         result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
                 "Bloomberg");
 
-        System.out.println(result);
         Assert.assertNull(result);
     }
 
@@ -423,7 +417,6 @@ public class HibernateMappingConfigurationDaoTest
 
         List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", null, null, null);
 
-        System.out.println(result);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 3);
     }
@@ -443,7 +436,6 @@ public class HibernateMappingConfigurationDaoTest
         MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("BAD CLIENT", "Salesperson to Salesperson Mapping", "Tradeweb", 
             "Bloomberg");
 
-        System.out.println(result);
         Assert.assertNull(result);
     }
 
@@ -463,7 +455,6 @@ public class HibernateMappingConfigurationDaoTest
         String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Dealer and Product to Account", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("BARCLON", result);
     }
 
@@ -482,7 +473,6 @@ public class HibernateMappingConfigurationDaoTest
         String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("YENTBFB", result);
 
         sourceSystemValues = new ArrayList<String>();
@@ -491,7 +481,6 @@ public class HibernateMappingConfigurationDaoTest
         result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb", 
             "Bloomberg", sourceSystemValues);
 
-        System.out.println(result);
         Assert.assertEquals("YENGOVT", result);
     }
 
@@ -506,7 +495,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         ConfigurationServiceClient result = this.xaMappingConfigurationDao.getConfigurationServiceClientByName("CMI2");
 
-        System.out.println(result);
         Assert.assertEquals("CMI2", result.getName());
         Assert.assertEquals("org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"
             , result.getKeyLocationQueryProcessorType());
@@ -519,7 +507,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationContext> result = this.xaMappingConfigurationDao.getAllConfigurationContexts();
 
-        System.out.println(result);
         Assert.assertEquals(2, result.size());
     }
 
@@ -529,7 +516,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationContext> result = this.xaMappingConfigurationDao.getAllConfigurationContexts();
 
-        System.out.println(result);
         Assert.assertEquals(2, result.size());
 
         for(ConfigurationContext configurationContext: result)
@@ -547,7 +533,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationType> result = this.xaMappingConfigurationDao.getAllConfigurationTypes();
 
-        System.out.println(result);
         Assert.assertEquals(3, result.size());
     }
 
@@ -557,7 +542,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationType> result = this.xaMappingConfigurationDao.getAllConfigurationTypes();
 
-        System.out.println(result);
         Assert.assertEquals(3, result.size());
 
         for(ConfigurationType configurationType: result)
@@ -575,7 +559,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationServiceClient> result = this.xaMappingConfigurationDao.getAllConfigurationServiceClients();
 
-        System.out.println(result);
         Assert.assertEquals(1, result.size());
     }
 
@@ -584,8 +567,7 @@ public class HibernateMappingConfigurationDaoTest
     public void test_get_configuration_service_clients_by_id_success()
     {
         List<ConfigurationServiceClient> result = this.xaMappingConfigurationDao.getAllConfigurationServiceClients();
-
-        System.out.println(result);
+        
         Assert.assertEquals(1, result.size());
 
         for(ConfigurationServiceClient configurationServiceClient: result)
@@ -604,7 +586,6 @@ public class HibernateMappingConfigurationDaoTest
         List<String> result = this.xaMappingConfigurationDao.getKeyLocationQuery
                 ("Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", "CMI2");
 
-        System.out.println(result);
         Assert.assertEquals(1, result.size());
     }
 
@@ -644,7 +625,6 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationServiceClient> result = this.xaMappingConfigurationDao.getAllConfigurationServiceClients();
 
-        System.out.println(result);
         Assert.assertEquals(1, result.size());
 
         List<MappingConfiguration> mappingConfigurations = this.xaMappingConfigurationDao
@@ -658,8 +638,7 @@ public class HibernateMappingConfigurationDaoTest
     public void test_get_mapping_configuration_by_configuration_type_id_success()
     {
         List<ConfigurationType> result = this.xaMappingConfigurationDao.getAllConfigurationTypes();
-
-        System.out.println(result);
+        
         Assert.assertEquals(3, result.size());
 
         for(ConfigurationType configurationType: result)
