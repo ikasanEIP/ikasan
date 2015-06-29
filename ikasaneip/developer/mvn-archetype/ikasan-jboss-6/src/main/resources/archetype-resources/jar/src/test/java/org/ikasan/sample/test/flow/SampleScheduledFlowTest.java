@@ -33,8 +33,10 @@ import javax.annotation.Resource;
         "/shared-conf.xml",
         "/sample-scheduled-flow-conf.xml",
         "/exception-conf.xml",
+        "/ikasan-transaction-conf.xml",
         "/mock-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/substitute-components.xml",
+        "/h2db-datasource-conf.xml"
 })
 public class SampleScheduledFlowTest extends IkasanEIPTest
 {

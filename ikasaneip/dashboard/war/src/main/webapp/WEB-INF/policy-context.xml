@@ -14,7 +14,7 @@
 		<constructor-arg value="policyManagement"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="policyManagementPanel"/>
                    <constructor-arg ref="policyManagementPanel"/>
                 </bean>

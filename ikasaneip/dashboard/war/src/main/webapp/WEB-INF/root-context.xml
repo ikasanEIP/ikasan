@@ -56,63 +56,63 @@
 		<constructor-arg value="topLevel"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="landingView"/>
                    <constructor-arg ref="landingViewPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="dashboardView"/>
                    <constructor-arg ref="dashboardPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="mappingView"/>
                    <constructor-arg ref="mappingView"/>
                 </bean>
-                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="errorView"/>
                    <constructor-arg ref="errorPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="userView"/>
                    <constructor-arg ref="userPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="replayView"/>
                    <constructor-arg ref="replayPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="profileView"/>
                    <constructor-arg ref="profilePanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="hospitalView"/>
                    <constructor-arg ref="hospitalPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="topologyViewPanel"/>
                 </bean> 
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="persistanceSetupView"/>
                    <constructor-arg ref="persistanceSetupPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="authenticationMethodView"/>
                    <constructor-arg ref="authenticationMethodPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementView"/>
                    <constructor-arg ref="principalManagementPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="roleManagementView"/>
                    <constructor-arg ref="roleManagementPanel"/>
                 </bean>
-                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="policyManagementView"/>
                    <constructor-arg ref="policyManagementPanel"/>
                 </bean>
@@ -122,7 +122,7 @@
     </bean>
 	
 	<!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
-    <bean id="navigationPanelProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <bean id="navigationPanelProxy" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
       <property name="targetSource">
         <bean class="org.springframework.aop.target.LazyInitTargetSource">
           <property name="targetBeanName"><idref local="navigationPanel"/></property>
@@ -159,7 +159,7 @@
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
     </bean>
 
-	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodPanel" scope="session">
+	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodTabPanel" scope="session">
 		 <constructor-arg ref="securityService"/>
 		 <constructor-arg ref="authenticationProviderFactory"/>
 		 <constructor-arg ref="ldapService"/>

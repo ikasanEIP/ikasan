@@ -134,8 +134,9 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         return this.dao.storeTargetConfigurationValue(targetConfigurationValue);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.stateModel.service.StateModelHistoryService#recordStateModelHistory(com.mizuho.cmi2.stateModel.model.StateModelHistory)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
      */
     @Override
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem, 
@@ -464,8 +465,9 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         this.dao.deleteTargetConfigurationValue(targetConfigurationValue);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.swiftAlliance.swiftGateway.service.LauSequenceService#getNextSequenceNumber()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getNextSequenceNumber()
      */
     @Override
     public Long getNextSequenceNumber()

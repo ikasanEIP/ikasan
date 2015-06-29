@@ -44,7 +44,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -66,6 +65,8 @@ public class SecurityServiceImpl implements SecurityService
 
 
     /**
+     * Constructor
+     * 
      * @param securityDao
      */
     public SecurityServiceImpl(SecurityDao securityDao)
@@ -78,8 +79,9 @@ public class SecurityServiceImpl implements SecurityService
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#createNewPrincipal(java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#createNewPrincipal(java.lang.String, java.lang.String)
      */
     @Override
     public IkasanPrincipal createNewPrincipal(String name, String type)
@@ -94,8 +96,9 @@ public class SecurityServiceImpl implements SecurityService
         return principal;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#savePrincipal(com.mizuho.cmi2.security.model.Principal)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#savePrincipal(org.ikasan.security.model.IkasanPrincipal)
      */
     @Override
     public void savePrincipal(IkasanPrincipal principal)
@@ -103,8 +106,9 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.saveOrUpdatePrincipal(principal);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#createNewRole(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#createNewRole(java.lang.String, java.lang.String)
      */
     @Override
     public Role createNewRole(String name, String description)
@@ -117,8 +121,9 @@ public class SecurityServiceImpl implements SecurityService
         return role;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#createNewPolicy(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#createNewPolicy(java.lang.String, java.lang.String)
      */
     @Override
     public Policy createNewPolicy(String name, String description)
@@ -132,8 +137,9 @@ public class SecurityServiceImpl implements SecurityService
         return policy;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#saveRole(com.mizuho.cmi2.security.model.Role)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#saveRole(org.ikasan.security.model.Role)
      */
     @Override
     public void saveRole(Role role) 
@@ -141,8 +147,9 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.saveOrUpdateRole(role);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#savePolicy(com.mizuho.cmi2.security.model.Policy)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#savePolicy(org.ikasan.security.model.Policy)
      */
     @Override
     public void savePolicy(Policy policy) 
@@ -150,8 +157,9 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.saveOrUpdatePolicy(policy);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#findPrincipalByName(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#findPrincipalByName(java.lang.String)
      */
     @Override
     public IkasanPrincipal findPrincipalByName(String name) 
@@ -159,8 +167,9 @@ public class SecurityServiceImpl implements SecurityService
         return this.securityDao.getPrincipalByName(name);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#deletePrincipal(com.mizuho.cmi2.security.model.Principal)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#deletePrincipal(org.ikasan.security.model.IkasanPrincipal)
      */
     @Override
     public void deletePrincipal(IkasanPrincipal principal) 
@@ -168,8 +177,9 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.deletePrincipal(principal);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#deleteRole(com.mizuho.cmi2.security.model.Role)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#deleteRole(org.ikasan.security.model.Role)
      */
     @Override
     public void deleteRole(Role role) 
@@ -177,8 +187,9 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.deleteRole(role);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#deletePolicy(com.mizuho.cmi2.security.model.Policy)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#deletePolicy(org.ikasan.security.model.Policy)
      */
     @Override
     public void deletePolicy(Policy policy) 
@@ -186,8 +197,9 @@ public class SecurityServiceImpl implements SecurityService
     	this.securityDao.deletePolicy(policy);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#getAllPrincipals()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#getAllPrincipals()
      */
     @Override
     public List<IkasanPrincipal> getAllPrincipals() 
@@ -204,17 +216,19 @@ public class SecurityServiceImpl implements SecurityService
 		return this.securityDao.getPrincipalByNameLike(name);
 	}
 
-	/* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#getAllRoles()
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAllRoles()
+	 */
     @Override
     public List<Role> getAllRoles() 
     {
         return this.securityDao.getAllRoles();
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#getAllPolicies()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#getAllPolicies()
      */
     @Override
     public List<Policy> getAllPolicies() 
@@ -228,7 +242,6 @@ public class SecurityServiceImpl implements SecurityService
      */
     public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) 
     {
-    	authenticationMethod.setId(SecurityConstants.AUTH_METHOD_ID);
 		this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
     }
 
@@ -236,9 +249,9 @@ public class SecurityServiceImpl implements SecurityService
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
      */
-    public AuthenticationMethod getAuthenticationMethod() 
+    public List<AuthenticationMethod> getAuthenticationMethods() 
     {
-		return this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
+		return this.securityDao.getAuthenticationMethods();
     }
 
 	/* (non-Javadoc)
@@ -329,5 +342,41 @@ public class SecurityServiceImpl implements SecurityService
 	public List<Role> getRoleByNameLike(String name)
 	{
 		return this.securityDao.getRoleByNameLike(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethod(Long id)
+	{
+		return this.securityDao.getAuthenticationMethod(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#deleteAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 */
+	@Override
+	public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod)
+	{
+		this.securityDao.deleteAuthenticationMethod(authenticationMethod);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getNumberOfAuthenticationMethods()
+	 */
+	@Override
+	public long getNumberOfAuthenticationMethods()
+	{
+		return this.securityDao.getNumberOfAuthenticationMethods();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAuthenticationMethodByOrder(int)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
+	{
+		return this.securityDao.getAuthenticationMethodByOrder(order);
 	}
 }
