@@ -389,6 +389,8 @@ public class AuthenticationMethodTabPanel extends Panel implements View
             		
             		authenticationMethod.setLastSynchronised(new Date());
 	            	securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
+	            	
+	            	populateAll();
             	}
             	catch(UnexpectedRollbackException e)
             	{
