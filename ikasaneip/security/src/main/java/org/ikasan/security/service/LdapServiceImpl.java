@@ -150,11 +150,26 @@ public class LdapServiceImpl implements LdapService
 		String accountType = dir.getStringAttribute(authenticationMethod.getAccountTypeAttributeName());
 		LdapUser user = null;
 
-		if (accountType != null && accountType.equals("Regular User"))
-		{
+//		if (accountType == null || (accountType != null && accountType.equals("Regular User")))
+//		{
+//			String accountName = dir.getStringAttribute(authenticationMethod.getUserAccountNameAttributeName());
+//			String cn = dir.getStringAttribute("cn");
+//
+//			if(accountType == null && accountName != null && cn != null && !accountName.equals(cn))
+//			{
+//				return null;
+//			}
+			
 			String email = dir.getStringAttribute(authenticationMethod.getEmailAttributeName());
 			String surname = dir.getStringAttribute(authenticationMethod.getSurnameAttributeName());
+			String firstName = dir.getStringAttribute(authenticationMethod.getFirstNameAttributeName());
+			
 			String accountName = dir.getStringAttribute(authenticationMethod.getUserAccountNameAttributeName());
+			
+			if(accountName == null)
+			{
+				return null;
+			}
 			
 			if (email == null || email.length() == 0)
 			{
@@ -166,16 +181,21 @@ public class LdapServiceImpl implements LdapService
 				surname = "no surname";
 			}
 			
+			if (firstName == null || firstName.length() == 0)
+			{
+				firstName = "no firstname";
+			}
+			
 			user = new LdapUser();
 			user.accountName = accountName.toLowerCase();
 			user.email = email;
 			user.surname = surname;
 			user.accountType = accountType;
-			user.firstName = dir.getStringAttribute(authenticationMethod.getFirstNameAttributeName());
+			user.firstName = firstName;
 			user.department = dir.getStringAttribute(authenticationMethod.getDepartmentAttributeName());
 			user.description = dir.getStringAttribute(authenticationMethod.getLdapUserDescriptionAttributeName());
 			user.memberOf = dir.getStringAttributes(authenticationMethod.getMemberofAttributeName());
-		}
+//		}
 
 		return user;
 	}
@@ -285,13 +305,16 @@ public class LdapServiceImpl implements LdapService
 	 * @see org.ikasan.security.service.LdapService#synchronize()
 	 */
 	@Override
-	public void synchronize() throws LdapServiceException
+	public void synchronize(AuthenticationMethod authenticationMethod) throws LdapServiceException
 	{
-
+		this.authenticationMethod = authenticationMethod;
+		
 		List<String> applicationSecurities = getAllApplicationSecurity();
 		
 		for (String applicationSecurity : applicationSecurities)
 		{
+			logger.info("Trying to get principal by name: " + applicationSecurity);
+
 			IkasanPrincipal principal = securityDao
 					.getPrincipalByName(applicationSecurity);
 
@@ -300,6 +323,7 @@ public class LdapServiceImpl implements LdapService
 				principal = getApplicationSecurity(applicationSecurity);
 			}
 
+			logger.info("Adding app sec principal: " + principal);
 			if(principal != null)
 			{
 				this.securityDao.saveOrUpdatePrincipal(principal);
@@ -312,8 +336,10 @@ public class LdapServiceImpl implements LdapService
 
 		for (String username : users)
 		{
+			logger.info("Trying to get user: " + username);
 			LdapUser ldapUser = getLdapUser(username.substring(3, username.length()));
 			
+			logger.info("Got user: " + ldapUser);
 			if (ldapUser == null)
 			{
 				continue;
@@ -330,6 +356,7 @@ public class LdapServiceImpl implements LdapService
 				user.setSurname(ldapUser.surname);
 				user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 				
+				logger.info(user);
 				this.userDao.save(user);
 				
 				user = userDao.getUser(ldapUser.accountName);
@@ -342,7 +369,14 @@ public class LdapServiceImpl implements LdapService
 				principal = new IkasanPrincipal();
 				principal.setName(ldapUser.accountName);
 				principal.setType("user");
-				principal.setDescription(ldapUser.description);
+				if(ldapUser.description == null)
+				{
+					principal.setDescription("No description");
+				}
+				else
+				{
+					principal.setDescription(ldapUser.description);
+				}
 			}
 
 			if(principal.getRoles() != null)
@@ -357,21 +391,26 @@ public class LdapServiceImpl implements LdapService
 				principal.setRoles(roles);
 			}
 
+			logger.info(principal);
+			
 			securityDao.saveOrUpdatePrincipal(principal);				
 			ikasanPrincipals.add(principal);
 			
-			for(String name: ldapUser.memberOf)
+			if(ldapUser.memberOf != null)
 			{
-				if(name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
+				for(String name: ldapUser.memberOf)
 				{
-					DistinguishedName dn = new DistinguishedName(name);
-					String cn = dn.getValue("cn");
-					
-					principal = this.securityDao.getPrincipalByName(cn);
-					
-					if(principal != null)
+					if(name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
 					{
-						ikasanPrincipals.add(principal);
+						DistinguishedName dn = new DistinguishedName(name);
+						String cn = dn.getValue("cn");
+						
+						principal = this.securityDao.getPrincipalByName(cn);
+						
+						if(principal != null)
+						{
+							ikasanPrincipals.add(principal);
+						}
 					}
 				}
 			}
@@ -382,6 +421,7 @@ public class LdapServiceImpl implements LdapService
 			user.setDepartment(ldapUser.department);
 			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 
+			logger.info(user);
 			this.userDao.save(user);
 				
 		}
@@ -389,15 +429,10 @@ public class LdapServiceImpl implements LdapService
 
 	protected AuthenticationMethod getAuthenticationMethod()
 			throws LdapServiceException
-	{
-		if(this.authenticationMethod == null)
-		{
-			this.authenticationMethod = this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
-		}
-		
+	{		
 		if(this.authenticationMethod == null)
 		 {
-			 throw new	LdapServiceException("Unable to load the AuthenticationMethod");
+			 throw new	LdapServiceException("Null AuthenticationMethod!");
 		 }
 		
 		return this.authenticationMethod;

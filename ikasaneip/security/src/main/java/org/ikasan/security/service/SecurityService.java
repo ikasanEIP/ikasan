@@ -191,11 +191,24 @@ public interface SecurityService
 
     /**
      * 
+     * @return
+     * @throws SecurityDaoException
+     */
+    public List<AuthenticationMethod> getAuthenticationMethods();
+    
+    /**
+     * 
      * @param id
      * @return
      * @throws SecurityDaoException
      */
-    public AuthenticationMethod getAuthenticationMethod();
+    public AuthenticationMethod getAuthenticationMethod(Long id);
+
+    /**
+     * 
+     * @param authenticationMethod
+     */
+    public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
      * 
@@ -241,5 +254,18 @@ public interface SecurityService
      * @return
      */
     public List<Role> getRoleByNameLike(String name);
+    
+    /**
+     * Get the number of AuthenticationMethod records in the database.
+     * @return
+     */
+    public long getNumberOfAuthenticationMethods();
+    
+    /**
+     * 
+     * @param order
+     * @return
+     */
+    public AuthenticationMethod getAuthenticationMethodByOrder(long order);
 }
 

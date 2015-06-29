@@ -11,6 +11,7 @@
         <property name="name"               value="Sample Scheduled Flow Name" />
         <property name="description"        value="Sample Scheduled Flow Description" />
         <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
         <property name="consumer">
             <bean class="org.ikasan.builder.FlowElementFactory">
                 <property name="name"       value="Scheduled Consumer Name"/>

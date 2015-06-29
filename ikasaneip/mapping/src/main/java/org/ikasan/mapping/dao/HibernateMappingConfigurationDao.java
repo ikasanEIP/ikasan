@@ -347,7 +347,6 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     public List<MappingConfiguration> getMappingConfigurations(final String clientName, final String mappingConfigurationType,
             final String sourceContextName, final String targetContextName)
     {
-        logger.info("Using new query for mapping configuration search.");
         return (List<MappingConfiguration>)this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
@@ -407,7 +406,6 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     public List<MappingConfigurationLite> getMappingConfigurationLites(final String clientName, final String mappingConfigurationType,
             final String sourceContextName, final String targetContextName)
     {
-        logger.info("Using new query for mapping configuration search.");
         return (List<MappingConfigurationLite>)this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
@@ -633,8 +631,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         this.getHibernateTemplate().delete(targetConfigurationValue);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.swiftAlliance.swiftGateway.dao.LauSequenceDao#getLauSequence()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getSourceConfigurationGroupSequence()
      */
     @Override
     public SourceConfigurationGroupSequence getSourceConfigurationGroupSequence()
@@ -645,8 +644,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return (SourceConfigurationGroupSequence) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.swiftAlliance.swiftGateway.dao.LauSequenceDao#saveLauSequence(com.mizuho.cmi2.swiftAlliance.swiftGateway.model.LauSequence)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#saveSourceConfigurationGroupSequence(org.ikasan.mapping.model.SourceConfigurationGroupSequence)
      */
     @Override
     public void saveSourceConfigurationGroupSequence(SourceConfigurationGroupSequence sequence)

@@ -197,6 +197,7 @@ public class MappingConfigurationPanel extends Panel implements View
     @SuppressWarnings("serial")
     protected void init()
     {
+    	this.setStyleName("dashboard");
         layout = new GridLayout(4, 5);
         paramQueriesLayout = new VerticalLayout();
 

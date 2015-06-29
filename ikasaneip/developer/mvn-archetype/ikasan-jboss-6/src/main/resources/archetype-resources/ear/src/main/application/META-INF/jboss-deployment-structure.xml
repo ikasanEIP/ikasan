@@ -2,6 +2,9 @@
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
     <deployment>
         <!-- Exclusions allow you to prevent the server from automatically adding some dependencies -->
+        <exclude-subsystems>
+            <subsystem name="jaxrs" />
+        </exclude-subsystems>
         <exclusions>
             <module name="org.apache.commons.logging" />
             <module name="org.apache.log4j" />
@@ -13,7 +16,7 @@
             <module name="org.slf4j.impl" />
         </exclusions>
     </deployment>
-    <sub-deployment name="ikasan-webconsole-skinny-war-${ikasan.version}.war">
+    <sub-deployment name="ikasan-webconsole-skinny-war-${version.ikasan}.war">
         <exclusions>
             <module name="org.apache.commons.logging" />
             <module name="org.apache.log4j" />

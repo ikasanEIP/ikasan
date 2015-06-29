@@ -43,7 +43,11 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
@@ -52,6 +56,7 @@ import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 
@@ -62,17 +67,19 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateSecurityDao extends HibernateDaoSupport implements SecurityDao
 {
 
- 	/* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#addRole(com.mizuho.cmi2.security.model.Role)
-     */
+ 	/*
+ 	 * (non-Javadoc)
+ 	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateRole(org.ikasan.security.model.Role)
+ 	 */
     @Override
     public void saveOrUpdateRole(Role role)
     {
     	this.getHibernateTemplate().saveOrUpdate(role);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#addRole(com.mizuho.cmi2.security.model.Role)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicy(org.ikasan.security.model.Policy)
      */
     @Override
     public void saveOrUpdatePolicy(Policy policy)
@@ -80,8 +87,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     	this.getHibernateTemplate().saveOrUpdate(policy);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#addPrincipal(com.mizuho.cmi2.security.model.Principal)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePrincipal(org.ikasan.security.model.IkasanPrincipal)
      */
     @Override
     public void saveOrUpdatePrincipal(IkasanPrincipal principal)
@@ -89,8 +97,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     	this.getHibernateTemplate().saveOrUpdate(principal);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#getPrincipalByName(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getPrincipalByName(java.lang.String)
      */
     @SuppressWarnings("unchecked")
 	@Override 
@@ -103,8 +112,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return principal;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#getAllPolicies()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getAllPolicies()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -115,8 +125,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return (List<Policy>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#getAllRoles()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getAllRoles()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -127,8 +138,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return (List<Role>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#getAllPrincipals()
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getAllPrincipals()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -139,8 +151,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#getPolicyByName(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getPolicyByName(java.lang.String)
      */
     @SuppressWarnings("unchecked")
 	@Override
@@ -153,8 +166,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return policy;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#getRoleByName(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getRoleByName(java.lang.String)
      */
     @SuppressWarnings("unchecked")
 	@Override
@@ -167,8 +181,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return role;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#deleteRole(com.mizuho.cmi2.security.model.Role)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#deleteRole(org.ikasan.security.model.Role)
      */
     @Override
     public void deleteRole(Role role)
@@ -176,8 +191,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         this.getHibernateTemplate().delete(role);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#deletePolicy(com.mizuho.cmi2.security.model.Policy)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#deletePolicy(org.ikasan.security.model.Policy)
      */
     @Override
     public void deletePolicy(Policy policy)
@@ -185,8 +201,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         this.getHibernateTemplate().delete(policy);
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.dao.SecurityDao#deletePrincipal(com.mizuho.cmi2.security.model.Principal)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#deletePrincipal(org.ikasan.security.model.IkasanPrincipal)
      */
     @Override
     public void deletePrincipal(IkasanPrincipal principal)
@@ -200,6 +217,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
 	{
+		
 		this.getHibernateTemplate().saveOrUpdate(authenticationMethod);
 	}
 
@@ -216,6 +234,19 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 
         return authenticationMethod;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethod(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AuthenticationMethod> getAuthenticationMethods()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
+		criteria.addOrder(Order.asc("order"));
+		
+		return (List<AuthenticationMethod>) this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
 	/* (non-Javadoc)
@@ -252,7 +283,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<IkasanPrincipal> getPrincipalByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<IkasanPrincipal> results = (List<IkasanPrincipal>) getHibernateTemplate().find("from IkasanPrincipal where name LIKE ?", name + '%');
+		List<IkasanPrincipal> results = (List<IkasanPrincipal>) getHibernateTemplate().findByNamedParam("from IkasanPrincipal where name LIKE :name", "name", name + '%');
 
         return results;
 	}
@@ -276,7 +307,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<Policy> getPolicyByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<Policy> results = (List<Policy>) getHibernateTemplate().find("from Policy where name LIKE ?", name + '%');
+		List<Policy> results = (List<Policy>) getHibernateTemplate().findByNamedParam("from Policy where name LIKE :name", "name", name + '%');
 
         return results;
 	}
@@ -288,7 +319,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<Role> getRoleByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<Role> results = (List<Role>) getHibernateTemplate().find("from Role where name LIKE ?", name + '%');
+		List<Role> results = (List<Role>) getHibernateTemplate().findByNamedParam("from Role where name LIKE :name", "name", name + '%');
 
         return results;
 	}
@@ -332,5 +363,46 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	     return (List<Policy>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#deleteAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 */
+	@Override
+	public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod)
+	{
+		this.getHibernateTemplate().delete(authenticationMethod);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getNumberOfAuthenticationMethods()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public long getNumberOfAuthenticationMethods()
+	{
+		return (Long)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery("select count(*) from AuthenticationMethod");
+
+                return (Long)query.uniqueResult();
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethodByOrder(int)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
+        criteria.add(Restrictions.eq("order", order));
+        @SuppressWarnings("unchecked")
+		AuthenticationMethod authenticationMethod = (AuthenticationMethod) DataAccessUtils
+        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+        return authenticationMethod;
+	}
 }

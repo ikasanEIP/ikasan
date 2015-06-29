@@ -14,11 +14,11 @@
 		<constructor-arg value="user"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="userPanel"/>
                    <constructor-arg ref="userPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementPanel"/>
                    <constructor-arg ref="principalManagementPanel"/>
                 </bean>
@@ -31,7 +31,7 @@
 		<constructor-arg value="principalManagement"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementPanel"/>
                    <constructor-arg ref="principalManagementPanel"/>
                 </bean>
@@ -44,11 +44,11 @@
 		<constructor-arg value="roleManagement"/>
         <constructor-arg>
             <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="roleManagementPanel"/>
                    <constructor-arg ref="roleManagementPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementPanel"/>
                    <constructor-arg ref="principalManagementPanel"/>
                 </bean>
