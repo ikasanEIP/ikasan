@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import javax.resource.ResourceException;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -54,7 +54,6 @@ import org.ikasan.connector.base.journal.TransactionJournalingException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -82,11 +81,11 @@ public class SFTPManagedConnectionTest
      */
     @Test public void testRecover() throws XAException, TransactionJournalingException
     {
-        Mockery interfaceMockery = new Mockery();
-        final TransactionJournal transactionJournal = interfaceMockery.mock(TransactionJournal.class);
+
+        final TransactionJournal transactionJournal = classMockery.mock(TransactionJournal.class);
         final Xid[] xids = new Xid[1];
         // mock the TransactionJournal
-        interfaceMockery.checking(new Expectations()
+        classMockery.checking(new Expectations()
         {
             {
                 one(transactionJournal).getExecutedTransactions();
@@ -113,12 +112,11 @@ public class SFTPManagedConnectionTest
      */
     @Test public void testRecover_handlesJournalingException() throws TransactionJournalingException
     {
-        Mockery interfaceMockery = new Mockery();
-        final TransactionJournal transactionJournal = interfaceMockery.mock(TransactionJournal.class);
+        final TransactionJournal transactionJournal = classMockery.mock(TransactionJournal.class);
         final TransactionJournalingException journalingException = new TransactionJournalingException(
                 "A journaling exception", null); //$NON-NLS-1$
         // mock the TransactionJournal
-        interfaceMockery.checking(new Expectations()
+        classMockery.checking(new Expectations()
         {
             {
                 one(transactionJournal).getExecutedTransactions();
@@ -186,13 +184,7 @@ public class SFTPManagedConnectionTest
      */
     private SFTPManagedConnectionFactory getMockedManagedConnectionFactory()
     {
-        // Mock the
-        Mockery classMockery = new Mockery()
-        {
-            {
-                setImposteriser(ClassImposteriser.INSTANCE);
-            }
-        };
+
         final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
                 .mock(SFTPManagedConnectionFactory.class);
         return managedConnectionFactory;
@@ -209,50 +201,5 @@ public class SFTPManagedConnectionTest
             }
         });
         return connectionRequestInfo;
-    }
-
-    @Ignore
-    @Test
-    public void testOpenSession_when_user_password_provided() throws ResourceException
-    {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
-        final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
-                .mock(SFTPManagedConnectionFactory.class);
-
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue("hostname"));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(22));
-                exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue(null));
-                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(1));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue("username"));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue("password"));
-                atLeast(1).of(managedConnectionFactory).getLocalHostname();
-                will(returnValue("locaalhost"));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-            }
-        });
-
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
-                managedConnectionFactory, connectionRequestInfo);
-
-        managedConnection.openSession();
-
     }
 }
