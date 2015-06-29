@@ -423,6 +423,7 @@
         <version.dom4j.dom4j>1.6.1</version.dom4j.dom4j>
         <version.com.jcraft.jsch>0.1.53</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
+        <version.org.apache.sshd>0.14.0</version.org.apache.sshd>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -1617,6 +1618,12 @@
                 <groupId>dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${version.dom4j.dom4j}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-core</artifactId>
+                <version>${version.org.apache.sshd}</version>
             </dependency>
 
         </dependencies>
