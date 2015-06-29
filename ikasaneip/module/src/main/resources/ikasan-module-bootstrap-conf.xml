@@ -9,6 +9,7 @@
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="moduleActivator" />
         <constructor-arg ref="userDetailsService" />
+        <constructor-arg ref="localTxTopologyService" />
         <property name="loaderConfiguration" value="loader-conf.xml" />
     </bean>
 
