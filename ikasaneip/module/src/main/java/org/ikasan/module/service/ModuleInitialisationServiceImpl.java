@@ -49,6 +49,7 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.BeansException;
@@ -92,6 +93,9 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     /** UserService provides access to users and authorities */
     private UserService userService;
 
+    /** TopologyService provides access to module metadata tables */
+    private TopologyService topologyService;
+
     /** Container for Spring application contexts loaded internally by this class */
     private List<AbstractApplicationContext> innerContexts;
 
@@ -101,7 +105,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * @param moduleActivator
      * @param userService
      */
-    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator, UserService userService)
+    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
+            UserService userService, TopologyService topologyService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -118,6 +123,12 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
         this.userService = userService;
         if(userService == null)
+        {
+            throw new IllegalArgumentException("userService cannot be 'null'");
+        }
+
+        this.topologyService = topologyService;
+        if(topologyService == null)
         {
             throw new IllegalArgumentException("userService cannot be 'null'");
         }
@@ -186,6 +197,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             {
                 try {
                     this.initialiseModuleSecurity(module);
+                    // intialise config into db
+                    this.initialiseModuleMetaData(module);
                     this.moduleContainer.add(module);
                     this.moduleActivator.activate(module);
                 } catch (RuntimeException re){
@@ -276,5 +289,23 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
             this.userService.createAuthority(moduleAdminAuthority);
         }
+    }
+
+    /**
+     * Creates the Module metadata in IkasanModule DB table for the module if they do not already exist
+     *
+     * @param module - The module
+     */
+    private void initialiseModuleMetaData(Module module)
+    {
+        org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
+
+        if (moduleDB==null)
+        {
+            logger.info("module does not exist [" + module.getName() + "], creating...");
+            moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
+            this.topologyService.save(moduleDB);
+        }
+
     }
 }

@@ -60,6 +60,8 @@
             classpath:scheduler-service-conf.xml
             classpath:recoveryManager-service-conf.xml
             classpath:module-service-conf.xml
+            classpath:topology-conf.xml
+            classpath:topology-tx-conf.xml
             classpath:ikasan-module-bootstrap-conf.xml
             classpath:wiretap-service-conf.xml
             classpath:exclusion-service-conf.xml

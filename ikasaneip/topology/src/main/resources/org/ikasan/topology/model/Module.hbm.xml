@@ -80,11 +80,17 @@
         <property name="diagramUrl"
                   type="java.lang.String"
                   column="DiagramUrl"
-                  not-null="true" 
+                  not-null="false"
+                  unique="false"/>
+
+        <property name="version"
+                  type="java.lang.String"
+                  column="Version"
+                  not-null="false"
                   unique="false"/>
         
         <many-to-one name="server" column="ServerId" 
-       		class="org.ikasan.topology.model.Server" not-null="true"/>
+       		class="org.ikasan.topology.model.Server" not-null="false" />
          
         <set name="flows" cascade="all" order-by="Id asc">
          	<key column="ModuleId"/>
