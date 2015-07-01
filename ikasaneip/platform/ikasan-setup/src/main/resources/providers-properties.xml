@@ -152,7 +152,8 @@
                     Identifier VARCHAR(255) NOT NULL,
 					Event IMAGE NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
-					Timestamp NUMERIC DEFAULT 0 NOT NULL
+					Timestamp NUMERIC DEFAULT 0 NOT NULL,
+					Expiry NUMERIC NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1402,7 +1403,8 @@
                     Identifier VARCHAR(255) NOT NULL,
                     Event IMAGE NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
-                    Timestamp NUMERIC DEFAULT 0 NOT NULL
+                    Timestamp NUMERIC DEFAULT 0 NOT NULL,
+					Expiry NUMERIC NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -2699,6 +2701,7 @@
                     [Event]                 [varbinary] (max) NULL,
                     [ErrorUri]              [varchar](255) NOT NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
+					[Expiry]                [numeric] NULL,
                     CONSTRAINT              [PK_ExclusionEvent_Module_Flow_Id] PRIMARY KEY CLUSTERED
                     (
                     [Id],[ModuleName],[FlowName],[Identifier] ASC
@@ -4113,7 +4116,8 @@
                     Identifier VARCHAR(255) NOT NULL,
                     Event BINARY NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
-					Timestamp NUMERIC DEFAULT 0 NOT NULL
+					Timestamp NUMERIC DEFAULT 0 NOT NULL,
+					Expiry NUMERIC NULL
 					);
 
 					CREATE UNIQUE INDEX IkasanExclusionEvent01u ON
