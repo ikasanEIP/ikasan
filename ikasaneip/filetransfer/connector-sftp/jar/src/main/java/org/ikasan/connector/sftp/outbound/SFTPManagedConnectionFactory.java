@@ -113,6 +113,10 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     /** The user name */
     private String username = null;
 
+    /** The password name */
+    private String password = null;
+
+
     /** authentication order */
     private String preferredAuthentications = null;
 
@@ -436,6 +440,27 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     {
         logger.debug("ra.xml setting username to: [" + username + "]");
         this.username = username;
+    }
+
+    /**
+     * Get the password
+     *
+     * @return the Password
+     */
+    public String getPassword()
+    {
+        return password;
+    }
+
+    /**
+     * Set the password
+     *
+     * @param password The password used to log on to EIS.
+     */
+    public void setPassword(String password)
+    {
+        logger.debug("ra.xml setting password to: [" + password + "]");
+        this.password = password;
     }
 
     /**

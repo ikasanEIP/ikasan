@@ -295,29 +295,41 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
 
         // Private key file
         File privateKey = null;
-        try
-        {
-            privateKey = new File(this.scri.getPrivateKeyFilename());
-        }
-        catch (NullPointerException e)
-        {
-            throw new ResourceException("privateKeyFilename is null", e); //$NON-NLS-1$
-        }
-        // Known Hosts file
         File knownHosts = null;
-        try
+
+        if (this.scri.getPassword() == null)
         {
-            knownHosts = new File(this.scri.getKnownHostsFilename());
-        }
-        catch (NullPointerException e)
-        {
-            throw new ResourceException("knownHostsFilename is null", e); //$NON-NLS-1$
+            try
+            {
+                privateKey = new File(this.scri.getPrivateKeyFilename());
+            }
+            catch (NullPointerException e)
+            {
+                throw new ResourceException("privateKeyFilename is null", e); //$NON-NLS-1$
+            }
+            // Known Hosts file
+            try
+            {
+                knownHosts = new File(this.scri.getKnownHostsFilename());
+            }
+            catch (NullPointerException e)
+            {
+                throw new ResourceException("knownHostsFilename is null", e); //$NON-NLS-1$
+            }
         }
         // Username
         String username = null;
+        String password = null;
+
         if (this.scri.getUsername() != null)
         {
             username = this.scri.getUsername();
+            // Username
+            if (this.scri.getPassword() != null)
+            {
+                password = this.scri.getPassword();
+            }
+
         }
         else
         {
@@ -365,7 +377,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         Integer connectionTimeout = this.scri.getConnectionTimeout();
 
         //Create a SFTPClient
-        this.sftpClient = new SFTPClient(privateKey, knownHosts, username, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
+        this.sftpClient = new SFTPClient(privateKey, knownHosts, username, password, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
         try
         {
             this.sftpClient.validateConstructorArgs();
