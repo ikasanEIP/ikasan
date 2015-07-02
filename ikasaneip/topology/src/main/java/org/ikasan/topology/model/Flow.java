@@ -196,5 +196,5 @@ public class Flow implements Principal
 	public void setModule(Module module)
 	{
 		this.module = module;
-	}   
+	}
 }

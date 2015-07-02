@@ -43,7 +43,6 @@
 
  Author:  Ikasan Development Team
 
- Application context definition for "springapp" DispatcherServlet.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -56,5 +55,14 @@
 	<bean id="resubmissionApplication" class="org.ikasan.rest.submit.ResubmissionApplication">
 		<constructor-arg ref="hospitalService" />
 	</bean>
-
+	
+	<bean id="discoveryApplication" class="org.ikasan.rest.discovery.DiscoveryApplication">
+		<constructor-arg ref="moduleContainer" />
+	</bean>
+	
+	<bean id="configurationApplication" class="org.ikasan.rest.configuration.ConfigurationApplication">
+		<constructor-arg ref="configurationService" />
+		<constructor-arg ref="moduleContainer" />
+	</bean>
+	
 </beans>

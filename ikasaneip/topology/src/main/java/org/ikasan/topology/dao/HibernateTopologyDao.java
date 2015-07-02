@@ -47,6 +47,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
+import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -216,6 +217,66 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 		criteria.add(Restrictions.in("id", ids));
 
         return (List<BusinessStream>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getFlowsByServerIdModuleIdAndFlowname(java.lang.Long, java.lang.Long, java.lang.String)
+	 */
+	@Override
+	public Flow getFlowsByServerIdModuleIdAndFlowname(Long serverId,
+			Long moduleId, String flowName)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		if(serverId != null && moduleId != null)
+		{
+			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId))
+				.createCriteria("server").add(Restrictions.eq("id", serverId));
+		}
+		else if(moduleId != null)
+		{
+			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId));
+		}
+		else if(serverId != null)
+		{
+			criteria.createCriteria("module").createCriteria("server"
+					).add(Restrictions.eq("id", serverId));
+		}
+			
+		if(flowName != null)
+		{
+			criteria.add(Restrictions.eq("name", flowName));
+		}
+
+		return (Flow)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.model.Flow)
+	 */
+	@Override
+	public void delete(Flow flow)
+	{
+		this.getHibernateTemplate().delete(flow);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.model.Component)
+	 */
+	@Override
+	public void delete(Component component)
+	{
+		this.getHibernateTemplate().delete(component);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Component)
+	 */
+	@Override
+	public void save(Component component)
+	{
+		this.getHibernateTemplate().saveOrUpdate(component);
 	}
 
     

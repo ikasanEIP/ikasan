@@ -168,6 +168,24 @@ public class HibernateTopologyDaoTest
 		
 		Assert.assertTrue(flows.size() == 20);
 	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
+	 */
+	@Test
+	@DirtiesContext
+	public void testGetFlowsByServerIdModuleIdAndFlowname()
+	{
+		List<Server> servers = this.xaTopologyDao.getAllServers();
+		Assert.assertTrue(servers.size() == 1);
+		
+		Module module = this.xaTopologyDao.getModuleByName("Module 1");
+		
+		
+		Flow flow =  this.xaTopologyDao.getFlowsByServerIdModuleIdAndFlowname(servers.get(0).getId(), module.getId(), "Flow 1");
+		
+		Assert.assertTrue(flow != null);
+	}
 
 	/**
 	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.

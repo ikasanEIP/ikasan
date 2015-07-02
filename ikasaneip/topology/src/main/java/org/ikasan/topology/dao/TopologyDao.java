@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
+import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -99,11 +100,40 @@ public interface TopologyDao
 	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId);
 
 	/**
+	 * Get a flow by server id, module id and flow name.
+	 * 
+	 * @return
+	 */
+	public Flow getFlowsByServerIdModuleIdAndFlowname(Long serverId, Long moduleId, String flowName);
+
+	
+	/**
 	 * Save a flow. Will create a new record or update an existing.
 	 * 
 	 * @param flow
 	 */
 	public void save(Flow flow);
+	
+	/**
+	 * Delete a flow.
+	 * 
+	 * @param flow
+	 */
+	public void delete(Flow flow);
+	
+	/**
+	 * Save a component. Will create a new record or update an existing.
+	 * 
+	 * @param flow
+	 */
+	public void save(Component component);
+
+	/**
+	 * Delete a component.
+	 * 
+	 * @param component
+	 */
+	public void delete(Component component);
 	
 
 	/**
