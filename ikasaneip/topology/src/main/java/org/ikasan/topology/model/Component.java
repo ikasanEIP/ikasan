@@ -51,7 +51,7 @@ public class Component
 	private Long id;
     private String name = "";
     private String description = "";
-    private Boolean configurable;
+    private Boolean configurable = false;
     private String configurationId;
     private Flow flow;
 
@@ -64,7 +64,7 @@ public class Component
     /**
 	 * Default constructor for Hibernate
 	 */
-    protected Component()
+    public Component()
     {
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
@@ -197,5 +197,5 @@ public class Component
 	public void setConfigurationId(String configurationId)
 	{
 		this.configurationId = configurationId;
-	}	
+	}
 }

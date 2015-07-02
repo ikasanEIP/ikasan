@@ -42,11 +42,14 @@ package org.ikasan.topology.service;
 
 import java.util.List;
 
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
+
+import com.ikasan.topology.exception.DiscoveryException;
 
 /**
  * 
@@ -145,4 +148,9 @@ public interface TopologyService
 	 * @return
 	 */
 	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
+
+	/**
+	 * Method to discovery and populate Ikasan topology
+	 */
+	public void discover(IkasanAuthentication authentication) throws DiscoveryException;
 }

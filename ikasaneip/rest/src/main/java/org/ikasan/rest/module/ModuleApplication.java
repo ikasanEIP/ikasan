@@ -25,6 +25,7 @@ public class ModuleApplication implements ModuleResource
         return moduleService.getModules();
     }
 
+    
     public SimpleModule getModule(String moduleName)
     {
         return (SimpleModule)moduleService.getModule(moduleName);
