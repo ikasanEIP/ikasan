@@ -50,8 +50,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import javax.resource.ResourceException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Test class for the <code>SFTPManagedConnection</code>
@@ -69,15 +73,18 @@ public class SFTPManagedConnectionOpenSessionTest
             setThreadingPolicy(new Synchroniser());
         }
     };
+    //private  TemporaryFolder testFolder = new TemporaryFolder();
     private static final int SFTP_PORT_PASSWORD=3001;
     private static final int SFTP_PORT_PUBLICKEY=3003;
-    private SftpServerWithPasswordAuthenticator server = new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD);
+    private SftpServerWithPasswordAuthenticator server;
     private SftpServerWithPublickeyAuthenticator serverPublic = new SftpServerWithPublickeyAuthenticator(SFTP_PORT_PUBLICKEY);
 
 
     @Before
-    public void setup()
+    public void setup() throws IOException
     {
+        Path tempDir = Files.createTempDirectory("tempfiles");
+        server= new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD,tempDir);
         server.start();
         serverPublic.start();
     }
@@ -123,6 +130,8 @@ public class SFTPManagedConnectionOpenSessionTest
                 will(returnValue("publickey,password,gssapi-with-mic"));
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
+                exactly(1).of(connectionRequestInfo).getIsRecursive();
+                will(returnValue(null));
             }
         });
 
@@ -134,6 +143,52 @@ public class SFTPManagedConnectionOpenSessionTest
         classMockery.assertIsSatisfied();
     }
 
+    @Test
+    public void openSession_when_user_password_provided_and_recursive() throws ResourceException
+    {
+        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+        final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
+                .mock(SFTPManagedConnectionFactory.class);
+
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // Dont care what this returns
+                atLeast(1).of(connectionRequestInfo).getClientID();
+                will(returnValue("testClientId"));
+                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                will(returnValue("localhost"));
+                atLeast(1).of(connectionRequestInfo).getRemotePort();
+                will(returnValue(SFTP_PORT_PASSWORD));
+                exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                will(returnValue(null));
+                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                will(returnValue(null));
+                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                will(returnValue(1));
+                atLeast(1).of(connectionRequestInfo).getUsername();
+                will(returnValue("username"));
+                atLeast(1).of(connectionRequestInfo).getPassword();
+                will(returnValue("password"));
+                atLeast(1).of(managedConnectionFactory).getLocalHostname();
+                will(returnValue("localhost"));
+                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                will(returnValue("publickey,password,gssapi-with-mic"));
+                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                will(returnValue(300000));
+                exactly(2).of(connectionRequestInfo).getIsRecursive();
+                will(returnValue(true));
+            }
+        });
+
+        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                managedConnectionFactory, connectionRequestInfo);
+
+        managedConnection.openSession();
+
+        classMockery.assertIsSatisfied();
+    }
     @Test(expected = ResourceException.class)
     public void openSession_when_user_not_provided() throws ResourceException
     {

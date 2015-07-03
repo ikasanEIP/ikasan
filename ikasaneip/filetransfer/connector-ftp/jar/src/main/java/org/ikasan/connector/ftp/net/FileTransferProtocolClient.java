@@ -998,6 +998,7 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
         ClientListEntry clientListEntry = new ClientListEntry();
         clientListEntry.setUri(fileUri);
         clientListEntry.setName(ftpFile.getName());
+        clientListEntry.setFullPath(ftpFile.getName());
         clientListEntry.setClientId(null);
         // Can't distinguish between Last Accessed and Last Modified
         clientListEntry.setDtLastAccessed(ftpFile.getTimestamp().getTime());
