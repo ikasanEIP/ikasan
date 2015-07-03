@@ -83,6 +83,8 @@ public class ClientListEntry
     // same.
     /** Complete 'ls' entry (e.g. "drwxr-xr-x    6 herodotos herodotos      204 Nov 25 17:36 Sites") */
     private String longFilename;
+    /** Complete filename - combined pwd result and filename */
+    private String fullPath;
     /** Last accessed time as long */
     private long Atime;                  
     /** Last modified time as long */
@@ -177,6 +179,25 @@ public class ClientListEntry
     {
         return this.name;
     }
+
+    /**
+     * Set the fullPath
+     * @param fullPath
+     */
+    public void setFullPath(String fullPath)
+    {
+        this.fullPath = fullPath;
+    }
+
+    /**
+     * Get the full Path
+     * @return fullPath
+     */
+    public String getFullPath()
+    {
+        return this.fullPath;
+    }
+
     /**
      * @return the atimeString
      */
@@ -489,7 +510,7 @@ public class ClientListEntry
     {
         return new FileFilter(
             this.getClientId(),
-            this.getName(),
+            this.getFullPath(),
             this.getDtLastModified(),
             this.getDtLastAccessed(),
             (int)this.getSize()); 

@@ -87,6 +87,9 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     /** Initial poll time for source system only */
     private Integer pollTime = 0;
 
+    /** Consumes files recursively */
+    private Boolean isRecursive;
+
     /** Default serial version uid */
     private static final long serialVersionUID = 1L;
 
@@ -352,6 +355,26 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     }
 
     /**
+     * Getter for the isRecursive
+     *
+     * @return Boolean
+     */
+    public Boolean getIsRecursive()
+    {
+        return isRecursive;
+    }
+
+    /**
+     * Setter for the isRecursive
+     *
+     * @param isRecursive
+     */
+    public void setIsRecursive(Boolean isRecursive)
+    {
+        this.isRecursive = isRecursive;
+    }
+
+    /**
      * String representation of the ConnectionSpec
      */
     @Override
@@ -359,6 +382,7 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     {
         String specAsString;
         specAsString = "CleanupJournalOnComplete:         [" + cleanupJournalOnComplete + "]\n"
+                + "Recursive:                        [" + isRecursive + "]\n"
                 + "Client Id:                        [" + super.getClientID() + "]\n"
                 + "Connection Timeout:               [" + connectionTimeout + "]\n"
                 + "Host:                             [" + remoteHostname + "]\n"
