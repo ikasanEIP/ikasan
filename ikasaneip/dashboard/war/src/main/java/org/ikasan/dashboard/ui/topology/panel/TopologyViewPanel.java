@@ -84,6 +84,7 @@ import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.Action;
@@ -107,6 +108,7 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
@@ -567,8 +569,48 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		layout.addComponent(this.treeViewBusinessStreamCombo);
 		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.12f);
+		
+		Button discoverButton = new Button("Discover");
+		discoverButton.addClickListener(new Button.ClickListener() 
+    	{
+            @SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event) 
+            {
+            	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+			        	.getAttribute(DashboardSessionValueConstants.USER);
+            	
+            	try
+				{
+					topologyService.discover(authentication);
+				}
+            	catch (DiscoveryException e)
+				{
+					Notification.show("An error occurred trying to auto discover modules: " 
+							+ e.getMessage(), Type.ERROR_MESSAGE);
+				}
+            	
+            	Notification.show("Auto discovery complete!");
+            }
+        });
+		
+		Button refreshButton = new Button("Refresh");
+		refreshButton.addClickListener(new Button.ClickListener() 
+    	{
+            @SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event) 
+            {
+				refresh();
+            }
+        });
+		
+		GridLayout buttonLayout = new GridLayout(2, 1);
+		buttonLayout.addComponent(discoverButton);
+		buttonLayout.addComponent(refreshButton);
+		layout.addComponent(buttonLayout);
+		layout.setExpandRatio(buttonLayout, 0.1f);
+		
 		layout.addComponent(this.moduleTree);
-		layout.setExpandRatio(this.moduleTree, 0.88f);
+		layout.setExpandRatio(this.moduleTree, 0.78f);
 
 		this.topologyTreePanel.setContent(layout);
 	}
@@ -2140,6 +2182,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
+		refresh();
+	}
+	
+	protected void refresh()
+	{
 		this.createTabSheet();
 		
 		this.moduleTree.removeAllItems();
@@ -2180,7 +2227,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                this.moduleTree.setItemIcon(flow, flowResource);
 		                
 		                Set<Component> components = flow.getComponents();
-		
+		                
 		                for(Component component: components)
 		                {
 		                	this.moduleTree.addItem(component);
@@ -2306,7 +2353,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        	}
         	}		
 		}
-		
 	}
 
 	/* (non-Javadoc)
@@ -2356,7 +2402,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         
         if(action.equals(CONFIGURE))
         {
-        	this.componentConfigurationWindow.populate(((Component)target).getConfigurationId());
+        	this.componentConfigurationWindow.populate(((Component)target));
         	UI.getCurrent().addWindow(this.componentConfigurationWindow);
         }
 	}

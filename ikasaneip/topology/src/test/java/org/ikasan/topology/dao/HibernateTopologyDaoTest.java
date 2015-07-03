@@ -85,7 +85,7 @@ public class HibernateTopologyDaoTest
     	Server server = new Server("esb01", "This is the first esb server", "svc-esb01", 60000);    	
     	this.xaTopologyDao.save(server);
     	
-    	Module module = new Module("Module 1", "contextRoot", "I am module 1", server, "diagram");
+    	Module module = new Module("Module 1", "contextRoot", "I am module 1","version", server, "diagram");
     	this.xaTopologyDao.save(module);
     	
     	Flow flow = new Flow("Flow 1", "I am flow 1", module);
@@ -99,7 +99,7 @@ public class HibernateTopologyDaoTest
     	flow = new Flow("Flow 5", "I am flow 5", module);
     	this.xaTopologyDao.save(flow);
     	
-    	module = new Module("Module 2", "contextRoot", "I am module 2", server, "diagram");
+    	module = new Module("Module 2", "contextRoot", "I am module 2","version", server, "diagram");
      	this.xaTopologyDao.save(module);
      	flow = new Flow("Flow 1", "I am flow 1", module);
     	this.xaTopologyDao.save(flow);
@@ -112,7 +112,7 @@ public class HibernateTopologyDaoTest
     	flow = new Flow("Flow 5", "I am flow 5", module);
     	this.xaTopologyDao.save(flow);
      	
-     	module = new Module("Module 3", "contextRoot", "I am module 3", server, "diagram");
+     	module = new Module("Module 3", "contextRoot", "I am module 3", "version",server, "diagram");
      	this.xaTopologyDao.save(module);
      	flow = new Flow("Flow 1", "I am flow 1", module);
     	this.xaTopologyDao.save(flow);
@@ -125,7 +125,7 @@ public class HibernateTopologyDaoTest
     	flow = new Flow("Flow 5", "I am flow 5", module);
     	this.xaTopologyDao.save(flow);
      	
-     	module = new Module("Module 4", "contextRoot", "I am module 4", server, "diagram");
+     	module = new Module("Module 4", "contextRoot", "I am module 4","version", server, "diagram");
      	this.xaTopologyDao.save(module);
      	flow = new Flow("Flow 1", "I am flow 1", module);
     	this.xaTopologyDao.save(flow);
@@ -167,6 +167,24 @@ public class HibernateTopologyDaoTest
 		List<Flow> flows =  this.xaTopologyDao.getFlowsByServerIdAndModuleId(servers.get(0).getId(), null);
 		
 		Assert.assertTrue(flows.size() == 20);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
+	 */
+	@Test
+	@DirtiesContext
+	public void testGetFlowsByServerIdModuleIdAndFlowname()
+	{
+		List<Server> servers = this.xaTopologyDao.getAllServers();
+		Assert.assertTrue(servers.size() == 1);
+		
+		Module module = this.xaTopologyDao.getModuleByName("Module 1");
+		
+		
+		Flow flow =  this.xaTopologyDao.getFlowsByServerIdModuleIdAndFlowname(servers.get(0).getId(), module.getId(), "Flow 1");
+		
+		Assert.assertTrue(flow != null);
 	}
 
 	/**

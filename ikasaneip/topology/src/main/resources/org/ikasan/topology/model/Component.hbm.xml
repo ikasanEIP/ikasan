@@ -82,7 +82,7 @@
                   not-null="false" 
                   unique="false"/>
            
-        <many-to-one name="flow" column="FlowId" 
+        <many-to-one name="flow" cascade="all" column="FlowId" 
        		class="org.ikasan.topology.model.Flow" not-null="true"/>
        	
         <property name="createdDateTime"

@@ -90,12 +90,6 @@ public class Server
         this.updatedDateTime = new Date(now);
 	}
 
-
-
-
-
-
-
 	/**
 	 * @return the id
 	 */
@@ -230,5 +224,6 @@ public class Server
 	public void setPort(Integer port)
 	{
 		this.port = port;
-	}	
+	}
+
 }

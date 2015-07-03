@@ -43,16 +43,26 @@ package org.ikasan.dashboard.ui.topology.window;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 import org.apache.log4j.Logger;
-import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.configurationService.model.DefaultConfiguration;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -75,12 +85,12 @@ public class ComponentConfigurationWindow extends Window
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 	private GridLayout layout;
 	private HashMap<String, TextArea> textFields = new HashMap<String, TextArea>();
+	private Configuration configuration;
 	
 	/**
 	 * @param configurationManagement
 	 */
-	public ComponentConfigurationWindow(
-			ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
 		super();
 		this.configurationManagement = configurationManagement;
@@ -100,10 +110,43 @@ public class ComponentConfigurationWindow extends Window
     }
 
     @SuppressWarnings("unchecked")
-	public void populate(String configuredResourceId)
+	public void populate(Component component)
     {
-    	final Configuration configuration = this.configurationManagement.getConfiguration(configuredResourceId);
+    	configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
     	
+    	if(configuration == null)
+    	{
+    		Server server = component.getFlow().getModule().getServer();
+    		
+    		String url = "http://" + server.getUrl() + ":" + server.getPort()
+    				+ component.getFlow().getModule().getContextRoot()
+    				+ "/rest/configuration/createConfiguration/"
+    	    		+ component.getFlow().getModule().getName() 
+    	    		+ "/"
+    	    		+ component.getFlow().getName()
+    	    		+ "/"
+    	    		+ component.getName();
+    		
+    		logger.info("Configuration Url: " + url);
+
+    		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+    	        	.getAttribute(DashboardSessionValueConstants.USER);
+        	
+        	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+        	
+        	ClientConfig clientConfig = new ClientConfig();
+        	clientConfig.register(feature) ;
+        	
+        	Client client = ClientBuilder.newClient(clientConfig);
+        	
+        	ObjectMapper mapper = new ObjectMapper();
+        	
+    	    WebTarget webTarget = client.target(url);
+    	    
+    	    configuration = webTarget.request().get(DefaultConfiguration.class);
+    	}
+    		
+    	  	
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 		
 		this.layout = new GridLayout(2, parameters.size() + 2);

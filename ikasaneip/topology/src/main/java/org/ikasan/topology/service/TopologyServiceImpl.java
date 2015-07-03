@@ -40,15 +40,33 @@
  */
 package org.ikasan.topology.service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+
+import javax.json.JsonArray;
+import javax.json.JsonValue;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.dao.TopologyDao;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
+import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ikasan.topology.exception.DiscoveryException;
 
 /**
  * 
@@ -190,6 +208,98 @@ public class TopologyServiceImpl implements TopologyService
 	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids)
 	{
 		return this.topologyDao.getBusinessStreamsByUserId(ids);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#discover()
+	 */
+	@Override
+	public void discover(IkasanAuthentication authentication) throws DiscoveryException
+	{
+		List<Server> servers =  this.topologyDao.getAllServers();
+		
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+    	
+    	ObjectMapper mapper = new ObjectMapper();
+    	
+		for(Server server: servers)
+		{
+			List<Module> modules = this.topologyDao.getAllModules();
+			
+			for(Module module: modules)
+			{
+				String url = "http://" + server.getUrl() + ":" + server.getPort() 
+						+ module.getContextRoot() 
+						+ "/rest/discovery/flows/"
+						+ module.getName();
+				
+			    WebTarget webTarget = client.target(url);
+			    
+			    JsonArray flowResponse = null;
+			    
+			    try
+			    {
+			    	flowResponse = webTarget.request().get(JsonArray.class);
+			    }
+			    catch(NotFoundException e)
+			    {
+			    	// We may not find the module on the server so just move on to the next module.
+			    	continue;
+			    }
+			    
+			    module.setServer(server);
+			    
+			    this.topologyDao.save(module);
+			    
+		    	List<Flow> dbFlows = topologyDao.getFlowsByServerIdAndModuleId
+						(server.getId(), module.getId());
+		    	
+				for(Flow dbFlow: dbFlows)
+				{
+					for(Component component: dbFlow.getComponents())
+					{
+						this.topologyDao.delete(component);
+					}
+					
+					this.topologyDao.delete(dbFlow);
+				}
+
+			    
+			    for(JsonValue flowValue: flowResponse)
+			    {
+			    	 
+		    		Flow flow;
+					try
+					{
+						flow = mapper.readValue(
+								 flowValue.toString(), Flow.class);
+					} 
+					catch (Exception e)
+					{
+						throw new DiscoveryException(e);
+					}
+					
+					Set<Component> components = flow.getComponents();
+					
+					flow.setComponents(null);
+					flow.setModule(module);
+					
+					this.topologyDao.save(flow);
+												
+					for(Component component: components)
+					{
+						component.setFlow(flow);
+						
+						this.topologyDao.save(component);
+					}								    	
+			    }
+			}
+		}
 	}
 	
 }

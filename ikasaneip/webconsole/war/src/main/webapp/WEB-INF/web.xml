@@ -60,6 +60,8 @@
             classpath:scheduler-service-conf.xml
             classpath:recoveryManager-service-conf.xml
             classpath:module-service-conf.xml
+            classpath:topology-conf.xml
+            classpath:topology-tx-conf.xml
             classpath:ikasan-module-bootstrap-conf.xml
             classpath:wiretap-service-conf.xml
             classpath:exclusion-service-conf.xml
@@ -139,16 +141,21 @@
 		</servlet-class>
 		<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>org.ikasan.rest.submit;org.ikasan.rest.security</param-value>
+			<param-value>
+				org.ikasan.rest.submit;
+				org.ikasan.rest.security;
+				org.ikasan.rest.discovery;
+				org.ikasan.rest.configuration
+			</param-value>
 		</init-param>
 		 <init-param>
 	        <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
 	        <param-value>org.ikasan.rest.security.SecurityFilter</param-value>
 	    </init-param>
-	    <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>org.ikasan.rest.IkasanRestApplication</param-value>
-        </init-param>
+        <init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
  
