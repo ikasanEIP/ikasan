@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -63,21 +64,28 @@ import org.junit.Test;
  */
 public class SFTPManagedConnectionTest
 {
+    // Mock the
+    private Mockery classMockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
     /**
      * Tests the function of the recover method. When called with the TMSTARTRSCAN flag, it should return any executed,
      * but uncommitted transactions it finds in the TransactionJournal
-     * 
+     *
      * @throws XAException
      * @throws TransactionJournalingException
      */
-    @Test
-    public void testRecover() throws XAException, TransactionJournalingException
+    @Test public void testRecover() throws XAException, TransactionJournalingException
     {
-        Mockery interfaceMockery = new Mockery();
-        final TransactionJournal transactionJournal = interfaceMockery.mock(TransactionJournal.class);
+
+        final TransactionJournal transactionJournal = classMockery.mock(TransactionJournal.class);
         final Xid[] xids = new Xid[1];
         // mock the TransactionJournal
-        interfaceMockery.checking(new Expectations()
+        classMockery.checking(new Expectations()
         {
             {
                 one(transactionJournal).getExecutedTransactions();
@@ -86,31 +94,29 @@ public class SFTPManagedConnectionTest
             }
         });
         // setup the managed connection
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
         // execute the recover method
         Xid[] executedTransactions = managedConnection.recover(XAResource.TMSTARTRSCAN);
         // check the results
-        assertEquals("recover method should return all the executed Xids returned from the transaction journal", xids, //$NON-NLS-1$
-            executedTransactions);
+        assertEquals("recover method should return all the executed Xids returned from the transaction journal", xids,
+                //$NON-NLS-1$
+                executedTransactions);
     }
 
     /**
      * Tests the function of the recover method. Should throw an appropriate XAException if the TransactionJournal
      * itself fell over
-     * 
+     *
      * @throws TransactionJournalingException
      */
-    @Test
-    public void testRecover_handlesJournalingException() throws TransactionJournalingException
+    @Test public void testRecover_handlesJournalingException() throws TransactionJournalingException
     {
-        Mockery interfaceMockery = new Mockery();
-        final TransactionJournal transactionJournal = interfaceMockery.mock(TransactionJournal.class);
+        final TransactionJournal transactionJournal = classMockery.mock(TransactionJournal.class);
         final TransactionJournalingException journalingException = new TransactionJournalingException(
-            "A journaling exception", null); //$NON-NLS-1$
+                "A journaling exception", null); //$NON-NLS-1$
         // mock the TransactionJournal
-        interfaceMockery.checking(new Expectations()
+        classMockery.checking(new Expectations()
         {
             {
                 one(transactionJournal).getExecutedTransactions();
@@ -118,8 +124,7 @@ public class SFTPManagedConnectionTest
             }
         });
         // setup the managed connection
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
         // execute the recover method
         try
@@ -130,19 +135,18 @@ public class SFTPManagedConnectionTest
         catch (XAException e)
         {
             assertTrue(
-                "As XAException cannot wrap other Throwables, message should end with message of underlying exception", //$NON-NLS-1$
-                e.getMessage().endsWith(journalingException.getMessage()));
+                    "As XAException cannot wrap other Throwables, message should end with message of underlying exception",
+                    //$NON-NLS-1$
+                    e.getMessage().endsWith(journalingException.getMessage()));
         }
     }
 
     /**
      * Tests the function of the recover method when an invalid flag is passed
      */
-    @Test
-    public void testRecover_handlesInvalidFlag()
+    @Test public void testRecover_handlesInvalidFlag()
     {
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         int invalidFlag = 99;
         boolean xaExceptionFound = false;
         try
@@ -155,21 +159,19 @@ public class SFTPManagedConnectionTest
             xaExceptionFound = true;
         }
         assertTrue("XAException should be thrown when an invalid flag is passed to the recover method", //$NON-NLS-1$
-            xaExceptionFound);
+                xaExceptionFound);
     }
 
     /**
      * Tests the function of the recover method when the timer end scan flag is passed
-     * 
+     * <p/>
      * TODO: What else should the ManagedConnection be doing on this method call?
-     * 
+     *
      * @throws XAException
      */
-    @Test
-    public void testRecover_WithTimerEndScanFlag() throws XAException
+    @Test public void testRecover_WithTimerEndScanFlag() throws XAException
     {
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         int flag = XAResource.TMENDRSCAN;
         Xid[] xids = managedConnection.recover(flag);
         assertEquals("No Xids should be returned when TimerEndScan flag is passed to recover", 0, xids.length); //$NON-NLS-1$
@@ -177,32 +179,19 @@ public class SFTPManagedConnectionTest
 
     /**
      * Simply mocks the SFTPManagedConnectioFactory
-     * 
+     *
      * @return SFTPManagedConnectionFactory
      */
     private SFTPManagedConnectionFactory getMockedManagedConnectionFactory()
     {
-        // Mock the
-        Mockery classMockery = new Mockery()
-        {
-            {
-                setImposteriser(ClassImposteriser.INSTANCE);
-            }
-        };
+
         final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
-            .mock(SFTPManagedConnectionFactory.class);
+                .mock(SFTPManagedConnectionFactory.class);
         return managedConnectionFactory;
     }
 
     private SFTPConnectionRequestInfo getMockedConnectionRequestInfo()
     {
-        // Mock the
-        Mockery classMockery = new Mockery()
-        {
-            {
-                setImposteriser(ClassImposteriser.INSTANCE);
-            }
-        };
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
         classMockery.checking(new Expectations()
         {

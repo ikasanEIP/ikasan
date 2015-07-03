@@ -293,6 +293,7 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
         spec.setPrivateKeyFilename(sftpConsumerConfiguration.getPrivateKeyFilename());
         spec.setConnectionTimeout(sftpConsumerConfiguration.getConnectionTimeout());
         spec.setUsername(sftpConsumerConfiguration.getUsername());
+        spec.setPassword(sftpConsumerConfiguration.getPassword());
         spec.setCleanupJournalOnComplete(sftpConsumerConfiguration.getCleanupJournalOnComplete());
         return spec;
     }
@@ -313,6 +314,7 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
             alternateSpec.setPrivateKeyFilename(alternateCofnig.getAlternatePrivateKeyFilename());
             alternateSpec.setConnectionTimeout(alternateCofnig.getAlternateConnectionTimeout());
             alternateSpec.setUsername(alternateCofnig.getAlternateUsername());
+            alternateSpec.setPassword(alternateCofnig.getAlternatePassword());
             alternateSpec.setCleanupJournalOnComplete(alternateCofnig.getCleanupJournalOnComplete());
         }
 

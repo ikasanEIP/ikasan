@@ -80,6 +80,9 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     /** The username */
     private String username = null;
 
+    /** The password */
+    private String password = null;
+
     /** Cleanup TransactionJournal on Complete */
     private Boolean cleanupJournalOnComplete;
 
@@ -276,6 +279,25 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     }
 
     /**
+     * Set the password name
+     * @param password
+     */
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
+
+    /**
+     * Get the password name
+     * @return the password name
+     */
+    public String getPassword()
+    {
+        return password;
+    }
+
+    /**
      * Set the user name
      * @param username
      */
@@ -283,6 +305,8 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     {
         this.username = username;
     }
+
+
 
     /**
      * Set the authentication order

@@ -238,6 +238,7 @@ public class SftpProducer implements Producer<Payload>,
         spec.setPrivateKeyFilename(sftpProducerConfiguration.getPrivateKeyFilename());
         spec.setConnectionTimeout(sftpProducerConfiguration.getConnectionTimeout());
         spec.setUsername(sftpProducerConfiguration.getUsername());
+        spec.setPassword(sftpProducerConfiguration.getPassword());
         spec.setCleanupJournalOnComplete(sftpProducerConfiguration.getCleanupJournalOnComplete());
         return spec;
     }
@@ -257,6 +258,7 @@ public class SftpProducer implements Producer<Payload>,
             alternateSpec.setPrivateKeyFilename(alternateConfig.getAlternatePrivateKeyFilename());
             alternateSpec.setConnectionTimeout(alternateConfig.getAlternateConnectionTimeout());
             alternateSpec.setUsername(alternateConfig.getAlternateUsername());
+            alternateSpec.setPassword(alternateConfig.getAlternatePassword());
             alternateSpec.setCleanupJournalOnComplete(alternateConfig.getCleanupJournalOnComplete());
         }
 
