@@ -79,7 +79,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     
 	private static Logger logger = Logger.getLogger(HospitalServiceImpl.class);
 	
-	private ModuleContainer moduleContainer;
+	F
 	private HospitalDao hospitalDao;
 	private ExclusionManagementService exclusionManagementService;
 	

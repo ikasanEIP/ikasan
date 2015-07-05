@@ -46,11 +46,22 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
@@ -132,6 +143,21 @@ import com.vaadin.ui.themes.Reindeer;
  */
 public class TopologyViewPanel extends Panel implements View, Action.Handler
 {
+	/** running state string constant */
+    private static String RUNNING = "running";
+    
+    /** stopped state string constant */
+    private static String STOPPED = "stopped";
+    
+    /** recovering state string constant */
+    private static String RECOVERING = "recovering";
+    
+    /** stoppedInError state string constant */
+    private static String STOPPED_IN_ERROR = "stoppedInError";
+    
+    /** paused state string constant */
+    private static String PAUSED = "paused";
+    
 	/**
 	 * 
 	 */
@@ -144,13 +170,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action VIEW_DIAGRAM = new Action("View Diagram");
     private final Action CONFIGURE = new Action("Configure");
     private final Action PAUSE = new Action("Pause");
+    private final Action START_PAUSE = new Action("Start/Pause");
+    private final Action RESUME = new Action("Resume");
     private final Action RESTART = new Action("Re-start");
     private final Action DISABLE = new Action("Disable");
     private final Action DETAILS = new Action("Details");
     private final Action WIRETAP = new Action("Wiretap");
     private final Action[] serverActions = new Action[] { DETAILS };
     private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
-    private final Action[] flowActions = new Action[] { DETAILS, STOP, START, PAUSE, RESTART, DISABLE };
+//    private final Action[] flowActions = new Action[] { DETAILS, STOP, START, PAUSE, RESTART, DISABLE };
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE };
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE };
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME };
     private final Action[] componentActionsConfigurable = new Action[] { DETAILS, CONFIGURE, WIRETAP };
     private final Action[] componentActions = new Action[] { DETAILS, WIRETAP };
     private final Action[] actionsEmpty = new Action[]{};
@@ -158,6 +189,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
 	private ThemeResource moduleResource = new ThemeResource("images/module.png");
 	private ThemeResource flowResource = new ThemeResource("images/flow.png");
+	private ThemeResource flowStartedResource = new ThemeResource("images/flow_started.png");
+	private ThemeResource flowPausedResource = new ThemeResource("images/flow_paused.png");
+	private ThemeResource flowStoppedResource = new ThemeResource("images/flow_stopped.png");
+	private ThemeResource flowStoppedInErrorResource = new ThemeResource("images/flow_stopped_in_error.png");
 	private ThemeResource componentResource = new ThemeResource("images/component.png");
 	private ThemeResource componentConfigurableResource = new ThemeResource("images/component_configurable.png");
 
@@ -213,6 +248,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private BusinessStream businessStream;
 	
 	private SystemEventService systemEventService;
+	
+	private HashMap<String, String> flowStates = new HashMap<String, String>();
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
@@ -411,6 +448,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 		for(Server server: servers)
                 		{
                 			Set<Module> modules = server.getModules();
+                			
+                			refreshFlowStates(modules);
 
                 			TopologyViewPanel.this.moduleTree.addItem(server);
                 			TopologyViewPanel.this.moduleTree.setItemCaption(server, server.getName());
@@ -433,7 +472,28 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setItemCaption(flow, flow.getName());
                 	            	TopologyViewPanel.this.moduleTree.setParent(flow, module);
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
-                	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, flowResource);
+                	            	
+                	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+        			    			if(state.equals(RUNNING))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowStartedResource);
+        			    			}
+        			    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+        			    			{
+        			    				moduleTree.setItemIcon(flow,flowStartedResource);
+        			    			}
+        			    			else if (state.equals(STOPPED))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowStoppedResource);
+        			    			}
+        			    			else if (state.equals(STOPPED_IN_ERROR))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
+        			    			}
+        			    			else if (state.equals(PAUSED))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowPausedResource);
+        			    			}
                 	                
                 	                Set<Component> components = flow.getComponents();
                 	
@@ -491,7 +551,28 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		                moduleTree.setItemCaption(flow, flow.getName());
             		                moduleTree.setParent(flow, module);
             		                moduleTree.setChildrenAllowed(flow, true);
-            		                moduleTree.setItemIcon(flow, flowResource);
+            		                
+            		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+        			    			if(state.equals(RUNNING))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowStartedResource);
+        			    			}
+        			    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+        			    			{
+        			    				moduleTree.setItemIcon(flow,flowStartedResource);
+        			    			}
+        			    			else if (state.equals(STOPPED))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowStoppedResource);
+        			    			}
+        			    			else if (state.equals(STOPPED_IN_ERROR))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
+        			    			}
+        			    			else if (state.equals(PAUSED))
+        			    			{
+        			    				moduleTree.setItemIcon(flow, flowPausedResource);
+        			    			}
             		                
             		                Set<Component> components = flow.getComponents();
             		
@@ -541,7 +622,28 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    	                moduleTree.setItemCaption(flow, flow.getName());
 	                        moduleTree.setParent(flow, module);
 	    	                moduleTree.setChildrenAllowed(flow, true);
-	    	                moduleTree.setItemIcon(flow, flowResource);
+	    	                
+	    	                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+			    			if(state.equals(RUNNING))
+			    			{
+			    				moduleTree.setItemIcon(flow, flowStartedResource);
+			    			}
+			    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+			    			{
+			    				moduleTree.setItemIcon(flow,flowStartedResource);
+			    			}
+			    			else if (state.equals(STOPPED))
+			    			{
+			    				moduleTree.setItemIcon(flow, flowStoppedResource);
+			    			}
+			    			else if (state.equals(STOPPED_IN_ERROR))
+			    			{
+			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
+			    			}
+			    			else if (state.equals(PAUSED))
+			    			{
+			    				moduleTree.setItemIcon(flow, flowPausedResource);
+			    			}
 	    	                
 	    	                Set<Component> components = flow.getComponents();
 	    	
@@ -599,7 +701,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
-				refresh();
+				refreshTree();
             }
         });
 		
@@ -2188,7 +2290,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	protected void refresh()
 	{
 		this.createTabSheet();
-		
+		this.refreshTree();
+	}
+	
+	protected void refreshTree()
+	{
 		this.moduleTree.removeAllItems();
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -2210,6 +2316,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 		        for(Module module: modules)
 		        {
+		        	refreshFlowStates(modules);
+		        	
 		            this.moduleTree.addItem(module);
 		            this.moduleTree.setItemCaption(module, module.getName());
 		            this.moduleTree.setParent(module, server);
@@ -2224,7 +2332,28 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                this.moduleTree.setItemCaption(flow, flow.getName());
 	                    this.moduleTree.setParent(flow, module);
 		                this.moduleTree.setChildrenAllowed(flow, true);
-		                this.moduleTree.setItemIcon(flow, flowResource);
+		    			
+		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+		    			if(state.equals(RUNNING))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
+		    			}
+		    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
+		    			}
+		    			else if (state.equals(STOPPED_IN_ERROR))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
+		    			}
+		    			else if (state.equals(STOPPED))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
+		    			}
+		    			else if (state.equals(PAUSED))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
+		    			}
 		                
 		                Set<Component> components = flow.getComponents();
 		                
@@ -2323,7 +2452,28 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                moduleTree.setItemCaption(flow, flow.getName());
 		                moduleTree.setParent(flow, module);
 		                moduleTree.setChildrenAllowed(flow, true);
-		                moduleTree.setItemIcon(flow, flowResource);
+
+		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+		    			if(state.equals(RUNNING))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
+		    			}
+		    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
+		    			}
+		    			else if (state.equals(STOPPED_IN_ERROR))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
+		    			}
+		    			else if (state.equals(STOPPED))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
+		    			}
+		    			else if (state.equals(PAUSED))
+		    			{
+		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
+		    			}
 		                
 		                Set<Component> components = flow.getComponents();
 		
@@ -2353,14 +2503,124 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        	}
         	}		
 		}
+	
+		for (Iterator<?> it = this.moduleTree.rootItemIds().iterator(); it.hasNext();) 
+		{
+			this.moduleTree.expandItemsRecursively(it.next());
+		}
+		
+		for (Iterator<?> it = this.moduleTree.getItemIds().iterator(); it.hasNext();) 
+		{
+			Object nextItem = it.next();
+			if(nextItem instanceof Flow)
+			{
+				this.moduleTree.collapseItemsRecursively(nextItem);
+			}
+		}
 	}
 
+	protected boolean actionFlow(Flow flow, String action)
+	{		
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	
+    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+		
+    	String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
+				+ flow.getModule().getContextRoot() 
+				+ "/rest/moduleControl/controlFlowState/"
+				+ flow.getModule().getName() 
+	    		+ "/"
+	    		+ flow.getName();
+    	
+	    WebTarget webTarget = client.target(url);
+	    Response response = webTarget.request().put(Entity.entity(action, MediaType.APPLICATION_OCTET_STREAM));
+	    
+	    if(response.getStatus()  == 200)
+	    {
+	    	Notification.show(flow.getName() + " flow " + action + "!");
+	    }  
+	    else
+	    {
+	    	response.bufferEntity();
+	        
+	        String responseMessage = response.readEntity(String.class);
+	        
+	    	Notification.show(responseMessage, Type.ERROR_MESSAGE);
+	    	return false;
+	    }
+	    
+	    return true;
+	}
+	
+	
+	protected void refreshFlowStates(Set<Module> modules)
+	{
+		for(Module module: modules)
+		{
+			this.flowStates.putAll(this.getFlowStates(module));
+		}
+	}
+
+	protected String getFlowState(Flow flow)
+	{
+		String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort() 
+				+ flow.getModule().getContextRoot() 
+				+ "/rest/moduleControl/flowState/"
+				+ flow.getModule().getName() + "/"
+				+ flow.getName();
+		
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	
+    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+    	
+	    WebTarget webTarget = client.target(url);
+	    
+	    return webTarget.request().get(String.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected HashMap<String, String> getFlowStates(Module module)
+	{
+		String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+				+ module.getContextRoot() 
+				+ "/rest/moduleControl/flowStates/"
+				+ module.getName();
+		
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	
+    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+    	
+	    WebTarget webTarget = client.target(url);
+	    
+	    return (HashMap<String, String>)webTarget.request().get(HashMap.class);
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.vaadin.event.Action.Handler#getActions(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public Action[] getActions(Object target, Object sender)
-	{        
+	{     
+		logger.info("Getting action: " + target + " " + sender);
+		
 		if(target instanceof Server)
         {
             return serverActions;
@@ -2371,7 +2631,25 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         }
 		else if(target instanceof Flow)
         {
-            return flowActions;
+			Flow flow = ((Flow)target);
+			
+			String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+			if(state.equals(RUNNING))
+			{
+				return this.flowActionsStarted;
+			}
+			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+			{
+				return this.flowActionsStarted;
+			}
+			else if (state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR))
+			{
+				return this.flowActionsStopped;
+			}
+			else if (state.equals(PAUSED))
+			{
+				return this.flowActionsPaused;
+			}
         }
 		else if(target instanceof Component)
         {
@@ -2384,10 +2662,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				return componentActions;
 			}
         }
-        else
-        {
-            return actionsEmpty;
-        }
+        
+           return actionsEmpty;
+
 	}
 
 	/* (non-Javadoc)
@@ -2395,15 +2672,58 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public void handleAction(Action action, Object sender, Object target)
-	{
-		logger.info("Action: " + action.getCaption());
-        logger.info("Target: " + target.getClass().getName());
-        logger.info("Sender: " + sender.getClass().getName());
+	{	        
+        Tree senderTree = ((Tree)sender);
         
-        if(action.equals(CONFIGURE))
+        if(target != null && target instanceof Component)
         {
-        	this.componentConfigurationWindow.populate(((Component)target));
-        	UI.getCurrent().addWindow(this.componentConfigurationWindow);
+        	if(action.equals(CONFIGURE))
+        	{
+        		this.componentConfigurationWindow.populate(((Component)target));
+        		UI.getCurrent().addWindow(this.componentConfigurationWindow);
+        	}
+        }
+        else if(target != null && target instanceof Flow)
+        {
+        	Flow flow = ((Flow)target);
+        	
+	        if(action.equals(START))
+	        {
+	     		if(this.actionFlow(flow, "start"))
+	     		{
+	     			senderTree.setItemIcon(flow, this.flowStartedResource);
+	     		}
+	        }
+	        else if(action.equals(STOP))
+	        {
+	        	if(this.actionFlow(flow, "stop"))
+	        	{
+	        		senderTree.setItemIcon(flow, this.flowStoppedResource);
+	        	}
+	        }
+	        else if(action.equals(PAUSE))
+	        {
+	        	if(this.actionFlow(flow, "pause"))
+	        	{
+	        		senderTree.setItemIcon(flow, this.flowPausedResource);
+	        	}
+	        }
+	        else if(action.equals(RESUME))
+	        {
+	        	if(this.actionFlow(flow, "resume"))
+	        	{
+	        		senderTree.setItemIcon(flow, this.flowStartedResource);
+	        	}
+	        }
+	        else if(action.equals(START_PAUSE))
+	        {       	
+	        	if(this.actionFlow(flow, "startPause"))
+	        	{
+	        		senderTree.setItemIcon(flow, this.flowPausedResource);
+	        	}
+	        }
+	        
+	        this.refreshFlowStates(flow.getModule().getServer().getModules());
         }
 	}
 	

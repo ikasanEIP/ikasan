@@ -250,7 +250,7 @@ public class ExclusionEventViewWindow extends Window
             	
             	Server server = module.getServer();
         		
-        		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
+        		String url = "http://" + server.getUrl() + ":" + server.getPort()
         				+ module.getContextRoot() 
         				+ "/rest/resubmission/resubmit/"
         	    		+ exclusionEvent.getModuleName() 
@@ -319,7 +319,7 @@ public class ExclusionEventViewWindow extends Window
             	
             	Server server = module.getServer();
         		
-        		String url = "http://" + server.getUrl() + ":" + server.getPort() + "/" 
+        		String url = "http://" + server.getUrl() + ":" + server.getPort()
         				+ module.getContextRoot() 
         				+ "/rest/resubmission/ignore/"
         				+ exclusionEvent.getModuleName() 
