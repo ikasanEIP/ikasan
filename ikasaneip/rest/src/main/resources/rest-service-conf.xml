@@ -65,4 +65,8 @@
 		<constructor-arg ref="moduleContainer" />
 	</bean>
 	
+	<bean id="moduleControlApplication" class="org.ikasan.rest.module.ModuleControlApplication">
+		<constructor-arg ref="moduleService" />
+	</bean>
+	
 </beans>

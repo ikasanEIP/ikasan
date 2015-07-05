@@ -42,12 +42,12 @@
 		<!-- AspectJ pointcut expression that locates our "post" method and applies 
 			security that way -->
 
-		<protect-pointcut
+		<!--  protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.startFlow(..))"
 			access="MODULE_ADMIN" />
 		<protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.stopFlow(..))"
-			access="MODULE_ADMIN" />
+			access="MODULE_ADMIN" / -->
 		<protect-pointcut
 			expression="execution(* org.ikasan.security.service.UserService.changeUsersPassword(..))"
 			access="ROLE_ADMIN" />
@@ -65,12 +65,12 @@
 			access="ROLE_ADMIN" />
 
 		<!-- Gaining access to a Module requires security check -->
-		<protect-pointcut
+		<!--  protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.getModule(..))"
 			access="ROLE_USER,AFTER_MODULE_READ" />
 		<protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.getModules())"
-			access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
+			access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" / -->
 
 		<after-invocation-provider
 			ref="moduleCollectionFilteringAfterInvocationProvider" />
