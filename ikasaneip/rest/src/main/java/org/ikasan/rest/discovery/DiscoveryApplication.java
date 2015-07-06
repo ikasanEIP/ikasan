@@ -123,7 +123,9 @@ public class DiscoveryApplication
 			flows.add(topologyFlow);
 			
 			Set<org.ikasan.topology.model.Component> components 
-			= new HashSet<org.ikasan.topology.model.Component>();
+				= new HashSet<org.ikasan.topology.model.Component>();
+			
+			int order = 0;
 			
 			for(FlowElement<?> flowElement: flow.getFlowElements())
 			{
@@ -149,6 +151,7 @@ public class DiscoveryApplication
 					component.setConfigurable(false);
 				}
 
+				component.setOrder(order++);
 				components.add(component);
 			}
 			

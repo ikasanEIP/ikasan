@@ -194,8 +194,6 @@ public class AuthenticationMethodPanel extends Panel
         gridLayout.setColumnExpandRatio(0, 0.3f);
         gridLayout.setColumnExpandRatio(1, 0.7f);
 
-        Label authMethodLabel = new Label("Authentication Method");
-
         authenticationMethodCombo.addItem(LOCAL_AUTHENTICATION);
         authenticationMethodCombo.setItemCaption(LOCAL_AUTHENTICATION, LOCAL_AUTHENTICATION.getCaption());
         authenticationMethodCombo.addItem(LDAP_LOCAL_AUTHENTICATION);

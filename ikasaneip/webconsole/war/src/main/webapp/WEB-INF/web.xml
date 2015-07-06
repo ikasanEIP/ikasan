@@ -145,7 +145,8 @@
 				org.ikasan.rest.submit;
 				org.ikasan.rest.security;
 				org.ikasan.rest.discovery;
-				org.ikasan.rest.configuration
+				org.ikasan.rest.configuration;
+				org.ikasan.rest.module;
 			</param-value>
 		</init-param>
 		 <init-param>

@@ -54,6 +54,7 @@ public class Component
     private Boolean configurable = false;
     private String configurationId;
     private Flow flow;
+    private int order;
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -197,5 +198,21 @@ public class Component
 	public void setConfigurationId(String configurationId)
 	{
 		this.configurationId = configurationId;
+	}
+
+	/**
+	 * @return the order
+	 */
+	public int getOrder()
+	{
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(int order)
+	{
+		this.order = order;
 	}
 }
