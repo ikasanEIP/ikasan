@@ -80,14 +80,15 @@ public class ClientTest
     	
     	Client client = ClientBuilder.newClient(clientConfig);
     	
-		String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/moduleControl/controlFlowState/gloss-referencemarketDataTgt/Counterparty Transformer Flow";
+		String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/moduleControl/controlFlowStartupMode" +
+				"/gloss-referencemarketDataTgt/Counterparty Transformer Flow/MANUAL";
 
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try
     	{
 		    WebTarget webTarget = client.target(url);
-		    Response response = webTarget.request().put(Entity.entity("pause", MediaType.APPLICATION_OCTET_STREAM));
+		    Response response = webTarget.request().put(Entity.entity("", MediaType.APPLICATION_OCTET_STREAM));
 		    
 		    if(response.getStatus()  != 200)
 		    {
