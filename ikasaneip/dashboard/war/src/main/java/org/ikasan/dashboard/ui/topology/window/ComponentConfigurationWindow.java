@@ -40,8 +40,10 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -50,6 +52,8 @@ import javax.ws.rs.client.WebTarget;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
@@ -63,14 +67,18 @@ import org.ikasan.topology.model.Server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.Reindeer;
 
 /**
  * 
@@ -85,6 +93,9 @@ public class ComponentConfigurationWindow extends Window
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 	private GridLayout layout;
 	private HashMap<String, TextArea> textFields = new HashMap<String, TextArea>();
+	private HashMap<String, TextArea> descriptionTextFields = new HashMap<String, TextArea>();
+	private HashMap<String, TextFieldKeyValuePair> mapTextFields = new HashMap<String, TextFieldKeyValuePair>();
+	private HashMap<String, TextField> valueTextFields = new HashMap<String, TextField>();
 	private Configuration configuration;
 	
 	/**
@@ -92,7 +103,8 @@ public class ComponentConfigurationWindow extends Window
 	 */
 	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
-		super();
+		super("Component Configuration");
+				
 		this.configurationManagement = configurationManagement;
 		
 		init();
@@ -105,8 +117,9 @@ public class ComponentConfigurationWindow extends Window
      */
     protected void init()
     {
-    	this.setSizeFull();
-    	this.setModal(true);    	
+    	setModal(true);
+		setHeight("90%");
+		setWidth("90%");   	
     }
 
     @SuppressWarnings("unchecked")
@@ -149,37 +162,54 @@ public class ComponentConfigurationWindow extends Window
     	  	
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 		
-		this.layout = new GridLayout(2, parameters.size() + 2);
+		this.layout = new GridLayout(2, parameters.size() + 6);
+		this.layout.setSpacing(true);
 		this.layout.setColumnExpandRatio(0, .25f);
 		this.layout.setColumnExpandRatio(1, .75f);
 
 		this.layout.setWidth("100%");
 		this.layout.setMargin(true);
 		
-		int i=0;
+		Label configurationParametersLabel = new Label("Configuration Parameters");
+		configurationParametersLabel.setStyleName("large-bold");
+		this.layout.addComponent(configurationParametersLabel, 0, 0);
+		
+		Label configuredResourceIdLabel = new Label("Configured Resource Id");
+		configuredResourceIdLabel.setStyleName("large");
+		Label configuredResourceIdValueLabel = new Label(configuration.getConfigurationId());
+		configuredResourceIdValueLabel.setStyleName("large");
+		
+		this.layout.addComponent(configuredResourceIdLabel, 0, 1);
+		this.layout.setComponentAlignment(configuredResourceIdLabel, Alignment.TOP_RIGHT);
+		this.layout.addComponent(configuredResourceIdValueLabel, 1, 1);
+		
+		int i=2;
 		
 		for(ConfigurationParameter parameter: parameters)
 		{
-			logger.info(parameter.getName() + " " + parameter.getValue());
-			Label label = new Label(parameter.getName());
-			TextArea textField = new TextArea();
-			textField.setWidth("80%");
-			textField.setId(parameter.getName());
-
-			textFields.put(parameter.getName(), textField);
-
-			if(parameter.getValue() != null)
-			{
-				textField.setValue(parameter.getValue().toString());
-			}
-			
-			this.layout.addComponent(label, 0, i);
-			this.layout.addComponent(textField, 1, i);
+			if(parameter.getValue() instanceof Integer ||
+					parameter.getValue() instanceof String ||
+					parameter.getValue() instanceof Boolean ||
+					parameter.getValue() instanceof Long)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter), 0, i, 1, i);
+    		} 
+			else if (parameter.getValue() instanceof Map)
+    		{
+    			this.layout.addComponent(this.createMapPanel
+    					((ConfigurationParameterMapImpl)parameter), 0, i, 1, i);
+    		}
+			else if (parameter.getValue() instanceof List)
+    		{
+    			this.layout.addComponent(this.createListPanel
+    					((ConfigurationParameterListImpl)parameter), 0, i, 1, i);
+    		}
 			
 			i++;
 		}
 		
-		Button saveButton = new Button("Save");    	
+		Button saveButton = new Button("Save");   
+		saveButton.addStyleName(Reindeer.BUTTON_SMALL);
     	saveButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -188,6 +218,13 @@ public class ComponentConfigurationWindow extends Window
         		{
             		TextArea textField = ComponentConfigurationWindow
             				.this.textFields.get(parameter.getName());
+            		TextArea descriptionTextField = ComponentConfigurationWindow
+            				.this.descriptionTextFields.get(parameter.getName());
+            		
+            		if(parameter != null && descriptionTextField != null)
+            		{
+            			parameter.setDescription(descriptionTextField.getValue());
+            		}
 
             		if(parameter.getValue() != null)
             		{
@@ -214,18 +251,66 @@ public class ComponentConfigurationWindow extends Window
             			logger.info("Setting Boolean value: " + textField.getValue());
             			parameter.setValue(new Long	(textField.getValue()));
             		}
+            		else if(parameter.getValue() instanceof Map)
+            		{
+            			ConfigurationParameterMapImpl mapParameter = (ConfigurationParameterMapImpl) parameter;
+            			
+            			HashMap<String, String> map = new HashMap<String, String>();
+            			
+            			for(String key: mapTextFields.keySet())
+            			{
+            				if(key.startsWith(parameter.getName()))
+            				{
+            					TextFieldKeyValuePair pair = mapTextFields.get(key);
+            					
+            					if(pair.key.getValue() != "")
+            					{
+            						map.put(pair.key.getValue(), pair.value.getValue());
+            					}
+            				}
+            			}
+            			
+            			parameter.setValue(map);
+            		}
+            		else if(parameter.getValue() instanceof List)
+            		{
+            			ConfigurationParameterListImpl mapParameter = (ConfigurationParameterListImpl) parameter;
+            			
+            			ArrayList<String> map = new ArrayList<String>();
+            			
+            			for(String key: valueTextFields.keySet())
+            			{
+            				if(key.startsWith(parameter.getName()))
+            				{
+            					map.add(valueTextFields.get(key).getValue());
+            				}
+            			}
+            			
+            			parameter.setValue(map);
+            		}
   
         			logger.info(parameter.getName() + " " + parameter.getValue());
         		}
             	
             	ComponentConfigurationWindow.this.configurationManagement
-            		.saveConfiguration(configuration);            	
+            		.saveConfiguration(configuration);      
+            	
+            	Notification.show("Saved!");
+            }
+        });
+    	
+    	Button cancalButton = new Button("Cancel");    	
+    	cancalButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	close();         	
             }
         });
 		
     	this.layout.addComponent(saveButton, 1, i);
     	
-    	Panel configurationPanel = new Panel("Configure");
+    	Panel configurationPanel = new Panel();
     	configurationPanel.setStyleName("dashboard");
     	configurationPanel.setContent(this.layout);
     	
@@ -235,5 +320,363 @@ public class ComponentConfigurationWindow extends Window
     	mainLayout.addComponent(configurationPanel);
     	
 		this.setContent(mainLayout);
+    }
+    
+    protected Panel createTextAreaPanel(ConfigurationParameter parameter)
+    {
+    	Panel paramPanel = new Panel();
+		paramPanel.setStyleName("dashboard");
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(2, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+		
+		Label label = new Label(parameter.getName());
+		label.setStyleName("large-bold");
+		label.setSizeUndefined();
+		paramLayout.addComponent(label, 0, 0, 1, 0);
+		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+		
+		logger.info(parameter.getName() + " " + parameter.getValue());
+		Label valueLabel = new Label("Value:");
+		valueLabel.setSizeUndefined();
+		TextArea textField = new TextArea();
+		textField.setRows(4);
+		textField.setWidth("80%");
+		textField.setId(parameter.getName());
+
+		textFields.put(parameter.getName(), textField);
+
+		if(parameter.getValue() != null)
+		{
+			textField.setValue(parameter.getValue().toString());
+		}
+		
+		paramLayout.addComponent(valueLabel, 0, 1);
+		paramLayout.addComponent(textField, 1, 1);
+		paramLayout.setComponentAlignment(valueLabel, Alignment.TOP_RIGHT);
+		
+		Label paramDescriptionLabel = new Label("Description:");
+		paramDescriptionLabel.setSizeUndefined();
+		TextArea descriptionTextField = new TextArea();
+		descriptionTextField.setRows(4);
+		descriptionTextField.setWidth("80%");
+		descriptionTextField.setId(parameter.getName());
+		
+		paramLayout.addComponent(paramDescriptionLabel, 0, 2);
+		paramLayout.addComponent(descriptionTextField, 1, 2);
+		paramLayout.setComponentAlignment(paramDescriptionLabel, Alignment.TOP_RIGHT);
+
+		descriptionTextFields.put(parameter.getName(), descriptionTextField);
+
+		if(parameter.getDescription() != null)
+		{
+			descriptionTextField.setValue(parameter.getDescription());
+		}
+		
+		paramPanel.setContent(paramLayout);
+		
+		return paramPanel;
+    }
+    
+    protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
+    {
+    	Panel paramPanel = new Panel();
+		paramPanel.setStyleName("dashboard");
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(2, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+		
+		Label label = new Label(parameter.getName());
+		label.setStyleName("large-bold");
+		label.setSizeUndefined();
+		paramLayout.addComponent(label, 0 , 0, 1, 0);
+		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+				
+		final Map<String, String> valueMap = parameter.getValue();
+		
+		final GridLayout mapLayout = new GridLayout(5, (valueMap.size() != 0 ? valueMap.size(): 1) + 1	);
+		mapLayout.setMargin(true);
+		mapLayout.setSpacing(true);
+		
+		int i=0;
+		
+		for(final String key: valueMap.keySet())
+		{
+			final Label keyLabel = new Label("Key");
+			final Label valueLabel = new Label("Value");
+			
+			final TextField keyField = new TextField();
+			keyField.setValue(key);
+			
+			final TextField valueField = new TextField();
+			valueField.setValue(valueMap.get(key));
+			
+			mapLayout.addComponent(keyLabel, 0, i);
+			mapLayout.addComponent(keyField, 1, i);
+			mapLayout.addComponent(valueLabel, 2, i);
+			mapLayout.addComponent(valueField, 3, i);
+			final String mapKey = parameter.getName() + i;
+			TextFieldKeyValuePair pair = new TextFieldKeyValuePair();
+			pair.key = keyField;
+			pair.value = valueField;
+			
+			this.mapTextFields.put(mapKey, pair);
+			
+			final Button removeButton = new Button("remove");
+			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+			removeButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            public void buttonClick(ClickEvent event) 
+	            {
+	            	valueMap.remove(key); 
+	            	mapLayout.removeComponent(keyLabel);
+	            	mapLayout.removeComponent(valueLabel);
+	            	mapLayout.removeComponent(keyField);
+	            	mapLayout.removeComponent(valueField);
+	            	mapLayout.removeComponent(removeButton);
+	            	
+	            	mapTextFields.remove(mapKey);
+	            }
+	        });
+			
+			mapLayout.addComponent(removeButton, 4, i);
+			
+			i++;
+		}
+		
+		final Button addButton = new Button("add");
+		addButton.setStyleName(Reindeer.BUTTON_LINK);
+		addButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	final Label keyLabel = new Label("Key");
+    			final Label valueLabel = new Label("Value");
+    			
+    			final TextField keyField = new TextField();
+    			
+    			final TextField valueField = new TextField();
+    			
+    			mapLayout.insertRow(mapLayout.getRows());
+    			
+    			mapLayout.removeComponent(addButton);
+    			mapLayout.addComponent(keyLabel, 0, mapLayout.getRows() -2);
+    			mapLayout.addComponent(keyField, 1, mapLayout.getRows() -2);
+    			mapLayout.addComponent(valueLabel, 2, mapLayout.getRows() -2);
+    			mapLayout.addComponent(valueField, 3, mapLayout.getRows() -2);
+    			
+    			final String mapKey = parameter.getName() + mapTextFields.size();
+    			TextFieldKeyValuePair pair = new TextFieldKeyValuePair();
+    			pair.key = keyField;
+    			pair.value = valueField;
+    			
+    			mapTextFields.put(mapKey, pair);
+    			
+    			final Button removeButton = new Button("remove");
+    			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+    			removeButton.addClickListener(new Button.ClickListener() 
+    	    	{
+    	            public void buttonClick(ClickEvent event) 
+    	            {
+    	            	mapLayout.removeComponent(keyLabel);
+    	            	mapLayout.removeComponent(valueLabel);
+    	            	mapLayout.removeComponent(keyField);
+    	            	mapLayout.removeComponent(valueField);
+    	            	
+    	            	mapLayout.removeComponent(removeButton);
+    	            }
+    	        });
+    			
+    			mapLayout.addComponent(removeButton, 4, mapLayout.getRows() -2);
+    			
+    			mapLayout.addComponent(addButton, 0, mapLayout.getRows() -1);
+            }
+        });
+		
+		mapLayout.addComponent(addButton, 0, mapLayout.getRows() -1);
+		
+		Panel mapPanel = new Panel();
+		mapPanel.setStyleName("dashboard");
+		mapPanel.setContent(mapLayout);
+		
+		paramLayout.addComponent(mapPanel, 0, 1, 1, 1);
+		paramLayout.setComponentAlignment(mapPanel, Alignment.TOP_CENTER);
+		paramPanel.setContent(paramLayout);
+		
+		Label paramDescriptionLabel = new Label("Description:");
+		paramDescriptionLabel.setSizeUndefined();
+		TextArea descriptionTextField = new TextArea();
+		descriptionTextField.setRows(4);
+		descriptionTextField.setWidth("80%");
+		descriptionTextField.setId(parameter.getName());
+		
+		paramLayout.addComponent(paramDescriptionLabel, 0, 2);
+		paramLayout.addComponent(descriptionTextField, 1, 2);
+		paramLayout.setComponentAlignment(paramDescriptionLabel, Alignment.TOP_RIGHT);
+
+		descriptionTextFields.put(parameter.getName(), descriptionTextField);
+
+		if(parameter.getDescription() != null)
+		{
+			descriptionTextField.setValue(parameter.getDescription());
+		}
+
+		
+		return paramPanel;
+    }
+
+    protected Panel createListPanel(final ConfigurationParameterListImpl parameter)
+    {
+    	Panel paramPanel = new Panel();
+		paramPanel.setStyleName("dashboard");
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(2, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+		
+		Label label = new Label(parameter.getName());
+		label.setStyleName("large-bold");
+		label.setSizeUndefined();
+		paramLayout.addComponent(label, 0 , 0, 1, 0);
+		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+				
+		final List<String> valueList = parameter.getValue();
+		
+		final GridLayout listLayout = new GridLayout(3, (valueList.size() != 0 ? valueList.size(): 1) + 1);
+		listLayout.setWidth("450px");
+		listLayout.setMargin(true);
+		listLayout.setSpacing(true);
+		
+		listLayout.setColumnExpandRatio(0, 0.25f);
+		listLayout.setColumnExpandRatio(1, 0.5f);
+		listLayout.setColumnExpandRatio(2, 0.25f);
+		
+		int i=0;
+		
+		for(final String value: valueList)
+		{
+			final Label valueLabel = new Label("Value");
+			
+			final TextField valueField = new TextField();
+			valueField.setValue(value);
+			valueField.setWidth("90%");
+		
+			listLayout.addComponent(valueLabel, 0, i);
+			listLayout.addComponent(valueField, 1, i);
+			
+			final String mapKey = parameter.getName() + i;
+			
+			this.valueTextFields.put(mapKey, valueField);
+			
+			final Button removeButton = new Button("remove");
+			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+			removeButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            public void buttonClick(ClickEvent event) 
+	            {
+	            	valueList.remove(value); 
+	            	listLayout.removeComponent(valueLabel);
+	            	listLayout.removeComponent(valueField);
+	            	listLayout.removeComponent(removeButton);
+	            	
+	            	valueTextFields.remove(mapKey);
+	            }
+	        });
+			
+			listLayout.addComponent(removeButton, 2, i);
+			
+			i++;
+		}
+		
+		final Button addButton = new Button("add");
+		addButton.setStyleName(Reindeer.BUTTON_LINK);
+		addButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+    			final Label valueLabel = new Label("Value");
+    				
+    			final TextField valueField = new TextField();
+    			valueField.setWidth("90%");
+    			
+    			listLayout.insertRow(listLayout.getRows());
+    			
+    			listLayout.removeComponent(addButton);
+    			listLayout.addComponent(valueLabel, 0, listLayout.getRows() -2);
+    			listLayout.addComponent(valueField, 1, listLayout.getRows() -2);
+    			
+    			final String mapKey = parameter.getName() + valueTextFields.size();
+    			
+    			valueTextFields.put(mapKey, valueField);
+    			
+    			final Button removeButton = new Button("remove");
+    			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+    			removeButton.addClickListener(new Button.ClickListener() 
+    	    	{
+    	            public void buttonClick(ClickEvent event) 
+    	            {
+    	            	listLayout.removeComponent(valueLabel);
+    	            	listLayout.removeComponent(valueField);
+    	            	
+    	            	listLayout.removeComponent(removeButton);
+    	            }
+    	        });
+    			
+    			listLayout.addComponent(removeButton, 2, listLayout.getRows() -2);
+    			
+    			listLayout.addComponent(addButton, 0, listLayout.getRows() -1);
+            }
+        });
+		
+		listLayout.addComponent(addButton, 0, listLayout.getRows() -1);
+		
+		Panel mapPanel = new Panel();
+		mapPanel.setStyleName("dashboard");
+		mapPanel.setContent(listLayout);
+		
+		paramLayout.addComponent(mapPanel, 0, 1, 1, 1);
+		paramLayout.setComponentAlignment(mapPanel, Alignment.TOP_CENTER);
+		paramPanel.setContent(paramLayout);
+		
+		Label paramDescriptionLabel = new Label("Description:");
+		paramDescriptionLabel.setSizeUndefined();
+		TextArea descriptionTextField = new TextArea();
+		descriptionTextField.setRows(4);
+		descriptionTextField.setWidth("80%");
+		descriptionTextField.setId(parameter.getName());
+		
+		paramLayout.addComponent(paramDescriptionLabel, 0, 2);
+		paramLayout.addComponent(descriptionTextField, 1, 2);
+		paramLayout.setComponentAlignment(paramDescriptionLabel, Alignment.TOP_RIGHT);
+
+		descriptionTextFields.put(parameter.getName(), descriptionTextField);
+
+		if(parameter.getDescription() != null)
+		{
+			descriptionTextField.setValue(parameter.getDescription());
+		}
+
+		
+		return paramPanel;
+    }
+    
+    private class TextFieldKeyValuePair
+    {
+    	public TextField key;
+    	public TextField value;
     }
 }

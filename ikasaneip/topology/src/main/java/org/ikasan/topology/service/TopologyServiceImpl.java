@@ -271,9 +271,9 @@ public class TopologyServiceImpl implements TopologyService
 
 			    
 			    for(JsonValue flowValue: flowResponse)
-			    {
-			    	 
+			    { 
 		    		Flow flow;
+		    		
 					try
 					{
 						flow = mapper.readValue(
@@ -295,6 +295,8 @@ public class TopologyServiceImpl implements TopologyService
 					{
 						component.setFlow(flow);
 						
+						logger.info("Saving component: " + component.getName());
+
 						this.topologyDao.save(component);
 					}								    	
 			    }

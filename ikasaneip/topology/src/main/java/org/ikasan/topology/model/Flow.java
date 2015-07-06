@@ -41,9 +41,7 @@
 package org.ikasan.topology.model;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -55,6 +53,7 @@ public class Flow implements Principal
     private Long id;
     private String name;
     private String description;
+    private String state;
     private Module module;
     private Set<Component> components;
 
@@ -196,5 +195,21 @@ public class Flow implements Principal
 	public void setModule(Module module)
 	{
 		this.module = module;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public String getState()
+	{
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state)
+	{
+		this.state = state;
 	}
 }

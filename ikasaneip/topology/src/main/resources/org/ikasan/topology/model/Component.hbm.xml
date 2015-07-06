@@ -81,6 +81,12 @@
                   column="ConfigurationId"
                   not-null="false" 
                   unique="false"/>
+                  
+        <property name="order"
+                  type="int"
+                  column="ComponentOrder"
+                  not-null="true" 
+                  unique="false"/>
            
         <many-to-one name="flow" cascade="all" column="FlowId" 
        		class="org.ikasan.topology.model.Flow" not-null="true"/>

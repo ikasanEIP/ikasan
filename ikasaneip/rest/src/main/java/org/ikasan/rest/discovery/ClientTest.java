@@ -42,17 +42,16 @@ package org.ikasan.rest.discovery;
 
 import java.io.IOException;
 
-import javax.json.JsonArray;
-import javax.json.JsonValue;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Flow;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -74,29 +73,30 @@ public class ClientTest
 	 */
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException
 	{
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("stewmi", "Mum&Dad2015");
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
     	
     	ClientConfig clientConfig = new ClientConfig();
     	clientConfig.register(feature) ;
     	
     	Client client = ClientBuilder.newClient(clientConfig);
     	
-		String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/discovery/flows/gloss-referencemarketDataTgt";
+		String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/moduleControl/controlFlowState/gloss-referencemarketDataTgt/Counterparty Transformer Flow";
 
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try
     	{
-	    WebTarget webTarget = client.target(url);
-	    JsonArray response = webTarget.request().get(JsonArray.class);
-	    	
-	    for(JsonValue value: response)
-	    {
-	    	 
-	    	Flow flow =  mapper.readValue(
-	    			 value.toString(), Flow.class);
-	    	System.out.println(flow);
-	    	
+		    WebTarget webTarget = client.target(url);
+		    Response response = webTarget.request().put(Entity.entity("pause", MediaType.APPLICATION_OCTET_STREAM));
+		    
+		    if(response.getStatus()  != 200)
+		    {
+		    	response.bufferEntity();
+		        
+		        String responseMessage = response.readEntity(String.class);
+		    	System.out.println(responseMessage);
+		    }
+    	}
 //	    	url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/discovery/components/gloss-referencemarketDataTgt/" + flow.getName();
 //	    	System.out.println("Flow: " + flow);
 //	    	
@@ -112,13 +112,7 @@ public class ClientTest
 //		    	System.out.println(component);
 //		    } 
 	    	
-	    	for(Component component: flow.getComponents())
-	    	{
-	    		System.out.println(component);
-	    	}
-	    }
-	    
-    	}
+	    	
     	catch(NotFoundException e)
     	{
     		System.out.println("Caught exception: " + e);

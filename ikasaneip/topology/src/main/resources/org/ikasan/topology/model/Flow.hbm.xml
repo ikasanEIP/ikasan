@@ -74,7 +74,7 @@
         <many-to-one name="module" column="ModuleId" 
        		class="org.ikasan.topology.model.Module" not-null="true"/>
        	
-       	<set name="components" cascade="all" order-by="Id asc">
+       	<set name="components" cascade="all" order-by="ComponentOrder asc">
          	<key column="FlowId"/>
          	<one-to-many class="org.ikasan.topology.model.Component" />
       	</set>
