@@ -157,12 +157,12 @@ public class PrincipalManagementPanel extends Panel implements View
 		
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
-		roleTable.setHeight("400px");
+		roleTable.setHeight("520px");
 		roleTable.setWidth("300px");
 		
 		principalDropTable.addContainerProperty("Members", String.class, null);
 		principalDropTable.addContainerProperty("", Button.class, null);
-		principalDropTable.setHeight("400px");
+		principalDropTable.setHeight("100%");
 		principalDropTable.setWidth("300px");
 
 		principalNameField.setQueryListener(new AutocompleteQueryListener<IkasanPrincipal>()

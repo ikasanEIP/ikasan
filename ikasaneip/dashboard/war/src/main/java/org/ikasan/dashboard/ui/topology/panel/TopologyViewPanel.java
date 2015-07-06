@@ -71,6 +71,8 @@ import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
+import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
+import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
@@ -176,14 +178,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action DISABLE = new Action("Disable");
     private final Action DETAILS = new Action("Details");
     private final Action WIRETAP = new Action("Wiretap");
+    private final Action STARTUP_CONTROL = new Action("Startup Type");
     private final Action[] serverActions = new Action[] { DETAILS };
     private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
-//    private final Action[] flowActions = new Action[] { DETAILS, STOP, START, PAUSE, RESTART, DISABLE };
-    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE };
-    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE };
-    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME };
-    private final Action[] componentActionsConfigurable = new Action[] { DETAILS, CONFIGURE, WIRETAP };
-    private final Action[] componentActions = new Action[] { DETAILS, WIRETAP };
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL };
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL };
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL };
+    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP };
+    private final Action[] componentActions = new Action[] { WIRETAP };
     private final Action[] actionsEmpty = new Action[]{};
 	
 	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
@@ -384,7 +386,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
     	final VerticalLayout tab5 = new VerticalLayout();
 		tab5.setSizeFull();
-		tab5.addComponent(this.createActionedExclusionsPanel());
+		tab5.addComponent(createActionedExclusionsPanel());
 		tabsheet.addTab(tab5, "Actioned Exclusions");
 		
 		final VerticalLayout tab6 = new VerticalLayout();
@@ -474,23 +476,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
                 	            	
                 	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-        			    			if(state.equals(RUNNING))
+        			    			if(state != null && state.equals(RUNNING))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowStartedResource);
         			    			}
-        			    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+        			    			else if(state != null &&(state.equals(RUNNING) || state.equals(RECOVERING)))
         			    			{
         			    				moduleTree.setItemIcon(flow,flowStartedResource);
         			    			}
-        			    			else if (state.equals(STOPPED))
+        			    			else if (state != null && state.equals(STOPPED))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowStoppedResource);
         			    			}
-        			    			else if (state.equals(STOPPED_IN_ERROR))
+        			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
         			    			}
-        			    			else if (state.equals(PAUSED))
+        			    			else if (state != null && state.equals(PAUSED))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowPausedResource);
         			    			}
@@ -553,23 +555,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		                moduleTree.setChildrenAllowed(flow, true);
             		                
             		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-        			    			if(state.equals(RUNNING))
+        			    			if(state != null && state.equals(RUNNING))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowStartedResource);
         			    			}
-        			    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+        			    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
         			    			{
         			    				moduleTree.setItemIcon(flow,flowStartedResource);
         			    			}
-        			    			else if (state.equals(STOPPED))
+        			    			else if (state != null && state.equals(STOPPED))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowStoppedResource);
         			    			}
-        			    			else if (state.equals(STOPPED_IN_ERROR))
+        			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
         			    			}
-        			    			else if (state.equals(PAUSED))
+        			    			else if (state != null && state.equals(PAUSED))
         			    			{
         			    				moduleTree.setItemIcon(flow, flowPausedResource);
         			    			}
@@ -624,23 +626,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    	                moduleTree.setChildrenAllowed(flow, true);
 	    	                
 	    	                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-			    			if(state.equals(RUNNING))
+			    			if(state != null && state.equals(RUNNING))
 			    			{
 			    				moduleTree.setItemIcon(flow, flowStartedResource);
 			    			}
-			    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+			    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 			    			{
 			    				moduleTree.setItemIcon(flow,flowStartedResource);
 			    			}
-			    			else if (state.equals(STOPPED))
+			    			else if (state != null && state.equals(STOPPED))
 			    			{
 			    				moduleTree.setItemIcon(flow, flowStoppedResource);
 			    			}
-			    			else if (state.equals(STOPPED_IN_ERROR))
+			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
 			    			{
 			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
 			    			}
-			    			else if (state.equals(PAUSED))
+			    			else if (state != null && state.equals(PAUSED))
 			    			{
 			    				moduleTree.setItemIcon(flow, flowPausedResource);
 			    			}
@@ -673,6 +675,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.12f);
 		
 		Button discoverButton = new Button("Discover");
+		discoverButton.setStyleName(Reindeer.BUTTON_SMALL);
 		discoverButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -696,6 +699,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button refreshButton = new Button("Refresh");
+		refreshButton.setStyleName(Reindeer.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -1033,6 +1037,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
+		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1101,6 +1106,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button clearButton = new Button("Clear");
+		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
 		clearButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1360,7 +1366,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		hListSelectLayout.addComponent(listSelectLayout);
 		layout.addComponent(hListSelectLayout);
 		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(100 , Unit.PIXELS);
+		hDateSelectLayout.setHeight(80 , Unit.PIXELS);
 		hDateSelectLayout.setWidth("100%");
 		hDateSelectLayout.addComponent(dateSelectLayout);
 		layout.addComponent(hDateSelectLayout);
@@ -1371,7 +1377,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.addComponent(hSearchLayout);
 		HorizontalLayout hWiretapTable = new HorizontalLayout();
 		hWiretapTable.setWidth("100%");
-		hWiretapTable.setHeight(420, Unit.PIXELS);
+		hWiretapTable.setHeight(450, Unit.PIXELS);
 		hWiretapTable.addComponent(this.wiretapTable);
 		layout.addComponent(hWiretapTable);
 		layout.setSizeFull();
@@ -1401,6 +1407,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
+		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -1470,6 +1477,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button clearButton = new Button("Clear");
+		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
 		clearButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1722,7 +1730,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		hListSelectLayout.addComponent(listSelectLayout);
 		layout.addComponent(hListSelectLayout);
 		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(50, Unit.PIXELS);
+		hDateSelectLayout.setHeight(40, Unit.PIXELS);
 		hDateSelectLayout.setWidth("100%");
 		hDateSelectLayout.addComponent(dateSelectLayout);
 		layout.addComponent(hDateSelectLayout);
@@ -1733,7 +1741,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.addComponent(hSearchLayout);
 		HorizontalLayout hErrorTable = new HorizontalLayout();
 		hErrorTable.setWidth("100%");
-		hErrorTable.setHeight(420, Unit.PIXELS);
+		hErrorTable.setHeight(500, Unit.PIXELS);
 		hErrorTable.addComponent(this.errorOccurenceTable);
 		layout.addComponent(hErrorTable);
 		layout.setSizeFull();
@@ -1778,6 +1786,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button refreshButton = new Button("Refresh");
+		refreshButton.setStyleName(Reindeer.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -1837,6 +1846,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
+		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -2123,17 +2133,33 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.actionedExclusionToDate.setResolution(Resolution.MINUTE);
 		this.actionedExclusionToDate.setValue(this.getTwentyThreeFixtyNineToday());
 		dateSelectLayout.addComponent(this.actionedExclusionToDate, 1, 0);
-				
 		
-		GridLayout searchLayout = new GridLayout(1, 1);
-		searchLayout.addComponent(searchButton, 0, 0);		
+		Button clearButton = new Button("Clear");
+		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
+		clearButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	actionedExclusionsModules.removeAllItems();
+            	actionedExclusionsFlows.removeAllItems();
+            	actionedExclusionsComponents.removeAllItems();
+            }
+        });
 		
-		VerticalLayout layout = new VerticalLayout();
+		GridLayout searchLayout = new GridLayout(2, 1);
+		searchLayout.addComponent(searchButton, 0, 0);	
+		searchLayout.addComponent(clearButton, 1, 0);	
+		
+		GridLayout layout = new GridLayout(1, 4);
 		layout.setMargin(true);
 		
-		layout.addComponent(listSelectLayout);
+		HorizontalLayout hListSelectLayout = new HorizontalLayout();
+		hListSelectLayout.setHeight(100 , Unit.PIXELS);
+		hListSelectLayout.setWidth("100%");
+		hListSelectLayout.addComponent(listSelectLayout);
+		layout.addComponent(hListSelectLayout);
 		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(30, Unit.PIXELS);
+		hDateSelectLayout.setHeight(40, Unit.PIXELS);
 		hDateSelectLayout.setWidth("100%");
 		hDateSelectLayout.addComponent(dateSelectLayout);
 		layout.addComponent(hDateSelectLayout);
@@ -2188,6 +2214,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
+		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -2222,6 +2249,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
+		dateSelectLayout.setSpacing(true);
 		dateSelectLayout.setWidth("50%");
 		this.systemEventFromDate = new PopupDateField("From date");
 		this.systemEventFromDate.setResolution(Resolution.MINUTE);
@@ -2334,23 +2362,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                this.moduleTree.setChildrenAllowed(flow, true);
 		    			
 		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-		    			if(state.equals(RUNNING))
+		    			if(state != null && state.equals(RUNNING))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
 		    			}
-		    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+		    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
 		    			}
-		    			else if (state.equals(STOPPED_IN_ERROR))
+		    			else if (state != null && state.equals(STOPPED_IN_ERROR))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
 		    			}
-		    			else if (state.equals(STOPPED))
+		    			else if (state != null && state.equals(STOPPED))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
 		    			}
-		    			else if (state.equals(PAUSED))
+		    			else if (state != null && state.equals(PAUSED))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
 		    			}
@@ -2454,23 +2482,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                moduleTree.setChildrenAllowed(flow, true);
 
 		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-		    			if(state.equals(RUNNING))
+		    			if(state != null && state.equals(RUNNING))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
 		    			}
-		    			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+		    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
 		    			}
-		    			else if (state.equals(STOPPED_IN_ERROR))
+		    			else if (state != null && state.equals(STOPPED_IN_ERROR))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
 		    			}
-		    			else if (state.equals(STOPPED))
+		    			else if (state != null && state.equals(STOPPED))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
 		    			}
-		    			else if (state.equals(PAUSED))
+		    			else if (state != null && state.equals(PAUSED))
 		    			{
 		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
 		    			}
@@ -2593,24 +2621,34 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	@SuppressWarnings("unchecked")
 	protected HashMap<String, String> getFlowStates(Module module)
 	{
-		String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
-				+ module.getContextRoot() 
-				+ "/rest/moduleControl/flowStates/"
-				+ module.getName();
-		
-		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-    	
-    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-	    WebTarget webTarget = client.target(url);
+		HashMap<String, String> results = new HashMap<String, String>();
+		try
+		{
+			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+					+ module.getContextRoot() 
+					+ "/rest/moduleControl/flowStates/"
+					+ module.getName();
+			
+			IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+	    	
+	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+	    	
+	    	ClientConfig clientConfig = new ClientConfig();
+	    	clientConfig.register(feature) ;
+	    	
+	    	Client client = ClientBuilder.newClient(clientConfig);
+	    	
+	    	WebTarget webTarget = client.target(url);
+		    
+	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
+		}
+		catch(Exception e)
+		{
+			return new HashMap<String, String>();
+		}
 	    
-	    return (HashMap<String, String>)webTarget.request().get(HashMap.class);
+	    return results;
 	}
 	
 	/* (non-Javadoc)
@@ -2634,19 +2672,19 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			Flow flow = ((Flow)target);
 			
 			String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-			if(state.equals(RUNNING))
+			if(state != null && state.equals(RUNNING))
 			{
 				return this.flowActionsStarted;
 			}
-			else if(state.equals(RUNNING) || state.equals(RECOVERING))
+			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 			{
 				return this.flowActionsStarted;
 			}
-			else if (state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR))
+			else if (state != null &&(state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR)))
 			{
 				return this.flowActionsStopped;
 			}
-			else if (state.equals(PAUSED))
+			else if (state != null && state.equals(PAUSED))
 			{
 				return this.flowActionsPaused;
 			}
@@ -2681,6 +2719,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         	{
         		this.componentConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.componentConfigurationWindow);
+        	}
+        	if(action.equals(WIRETAP))
+        	{
+        		UI.getCurrent().addWindow(new WiretapConfigurationWindow());
         	}
         }
         else if(target != null && target instanceof Flow)
@@ -2721,6 +2763,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        	{
 	        		senderTree.setItemIcon(flow, this.flowPausedResource);
 	        	}
+	        }
+	        else if(action.equals(STARTUP_CONTROL))
+	        {       	
+	        	UI.getCurrent().addWindow(new StartupControlConfigurationWindow());
 	        }
 	        
 	        this.refreshFlowStates(flow.getModule().getServer().getModules());

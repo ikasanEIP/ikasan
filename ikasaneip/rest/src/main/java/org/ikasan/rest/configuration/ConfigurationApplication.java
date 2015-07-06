@@ -62,7 +62,7 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	@GET
 	@Path("/createConfiguration/{moduleName}/{flowName}/{componentName}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Configuration createConfiguration(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
+	public Response createConfiguration(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
 			@PathParam("componentName") String componentName)
 	{
 		if(!context.isUserInRole("WebServiceAdmin"))
@@ -88,14 +88,20 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 			if(configuration == null)
 			{
 				configuration = this.configurationManagement.createConfiguration(configuredResource);
+				this.configurationManagement.saveConfiguration(configuration);
 			}
 			else
 			{
 				throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).type("text/plain")
-		                .entity("Configuration already exists!.").build());
+	                .entity("This configuration alread exists!").build());
 			}
 		}
+		else
+		{
+			throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).type("text/plain")
+	                .entity("This component is not configurable!").build());
+		}
 		
-		return configuration;
+		return Response.ok("Configuration created!").build();
 	}
 }
