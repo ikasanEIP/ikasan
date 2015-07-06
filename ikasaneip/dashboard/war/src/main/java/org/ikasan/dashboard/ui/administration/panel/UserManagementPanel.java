@@ -62,6 +62,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -98,7 +99,6 @@ public class UserManagementPanel extends Panel implements View
 	private AutocompleteField<User> usernameField = new AutocompleteField<User>();
 	private AutocompleteField<User> firstName;
 	private AutocompleteField<User> surname;
-	private PasswordField passwordField = new PasswordField();
 	private Table userDropTable = new Table();
 	private Table associatedPrincipalsTable = new Table();
 	private User user;
@@ -153,7 +153,7 @@ public class UserManagementPanel extends Panel implements View
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
 	
-		Label usernameLabel = new Label("Username");
+		Label usernameLabel = new Label("Username:");
 		
 		usernameField.setWidth("40%");
 
@@ -161,8 +161,6 @@ public class UserManagementPanel extends Panel implements View
 				usernameField);
 		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
 
-		passwordField = new PasswordField();
-		passwordField.setWidth("40%");
 		
 		firstName = new AutocompleteField<User>();
 		firstName.setWidth("40%");
@@ -172,10 +170,11 @@ public class UserManagementPanel extends Panel implements View
 		department.setWidth("40%");
 		final TextField email = new TextField();
 		email.setWidth("40%");
+		
 		final Table roleTable = new Table();
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
-		roleTable.setHeight("400px");
+		roleTable.setHeight("520px");
 		roleTable.setWidth("200px");
 
 		usernameField.setQueryListener(new AutocompleteQueryListener<User>()
@@ -197,7 +196,6 @@ public class UserManagementPanel extends Panel implements View
 			public void onSuggestionPicked(User user)
 			{
 				UserManagementPanel.this.user = user;
-				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
 				department.setValue(user.getDepartment());
@@ -267,7 +265,6 @@ public class UserManagementPanel extends Panel implements View
 			{
 				UserManagementPanel.this.user = user;
 				usernameField.setText(user.getUsername());
-				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
 				department.setValue(user.getDepartment());
@@ -337,7 +334,6 @@ public class UserManagementPanel extends Panel implements View
 			{
 				UserManagementPanel.this.user = user;
 				usernameField.setText(user.getUsername());
-				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
 				department.setValue(user.getDepartment());
@@ -387,36 +383,41 @@ public class UserManagementPanel extends Panel implements View
 			}
 		});
 		
-		GridLayout formLayout = new GridLayout(2, 6);
+		GridLayout formLayout = new GridLayout(2, 5);
+		formLayout.setSpacing(true);
 		formLayout.setWidth("100%");
-		formLayout.setHeight("190px");
 		
-		formLayout.setColumnExpandRatio(0, 1);
-		formLayout.setColumnExpandRatio(1, 5);
+		formLayout.setColumnExpandRatio(0, .1f);
+		formLayout.setColumnExpandRatio(1, .8f);
 
+		usernameLabel.setSizeUndefined();
 		formLayout.addComponent(usernameLabel, 0, 0);
-		formLayout.addComponent(usernameFieldWrap, 1, 0);
-		
-		Label passwordLabel = new Label("Password");
-		formLayout.addComponent(passwordLabel, 0, 1);
-		formLayout.addComponent(passwordField, 1, 1);
-		
+		formLayout.setComponentAlignment(usernameLabel, Alignment.MIDDLE_RIGHT);
+		formLayout.addComponent(usernameFieldWrap, 1, 0);		
 
-		Label firstNameLabel = new Label("First name");
-		formLayout.addComponent(firstNameLabel, 0, 2);
-		formLayout.addComponent(firstName, 1, 2);
+		Label firstNameLabel = new Label("First name:");
+		firstNameLabel.setSizeUndefined();
+		formLayout.addComponent(firstNameLabel, 0, 1);
+		formLayout.setComponentAlignment(firstNameLabel, Alignment.MIDDLE_RIGHT);
+		formLayout.addComponent(firstName, 1, 1);
 
-		Label surnameLabel = new Label("Surname");
-		formLayout.addComponent(surnameLabel, 0, 3);
-		formLayout.addComponent(surname, 1, 3);
+		Label surnameLabel = new Label("Surname:");
+		surnameLabel.setSizeUndefined();
+		formLayout.addComponent(surnameLabel, 0, 2);
+		formLayout.setComponentAlignment(surnameLabel, Alignment.MIDDLE_RIGHT);
+		formLayout.addComponent(surname, 1, 2);
 
-		Label departmentLabel = new Label("Department");
-		formLayout.addComponent(departmentLabel, 0, 4);
-		formLayout.addComponent(department, 1, 4);
+		Label departmentLabel = new Label("Department:");
+		departmentLabel.setSizeUndefined();
+		formLayout.addComponent(departmentLabel, 0, 3);
+		formLayout.setComponentAlignment(departmentLabel, Alignment.MIDDLE_RIGHT);
+		formLayout.addComponent(department, 1, 3);
 
-		Label emailLabel = new Label("Email address");
-		formLayout.addComponent(emailLabel, 0, 5);
-		formLayout.addComponent(email, 1, 5);
+		Label emailLabel = new Label("Email address:");
+		emailLabel.setSizeUndefined();
+		formLayout.addComponent(emailLabel, 0, 4);
+		formLayout.setComponentAlignment(emailLabel, Alignment.MIDDLE_RIGHT);
+		formLayout.addComponent(email, 1, 4);
 		
 		gridLayout.addComponent(formLayout, 0, 0, 1, 0);
 		
@@ -426,7 +427,7 @@ public class UserManagementPanel extends Panel implements View
 
 		userDropTable.addContainerProperty("Members", String.class, null);
 		userDropTable.addContainerProperty("", Button.class, null);
-		userDropTable.setHeight("400px");
+		userDropTable.setHeight("100%");
 		userDropTable.setWidth("300px");
 
 		userDropTable.setDragMode(TableDragMode.ROW);
@@ -524,7 +525,7 @@ public class UserManagementPanel extends Panel implements View
 		
 		this.associatedPrincipalsTable.addContainerProperty("Member of", String.class, null);
 		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
-		associatedPrincipalsTable.setHeight("400px");
+		associatedPrincipalsTable.setHeight("520px");
 		associatedPrincipalsTable.setWidth("450px");
 		
 		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 2);

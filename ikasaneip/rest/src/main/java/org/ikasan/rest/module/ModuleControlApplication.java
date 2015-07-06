@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 
 /**
@@ -98,7 +99,7 @@ public class ModuleControlApplication
     }
 
     @PUT
-	@Path("/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}/{startupComment}")
+	@Path("/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
     @Consumes("application/octet-stream")
     public void controlFlowStartupMode(@Context SecurityContext context, @PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, @PathParam("startupType") String startupType, String startupComment)
@@ -125,6 +126,8 @@ public class ModuleControlApplication
             }
 
             moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
+            
+            StartupControl c = moduleService.getStartupControl("", "");
         }
         else
         {

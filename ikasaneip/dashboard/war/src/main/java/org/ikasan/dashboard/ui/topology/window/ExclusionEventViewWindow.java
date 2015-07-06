@@ -67,7 +67,6 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -127,7 +126,8 @@ public class ExclusionEventViewWindow extends Window
 	{
 		this.setModal(true);
 		this.setResizable(false);
-		this.setSizeFull();
+		this.setHeight("90%");
+		this.setWidth("90%");
 		
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();
