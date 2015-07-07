@@ -89,6 +89,9 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     /** Chunk files when retrieving */
     private Boolean chunking = Boolean.FALSE;
 
+    /** Gets files from sourceDir and all its sub directories */
+    private Boolean isRecursive = Boolean.FALSE;
+
     /** Maximum size of chunk when chunking, defaults to 1MB */
     private Integer chunkSize = Integer.valueOf(1048576);
 
@@ -398,6 +401,22 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     public void setChunking(Boolean chunking)
     {
         this.chunking = chunking;
+    }
+
+    /**
+     * @return the isRecursive
+     */
+    public Boolean getIsRecursive()
+    {
+        return this.isRecursive;
+    }
+
+    /**
+     * @param isRecursive the isRecursive to set
+     */
+    public void setIsRecursive(Boolean isRecursive)
+    {
+        this.isRecursive = isRecursive;
     }
 
     /**

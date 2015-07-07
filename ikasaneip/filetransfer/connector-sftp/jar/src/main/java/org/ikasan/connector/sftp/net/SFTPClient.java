@@ -171,11 +171,6 @@ public class SFTPClient implements FileTransferClient
     private String preferredAuthentications;
 
     /**
-     * Determins if the listing of the files should be recursive
-     */
-    private boolean isRecursive;
-
-    /**
      * SFTPClient constructor where all parameters are provided by the user
      *
      * <p>
@@ -207,7 +202,6 @@ public class SFTPClient implements FileTransferClient
         this.remotePort = remotePort;
         this.getDestructive = false;
         this.putDestructive = false;
-        this.isRecursive = false;
         this.lfs = System.getProperty("file.separator");
         this.tfs = new String("/");
         this.maxRetryAttempts = maxRetryAttempts;
@@ -1162,13 +1156,8 @@ public class SFTPClient implements FileTransferClient
             SftpProgressMonitor monitor = null;
             // If the consuming is taking place and the isRecursive==true we need to use
             // full path names rather then file name
-            if(isRecursive)
-            {
-                this.channelSftp.get(srcFile.getPath(), output, monitor);
-            } else
-            {
-                this.channelSftp.get(fileName, output, monitor);
-            }
+             this.channelSftp.get(srcFile.getPath(), output, monitor);
+
         }
         catch (SftpException e)
         {
@@ -1676,16 +1665,7 @@ public class SFTPClient implements FileTransferClient
             {
                 URI fileUri = this.getURI(currentDir, lsEntry.getFilename());
                 ClientListEntry entry = convertLsEntryToClientListEntry(lsEntry, fileUri,currentDir);
-
-                if (this.isRecursive&&entry.isDirectory()&&!entry.getName().equals("..")&&!entry.getName().equals("."))
-                {
-                    list.add(entry);
-                    getListOfFiles(entry.getName(), list);
-                }
-                else
-                {
-                    list.add(entry);
-                }
+                list.add(entry);
             }
             // Return to the calling directory
             this.channelSftp.cd(startDir);
@@ -1823,29 +1803,6 @@ public class SFTPClient implements FileTransferClient
     public void setGetDestructive(boolean getDestructive)
     {
         this.getDestructive = getDestructive;
-    }
-
-    /**
-     * Setter method for the boolean <code>isRecursive</code> class
-     * variable. This will indicate whether get functionality will be
-     * getting recursive list of files.
-     *
-     * @param isRecursive Boolean value for the <code>isRecursive</code>
-     */
-    public void setRecursive(boolean isRecursive)
-    {
-        this.isRecursive = isRecursive;
-    }
-
-    /**
-     * Getter method for the boolean <code>isRecursive</code> class
-     * variable.
-     *
-     * @return True if the get operation is getting files recursively, false otherwise.
-     */
-    public boolean isRecursive()
-    {
-        return isRecursive;
     }
 
     /**
@@ -2183,13 +2140,7 @@ public class SFTPClient implements FileTransferClient
         ClientListEntry clientListEntry = new ClientListEntry();
         clientListEntry.setUri(fileUri);
         clientListEntry.setName(fileName);
-        if(isRecursive)
-        {
-            clientListEntry.setFullPath(currentDir + fileName);
-        } else
-        {
-            clientListEntry.setFullPath(fileName);
-        }
+        clientListEntry.setFullPath(currentDir +System.getProperty("file.separator")+ fileName);
         clientListEntry.setClientId(null);
         clientListEntry.setDtLastAccessed(new Date(((long) attrs.getATime()) * 1000));
         clientListEntry.setDtLastModified(new Date(((long) attrs.getMTime()) * 1000));

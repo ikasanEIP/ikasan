@@ -242,7 +242,6 @@ public class SFTPConnectionFactory extends EISConnectionFactoryImpl
             scri.setPollTime(sftpConnectionSpec.getPollTime());
             scri.setPreferredAuthentications(sftpConnectionSpec.getPreferredAuthentications());
             scri.setConnectionTimeout(sftpConnectionSpec.getConnectionTimeout());
-            scri.setIsRecursive(sftpConnectionSpec.getIsRecursive());
         }
         return scri;
     }
