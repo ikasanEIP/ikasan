@@ -1020,12 +1020,12 @@
 					   ContextRoot     				VARCHAR(256) 		NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   DiagramUrl      				VARCHAR(256) 		NULL,
-                       Version						VARCHAR(256) 		NULL,
-                       ServerId						NUMERIC(18, 0) 		NULL,
+					   Version      				VARCHAR(256) 		NULL,
+					   ServerId						NUMERIC(18, 0) 		NULL,
 					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
-					) 
+					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
                 </prop>
@@ -1035,11 +1035,10 @@
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
-					   ModuleId						NUMERIC(18, 0) 		NOT NULL,
+					   ModuleId						NUMERIC(18, 0) 		NULL,
 					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   PRIMARY KEY (Id),
-					   FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1051,13 +1050,12 @@
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   IsConfigurable 				BIT DEFAULT 0,
-					   FlowId						NUMERIC(18, 0) 		NOT NULL,
+					   FlowId						NUMERIC(18, 0) 		NULL,
+					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
 					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   PRIMARY KEY (Id),
-					   FOREIGN KEY (FlowId) REFERENCES Flow(Id),
-					   FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1080,12 +1078,11 @@
 					(
 					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
 					   FlowId						NUMERIC(18, 0) 	NOT NULL,
-					   FlowOrder						NUMERIC(18, 0) 	NOT NULL,
+					   FlowOrder					NUMERIC(18, 0) 	NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (BusinessStreamId, FlowId),
-					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id),
-					   FOREIGN KEY (FlowId) REFERENCES Flow(Id)
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1296,9 +1293,7 @@
 					INSERT
 					INTO PolicyLinkType ( Name, TableName )
 					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
-					
-					INSERT INTO AuthenticationMethod (Id, Method)
-					VALUES (1, 'AUTH_METHOD_LOCAL')
+				
 				</prop>
 			</props>
 		</property>
@@ -1955,7 +1950,7 @@
 					WITH IDENTITY_GAP=1
 				</prop>
 
-				<!--  Hospital Service Tables -->
+				<!--  Topology Service Tables -->
                 <prop key="create.server">CREATE TABLE Server
 					(
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
@@ -1982,8 +1977,8 @@
 					   ServerId						NUMERIC(18, 0) 		NULL,
 					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   PRIMARY KEY (Id),
-                    )
+					   PRIMARY KEY (Id)
+					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
                 </prop>
@@ -1993,11 +1988,10 @@
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
-					   ModuleId						NUMERIC(18, 0) 		NOT NULL,
+					   ModuleId						NUMERIC(18, 0) 		NULL,
 					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   PRIMARY KEY (Id),
-					   FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -2009,13 +2003,12 @@
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   IsConfigurable 				BIT DEFAULT 0,
-					   FlowId						NUMERIC(18, 0) 		NOT NULL,
+					   FlowId						NUMERIC(18, 0) 		NULL,
+					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
 					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   PRIMARY KEY (Id),
-					   FOREIGN KEY (FlowId) REFERENCES Flow(Id),
-					   FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -2038,12 +2031,11 @@
 					(
 					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
 					   FlowId						NUMERIC(18, 0) 	NOT NULL,
-					   FlowOrder						NUMERIC(18, 0) 	NOT NULL,
+					   FlowOrder					NUMERIC(18, 0) 	NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (BusinessStreamId, FlowId),
-					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id),
-					   FOREIGN KEY (FlowId) REFERENCES Flow(Id)
+					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -2259,8 +2251,6 @@
 					INTO PolicyLinkType ( Name, TableName )
 					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
 					
-					INSERT INTO AuthenticationMethod (Id, Method)
-					VALUES (1, 'AUTH_METHOD_LOCAL')
 				</prop>
 				
 				<!-- Tables required for the ikasan mapping module -->
@@ -3484,7 +3474,7 @@
                     )
                 </prop>
                 
-				<!--  Hospital Service Tables -->
+				<!--  Topology Service Tables -->
                 <prop key="create.server">CREATE TABLE Server
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
@@ -3532,8 +3522,7 @@
 					   CONSTRAINT            [PK_Flow_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
-						),
-					   CONSTRAINT [FK_Flow_ModuleId] FOREIGN KEY (ModuleId) REFERENCES IkasanModule(Id)
+						)
 					) 
                 </prop>
                 
@@ -3545,14 +3534,13 @@
 					   [IsConfigurable]				[bit] 				DEFAULT 0,
 					   [FlowId]						[numeric](18) 		NOT NULL,
 					   [ConfigurationId]			[varchar](256) 		NULL,
+					   [ComponentOrder]						[numeric](18) 		NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Component_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
-						),
-					   CONSTRAINT [FK_Component_FlowId] FOREIGN KEY (FlowId) REFERENCES Flow(Id),
-					   CONSTRAINT [FK_Component_ConfigurationId] FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+						)
 					) 
                 </prop>
                 
@@ -3581,7 +3569,6 @@
 					   (
 							[BusinessStreamId], [FlowId]
 					   ),
-					   CONSTRAINT [FK_BusinessStreamFlow_FlowId] FOREIGN KEY (FlowId) REFERENCES Flow(Id),
 					   CONSTRAINT [FK_BusinessStreamFlow_BusinessStreamId] FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
 					) 
                 </prop>
@@ -3798,10 +3785,6 @@
 					INTO PolicyLinkType ( Name, TableName )
 					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
 					
-					SET IDENTITY_INSERT AuthenticationMethod ON
-					INSERT INTO AuthenticationMethod (Id, Method)
-					VALUES (1, 'AUTH_METHOD_LOCAL')
-					SET IDENTITY_INSERT AuthenticationMethod OFF
 				</prop>
 			</props>
 		</property>
@@ -4612,14 +4595,13 @@
 					   Id             				NUMERIC(18, 0) 		IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
-					   IsConfigurable 				BOOLEAN 			DEFAULT 0,
-					   FlowId						NUMERIC(18, 0) 		NOT NULL,
+					   IsConfigurable 				BIT DEFAULT 0,
+					   FlowId						NUMERIC(18, 0) 		NULL,
+					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
-					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
-					   PRIMARY KEY (Id),
-					   FOREIGN KEY (FlowId) REFERENCES Flow(Id),
-					   FOREIGN KEY (ConfigurationId) REFERENCES Configuration(ConfigurationId)
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
 					);
                 </prop>
                 

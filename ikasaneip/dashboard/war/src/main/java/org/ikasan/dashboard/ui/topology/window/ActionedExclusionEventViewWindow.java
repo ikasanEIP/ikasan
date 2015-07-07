@@ -123,7 +123,8 @@ public class ActionedExclusionEventViewWindow extends Window
 	{
 		this.setModal(true);
 		this.setResizable(false);
-		this.setSizeFull();
+		this.setHeight("90%");
+		this.setWidth("90%");   
 		
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();

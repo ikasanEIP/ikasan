@@ -38,88 +38,79 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.rest.discovery;
+package org.ikasan.dashboard.ui.topology.window;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.DefaultConfiguration;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Server;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.Reindeer;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ClientTest
+public class StartupControlConfigurationWindow extends Window
 {
+	private static final long serialVersionUID = 8900720508474545668L;
+
+	private Logger logger = Logger.getLogger(TopologyViewPanel.class);
+	
+	
+	/**
+	 * @param configurationManagement
+	 */
+	public StartupControlConfigurationWindow()
+	{
+		super("Startup Control");
+		
+		init();
+	}
 
 	/**
-	 * @param args
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException
-	{
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-		String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/moduleControl/controlFlowStartupMode" +
-				"/gloss-referencemarketDataTgt/Counterparty Transformer Flow/MANUAL";
-
-		ObjectMapper mapper = new ObjectMapper();
-		
-		try
-    	{
-		    WebTarget webTarget = client.target(url);
-		    Response response = webTarget.request().put(Entity.entity("", MediaType.APPLICATION_OCTET_STREAM));
-		    
-		    if(response.getStatus()  != 200)
-		    {
-		    	response.bufferEntity();
-		        
-		        String responseMessage = response.readEntity(String.class);
-		    	System.out.println(responseMessage);
-		    }
-    	}
-//	    	url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/discovery/components/gloss-referencemarketDataTgt/" + flow.getName();
-//	    	System.out.println("Flow: " + flow);
-//	    	
-//	    	webTarget = client.target(url);	    	
-//	    	
-//    		JsonArray componentResponse = webTarget.request().get(JsonArray.class);
-//    		
-//    		for(JsonValue componentValue: componentResponse)
-//		    {
-//		    	 
-//		    	Component component =  mapper.readValue(
-//		    			componentValue.toString(), Component.class);
-//		    	System.out.println(component);
-//		    } 
-	    	
-	    	
-    	catch(NotFoundException e)
-    	{
-    		System.out.println("Caught exception: " + e);
-    	}
-	}
-		
-		
-
+     * Helper method to initialise this object.
+     * 
+     * @param message
+     */
+    protected void init()
+    {
+    	setModal(true);
+		setHeight("90%");
+		setWidth("90%");   	
+    }
 }

@@ -87,7 +87,8 @@ public class ErrorOccurrenceViewWindow extends Window
 	{
 		this.setModal(true);
 		this.setResizable(false);
-		this.setSizeFull();
+		this.setHeight("90%");
+		this.setWidth("90%");
 		
 		GridLayout layout = new GridLayout(1, 1);
 		layout.setSizeFull();
