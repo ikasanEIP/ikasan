@@ -48,14 +48,16 @@ import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
+import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
@@ -74,9 +76,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Reindeer;
 
@@ -156,7 +160,18 @@ public class ComponentConfigurationWindow extends Window
         	
     	    WebTarget webTarget = client.target(url);
     	    
-    	    configuration = webTarget.request().get(DefaultConfiguration.class);
+    	    Response response = webTarget.request().get();
+    	    
+    	    if(response.getStatus()  != 200)
+    	    {
+    	    	response.bufferEntity();
+    	        
+    	        String responseMessage = response.readEntity(String.class);
+    	    	Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': " 
+    	    			+ responseMessage, Type.ERROR_MESSAGE);
+    	    }
+    	    
+    	    configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
     	}
     		
     	  	
@@ -167,21 +182,45 @@ public class ComponentConfigurationWindow extends Window
 		this.layout.setColumnExpandRatio(0, .25f);
 		this.layout.setColumnExpandRatio(1, .75f);
 
-		this.layout.setWidth("100%");
+		this.layout.setWidth("95%");
 		this.layout.setMargin(true);
+		
+		Panel paramPanel = new Panel();
+		paramPanel.setStyleName("dashboard");
+		paramPanel.setWidth("100%");
 		
 		Label configurationParametersLabel = new Label("Configuration Parameters");
 		configurationParametersLabel.setStyleName("large-bold");
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
 		
+		GridLayout paramLayout = new GridLayout(2, 2);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+
 		Label configuredResourceIdLabel = new Label("Configured Resource Id");
 		configuredResourceIdLabel.setStyleName("large");
 		Label configuredResourceIdValueLabel = new Label(configuration.getConfigurationId());
 		configuredResourceIdValueLabel.setStyleName("large");
 		
-		this.layout.addComponent(configuredResourceIdLabel, 0, 1);
-		this.layout.setComponentAlignment(configuredResourceIdLabel, Alignment.TOP_RIGHT);
-		this.layout.addComponent(configuredResourceIdValueLabel, 1, 1);
+		paramLayout.addComponent(configuredResourceIdLabel, 0, 0);
+		paramLayout.setComponentAlignment(configuredResourceIdLabel, Alignment.TOP_RIGHT);
+		paramLayout.addComponent(configuredResourceIdValueLabel, 1, 0);
+		
+		Label configurationDescriptionLabel = new Label("Description:");
+		configurationDescriptionLabel.setSizeUndefined();
+		paramLayout.addComponent(configurationDescriptionLabel, 0, 1);
+		paramLayout.setComponentAlignment(configurationDescriptionLabel, Alignment.TOP_RIGHT);
+		
+		TextArea conmfigurationDescriptionTextField = new TextArea();
+		conmfigurationDescriptionTextField.setRows(4);
+		conmfigurationDescriptionTextField.setWidth("80%");
+		paramLayout.addComponent(conmfigurationDescriptionTextField, 1, 1);
+		
+		paramPanel.setContent(paramLayout);
+		this.layout.addComponent(paramPanel, 0, 1, 1, 1);
 		
 		int i=2;
 		
@@ -257,14 +296,19 @@ public class ComponentConfigurationWindow extends Window
             			
             			HashMap<String, String> map = new HashMap<String, String>();
             			
+            			logger.info("Saving map: " + mapTextFields.size());
+            			
             			for(String key: mapTextFields.keySet())
             			{
             				if(key.startsWith(parameter.getName()))
             				{
             					TextFieldKeyValuePair pair = mapTextFields.get(key);
             					
+            					logger.info("Saving for key: " + key);
+            					
             					if(pair.key.getValue() != "")
             					{
+            						logger.info("Saving value: " + pair.key.getValue());
             						map.put(pair.key.getValue(), pair.value.getValue());
             					}
             				}
@@ -299,16 +343,27 @@ public class ComponentConfigurationWindow extends Window
             }
         });
     	
-    	Button cancalButton = new Button("Cancel");    	
-    	cancalButton.addClickListener(new Button.ClickListener() 
+    	Button deleteButton = new Button("Delete");    	
+    	deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	close();         	
+            	DeleteConfigurationAction action = new DeleteConfigurationAction
+            			(configuration, configurationManagement, ComponentConfigurationWindow.this);
+            	
+            	IkasanMessageDialog dialog = new IkasanMessageDialog("Delete configuration", 
+            			"Are you sure you would like to delete this configuration?", action);
+
+            	UI.getCurrent().addWindow(dialog);         	
             }
         });
 		
-    	this.layout.addComponent(saveButton, 1, i);
+    	GridLayout buttonLayout = new GridLayout(2, 1);
+    	buttonLayout.setSpacing(true);
+    	buttonLayout.addComponent(saveButton, 0 , 0);
+    	buttonLayout.addComponent(deleteButton, 1 , 0);
+    	
+    	this.layout.addComponent(buttonLayout, 1, i);
     	
     	Panel configurationPanel = new Panel();
     	configurationPanel.setStyleName("dashboard");
@@ -494,6 +549,8 @@ public class ComponentConfigurationWindow extends Window
     	            	mapLayout.removeComponent(valueField);
     	            	
     	            	mapLayout.removeComponent(removeButton);
+    	            	
+    	            	mapTextFields.remove(mapKey);
     	            }
     	        });
     			
@@ -633,6 +690,8 @@ public class ComponentConfigurationWindow extends Window
     	            	listLayout.removeComponent(valueField);
     	            	
     	            	listLayout.removeComponent(removeButton);
+    	            	
+    	            	valueTextFields.remove(mapKey);
     	            }
     	        });
     			

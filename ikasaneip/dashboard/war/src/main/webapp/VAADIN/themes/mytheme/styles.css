@@ -5889,6 +5889,16 @@ body .mytheme.v-app .v-app-loading {
     font-size: 11px !important;
 }
 
+.v-table-header-cell-asc {
+    font-family: "Calibri";
+    font-size: 11px !important;
+}
+
+.v-table-header-cell-desc {
+    font-family: "Calibri";
+    font-size: 11px !important;
+}
+
 .mytheme .v-table-footer-wrap, .mytheme .white .v-table-footer-wrap {
 	text-transform: none;
 	font-size: 12px;
