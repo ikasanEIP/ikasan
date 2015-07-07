@@ -89,9 +89,6 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     /** Authentication order*/
     private String preferredAuthentications = new String();
 
-    /** Read recursively */
-    private Boolean isRecursive;
-
     /** Default serial version uid */
     private static final long serialVersionUID = 1L;
 
@@ -115,7 +112,6 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
                this.privateKeyFilename.equalsIgnoreCase(cri.getPrivateKeyFilename()) &&
                this.preferredAuthentications.equals(cri.getPreferredAuthentications()) &&
                this.connectionTimeout.equals(cri.getConnectionTimeout()) &&
-               this.isRecursive.equals(cri.getIsRecursive()) &&
                this.username.equals(cri.getUsername()))
             {
                 return true;
@@ -137,7 +133,6 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
              + this.privateKeyFilename.hashCode()
              + this.username.hashCode()
              + this.connectionTimeout.hashCode()
-             + this.isRecursive.hashCode()
              + this.preferredAuthentications.hashCode();
     }
 
@@ -350,16 +345,6 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
         return this.connectionTimeout;
     }
 
-    public Boolean getIsRecursive()
-    {
-        return isRecursive;
-    }
-
-    public void setIsRecursive(Boolean isRecursive)
-    {
-        this.isRecursive = isRecursive;
-    }
-
     /**
      * String representation of the ConnectionRequestInfo
      */
@@ -379,7 +364,6 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
             + "Poll time:                        [" + pollTime + "]\n"
             + "Private key file name:            [" + privateKeyFilename + "]\n"
             + "Preferred authentication order:   [" + this.preferredAuthentications + "]\n"
-            + "Recursive:                        [" + isRecursive + "]\n"
             + "Username:                         [" + username + "]";
 
             return requestInfoAsString;

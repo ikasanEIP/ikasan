@@ -381,11 +381,6 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         //Create a SFTPClient
         this.sftpClient = new SFTPClient(privateKey, knownHosts, username, password, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
 
-        if(this.scri.getIsRecursive() != null)
-        {
-            this.sftpClient.setRecursive(this.scri.getIsRecursive());
-        }
-
         try
         {
             this.sftpClient.validateConstructorArgs();

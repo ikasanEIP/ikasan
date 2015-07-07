@@ -861,7 +861,7 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
             if (ftpFile != null)
             {
                 URI fileUri = this.getURI(currentDir, ftpFile.getName());
-                ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri);
+                ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri, currentDir);
                 list.add(entry);
             }
             else
@@ -993,12 +993,13 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
      *            <code>FTPFile</code>
      * @return ClientListEntry
      */
-    private ClientListEntry convertFTPFileToClientListEntry(FTPFile ftpFile, URI fileUri)
+    private ClientListEntry convertFTPFileToClientListEntry(FTPFile ftpFile, URI fileUri,String currentDir)
     {
         ClientListEntry clientListEntry = new ClientListEntry();
         clientListEntry.setUri(fileUri);
         clientListEntry.setName(ftpFile.getName());
-        clientListEntry.setFullPath(ftpFile.getName());
+        clientListEntry.setFullPath(currentDir +System.getProperty("file.separator")+ ftpFile.getName());
+
         clientListEntry.setClientId(null);
         // Can't distinguish between Last Accessed and Last Modified
         clientListEntry.setDtLastAccessed(ftpFile.getTimestamp().getTime());

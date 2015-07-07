@@ -132,7 +132,8 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
                         this.configuration.getFilterDuplicates().booleanValue(),
                         this.configuration.getFilterOnFilename().booleanValue(),
                         this.configuration.getFilterOnLastModifiedDate().booleanValue(),
-                        this.configuration.getChronological().booleanValue());
+                        this.configuration.getChronological().booleanValue(),
+                        this.configuration.getIsRecursive().booleanValue());
 
                 if (payload != null)
                 {
@@ -295,7 +296,6 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
         spec.setUsername(sftpConsumerConfiguration.getUsername());
         spec.setPassword(sftpConsumerConfiguration.getPassword());
         spec.setCleanupJournalOnComplete(sftpConsumerConfiguration.getCleanupJournalOnComplete());
-        spec.setIsRecursive(sftpConsumerConfiguration.getIsRecursive());
         return spec;
     }
 

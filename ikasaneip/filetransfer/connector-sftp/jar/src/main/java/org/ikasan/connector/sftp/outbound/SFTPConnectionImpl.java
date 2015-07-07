@@ -229,7 +229,8 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
     @SuppressWarnings("unchecked")
     public Payload getDiscoveredFile(String sourceDir, String filenamePattern, boolean renameOnSuccess,
             String renameOnSuccessExtension, boolean moveOnSuccess, String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum,
-            long minAge, boolean destructive, boolean filterDuplicates, boolean filterOnFilename, boolean  filterOnLastModifiedDate, boolean chronological) 
+            long minAge, boolean destructive, boolean filterDuplicates, boolean filterOnFilename, boolean  filterOnLastModifiedDate,
+            boolean chronological, boolean isRecursive)
             throws ResourceException
     {
         Payload result = null;
@@ -243,7 +244,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
 
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern,
-            baseFileTransferDao, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate);
+            baseFileTransferDao, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate, isRecursive);
 
         // Discover any new files
         List<?> entries = executeCommand(fileDiscoveryCommand, executionContext).getResultList();

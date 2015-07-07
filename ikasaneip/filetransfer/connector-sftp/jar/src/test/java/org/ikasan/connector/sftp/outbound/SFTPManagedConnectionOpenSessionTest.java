@@ -130,8 +130,6 @@ public class SFTPManagedConnectionOpenSessionTest
                 will(returnValue("publickey,password,gssapi-with-mic"));
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
-                exactly(1).of(connectionRequestInfo).getIsRecursive();
-                will(returnValue(null));
             }
         });
 
@@ -177,8 +175,6 @@ public class SFTPManagedConnectionOpenSessionTest
                 will(returnValue("publickey,password,gssapi-with-mic"));
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
-                exactly(2).of(connectionRequestInfo).getIsRecursive();
-                will(returnValue(true));
             }
         });
 
