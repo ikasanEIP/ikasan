@@ -66,16 +66,18 @@
             <artifactId>ikasan-filetransfer-common</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-base</artifactId>
-        </dependency>
         <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-connector-base</artifactId>
+        </dependency>
+
 		<!-- The FTP library -->
         <dependency>
             <groupId>commons-net</groupId>
