@@ -422,6 +422,15 @@
         <version.com.jcraft.jsch>0.1.53</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>0.14.0</version.org.apache.sshd>
+	<version.org.glassfish.jersey>2.17</version.org.glassfish.jersey>
+	<version.org.glassfish.json>1.0</version.org.glassfish.json>
+	<version.com.sun.jersey>1.19</version.com.sun.jersey>
+	<version.javax.ws.rs>2.0</version.javax.ws.rs>
+	<version.com.zybnet.vaadin-autocomplete>1.1.1</version.com.zybnet.vaadin-autocomplete>
+	<version.vaadin>7.4.1</version.vaadin>
+	<version.com.google.guava>12.0</version.com.google.guava>
+	<version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
+	<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -1013,6 +1022,24 @@
                 <artifactId>ikasan-consumer</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-mapping</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-hospital</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
@@ -1378,7 +1405,173 @@
                 <artifactId>spring-jdbc</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
+			
+	<!-- Jersey -->
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.core</groupId>
+		<artifactId>jersey-server</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-json-jackson</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
 
+	<dependency>
+		<groupId>org.glassfish.jersey.containers</groupId>
+		<artifactId>jersey-container-servlet</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.core</groupId>
+		<artifactId>jersey-client</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish</groupId>
+		<artifactId>javax.json</artifactId>
+		<version>${version.org.glassfish.json}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-json-processing</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-json-jackson</artifactId>
+		<version>${version.org.glassfish.json}</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.glassfish.jersey.ext</groupId>
+		<artifactId>jersey-spring3</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.sun.jersey</groupId>
+		<artifactId>jersey-json</artifactId>
+		<version>${version.com.sun.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.sun.jersey.contribs</groupId>
+		<artifactId>jersey-spring</artifactId>
+		<version>${version.com.sun.jersey}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+
+	<dependency>
+		<groupId>javax.ws.rs</groupId>
+		<artifactId>javax.ws.rs-api</artifactId>
+		<version>${version.javax.ws.rs}</version>
+	</dependency>
+	
+	<!-- Vaadin -->
+	
+	<dependency>
+	   <groupId>com.zybnet</groupId>
+	   <artifactId>vaadin-autocomplete</artifactId>
+	   <version>${version.com.zybnet.vaadin-autocomplete}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-server</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-client-compiled</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-client</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-push</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-themes</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+	
+	<dependency>
+	   <groupId>com.vaadin</groupId>
+	   <artifactId>vaadin-testbench</artifactId>
+	   <version>4.0.2</version>
+	</dependency>
+	
+	<dependency>
+	   <groupId>org.vaadin.addons</groupId>
+	   <artifactId>aceeditor</artifactId>
+	   <version>${version.org.vaadin.addons.aceeditor}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.google.guava</groupId>
+		<artifactId>guava</artifactId>
+		<version>${version.com.google.guava}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>ru.xpoft.vaadin</groupId>
+		<artifactId>spring-vaadin-integration</artifactId>
+		<version>${version.ru.xpoft.vaadin.spring-vaadin-integration}</version>
+	</dependency>
+			
             <!-- TODO: Upgrade to 1.8.1.2 at some stage -->
             <dependency>
                 <groupId>org.hsqldb</groupId>

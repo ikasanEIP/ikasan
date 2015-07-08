@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
-import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 
 /**
@@ -54,45 +53,43 @@ public class ModuleControlApplication
 	                .entity("You are not authorised to access this resource.").build());
 		}
     	
-        String user = "unknown";
-        if (context != null)
-        {
-            user = context.getUserPrincipal().getName();
-        }
-        if (action.equalsIgnoreCase("start"))
-        {
-            try
-            {
-            	logger.info("Starting module!");
-            	this.moduleService.startFlow(moduleName, flowName, user);
-            }
-            catch(IllegalStateException e)
-            {
-            	logger.info("Throwing illegal state exception!");
-            	throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
-    	                .entity(e.getMessage()).build());
-            }
-        }
-        else if (action.equalsIgnoreCase("startPause"))
-        {
-            this.moduleService.startPauseFlow(moduleName, flowName, user);
-        }
-        else if (action.equalsIgnoreCase("pause"))
-        {
-            this.moduleService.pauseFlow(moduleName, flowName, user);
-        }
-        else if (action.equalsIgnoreCase("resume"))
-        {
-            this.moduleService.resumeFlow(moduleName, flowName, user);
-        }
-        else if (action.equalsIgnoreCase("stop"))
-        {
-            this.moduleService.stopFlow(moduleName, flowName, user);
-        }
-        else
+    	try
+    	{	
+	        String user = "unknown";
+	        if (context != null)
+	        {
+	            user = context.getUserPrincipal().getName();
+	        }
+	        if (action.equalsIgnoreCase("start"))
+	        {
+	            this.moduleService.startFlow(moduleName, flowName, user);
+	        }
+	        else if (action.equalsIgnoreCase("startPause"))
+	        {
+	            this.moduleService.startPauseFlow(moduleName, flowName, user);
+	        }
+	        else if (action.equalsIgnoreCase("pause"))
+	        {
+	            this.moduleService.pauseFlow(moduleName, flowName, user);
+	        }
+	        else if (action.equalsIgnoreCase("resume"))
+	        {
+	            this.moduleService.resumeFlow(moduleName, flowName, user);
+	        }
+	        else if (action.equalsIgnoreCase("stop"))
+	        {
+	            this.moduleService.stopFlow(moduleName, flowName, user);
+	        }
+	        else
+	        {
+	        	throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+		                .entity("Unknown flow action [" + action + "].").build());
+	        }
+    	}	
+        catch(Exception e)
         {
         	throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
-	                .entity("Unknown flow action [" + action + "].").build());
+	                .entity(e.getMessage()).build());
         }
         
         return Response.ok("Flow state changed successfully!").build();
@@ -126,8 +123,6 @@ public class ModuleControlApplication
             }
 
             moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
-            
-            StartupControl c = moduleService.getStartupControl("", "");
         }
         else
         {

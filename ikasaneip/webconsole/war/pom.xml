@@ -88,13 +88,11 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-hospital</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -162,7 +160,6 @@
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-spring3</artifactId>
-            <version>2.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -186,7 +183,6 @@
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-spring</artifactId>
-            <version>1.19</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -218,25 +214,26 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-            <version>2.6</version>
         </dependency>
 
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>2.6</version>
         </dependency>
 
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>2.6</version>
         </dependency>
         
         <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-json</artifactId>
-			<version>1.19</version>
+		</dependency>
+		
+		 <dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
 		</dependency>
 
     </dependencies>
