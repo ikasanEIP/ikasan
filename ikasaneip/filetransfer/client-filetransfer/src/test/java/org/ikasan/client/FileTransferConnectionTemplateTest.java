@@ -141,20 +141,21 @@ public class FileTransferConnectionTemplateTest
         final boolean filterOnFilename=true; 
         final boolean filterOnLastModifedDate=true; 
         final boolean chronological = false;
-        
+        final boolean isRecursive = false;
+
         mockery.checking(new Expectations()
         {
             {
                 one(connectionFactory).getConnection();
                 will(returnValue(connection));
-                one(connection).getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum,minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological);
+                one(connection).getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum,minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
                 one(connection).close(); 
             }
         });
         FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory,null);
         
         
-        fileTransferConnectionTemplate.getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological);
+        fileTransferConnectionTemplate.getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
         mockery.assertIsSatisfied();
     }
     

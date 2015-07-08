@@ -136,6 +136,9 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
     /** SFTP remote port */
     private Integer connectionTimeout = Integer.valueOf(60000);
 
+    /** Consume files from sourceDirectory in recursive way */
+    private Boolean isRecursive = Boolean.FALSE;
+
 
     /**
      * @return the sourceDirectory
@@ -641,6 +644,21 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * @return the isRecursive
+     */
+    public Boolean getIsRecursive()
+    {
+        return isRecursive;
+    }
+
+    /**
+     * @param isRecursive the isRecursive to set
+     */
+    public void setIsRecursive(Boolean isRecursive)
+    {
+        this.isRecursive = isRecursive;
+    }
 
     /**
      * Validate configured properties.
