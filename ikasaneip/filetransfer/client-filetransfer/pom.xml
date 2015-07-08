@@ -62,13 +62,11 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -76,7 +74,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
