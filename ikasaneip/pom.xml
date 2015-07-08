@@ -1443,12 +1443,6 @@
 		<artifactId>jersey-media-json-processing</artifactId>
 		<version>${version.org.glassfish.jersey}</version>
 	</dependency>
-	
-	<dependency>
-		<groupId>org.glassfish.jersey.media</groupId>
-		<artifactId>jersey-media-json-jackson</artifactId>
-		<version>${version.org.glassfish.json}</version>
-	</dependency>
 
 	<dependency>
 		<groupId>org.glassfish.jersey.ext</groupId>
