@@ -42,6 +42,11 @@ package org.ikasan.connector.sftp.ssh;
 
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.Session;
+import org.apache.sshd.common.file.FileSystemView;
+import org.apache.sshd.common.file.nativefs.NativeFileSystemFactory;
+import org.apache.sshd.common.file.nativefs.NativeFileSystemView;
+import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.UserAuth;
@@ -50,9 +55,11 @@ import org.apache.sshd.server.command.ScpCommandFactory;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.sftp.SftpSubsystem;
+import org.junit.rules.TemporaryFolder;
 
-
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,9 +69,12 @@ import java.util.List;
  */
 public class SftpServerWithPasswordAuthenticator
 {
+
     private SshServer sshd;
 
-    public SftpServerWithPasswordAuthenticator(int port) {
+    public SftpServerWithPasswordAuthenticator(int port,final Path testFolder)
+    {
+
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
 
@@ -89,14 +99,21 @@ public class SftpServerWithPasswordAuthenticator
         namedFactoryList.add(new SftpSubsystem.Factory());
         sshd.setSubsystemFactories(namedFactoryList);
 
+//        sshd.setFileSystemFactory(new NativeFileSystemFactory() {
+//            @Override
+//            public FileSystemView createFileSystemView(final Session session) {
+//                return new NativeFileSystemView(session.getUsername(), false) {
+//
+//                    public String getVirtualUserDir() {
+//                        System.out.println("testFolder.toString()");
+//                        return testFolder.toString();
+//                    }
+//                };
+//            };
+//        });
 
-        //FileKeyPairProvider fileKeyPairProvider = new FileKeyPairProvider(new String[]{HOST_KEY});
-        //sshd.setKeyPairProvider(fileKeyPairProvider);
-//        SftpSubsystem.Factory factory = new SftpSubsystem.Factory();
-//        sshd.setSubsystemFactories(Arrays.<NamedFactory<Command>>asList(factory));
-//        sshd.setCommandFactory(new ScpCommandFactory());
-//        sshd.setShellFactory(new ProcessShellFactory());
-//        sshd.setPasswordAuthenticator(PasswordAuthenticator());
+        System.out.println(testFolder.toString());
+        sshd.setFileSystemFactory(new VirtualFileSystemFactory(testFolder.toString()));
     }
 
     private PasswordAuthenticator PasswordAuthenticator() {

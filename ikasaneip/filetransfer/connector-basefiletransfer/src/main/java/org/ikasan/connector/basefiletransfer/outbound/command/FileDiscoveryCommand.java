@@ -88,6 +88,9 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
     /** Whether we use Last Modified date as a duplicates filter */
     private boolean filterOnLastModifiedDate;
 
+    /** Whether the file discovery will travers sub directories recursively  */
+    private boolean isRecursive;
+
     /** No args constructor as required by Hibernate */
     public FileDiscoveryCommand()
     {
@@ -106,7 +109,7 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
      * @param filterOnLastModifiedDate Whether we filter on the last modified date
      */
     public FileDiscoveryCommand(String sourceDirectory, String filenamePattern, BaseFileTransferDao persistence,
-            long minAge, boolean filterDuplicates, boolean filterOnFilename, boolean filterOnLastModifiedDate)
+            long minAge, boolean filterDuplicates, boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean isRecursive)
     {
         super();
         this.sourceDirectory = sourceDirectory;
@@ -116,6 +119,7 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
         this.filterDuplicates = filterDuplicates;
         this.filterOnFilename = filterOnFilename;
         this.filterOnLastModifiedDate = filterOnLastModifiedDate;
+        this.isRecursive = isRecursive;
     }
 
     @Override
@@ -156,7 +160,9 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
         // CD to the src dir
         changeDirectory(sourceDirectory);
         // Getting a complete listing of current directory (sourceDirectory)
-        List<ClientListEntry> allFiles = listDirectory(sourceDirectory);
+        List<ClientListEntry> allFiles = new ArrayList<ClientListEntry>();
+        allFiles = listDirectory(sourceDirectory, allFiles);
+
         logFileList(allFiles, "Unfiltered file list"); //$NON-NLS-1$
 
         // Filter the files
@@ -208,6 +214,30 @@ public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalR
             logger.debug("No files to get, nothing matched the filename pattern."); //$NON-NLS-1$
         }
         return result;
+    }
+
+    protected List<ClientListEntry> listDirectory(String directory, List<ClientListEntry> allFiles) throws ResourceException
+    {
+        if(!this.isRecursive)
+        {
+          return   listDirectory(directory);
+        } else{
+            List<ClientListEntry> tmpFiles = listDirectory(directory);
+            for(ClientListEntry clientListEntry:tmpFiles){
+                if(clientListEntry.isDirectory()&&!clientListEntry.getName().equals("..")&&!clientListEntry.getName().equals("."))
+                {
+                    String subdir = directory+this.fileSeparator+clientListEntry.getName();
+                    allFiles.add(clientListEntry);
+                    listDirectory(subdir, allFiles);
+
+                } else
+                {
+                    allFiles.add(clientListEntry);
+                }
+            }
+            return allFiles;
+        }
+
     }
 
     /**

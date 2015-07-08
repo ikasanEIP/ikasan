@@ -225,7 +225,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
     @SuppressWarnings("unchecked")
     public Payload getDiscoveredFile(String sourceDir, String filenamePattern, boolean renameOnSuccess, String renameOnSuccessExtension, boolean moveOnSuccess,
             String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum, long minAge, boolean destructive, boolean filterDuplicates,
-            boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean chronological) throws ResourceException
+            boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean chronological, boolean isRecursive) throws ResourceException
     {
         Payload result = null;
         ExecutionContext executionContext = new ExecutionContext();
@@ -234,7 +234,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         executionContext.put(ExecutionContext.CLIENT_ID, this.clientId);
         BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern, baseFileTransferDao, minAge, filterDuplicates,
-            filterOnFilename, filterOnLastModifiedDate);
+            filterOnFilename, filterOnLastModifiedDate,isRecursive);
 
         // Discover any new files
         List<?> entries = executeCommand(fileDiscoveryCommand, executionContext).getResultList();

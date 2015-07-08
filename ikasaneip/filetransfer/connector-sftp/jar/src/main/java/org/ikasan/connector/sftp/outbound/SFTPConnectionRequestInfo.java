@@ -344,7 +344,7 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     {
         return this.connectionTimeout;
     }
-    
+
     /**
      * String representation of the ConnectionRequestInfo
      */

@@ -56,7 +56,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Level;
@@ -78,7 +77,6 @@ import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
-
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -96,7 +94,7 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
  * <code>SFTPClient</code> specific exceptions, or to provide the
  * functionality required by a framework component.
  * </p>
- * 
+ *
  * @author Ikasan Development Team
  */
 public class SFTPClient implements FileTransferClient
@@ -174,22 +172,22 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * SFTPClient constructor where all parameters are provided by the user
-     * 
+     *
      * <p>
      * Note: Providing the knownHosts file location is essential in order to
      * avoid ssh prompts for trusting hosts.
      * </p>
      * Note: The key used needs to be in openssh format (i.e. no header info)
-     * 
+     *
      * @param prvKey The private key file (rsa or dsa key)
      * @param knownHosts The .ssh "known_hosts" file
      * @param username The username for the connection
-     * @param remoteHostname The target host 
-     * @param remotePort The port to connect to 
+     * @param remoteHostname The target host
+     * @param remotePort The port to connect to
      * @param localHostname - the local hostname to bind to
      * @param maxRetryAttempts - number of connection retries before failure
      * @param connectionTimeout - socket connection timeout
-     * @param preferredAuthentications 
+     * @param preferredAuthentications
      */
     public SFTPClient(File prvKey, File knownHosts, String username, String password, String remoteHostname,
             int remotePort, String localHostname,
@@ -229,15 +227,15 @@ public class SFTPClient implements FileTransferClient
      * Convenience constructor which only gets the username and hostname as
      * parameters and searches for the ssh files ("id_dsa" and "known_hosts") at
      * the default ssh directory (i.e. ~/.ssh).
-     * 
+     *
      * As of 03/07/2007 Only used by SFTPClientTest
-     * 
+     *
      * <p>
      * Note: Providing the knownHosts file location is essential in order to
      * avoid ssh prompts for trusting hosts.
      * </p>
      * Note: The key used needs to be in openssh format (i.e. no header info)
-     * 
+     *
      * @param username The username for the connection
      * @param hostname The target host
      */
@@ -261,8 +259,8 @@ public class SFTPClient implements FileTransferClient
     /**
      * All constructor arguments are essential, so use this method to validate
      * them before attempting connection
-     * 
-     * @throws ClientInitialisationException if any of the required parameters 
+     *
+     * @throws ClientInitialisationException if any of the required parameters
      * are invalid
      */
     public void validateConstructorArgs() throws ClientInitialisationException
@@ -309,12 +307,12 @@ public class SFTPClient implements FileTransferClient
      * and only initialises the connection process if not already connected. The
      * check is done using the <code>isConnected()</code> method, while the
      * actual connection is established using the private
-     * 
+     *
      * If a maxRetryAttempts exists, then a connection will be attempted up to a
      * maximum of this value. Otherwise just a single attempt will be made
-     * 
+     *
      * <code>doConnect()</code> method.
-     * 
+     *
      * @throws ClientConnectionException if connection attempt fails
      */
     public void connect() throws ClientConnectionException
@@ -383,12 +381,12 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method that handles the <code>session</code> and <code>channel</code>
      * creation and connection.
-     * 
+     *
      * Note: The current implementation of Jsch does not allow us to identify
      * between authentication and communication errors during session or channel
      * connect, hence any exception will be wrapped and thrown as
      * <code>ClientConnectionException</code>.
-     * 
+     *
      * @throws ClientConnectionException if connection attempt fails
      */
     private void doConnect() throws ClientConnectionException
@@ -412,7 +410,8 @@ public class SFTPClient implements FileTransferClient
                 logger.debug(msg);
                 this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
 
-            } else {
+            } else
+            {
                 JSch.setConfig("StrictHostKeyChecking", "no");
                 this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
                 session.setPassword(password);
@@ -442,7 +441,7 @@ public class SFTPClient implements FileTransferClient
                     }
                 }
             }
-            
+
             msg = new String("Getting the sftp channel and connecting..."); //$NON-NLS-1$
             logger.debug(msg);
             this.channel = session.openChannel("sftp");
@@ -463,7 +462,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method that tests if the underlying library's session and channels are
      * valid and connected.
-     * 
+     *
      * @return <code>true</code> if fully connected, <code>false</code>
      *         otherwise
      */
@@ -483,7 +482,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method that handles the <code>channel</code> and <code>session</code>
      * disconnection.
-     * 
+     *
      * channelSftp.exit() and channelSftp.quit() call channelSftp.disconnect()
      * so we're OK there.
      */
@@ -514,21 +513,21 @@ public class SFTPClient implements FileTransferClient
      * which case the jsch library will read from the root of the target host -
      * or <b>relative</b> - in which case the will be treated in reference to
      * the current working directory on the host.
-     * 
+     *
      * @param currentPath The file or directory to rename
      * @param newPath The file or directory to rename to
-     * 
+     *
      * Note: Using <code>File</code>s for this operation will result in
      * errors if the host's OS is not the same as the one running the client
      * because the <code>File.getAbsolutePath()</code> method will always
      * return a string path valid for the current OS.
-     * 
+     *
      * @throws ClientCommandRenameException
      */
     public void rename(String currentPath, String newPath) throws ClientCommandRenameException
     {
         logger.debug("rename called with currentPath [" + currentPath + "], newPath [" + newPath + "]");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
-        
+
         try
         {
             String dirBefore = this.channelSftp.pwd();
@@ -608,15 +607,15 @@ public class SFTPClient implements FileTransferClient
      * <li>For each <b>file</b> in the relevant absolute <b>destination</b>
      * paths list, put the file</li>
      * </ul>
-     * 
+     *
      * This method relies on a number of other methods, namely:
      * <ul>
      * <li>listAbsoluteSourcePaths() (This can be recursive to any depth, or
      * just current dir)</li>
      * </ul>
-     * 
+     *
      * As of 03/07/2007 - only used by SFTPClientTest
-     * 
+     *
      * @param src
      * @param rDir
      * @param rFile
@@ -800,21 +799,21 @@ public class SFTPClient implements FileTransferClient
     /**
      * Puts a <code>byte[]</code> as a file to the destination. The name to
      * use is provided by the name parameter.
-     * 
+     *
      * Also possibly allow for more than just the overwrite mode.
-     * 
+     *
      * @param name
      * @param content The payload which should contain a the file content as a
-     * <code>byte[]</code> and the absolute or relative filename as the 
+     * <code>byte[]</code> and the absolute or relative filename as the
      * <code>Payload</code>'s <code>name</code> field.
-     * 
+     *
      * @throws ClientCommandPutException If the underlying library put
      *             operation fails.
      */
     public void put(String name, byte[] content) throws ClientCommandPutException
     {
         InputStream ins = new ByteArrayInputStream(content);
-        
+
         try
         {
             this.channelSftp.put(ins, name, ChannelSftp.OVERWRITE);
@@ -840,7 +839,7 @@ public class SFTPClient implements FileTransferClient
      * <p>
      * The source file will be deleted if the <code>getDestructive</code> class
      * variable is set to <code>true</code>
-     * 
+     *
      * <p>
      * The write modes for writing the file to the local system are as follows:
      * <ul>
@@ -848,10 +847,10 @@ public class SFTPClient implements FileTransferClient
      * <li>"get-resume" for <code>ChannelSftp.RESUME</code></li>
      * <li>"get-append" for <code>ChannelSftp.APPEND</code></li>
      * </ul>
-     * 
+     *
      * Suppressed Warning:  We assume that this.channelSftp.ls(path) returns Vector<LsEntry>
-     * 
-     * @param rDir The absolute path to the remote target directory as 
+     *
+     * @param rDir The absolute path to the remote target directory as
      * <code>String</code>.
      * @param rFile The remote target file (or files based on pattern) as
      * <code>String</code>.
@@ -912,7 +911,6 @@ public class SFTPClient implements FileTransferClient
             throw new ClientCommandGetException(sb.toString(), e);
         }
         logger.debug("Current local dir [" + this.channelSftp.lpwd() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        
         try
         {
             logger.debug("Current remote dir [" + this.channelSftp.pwd() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1041,7 +1039,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Overloading method for get.
-     * 
+     *
      * @param rDir The absolute path to the remote (source) directory as
      *            <code>String</code>
      * @param lDir The absolute path to the local (destination) directory as
@@ -1056,7 +1054,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Get the raw Stream
-     * 
+     *
      * @param entry
      * @return InputStream
      * @throws ClientCommandGetException
@@ -1100,7 +1098,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Retrieves a remote file as an BaseFileTransferMappedRecord
-     * 
+     *
      * @param filePath
      * @return BaseFileTransferMappedRecord
      * @throws ClientCommandGetException
@@ -1133,7 +1131,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Get a BaseFileTransferMappedRecord
-     * 
+     *
      * @param entry
      * @return BaseFileTransferMappedRecord
      * @throws ClientCommandGetException
@@ -1156,7 +1154,10 @@ public class SFTPClient implements FileTransferClient
         try
         {
             SftpProgressMonitor monitor = null;
-            this.channelSftp.get(fileName, output, monitor);
+            // If the consuming is taking place and the isRecursive==true we need to use
+            // full path names rather then file name
+             this.channelSftp.get(srcFile.getPath(), output, monitor);
+
         }
         catch (SftpException e)
         {
@@ -1182,11 +1183,11 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method to be used in order to return the current directory on the remote
      * host.
-     * 
+     *
      * @return The <b>absolute
      *         </p>
      *         path up to and including the current working directory.
-     * 
+     *
      * @throws ClientCommandPwdException If the underlying operation fails
      */
     public String pwd() throws ClientCommandPwdException
@@ -1205,7 +1206,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Method used to call a directory on the remote host.
-     * 
+     *
      * @param targetPath The directory to call
      * @throws ClientCommandCdException If the underlying operation fails
      *             (i.e. target directory not found)
@@ -1240,7 +1241,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Utility method for <code>mkdir(String newDirPath, boolean force)</code>
      * that defaults the <code>force</code> parameter to <code>true</code>.
-     * 
+     *
      * @param newPath The new path to create
      * @throws ClientCommandMkdirException
      */
@@ -1259,7 +1260,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method to recursively delete all files and directories under a <b>local</b>
      * directory.
-     * 
+     *
      * @param dir The <i>local</i> directory to delete
      * @return <code>true</code> if all deletions successful,
      *         <code>false</code> otherwise
@@ -1284,10 +1285,10 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Utility method that checks whether a path exists on the server host.
-     * 
+     *
      * Note: for non-absolute paths, the path will examined with the user's home
      * directory as root.
-     * 
+     *
      * @param remotePath path to check on the server host.
      * @return <code>true</code> if path exists, <code>false</code>
      *         otherwise.
@@ -1338,11 +1339,11 @@ public class SFTPClient implements FileTransferClient
      * to a target. The absolute path needs be passed in as two parameters: One
      * indicating the absolute path of the parent directory and one indicating
      * the actual file name.
-     * 
-     * Note:Avoid having any encoding/decoding of the path in here 
-     * 
+     *
+     * Note:Avoid having any encoding/decoding of the path in here
+     *
      * TODO: Could add check to see if this is root path or not!
-     * 
+     *
      * @param absDir
      * @param filename
      * @return URI
@@ -1361,7 +1362,8 @@ public class SFTPClient implements FileTransferClient
         userInfo.append(";fingerprint=");
         userInfo.append(this.session.getHostKey().getFingerPrint(this.jsch));
         userInfo.trimToSize();
-        return new URI("sftp", userInfo.toString(), this.remoteHostname, this.remotePort, absolutePath.toString(), null, null);
+        return new URI("sftp", userInfo.toString(), this.remoteHostname, this.remotePort, absolutePath.toString(), null,
+                null);
     }
 
     /**
@@ -1369,16 +1371,16 @@ public class SFTPClient implements FileTransferClient
      * that does not exist along the path will be created if the
      * <code>force</code> parameter is set to true. Currently used by the ...
      * method.
-     * 
+     *
      * @param newPath The path to create on the remote host. This can be either
-     * absolute or relative to current working directory. Absolute paths must 
+     * absolute or relative to current working directory. Absolute paths must
      * start with a '/' character.
      * @param force If true all missing elements along the <code>newPath</code>
      * will be created.
-     * 
+     *
      * @throws ClientException If the operation fails (i.e. because of
-     * permission issues). It is left up the caller method to throw the 
-     * appropriate specific exception as this in only used internally. 
+     * permission issues). It is left up the caller method to throw the
+     * appropriate specific exception as this in only used internally.
      */
     private void createRemotePath(String newPath, boolean force) throws ClientException
     {
@@ -1504,7 +1506,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Attempts to delete a given file from the remote host. Used by get()
      * (getDestructive) as well as by outside clients
-     * 
+     *
      * @param filename The absolute path to a file/directory on the remote host.
      * @throws ClientException
      */
@@ -1528,7 +1530,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method used to get a list of all files and directories in the target path
      * including the "." and ".." directories.
-     * 
+     *
      * @param path The (directory) path to list.
      * @return A <code>ClientListEntry</code> typed <code>List</code>
      * @throws URISyntaxException If a malformed <code>URI</code> is created
@@ -1549,9 +1551,9 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * List entries on the server given a path and a polarised filter
-     * 
+     *
      * As of 28/06/2007 - Only used by Test Clients
-     * 
+     *
      * @param path
      * @param filter
      * @return List of SFTPClientListEntries
@@ -1575,9 +1577,9 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * List entries on the server given a path and a filter for the list
-     * 
+     *
      * As of 28/06/2007 - Only used by Test Clients
-     * 
+     *
      * @param path
      * @param filterList
      * @return List of ClientListEntries
@@ -1602,12 +1604,12 @@ public class SFTPClient implements FileTransferClient
      * without any <code>SFTPClientFilter</code>s, this method will return
      * all files and directories in the target path including the "." and ".."
      * directories.
-     * 
+     *
      * Note: Currently there are no rules defining the order of the
      * <code>List</code> returned.
-     * 
+     *
      * Suppressed Warning:  We assume that this.channelSftp.ls(path) returns Vector<LsEntry>
-     * 
+     *
      * @param path The (directory) path to list.
      * @param filters The <code>SFTPClientListEntry</code>
      * @return A List of<code>SFTPClientFilter</code>s to apply
@@ -1619,50 +1621,11 @@ public class SFTPClient implements FileTransferClient
     private List<ClientListEntry> doList(String path, List<ClientPolarisedFilter> filters)
             throws ClientException, URISyntaxException
     {
-        List<ClientListEntry> list = null;
+        List<ClientListEntry> list = new ArrayList<ClientListEntry>();
         List<ClientListEntry> filteredList = null;
         try
         {
-            // Check whether we are dealing with a file or a dir
-            SftpATTRS ps = this.channelSftp.stat(path);
-            if (ps.isDir())
-            {
-                // Call the target remote directory.
-                String startDir = this.channelSftp.pwd();
-                this.channelSftp.cd(path);
-                String currentDir = this.channelSftp.pwd();
-                logger.debug("Listing directory [" + currentDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                Vector<LsEntry> v = this.channelSftp.ls(".");
-                list = new ArrayList<ClientListEntry>(v.size());
-                // Create a complete list of all files and dirs as bespoke entries
-                for (LsEntry lsEntry : v)
-                {
-                    URI fileUri = this.getURI(currentDir, lsEntry.getFilename());
-                    ClientListEntry entry = convertLsEntryToClientListEntry(lsEntry, fileUri);
-                    list.add(entry);
-                }
-                // Return to the calling directory
-                this.channelSftp.cd(startDir);
-            }
-            else
-            {
-                list = new ArrayList<ClientListEntry>(1);
-                int fs = path.lastIndexOf('/');
-                String dir = null;// path.substring(0, fs);
-                if (path.startsWith(System.getProperty("file.separator"))) //$NON-NLS-1$
-                {
-                    dir = path.substring(0, fs);
-                }
-                else
-                {
-                    // assume relative to whatever path we currently are
-                    dir = this.channelSftp.pwd() + path.substring(0, fs);
-                }
-                String file = path.substring(fs);
-                URI fileUri = this.getURI(dir, file);
-                ClientListEntry entry = convertSftpATTRSToClientListEntry(ps, null, fileUri, file);
-                list.add(entry);
-            }
+            list = getListOfFiles(path, list);
             if (filters != null && filters.size() > 0)
             {
                 filteredList = BaseFileTransferUtils.filterList(list, filters);
@@ -1676,13 +1639,58 @@ public class SFTPClient implements FileTransferClient
             sb.append(']');
             throw new ClientException(sb.toString(), e);
         }
-        
         if (filteredList != null)
         {
             return filteredList;
         }
         // Default else
         return list;
+    }
+
+    private List<ClientListEntry> getListOfFiles(String path, List<ClientListEntry> list)
+            throws URISyntaxException, SftpException
+    {
+        // Check whether we are dealing with a file or a dir
+        SftpATTRS ps = this.channelSftp.stat(path);
+        if (ps.isDir())
+        {
+            // Call the target remote directory.
+            String startDir = this.channelSftp.pwd();
+            this.channelSftp.cd(path);
+            String currentDir = this.channelSftp.pwd();
+            logger.debug("Listing directory [" + currentDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            Vector<LsEntry> v = this.channelSftp.ls(".");
+            // Create a complete list of all files and dirs as bespoke entries
+            for (LsEntry lsEntry : v)
+            {
+                URI fileUri = this.getURI(currentDir, lsEntry.getFilename());
+                ClientListEntry entry = convertLsEntryToClientListEntry(lsEntry, fileUri,currentDir);
+                list.add(entry);
+            }
+            // Return to the calling directory
+            this.channelSftp.cd(startDir);
+            return list;
+        }
+        else
+        {
+            list = new ArrayList<ClientListEntry>(1);
+            int fs = path.lastIndexOf('/');
+            String dir = null;// path.substring(0, fs);
+            if (path.startsWith(System.getProperty("file.separator"))) //$NON-NLS-1$
+            {
+                dir = path.substring(0, fs);
+            }
+            else
+            {
+                // assume relative to whatever path we currently are
+                dir = this.channelSftp.pwd() + path.substring(0, fs);
+            }
+            String file = path.substring(fs);
+            URI fileUri = this.getURI(dir, file);
+            ClientListEntry entry = convertSftpATTRSToClientListEntry(ps, null, fileUri, file, dir);
+            list.add(entry);
+            return list;
+        }
     }
 
     /**
@@ -1692,11 +1700,11 @@ public class SFTPClient implements FileTransferClient
      * <code>recurse</code> parameter to <code>true</code>) while the
      * returned results can also be filtered by a <code>FilenameFilter</code>
      * if need be.
-     * 
+     *
      * <p>
      * Note: If the underlying file encoding is not UTF-8, the paths are also
      * encoded to UTF-8.
-     * 
+     *
      * @param srcPath The <code>File</code> to list
      * @param filter If not <code>null</code>, the returned list will be
      * filtered based on this.
@@ -1740,7 +1748,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Method auxiliary to <code>put()</code>
-     * 
+     *
      * @param src
      * @param absSrcPaths
      * @param formatter
@@ -1765,7 +1773,7 @@ public class SFTPClient implements FileTransferClient
      * Setter method for the boolean <code>putDestructive</code> class
      * variable. This will indicate whether put functionality will be
      * destructive.
-     * 
+     *
      * @param putDestructive Boolean value for the <code>putDestructive</code>
      */
     public void setPutDestructive(boolean putDestructive)
@@ -1776,7 +1784,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Getter method for the boolean <code>getDestructive</code> class
      * variable.
-     * 
+     *
      * @return True if the get operation is destructive, false otherwise.
      */
     public boolean isGetDestructive()
@@ -1789,7 +1797,7 @@ public class SFTPClient implements FileTransferClient
      * variable. This will indicate whether get functionality will be
      * destructive. Get will delete files as long as they are copied.
      * Directories are NOT deleted (for now).
-     * 
+     *
      * @param getDestructive Boolean value for the <code>getDestructive</code>
      */
     public void setGetDestructive(boolean getDestructive)
@@ -1800,7 +1808,7 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method used to log the configuration information used to initialise the
      * client.
-     * 
+     *
      * @param logLevel The log level at which to log the information
      */
     public void echoConfig(Level logLevel)
@@ -1831,9 +1839,9 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Method used to log current connection status information for the client.
-     * 
+     *
      * As of 28/06/2007 - Used by Test Clients only
-     * 
+     *
      * @param logLevel The log level at which to log the information
      */
     public void echoStatus(Level logLevel)
@@ -1876,10 +1884,10 @@ public class SFTPClient implements FileTransferClient
     /**
      * Utilises the underlying API to return an InputStream as the result of the
      * GET operation
-     * 
+     *
      * @param filePath
      * @return InputStream
-     * 
+     *
      * @throws ClientCommandGetException
      */
     public InputStream getAsInputStream(String filePath) throws ClientCommandGetException
@@ -1898,7 +1906,7 @@ public class SFTPClient implements FileTransferClient
      * Utilises the underlying API to provide a GET implementation that delivers
      * its result into a supplied OutputStream, resuming at the specified offset
      * of the target file
-     * 
+     *
      * @param filePath
      * @param outputStream
      * @param resume
@@ -1923,10 +1931,10 @@ public class SFTPClient implements FileTransferClient
     /**
      * Utilises the underlying API to provide a GET implementation that delivers
      * its result into a supplied OutputStream
-     * 
+     *
      * @param filePath
      * @param outputStream
-     * 
+     *
      * @throws ClientCommandGetException
      */
     public void get(String filePath, OutputStream outputStream) throws ClientCommandGetException
@@ -1946,9 +1954,9 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Performs an SFTP put, resuming at the designated offset
-     * 
+     *
      * @param fileName
-     * 
+     *
      * @throws ClientCommandPutException
      * @throws ClientCommandMkdirException
      * @throws ClientCommandLsException
@@ -1969,16 +1977,15 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Deletes a remote directory
-     * 
+     *
      * @param directoryPath
-     * @param recurse 
+     * @param recurse
      * @throws ClientException
      * @throws ClientCommandLsException
      */
     public void deleteRemoteDirectory(String directoryPath, boolean recurse) throws ClientException,
             ClientCommandLsException
     {
-
         try
         {
             if (recurse)
@@ -2022,7 +2029,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Creates, if necessary all the parents in given file path
-     * 
+     *
      * @param filePath
      * @throws ClientCommandLsException
      * @throws ClientCommandMkdirException
@@ -2050,7 +2057,7 @@ public class SFTPClient implements FileTransferClient
 
     /**
      * Determines if a remote directory exists
-     * 
+     *
      * @param directory
      * @return true if this file represents an existent remote directory
      * @throws ClientCommandLsException
@@ -2108,31 +2115,32 @@ public class SFTPClient implements FileTransferClient
      * @param fileUri The URI of the underlying file for the particular <code>LsEntry</code>
      * @return ClientListEntry
      */
-    public ClientListEntry convertLsEntryToClientListEntry(LsEntry lsEntry, URI fileUri)
+    private ClientListEntry convertLsEntryToClientListEntry(LsEntry lsEntry, URI fileUri, String currentDir)
     {
         SftpATTRS attrs = lsEntry.getAttrs();
         String longName = lsEntry.getLongname();
         String fileName = lsEntry.getFilename();
-        return convertSftpATTRSToClientListEntry(attrs, longName, fileUri, fileName);
-    }    
-    
+        return convertSftpATTRSToClientListEntry(attrs, longName, fileUri, fileName,currentDir);
+    }
+
     /**
      * Constructing a <code>ClientListEntry</code> object from an
      * <code>SftpATTRS</code> object. This is a direct map with some formatting
      * changes.
      *
      * @param attrs The <code>SftpATTRS</code> to map to a <code>ClientEntry</code>
-     * @param longName 
+     * @param longName
      * @param fileUri The URI of the underlying file for the particular <code>LsEntry</code>
-     * @param fileName 
+     * @param fileName
      * @return ClientListEntry
      */
-    public ClientListEntry convertSftpATTRSToClientListEntry(SftpATTRS attrs, String longName, URI fileUri, String fileName)
+    private ClientListEntry convertSftpATTRSToClientListEntry(SftpATTRS attrs, String longName, URI fileUri,
+            String fileName, String currentDir)
     {
         ClientListEntry clientListEntry = new ClientListEntry();
-        
         clientListEntry.setUri(fileUri);
         clientListEntry.setName(fileName);
+        clientListEntry.setFullPath(currentDir +System.getProperty("file.separator")+ fileName);
         clientListEntry.setClientId(null);
         clientListEntry.setDtLastAccessed(new Date(((long) attrs.getATime()) * 1000));
         clientListEntry.setDtLastModified(new Date(((long) attrs.getMTime()) * 1000));
@@ -2148,7 +2156,7 @@ public class SFTPClient implements FileTransferClient
         {
             clientListEntry.setLongFilename(longName);
         }
-        
+
         clientListEntry.setAtime(attrs.getATime());
         clientListEntry.setMtime(attrs.getMTime());
         clientListEntry.setAtimeString(attrs.getAtimeString());
@@ -2170,7 +2178,7 @@ public class SFTPClient implements FileTransferClient
             }
             clientListEntry.setExtended(extended);
         }
-        
+
         return clientListEntry;
     }
 }
