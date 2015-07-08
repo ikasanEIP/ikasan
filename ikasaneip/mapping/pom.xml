@@ -110,12 +110,6 @@
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Hibernate 3.5.x runtime dependencies -->
-		<!--dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
-		</dependency-->
 	
 		<dependency>
 			<groupId>org.javassist</groupId>

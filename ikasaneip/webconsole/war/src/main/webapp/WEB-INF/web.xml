@@ -147,6 +147,7 @@
 				org.ikasan.rest.discovery;
 				org.ikasan.rest.configuration;
 				org.ikasan.rest.module;
+				org.ikasan.rest.wiretap;
 			</param-value>
 		</init-param>
 		 <init-param>

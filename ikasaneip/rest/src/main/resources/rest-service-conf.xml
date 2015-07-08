@@ -69,4 +69,8 @@
 		<constructor-arg ref="moduleService" />
 	</bean>
 	
+	<bean id="wiretapApplication" class="org.ikasan.rest.wiretap.WiretapApplication">
+		<constructor-arg ref="wiretapFlowEventListener" />
+	</bean>
+	
 </beans>

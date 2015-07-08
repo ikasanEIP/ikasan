@@ -15,8 +15,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.4.1</vaadin.version>
-		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+		<vaadin.plugin.version>${version.vaadin}</vaadin.plugin.version>
 	</properties>
 
 	<repositories>
@@ -54,65 +53,49 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
-			<version>${vaadin.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
-			<version>${vaadin.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client</artifactId>
-			<version>${vaadin.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
-			<version>${vaadin.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
-			<version>${vaadin.version}</version>
 		</dependency>
 		
 		<dependency>
 		   <groupId>com.vaadin</groupId>
 		   <artifactId>vaadin-testbench</artifactId>
-		   <version>4.0.2</version>
 		   <scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>aceeditor</artifactId>
-		   <version>0.8.13</version>
 		</dependency>
 		
 	
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>12.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>ru.xpoft.vaadin</groupId>
 			<artifactId>spring-vaadin-integration</artifactId>
-			<version>3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		
@@ -149,203 +132,166 @@
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.18.1-GA</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-mapping</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-topology</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-security</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-setup</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-system-event</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
  
  		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
         
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
         
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-hospital</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
         
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
         
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
-            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-error-reporting-service</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-exclusion-service</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-serialiser</artifactId>
-			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>3.2.6.RELEASE</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
-			<version>3.2.6.RELEASE</version>
 		</dependency>
 		
 		<dependency>
 		   <groupId>com.zybnet</groupId>
 		   <artifactId>vaadin-autocomplete</artifactId>
-		   <version>1.1.1</version>
 		   <scope>compile</scope>
-		</dependency>
-		
-		
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>2.17</version>
 		</dependency>
 
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.17</version>
 		</dependency>
 
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-            <version>2.17</version>
         </dependency>
                 
         <dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.json</artifactId>
-			<version>1.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-processing</artifactId>
-			<version>2.17</version>
 		</dependency>
 		
 		<!-- Test dependencies-->
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock</artifactId>
-			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-junit4</artifactId>
-			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
-			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
-			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
-			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -353,28 +299,24 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>2.5.6</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
             <scope>compile</scope>
         </dependency>
 		
