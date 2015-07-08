@@ -66,12 +66,6 @@
             <artifactId>ikasan-filetransfer-common</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-basefiletransfer</artifactId>
-        </dependency>
-
 
         <dependency>
             <groupId>org.ikasan</groupId>
