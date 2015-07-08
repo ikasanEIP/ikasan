@@ -109,6 +109,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -429,7 +430,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.treeViewBusinessStreamCombo.setHeight(40, Unit.PIXELS);
 		
 		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() {
-            public void valueChange(ValueChangeEvent event) {
+            public void valueChange(ValueChangeEvent event) 
+            {
                 if(event.getProperty() != null && event.getProperty().getValue() != null)
                 {
                 	businessStream  = (BusinessStream)event.getProperty().getValue();
@@ -464,7 +466,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	        	TopologyViewPanel.this.moduleTree.setItemCaption(module, module.getName());
                 	        	TopologyViewPanel.this.moduleTree.setParent(module, server);
                 	        	TopologyViewPanel.this.moduleTree.setChildrenAllowed(module, true);
-                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, moduleResource);
+                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, FontAwesome.DATABASE);
                 	            
                 	            Set<Flow> flows = module.getFlows();
                 	
