@@ -193,12 +193,6 @@
             <artifactId>ikasan-module</artifactId>
 			<scope>compile</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-system-event</artifactId>
-			<scope>compile</scope>
-        </dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
