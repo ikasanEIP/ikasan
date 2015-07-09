@@ -66,6 +66,7 @@ import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.server.VaadinService;
@@ -108,6 +109,7 @@ public class ComponentConfigurationWindow extends Window
 	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
 		super("Component Configuration");
+		this.setIcon(VaadinIcons.COG_O);
 				
 		this.configurationManagement = configurationManagement;
 		

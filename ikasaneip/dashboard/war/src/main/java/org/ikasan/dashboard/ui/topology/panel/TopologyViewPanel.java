@@ -66,6 +66,8 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.graph.NodeImpl;
+import org.ikasan.dashboard.ui.topology.graph.SimpleGraphRepositoryImpl;
 import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
@@ -96,6 +98,7 @@ import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.springframework.security.core.GrantedAuthority;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -107,15 +110,22 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.graph.GraphExplorer;
+import com.vaadin.graph.layout.JungCircleLayoutEngine;
+import com.vaadin.graph.layout.JungFRLayoutEngine;
+import com.vaadin.graph.layout.JungISOMLayoutEngine;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -132,12 +142,15 @@ import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.Reindeer;
+
+import org.ikasan.dashboard.ui.topology.graph.ArcImpl;
 
 /**
  * 
@@ -189,15 +202,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action[] componentActions = new Action[] { WIRETAP };
     private final Action[] actionsEmpty = new Action[]{};
 	
-	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
-	private ThemeResource moduleResource = new ThemeResource("images/module.png");
-	private ThemeResource flowResource = new ThemeResource("images/flow.png");
-	private ThemeResource flowStartedResource = new ThemeResource("images/flow_started.png");
-	private ThemeResource flowPausedResource = new ThemeResource("images/flow_paused.png");
-	private ThemeResource flowStoppedResource = new ThemeResource("images/flow_stopped.png");
-	private ThemeResource flowStoppedInErrorResource = new ThemeResource("images/flow_stopped_in_error.png");
-	private ThemeResource componentResource = new ThemeResource("images/component.png");
-	private ThemeResource componentConfigurableResource = new ThemeResource("images/component_configurable.png");
+//	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
+//	private ThemeResource moduleResource = new ThemeResource("images/module.png");
+//	private ThemeResource flowResource = new ThemeResource("images/flow.png");
+//	private ThemeResource flowStartedResource = new ThemeResource("images/flow_started.png");
+//	private ThemeResource flowPausedResource = new ThemeResource("images/flow_paused.png");
+//	private ThemeResource flowStoppedResource = new ThemeResource("images/flow_stopped.png");
+//	private ThemeResource flowStoppedInErrorResource = new ThemeResource("images/flow_stopped_in_error.png");
+//	private ThemeResource componentResource = new ThemeResource("images/component.png");
+//	private ThemeResource componentConfigurableResource = new ThemeResource("images/component_configurable.png");
 
 	private TopologyService topologyService;
 	private Panel topologyTreePanel;
@@ -407,6 +420,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	}
             }
         });
+		
+		final VerticalLayout tab7 = new VerticalLayout();
+		tab7.setSizeFull();
+		tab7.addComponent(this.initGraph());
+		tabsheet.addTab(tab7, "Graph");
+		
 
 		this.tabsheetPanel.setContent(tabsheet);
 	}
@@ -421,6 +440,42 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.moduleTree.setSizeFull();
 		this.moduleTree.addActionHandler(this);
 		this.moduleTree.setDragMode(TreeDragMode.NODE);
+		this.moduleTree.setItemStyleGenerator(new ItemStyleGenerator() 
+		{
+			@Override
+			public String getStyle(Tree source, Object itemId)
+			{
+				if(itemId instanceof Flow)
+				{
+					Flow flow = (Flow)itemId;
+					
+					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+	            	
+	    			if(state != null && state.equals(RUNNING))
+	    			{
+	    				return "greenicon";
+	    			}
+	    			else if(state != null && state.equals(RECOVERING))
+	    			{
+	    				return "orangeicon";
+	    			}
+	    			else if (state != null && state.equals(STOPPED))
+	    			{
+	    				return "redicon";
+	    			}
+	    			else if (state != null && state.equals(STOPPED_IN_ERROR))
+	    			{
+	    				return "redicon";
+	    			}
+	    			else if (state != null && state.equals(PAUSED))
+	    			{
+	    				return "yellowicon";
+	    			}
+				}				
+				
+				return "";
+			}
+		});
 		
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
@@ -458,7 +513,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 			TopologyViewPanel.this.moduleTree.addItem(server);
                 			TopologyViewPanel.this.moduleTree.setItemCaption(server, server.getName());
                 			TopologyViewPanel.this.moduleTree.setChildrenAllowed(server, true);
-                			TopologyViewPanel.this.moduleTree.setItemIcon(server, serverResource);
+                			TopologyViewPanel.this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 
                 	        for(Module module: modules)
                 	        {
@@ -466,7 +521,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	        	TopologyViewPanel.this.moduleTree.setItemCaption(module, module.getName());
                 	        	TopologyViewPanel.this.moduleTree.setParent(module, server);
                 	        	TopologyViewPanel.this.moduleTree.setChildrenAllowed(module, true);
-                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, FontAwesome.DATABASE);
+                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
                 	            
                 	            Set<Flow> flows = module.getFlows();
                 	
@@ -478,26 +533,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
                 	            	
                 	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-        			    			if(state != null && state.equals(RUNNING))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStartedResource);
-        			    			}
-        			    			else if(state != null &&(state.equals(RUNNING) || state.equals(RECOVERING)))
-        			    			{
-        			    				moduleTree.setItemIcon(flow,flowStartedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
-        			    			}
-        			    			else if (state != null && state.equals(PAUSED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowPausedResource);
-        			    			}
+                	            	                	            	
+                	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
                 	                
                 	                Set<Component> components = flow.getComponents();
                 	
@@ -510,11 +547,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	                	
                 	                	if(component.isConfigurable())
                 	                	{
-                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, TopologyViewPanel.this.componentConfigurableResource);
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
                 	                	}
                 	                	else
                 	                	{
-                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, TopologyViewPanel.this.componentResource);
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
                 	                	}
                 	                }
                 	            }
@@ -542,41 +579,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		            		moduleTree.addItem(server);
             		                    moduleTree.setItemCaption(server, server.getName());
             		                    moduleTree.setChildrenAllowed(server, true);
-            		                    moduleTree.setItemIcon(server, serverResource);
+            		                    moduleTree.setItemIcon(server, VaadinIcons.SERVER);
             		        		}
             		                
             		                moduleTree.addItem(module);
             		                moduleTree.setItemCaption(module, module.getName());
             		                moduleTree.setParent(module, server);
             		                moduleTree.setChildrenAllowed(module, true);
-            		                moduleTree.setItemIcon(module, moduleResource);
+            		                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
             		                
             		                moduleTree.addItem(flow);
             		                moduleTree.setItemCaption(flow, flow.getName());
             		                moduleTree.setParent(flow, module);
             		                moduleTree.setChildrenAllowed(flow, true);
             		                
-            		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-        			    			if(state != null && state.equals(RUNNING))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStartedResource);
-        			    			}
-        			    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-        			    			{
-        			    				moduleTree.setItemIcon(flow,flowStartedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
-        			    			}
-        			    			else if (state != null && state.equals(PAUSED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowPausedResource);
-        			    			}
+            		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
             		                
             		                Set<Component> components = flow.getComponents();
             		
@@ -588,13 +605,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		                	moduleTree.setChildrenAllowed(component, false);
             		                	
             		                	if(component.isConfigurable())
-            		                	{
-            		                		moduleTree.setItemIcon(component, componentConfigurableResource);
-            		                	}
-            		                	else
-            		                	{
-            		                		moduleTree.setItemIcon(component, componentResource);
-            		                	}
+                	                	{
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+                	                	}
+                	                	else
+                	                	{
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+                	                	}
             		                }
             		        	}
             	        	}
@@ -613,41 +630,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                		moduleTree.addItem(server);
 		                        moduleTree.setItemCaption(server, server.getName());
 		                        moduleTree.setChildrenAllowed(server, true);
-		                        moduleTree.setItemIcon(server, serverResource);
+		                        moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 	                		}
 	                        
 	                        moduleTree.addItem(module);
 	    	                moduleTree.setItemCaption(module, module.getName());
 	                        moduleTree.setParent(module, server);
 	    	                moduleTree.setChildrenAllowed(module, true);
-	    	                moduleTree.setItemIcon(module, moduleResource);
+	    	                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 	                        
 	                        moduleTree.addItem(flow);
 	    	                moduleTree.setItemCaption(flow, flow.getName());
 	                        moduleTree.setParent(flow, module);
 	    	                moduleTree.setChildrenAllowed(flow, true);
 	    	                
-	    	                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-			    			if(state != null && state.equals(RUNNING))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowStartedResource);
-			    			}
-			    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-			    			{
-			    				moduleTree.setItemIcon(flow,flowStartedResource);
-			    			}
-			    			else if (state != null && state.equals(STOPPED))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowStoppedResource);
-			    			}
-			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
-			    			}
-			    			else if (state != null && state.equals(PAUSED))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowPausedResource);
-			    			}
+	    	                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	    	                
 	    	                Set<Component> components = flow.getComponents();
 	    	
@@ -659,13 +656,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    	                	moduleTree.setChildrenAllowed(component, false);
 	    	                	
 	    	                	if(component.isConfigurable())
-	    	                	{
-	    	                		moduleTree.setItemIcon(component, componentConfigurableResource);
-	    	                	}
-	    	                	else
-	    	                	{
-	    	                		moduleTree.setItemIcon(component, componentResource);
-	    	                	}
+        	                	{
+        	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+        	                	}
+        	                	else
+        	                	{
+        	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+        	                	}
 	    	                }
 	                	}
                 	}        	
@@ -678,6 +675,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		Button discoverButton = new Button("Discover");
 		discoverButton.setStyleName(Reindeer.BUTTON_SMALL);
+		
 		discoverButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -775,13 +773,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
 						
 						Button deleteButton = new Button();
-    					ThemeResource deleteIcon = new ThemeResource(
-    							"images/remove-icon.png");
+    					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
     					deleteButton.setIcon(deleteIcon);
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-    					
-						Button flowButton = new Button();
-						flowButton.setIcon(flowResource);
+    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);    					
+
     					
     					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
     					deleteButton.setData(businessStreamFlow);
@@ -829,13 +824,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							businessStream.getFlows().add(businessStreamFlow);
 							
 							TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-							
-							Button flowButton = new Button();
-							flowButton.setIcon(flowResource);
-	    					
+							    					
 							Button deleteButton = new Button();
-	    					ThemeResource deleteIcon = new ThemeResource(
-	    							"images/remove-icon.png");
+							Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+							
 	    					deleteButton.setIcon(deleteIcon);
 	    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 	    					deleteButton.setData(businessStreamFlow);
@@ -903,14 +895,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	{
                 		logger.info("Adding flow: " + businessStreamFlow);
                 		Button deleteButton = new Button();
-    					ThemeResource deleteIcon = new ThemeResource(
-    							"images/remove-icon.png");
+                		Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+                		
     					deleteButton.setIcon(deleteIcon);
     					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-    					
-    					Button flowButton = new Button();
-						flowButton.setIcon(flowResource);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
     					
     					// Add the delete functionality to each role that is added
     					deleteButton.addClickListener(new Button.ClickListener() 
@@ -1124,6 +1112,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSizeFull();
+		listSelectLayout.setSpacing(true);
 		
 		wiretapModules.addContainerProperty("Module Name", String.class,  null);
 		wiretapModules.addContainerProperty("", Button.class,  null);
@@ -1149,8 +1138,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ module.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -1236,8 +1224,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ flow.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -1307,8 +1294,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ component.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -1494,6 +1480,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setMargin(true);
 		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
+		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
 		
 		errorOccurenceModules.addContainerProperty("Module Name", String.class,  null);
@@ -1520,8 +1507,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ module.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -1607,8 +1593,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ flow.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -1678,8 +1663,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ component.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -1920,6 +1904,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 
 		GridLayout listSelectLayout = new GridLayout(3, 1);
+		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
 		
 		actionedExclusionsModules.addContainerProperty("Module Name", String.class,  null);
@@ -1946,8 +1931,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							+ module.getName());
 					
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+					
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -2028,8 +2013,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							.getItemId();
 
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+					
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -2094,8 +2079,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							.getItemId();
 										
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
+					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+					
 					deleteButton.setIcon(deleteIcon);
 					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 
@@ -2342,7 +2327,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				this.moduleTree.addItem(server);
 	            this.moduleTree.setItemCaption(server, server.getName());
 	            this.moduleTree.setChildrenAllowed(server, true);
-	            this.moduleTree.setItemIcon(server, serverResource);
+	            this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 	
 		        for(Module module: modules)
 		        {
@@ -2352,7 +2337,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		            this.moduleTree.setItemCaption(module, module.getName());
 		            this.moduleTree.setParent(module, server);
 		            this.moduleTree.setChildrenAllowed(module, true);
-		            this.moduleTree.setItemIcon(module, moduleResource);
+		            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 		            
 		            Set<Flow> flows = module.getFlows();
 		
@@ -2363,27 +2348,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	                    this.moduleTree.setParent(flow, module);
 		                this.moduleTree.setChildrenAllowed(flow, true);
 		    			
-		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-		    			if(state != null && state.equals(RUNNING))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
-		    			}
-		    			else if (state != null && state.equals(PAUSED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
-		    			}
+		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 		                
 		                Set<Component> components = flow.getComponents();
 		                
@@ -2395,13 +2360,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                	this.moduleTree.setChildrenAllowed(component, false);
 		                	
 		                	if(component.isConfigurable())
-		                	{
-		                		this.moduleTree.setItemIcon(component, this.componentConfigurableResource);
-		                	}
-		                	else
-		                	{
-		                		this.moduleTree.setItemIcon(component, this.componentResource);
-		                	}
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+    	                	}
+    	                	else
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+    	                	}
 		                }
 		            }
 		        }
@@ -2469,41 +2434,20 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		            		moduleTree.addItem(server);
 		                    moduleTree.setItemCaption(server, server.getName());
 		                    moduleTree.setChildrenAllowed(server, true);
-		                    moduleTree.setItemIcon(server, serverResource);
-		        		}
+		                    		        		}
 		                
 		                moduleTree.addItem(module);
 		                moduleTree.setItemCaption(module, module.getName());
 		                moduleTree.setParent(module, server);
 		                moduleTree.setChildrenAllowed(module, true);
-		                moduleTree.setItemIcon(module, moduleResource);
+		                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 		                
 		                moduleTree.addItem(flow);
 		                moduleTree.setItemCaption(flow, flow.getName());
 		                moduleTree.setParent(flow, module);
 		                moduleTree.setChildrenAllowed(flow, true);
 
-		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-		    			if(state != null && state.equals(RUNNING))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
-		    			}
-		    			else if (state != null && state.equals(PAUSED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
-		    			}
+		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 		                
 		                Set<Component> components = flow.getComponents();
 		
@@ -2515,13 +2459,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                	moduleTree.setChildrenAllowed(component, false);
 		                	
 		                	if(component.isConfigurable())
-		                	{
-		                		moduleTree.setItemIcon(component, componentConfigurableResource);
-		                	}
-		                	else
-		                	{
-		                		moduleTree.setItemIcon(component, componentResource);
-		                	}
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+    	                	}
+    	                	else
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+    	                	}
 		                }
 		                
 		                this.businessStreamCombo.addItem(businessStream);
@@ -2735,35 +2679,35 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        {
 	     		if(this.actionFlow(flow, "start"))
 	     		{
-	     			senderTree.setItemIcon(flow, this.flowStartedResource);
+	     			TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	     		}
 	        }
 	        else if(action.equals(STOP))
 	        {
 	        	if(this.actionFlow(flow, "stop"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowStoppedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(PAUSE))
 	        {
 	        	if(this.actionFlow(flow, "pause"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowPausedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(RESUME))
 	        {
 	        	if(this.actionFlow(flow, "resume"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowStartedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(START_PAUSE))
 	        {       	
 	        	if(this.actionFlow(flow, "startPause"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowPausedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(STARTUP_CONTROL))
@@ -2798,4 +2742,107 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		return date.getTime();
 	}
+	
+	
+
+    private SimpleGraphRepositoryImpl graphRepo;
+    private GraphExplorer<?, ?> graph;
+    private CssLayout layout;
+	
+
+    public Layout initGraph() {
+    	graphRepo = createGraphRepository();    	
+    	VerticalLayout content = new VerticalLayout();
+    	layout = new CssLayout();
+    	layout.setSizeFull();
+    	ComboBox select = createLayoutSelect();
+    	content.addComponent(select);
+    	content.addComponent(layout);
+    	content.setExpandRatio(layout, 1);
+    	content.setSizeFull();
+    	refreshGraph();
+    	
+    	return content;
+    }
+    
+    private SimpleGraphRepositoryImpl createGraphRepository() {
+    	SimpleGraphRepositoryImpl repo = new SimpleGraphRepositoryImpl();
+    	repo.addNode("node1", "Node 1").setIcon(VaadinIcons.COG);
+    	repo.setHomeNodeId("node1");
+    	
+    	repo.addNode("node2", "Node 2").setIcon(VaadinIcons.COG);
+    	repo.addNode("node3", "Node 3").setIcon(VaadinIcons.COG);
+    	repo.addNode("node4", "Node 4").setIcon(VaadinIcons.COG);
+
+    	repo.addNode("node10", "Node 10").setIcon(VaadinIcons.COG);
+    	repo.addNode("node11", "Node 11").setIcon(VaadinIcons.COG);
+    	repo.addNode("node12", "Node 12").setIcon(VaadinIcons.COG);
+    	repo.addNode("node13", "Node 13").setIcon(VaadinIcons.COG);
+    	repo.addNode("node14", "Node 14").setIcon(VaadinIcons.COG);
+    	repo.addNode("node15", "Node 15").setIcon(VaadinIcons.COG);
+    	repo.addNode("node16", "Node 16").setIcon(VaadinIcons.COG);
+    	repo.addNode("node17", "Node 17").setIcon(VaadinIcons.COG);
+    	repo.addNode("node18", "Node 18").setIcon(VaadinIcons.COG);
+    	repo.addNode("node19", "Node 19").setIcon(VaadinIcons.COG);
+    	repo.addNode("node20", "Node 20").setIcon(VaadinIcons.COG);
+    	repo.addNode("node21", "Node 21").setIcon(VaadinIcons.COG);
+    	repo.addNode("node22", "Node 22").setIcon(VaadinIcons.COG);
+    	repo.addNode("node23", "Node 23").setIcon(VaadinIcons.COG);
+    	repo.addNode("node24", "Node 24").setIcon(VaadinIcons.COG);
+    	repo.addNode("node25", "Node 25").setIcon(VaadinIcons.COG);
+
+    	repo.joinNodes("node1", "node2", "edge12", "Edge 1-2");
+    	repo.joinNodes("node1", "node3", "edge13", "Edge 1-3");
+    	repo.joinNodes("node3", "node4", "edge34", "Edge 3-4");
+
+    	repo.joinNodes("node2", "node10", "edge210", "Edge type A");
+    	repo.joinNodes("node2", "node11", "edge211", "Edge type A");
+    	repo.joinNodes("node2", "node12", "edge212", "Edge type A");
+    	repo.joinNodes("node2", "node13", "edge213", "Edge type A");
+    	repo.joinNodes("node2", "node14", "edge214", "Edge type A");
+    	repo.joinNodes("node2", "node15", "edge215", "Edge type A");
+    	repo.joinNodes("node2", "node16", "edge216", "Edge type A");
+    	repo.joinNodes("node2", "node17", "edge217", "Edge type A");
+    	repo.joinNodes("node2", "node18", "edge218", "Edge type A");
+    	repo.joinNodes("node2", "node19", "edge219", "Edge type A");
+    	repo.joinNodes("node2", "node20", "edge220", "Edge type A");
+    	repo.joinNodes("node2", "node21", "edge221", "Edge type A");
+    	repo.joinNodes("node2", "node22", "edge222", "Edge type B");
+    	repo.joinNodes("node2", "node23", "edge223", "Edge type B");
+    	repo.joinNodes("node2", "node24", "edge224", "Edge type B");
+    	repo.joinNodes("node2", "node25", "edge225", "Edge type C");
+    	
+    	return repo;
+    }
+
+    private ComboBox createLayoutSelect() {
+    	final ComboBox select = new ComboBox("Select layout algorithm");
+    	select.addItem("FR");
+    	select.addItem("Circle");
+    	select.addItem("ISOM");
+    	select.addValueChangeListener(new ValueChangeListener() {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if ("FR".equals(select.getValue())) {
+					graph.setLayoutEngine(new JungFRLayoutEngine());
+				} else if ("Circle".equals(select.getValue())) {
+					graph.setLayoutEngine(new JungCircleLayoutEngine());					
+				} if ("ISOM".equals(select.getValue())) {
+					graph.setLayoutEngine(new JungISOMLayoutEngine());
+				}
+				refreshGraph();
+			}
+		});
+    	return select;
+    }
+    
+    private void refreshGraph() {
+    	layout.removeAllComponents();
+        graph = new GraphExplorer<NodeImpl, ArcImpl>(graphRepo);
+        graph.setSizeFull();
+        layout.addComponent(graph);
+    }
 }

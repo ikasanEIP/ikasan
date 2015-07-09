@@ -87,7 +87,18 @@
 		   <artifactId>aceeditor</artifactId>
 		</dependency>
 		
-	
+		<dependency>
+		   <groupId>org.vaadin.icons</groupId>
+		   <artifactId>vaadin-icons</artifactId>
+		   <version>1.0.1</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>graph-explorer</artifactId>
+		   <version>0.7.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -383,15 +394,12 @@
                         <goals>
                             <goal>resources</goal>
                             <goal>update-widgetset</goal>
+			    <goal>update-theme</goal>
                             <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
