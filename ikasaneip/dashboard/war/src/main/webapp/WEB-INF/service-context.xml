@@ -156,6 +156,14 @@
         <constructor-arg value="true"/>
         <constructor-arg value="100"/>
     </bean>
+    
+    <bean id="errorCategorisationService" class="org.ikasan.error.reporting.service.ErrorCategorisationServiceImpl">
+        <constructor-arg ref="errorCategorisationDao"/>
+    </bean>
+
+	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -193,6 +201,7 @@
 			   <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
 			   <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
 			   <value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

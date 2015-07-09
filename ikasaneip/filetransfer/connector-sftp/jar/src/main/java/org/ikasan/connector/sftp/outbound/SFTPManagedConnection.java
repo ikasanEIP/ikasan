@@ -101,7 +101,8 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     private SFTPConnectionRequestInfo scri;
 
     /**
-     * Constructor, sets the managed connection factory and the hibernate filter
+     * Constructor, sets
+     * the managed connection factory and the hibernate filter
      * table
      * 
      * client ID sits on EISManagedConnection
@@ -376,8 +377,10 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
 
         Integer connectionTimeout = this.scri.getConnectionTimeout();
 
+
         //Create a SFTPClient
         this.sftpClient = new SFTPClient(privateKey, knownHosts, username, password, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
+
         try
         {
             this.sftpClient.validateConstructorArgs();

@@ -125,7 +125,7 @@ public class FileDiscoveryCommandTest
         });
         
         final FileDiscoveryCommand command = new FileDiscoveryCommand(sourceDir,
-            filenamePattern, dao, 120, true, true, true);
+            filenamePattern, dao, 120, true, true, true, false);
         
         final TransactionJournal transactionJournal = BaseFileTransferCommandJUnitHelper.getTransactionJournal(command, 3);
         command.setTransactionJournal(transactionJournal);

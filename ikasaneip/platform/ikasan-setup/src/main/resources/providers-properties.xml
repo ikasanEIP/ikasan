@@ -925,7 +925,7 @@
                     (
                     Id              numeric(18,0) IDENTITY,
                     ClientId        varchar(255)  NOT NULL,
-                    Criteria        varchar(255)  NOT NULL,
+                    Criteria        varchar(512)  NOT NULL,
                     LastModified    datetime      NOT NULL,
                     LastAccessed    datetime      NOT NULL,
                     Size            numeric(18,0) NOT NULL,
@@ -2476,7 +2476,7 @@
                     (
                     Id              numeric(18,0) IDENTITY,
                     ClientId        varchar(255)  NOT NULL,
-                    Criteria        varchar(255)  NOT NULL,
+                    Criteria        varchar(512)  NOT NULL,
                     LastModified    datetime      NOT NULL,
                     LastAccessed    datetime      NOT NULL,
                     Size            numeric(18,0) NOT NULL,
@@ -3410,7 +3410,7 @@
                     (
                     [Id]                [numeric](18)  IDENTITY NOT NULL,
                     [ClientId]          [varchar](255)  NOT NULL,
-                    [Criteria]          [varchar](255)  NOT NULL,
+                    [Criteria]          [varchar](512)  NOT NULL,
                     [LastModified]      [datetime]      NOT NULL,
                     [LastAccessed]      [datetime]      NOT NULL,
                     [Size]              [numeric](18) NOT NULL,
@@ -4464,7 +4464,7 @@
                     (
                     Id              NUMERIC(18,0) IDENTITY NOT NULL,
                     ClientId        VARCHAR(255)  NOT NULL,
-                    Criteria        VARCHAR(255)  NOT NULL,
+                    Criteria        VARCHAR(512)  NOT NULL,
                     LastModified    datetime      NOT NULL,
                     LastAccessed    datetime      NOT NULL,
                     Size            NUMERIC(18,0) NOT NULL,

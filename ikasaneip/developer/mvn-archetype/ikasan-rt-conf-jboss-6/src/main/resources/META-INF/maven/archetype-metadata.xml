@@ -50,7 +50,7 @@
             <defaultValue>ikasan-rt-conf</defaultValue>
         </requiredProperty>
         <requiredProperty key="version">
-            <defaultValue>1.0.0-rc4-SNAPSHOT</defaultValue>
+            <defaultValue>1.0.0-rc5</defaultValue>
         </requiredProperty>
     </requiredProperties>
 

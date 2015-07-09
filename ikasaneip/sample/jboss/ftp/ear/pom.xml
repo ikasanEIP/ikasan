@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-sample-ftp-parent</artifactId>
-        <version>1.0.0-rc5-SNAPSHOT</version>
+        <version>1.0.0-rc6-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-ftp-ear</artifactId>
     <packaging>ear</packaging>
-    <version>1.0.0-rc5-SNAPSHOT</version>
+    <version>1.0.0-rc6-SNAPSHOT</version>
     <name>ikasan-sample-ftp Integration Module EAR</name>
     <description>EAR Packaging for this Integration Module</description>
 
@@ -68,13 +68,12 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-sample-ftp</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
@@ -91,7 +90,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -107,7 +105,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>

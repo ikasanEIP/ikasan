@@ -9,7 +9,15 @@
         <constructor-arg ref="ikasanSerialiserFactory"/>
         <constructor-arg ref="errorReportingServiceDao"/>
     </bean>
+    
+    <bean id="errorCategorisationService" class="org.ikasan.error.reporting.service.ErrorCategorisationServiceImpl">
+        <constructor-arg ref="errorCategorisationDao"/>
+    </bean>
 
+	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
+        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+    </bean>
+    
     <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
         <property name="sessionFactory" ref="errorReportingSessionFactory"/>
     </bean>
@@ -19,6 +27,7 @@
         <property name="mappingResources">
             <list>
                 <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -28,4 +37,5 @@
         <aop:pointcut id="errorReportingServiceInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorReportingServiceInvocation"/>
     </aop:config>
+
 </beans>
