@@ -63,20 +63,17 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filetransfer-common</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- The SFTP library -->
         <dependency>

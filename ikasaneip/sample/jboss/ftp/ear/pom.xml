@@ -68,13 +68,12 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-sample-ftp</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
@@ -91,7 +90,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -107,7 +105,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>

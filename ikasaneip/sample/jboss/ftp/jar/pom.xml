@@ -42,20 +42,17 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-ftp-endpoint</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-ftp-classes</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -75,14 +72,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
