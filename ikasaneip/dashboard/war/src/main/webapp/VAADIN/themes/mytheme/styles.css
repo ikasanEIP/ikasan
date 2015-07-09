@@ -1,5 +1,36 @@
 /** Ikasan font: Trebuchet MS **/
 
+@font-face {
+    font-family: 'Vaadin-Icons';
+    src: url('fonts/Vaadin-Icons.eot');
+    src: url('fonts/Vaadin-Icons.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Vaadin-Icons.woff') format('woff'),
+         url('fonts/Vaadin-Icons.ttf') format('truetype'),
+         url('fonts/Vaadin-Icons.svg#icomoon') format('svg');
+}
+
+.Vaadin-Icons {
+    font-family: 'Vaadin-Icons';
+    font-size: 18px;
+    padding: 5px;
+}
+
+.redicon .v-icon {
+    color: red;
+}
+
+.yellowicon .v-icon {
+    color: yellow;
+}
+
+.greenicon .v-icon {
+    color: green;
+}
+
+.orangeicon .v-icon {
+    color: orange;
+}
+
 .v-assistive-device-only {
 	position: absolute;
 	top: -2000px;
@@ -6835,6 +6866,30 @@ body .mytheme.v-app .v-app-loading {
 	padding-bottom: 1px;
 }
 
+.mytheme .v-tree-node-caption-redicon {
+	margin-left: 16px;
+	padding-bottom: 1px;
+	color: red;
+}
+
+.mytheme .v-tree-node-caption-yellowicon {
+	margin-left: 16px;
+	padding-bottom: 1px;
+	color: yellow;
+}
+
+.mytheme .v-tree-node-caption-orangeicon {
+	margin-left: 16px;
+	padding-bottom: 1px;
+	color: orange;
+}
+
+.mytheme .v-tree-node-caption-greenicon {
+	margin-left: 16px;
+	padding-bottom: 1px;
+	color: green;
+}
+
 .mytheme .v-tree-node span {
 	padding: 1px 2px;
 	display: inline-block;
@@ -7326,4 +7381,108 @@ body .mytheme.v-app .v-app-loading {
 .mytheme .myCustomUpload .v-button .v-button-wrap .v-button-caption {
 	height: auto;
 	padding: 2px;
+}
+
+.mytheme .v-graph-explorer .canvas {
+	background-color: white;
+}
+
+.mytheme .v-graph-explorer .node {
+	position: absolute;
+	min-width: 1em;
+	max-width: 20em;
+	min-height: 1em;
+	font-size: 100%;
+	#background-color: #8BC760;
+	text-align: center;
+	display: table-row;
+	#border-radius: 1em;
+	padding: 0.9ex;
+}
+
+.mytheme .v-graph-explorer .expanded {
+	border-style: solid;
+	border-width: 1px;
+	#border-color: #000 #333 #333 #000;
+}
+
+.mytheme .v-graph-explorer .node.group {
+	font-size: 1.25em;
+	padding: 1ex;
+	border-radius: 50%;
+}
+
+.mytheme .v-graph-explorer .node .label {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.mytheme .v-graph-explorer .arc {
+	position: absolute;
+	background-color: white;
+	font-size: 80%;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.mytheme .v-graph-explorer .arc {
+	z-index: 0;
+}
+
+.mytheme .v-graph-explorer .collapsed {
+	z-index: 1;
+}
+
+.mytheme .v-graph-explorer .group {
+	z-index: 2;
+}
+
+.mytheme .v-graph-explorer .expanded {
+	z-index: 3;
+}
+
+.mytheme .v-graph-explorer .expanding {
+	z-index: 4;
+}
+
+.mytheme .v-graph-explorer .node, .mytheme .v-graph-explorer .node.down, .mytheme .v-graph-explorer .node.group.down {
+	#box-shadow: 0.25ex 0.5ex 0.5ex rgba(0, 0, 0, 0.5) inset, -0.25ex -0.5ex 0.5ex rgba(255, 255, 255, 0.5) inset;
+	#-webkit-box-shadow: 0.25ex 0.5ex 0.5ex rgba(0, 0, 0, 0.5) inset, -0.25ex -0.5ex 0.5ex rgba(255, 255, 255, 0.5) inset;
+	#text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.38);
+}
+
+.mytheme .v-graph-explorer .collapsed {
+	#box-shadow: 0.5ex 1ex 1ex rgba(255, 255, 255, 0.8) inset, -0.5ex -1ex 1ex rgba(0, 0, 0, 0.2) inset, 2px 2px 4px rgba(0, 0, 0, 0.62);
+	#-webkit-box-shadow: 0.5ex 1ex 1ex rgba(255, 255, 255, 0.8) inset, -0.5ex -1ex 1ex rgba(0, 0, 0, 0.2) inset, 1px 2px 4px rgba(0, 0, 0, 0.62);
+}
+
+.mytheme .v-graph-explorer .node.group {
+	#box-shadow: 0.75ex 1.5ex 1.5ex rgba(255, 255, 255, 0.8) inset, -0.75ex -1.5ex 1.5ex rgba(0, 0, 0, 0.2) inset, 3px 3px 6px rgba(0, 0, 0, 0.62);
+	#-webkit-box-shadow: 0.75ex 1.5ex 1.5ex rgba(255, 255, 255, 0.8) inset, -0.75ex -1.5ex 1.5ex rgba(0, 0, 0, 0.2) inset, 2px 4px 4px rgba(0, 0, 0, 0.62);
+}
+
+.mytheme .v-graph-explorer .node.root {
+	background-color: yellow;
+}
+
+.mytheme .v-graph-explorer .node.blue {
+	background-color: blue;
+}
+
+.mytheme .thick-blue-svg {
+	stroke: blue;
+	stroke-width: 5;
+}
+
+.mytheme .arc.thick-blue {
+	border: 5px dotted blue;
+}
+
+.mytheme .thin-red-svg {
+	stroke: red;
+}
+
+.mytheme .arc.thin-red {
+	border: 1px dotted red;
 }

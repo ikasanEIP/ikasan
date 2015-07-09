@@ -3534,9 +3534,7 @@
 					   [IsConfigurable]				[bit] 				DEFAULT 0,
 					   [FlowId]						[numeric](18) 		NOT NULL,
 					   [ConfigurationId]			[varchar](256) 		NULL,
-					   [ComponentOrder
-					   
-					   ]						[numeric](18) 		NULL,
+					   [ComponentOrder]				[numeric](18) 		NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Component_Id] PRIMARY KEY CLUSTERED
