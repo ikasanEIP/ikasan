@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-endpoint-parent</artifactId>
-        <version>1.0.0-rc5-SNAPSHOT</version>
+        <version>1.0.0-rc6-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-mongo-endpoint</artifactId>
@@ -72,12 +72,6 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

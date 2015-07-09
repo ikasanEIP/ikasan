@@ -131,6 +131,7 @@ public interface
      * @param filterOnFilename filter out files based on their name
      * @param filterOnLastModifedDate filter out files based on last modified
      * @param chronological retrieve files on a chronological basis
+     * @param isRecursive retrieve files from given sourceDir in recursive way
      *
      * @return Payload containing the file as content
      * @throws javax.resource.ResourceException -
@@ -141,7 +142,7 @@ public interface
                                      boolean chunking, int chunkSize, boolean checksum,
                                      long minAge, boolean destructive, boolean filterDuplicates,
                                      boolean filterOnFilename, boolean filterOnLastModifedDate,
-                                     boolean chronological) throws ResourceException;
+                                     boolean chronological, boolean isRecursive) throws ResourceException;
 
     /**
      * Housekeeping the file transfer based connectors
