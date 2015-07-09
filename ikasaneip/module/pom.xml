@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc5-SNAPSHOT</version>
+        <version>1.0.0-rc5</version>
     </parent>
 
     <artifactId>ikasan-module</artifactId>
