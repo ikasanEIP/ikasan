@@ -34,7 +34,7 @@
 					<archive>
 						<manifestEntries>
 							<Dependencies>deployment.ikasan-sample-ftp-ear-${project.version}.ear,
-                                org.ikasan.configuration,
+                                org.ikasan.${dashed.project.version}.configuration,
                                 javax.servlet.jsp.api,javax.servlet.jstl.api,javax.servlet.api, org.apache.log4j,
                                 org.ikasan.ftp.ra,
                                 org.ikasan.ikasan-sample-ftp.conf</Dependencies>
