@@ -66,10 +66,12 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.graph.ArcImpl;
 import org.ikasan.dashboard.ui.topology.graph.NodeImpl;
 import org.ikasan.dashboard.ui.topology.graph.SimpleGraphRepositoryImpl;
 import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
@@ -116,10 +118,7 @@ import com.vaadin.graph.layout.JungFRLayoutEngine;
 import com.vaadin.graph.layout.JungISOMLayoutEngine;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
@@ -149,8 +148,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.Reindeer;
-
-import org.ikasan.dashboard.ui.topology.graph.ArcImpl;
 
 /**
  * 
@@ -192,14 +189,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action DISABLE = new Action("Disable");
     private final Action DETAILS = new Action("Details");
     private final Action WIRETAP = new Action("Wiretap");
+    private final Action ERROR_CATEGORISATION = new Action("Categorise Error");
     private final Action STARTUP_CONTROL = new Action("Startup Type");
     private final Action[] serverActions = new Action[] { DETAILS };
     private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
     private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL };
     private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL };
     private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL };
-    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP };
-    private final Action[] componentActions = new Action[] { WIRETAP };
+    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
 	
 //	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
@@ -2669,6 +2667,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         	if(action.equals(WIRETAP))
         	{
         		UI.getCurrent().addWindow(new WiretapConfigurationWindow());
+        	}
+        	if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(((Component)target)));
         	}
         }
         else if(target != null && target instanceof Flow)
