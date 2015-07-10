@@ -33,7 +33,7 @@
 					<archive>
 						<manifestEntries>
 							<Dependencies>deployment.ikasan-sample-sftp-ear-${project.version}.ear,
-                                org.ikasan.configuration,
+                                org.ikasan.${dashed.project.version}.configuration,
                                 javax.servlet.jsp.api,javax.servlet.jstl.api,javax.servlet.api, org.apache.log4j,
                                 org.ikasan.sftp.ra,
                                 org.ikasan.ikasan-sample-sftp.conf</Dependencies>

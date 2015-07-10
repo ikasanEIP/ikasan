@@ -346,7 +346,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.ikasan.configuration</Dependencies>
+							<Dependencies>org.ikasan.${dashed.project.version}.configuration</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
