@@ -20,7 +20,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>org.ikasan.configuration org.apache.log4j</Dependencies>
+                            <Dependencies>org.ikasan.${dashed.project.version}.configuration org.apache.log4j</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>

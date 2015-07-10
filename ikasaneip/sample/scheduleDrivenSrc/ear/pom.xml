@@ -30,7 +30,7 @@
                     </modules>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>org.ikasan.configuration, deployment.sample-scheduleDrivenSrc-ear-${project.version}.ear</Dependencies>
+                            <Dependencies>org.ikasan.${dashed.project.version}.configuration, deployment.sample-scheduleDrivenSrc-ear-${project.version}.ear</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>
