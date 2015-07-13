@@ -49,7 +49,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -85,14 +85,13 @@ public class IkasanMessageDialog extends Window
         super.setModal(true);
         super.setResizable(false);
         super.center();
-        super.setStyleName("ikasan");
         
         FormLayout layout = new FormLayout();
         layout.setMargin(true);
         layout.addComponent(new Label(message));
         
         Button okButton = new Button("OK");
-        okButton.setStyleName(Reindeer.BUTTON_SMALL);
+        okButton.setStyleName(ValoTheme.BUTTON_SMALL);
 
         okButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -102,7 +101,7 @@ public class IkasanMessageDialog extends Window
         });
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
+        cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
 
         cancelButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {

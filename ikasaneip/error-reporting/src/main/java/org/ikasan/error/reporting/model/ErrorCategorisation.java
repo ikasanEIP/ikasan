@@ -87,6 +87,22 @@ public class ErrorCategorisation
 	}
 	
 	/**
+	 * @param moduleName
+	 * @param flowName
+	 * @param componentName
+	 * @param errorCategory
+	 * @param errorDescription
+	 */
+	public ErrorCategorisation(String moduleName, String flowName,
+			String flowElementName)
+	{
+		super();
+		this.moduleName = moduleName;
+		this.flowName = flowName;
+		this.flowElementName = flowElementName;
+	}
+	
+	/**
 	 * @return the id
 	 */
 	public Long getId()

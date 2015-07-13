@@ -41,9 +41,11 @@
 package org.ikasan.dashboard.ui.framework.panel;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.navigation.VerticalMenu;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -72,6 +74,10 @@ public class LandingViewPanel extends Panel implements View
 
     protected void init()
     {       
+    	GridLayout layout = new GridLayout(1, 1);
+    	layout.setSpacing(true);
+    	layout.setSizeFull();
+    	
     	VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidth("100%");
         verticalLayout.setHeight("100%");
@@ -106,8 +112,15 @@ public class LandingViewPanel extends Panel implements View
         verticalLayout.addComponent(ikasanWelcomeLabel2);
         verticalLayout.addComponent(ikasanWelcomeLabel3);
         verticalLayout.addComponent(ikasanWelcomeLabel4);
+        
+        layout.addComponent(verticalLayout);
+        
+        VerticalLayout wrapper = new VerticalLayout();
+        wrapper.setSizeFull();
+        wrapper.addComponent(layout);
        
-        this.setContent(verticalLayout);
+        this.setSizeFull();
+        this.setContent(wrapper);
     }
     
 
