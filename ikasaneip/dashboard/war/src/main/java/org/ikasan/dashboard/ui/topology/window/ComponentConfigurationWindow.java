@@ -83,7 +83,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -187,12 +187,8 @@ public class ComponentConfigurationWindow extends Window
 		this.layout.setWidth("95%");
 		this.layout.setMargin(true);
 		
-		Panel paramPanel = new Panel();
-		paramPanel.setStyleName("dashboard");
-		paramPanel.setWidth("100%");
-		
 		Label configurationParametersLabel = new Label("Configuration Parameters");
-		configurationParametersLabel.setStyleName("large-bold");
+		configurationParametersLabel.setStyleName(ValoTheme.LABEL_LARGE);
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
 		
 		GridLayout paramLayout = new GridLayout(2, 2);
@@ -203,9 +199,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 
 		Label configuredResourceIdLabel = new Label("Configured Resource Id");
-		configuredResourceIdLabel.setStyleName("large");
+		configuredResourceIdLabel.setStyleName(ValoTheme.LABEL_BOLD);
 		Label configuredResourceIdValueLabel = new Label(configuration.getConfigurationId());
-		configuredResourceIdValueLabel.setStyleName("large");
+		configuredResourceIdValueLabel.setStyleName(ValoTheme.LABEL_BOLD);
 		
 		paramLayout.addComponent(configuredResourceIdLabel, 0, 0);
 		paramLayout.setComponentAlignment(configuredResourceIdLabel, Alignment.TOP_RIGHT);
@@ -220,11 +216,9 @@ public class ComponentConfigurationWindow extends Window
 		conmfigurationDescriptionTextField.setRows(4);
 		conmfigurationDescriptionTextField.setWidth("80%");
 		paramLayout.addComponent(conmfigurationDescriptionTextField, 1, 1);
+
 		
-		paramPanel.setContent(paramLayout);
-		this.layout.addComponent(paramPanel, 0, 1, 1, 1);
-		
-		int i=2;
+		int i=1;
 		
 		for(ConfigurationParameter parameter: parameters)
 		{
@@ -250,7 +244,7 @@ public class ComponentConfigurationWindow extends Window
 		}
 		
 		Button saveButton = new Button("Save");   
-		saveButton.addStyleName(Reindeer.BUTTON_SMALL);
+		saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
     	saveButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -368,15 +362,16 @@ public class ComponentConfigurationWindow extends Window
     	this.layout.addComponent(buttonLayout, 1, i);
     	
     	Panel configurationPanel = new Panel();
-    	configurationPanel.setStyleName("dashboard");
+    	configurationPanel.addStyleName("color1");
     	configurationPanel.setContent(this.layout);
+//    	configurationPanel.setS
     	
-    	HorizontalLayout mainLayout = new HorizontalLayout();
-    	mainLayout.setMargin(true);
-    	mainLayout.setSizeFull();
-    	mainLayout.addComponent(configurationPanel);
+//    	HorizontalLayout mainLayout = new HorizontalLayout();
+//    	mainLayout.setMargin(true);
+//    	mainLayout.setSizeFull();
+//    	mainLayout.addComponent(configurationPanel);
     	
-		this.setContent(mainLayout);
+		this.setContent(configurationPanel);
     }
     
     protected Panel createTextAreaPanel(ConfigurationParameter parameter)
@@ -490,7 +485,7 @@ public class ComponentConfigurationWindow extends Window
 			this.mapTextFields.put(mapKey, pair);
 			
 			final Button removeButton = new Button("remove");
-			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
 			removeButton.addClickListener(new Button.ClickListener() 
 	    	{
 	            public void buttonClick(ClickEvent event) 
@@ -512,7 +507,7 @@ public class ComponentConfigurationWindow extends Window
 		}
 		
 		final Button addButton = new Button("add");
-		addButton.setStyleName(Reindeer.BUTTON_LINK);
+		addButton.setStyleName(ValoTheme.BUTTON_LINK);
 		addButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -540,7 +535,7 @@ public class ComponentConfigurationWindow extends Window
     			mapTextFields.put(mapKey, pair);
     			
     			final Button removeButton = new Button("remove");
-    			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+    			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
     			removeButton.addClickListener(new Button.ClickListener() 
     	    	{
     	            public void buttonClick(ClickEvent event) 
@@ -642,7 +637,7 @@ public class ComponentConfigurationWindow extends Window
 			this.valueTextFields.put(mapKey, valueField);
 			
 			final Button removeButton = new Button("remove");
-			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
 			removeButton.addClickListener(new Button.ClickListener() 
 	    	{
 	            public void buttonClick(ClickEvent event) 
@@ -662,7 +657,7 @@ public class ComponentConfigurationWindow extends Window
 		}
 		
 		final Button addButton = new Button("add");
-		addButton.setStyleName(Reindeer.BUTTON_LINK);
+		addButton.setStyleName(ValoTheme.BUTTON_LINK);
 		addButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -683,7 +678,7 @@ public class ComponentConfigurationWindow extends Window
     			valueTextFields.put(mapKey, valueField);
     			
     			final Button removeButton = new Button("remove");
-    			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+    			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
     			removeButton.addClickListener(new Button.ClickListener() 
     	    	{
     	            public void buttonClick(ClickEvent event) 

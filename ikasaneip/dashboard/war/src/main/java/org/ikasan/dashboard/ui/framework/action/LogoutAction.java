@@ -115,7 +115,6 @@ public class LogoutAction implements Action
         VaadinSession vSession = VaadinSession.getCurrent();
         WrappedSession httpSession = vSession.getSession();
         
-        this.navigationPanel.loadTopLevelNavigator();
         this.navigationPanel.reset();
         
        //Invalidate HttpSession

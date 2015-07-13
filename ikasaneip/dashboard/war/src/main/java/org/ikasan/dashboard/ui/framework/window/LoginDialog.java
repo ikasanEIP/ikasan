@@ -60,7 +60,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -105,7 +105,6 @@ public class LoginDialog extends Window
         super.setModal(true);
         super.setResizable(false);
         super.center();
-        super.setStyleName("ikasan");
 
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(LoginFieldGroup.USERNAME, new ObjectProperty<String>(""));
@@ -140,7 +139,7 @@ public class LoginDialog extends Window
         HorizontalLayout buttons = new HorizontalLayout();
         
         Button loginButton = new Button("Login");
-        loginButton.setStyleName(Reindeer.BUTTON_SMALL);
+        loginButton.setStyleName(ValoTheme.BUTTON_SMALL);
         loginButton.addClickListener(new ClickListener() 
         {
             @Override
@@ -172,7 +171,7 @@ public class LoginDialog extends Window
         buttons.addComponent(loginButton);
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
+        cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
         cancelButton.addClickListener(new ClickListener() 
         {
             @Override

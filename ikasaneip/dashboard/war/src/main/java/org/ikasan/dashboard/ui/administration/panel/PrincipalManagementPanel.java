@@ -73,7 +73,7 @@ import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
 import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
@@ -238,7 +238,7 @@ public class PrincipalManagementPanel extends Panel implements View
 				ThemeResource deleteIcon = new ThemeResource(
 						"images/remove-icon.png");
 				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 				
 				final IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
 				final Role roleToRemove = (Role)rolesCombo.getValue();
@@ -273,7 +273,7 @@ public class PrincipalManagementPanel extends Panel implements View
 				{
 					Button roleDeleteButton = new Button();
 					roleDeleteButton.setIcon(deleteIcon);
-					roleDeleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					roleDeleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 					
 					roleDeleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -323,7 +323,7 @@ public class PrincipalManagementPanel extends Panel implements View
 						ThemeResource deleteIcon = new ThemeResource(
 								"images/remove-icon.png");
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						deleteButton.addClickListener(new Button.ClickListener() 
 				        {
@@ -407,7 +407,7 @@ public class PrincipalManagementPanel extends Panel implements View
 			ThemeResource deleteIcon = new ThemeResource(
 					"images/remove-icon.png");
 			deleteButton.setIcon(deleteIcon);
-			deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+			deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 			
 			deleteButton.addClickListener(new Button.ClickListener() 
 	        {

@@ -100,7 +100,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.BaseTheme;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -455,7 +455,7 @@ public class MappingConfigurationPanel extends Panel implements View
         HorizontalLayout controlsLayout = new HorizontalLayout();
         controlsLayout.setWidth("100%");
         
-        this.addNewRecordButton.setStyleName(Reindeer.BUTTON_LINK);
+        this.addNewRecordButton.setStyleName(ValoTheme.BUTTON_LINK);
         this.addNewRecordButton.setVisible(buttonsVisible);
         this.addNewRecordButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -473,7 +473,7 @@ public class MappingConfigurationPanel extends Panel implements View
         });
 
         final RemoveAllItemsAction removeAllItemsAction = new RemoveAllItemsAction(this.mappingConfigurationConfigurationValuesTable);
-        this.deleteAllRecordsButton.setStyleName(Reindeer.BUTTON_LINK);
+        this.deleteAllRecordsButton.setStyleName(ValoTheme.BUTTON_LINK);
         this.deleteAllRecordsButton.setVisible(buttonsVisible);
         this.deleteAllRecordsButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -485,7 +485,7 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        this.importMappingConfigurationButton.setStyleName(Reindeer.BUTTON_LINK);
+        this.importMappingConfigurationButton.setStyleName(ValoTheme.BUTTON_LINK);
         this.importMappingConfigurationButton.setVisible(buttonsVisible);
         this.importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -496,7 +496,7 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        this.exportMappingConfigurationValuesButton.setStyleName(Reindeer.BUTTON_LINK);
+        this.exportMappingConfigurationValuesButton.setStyleName(ValoTheme.BUTTON_LINK);
         this.exportMappingConfigurationValuesButton.setVisible(buttonsVisible);
 
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationValuesExportStream());

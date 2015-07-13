@@ -40,50 +40,28 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
-import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.server.VaadinService;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -95,7 +73,7 @@ public class ErrorCategorisationWindow extends Window
 	private Logger logger = Logger.getLogger(TopologyViewPanel.class);
 		
 	private Component component;
-	
+	private ErrorCategorisationService errorCategorisationService;
 	
 	/**
 	 * @param configurationManagement
@@ -106,6 +84,7 @@ public class ErrorCategorisationWindow extends Window
 		this.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
 		
 		this.component = component;
+		this.errorCategorisationService = errorCategorisationService;
 		
 		init();
 	}
@@ -116,14 +95,7 @@ public class ErrorCategorisationWindow extends Window
      * @param message
      */
     protected void init()
-    {
-//    	private Long id;
-//    	private String moduleName;
-//    	private String flowName;
-//    	private String flowElementName;
-//    	private String errorCategory;
-//    	private String errorDescription;
-    	
+    {   	
     	setModal(true);
 		setHeight("90%");
 		setWidth("90%"); 
@@ -132,29 +104,140 @@ public class ErrorCategorisationWindow extends Window
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setMargin(true);
+		layout.setColumnExpandRatio(0, .25f);
+		layout.setColumnExpandRatio(1, .75f);
+		
+		ErrorCategorisation errorCaterorision = new ErrorCategorisation(this.component.getFlow().getModule().getName(),
+				this.component.getFlow().getName(), this.component.getName(), "", "");
+		
+		BeanItem<ErrorCategorisation> errorCategorisationItem = new BeanItem<ErrorCategorisation>(errorCaterorision);
     	
     	Label configuredResourceIdLabel = new Label("Error Categorisation");
 		configuredResourceIdLabel.setStyleName("large");
 		layout.addComponent(configuredResourceIdLabel);
 
-		Label configuredResourceIdValueLabel = new Label("Module Name");
-		configuredResourceIdValueLabel.setSizeUndefined();		
-		layout.addComponent(configuredResourceIdValueLabel, 0, 1);
-		layout.setComponentAlignment(configuredResourceIdValueLabel, Alignment.MIDDLE_RIGHT);
+		Label moduleNameLabel = new Label("Module Name:");
+		moduleNameLabel.setSizeUndefined();		
+		layout.addComponent(moduleNameLabel, 0, 1);
+		layout.setComponentAlignment(moduleNameLabel, Alignment.MIDDLE_RIGHT);
 		
 		TextField moduleNameTextField = new TextField();
-		moduleNameTextField.setIcon(VaadinIcons.ARCHIVE);
+//		moduleNameTextField.setIcon(VaadinIcons.ARCHIVE);
 		moduleNameTextField.setRequired(true);
-		moduleNameTextField.setValue(this.component.getFlow().getModule().getName());
+		moduleNameTextField.setPropertyDataSource(errorCategorisationItem.getItemProperty("moduleName"));
 		moduleNameTextField.setReadOnly(true);
-		layout.addComponent(moduleNameTextField, 1, 1);  	
+		moduleNameTextField.setWidth("80%");
+		layout.addComponent(moduleNameTextField, 1, 1); 
+		
+		Label flowNameLabel = new Label("Flow Name:");
+		flowNameLabel.setSizeUndefined();		
+		layout.addComponent(flowNameLabel, 0, 2);
+		layout.setComponentAlignment(flowNameLabel, Alignment.MIDDLE_RIGHT);
+		
+		TextField flowNameTextField = new TextField();
+//		moduleNameTextField.setIcon(VaadinIcons.ARCHIVE);
+		flowNameTextField.setRequired(true);
+		flowNameTextField.setPropertyDataSource(errorCategorisationItem.getItemProperty("flowName"));
+		flowNameTextField.setReadOnly(true);
+		flowNameTextField.setWidth("80%");
+		layout.addComponent(flowNameTextField, 1, 2); 
+		
+		Label componentNameLabel = new Label("Component Name:");
+		componentNameLabel.setSizeUndefined();		
+		layout.addComponent(componentNameLabel, 0, 3);
+		layout.setComponentAlignment(componentNameLabel, Alignment.MIDDLE_RIGHT);
+		
+		TextField componentNameTextField = new TextField();
+//		moduleNameTextField.setIcon(VaadinIcons.ARCHIVE);
+		componentNameTextField.setRequired(true);
+		componentNameTextField.setPropertyDataSource(errorCategorisationItem.getItemProperty("flowElementName"));
+		componentNameTextField.setReadOnly(true);
+		componentNameTextField.setWidth("80%");
+		layout.addComponent(componentNameTextField, 1, 3); 
+		
+		Label errorCategoryLabel = new Label("Error Category:");
+		errorCategoryLabel.setSizeUndefined();		
+		layout.addComponent(errorCategoryLabel, 0, 4);
+		layout.setComponentAlignment(errorCategoryLabel, Alignment.MIDDLE_RIGHT);
+		
+		final ComboBox errorCategoryCombo = new ComboBox();
+		errorCategoryCombo.addValidator(new StringLengthValidator(
+	            "An error category must be selected!", 1, -1, false));
+		errorCategoryCombo.setValidationVisible(false);
+		errorCategoryCombo.setPropertyDataSource(errorCategorisationItem.getItemProperty("errorCategory"));
+		errorCategoryCombo.setRequired(true);
+		errorCategoryCombo.setHeight("30px");
+		layout.addComponent(errorCategoryCombo, 1, 4); 
+		errorCategoryCombo.addItem(ErrorCategorisation.TRIVIAL);
+		errorCategoryCombo.addItem(ErrorCategorisation.MAJOR);
+		errorCategoryCombo.addItem(ErrorCategorisation.CRITICAL);
+		errorCategoryCombo.addItem(ErrorCategorisation.BLOCKER);
+		
+		Label errorMessageLabel = new Label("Error Message:");
+		errorMessageLabel.setSizeUndefined();		
+		layout.addComponent(errorMessageLabel, 0, 5);
+		layout.setComponentAlignment(errorMessageLabel, Alignment.TOP_RIGHT);
+		
+		final TextArea errorMessageTextArea = new TextArea();
+		errorMessageTextArea.addValidator(new StringLengthValidator(
+	            "You must define an error message!", 1, -1, false));
+		errorMessageTextArea.setValidationVisible(false);
+		errorMessageTextArea.setPropertyDataSource(errorCategorisationItem.getItemProperty("errorDescription"));
+		errorMessageTextArea.setRequired(true);
+		errorMessageTextArea.setWidth("650px");
+		errorMessageTextArea.setRows(8);
+		layout.addComponent(errorMessageTextArea, 1, 5); 
+		
+		GridLayout buttonLayouts = new GridLayout(2, 1);
+		buttonLayouts.setSpacing(true);
+		
+		Button saveButton = new Button("Save");
+		saveButton.setStyleName(ValoTheme.BUTTON_SMALL);		
+		saveButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	try 
+                {
+//            		errorCategoryCombo.validate();
+            		errorMessageTextArea.validate();
+                } 
+                catch (InvalidValueException e) 
+                {
+//                	errorCategoryCombo.setValidationVisible(true);
+                	errorMessageTextArea.setValidationVisible(true);
+                    return;
+                }
+            }
+        });
+		
+		Button cancelButton = new Button("Cancel");
+		cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
+		cancelButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	close();
+            }
+        });
+		
+		buttonLayouts.addComponent(saveButton);
+		buttonLayouts.addComponent(cancelButton);
+		
+		layout.addComponent(buttonLayouts, 0, 6, 1, 6);
+		layout.setComponentAlignment(buttonLayouts, Alignment.MIDDLE_CENTER);
 		
 		Panel paramPanel = new Panel();
 		paramPanel.setStyleName("dashboard");
 		paramPanel.setWidth("100%");
 		paramPanel.setContent(layout);
 		
-		this.setContent(paramPanel);
+		GridLayout wrapper = new GridLayout();
+		wrapper.setMargin(true);
+		wrapper.setSizeFull();
+		wrapper.addComponent(paramPanel);
+		
+		this.setContent(wrapper);
     }
 
     

@@ -59,7 +59,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -219,7 +219,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         contentLayout.addComponent(this.targetContextComboBox, 1, 3);
 
         Button button = new Button("Search");
-        button.setStyleName(Reindeer.BUTTON_SMALL);
+        button.setStyleName(ValoTheme.BUTTON_SMALL);
         button.addClickListener(searchButtonClickListener);
 
         contentLayout.addComponent(button, 1, 4);

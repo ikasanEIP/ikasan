@@ -147,7 +147,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -200,16 +200,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
 	
-//	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
-//	private ThemeResource moduleResource = new ThemeResource("images/module.png");
-//	private ThemeResource flowResource = new ThemeResource("images/flow.png");
-//	private ThemeResource flowStartedResource = new ThemeResource("images/flow_started.png");
-//	private ThemeResource flowPausedResource = new ThemeResource("images/flow_paused.png");
-//	private ThemeResource flowStoppedResource = new ThemeResource("images/flow_stopped.png");
-//	private ThemeResource flowStoppedInErrorResource = new ThemeResource("images/flow_stopped_in_error.png");
-//	private ThemeResource componentResource = new ThemeResource("images/component.png");
-//	private ThemeResource componentConfigurableResource = new ThemeResource("images/component_configurable.png");
-
 	private TopologyService topologyService;
 	private Panel topologyTreePanel;
 	private Tree moduleTree;
@@ -449,6 +439,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					
 					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
 	            	
+					logger.info("State = " + state);
+					
 	    			if(state != null && state.equals(RUNNING))
 	    			{
 	    				return "greenicon";
@@ -672,7 +664,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.12f);
 		
 		Button discoverButton = new Button("Discover");
-		discoverButton.setStyleName(Reindeer.BUTTON_SMALL);
+		discoverButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		
 		discoverButton.addClickListener(new Button.ClickListener() 
     	{
@@ -697,7 +689,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button refreshButton = new Button("Refresh");
-		refreshButton.setStyleName(Reindeer.BUTTON_SMALL);
+		refreshButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -725,7 +717,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.businessStreamTable.addContainerProperty("Flow Name", String.class,  null);
 		this.businessStreamTable.addContainerProperty("", Button.class,  null);
 		this.businessStreamTable.setSizeFull();
-		this.businessStreamTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+//		this.businessStreamTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.businessStreamTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.businessStreamTable.setDragMode(TableDragMode.ROW);
 		this.businessStreamTable.setDropHandler(new DropHandler()
 		{
@@ -773,10 +766,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						Button deleteButton = new Button();
     					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
     					deleteButton.setIcon(deleteIcon);
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);    					
+    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);    					
 
     					
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     					deleteButton.setData(businessStreamFlow);
     					
     					// Add the delete functionality to each role that is added
@@ -827,7 +820,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 							
 	    					deleteButton.setIcon(deleteIcon);
-	    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+	    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 	    					deleteButton.setData(businessStreamFlow);
 	    					
 	    					// Add the delete functionality to each role that is added
@@ -896,7 +889,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 		Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
                 		
     					deleteButton.setIcon(deleteIcon);
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     					
     					// Add the delete functionality to each role that is added
     					deleteButton.addClickListener(new Button.ClickListener() 
@@ -937,7 +930,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		controlsLayout.addComponent(businessStreamCombo, 1, 0);
 		
 		Button newButton = new Button("New");
-		newButton.setStyleName(Reindeer.BUTTON_LINK);
+		newButton.setStyleName(ValoTheme.BUTTON_LINK);
     	newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -975,7 +968,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	controlsLayout.addComponent(newButton, 2, 0);
     	
     	Button deleteButton = new Button("Delete");
-    	deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    	deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     	deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1007,7 +1000,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	{
 		this.wiretapTable = new Table();
 		this.wiretapTable.setSizeFull();
-		this.wiretapTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+//		this.wiretapTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.wiretapTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.wiretapTable.addContainerProperty("Module Name", String.class,  null);
 		this.wiretapTable.addContainerProperty("Flow Name", String.class,  null);
 		this.wiretapTable.addContainerProperty("Component Name", String.class,  null);
@@ -1025,7 +1019,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
+		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1094,7 +1088,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button clearButton = new Button("Clear");
-		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
+		clearButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		clearButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1138,7 +1132,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Button deleteButton = new Button();
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1156,7 +1150,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					{
 						deleteButton = new Button();
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -1173,7 +1167,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						{
 							deleteButton = new Button();
 							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+							deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 							
 							// Add the delete functionality to each role that is added
 							deleteButton.addClickListener(new Button.ClickListener() 
@@ -1224,7 +1218,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Button deleteButton = new Button();
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1242,7 +1236,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					{
 						deleteButton = new Button();
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -1294,7 +1288,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Button deleteButton = new Button();
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1376,6 +1370,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.errorOccurenceTable = new Table();
 		this.errorOccurenceTable.setSizeFull();
 		this.errorOccurenceTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.errorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.errorOccurenceTable.addStyleName("ikasan");
 		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
 		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
 		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
@@ -1393,7 +1389,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
+		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -1463,7 +1459,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button clearButton = new Button("Clear");
-		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
+		clearButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		clearButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1507,7 +1503,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Button deleteButton = new Button();
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1525,7 +1521,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					{
 						deleteButton = new Button();
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -1542,7 +1538,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						{
 							deleteButton = new Button();
 							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+							deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 							
 							// Add the delete functionality to each role that is added
 							deleteButton.addClickListener(new Button.ClickListener() 
@@ -1593,7 +1589,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Button deleteButton = new Button();
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1611,7 +1607,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					{
 						deleteButton = new Button();
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -1663,7 +1659,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Button deleteButton = new Button();
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1770,7 +1766,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button refreshButton = new Button("Refresh");
-		refreshButton.setStyleName(Reindeer.BUTTON_SMALL);
+		refreshButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -1830,7 +1826,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
+		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -1932,7 +1928,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -1950,7 +1946,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					{
 						deleteButton = new Button();
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -1967,7 +1963,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						{
 							deleteButton = new Button();
 							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+							deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 							
 							// Add the delete functionality to each role that is added
 							deleteButton.addClickListener(new Button.ClickListener() 
@@ -2014,7 +2010,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -2032,7 +2028,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					{
 						deleteButton = new Button();
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -2080,7 +2076,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
 					
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 
 					
 					// Add the delete functionality to each role that is added
@@ -2120,7 +2116,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		dateSelectLayout.addComponent(this.actionedExclusionToDate, 1, 0);
 		
 		Button clearButton = new Button("Clear");
-		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
+		clearButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		clearButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -2199,7 +2195,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
+		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")

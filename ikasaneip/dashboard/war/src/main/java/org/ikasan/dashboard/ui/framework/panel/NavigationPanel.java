@@ -58,6 +58,7 @@ import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.Navigator;
@@ -81,7 +82,7 @@ import com.vaadin.ui.themes.BaseTheme;
  * @author Ikasan Development Team
  * 
  */
-public class NavigationPanel extends Panel implements ViewContext, Navigation
+public class NavigationPanel extends Panel implements ViewContext
 {
 
 	private static final long serialVersionUID = 5649279357596506519L;
@@ -153,22 +154,22 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		this.layout.setColumnExpandRatio(2, 2.5f);
 		this.layout.setColumnExpandRatio(3, 2.5f);
 		this.layout.setColumnExpandRatio(4, 2.5f);
+		this.layout.addStyleName("valo-menuitems");
 		
 		this.actionMenu.setStyleName("ikasan");
-		this.utilityMenu.setStyleName("ikasan");
 		
 		this.createActionMenuItems();
 		this.createUtilityMenuItems();
 
-		this.layout.addComponent(actionMenu, 0, 0);
-		this.layout.setComponentAlignment(actionMenu, Alignment.MIDDLE_LEFT);
+//		this.layout.addComponent(actionMenu, 0, 0);
+//		this.layout.setComponentAlignment(actionMenu, Alignment.MIDDLE_LEFT);
 
 		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
 				this);
 
 		this.loginButton = new Button("Login");
-		this.loginButton.setStyleName(BaseTheme.BUTTON_LINK);
-		this.loginButton.addStyleName("white");
+		this.loginButton.setPrimaryStyleName("valo-menu-item");
+		this.loginButton.setHtmlContentAllowed(true);
 		this.loginButton.addClickListener(new ClickListener()
 		{
 			@Override
@@ -185,8 +186,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 
 
 		logoutButton = new Button(new ThemeResource("images/user.png"));
-		this.logoutButton.setStyleName(BaseTheme.BUTTON_LINK);
-		this.logoutButton.addStyleName("white");
+		this.logoutButton.setPrimaryStyleName("valo-menu-item");
+		this.logoutButton.setHtmlContentAllowed(true);
 		this.logoutButton.addClickListener(new ClickListener()
 		{
 			@Override
@@ -197,14 +198,13 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		});
 		
 		this.setupButton = new Button("Setup");
-		this.setupButton.setStyleName(BaseTheme.BUTTON_LINK);
-		this.setupButton.addStyleName("white");
+		this.setupButton.setPrimaryStyleName("valo-menu-item");
+		this.setupButton.setHtmlContentAllowed(true);
 		this.setupButton.addClickListener(new ClickListener()
 		{
 			@Override
 			public void buttonClick(ClickEvent event)
 			{
-				loadTopLevelNavigator();
 				UI.getCurrent().getNavigator().navigateTo("persistanceSetupView");
 			}
 		});
@@ -213,8 +213,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 				Alignment.MIDDLE_RIGHT);
 
 		this.collapseButton = new Button("^");
-		this.collapseButton.setStyleName(BaseTheme.BUTTON_LINK);
-		this.collapseButton.addStyleName("white");
+		this.collapseButton.setPrimaryStyleName("valo-menu-item");
+		this.collapseButton.setHtmlContentAllowed(true);
 		this.layout.addComponent(this.collapseButton, 4, 0);
 		this.layout.setComponentAlignment(this.collapseButton,
 				Alignment.MIDDLE_RIGHT);
@@ -232,8 +232,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		});
 
 		this.expandButton = new Button("+");
-		this.expandButton.setStyleName(BaseTheme.BUTTON_LINK);
-		this.expandButton.addStyleName("white");
+		this.expandButton.setPrimaryStyleName("valo-menu-item");
+		this.expandButton.setHtmlContentAllowed(true);
 		this.expandButton.addClickListener(new ClickListener()
 		{
 			@Override
@@ -267,83 +267,41 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 //		dashboards.addItem("My custom dasboard 1", null, null);
 //		dashboards.addItem("My custom dasboard 2", null, null);
 
-		MenuBar.Command mappingCommand = createNavigatorMenuCommand("mapping",
-				"mappingView");
+//		MenuBar.Command mappingCommand = createNavigatorMenuCommand("mapping",
+//				"mappingView");
 //		MenuBar.Command errorCommand = createNavigatorMenuCommand("error",
 //				"errorView");
 //		MenuBar.Command replayCommand = createNavigatorMenuCommand("replay",
 //				"replayView");
 //		MenuBar.Command hospitalCommand = createNavigatorMenuCommand(
 //				"hospital", "hospitalView");
-		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
-				"topology", "topologyView");
+//		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
+//				"topology", "topologyView");
 
 		// Another top-level item
 		
-		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-	    	
-    	if(authentication != null)
-    	{
-			MenuItem service = this.actionMenu.addItem("Services",
-					new ThemeResource("images/menu-icon.png"), null);
-			service.setStyleName("ikasan");
-			service.addItem("Topology", null, topologyCommand);
-			service.addSeparator();
-			service.addItem("Mapping", null, mappingCommand);
+//		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+//	        	.getAttribute(DashboardSessionValueConstants.USER);
+//	    	
+//    	if(authentication != null)
+//    	{
+//			MenuItem service = this.actionMenu.addItem("Services",
+//					new ThemeResource("images/menu-icon.png"), null);
+//			service.setStyleName("ikasan");
+//			service.addItem("Topology", null, topologyCommand);
+//			service.addSeparator();
+//			service.addItem("Mapping", null, mappingCommand);
 	//		service.addSeparator();
 	//		service.addItem("Error", null, errorCommand);
 	//		service.addItem("Replay", null, replayCommand);
 	//		service.addItem("Hospital", null, hospitalCommand);
-    	}
+//    	}
 	}
 
 	protected void createUtilityMenuItems()
 	{
 		utilityMenu.removeItems();
-		
-		MenuBar.Command helpCommand = new MenuBar.Command()
-		{
-			public void menuSelected(MenuItem selectedItem)
-			{				
-				JavaScript.getCurrent().execute
-					("window.open('http://google.com', 'Help', 'height=300,width=200,resizable');");
-
-			}
-		};
-
-		utilityMenu.addItem("", new ThemeResource(
-				"images/help.png"), helpCommand);
-		
-		MenuBar.Command userCommand = createNavigatorMenuCommand("user",
-				"userView");
-		MenuBar.Command authenticationMethodCommand = createNavigatorMenuCommand("topLevel",
-				"authenticationMethodView");
-		MenuBar.Command principalManagementCommand = createNavigatorMenuCommand("principalManagement",
-				"principalManagementView");
-		MenuBar.Command roleManagementCommand = createNavigatorMenuCommand("roleManagement",
-				"roleManagementView");
-		MenuBar.Command policyManagementCommand = createNavigatorMenuCommand("policyManagement",
-				"policyManagementView");
-		
-		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-	    	
-    	if(authentication != null 
-    			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
-    	{
-    		MenuItem admin = utilityMenu.addItem("", new ThemeResource(
-    				"images/gear.png"), null);
-    		admin.setStyleName("ikasan");
-    		admin.addItem("Manage Users", null, userCommand);
-    		admin.addItem("Manage Groups", null, principalManagementCommand);
-    		admin.addItem("Manage Roles", null, roleManagementCommand);
-    		admin.addItem("Manage Policies", null, policyManagementCommand);
-    		admin.addItem("Security Administration", null, authenticationMethodCommand);
-    	}		
-
-		MenuBar.Command profileCommand = createNavigatorMenuCommand("profile",
-				"profileView");
+		utilityMenu.addStyleName("user-menu");
 		MenuBar.Command logOutCommand = new MenuBar.Command()
 		{
 			public void menuSelected(MenuItem selectedItem)
@@ -352,11 +310,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 			}
 		};
 
-		MenuItem userItem = this.utilityMenu.addItem("", new ThemeResource(
-				"images/user.png"), null);
-		userItem.setStyleName("ikasan");
-		userItem.addItem("Profile", profileCommand);
-		userItem.addSeparator();
+		MenuItem userItem = this.utilityMenu.addItem("", VaadinIcons.USER, null);
 		userItem.addItem("Log Out", logOutCommand);
 	}
 
@@ -400,22 +354,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 				.initialiseButtonState();
 		
 		this.createUtilityMenuItems();
-		this.createActionMenuItems();
-		
-		loadTopLevelNavigator();
+
 		UI.getCurrent().getNavigator().navigateTo("landingView");
-	}
-
-	public void loadTopLevelNavigator()
-	{
-		Navigator navigator = new Navigator(UI.getCurrent(), views.get(
-				"topLevel").getContainer());
-
-		for (IkasanUIView view : this.views.get("topLevel").getIkasanViews())
-		{
-			logger.info("Adding view:" + view.getPath());
-			navigator.addView(view.getPath(), view.getView());
-		}
 	}
 
 	protected MenuBar.Command createNavigatorMenuCommand(
@@ -425,29 +365,29 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		{
 			public void menuSelected(MenuItem selectedItem)
 			{
-				if (currentView == null
-						|| !currentView.equals(views.get(navigatorName)
-								.getName()))
-				{
-					refresh();
-					
-					loadTopLevelNavigator();
-
-					UI.getCurrent().getNavigator().navigateTo(viewName);
-
-					currentView = views.get(navigatorName).getName();
-
-					List<IkasanUIView> mappingViews = views.get(navigatorName)
-							.getIkasanViews();
-
-					Navigator navigator = new Navigator(UI.getCurrent(), views
-							.get(navigatorName).getContainer());
-
-					for (IkasanUIView view : mappingViews)
-					{
-						navigator.addView(view.getPath(), view.getView());
-					}
-				}
+//				if (currentView == null
+//						|| !currentView.equals(views.get(navigatorName)
+//								.getName()))
+//				{
+//					refresh();
+//					
+//					loadTopLevelNavigator();
+//
+//					UI.getCurrent().getNavigator().navigateTo(viewName);
+//
+//					currentView = views.get(navigatorName).getName();
+//
+//					List<IkasanUIView> mappingViews = views.get(navigatorName)
+//							.getIkasanViews();
+//
+//					Navigator navigator = new Navigator(UI.getCurrent(), views
+//							.get(navigatorName).getContainer());
+//
+//					for (IkasanUIView view : mappingViews)
+//					{
+//						navigator.addView(view.getPath(), view.getView());
+//					}
+//				}
 			}
 		};
 	}

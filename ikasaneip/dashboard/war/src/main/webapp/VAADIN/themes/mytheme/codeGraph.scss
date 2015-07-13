@@ -1,8 +1,8 @@
-@import "../reindeer/reindeer.scss";
+@import "../valo/valo.scss";
 @import "../graph-explorer/graph-explorer.scss";
 
 @mixin codeGraph {
-  @include reindeer;
+  @include valo;
   @include graph-explorer;
     
   .v-graph-explorer .node.root {
