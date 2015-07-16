@@ -30,7 +30,7 @@
 					</modules>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>deployment.sample-jmsDrivenPriceSrc-ear-0.9.5-SNAPSHOT.ear, org.ikasan.configuration, org.apache.log4j</Dependencies>
+                            <Dependencies>deployment.sample-jmsDrivenPriceSrc-ear-${project.version}.ear, org.ikasan.${dashed.project.version}.configuration, org.apache.log4j</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>

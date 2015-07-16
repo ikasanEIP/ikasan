@@ -4,13 +4,13 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-dashboard-war</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-rc6-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>Ikasan Dashboard</name>
 
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-dashboard</artifactId>
-		<version>1.0.0-rc6-SNAPSHOT</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -88,22 +88,16 @@
 		</dependency>
 		
 		<dependency>
-		   <groupId>org.vaadin.addons</groupId>
-		   <artifactId>graph-explorer</artifactId>
-		   <version>0.7.0</version>
-		</dependency>
-		
-		<dependency>
 		   <groupId>org.vaadin.icons</groupId>
 		   <artifactId>vaadin-icons</artifactId>
 		   <version>1.0.1</version>
-		</dependency>	
+		</dependency>
 		
 		<dependency>
-		   <groupId>at.downdrown.vaadinaddons</groupId>
-		   <artifactId>highchartsapi</artifactId>
-		   <version>2.0.0</version>
-		</dependency>	
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>graph-explorer</artifactId>
+		   <version>0.7.0</version>
+		</dependency>		
 	
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -363,7 +357,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.ikasan.configuration</Dependencies>
+							<Dependencies>org.ikasan.${dashed.project.version}.configuration</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>

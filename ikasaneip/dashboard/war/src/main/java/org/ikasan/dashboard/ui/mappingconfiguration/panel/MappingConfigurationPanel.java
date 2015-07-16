@@ -287,6 +287,7 @@ public class MappingConfigurationPanel extends Panel implements View
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(contentLayout
             , createTableLayout(false));
+        vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
         Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
         queryParamsPanel.setHeight(200, Unit.PIXELS);
@@ -294,7 +295,7 @@ public class MappingConfigurationPanel extends Panel implements View
         queryParamsPanel.setContent(paramQueriesLayout);
         this.layout.addComponent(queryParamsPanel, 2, 4, 3, 4);
 
-        vpanel.setSplitPosition(290, Unit.PIXELS);
+        vpanel.setSplitPosition(50, Unit.PERCENTAGE);
         this.setContent(vpanel);
         this.setSizeFull();
     }

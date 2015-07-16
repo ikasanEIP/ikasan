@@ -36,6 +36,8 @@
               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
+`   <!-- TODO point cuts below are commented out as these methods are called via REST and rest 
+		supplies its own security. -->
 	<global-method-security
 		access-decision-manager-ref="accessDecisionManager">
 
@@ -145,7 +147,7 @@
 		<aop:pointcut id="securityServiceMethods"
 			expression="execution(* org.ikasan.security.service.*.*(..))" />
 		<aop:pointcut id="systemEventServiceMethods"
-			expression="execution(* org.ikasan.systemevent.service.*.*(..))" />
+			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
 			expression="execution(* org.ikasan.configurationService.service.*.*(..))" />
 		<aop:pointcut id="moduleServiceServiceMethods"

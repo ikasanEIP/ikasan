@@ -4,6 +4,7 @@ $v-font-size: 11px;
 /* Import the Valo theme. */
 /* This only allows us to use the mixins defined in it and does not add any styles by itself. */
 @import "../valo/valo.scss";
+@import "./dashboardview.scss";
 
 /* This contains all of your theme. */
 /* If somebody wants to extend the theme she will include this mixin. */
@@ -11,8 +12,10 @@ $v-font-size: 11px;
 {
   	/* Include all the styles from the Valo theme */
  	@include valo; 
+	
+	@include dashboard-dashboard-view; 
  	
- 		.v-panel-navigation {
+ 	.v-panel-navigation {
 		background: #434343;
 	}
 

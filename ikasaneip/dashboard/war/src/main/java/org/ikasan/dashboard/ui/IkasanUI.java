@@ -42,8 +42,6 @@ package org.ikasan.dashboard.ui;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -65,6 +63,7 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -72,10 +71,10 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.ConnectorTracker;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
@@ -85,7 +84,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-@Theme("mytheme")
+@Theme("dashboard")
 @SuppressWarnings("serial")
 //@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
 //@PreserveOnRefresh
@@ -105,6 +104,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private EventBus eventBus = new EventBus();
     private NavigationPanel navigationPanel;
     
+    private static final String STYLE_VISIBLE = "valo-menu-visible";
+    
     private final Table table = new Table();
     private Container container = new IndexedContainer();
 //    private FeederThread feederThread = new FeederThread();
@@ -115,6 +116,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private final LinkedHashMap<String, String> menuItems = new LinkedHashMap<String, String>();
     private CssLayout menuItemsLayout = new CssLayout();
     private MenuLayout menuLayout = new MenuLayout();
+    private Component menuComponent;
 
     /**
      * Constructor 
@@ -157,9 +159,12 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     @Override
     protected void init(VaadinRequest request)
     {
+//    	Responsive.ma	keResponsive(this);
+        addStyleName(ValoTheme.UI_WITH_MENU);
+        
         final GridLayout layout = new GridLayout(1, 4);	
         layout.setSizeFull();   
-        layout.setMargin(true);
+//        layout.setMargin(true);
         this.setContent(layout);
 
         imagePanelLayout.removeAllComponents();
@@ -181,26 +186,20 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         imagePanelLayout.setExpandRatio(label, 0.5f);
         imagePanelLayout.setComponentAlignment(label, Alignment.BOTTOM_LEFT);
 
+        
         layout.addComponent(navigationPanel, 0, 1);
         
         loadTopLevelNavigator();
-        menuLayout.addMenu(this.buildMenu());
+        menuComponent = buildContent();
+        menuLayout.addMenu(menuComponent);
         layout.addComponent(menuLayout, 0, 2);
         
         layout.setRowExpandRatio(2, 1);
 
         boolean usersTablesExist = true;
-
-//        Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
-//
-//        List<IkasanUIView> mappingViews = this.views.get("topLevel").getIkasanViews();
-//        
-//        for(IkasanUIView view: mappingViews)
-//        {
-//            navigator.addView(view.getPath(), view.getView());
-//        }
        
         this.navigationPanel.resetCurrentView();
+        navigationPanel.addToggleButton(buildToggleButton());
         
         if(!usersTablesExist)
         {
@@ -214,28 +213,45 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         }
     }
     
+    private Component buildContent() {
+        final CssLayout menuContent = new CssLayout();
+        menuContent.addStyleName("sidebar");
+        menuContent.addStyleName(ValoTheme.MENU_PART);
+        menuContent.addStyleName("no-vertical-drag-hints");
+        menuContent.addStyleName("no-horizontal-drag-hints");
+        menuContent.setWidth(null);
+        menuContent.setHeight("100%");
+
+//        menuContent.addComponent(buildToggleButton());
+        menuContent.addComponent(buildMenu());
+
+        return menuContent;
+    }
+    
     protected CssLayout buildMenu() 
     {
-        final Button showMenu = new Button("Menu", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-                if (menu.getStyleName().contains("valo-menu-visible")) 
-                {
-                    menu.removeStyleName("valo-menu-visible");
-                } 
-                else 
-                {
-                    menu.addStyleName("valo-menu-visible");
-                }
-            }
-        });
-        showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
-        showMenu.addStyleName("valo-menu-toggle");
-        showMenu.setIcon(FontAwesome.LIST);
-        menu.addComponent(showMenu);
+//        final Button showMenu = new Button("Menu", new ClickListener() 
+//        {
+//            @Override
+//            public void buttonClick(final ClickEvent event) 
+//            {
+//                if(menu.getStyleName().contains("valo-menu-visible")) 
+//                {
+//	                menu.setVisible(false);	
+//                    menu.removeStyleName("valo-menu-visible");
+//                } 
+//                else 
+//                {
+//                	menu.setVisible(true);	
+//                    menu.addStyleName("valo-menu-visible");
+//                }
+//            }
+//        });
+//        showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
+//        showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
+////        showMenu.addStyleName("valo-menu-toggle");
+//        showMenu.setIcon(FontAwesome.LIST);
+//        menu.addComponent(showMenu);
 
 
         final MenuBar settings = new MenuBar();
@@ -378,6 +394,35 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         menuItemsLayout.addComponent(authItem);
 
         return menu;
+    }
+    
+    private Component buildToggleButton() 
+    {
+    	 final Button showMenu = new Button("Menu", new ClickListener() 
+         {
+             @Override
+             public void buttonClick(final ClickEvent event) 
+             {
+                 if(menu.getStyleName().contains("valo-menu-visible")) 
+                 {
+ 	                menu.setVisible(false);	
+                    menu.removeStyleName("valo-menu-visible");
+                 } 
+                 else 	
+                 {
+                 	menu.setVisible(true);	
+                 	menu.addStyleName("valo-menu-visible");
+                 }
+             }
+         });
+    	 
+         showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
+         showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
+         showMenu.setIcon(FontAwesome.LIST);
+         showMenu.setPrimaryStyleName("valo-menu-item");
+         menu.setStyleName("valo-menu-visible");
+         
+         return showMenu;
     }
     
     public void loadTopLevelNavigator()

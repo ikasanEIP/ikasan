@@ -45,11 +45,7 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 
-/**
- * 
- * @since
- * @author Vaadin Ltd
- */
+
 public class MenuLayout extends HorizontalLayout {
 
     CssLayout contentArea = new CssLayout();

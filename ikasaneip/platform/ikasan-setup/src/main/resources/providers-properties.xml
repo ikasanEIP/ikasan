@@ -3478,10 +3478,10 @@
                 <prop key="create.server">CREATE TABLE Server
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
+					   [Name]		      		[varchar](256) 		UNIQUE NOT NULL,
 					   [Description]	      		[varchar](1024) 	NOT NULL,
-					   [Url]		      			[varchar](256) 		NOT NULL,
-					   [Port]						[numeric](18) 		NOT NULL,
+					   [Url]		      		[varchar](256) 		NOT NULL,
+					   [Port]				[numeric](18) 		NOT NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Server_Id] PRIMARY KEY CLUSTERED
@@ -3495,12 +3495,12 @@
                 <prop key="create.ikasanModule">CREATE TABLE IkasanModule
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
+					   [Name]		      		[varchar](256) 		UNIQUE NOT NULL,
 					   [ContextRoot]     			[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
 					   [DiagramUrl]      			[varchar](256) 		NULL,
-					   [Version]      			    [varchar](256) 		NULL,
-					   [ServerId]					[numeric](18) 		NULL,
+					   [Version]      			[varchar](256) 		NULL,
+					   [ServerId]				[numeric](18) 		NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_IkasanModule_Id] PRIMARY KEY CLUSTERED
@@ -3514,11 +3514,11 @@
                 <prop key="create.flow">CREATE TABLE Flow
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      			[varchar](256) 		NOT NULL,
+					   [Name]		      		[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [ModuleId]					[numeric](18) 		NOT NULL,
-					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [ModuleId]				[numeric](18) 		NOT NULL,
+					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Flow_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3529,14 +3529,14 @@
                 <prop key="create.component">CREATE TABLE Component
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      			[varchar](256) 		NOT NULL,
+					   [Name]		      		[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [IsConfigurable]				[bit] 				DEFAULT 0,
-					   [FlowId]						[numeric](18) 		NOT NULL,
+					   [IsConfigurable]			[bit] 			DEFAULT 0,
+					   [FlowId]				[numeric](18) 		NOT NULL,
 					   [ConfigurationId]			[varchar](256) 		NULL,
-					   [ComponentOrder]				[numeric](18) 		NULL,
-					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [ComponentOrder]			[numeric](18) 		NULL,
+					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Component_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3547,10 +3547,10 @@
                 <prop key="create.businessStream">CREATE TABLE BusinessStream
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
+					   [Name]		      		[varchar](256) 		UNIQUE NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   CONSTRAINT            [PK_BusinessStream_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3575,7 +3575,7 @@
                 
                 <prop key="create.userBusinessStream">CREATE TABLE UserBusinessStream
 					(
-					   [UserId]						[numeric](18) 	NOT NULL,
+					   [UserId]				[numeric](18) 	NOT NULL,
 					   [BusinessStreamId]			[numeric](18) 	NOT NULL,
 					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,

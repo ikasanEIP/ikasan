@@ -45,38 +45,30 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.action.LogoutAction;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
-import org.ikasan.dashboard.ui.framework.navigation.Navigation;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.BaseTheme;
 
 /**
  * @author Ikasan Development Team
@@ -161,9 +153,6 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.createActionMenuItems();
 		this.createUtilityMenuItems();
 
-//		this.layout.addComponent(actionMenu, 0, 0);
-//		this.layout.setComponentAlignment(actionMenu, Alignment.MIDDLE_LEFT);
-
 		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
 				this);
 
@@ -215,9 +204,6 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.collapseButton = new Button("^");
 		this.collapseButton.setPrimaryStyleName("valo-menu-item");
 		this.collapseButton.setHtmlContentAllowed(true);
-		this.layout.addComponent(this.collapseButton, 4, 0);
-		this.layout.setComponentAlignment(this.collapseButton,
-				Alignment.MIDDLE_RIGHT);
 		this.collapseButton.addClickListener(new ClickListener()
 		{
 			@Override
@@ -234,6 +220,10 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.expandButton = new Button("+");
 		this.expandButton.setPrimaryStyleName("valo-menu-item");
 		this.expandButton.setHtmlContentAllowed(true);
+		this.layout.addComponent(this.expandButton, 4, 0);
+		this.layout.setComponentAlignment(this.expandButton,
+				Alignment.MIDDLE_RIGHT);
+		imagePanelLayout.setVisible(false);
 		this.expandButton.addClickListener(new ClickListener()
 		{
 			@Override
@@ -398,6 +388,11 @@ public class NavigationPanel extends Panel implements ViewContext
 		{
 			refreshGroup.refresh();
 		}
+	}
+	
+	public void addToggleButton(Component toggleButton)
+	{
+		this.layout.addComponent(toggleButton);
 	}
 
 	@Override
