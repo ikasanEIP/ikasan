@@ -315,6 +315,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.setHeight("100%");
 
 		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+		hsplit.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
 		HorizontalLayout leftLayout = new HorizontalLayout();
 		leftLayout.setSizeFull();
@@ -467,13 +468,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			}
 		});
 		
-		VerticalLayout layout = new VerticalLayout();
+		GridLayout layout = new GridLayout(1, 3);
 		layout.setMargin(true);
-		layout.setSizeFull();
+		layout.setSpacing(true);
+		layout.setWidth("100%");
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
-		this.treeViewBusinessStreamCombo.setHeight(40, Unit.PIXELS);
-		
+				
 		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() {
             public void valueChange(ValueChangeEvent event) 
             {
@@ -661,7 +662,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 
 		layout.addComponent(this.treeViewBusinessStreamCombo);
-		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.12f);
 		
 		Button discoverButton = new Button("Discover");
 		discoverButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -700,13 +700,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		GridLayout buttonLayout = new GridLayout(2, 1);
+		buttonLayout.setSpacing(true);
 		buttonLayout.addComponent(discoverButton);
 		buttonLayout.addComponent(refreshButton);
-		layout.addComponent(buttonLayout);
-		layout.setExpandRatio(buttonLayout, 0.1f);
 		
+		layout.addComponent(buttonLayout);
 		layout.addComponent(this.moduleTree);
-		layout.setExpandRatio(this.moduleTree, 0.78f);
 
 		this.topologyTreePanel.setContent(layout);
 	}

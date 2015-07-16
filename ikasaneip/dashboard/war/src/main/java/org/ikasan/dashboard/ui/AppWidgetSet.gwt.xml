@@ -38,5 +38,5 @@
 
     <inherits name="com.vaadin.graph.GraphExplorerWidgetset" />
 
-    <inherits name="at.downdrown.vaadinaddons.highchartsapi.WidgetSet" />
+    
 </module>

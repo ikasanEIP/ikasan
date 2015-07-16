@@ -69,12 +69,12 @@ import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -188,7 +188,7 @@ public class ComponentConfigurationWindow extends Window
 		this.layout.setMargin(true);
 		
 		Label configurationParametersLabel = new Label("Configuration Parameters");
-		configurationParametersLabel.setStyleName(ValoTheme.LABEL_LARGE);
+		configurationParametersLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
 		
 		GridLayout paramLayout = new GridLayout(2, 2);
@@ -199,9 +199,11 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 
 		Label configuredResourceIdLabel = new Label("Configured Resource Id");
-		configuredResourceIdLabel.setStyleName(ValoTheme.LABEL_BOLD);
+		configuredResourceIdLabel.addStyleName(ValoTheme.LABEL_LARGE);
+		configuredResourceIdLabel.addStyleName(ValoTheme.LABEL_BOLD);
 		Label configuredResourceIdValueLabel = new Label(configuration.getConfigurationId());
-		configuredResourceIdValueLabel.setStyleName(ValoTheme.LABEL_BOLD);
+		configuredResourceIdValueLabel.addStyleName(ValoTheme.LABEL_LARGE);
+		configuredResourceIdValueLabel.addStyleName(ValoTheme.LABEL_BOLD);
 		
 		paramLayout.addComponent(configuredResourceIdLabel, 0, 0);
 		paramLayout.setComponentAlignment(configuredResourceIdLabel, Alignment.TOP_RIGHT);
@@ -218,7 +220,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.addComponent(conmfigurationDescriptionTextField, 1, 1);
 
 		
-		int i=1;
+		this.layout.addComponent(paramLayout, 0, 1, 1, 1);
+		
+		int i=2;
 		
 		for(ConfigurationParameter parameter: parameters)
 		{
@@ -304,7 +308,6 @@ public class ComponentConfigurationWindow extends Window
             					
             					if(pair.key.getValue() != "")
             					{
-            						logger.info("Saving value: " + pair.key.getValue());
             						map.put(pair.key.getValue(), pair.value.getValue());
             					}
             				}
@@ -329,17 +332,23 @@ public class ComponentConfigurationWindow extends Window
             			parameter.setValue(map);
             		}
   
-        			logger.info(parameter.getName() + " " + parameter.getValue());
+        			
         		}
             	
             	ComponentConfigurationWindow.this.configurationManagement
             		.saveConfiguration(configuration);      
             	
-            	Notification.show("Saved!");
+            	Notification notification = new Notification(
+            		    "Saved",
+            		    "The configuration has been saved successfully!",
+            		    Type.HUMANIZED_MESSAGE);
+            	notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+            	notification.show(Page.getCurrent());
             }
         });
     	
-    	Button deleteButton = new Button("Delete");    	
+    	Button deleteButton = new Button("Delete");    
+    	deleteButton.addStyleName(ValoTheme.BUTTON_SMALL);
     	deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -359,17 +368,12 @@ public class ComponentConfigurationWindow extends Window
     	buttonLayout.addComponent(saveButton, 0 , 0);
     	buttonLayout.addComponent(deleteButton, 1 , 0);
     	
-    	this.layout.addComponent(buttonLayout, 1, i);
+    	this.layout.addComponent(buttonLayout, 0, i, 1, i);
+    	this.layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
     	
     	Panel configurationPanel = new Panel();
-    	configurationPanel.addStyleName("color1");
     	configurationPanel.setContent(this.layout);
-//    	configurationPanel.setS
-    	
-//    	HorizontalLayout mainLayout = new HorizontalLayout();
-//    	mainLayout.setMargin(true);
-//    	mainLayout.setSizeFull();
-//    	mainLayout.addComponent(configurationPanel);
+
     	
 		this.setContent(configurationPanel);
     }
@@ -388,7 +392,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
 		Label label = new Label(parameter.getName());
-		label.setStyleName("large-bold");
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
@@ -449,7 +455,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
 		Label label = new Label(parameter.getName());
-		label.setStyleName("large-bold");
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
@@ -603,7 +611,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
 		Label label = new Label(parameter.getName());
-		label.setStyleName("large-bold");
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
