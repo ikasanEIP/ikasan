@@ -40,7 +40,11 @@
  */
 package org.ikasan.error.reporting.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.ikasan.error.reporting.dao.ErrorCategorisationDao;
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 
 /**
@@ -85,6 +89,27 @@ public class ErrorCategorisationServiceImpl implements
 			String flowElementName)
 	{
 		return this.errorCategorisationDao.find(moduleName, flowName, flowElementName);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.model.ErrorCategorisation)
+	 */
+	@Override
+	public void delete(ErrorCategorisation errorCategorisation)
+	{
+		this.errorCategorisationDao.delete(errorCategorisation);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#findCategorisedErrorOccurences(java.util.List, java.util.List, java.util.List, java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames,
+			List<String> flowElementNames, String errorCategory, Date startDate, Date endDate)
+	{
+		// TODO Auto-generated method stub
+		return this.errorCategorisationDao.findCategorisedErrorOccurences(moduleNames, flowNames, flowElementNames, 
+				errorCategory, startDate, endDate);
 	}
 
 }

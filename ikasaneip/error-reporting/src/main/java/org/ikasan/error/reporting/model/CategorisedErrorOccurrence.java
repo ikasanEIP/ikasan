@@ -38,57 +38,61 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.component;
+package org.ikasan.error.reporting.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class CategorisedErrorOccurrence
+{
+	private ErrorOccurrence errorOccurrence;
+	private ErrorCategorisation errorCategorisation;
 
-import com.vaadin.ui.Table;
-import com.vaadin.ui.themes.ValoTheme;
+	/**
+	 * @param errorOccurrence
+	 * @param errorCategorisation
+	 */
+	public CategorisedErrorOccurrence(ErrorOccurrence errorOccurrence,
+			ErrorCategorisation errorCategorisation)
+	{
+		super();
+		this.errorOccurrence = errorOccurrence;
+		this.errorCategorisation = errorCategorisation;
+	}
 
-@SuppressWarnings("serial")
-public final class DashboardTable extends Table {
+	/**
+	 * @return the errorOccurrence
+	 */
+	public ErrorOccurrence getErrorOccurrence()
+	{
+		return errorOccurrence;
+	}
 
+	/**
+	 * @param errorOccurrence the errorOccurrence to set
+	 */
+	public void setErrorOccurrence(ErrorOccurrence errorOccurrence)
+	{
+		this.errorOccurrence = errorOccurrence;
+	}
 
-    public DashboardTable() 
-    {
-        setCaption("Event Exclusions");
+	/**
+	 * @return the errorCategorisation
+	 */
+	public ErrorCategorisation getErrorCategorisation()
+	{
+		return errorCategorisation;
+	}
 
-        addStyleName(ValoTheme.TABLE_BORDERLESS);
-        addStyleName(ValoTheme.TABLE_NO_STRIPES);
-        addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
-        addStyleName(ValoTheme.TABLE_SMALL);
-       
-        setSortEnabled(false);
-        setColumnAlignment("revenue", Align.RIGHT);
-        setRowHeaderMode(RowHeaderMode.INDEX);
-//        setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-        setSizeFull();
-
-
-        addContainerProperty("Module Name", String.class,  null);
-		addContainerProperty("Flow Name", String.class,  null);
-		addContainerProperty("Component Name", String.class,  null);
-		addContainerProperty("Timestamp", String.class,  null);
-    			
-
-    	for(int i=0; i<10; i++)
-    	{
-//    		Date date = new Date(errorOccurrence.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-    	    String timestamp = format.format(new Date(System.currentTimeMillis()));
-    	    
-    	    addItem(new Object[]{"Module Name", "Flow Name"
-    				, "Component Name", timestamp}, "errorOccurrence" + i);
-    	}
-
-//        setVisibleColumns("title", "revenue");
-//        setColumnHeaders("Title", "Revenue");
-//        setColumnExpandRatio("title", 2);
-//        setColumnExpandRatio("revenue", 1);
-//
-//        setSortContainerPropertyId("revenue");
-//        setSortAscending(false);
-    }
-
+	/**
+	 * @param errorCategorisation the errorCategorisation to set
+	 */
+	public void setErrorCategorisation(ErrorCategorisation errorCategorisation)
+	{
+		this.errorCategorisation = errorCategorisation;
+	}
+	
+	
 }

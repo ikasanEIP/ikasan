@@ -38,57 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.component;
+package org.ikasan.dashboard.ui.topology.component;
 
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-import com.vaadin.ui.Table;
-import com.vaadin.ui.themes.ValoTheme;
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public abstract class TopologyTab
+{
+	protected Date getMidnightToday()
+	{
+		Calendar date = new GregorianCalendar();
+		// reset hour, minutes, seconds and millis
+		date.set(Calendar.HOUR_OF_DAY, 0);
+		date.set(Calendar.MINUTE, 0);
+		date.set(Calendar.SECOND, 0);
+		date.set(Calendar.MILLISECOND, 0);
 
-@SuppressWarnings("serial")
-public final class DashboardTable extends Table {
+		return date.getTime();
+	}
+	
+	protected Date getTwentyThreeFixtyNineToday()
+	{
+		Calendar date = new GregorianCalendar();
+		// reset hour, minutes, seconds and millis
+		date.set(Calendar.HOUR_OF_DAY, 23);
+		date.set(Calendar.MINUTE, 59);
+		date.set(Calendar.SECOND, 0);
+		date.set(Calendar.MILLISECOND, 0);
 
-
-    public DashboardTable() 
-    {
-        setCaption("Event Exclusions");
-
-        addStyleName(ValoTheme.TABLE_BORDERLESS);
-        addStyleName(ValoTheme.TABLE_NO_STRIPES);
-        addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
-        addStyleName(ValoTheme.TABLE_SMALL);
-       
-        setSortEnabled(false);
-        setColumnAlignment("revenue", Align.RIGHT);
-        setRowHeaderMode(RowHeaderMode.INDEX);
-//        setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-        setSizeFull();
-
-
-        addContainerProperty("Module Name", String.class,  null);
-		addContainerProperty("Flow Name", String.class,  null);
-		addContainerProperty("Component Name", String.class,  null);
-		addContainerProperty("Timestamp", String.class,  null);
-    			
-
-    	for(int i=0; i<10; i++)
-    	{
-//    		Date date = new Date(errorOccurrence.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-    	    String timestamp = format.format(new Date(System.currentTimeMillis()));
-    	    
-    	    addItem(new Object[]{"Module Name", "Flow Name"
-    				, "Component Name", timestamp}, "errorOccurrence" + i);
-    	}
-
-//        setVisibleColumns("title", "revenue");
-//        setColumnHeaders("Title", "Revenue");
-//        setColumnExpandRatio("title", 2);
-//        setColumnExpandRatio("revenue", 1);
-//
-//        setSortContainerPropertyId("revenue");
-//        setSortAscending(false);
-    }
-
+		return date.getTime();
+	}
 }

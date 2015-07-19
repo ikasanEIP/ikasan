@@ -11,7 +11,7 @@
     font-family: 'Vaadin-Icons';
     font-size: 18px;
     padding: 5px;
-}	
+}
 
 /**
  * Checks if a list contains a certain value.
@@ -13766,6 +13766,25 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .v-table-cell-content-ikasan {
 	font-size: 11px;
+}
+
+.dashboard .v-table-cell-content-ikasan-green {
+	font-size: 11px;
+	background-color: rgba(0, 153, 51, 0.2);
+}
+
+.dashboard .v-table-cell-content-ikasan-red {
+	font-size: 11px;
+	background-color: rgba(255, 0, 0, 0.2);
+}
+
+.dashboard .v-table-cell-content-ikasan-orange {
+	font-size: 11px;
+	background-color: rgba(255, 153, 0, 0.2);
+}
+
+.dashboard .v-table-cell-content-ikasan-small {
+	font-size: 9px;
 }
 
 .dashboard .v-table-header td {
