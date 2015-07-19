@@ -40,11 +40,18 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -71,6 +78,9 @@ public class ErrorCategorisationDaoTest
 {
     @Resource
     ErrorCategorisationDao errorCategorisationDao;
+    
+    @Resource
+    ErrorReportingServiceDao errorReportingServiceDao;
 
     /**
      * Test save of errorOccurrence
@@ -91,9 +101,6 @@ public class ErrorCategorisationDaoTest
         Assert.assertEquals(errorCategorisation, foundErrorCategorisation);
     }
     
-    /**
-     * Test save of errorOccurrence
-     */
     @DirtiesContext
     @Test(expected=DataIntegrityViolationException.class)
     public void test_exception_add_duplicate()
@@ -107,6 +114,35 @@ public class ErrorCategorisationDaoTest
         		"flowElementName", ErrorCategorisation.TRIVIAL, "This is the error message");
         
         this.errorCategorisationDao.save(errorCategorisation);
-    }   
+    }  
+    
+    @DirtiesContext
+    @Test
+    public void test_save_and_find_categorised_error()
+    {
+    	ErrorOccurrence errorOccurrence = new ErrorOccurrence
+    			("moduleName", "flowName", "componentName", "error detail", 
+    					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+
+        errorReportingServiceDao.save(errorOccurrence);
+        
+        ErrorCategorisation errorCategorisation = new ErrorCategorisation("moduleName", "flowName", 
+        		"componentName", ErrorCategorisation.TRIVIAL, "This is the error message");
+        
+        this.errorCategorisationDao.save(errorCategorisation);
+
+        ArrayList<String> moduleNames = new ArrayList<String>();
+        moduleNames.add("moduleName");
+        ArrayList<String> flowNames = new ArrayList<String>();
+        moduleNames.add("flowName");
+        ArrayList<String> componentNames = new ArrayList<String>();
+        moduleNames.add("componentName");
+        
+        List<CategorisedErrorOccurrence> categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, ErrorCategorisation.TRIVIAL, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertTrue(categorisedErrorOccurences.size() == 1);
+    } 
 
 }

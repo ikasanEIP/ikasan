@@ -90,6 +90,25 @@ $v-font-weight: 400;
 		font-size: $v-font-size;
 	}
 	
+	.v-table-cell-content-ikasan-green {
+		font-size: $v-font-size;
+		background-color: rgba(0, 153, 51, 0.2);
+	}
+	
+	.v-table-cell-content-ikasan-red {
+		font-size: $v-font-size;
+		background-color: rgba(255, 0, 0, 0.2);
+	}
+	
+	.v-table-cell-content-ikasan-orange {
+		font-size: $v-font-size;
+		background-color: rgba(255, 153, 0, 0.2);
+	}
+	
+	.v-table-cell-content-ikasan-small {
+		font-size: 9px;
+	}
+	
 	.v-table-header td {
 		font-size: $v-font-size;
 	}

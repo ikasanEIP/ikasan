@@ -40,6 +40,10 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import java.util.Date;
+import java.util.List;
+
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 
 /**
@@ -55,6 +59,13 @@ public interface ErrorCategorisationDao
 	 * @param errorCategorisation
 	 */
 	public void save(ErrorCategorisation errorCategorisation);
+	
+	/**
+	 * Method to delete an error categorisation.
+	 * 
+	 * @param errorCategorisation
+	 */
+	public void delete(ErrorCategorisation errorCategorisation);
 
 	/**
 	 * Method to find an error categorisation.
@@ -65,4 +76,25 @@ public interface ErrorCategorisationDao
 	 * @return
 	 */	
 	public ErrorCategorisation find(String moduleName, String flowName, String flowElementName);
+	
+	/**
+	 * Method to find an error categorisation.
+	 *  
+	 * @return
+	 */	
+	public List<ErrorCategorisation> findAll();
+
+	/**
+	 * Method to find categorised error occurrences based on filter criteria.
+	 * 
+	 * @param moduleNames
+	 * @param flowNames
+	 * @param flowElementNames
+	 * @param errorCategory
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
+			, String errorCategory, Date startDate, Date endDate);
 }
