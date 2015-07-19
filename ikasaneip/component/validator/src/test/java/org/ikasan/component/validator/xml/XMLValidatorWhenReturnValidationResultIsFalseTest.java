@@ -22,7 +22,7 @@ import java.io.InputStream;
 /**
  * Tests the XMLValidator
  */
-public class XMLValidatorTest
+public class XMLValidatorWhenReturnValidationResultIsFalseTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -48,6 +48,7 @@ public class XMLValidatorTest
         // create the class to be tested
         this.uut = new XMLValidator(this.factory);
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setReturnValidationResult(true);
         uut.setConfiguration(configuration);
     }
 
@@ -74,8 +75,9 @@ public class XMLValidatorTest
             }
         });
 
-        ValidationResult result = this.uut.convert(payloadContent);
+        ValidationResult result = (ValidationResult)this.uut.convert(payloadContent);
 
+        //assert
         Assert.assertTrue("Document should be valid", result.getResult().equals(ValidationResult.Result.VALID));
 
     }
@@ -87,7 +89,7 @@ public class XMLValidatorTest
             SAXException, IOException
     {
 
-        javax.xml.parsers.DocumentBuilderFactory documentBuilderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setValidating(true);
         documentBuilderFactory.setNamespaceAware(true);
 
@@ -99,7 +101,7 @@ public class XMLValidatorTest
                 ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                         + "<a/>");
 
-        ValidationResult result = this.uut.convert(payloadContent);
+        ValidationResult result = (ValidationResult)this.uut.convert(payloadContent);
 
         Assert.assertTrue("Document should be valid", result.getResult().equals(ValidationResult.Result.VALID));
 
@@ -127,7 +129,7 @@ public class XMLValidatorTest
             }
         });
 
-        ValidationResult result = this.uut.convert(payloadContent);
+        ValidationResult result = (ValidationResult)this.uut.convert(payloadContent);
 
         Assert.assertTrue(result.getResult().equals(ValidationResult.Result.INVALID));
         Assert.assertTrue(result.getException() instanceof SAXException );
@@ -184,7 +186,7 @@ public class XMLValidatorTest
             }
         });
 
-        ValidationResult result = this.uut.convert(payloadContent);
+        ValidationResult result = (ValidationResult)this.uut.convert(payloadContent);
 
         Assert.assertTrue(result.getResult().equals(ValidationResult.Result.INVALID));
         Assert.assertTrue(result.getException() instanceof IOException );
@@ -239,7 +241,7 @@ public class XMLValidatorTest
             }
         });
 
-        ValidationResult result = this.uut.convert(payloadContent);
+        ValidationResult result = (ValidationResult)this.uut.convert(payloadContent);
 
         Assert.assertTrue(result.getResult().equals(ValidationResult.Result.INVALID));
         Assert.assertTrue(result.getException() instanceof ParserConfigurationException );
