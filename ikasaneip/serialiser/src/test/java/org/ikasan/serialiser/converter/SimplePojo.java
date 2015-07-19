@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by amajewski on 19/07/15.
  */
-public class TestPojo implements Serializable {
+public class SimplePojo implements Serializable {
     /** serialVersionUID */
     private static final long serialVersionUID = 3595514737829632181L;
 
