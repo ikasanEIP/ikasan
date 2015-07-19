@@ -57,6 +57,11 @@ public class XMLValidatorConfiguration
      */
     private boolean throwExceptionOnValidationFailure = false;
 
+    /**
+     * Option to return ValidationResult object as result of validation, defaults to false
+     */
+    public boolean returnValidationResult = false;
+
 
     public boolean isSkipValidation()
     {
@@ -76,5 +81,13 @@ public class XMLValidatorConfiguration
     public void setThrowExceptionOnValidationFailure(boolean throwExceptionOnValidationFailure)
     {
         this.throwExceptionOnValidationFailure = throwExceptionOnValidationFailure;
+    }
+
+    public boolean isReturnValidationResult() {
+        return returnValidationResult;
+    }
+
+    public void setReturnValidationResult(boolean returnValidationResult) {
+        this.returnValidationResult = returnValidationResult;
     }
 }
