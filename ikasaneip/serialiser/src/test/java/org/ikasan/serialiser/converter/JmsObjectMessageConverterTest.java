@@ -64,13 +64,13 @@ public class JmsObjectMessageConverterTest {
     public void convert_when_objectMessage_has_object() throws JMSException {
 
         ObjectMessage message = new ActiveMQObjectMessage();
-        message.setObject(new TestPojo());
+        message.setObject(new SimplePojo());
 
         // test
         JmsObjectMessageDefaultImpl result = uut.convert(message);
 
         //assert
-        assertTrue(result.getObject() instanceof TestPojo);
+        assertTrue(result.getObject() instanceof SimplePojo);
 
     }
 
