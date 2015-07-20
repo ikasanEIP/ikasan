@@ -4546,8 +4546,8 @@
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
 					   LdapUserDescAttributeName	VARCHAR(256) NULL,
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -4575,8 +4575,8 @@
                     DiagramUrl      			VARCHAR(256) 		NULL,
                     Version						VARCHAR(256) 		NULL,
                     ServerId					NUMERIC(18, 0) 		NULL,
-                    CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
-                    UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+                    CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+                    UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
                     PRIMARY KEY (Id)
 					);
                 </prop>
@@ -4603,8 +4603,8 @@
 					   FlowId						NUMERIC(18, 0) 		NULL,
 					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
-					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
                 </prop>
