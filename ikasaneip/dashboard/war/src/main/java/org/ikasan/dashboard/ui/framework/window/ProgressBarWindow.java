@@ -38,61 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.exclusion;
+package org.ikasan.dashboard.ui.framework.window;
 
-import java.util.Date;
-import java.util.List;
-
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ProgressBar;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ExclusionManagementService<ENTITY, IDENTIFIER>
+public class ProgressBarWindow extends Window
 {
-	/**
-	 * Find and exclusion event entity.
-	 * 
-	 * @param moduleName
-	 * @param flowName
-	 * @param identifier
-	 * @return
-	 */
-    public ENTITY find(String moduleName, String flowName, IDENTIFIER identifier);
-    
-    /**
-     * Find a list of event entities based on criteria.
-     * 
-     * @param moduleName
-     * @param flowName
-     * @param starteDate
-     * @param endDate
-     * @param identifier
-     * @return
-     */
-    public List<ENTITY> find(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, IDENTIFIER identifier);
 
-    /**
-	 * Find all exclusion event entities.
+	/**
 	 * 
-	 * @return
 	 */
-    public List<ENTITY> findAll();
-    
-    /**
-     * Remove the event
-     * @param moduleName
-     * @param flowName
-     * @param identifier
-     * @return
-     */
-    public void delete(String moduleName, String flowName, IDENTIFIER identifier);
-    
-    /**
-     * Remove the event
-     * @param errorUri
-     * @return
-     */
-    public void delete(String errorUri);
+	public ProgressBarWindow()
+	{
+		super();
+		init();
+	}
+	
+	protected void init()
+	{
+		this.setModal(true);
+		this.setWidth("15%");
+		this.setHeight("15%");
+		
+		ProgressBar progressBar = new ProgressBar();
+		progressBar.setIndeterminate(true);
+		progressBar.setEnabled(true);
+		
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(progressBar);
+		layout.setComponentAlignment(progressBar, Alignment.MIDDLE_CENTER);
+		
+		this.setContent(layout);
+	}
+
+	
 }

@@ -41,19 +41,14 @@
 package org.ikasan.dashboard.ui.topology.component;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.window.ProgressBarWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
@@ -62,6 +57,7 @@ import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.event.DataBoundTransferable;
@@ -84,9 +80,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Table.TableDragMode;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
@@ -104,9 +101,9 @@ public class WiretapTab extends TopologyTab
 	
 	private WiretapDao wiretapDao;
 	
-	private Table errorOccurenceModules = new Table("Modules");
-	private Table errorOccurenceFlows = new Table("Flows");
-	private Table errorOccurenceComponents = new Table("Components");
+	private Table modules = new Table("Modules");
+	private Table flows = new Table("Flows");
+	private Table components = new Table("Components");
 	
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -126,42 +123,49 @@ public class WiretapTab extends TopologyTab
 	}
 	
 	public Layout createWiretapLayout()
-	{
+	{		
 		this.wiretapTable = new Table();
 		this.wiretapTable.setSizeFull();
 		this.wiretapTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.wiretapTable.addStyleName("ikasan");
-		this.wiretapTable.addContainerProperty("Category", Label.class,  null);
+		
 		this.wiretapTable.addContainerProperty("Module Name", String.class,  null);
 		this.wiretapTable.addContainerProperty("Flow Name", String.class,  null);
 		this.wiretapTable.addContainerProperty("Component Name", String.class,  null);
+		this.wiretapTable.addContainerProperty("Event Id / Payload Id", String.class,  null);
 		this.wiretapTable.addContainerProperty("Timestamp", String.class,  null);
+		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		
 		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) {
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
+		    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
+		    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
 		    
-		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
 		    }
 		});
 				
-		Button searchButton = new Button("Search");
+		final Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	System.out.println("Addin progress window!");
+            	ProgressBarWindow pbWindow = new ProgressBarWindow();
+            	
+            	UI.getCurrent().addWindow(pbWindow);
+            	
             	wiretapTable.removeAllItems();
 
             	HashSet<String> modulesNames = null;
             	
-            	if(errorOccurenceModules.getItemIds().size() > 0)
+            	if(modules.getItemIds().size() > 0)
             	{
 	            	modulesNames = new HashSet<String>();
-	            	for(Object module: errorOccurenceModules.getItemIds())
+	            	for(Object module: modules.getItemIds())
 	            	{
 	            		modulesNames.add(((Module)module).getName());
 	            	}
@@ -169,10 +173,10 @@ public class WiretapTab extends TopologyTab
             	
             	HashSet<String> flowNames = null;
             	
-            	if(errorOccurenceFlows.getItemIds().size() > 0)
+            	if(flows.getItemIds().size() > 0)
             	{
             		flowNames = new HashSet<String>();
-            		for(Object flow: errorOccurenceFlows.getItemIds())
+            		for(Object flow: flows.getItemIds())
                 	{
                 		flowNames.add(((Flow)flow).getName());
                 	}
@@ -180,10 +184,10 @@ public class WiretapTab extends TopologyTab
             	
             	HashSet<String> componentNames = null;
             	
-            	if(errorOccurenceComponents.getItemIds().size() > 0)
+            	if(components.getItemIds().size() > 0)
             	{
             		componentNames = new HashSet<String>();
-	            	for(Object component: errorOccurenceComponents.getItemIds())
+	            	for(Object component: components.getItemIds())
 	            	{
 	            		componentNames.add(((Component)component).getName());
 	            	}
@@ -205,8 +209,10 @@ public class WiretapTab extends TopologyTab
             	String errorCategory = null;
             	
          
+            	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
+            	// results with Vaadin.
             	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
-            			, flowNames, componentNames, null, null, fromDate.getValue(), toDate.getValue(), null);
+            			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
@@ -215,8 +221,10 @@ public class WiretapTab extends TopologyTab
             	    String timestamp = format.format(date);
             	    
             		wiretapTable.addItem(new Object[]{wiretapEvent.getModuleName(), wiretapEvent.getFlowName()
-            				, wiretapEvent.getComponentName(), timestamp}, wiretapEvent);
+            				, wiretapEvent.getComponentName(), ((WiretapFlowEvent)wiretapEvent).getEventId(), timestamp}, wiretapEvent);
             	}
+            	
+            	pbWindow.close();
             }
         });
 		
@@ -226,9 +234,9 @@ public class WiretapTab extends TopologyTab
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	errorOccurenceModules.removeAllItems();
-            	errorOccurenceFlows.removeAllItems();
-            	errorOccurenceComponents.removeAllItems();
+            	modules.removeAllItems();
+            	flows.removeAllItems();
+            	components.removeAllItems();
             }
         });
 
@@ -240,13 +248,13 @@ public class WiretapTab extends TopologyTab
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
 		
-		errorOccurenceModules.setIcon(VaadinIcons.ARCHIVE);
-		errorOccurenceModules.addContainerProperty("Module Name", String.class,  null);
-		errorOccurenceModules.addContainerProperty("", Button.class,  null);
-		errorOccurenceModules.setSizeFull();
-		errorOccurenceModules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceModules.setDragMode(TableDragMode.ROW);
-		errorOccurenceModules.setDropHandler(new DropHandler()
+		modules.setIcon(VaadinIcons.ARCHIVE);
+		modules.addContainerProperty("Module Name", String.class,  null);
+		modules.addContainerProperty("", Button.class,  null);
+		modules.setSizeFull();
+		modules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		modules.setDragMode(TableDragMode.ROW);
+		modules.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -275,11 +283,11 @@ public class WiretapTab extends TopologyTab
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	errorOccurenceModules.removeItem(module);
+			            	modules.removeItem(module);
 			            }
 			        });
 					
-					errorOccurenceModules.addItem(new Object[]{module.getName(), deleteButton}, module);
+					modules.addItem(new Object[]{module.getName(), deleteButton}, module);
 
 					for(final Flow flow: module.getFlows())
 					{
@@ -292,11 +300,11 @@ public class WiretapTab extends TopologyTab
 				        {
 				            public void buttonClick(ClickEvent event) 
 				            {		
-				            	errorOccurenceFlows.removeItem(flow);
+				            	flows.removeItem(flow);
 				            }
 				        });
 						
-						errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+						flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
 						
 						for(final Component component: flow.getComponents())
 						{
@@ -309,11 +317,11 @@ public class WiretapTab extends TopologyTab
 					        {
 					            public void buttonClick(ClickEvent event) 
 					            {		
-					            	errorOccurenceComponents.removeItem(component);
+					            	components.removeItem(component);
 					            }
 					        });
 							
-							errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
+							components.addItem(new Object[]{component.getName(), deleteButton}, component);
 						}
 					}
 				}
@@ -327,14 +335,14 @@ public class WiretapTab extends TopologyTab
 			}
 		});
 		
-		listSelectLayout.addComponent(errorOccurenceModules, 0, 0);
+		listSelectLayout.addComponent(modules, 0, 0);
 		
-		errorOccurenceFlows.setIcon(VaadinIcons.AUTOMATION);
-		errorOccurenceFlows.addContainerProperty("Flow Name", String.class,  null);
-		errorOccurenceFlows.addContainerProperty("", Button.class,  null);
-		errorOccurenceFlows.setSizeFull();
-		errorOccurenceFlows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceFlows.setDropHandler(new DropHandler()
+		flows.setIcon(VaadinIcons.AUTOMATION);
+		flows.addContainerProperty("Flow Name", String.class,  null);
+		flows.addContainerProperty("", Button.class,  null);
+		flows.setSizeFull();
+		flows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		flows.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -363,11 +371,11 @@ public class WiretapTab extends TopologyTab
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	errorOccurenceFlows.removeItem(flow);
+			            	flows.removeItem(flow);
 			            }
 			        });
 					
-					errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+					flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
 						
 					for(final Component component: flow.getComponents())
 					{
@@ -381,11 +389,11 @@ public class WiretapTab extends TopologyTab
 				        {
 				            public void buttonClick(ClickEvent event) 
 				            {		
-				            	errorOccurenceComponents.removeItem(component);
+				            	components.removeItem(component);
 				            }
 				        });
 						
-						errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
+						components.addItem(new Object[]{component.getName(), deleteButton}, component);
 					}
 				}
 				
@@ -398,16 +406,16 @@ public class WiretapTab extends TopologyTab
 			}
 		});
 
-		listSelectLayout.addComponent(errorOccurenceFlows, 1, 0);
+		listSelectLayout.addComponent(flows, 1, 0);
 		
-		errorOccurenceComponents.setIcon(VaadinIcons.COG);
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.addContainerProperty("Component Name", String.class,  null);
-		errorOccurenceComponents.addContainerProperty("", Button.class,  null);
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceComponents.setDropHandler(new DropHandler()
+		components.setIcon(VaadinIcons.COG);
+		components.setSizeFull();
+		components.addContainerProperty("Component Name", String.class,  null);
+		components.addContainerProperty("", Button.class,  null);
+		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		components.setSizeFull();
+		components.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		components.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -436,11 +444,11 @@ public class WiretapTab extends TopologyTab
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	errorOccurenceComponents.removeItem(component);
+			            	components.removeItem(component);
 			            }
 			        });
 					
-					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
+					components.addItem(new Object[]{component.getName(), deleteButton}, component);
 						
 				}
 				
@@ -452,7 +460,7 @@ public class WiretapTab extends TopologyTab
 				return AcceptAll.get();
 			}
 		});
-		listSelectLayout.addComponent(this.errorOccurenceComponents, 2, 0);
+		listSelectLayout.addComponent(this.components, 2, 0);
 
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
@@ -472,6 +480,10 @@ public class WiretapTab extends TopologyTab
 		this.eventId.setWidth("80%");
 		this.payloadContent = new TextField("Payload Content");
 		this.payloadContent.setWidth("80%");
+		
+		this.eventId.setNullSettingAllowed(true);
+		this.payloadContent.setNullSettingAllowed(true);
+		
 		dateSelectLayout.addComponent(this.eventId, 1, 0);
 		dateSelectLayout.addComponent(this.payloadContent, 1, 1);
 				

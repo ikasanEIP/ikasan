@@ -56,12 +56,16 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Item;
@@ -105,12 +109,11 @@ public class ExclusionsTab extends TopologyTab
 	
 	private Table exclusionsTable;
 	
-	private Table errorOccurenceModules = new Table("Modules");
-	private Table errorOccurenceFlows = new Table("Flows");
-	private Table errorOccurenceComponents = new Table("Components");
+	private Table exclusionModules = new Table("Modules");
+	private Table exclusionFlows = new Table("Flows");
 	
-	private PopupDateField errorFromDate;
-	private PopupDateField errorToDate;
+	private PopupDateField fromDate;
+	private PopupDateField toDate;
 	
 	private ComboBox businessStreamCombo;
 	
@@ -118,23 +121,31 @@ public class ExclusionsTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ErrorReportingService errorReportingService;
+	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
+	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private TopologyService topologyService;
 	
-	public ExclusionsTab(ErrorReportingService errorReportingService,
+	private SerialiserFactory serialiserFactory;
+	
+	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService, SerialiserFactory serialiserFactory, 
 			ComboBox businessStreamCombo)
 	{
 		this.errorReportingService = errorReportingService;
+		this.exclusionManagementService = exclusionManagementService;
+		this.hospitalManagementService = hospitalManagementService;
+		this.topologyService = topologyService;
+		this.serialiserFactory = serialiserFactory;
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
-	public Layout createCategorisedErrorLayout()
+	public Layout createLayout()
 	{
 		this.exclusionsTable = new Table();
 		this.exclusionsTable.setSizeFull();
 		this.exclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
 		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Action", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Actioned By", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
 		
 		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
@@ -153,7 +164,7 @@ public class ExclusionsTab extends TopologyTab
 		            // inline close-listener
 		            public void windowClose(CloseEvent e) 
 		            {
-//		            	refreshExcludedEventsTable();
+		            	refreshExcludedEventsTable();
 		            }
 		        });
 		    
@@ -172,10 +183,10 @@ public class ExclusionsTab extends TopologyTab
 
             	ArrayList<String> modulesNames = null;
             	
-            	if(errorOccurenceModules.getItemIds().size() > 0)
+            	if(exclusionModules.getItemIds().size() > 0)
             	{
 	            	modulesNames = new ArrayList<String>();
-	            	for(Object module: errorOccurenceModules.getItemIds())
+	            	for(Object module: exclusionModules.getItemIds())
 	            	{
 	            		modulesNames.add(((Module)module).getName());
 	            	}
@@ -183,27 +194,17 @@ public class ExclusionsTab extends TopologyTab
             	
             	ArrayList<String> flowNames = null;
             	
-            	if(errorOccurenceFlows.getItemIds().size() > 0)
+            	if(exclusionFlows.getItemIds().size() > 0)
             	{
             		flowNames = new ArrayList<String>();
-            		for(Object flow: errorOccurenceFlows.getItemIds())
+            		for(Object flow: exclusionFlows.getItemIds())
                 	{
                 		flowNames.add(((Flow)flow).getName());
                 	}
             	}
             	
-            	ArrayList<String> componentNames = null;
             	
-            	if(errorOccurenceComponents.getItemIds().size() > 0)
-            	{
-            		componentNames = new ArrayList<String>();
-	            	for(Object component: errorOccurenceComponents.getItemIds())
-	            	{
-	            		componentNames.add(((Component)component).getName());
-	            	}
-            	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
+            	if(modulesNames == null && flowNames == null
             			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
             	{
             		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
@@ -215,18 +216,18 @@ public class ExclusionsTab extends TopologyTab
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
             	}
-         
-            	List<ErrorOccurrence> errorOccurences = errorReportingService
-            			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+            	
+            	List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
+            			flowNames, fromDate.getValue(),  toDate.getValue(), null);
 
-            	for(ErrorOccurrence errorOccurrence: errorOccurences)
+            	for(ExclusionEvent exclusionEvent: exclusionEvents)
             	{
-            		Date date = new Date(errorOccurrence.getTimestamp());
+            		Date date = new Date(exclusionEvent.getTimestamp());
             		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             	    String timestamp = format.format(date);
             	    
-            	    exclusionsTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), timestamp}, errorOccurrence);
+            	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
+            				timestamp}, exclusionEvent);
             	}
             }
         });
@@ -237,9 +238,8 @@ public class ExclusionsTab extends TopologyTab
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	errorOccurenceModules.removeAllItems();
-            	errorOccurenceFlows.removeAllItems();
-            	errorOccurenceComponents.removeAllItems();
+            	exclusionModules.removeAllItems();
+            	exclusionFlows.removeAllItems();
             }
         });
 
@@ -247,17 +247,17 @@ public class ExclusionsTab extends TopologyTab
 		layout.setMargin(false);
 		layout.setHeight(270 , Unit.PIXELS);
 		
-		GridLayout listSelectLayout = new GridLayout(3, 1);
+		GridLayout listSelectLayout = new GridLayout(2, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
 		
-		errorOccurenceModules.setIcon(VaadinIcons.ARCHIVE);
-		errorOccurenceModules.addContainerProperty("Module Name", String.class,  null);
-		errorOccurenceModules.addContainerProperty("", Button.class,  null);
-		errorOccurenceModules.setSizeFull();
-		errorOccurenceModules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceModules.setDragMode(TableDragMode.ROW);
-		errorOccurenceModules.setDropHandler(new DropHandler()
+		exclusionModules.setIcon(VaadinIcons.ARCHIVE);
+		exclusionModules.addContainerProperty("Module Name", String.class,  null);
+		exclusionModules.addContainerProperty("", Button.class,  null);
+		exclusionModules.setSizeFull();
+		exclusionModules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		exclusionModules.setDragMode(TableDragMode.ROW);
+		exclusionModules.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -286,16 +286,18 @@ public class ExclusionsTab extends TopologyTab
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	errorOccurenceModules.removeItem(module);
+			            	exclusionModules.removeItem(module);
 			            }
 			        });
 					
-					errorOccurenceModules.addItem(new Object[]{module.getName(), deleteButton}, module);
+					exclusionModules.addItem(new Object[]{module.getName(), deleteButton}, module);
 
 					for(final Flow flow: module.getFlows())
 					{
+						
 						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
+						deleteButton.setCaptionAsHtml(true);
+						deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
 						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						// Add the delete functionality to each role that is added
@@ -303,29 +305,11 @@ public class ExclusionsTab extends TopologyTab
 				        {
 				            public void buttonClick(ClickEvent event) 
 				            {		
-				            	errorOccurenceFlows.removeItem(flow);
+				            	exclusionFlows.removeItem(flow);
 				            }
 				        });
 						
-						errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	errorOccurenceComponents.removeItem(component);
-					            }
-					        });
-							
-							errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
+						exclusionFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
 					}
 				}
 				
@@ -338,14 +322,14 @@ public class ExclusionsTab extends TopologyTab
 			}
 		});
 		
-		listSelectLayout.addComponent(errorOccurenceModules, 0, 0);
+		listSelectLayout.addComponent(exclusionModules, 0, 0);
 		
-		errorOccurenceFlows.setIcon(VaadinIcons.AUTOMATION);
-		errorOccurenceFlows.addContainerProperty("Flow Name", String.class,  null);
-		errorOccurenceFlows.addContainerProperty("", Button.class,  null);
-		errorOccurenceFlows.setSizeFull();
-		errorOccurenceFlows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceFlows.setDropHandler(new DropHandler()
+		exclusionFlows.setIcon(VaadinIcons.AUTOMATION);
+		exclusionFlows.addContainerProperty("Flow Name", String.class,  null);
+		exclusionFlows.addContainerProperty("", Button.class,  null);
+		exclusionFlows.setSizeFull();
+		exclusionFlows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		exclusionFlows.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -374,30 +358,11 @@ public class ExclusionsTab extends TopologyTab
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	errorOccurenceFlows.removeItem(flow);
+			            	exclusionFlows.removeItem(flow);
 			            }
 			        });
 					
-					errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setCaptionAsHtml(true);
-						deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	errorOccurenceComponents.removeItem(component);
-				            }
-				        });
-						
-						errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
+					exclusionFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
 				}
 				
 			}
@@ -409,73 +374,19 @@ public class ExclusionsTab extends TopologyTab
 			}
 		});
 
-		listSelectLayout.addComponent(errorOccurenceFlows, 1, 0);
-		
-		errorOccurenceComponents.setIcon(VaadinIcons.COG);
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.addContainerProperty("Component Name", String.class,  null);
-		errorOccurenceComponents.addContainerProperty("", Button.class,  null);
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceComponents.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
-					
-					Button deleteButton = new Button();
-					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceComponents.removeItem(component);
-			            }
-			        });
-					
-					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
+		listSelectLayout.addComponent(exclusionFlows, 1, 0);
 				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.errorOccurenceComponents, 2, 0);
-		
 		GridLayout dateSelectLayout = new GridLayout(2, 1);
 
 		dateSelectLayout.setSizeFull();
-		errorFromDate = new PopupDateField("From date");
-		errorFromDate.setResolution(Resolution.MINUTE);
-		errorFromDate.setValue(this.getMidnightToday());
-		dateSelectLayout.addComponent(errorFromDate, 0, 0);
-		errorToDate = new PopupDateField("To date");
-		errorToDate.setResolution(Resolution.MINUTE);
-		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		dateSelectLayout.addComponent(errorToDate, 1, 0);
+		fromDate = new PopupDateField("From date");
+		fromDate.setResolution(Resolution.MINUTE);
+		fromDate.setValue(this.getMidnightToday());
+		dateSelectLayout.addComponent(fromDate, 0, 0);
+		toDate = new PopupDateField("To date");
+		toDate.setResolution(Resolution.MINUTE);
+		toDate.setValue(this.getTwentyThreeFixtyNineToday());
+		dateSelectLayout.addComponent(toDate, 1, 0);
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
@@ -582,11 +493,11 @@ public class ExclusionsTab extends TopologyTab
 		return wrapper;
 	}
 	
-	protected void refreshExcludedEventsTable()
+	public void refreshExcludedEventsTable()
 	{
 		exclusionsTable.removeAllItems();
     	
-    	List<ExclusionEvent> exclusionEvents = exclusionManagementService..findAll();
+    	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
 
     	for(ExclusionEvent exclusionEvent: exclusionEvents)
     	{
@@ -594,18 +505,7 @@ public class ExclusionsTab extends TopologyTab
     		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
     	    String timestamp = format.format(date);
     	    
-    	    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-    	    
-    	    String actionString = "";
-    	    String actionedByString = "";
-    	    
-    	    if(action != null)
-    	    {
-    	    	actionString = action.getAction();
-    	    	actionedByString = action.getActionedBy();
-    	    }
-    	    
-    	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(), actionString, actionedByString,
+    	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
     				timestamp}, exclusionEvent);
     	}
 	}

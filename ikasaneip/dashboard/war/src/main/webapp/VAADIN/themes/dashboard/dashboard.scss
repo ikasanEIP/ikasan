@@ -2,7 +2,6 @@ $v-app-loading-text: "Ikasan Dashboard";
 $v-font-size: 11px;
 
 @import "../valo/valo";
-// @import "common";
 @import "views/dashboardview";
 
 
@@ -17,7 +16,6 @@ $v-font-weight: 400;
 
 @mixin dashboard {
   @include valo;
-  // @include dashboard-common;
   @include dashboard-dashboard-view;
 
   
@@ -40,7 +38,7 @@ $v-font-weight: 400;
         border: none;
         font-family: "Calibri";
         color: white;
-        width: 30%;
+        width: 100%;
         padding-top: 0px;
         padding-bottom: 0px;
         padding-right: 0px;
