@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui.framework.panel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -97,9 +98,9 @@ public class NavigationPanel extends Panel implements ViewContext
 	private Label loggedInUserLabel;
 	private HashMap<String, IkasanUINavigator> views;
 	private String currentView;
-	private MenuBar actionMenu = new MenuBar();
-	private MenuBar utilityMenu = new MenuBar();
 	private List<RefreshGroup> refreshGroups;
+	private Component toggleButton = new Button();
+	private List<Component> menuComponents;
 
 	/**
 	 * 
@@ -141,17 +142,17 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setHeight(30, Unit.PIXELS);
 		this.setStyleName("navigation");
-		this.layout.setColumnExpandRatio(0, 45f);
-		this.layout.setColumnExpandRatio(1, 47.5f);
-		this.layout.setColumnExpandRatio(2, 2.5f);
-		this.layout.setColumnExpandRatio(3, 2.5f);
-		this.layout.setColumnExpandRatio(4, 2.5f);
+		
+		this.layout.setWidth(97, Unit.PERCENTAGE);
+		this.layout.setHeight(100, Unit.PERCENTAGE);
+		
+		this.layout.setColumnExpandRatio(0, .45f);
+		this.layout.setColumnExpandRatio(1, .505f);
+		this.layout.setColumnExpandRatio(2, .015f);
+		this.layout.setColumnExpandRatio(3, .015f);
+		this.layout.setColumnExpandRatio(4, .015f);
 		this.layout.addStyleName("valo-menuitems");
-		
-		this.actionMenu.setStyleName("ikasan");
-		
-		this.createActionMenuItems();
-		this.createUtilityMenuItems();
+
 
 		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
 				this);
@@ -167,14 +168,13 @@ public class NavigationPanel extends Panel implements ViewContext
 				UI.getCurrent().addWindow(dialog);
 			}
 		});
-		this.layout.setWidth(97, Unit.PERCENTAGE);
-		this.layout.setHeight(100, Unit.PERCENTAGE);
+		
 		this.layout.addComponent(this.loginButton, 2, 0);
 		this.layout.setComponentAlignment(this.loginButton,
 				Alignment.MIDDLE_RIGHT);
 
 
-		logoutButton = new Button(new ThemeResource("images/user.png"));
+		logoutButton = new Button("Sign out");
 		this.logoutButton.setPrimaryStyleName("valo-menu-item");
 		this.logoutButton.setHtmlContentAllowed(true);
 		this.logoutButton.addClickListener(new ClickListener()
@@ -240,69 +240,7 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.setContent(layout);
 	}
 
-	/**
-	 * Helper method to create the action menu
-	 */
-	protected void createActionMenuItems()
-	{
-		this.actionMenu.removeItems();
-//		MenuItem dashboards = actionMenu.addItem("Dashboards",
-//				new ThemeResource("images/menu-icon.png"), null);
-//		dashboards.setStyleName("ikasan");
-//
-//		MenuBar.Command dashboardCommand = createNavigatorMenuCommand(
-//				"dashboard", "dashboardView");
-//		dashboards.addItem("Default", dashboardCommand);
-//		dashboards.addSeparator();
-//		dashboards.addItem("My custom dasboard 1", null, null);
-//		dashboards.addItem("My custom dasboard 2", null, null);
-
-//		MenuBar.Command mappingCommand = createNavigatorMenuCommand("mapping",
-//				"mappingView");
-//		MenuBar.Command errorCommand = createNavigatorMenuCommand("error",
-//				"errorView");
-//		MenuBar.Command replayCommand = createNavigatorMenuCommand("replay",
-//				"replayView");
-//		MenuBar.Command hospitalCommand = createNavigatorMenuCommand(
-//				"hospital", "hospitalView");
-//		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
-//				"topology", "topologyView");
-
-		// Another top-level item
-		
-//		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//	        	.getAttribute(DashboardSessionValueConstants.USER);
-//	    	
-//    	if(authentication != null)
-//    	{
-//			MenuItem service = this.actionMenu.addItem("Services",
-//					new ThemeResource("images/menu-icon.png"), null);
-//			service.setStyleName("ikasan");
-//			service.addItem("Topology", null, topologyCommand);
-//			service.addSeparator();
-//			service.addItem("Mapping", null, mappingCommand);
-	//		service.addSeparator();
-	//		service.addItem("Error", null, errorCommand);
-	//		service.addItem("Replay", null, replayCommand);
-	//		service.addItem("Hospital", null, hospitalCommand);
-//    	}
-	}
-
-	protected void createUtilityMenuItems()
-	{
-		utilityMenu.removeItems();
-		utilityMenu.addStyleName("user-menu");
-		MenuBar.Command logOutCommand = new MenuBar.Command()
-		{
-			public void menuSelected(MenuItem selectedItem)
-			{
-				manageLogout();
-			}
-		};
-
-		MenuItem userItem = this.utilityMenu.addItem("", VaadinIcons.USER, null);
-		userItem.addItem("Log Out", logOutCommand);
-	}
+	
 
 	/**
 	 * Method to manage a logout
@@ -311,7 +249,7 @@ public class NavigationPanel extends Panel implements ViewContext
 	{
 		LogoutAction action = new LogoutAction(this.visibilityGroup,
 				this.editableGroup, this.layout, this.loginButton, 
-				this.setupButton, this.utilityMenu, this.loggedInUserLabel, this);
+				this.setupButton, this.logoutButton, this.loggedInUserLabel, this);
 
 		IkasanMessageDialog dialog = new IkasanMessageDialog("Logout",
 				"You are about to log out. Any unsaved data will be lost. "
@@ -335,52 +273,18 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.layout.addComponent(loggedInUserLabel, 1, 0);
 		this.layout.setComponentAlignment(loggedInUserLabel,
 				Alignment.MIDDLE_RIGHT);
-		this.layout.addComponent(this.utilityMenu, 2, 0);
-		this.layout
-				.setComponentAlignment(this.utilityMenu, Alignment.MIDDLE_RIGHT);
+		this.layout.addComponent(this.logoutButton, 2, 0);
+		this.layout.setComponentAlignment(this.logoutButton, Alignment.MIDDLE_RIGHT);
 
 		this.newMappingConfigurationFunctionalGroup.initialiseButtonState();
 		this.existingMappingConfigurationFunctionalGroup
 				.initialiseButtonState();
 		
-		this.createUtilityMenuItems();
+//		this.createUtilityMenuItems();
 
 		UI.getCurrent().getNavigator().navigateTo("landingView");
 	}
 
-	protected MenuBar.Command createNavigatorMenuCommand(
-			final String navigatorName, final String viewName)
-	{
-		return new MenuBar.Command()
-		{
-			public void menuSelected(MenuItem selectedItem)
-			{
-//				if (currentView == null
-//						|| !currentView.equals(views.get(navigatorName)
-//								.getName()))
-//				{
-//					refresh();
-//					
-//					loadTopLevelNavigator();
-//
-//					UI.getCurrent().getNavigator().navigateTo(viewName);
-//
-//					currentView = views.get(navigatorName).getName();
-//
-//					List<IkasanUIView> mappingViews = views.get(navigatorName)
-//							.getIkasanViews();
-//
-//					Navigator navigator = new Navigator(UI.getCurrent(), views
-//							.get(navigatorName).getContainer());
-//
-//					for (IkasanUIView view : mappingViews)
-//					{
-//						navigator.addView(view.getPath(), view.getView());
-//					}
-//				}
-			}
-		};
-	}
 	
 	protected void refresh()
 	{
@@ -390,9 +294,13 @@ public class NavigationPanel extends Panel implements ViewContext
 		}
 	}
 	
-	public void addToggleButton(Component toggleButton)
+	public void setToggleButton(Component toggleButton)
 	{
-		this.layout.addComponent(toggleButton);
+		this.layout.removeComponent(this.toggleButton);
+		this.toggleButton = toggleButton;
+		this.layout.addComponent(this.toggleButton, 0, 0);
+		this.layout.setComponentAlignment(this.toggleButton,
+				Alignment.MIDDLE_LEFT);
 	}
 
 	@Override
@@ -414,7 +322,15 @@ public class NavigationPanel extends Panel implements ViewContext
 	public void reset()
 	{
 		currentView = null;
-		this.createActionMenuItems();
+	}
+
+	/**
+	 * @param menuComponents the menuComponents to set
+	 */
+	public void setMenuComponents(List<Component> menuComponents)
+	{
+		this.menuComponents = menuComponents;
+		this.visibilityGroup.getComponents().addAll(menuComponents);
 	}
 
 }

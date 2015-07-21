@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -63,7 +64,6 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -77,8 +77,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -117,6 +115,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private CssLayout menuItemsLayout = new CssLayout();
     private MenuLayout menuLayout = new MenuLayout();
     private Component menuComponent;
+    
+    private ArrayList<Component> menuComponents = new ArrayList<Component>();
 
     /**
      * Constructor 
@@ -164,7 +164,6 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         
         final GridLayout layout = new GridLayout(1, 4);	
         layout.setSizeFull();   
-//        layout.setMargin(true);
         this.setContent(layout);
 
         imagePanelLayout.removeAllComponents();
@@ -195,22 +194,19 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         layout.addComponent(menuLayout, 0, 2);
         
         layout.setRowExpandRatio(2, 1);
-
-        boolean usersTablesExist = true;
-       
+     
         this.navigationPanel.resetCurrentView();
-        navigationPanel.addToggleButton(buildToggleButton());
+        this.navigationPanel.setToggleButton(buildToggleButton());
         
-        if(!usersTablesExist)
+        for(Component component: this.menuComponents)
         {
-        	UI.getCurrent().getNavigator().navigateTo("persistanceSetupView");
-        	navigationPanel.setVisible(false);
+        	component.setVisible(false);
         }
-        else
-        {
-        	UI.getCurrent().getNavigator().navigateTo("landingView");  
+        
+        this.navigationPanel.setMenuComponents(menuComponents);
+        
+        UI.getCurrent().getNavigator().navigateTo("landingView");  
 	       	navigationPanel.setVisible(true);
-        }
     }
     
     private Component buildContent() {
@@ -222,7 +218,6 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
 
-//        menuContent.addComponent(buildToggleButton());
         menuContent.addComponent(buildMenu());
 
         return menuContent;
@@ -230,42 +225,16 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     
     protected CssLayout buildMenu() 
     {
-//        final Button showMenu = new Button("Menu", new ClickListener() 
-//        {
-//            @Override
-//            public void buttonClick(final ClickEvent event) 
-//            {
-//                if(menu.getStyleName().contains("valo-menu-visible")) 
-//                {
-//	                menu.setVisible(false);	
-//                    menu.removeStyleName("valo-menu-visible");
-//                } 
-//                else 
-//                {
-//                	menu.setVisible(true);	
-//                    menu.addStyleName("valo-menu-visible");
-//                }
-//            }
-//        });
-//        showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
-//        showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
-////        showMenu.addStyleName("valo-menu-toggle");
-//        showMenu.setIcon(FontAwesome.LIST);
-//        menu.addComponent(showMenu);
-
-
-        final MenuBar settings = new MenuBar();
-        settings.addStyleName("user-menu");
-
-        final MenuItem settingsItem = settings.addItem("Settings", null);
-        settingsItem.addItem("Edit Profile", null);
-        settingsItem.addItem("Preferences", null);
-        settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", null);
-        menu.addComponent(settings);
-
         menuItemsLayout.setPrimaryStyleName("valo-menuitems");
         menu.addComponent(menuItemsLayout);
+        
+        Label label = null;
+        
+        label = new Label("General", ContentMode.HTML);
+        label.setPrimaryStyleName("valo-menu-subtitle");
+        label.addStyleName("h4");
+        label.setSizeUndefined();
+        menuItemsLayout.addComponent(label);
         
         final Button dashboardMenuItem = new Button("Dashboard", new ClickListener() 
         {
@@ -278,16 +247,18 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         
         dashboardMenuItem.setHtmlContentAllowed(true);
         dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
-        dashboardMenuItem.setIcon(VaadinIcons.HOME);
+        dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
         menuItemsLayout.addComponent(dashboardMenuItem);
 
-        Label label = null;
+        label = null;
         
         label = new Label("Services", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
+        
+        this.menuComponents.add(label);
         
         final Button topologyMenuItem = new Button("Topology", new ClickListener() 
         {
@@ -303,6 +274,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
         menuItemsLayout.addComponent(topologyMenuItem);
         
+        this.menuComponents.add(topologyMenuItem);
+        
         final Button mappingMenuItem = new Button("Mapping", new ClickListener()
         {
             @Override
@@ -317,11 +290,15 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         mappingMenuItem.setIcon(VaadinIcons.COPY_O);
         menuItemsLayout.addComponent(mappingMenuItem);
         
+        this.menuComponents.add(mappingMenuItem);
+        
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
+        
+        this.menuComponents.add(label);
         
         final Button usersItem = new Button("Users", new ClickListener() 
         {
@@ -337,6 +314,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         usersItem.setIcon(VaadinIcons.USER);
         menuItemsLayout.addComponent(usersItem);
         
+        this.menuComponents.add(usersItem);
+        
         final Button groupsItem = new Button("Groups", new ClickListener() 
         {
             @Override
@@ -350,6 +329,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         groupsItem.setPrimaryStyleName("valo-menu-item");
         groupsItem.setIcon(VaadinIcons.USERS);
         menuItemsLayout.addComponent(groupsItem);
+        
+        this.menuComponents.add(groupsItem);
         
         final Button rolesItem = new Button("Roles", new ClickListener() 
         {
@@ -365,6 +346,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         rolesItem.setIcon(VaadinIcons.SPECIALIST);
         menuItemsLayout.addComponent(rolesItem);
         
+        this.menuComponents.add(rolesItem);
+        
         final Button policyItem = new Button("Policies", new ClickListener() 
         {
             @Override
@@ -379,6 +362,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         policyItem.setIcon(VaadinIcons.SAFE);
         menuItemsLayout.addComponent(policyItem);
         
+        this.menuComponents.add(policyItem);
+        
         final Button authItem = new Button("User Directories", new ClickListener() 
         {
             @Override
@@ -392,6 +377,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         authItem.setPrimaryStyleName("valo-menu-item");
         authItem.setIcon(VaadinIcons.COG);
         menuItemsLayout.addComponent(authItem);
+        
+        this.menuComponents.add(authItem);
 
         return menu;
     }

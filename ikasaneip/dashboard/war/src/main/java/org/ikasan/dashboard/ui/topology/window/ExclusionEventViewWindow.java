@@ -68,6 +68,8 @@ import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -75,6 +77,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -130,8 +133,7 @@ public class ExclusionEventViewWindow extends Window
 		this.setWidth("90%");
 		
 		VerticalLayout layout = new VerticalLayout();
-		layout.setSizeFull();
-		layout.setMargin(true);
+		layout.setWidth("100%");
 		
 		layout.addComponent(createExclusionEventDetailsPanel());
 			
@@ -140,54 +142,59 @@ public class ExclusionEventViewWindow extends Window
 
 	protected Panel createExclusionEventDetailsPanel()
 	{
-		Panel exclusionEventDetailsPanel = new Panel("Exclusion Event");
+		Panel exclusionEventDetailsPanel = new Panel();
 		exclusionEventDetailsPanel.setSizeFull();
 		exclusionEventDetailsPanel.setStyleName("dashboard");
 		
-		GridLayout layout = new GridLayout(4, 6);
+		GridLayout layout = new GridLayout(4, 7);
+		layout.setSpacing(true);
 		layout.setWidth("100%");
-		layout.setHeight(140, Unit.PIXELS);
-		layout.addComponent(new Label("Module Name"), 0, 0);
+		
+		Label exclusionEvenDetailsLabel = new Label("Exclusion Event Details");
+		exclusionEvenDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		layout.addComponent(exclusionEvenDetailsLabel);
+		
+		layout.addComponent(new Label("Module Name"), 0, 1);
 		
 		TextField tf1 = new TextField();
 		tf1.setValue(this.exclusionEvent.getModuleName());
 		tf1.setReadOnly(true);
 		tf1.setWidth("80%");
-		layout.addComponent(tf1, 1, 0);
+		layout.addComponent(tf1, 1, 1);
 		
-		layout.addComponent(new Label("Flow Name"), 0, 1);
+		layout.addComponent(new Label("Flow Name"), 0, 2);
 		
 		TextField tf2 = new TextField();
 		tf2.setValue(this.exclusionEvent.getFlowName());
 		tf2.setReadOnly(true);
 		tf2.setWidth("80%");
-		layout.addComponent(tf2, 1, 1);
+		layout.addComponent(tf2, 1, 2);
 		
-		layout.addComponent(new Label("Event Id"), 0, 2);
+		layout.addComponent(new Label("Event Id"), 0, 3);
 		
 		TextField tf3 = new TextField();
 		tf3.setValue(this.errorOccurrence.getEventLifeIdentifier());
 		tf3.setReadOnly(true);
 		tf3.setWidth("80%");
-		layout.addComponent(tf3, 1, 2);
+		layout.addComponent(tf3, 1, 3);
 		
-		layout.addComponent(new Label("Date/Time"), 0, 3);
+		layout.addComponent(new Label("Date/Time"), 0, 4);
 		
 		TextField tf4 = new TextField();
 		tf4.setValue(new Date(this.exclusionEvent.getTimestamp()).toString());
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
-		layout.addComponent(tf4, 1, 3);
+		layout.addComponent(tf4, 1, 4);
 		
-		layout.addComponent(new Label("Error URI"), 0, 4);
+		layout.addComponent(new Label("Error URI"), 0, 5);
 		
 		TextField tf5 = new TextField();
 		tf5.setValue(exclusionEvent.getErrorUri());
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
-		layout.addComponent(tf5, 1, 4);
+		layout.addComponent(tf5, 1, 5);
 		
-		layout.addComponent(new Label("Action"), 2, 0);
+		layout.addComponent(new Label("Action"), 2, 1);
 		
 		final TextField tf6 = new TextField();
 		if(this.action != null)
@@ -196,9 +203,9 @@ public class ExclusionEventViewWindow extends Window
 		}
 		tf6.setReadOnly(true);
 		tf6.setWidth("80%");
-		layout.addComponent(tf6, 3, 0);
+		layout.addComponent(tf6, 3, 1);
 		
-		layout.addComponent(new Label("Actioned By"), 2, 1);
+		layout.addComponent(new Label("Actioned By"), 2, 2);
 		
 		final TextField tf7 = new TextField();
 		if(this.action != null)
@@ -207,9 +214,9 @@ public class ExclusionEventViewWindow extends Window
 		}
 		tf7.setReadOnly(true);
 		tf7.setWidth("80%");
-		layout.addComponent(tf7, 3, 1);
+		layout.addComponent(tf7, 3, 2);
 		
-		layout.addComponent(new Label("Actioned Time"), 2, 2);
+		layout.addComponent(new Label("Actioned Time"), 2, 3);
 		
 		final TextField tf8 = new TextField();
 		if(this.action != null)
@@ -218,7 +225,7 @@ public class ExclusionEventViewWindow extends Window
 		}
 		tf8.setReadOnly(true);
 		tf8.setWidth("80%");
-		layout.addComponent(tf8, 3, 2);
+		layout.addComponent(tf8, 3, 3);
 		
 		final Button resubmitButton = new Button("Re-submit");
 		final Button ignoreButton = new Button("Ignore");
@@ -363,6 +370,7 @@ public class ExclusionEventViewWindow extends Window
 		
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setHeight("100%");
+		buttonLayout.setSpacing(true);
 		buttonLayout.setWidth(200, Unit.PIXELS);
 		buttonLayout.setMargin(true);
 		buttonLayout.addComponent(resubmitButton);
@@ -370,7 +378,8 @@ public class ExclusionEventViewWindow extends Window
 		
 		if(this.action == null)
 		{
-			layout.addComponent(buttonLayout, 0, 5, 1, 5);
+			layout.addComponent(buttonLayout, 0, 6, 1, 6);
+			layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 		}
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -417,14 +426,29 @@ public class ExclusionEventViewWindow extends Window
 		
 		VerticalSplitPanel splitPanel = new VerticalSplitPanel();
 		splitPanel.setWidth("100%");
-		splitPanel.setHeight(600, Unit.PIXELS);
-		splitPanel.setFirstComponent(eventEditorLayout);
-		splitPanel.setSecondComponent(errorEditorLayout);
+		splitPanel.setHeight(800, Unit.PIXELS);
 		
-		VerticalLayout wrapperLayout = new VerticalLayout();
-		wrapperLayout.setSizeFull();
+		HorizontalLayout h1 = new HorizontalLayout();
+		h1.setSizeFull();
+		h1.setMargin(true);
+		h1.addComponent(eventEditorLayout);
+		splitPanel.setFirstComponent(h1);
+		
+		HorizontalLayout h2 = new HorizontalLayout();
+		h2.setSizeFull();
+		h2.setMargin(true);
+		h2.addComponent(errorEditorLayout);
+		splitPanel.setSecondComponent(h2);
+		
+		HorizontalLayout formLayout = new HorizontalLayout();
+		formLayout.setWidth("100%");
+		formLayout.setHeight(150, Unit.PIXELS);
+		formLayout.addComponent(layout);
+		
+		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
-		wrapperLayout.addComponent(layout);
+		wrapperLayout.setWidth("100%");
+		wrapperLayout.addComponent(formLayout);
 		wrapperLayout.addComponent(splitPanel);
 
 		exclusionEventDetailsPanel.setContent(wrapperLayout);

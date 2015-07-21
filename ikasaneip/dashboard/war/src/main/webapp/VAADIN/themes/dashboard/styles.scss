@@ -1,13 +1,16 @@
 // Import all the mixins for this theme
 @import "dashboard";
 @import "addons";
-@import "codeGraph";
+
+// Graphs were in as a demo. Commenting out for now.
+// @import "codeGraph";
 
 .dashboard {
   // Output the actual theme selectors
   @include dashboard;
   
-  @include codeGraph;
+  // Graphs were in as a demo. Commenting out for now.
+  // @include codeGraph;
   
   @include addons;
 }

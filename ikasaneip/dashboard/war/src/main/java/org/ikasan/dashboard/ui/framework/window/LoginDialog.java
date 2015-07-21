@@ -51,6 +51,7 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -139,7 +140,9 @@ public class LoginDialog extends Window
         HorizontalLayout buttons = new HorizontalLayout();
         
         Button loginButton = new Button("Login");
-        loginButton.setStyleName(ValoTheme.BUTTON_SMALL);
+        loginButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        loginButton.setClickShortcut(KeyCode.ENTER);
+
         loginButton.addClickListener(new ClickListener() 
         {
             @Override

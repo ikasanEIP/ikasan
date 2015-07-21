@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.ikasan.exclusion.dao.ExclusionEventDao;
@@ -100,4 +101,16 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 	{
 		this.exclusionEventDao.delete(errorUri);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.exclusion.ExclusionManagementService#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
+	 */
+	@Override
+	public List<ExclusionEvent> find(List<String> moduleName,
+			List<String> flowName, Date startDate, Date endDate,
+			String identifier)
+	{
+		return this.exclusionEventDao.find(moduleName, flowName, startDate, endDate, identifier);
+	}
 }
+ 

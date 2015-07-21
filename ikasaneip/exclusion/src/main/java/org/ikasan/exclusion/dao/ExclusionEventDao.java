@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.dao;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,4 +87,16 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public List<EVENT> findAll();
+    
+    /**
+     * Find a list of event entities based on criteria.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param starteDate
+     * @param endDate
+     * @param identifier
+     * @return
+     */
+    public List<EVENT> find(List<String> moduleName, List<String> flowName, Date starteDate, Date endDate, IDENTIFIER identifier);
 }
