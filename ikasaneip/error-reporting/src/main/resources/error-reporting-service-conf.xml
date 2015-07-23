@@ -12,6 +12,7 @@
     
     <bean id="errorCategorisationService" class="org.ikasan.error.reporting.service.ErrorCategorisationServiceImpl">
         <constructor-arg ref="errorCategorisationDao"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
     </bean>
 
 	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
@@ -28,6 +29,7 @@
             <list>
                 <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
                 <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

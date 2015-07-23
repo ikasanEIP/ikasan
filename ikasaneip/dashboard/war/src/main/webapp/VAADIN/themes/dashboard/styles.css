@@ -13,7 +13,6 @@
     padding: 5px;
 }
 
-
 /**
  * Checks if a list contains a certain value.
  * 
@@ -12986,6 +12985,12 @@ div.v-layout.v-horizontal.v-widget {
 	color: gray;
 }
 
+.dashboard .wordwrap-table .v-table-cell-wrapper {
+	white-space: normal;
+	overflow: hidden;
+	padding: 5px;
+}
+
 .dashboard .v-header {
 	background-color: #F9AF56;
 	background-image: url(./images/Banner.png);
@@ -13068,6 +13073,24 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .v-table-cell-content-ikasan-orange {
 	font-size: 11px;
 	background-color: rgba(255, 153, 0, 0.2);
+}
+
+.dashboard .v-table-cell-content-ikasan-green-small {
+	font-size: 11px;
+	background-color: rgba(0, 153, 51, 0.2);
+	font-size: 9px;
+}
+
+.dashboard .v-table-cell-content-ikasan-red-small {
+	font-size: 11px;
+	background-color: rgba(255, 0, 0, 0.2);
+	font-size: 9px;
+}
+
+.dashboard .v-table-cell-content-ikasan-orange-small {
+	font-size: 11px;
+	background-color: rgba(255, 153, 0, 0.2);
+	font-size: 9px;
 }
 
 .dashboard .v-table-cell-content-ikasan-small {

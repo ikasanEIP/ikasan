@@ -38,87 +38,43 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.dao;
+package org.ikasan.wiretap.service;
 
-import java.util.Date;
 import java.util.List;
 
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
-import org.ikasan.error.reporting.model.ErrorCategorisationLink;
+import org.ikasan.trigger.dao.TriggerDao;
+import org.ikasan.trigger.model.Trigger;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ErrorCategorisationDao
+public class TriggerManagementServiceImpl implements TriggerManagementService
 {
-	/**
-	 * Method to save an error categorisation.
-	 * 
-	 * @param errorCategorisation
-	 */
-	public void save(ErrorCategorisation errorCategorisation);
-	
-	/**
-	 * Method to save an error categorisation link.
-	 * 
-	 * @param errorCategorisationLink
-	 */
-	public void save(ErrorCategorisationLink errorCategorisationLink);
-	
-	/**
-	 * Method to delete an error categorisation.
-	 * 
-	 * @param errorCategorisation
-	 */
-	public void delete(ErrorCategorisation errorCategorisation);
-	
-	/**
-	 * Method to delete an error categorisation link.
-	 * 
-	 * @param errorCategorisationLink
-	 */
-	public void delete(ErrorCategorisationLink errorCategorisationLink);
+	private TriggerDao triggerDao;
 
 	/**
-	 * Method to find an error categorisation.
-	 *  
-	 * @param moduleName
-	 * @param flowName
-	 * @param flowElementName
-	 * @return
-	 */	
-	public ErrorCategorisationLink find(String moduleName, String flowName, String flowElementName);
-	
-	/**
-	 * Method to find all error categorisations.
-	 *  
-	 * @return
-	 */	
-	public List<ErrorCategorisation> findAll();
-	
-	/**
-	 * Method to find all error categorisation links.
-	 * 
-	 * @return
+	 * @param triggerDao
 	 */
-	public List<ErrorCategorisationLink> findAllErrorCategorisationLinks();
+	public TriggerManagementServiceImpl(TriggerDao triggerDao)
+	{
+		super();
+		this.triggerDao = triggerDao;
+		if(this.triggerDao == null)
+		{
+			throw new IllegalArgumentException("triggerDao cannot be null!");
+		}
+	}
 
-	/**
-	 * Method to find categorised error occurrences based on filter criteria.
-	 * 
-	 * @param moduleNames
-	 * @param flowNames
-	 * @param flowElementNames
-	 * @param errorCategory
-	 * @param action
-	 * @param exceptionClass
-	 * @param startDate
-	 * @param endDate
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.ikasan.wiretap.service.TriggerManagementService#findTriggers(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
-			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate);
+	@Override
+	public List<Trigger> findTriggers(String moduleName, String flowname,
+			String flowElementName)
+	{
+		return this.triggerDao.findTriggers(moduleName, flowname, flowElementName);
+	}
+
 }

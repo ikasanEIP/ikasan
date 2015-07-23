@@ -38,87 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.dao;
+package org.ikasan.dashboard.ui.framework.validation;
 
-import java.util.Date;
-import java.util.List;
-
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
-import org.ikasan.error.reporting.model.ErrorCategorisationLink;
+import com.vaadin.data.Validator;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ErrorCategorisationDao
+public class IntegerValidator implements Validator
 {
-	/**
-	 * Method to save an error categorisation.
-	 * 
-	 * @param errorCategorisation
-	 */
-	public void save(ErrorCategorisation errorCategorisation);
-	
-	/**
-	 * Method to save an error categorisation link.
-	 * 
-	 * @param errorCategorisationLink
-	 */
-	public void save(ErrorCategorisationLink errorCategorisationLink);
-	
-	/**
-	 * Method to delete an error categorisation.
-	 * 
-	 * @param errorCategorisation
-	 */
-	public void delete(ErrorCategorisation errorCategorisation);
-	
-	/**
-	 * Method to delete an error categorisation link.
-	 * 
-	 * @param errorCategorisationLink
-	 */
-	public void delete(ErrorCategorisationLink errorCategorisationLink);
 
-	/**
-	 * Method to find an error categorisation.
-	 *  
-	 * @param moduleName
-	 * @param flowName
-	 * @param flowElementName
-	 * @return
-	 */	
-	public ErrorCategorisationLink find(String moduleName, String flowName, String flowElementName);
-	
-	/**
-	 * Method to find all error categorisations.
-	 *  
-	 * @return
-	 */	
-	public List<ErrorCategorisation> findAll();
-	
-	/**
-	 * Method to find all error categorisation links.
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see com.vaadin.data.Validator#validate(java.lang.Object)
 	 */
-	public List<ErrorCategorisationLink> findAllErrorCategorisationLinks();
+	@Override
+	public void validate(Object value) throws InvalidValueException
+	{
+		// TODO Auto-generated method stub
 
-	/**
-	 * Method to find categorised error occurrences based on filter criteria.
-	 * 
-	 * @param moduleNames
-	 * @param flowNames
-	 * @param flowElementNames
-	 * @param errorCategory
-	 * @param action
-	 * @param exceptionClass
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 */
-	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
-			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate);
+	}
+
 }

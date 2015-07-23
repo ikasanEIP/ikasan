@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,17 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.topology.dao.constants;
+package org.ikasan.dashboard.ui.framework.validation;
+
+import com.vaadin.data.Validator;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public interface TopologyConstants
+public class StringValidator implements Validator
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = new Long(1);
+
+	/* (non-Javadoc)
+	 * @see com.vaadin.data.Validator#validate(java.lang.Object)
+	 */
+	@Override
+	public void validate(Object value) throws InvalidValueException
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

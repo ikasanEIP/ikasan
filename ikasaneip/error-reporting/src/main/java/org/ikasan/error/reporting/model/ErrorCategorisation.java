@@ -53,19 +53,15 @@ public class ErrorCategorisation
 	public static final String BLOCKER = "Blocker";
 	
 	private Long id;
-	private String moduleName;
-	private String flowName;
-	private String flowElementName;
 	private String errorCategory;
 	private String errorDescription;
 
 	/**
 	 * Hibernate likes this. 
 	 */
-	private ErrorCategorisation()
+	public ErrorCategorisation()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -75,32 +71,15 @@ public class ErrorCategorisation
 	 * @param errorCategory
 	 * @param errorDescription
 	 */
-	public ErrorCategorisation(String moduleName, String flowName,
-			String flowElementName, String errorCategory, String errorDescription)
+	public ErrorCategorisation(String errorCategory, String errorDescription)
 	{
 		super();
-		this.moduleName = moduleName;
-		this.flowName = flowName;
-		this.flowElementName = flowElementName;
+
 		this.errorCategory = errorCategory;
 		this.errorDescription = errorDescription;
 	}
 	
-	/**
-	 * @param moduleName
-	 * @param flowName
-	 * @param componentName
-	 * @param errorCategory
-	 * @param errorDescription
-	 */
-	public ErrorCategorisation(String moduleName, String flowName,
-			String flowElementName)
-	{
-		super();
-		this.moduleName = moduleName;
-		this.flowName = flowName;
-		this.flowElementName = flowElementName;
-	}
+
 	
 	/**
 	 * @return the id
@@ -116,54 +95,6 @@ public class ErrorCategorisation
 	public void setId(Long id)
 	{
 		this.id = id;
-	}
-
-	/**
-	 * @return the moduleName
-	 */
-	public String getModuleName()
-	{
-		return moduleName;
-	}
-
-	/**
-	 * @param moduleName the moduleName to set
-	 */
-	public void setModuleName(String moduleName)
-	{
-		this.moduleName = moduleName;
-	}
-
-	/**
-	 * @return the flowName
-	 */
-	public String getFlowName()
-	{
-		return flowName;
-	}
-
-	/**
-	 * @param flowName the flowName to set
-	 */
-	public void setFlowName(String flowName)
-	{
-		this.flowName = flowName;
-	}
-
-	/**
-	 * @return the flowElementName
-	 */
-	public String getFlowElementName()
-	{
-		return flowElementName;
-	}
-
-	/**
-	 * @param flowElementName the flowElementName to set
-	 */
-	public void setFlowElementName(String flowElementName)
-	{
-		this.flowElementName = flowElementName;
 	}
 
 	/**
@@ -211,13 +142,7 @@ public class ErrorCategorisation
 		result = prime
 				* result
 				+ ((errorDescription == null) ? 0 : errorDescription.hashCode());
-		result = prime * result
-				+ ((flowElementName == null) ? 0 : flowElementName.hashCode());
-		result = prime * result
-				+ ((flowName == null) ? 0 : flowName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((moduleName == null) ? 0 : moduleName.hashCode());
 		return result;
 	}
 
@@ -246,30 +171,23 @@ public class ErrorCategorisation
 				return false;
 		} else if (!errorDescription.equals(other.errorDescription))
 			return false;
-		if (flowElementName == null)
-		{
-			if (other.flowElementName != null)
-				return false;
-		} else if (!flowElementName.equals(other.flowElementName))
-			return false;
-		if (flowName == null)
-		{
-			if (other.flowName != null)
-				return false;
-		} else if (!flowName.equals(other.flowName))
-			return false;
 		if (id == null)
 		{
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (moduleName == null)
-		{
-			if (other.moduleName != null)
-				return false;
-		} else if (!moduleName.equals(other.moduleName))
-			return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ErrorCategorisation [id=" + id + ", errorCategory="
+				+ errorCategory + ", errorDescription=" + errorDescription
+				+ "]";
 	}
 }

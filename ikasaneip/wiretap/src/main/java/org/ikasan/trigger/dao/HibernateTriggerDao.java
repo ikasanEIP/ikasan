@@ -42,6 +42,8 @@ package org.ikasan.trigger.dao;
 
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.ikasan.trigger.model.Trigger;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -84,4 +86,31 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
     {
         getHibernateTemplate().saveOrUpdate(trigger);
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.trigger.dao.TriggerDao#findTriggers(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<Trigger> findTriggers(String moduleName, String flowName,
+			String flowElementName)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Trigger.class);
+		
+		if(moduleName != null && moduleName.length() > 0);
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.length() > 0);
+		{
+			criteria.add(Restrictions.eq("flowName", flowName));
+		}
+		
+		if(flowElementName != null && flowElementName.length() > 0);
+		{
+			criteria.add(Restrictions.eq("flowElementName", flowElementName));
+		}
+        
+        return (List<Trigger>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
 }

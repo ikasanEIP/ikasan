@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,17 +38,23 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.hospital.dao.constants;
+package org.ikasan.wiretap.service;
+
+import java.util.List;
+
+import org.ikasan.trigger.model.Trigger;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public interface HospitalConstants
+public interface TriggerManagementService
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = new Long(1);
+	/**
+	 * returns all persisted Triggers, narrowed by module flow and element
+	 * 
+	 * @return List of Triggers
+	 */
+	public List<Trigger> findTriggers(String moduleName, String flowname, String flowElementName);
 }

@@ -53,17 +53,30 @@ public interface ErrorCategorisationDaoConstants
     public static final String START_DATE = "startDate";
     public static final String END_DATE = "endDate";
     public static final String ERROR_CATEGORY = "errorCategory";
+    public static final String ACTION = "action";
+    public static final String EXCEPTION_CLASS = "exceptionClass";
+    
+    public static final String ORDER_BY_ASC = "asc";
+    public static final String ORDER_BY_DESC = "desc";
 
     
-    public static final String CATEGORISED_ERROR_OCCURRENCE_QUERY = "select eo from ErrorOccurrence eo, ErrorCategorisation ec" +
-    		" where eo.moduleName = ec.moduleName " +
-    		" and eo.flowName = ec.flowName " +
-    		" and eo.flowElementName = ec.flowElementName";
+    public static final String CATEGORISED_ERROR_OCCURRENCE_QUERY = "select eo from ErrorOccurrence eo, ErrorCategorisationLink ec where";
+//    +
+//    		" where eo.moduleName = ec.moduleName " +
+//    		" and eo.flowName = ec.flowName " +
+//    		" and eo.flowElementName = ec.flowElementName";
     
-    public static final String NARROW_BY_MODULE_NAMES =	" and eo.moduleName in :" + MODULE_NAMES;
-    public static final String NARROW_BY_FLOW_NAMES =	" and eo.flowName in :" + FLOW_NAMES;
-    public static final String NARROW_BY_FLOW_ELEMENT_NAMES =	" and eo.flowElementName in :" + FLOW_ELEMENT_NAMES;
-    public static final String NARROW_BY_ERROR_CATEGORY = " and ec.errorCategory = :" + ERROR_CATEGORY;
+    public static final String NARROW_BY_MODULE_NAMES =	" eo.moduleName = ec.moduleName and eo.moduleName in :" + MODULE_NAMES;
+    public static final String NARROW_BY_MODULE_NAMES_EMPTY_OR_NULL =	" (eo.moduleName = ec.moduleName  or ec.moduleName = :" + MODULE_NAMES + ")";
+    public static final String NARROW_BY_FLOW_NAMES =	" and eo.flowName = ec.flowName and eo.flowName in :" + FLOW_NAMES;
+    public static final String NARROW_BY_FLOW_NAMES_EMPTY_OR_NULL =	" and (eo.flowName = ec.flowName or ec.flowName = :" + FLOW_NAMES + ")";
+    public static final String NARROW_BY_FLOW_ELEMENT_NAMES =	"  and eo.flowElementName = ec.flowElementName and eo.flowElementName in :" + FLOW_ELEMENT_NAMES;
+    public static final String NARROW_BY_FLOW_ELEMENT_NAMES_EMPTY_OR_NULL =	" and (eo.flowElementName = ec.flowElementName or ec.flowElementName = :" + FLOW_ELEMENT_NAMES + ")";
+    public static final String NARROW_BY_ACTION =	" and ec.action = :" + ACTION;
+    public static final String NARROW_BY_EXCEPTION_CLASS =	" and ec.exceptionClass = :" + EXCEPTION_CLASS;
+    public static final String NARROW_BY_ERROR_CATEGORY = " and ec.errorCategorisation.errorCategory = :" + ERROR_CATEGORY;
     public static final String NARROW_BY_START_DATE = " and eo.timestamp >= :" + START_DATE;
     public static final String NARROW_BY_END_DATE = " and eo.timestamp <= :" + END_DATE;
+    
+    public static final String ORDER_BY = " order by eo.timestamp desc";
 }

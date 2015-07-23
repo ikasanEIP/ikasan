@@ -153,7 +153,6 @@ public class WiretapTab extends TopologyTab
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
-            	System.out.println("Addin progress window!");
             	ProgressBarWindow pbWindow = new ProgressBarWindow();
             	
             	UI.getCurrent().addWindow(pbWindow);
@@ -189,7 +188,9 @@ public class WiretapTab extends TopologyTab
             		componentNames = new HashSet<String>();
 	            	for(Object component: components.getItemIds())
 	            	{
-	            		componentNames.add(((Component)component).getName());
+	            		
+	            		componentNames.add("before " + ((Component)component).getName());
+	            		componentNames.add("after " + ((Component)component).getName());
 	            	}
             	}
             	

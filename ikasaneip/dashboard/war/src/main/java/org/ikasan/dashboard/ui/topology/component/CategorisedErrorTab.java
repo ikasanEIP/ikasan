@@ -48,19 +48,20 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
+import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Item;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.dd.DragAndDropEvent;
@@ -76,6 +77,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -97,7 +99,7 @@ public class CategorisedErrorTab extends TopologyTab
 {
 	private Logger logger = Logger.getLogger(CategorisedErrorTab.class);
 	
-	private Table categorizedErrorOccurenceTable;
+	private FilterTable categorizedErrorOccurenceTable;
 	
 	private Table errorOccurenceModules = new Table("Modules");
 	private Table errorOccurenceFlows = new Table("Flows");
@@ -113,39 +115,52 @@ public class CategorisedErrorTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ErrorCategorisationService errorCategorisationService;
+	private SerialiserFactory serialiserFactory;
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
-			ComboBox businessStreamCombo)
+			ComboBox businessStreamCombo, SerialiserFactory serialiserFactory)
 	{
 		this.errorCategorisationService = errorCategorisationService;
 		this.businessStreamCombo = businessStreamCombo;
+		this.serialiserFactory = serialiserFactory;
 	}
 	
 	public Layout createCategorisedErrorLayout()
 	{
-		this.categorizedErrorOccurenceTable = new Table();
+		this.categorizedErrorOccurenceTable = new FilterTable();
 		this.categorizedErrorOccurenceTable.setSizeFull();
-		this.categorizedErrorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
-		this.categorizedErrorOccurenceTable.addStyleName("ikasan");
-		this.categorizedErrorOccurenceTable.addContainerProperty("Category", Label.class,  null);
+		this.categorizedErrorOccurenceTable.addContainerProperty("", Label.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("", .03f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Module Name", .15f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
+		this.categorizedErrorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
+		
+		this.categorizedErrorOccurenceTable.addStyleName("wordwrap-table");
+		this.categorizedErrorOccurenceTable.addStyleName(ValoTheme.TABLE_NO_STRIPES);
+		
+//		this.categorizedErrorOccurenceTable.setFilterBarVisible(true);
 		
 		this.categorizedErrorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) {
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
+		    	CategorisedErrorOccurrence errorOccurrence = (CategorisedErrorOccurrence)itemClickEvent.getItemId();
+		    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow = new CategorisedErrorOccurrenceViewWindow(errorOccurrence,
+		    			serialiserFactory);
 		    
 		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    }
 		});
 		
-		this.categorizedErrorOccurenceTable.setCellStyleGenerator(new Table.CellStyleGenerator() {
+		this.categorizedErrorOccurenceTable.setCellStyleGenerator(new CustomTable.CellStyleGenerator() {
 			@Override
-			public String getStyle(Table source, Object itemId, Object propertyId) {
+			public String getStyle(CustomTable source, Object itemId, Object propertyId) {
 				
 				CategorisedErrorOccurrence categorisedErrorOccurrence = (CategorisedErrorOccurrence)itemId;
 				
@@ -155,47 +170,47 @@ public class CategorisedErrorTab extends TopologyTab
 					if(categorisedErrorOccurrence.getErrorCategorisation()
 							.getErrorCategory().equals(ErrorCategorisation.TRIVIAL))
 					{
-						return "ikasan-green";
+						return "ikasan-green-small";
 					}
 					else if(categorisedErrorOccurrence.getErrorCategorisation()
 							.getErrorCategory().equals(ErrorCategorisation.MAJOR))
 					{
-						return "ikasan-green";
+						return "ikasan-green-small";
 					}
 					else if(categorisedErrorOccurrence.getErrorCategorisation()
 							.getErrorCategory().equals(ErrorCategorisation.CRITICAL))
 					{
-						return "ikasan-orange";
+						return "ikasan-orange-small";
 					}
 					else if(categorisedErrorOccurrence.getErrorCategorisation()
 							.getErrorCategory().equals(ErrorCategorisation.BLOCKER))
 					{
-						return "ikasan-red";
+						return "ikasan-red-small";
 					}
 				}
 				
 				if(categorisedErrorOccurrence.getErrorCategorisation()
 						.getErrorCategory().equals(ErrorCategorisation.TRIVIAL))
 				{
-					return "ikasan-green";
+					return "ikasan-green-small";
 				}
 				else if(categorisedErrorOccurrence.getErrorCategorisation()
 						.getErrorCategory().equals(ErrorCategorisation.MAJOR))
 				{
-					return "ikasan-green";
+					return "ikasan-green-small";
 				}
 				else if(categorisedErrorOccurrence.getErrorCategorisation()
 						.getErrorCategory().equals(ErrorCategorisation.CRITICAL))
 				{
-					return "ikasan-orange";
+					return "ikasan-orange-small";
 				}
 				else if(categorisedErrorOccurrence.getErrorCategorisation()
 						.getErrorCategory().equals(ErrorCategorisation.BLOCKER))
 				{
-					return "ikasan-red";
+					return "ikasan-red-small";
 				}
 				
-				return "ikasan";
+				return "ikasan-small";
 			}
 			});
 				
@@ -262,7 +277,7 @@ public class CategorisedErrorTab extends TopologyTab
             	}
          
             	List<CategorisedErrorOccurrence> categorisedErrorOccurences = errorCategorisationService
-            			.findCategorisedErrorOccurences(modulesNames, flowNames, componentNames, errorCategory,
+            			.findCategorisedErrorOccurences(modulesNames, flowNames, componentNames, "", "", errorCategory,
             					errorFromDate.getValue(), errorToDate.getValue());
 
             	for(CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurences)
@@ -273,10 +288,29 @@ public class CategorisedErrorTab extends TopologyTab
             		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             	    String timestamp = format.format(date);
             	    
-            	    Label blockerLabel = new Label(VaadinIcons.BAN.getHtml() + " Blocker", ContentMode.HTML);
+            	    Label categoryLabel = new Label();
             	    
-            	    categorizedErrorOccurenceTable.addItem(new Object[]{blockerLabel, errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), timestamp}, categorisedErrorOccurrence);
+            	    if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.BLOCKER))
+            	    {
+            	    	categoryLabel = new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML);
+            	    }
+            	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.CRITICAL))
+            	    {
+            	    	categoryLabel = new Label(VaadinIcons.EXCLAMATION.getHtml(), ContentMode.HTML);
+            	    }
+            	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.MAJOR))
+            	    {
+            	    	categoryLabel = new Label(VaadinIcons.ARROW_UP.getHtml(), ContentMode.HTML);
+            	    }
+            	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.TRIVIAL))
+            	    {
+            	    	categoryLabel = new Label(VaadinIcons.ARROW_DOWN.getHtml(), ContentMode.HTML);
+            	    }
+            	    
+            	    
+            	    categorizedErrorOccurenceTable.addItem(new Object[]{categoryLabel, errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+            				, errorOccurrence.getFlowElementName(), categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
+            				, timestamp}, categorisedErrorOccurrence);
             	}
             }
         });
