@@ -50,8 +50,10 @@ import junit.framework.Assert;
 
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.model.ErrorCategorisationLink;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -89,60 +91,161 @@ public class ErrorCategorisationDaoTest
     @Test
     public void test_save_and_find()
     {
-        ErrorCategorisation errorCategorisation = new ErrorCategorisation("moduleName", "flowName", 
-        		"flowElementName", ErrorCategorisation.TRIVIAL, "This is the error message");
+    	ErrorCategorisationLink link = new ErrorCategorisationLink("moduleName", "flowName", 
+        		"flowElementName", "", "");
+    	
+        ErrorCategorisation errorCategorisation = new ErrorCategorisation(ErrorCategorisation.TRIVIAL, "This is the error message");
         
         this.errorCategorisationDao.save(errorCategorisation);
+        
+        link.setErrorCategorisation(errorCategorisation);
+        
+        this.errorCategorisationDao.save(link);
 
         
-        ErrorCategorisation foundErrorCategorisation = this.errorCategorisationDao.find("moduleName", "flowName", 
+        ErrorCategorisationLink foundErrorCategorisationLink = this.errorCategorisationDao.find("moduleName", "flowName", 
         		"flowElementName");
         
-        Assert.assertEquals(errorCategorisation, foundErrorCategorisation);
+        Assert.assertEquals(link, foundErrorCategorisationLink);
     }
     
     @DirtiesContext
     @Test(expected=DataIntegrityViolationException.class)
     public void test_exception_add_duplicate()
     {
-        ErrorCategorisation errorCategorisation = new ErrorCategorisation("moduleName", "flowName", 
-        		"flowElementName", ErrorCategorisation.TRIVIAL, "This is the error message");
+    	ErrorCategorisationLink link = new ErrorCategorisationLink("moduleName", "flowName", 
+        		"flowElementName", "action", "");
         
-        this.errorCategorisationDao.save(errorCategorisation);
+        this.errorCategorisationDao.save(link);
         
-        errorCategorisation = new ErrorCategorisation("moduleName", "flowName", 
-        		"flowElementName", ErrorCategorisation.TRIVIAL, "This is the error message");
+        link = new ErrorCategorisationLink("moduleName", "flowName", 
+        		"flowElementName", "action", "");
         
-        this.errorCategorisationDao.save(errorCategorisation);
+        this.errorCategorisationDao.save(link);
     }  
     
     @DirtiesContext
     @Test
+    @Ignore
     public void test_save_and_find_categorised_error()
     {
     	ErrorOccurrence errorOccurrence = new ErrorOccurrence
-    			("moduleName", "flowName", "componentName", "error detail", 
+    			("moduleName", "flowName", "flowElementName", "error detail", 
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+    	errorOccurrence.setAction("Retry");
 
         errorReportingServiceDao.save(errorOccurrence);
         
-        ErrorCategorisation errorCategorisation = new ErrorCategorisation("moduleName", "flowName", 
-        		"componentName", ErrorCategorisation.TRIVIAL, "This is the error message");
+        errorOccurrence = new ErrorOccurrence
+    			("moduleName", "anotherFlowName", "anotherFlowElementName", "error detail", 
+    					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+        errorOccurrence.setAction("Retry");
         
-        this.errorCategorisationDao.save(errorCategorisation);
+        errorReportingServiceDao.save(errorOccurrence);
+        
+        ErrorCategorisation errorCategorisation1 = new ErrorCategorisation(ErrorCategorisation.TRIVIAL, "This is the error message");
+        
+        this.errorCategorisationDao.save(errorCategorisation1);
+        
+        ErrorCategorisation errorCategorisation2 = new ErrorCategorisation(ErrorCategorisation.BLOCKER, "This is a blocker error message");
+        
+        this.errorCategorisationDao.save(errorCategorisation2);
+        
+        ErrorCategorisationLink link = new ErrorCategorisationLink("moduleName", "flowName", 
+        		"flowElementName", "Retry", "");
+        
+        
+        link.setErrorCategorisation(errorCategorisation2);
+        
+        this.errorCategorisationDao.save(link);
+        
+        link = new ErrorCategorisationLink("moduleName", "", 
+        		"", "Retry", "");
+        
+        link.setErrorCategorisation(errorCategorisation1);
+        
+        this.errorCategorisationDao.save(link);
+        
+        link = new ErrorCategorisationLink("moduleName", "flowName", 
+        		"", "Retry", "");
+        
+        link.setErrorCategorisation(errorCategorisation1);
+        
+        this.errorCategorisationDao.save(link);
+        
+        link = new ErrorCategorisationLink("", "", 
+        		"", "Retry", "");
+        
+        link.setErrorCategorisation(errorCategorisation2);
+        
+        this.errorCategorisationDao.save(link);
 
         ArrayList<String> moduleNames = new ArrayList<String>();
         moduleNames.add("moduleName");
         ArrayList<String> flowNames = new ArrayList<String>();
-        moduleNames.add("flowName");
+        flowNames.add("flowName");
         ArrayList<String> componentNames = new ArrayList<String>();
-        moduleNames.add("componentName");
+        componentNames.add("flowElementName");
         
         List<CategorisedErrorOccurrence> categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, ErrorCategorisation.TRIVIAL, new Date(100), 
+        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, null, null, null, new Date(100), 
         				new Date(new Long("10000000000000")));
         
-        Assert.assertTrue(categorisedErrorOccurences.size() == 1);
+        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 1);
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 0);
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, null, null, ErrorCategorisation.BLOCKER, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 1);
+        
+        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(moduleNames, null, null, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 2);
+        
+        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
+        System.out.println(categorisedErrorOccurences.get(1).getErrorCategorisation());
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(moduleNames, null, null, null, null, ErrorCategorisation.BLOCKER, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 0);
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(moduleNames, flowNames, null, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 1);
+        
+        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(null, null, null, null, null, ErrorCategorisation.BLOCKER, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 2);
+        
+        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
+        System.out.println(categorisedErrorOccurences.get(1).getErrorCategorisation());
+        
+        categorisedErrorOccurences = this.errorCategorisationDao
+        		.findCategorisedErrorOccurences(null, null, null, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
+        				new Date(new Long("10000000000000")));
+        
+        Assert.assertEquals(categorisedErrorOccurences.size(), 0);
     } 
 
 }

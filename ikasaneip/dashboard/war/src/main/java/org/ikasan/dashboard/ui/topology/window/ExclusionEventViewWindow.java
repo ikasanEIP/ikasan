@@ -148,13 +148,21 @@ public class ExclusionEventViewWindow extends Window
 		
 		GridLayout layout = new GridLayout(4, 7);
 		layout.setSpacing(true);
+		layout.setColumnExpandRatio(0, .10f);
+		layout.setColumnExpandRatio(1, .30f);
+		layout.setColumnExpandRatio(2, .05f);
+		layout.setColumnExpandRatio(3, .30f);
+		
 		layout.setWidth("100%");
 		
 		Label exclusionEvenDetailsLabel = new Label("Exclusion Event Details");
 		exclusionEvenDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
-		layout.addComponent(exclusionEvenDetailsLabel);
+		layout.addComponent(exclusionEvenDetailsLabel, 0, 0, 3, 0);
 		
-		layout.addComponent(new Label("Module Name"), 0, 1);
+		Label label = new Label("Module Name:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 0, 1);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf1 = new TextField();
 		tf1.setValue(this.exclusionEvent.getModuleName());
@@ -162,7 +170,10 @@ public class ExclusionEventViewWindow extends Window
 		tf1.setWidth("80%");
 		layout.addComponent(tf1, 1, 1);
 		
-		layout.addComponent(new Label("Flow Name"), 0, 2);
+		label = new Label("Flow Name:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 0, 2);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf2 = new TextField();
 		tf2.setValue(this.exclusionEvent.getFlowName());
@@ -170,7 +181,10 @@ public class ExclusionEventViewWindow extends Window
 		tf2.setWidth("80%");
 		layout.addComponent(tf2, 1, 2);
 		
-		layout.addComponent(new Label("Event Id"), 0, 3);
+		label = new Label("Event Id:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 0, 3);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf3 = new TextField();
 		tf3.setValue(this.errorOccurrence.getEventLifeIdentifier());
@@ -178,7 +192,10 @@ public class ExclusionEventViewWindow extends Window
 		tf3.setWidth("80%");
 		layout.addComponent(tf3, 1, 3);
 		
-		layout.addComponent(new Label("Date/Time"), 0, 4);
+		label = new Label("Date/Time:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 0, 4);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf4 = new TextField();
 		tf4.setValue(new Date(this.exclusionEvent.getTimestamp()).toString());
@@ -186,7 +203,10 @@ public class ExclusionEventViewWindow extends Window
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
 		
-		layout.addComponent(new Label("Error URI"), 0, 5);
+		label = new Label("Error URI:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 0, 5);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf5 = new TextField();
 		tf5.setValue(exclusionEvent.getErrorUri());
@@ -194,7 +214,10 @@ public class ExclusionEventViewWindow extends Window
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
 		
-		layout.addComponent(new Label("Action"), 2, 1);
+		label = new Label("Action:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 2, 1);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		final TextField tf6 = new TextField();
 		if(this.action != null)
@@ -205,7 +228,10 @@ public class ExclusionEventViewWindow extends Window
 		tf6.setWidth("80%");
 		layout.addComponent(tf6, 3, 1);
 		
-		layout.addComponent(new Label("Actioned By"), 2, 2);
+		label = new Label("Actioned By:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 2, 2);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		final TextField tf7 = new TextField();
 		if(this.action != null)
@@ -216,7 +242,10 @@ public class ExclusionEventViewWindow extends Window
 		tf7.setWidth("80%");
 		layout.addComponent(tf7, 3, 2);
 		
-		layout.addComponent(new Label("Actioned Time"), 2, 3);
+		label = new Label("Actioned Time:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 2, 3);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		final TextField tf8 = new TextField();
 		if(this.action != null)
@@ -378,7 +407,7 @@ public class ExclusionEventViewWindow extends Window
 		
 		if(this.action == null)
 		{
-			layout.addComponent(buttonLayout, 0, 6, 1, 6);
+			layout.addComponent(buttonLayout, 0, 6, 3, 6);
 			layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 		}
 		
@@ -425,6 +454,7 @@ public class ExclusionEventViewWindow extends Window
 
 		
 		VerticalSplitPanel splitPanel = new VerticalSplitPanel();
+		splitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
 		splitPanel.setWidth("100%");
 		splitPanel.setHeight(800, Unit.PIXELS);
 		
@@ -432,17 +462,17 @@ public class ExclusionEventViewWindow extends Window
 		h1.setSizeFull();
 		h1.setMargin(true);
 		h1.addComponent(eventEditorLayout);
-		splitPanel.setFirstComponent(h1);
+		splitPanel.setFirstComponent(eventEditorLayout);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
 		h2.addComponent(errorEditorLayout);
-		splitPanel.setSecondComponent(h2);
+		splitPanel.setSecondComponent(errorEditorLayout);
 		
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(150, Unit.PIXELS);
+		formLayout.setHeight(240, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);

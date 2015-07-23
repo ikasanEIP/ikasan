@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.model.ErrorCategorisationLink;
 
 /**
  * 
@@ -59,6 +60,13 @@ public interface ErrorCategorisationService
 	 * @param errorCategorisation
 	 */
 	public void save(ErrorCategorisation errorCategorisation);
+	
+	/**
+	 * Method to save an error categorisation link.
+	 * 
+	 * @param errorCategorisationLink
+	 */
+	public void save(ErrorCategorisationLink errorCategorisationLink);
 
 	/**
 	 * Method to find an error categorisation.
@@ -68,7 +76,7 @@ public interface ErrorCategorisationService
 	 * @param flowElementName
 	 * @return
 	 */	
-	public ErrorCategorisation find(String moduleName, String flowName, String flowElementName);
+	public ErrorCategorisationLink find(String moduleName, String flowName, String flowElementName);
 	
 	/**
 	 * Method to delete an error categorisation.
@@ -76,6 +84,13 @@ public interface ErrorCategorisationService
 	 * @param errorCategorisation
 	 */
 	public void delete(ErrorCategorisation errorCategorisation);
+	
+	/**
+	 * Method to delete an error categorisation link.
+	 * 
+	 * @param errorCategorisation
+	 */
+	public void delete(ErrorCategorisationLink errorCategorisationLink);
 	
 	/**
 	 * Method to find categorised error occurrences based on filter criteria.
@@ -89,5 +104,5 @@ public interface ErrorCategorisationService
 	 * @return
 	 */
 	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
-			, String errorCategory, Date startDate, Date endDate);
+			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate);
 }

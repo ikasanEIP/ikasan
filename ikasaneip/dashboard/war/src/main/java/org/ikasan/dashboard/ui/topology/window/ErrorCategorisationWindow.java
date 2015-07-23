@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui.topology.window;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.model.ErrorCategorisationLink;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.topology.model.Component;
 import org.vaadin.teemu.VaadinIcons;
@@ -76,6 +77,7 @@ public class ErrorCategorisationWindow extends Window
 	private Component component;
 	private ErrorCategorisationService errorCategorisationService;
 	private ErrorCategorisation errorCategorisation;
+	private ErrorCategorisationLink errorCategorisationLink;
 	
 	/**
 	 * @param configurationManagement
@@ -103,23 +105,30 @@ public class ErrorCategorisationWindow extends Window
 		setHeight("90%");
 		setWidth("90%"); 
 		
-		GridLayout layout = new GridLayout(2, 7);
+		GridLayout layout = new GridLayout(2, 8);
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setMargin(true);
 		layout.setColumnExpandRatio(0, .25f);
 		layout.setColumnExpandRatio(1, .75f);
 		
-		errorCategorisation = this.errorCategorisationService.find(this.component.getFlow().getModule().getName(),
+		this.errorCategorisationLink = this.errorCategorisationService.find(this.component.getFlow().getModule().getName(),
 				this.component.getFlow().getName(), this.component.getName());
 		
-		if(errorCategorisation == null)
-		{
-			errorCategorisation = new ErrorCategorisation(this.component.getFlow().getModule().getName(),
+		if(this.errorCategorisationLink == null)
+		{	
+			this.errorCategorisationLink = new ErrorCategorisationLink(this.component.getFlow().getModule().getName(),
 					this.component.getFlow().getName(), this.component.getName(), "", "");
+			
+			this.errorCategorisation = new ErrorCategorisation("", "");
+		}
+		else
+		{
+			this.errorCategorisation = this.errorCategorisationLink.getErrorCategorisation();
 		}
 		
-		final BeanItem<ErrorCategorisation> errorCategorisationItem = new BeanItem<ErrorCategorisation>(errorCategorisation);
+		final BeanItem<ErrorCategorisation> errorCategorisationItem = new BeanItem<ErrorCategorisation>(this.errorCategorisation);
+		final BeanItem<ErrorCategorisationLink> errorCategorisationLinkItem = new BeanItem<ErrorCategorisationLink>(this.errorCategorisationLink);
     	
     	Label configuredResourceIdLabel = new Label("Error Categorisation");
 		configuredResourceIdLabel.setStyleName(ValoTheme.LABEL_HUGE);
@@ -134,7 +143,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		TextField moduleNameTextField = new TextField();
 		moduleNameTextField.setRequired(true);
-		moduleNameTextField.setPropertyDataSource(errorCategorisationItem.getItemProperty("moduleName"));
+		moduleNameTextField.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("moduleName"));
 		moduleNameTextField.setReadOnly(true);
 		moduleNameTextField.setWidth("80%");
 		layout.addComponent(moduleNameTextField, 1, 1); 
@@ -148,7 +157,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		TextField flowNameTextField = new TextField();
 		flowNameTextField.setRequired(true);
-		flowNameTextField.setPropertyDataSource(errorCategorisationItem.getItemProperty("flowName"));
+		flowNameTextField.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("flowName"));
 		flowNameTextField.setReadOnly(true);
 		flowNameTextField.setWidth("80%");
 		layout.addComponent(flowNameTextField, 1, 2); 
@@ -162,14 +171,32 @@ public class ErrorCategorisationWindow extends Window
 		
 		TextField componentNameTextField = new TextField();
 		componentNameTextField.setRequired(true);
-		componentNameTextField.setPropertyDataSource(errorCategorisationItem.getItemProperty("flowElementName"));
+		componentNameTextField.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("flowElementName"));
 		componentNameTextField.setReadOnly(true);
 		componentNameTextField.setWidth("80%");
 		layout.addComponent(componentNameTextField, 1, 3); 
 		
+		Label actionLabel = new Label();
+		actionLabel.setContentMode(ContentMode.HTML);
+		actionLabel.setValue("Action:");
+		actionLabel.setSizeUndefined();		
+		layout.addComponent(actionLabel, 0, 4);
+		layout.setComponentAlignment(actionLabel, Alignment.MIDDLE_RIGHT);
+		
+		
+		final ComboBox actionCombo = new ComboBox();
+		actionCombo.addItem(ErrorCategorisationLink.EXCLUDE_EVENT_ACTION);
+		actionCombo.addItem(ErrorCategorisationLink.RETRY_ACTION);
+		actionCombo.addItem(ErrorCategorisationLink.STOP_ACTION);
+		actionCombo.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("action"));
+		actionCombo.setRequired(true);
+		actionCombo.setRequiredError("An action must be selected!");
+		actionCombo.setValidationVisible(false);
+		layout.addComponent(actionCombo, 1, 4);
+		
 		Label errorCategoryLabel = new Label("Error Category:");
 		errorCategoryLabel.setSizeUndefined();		
-		layout.addComponent(errorCategoryLabel, 0, 4);
+		layout.addComponent(errorCategoryLabel, 0, 5);
 		layout.setComponentAlignment(errorCategoryLabel, Alignment.MIDDLE_RIGHT);
 		
 		final ComboBox errorCategoryCombo = new ComboBox();
@@ -180,7 +207,7 @@ public class ErrorCategorisationWindow extends Window
 		errorCategoryCombo.setRequired(true);
 		errorCategoryCombo.setHeight("30px");
 		errorCategoryCombo.setNullSelectionAllowed(false);
-		layout.addComponent(errorCategoryCombo, 1, 4); 
+		layout.addComponent(errorCategoryCombo, 1, 5); 
 		errorCategoryCombo.addItem(ErrorCategorisation.TRIVIAL);
 		errorCategoryCombo.setItemIcon(ErrorCategorisation.TRIVIAL, VaadinIcons.ARROW_DOWN);
 		errorCategoryCombo.addItem(ErrorCategorisation.MAJOR);
@@ -192,7 +219,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		Label errorMessageLabel = new Label("Error Message:");
 		errorMessageLabel.setSizeUndefined();		
-		layout.addComponent(errorMessageLabel, 0, 5);
+		layout.addComponent(errorMessageLabel, 0, 6);
 		layout.setComponentAlignment(errorMessageLabel, Alignment.TOP_RIGHT);
 		
 		final TextArea errorMessageTextArea = new TextArea();
@@ -204,7 +231,7 @@ public class ErrorCategorisationWindow extends Window
 		errorMessageTextArea.setWidth("650px");
 		errorMessageTextArea.setRows(8);
 		errorMessageTextArea.setRequiredError("An error message is required!");
-		layout.addComponent(errorMessageTextArea, 1, 5); 
+		layout.addComponent(errorMessageTextArea, 1, 6); 
 		
 		GridLayout buttonLayouts = new GridLayout(3, 1);
 		buttonLayouts.setSpacing(true);
@@ -216,21 +243,28 @@ public class ErrorCategorisationWindow extends Window
             public void buttonClick(ClickEvent event) 
             {
             	try 
-                {
-            		logger.info("errorMessageTextArea value == " + errorMessageTextArea.getValue());            		
-            		logger.info("errorMessageTextArea value length == " + errorMessageTextArea.getValue().length());
-            		
+            	{
             		errorCategoryCombo.validate();
             		errorMessageTextArea.validate();
+            		actionCombo.validate();
                 } 
                 catch (InvalidValueException e) 
                 {
                 	errorCategoryCombo.setValidationVisible(true);
                 	errorMessageTextArea.setValidationVisible(true);
+                	actionCombo.setValidationVisible(true);
+                	
+                	errorCategoryCombo.markAsDirty();
+                	errorMessageTextArea.markAsDirty();
+                	actionCombo.markAsDirty();
                     return;
                 }
             	
             	errorCategorisationService.save(errorCategorisationItem.getBean());
+            	
+            	errorCategorisationLink.setErrorCategorisation(errorCategorisationItem.getBean());
+            	
+            	errorCategorisationService.save(errorCategorisationLink);
             	
             	Notification.show("Saved!");
             }
@@ -243,9 +277,9 @@ public class ErrorCategorisationWindow extends Window
             public void buttonClick(ClickEvent event) 
             {
             	errorCategorisationService.delete(errorCategorisationItem.getBean());
+            	errorCategorisationService.delete(errorCategorisationLinkItem.getBean());
             	
-            	errorCategorisation = new ErrorCategorisation(component.getFlow().getModule().getName(),
-    					component.getFlow().getName(), component.getName(), "", "");
+            	errorCategorisation = new ErrorCategorisation(null, null);
             }
         });
 		
@@ -263,7 +297,7 @@ public class ErrorCategorisationWindow extends Window
 		buttonLayouts.addComponent(deleteButton);
 		buttonLayouts.addComponent(cancelButton);
 		
-		layout.addComponent(buttonLayouts, 0, 6, 1, 6);
+		layout.addComponent(buttonLayouts, 0, 7, 1, 7);
 		layout.setComponentAlignment(buttonLayouts, Alignment.MIDDLE_CENTER);
 		
 		Panel paramPanel = new Panel();

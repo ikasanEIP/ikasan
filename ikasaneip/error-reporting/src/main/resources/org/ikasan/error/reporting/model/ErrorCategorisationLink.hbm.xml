@@ -50,61 +50,44 @@
 
 <hibernate-mapping>
 
-    <class name="org.ikasan.error.reporting.model.ErrorOccurrence" table="ErrorOccurrence">
+    <class name="org.ikasan.error.reporting.model.ErrorCategorisationLink" table="ErrorCategorisationLink">
 
-        <id name="uri" type="java.lang.String" column="Uri">
-            <generator class="assigned" />
+        <id name="id" type="java.lang.Long" column="Id">
+            <generator class="native" />
         </id>
 
-        <property name="moduleName"
-                  type="java.lang.String"
-                  column="ModuleName"
-                  not-null="true" />
+		<properties name="unique-key-reference" unique="true">
+		
+	        <property name="moduleName"
+	                  type="java.lang.String"
+	                  column="ModuleName"
+	                  not-null="true" />
+	
+	        <property name="flowName"
+	                  type="java.lang.String"
+	                  column="FlowName"
+	                  not-null="true" />
+	
+	        <property name="flowElementName"
+	                  type="java.lang.String"
+	                  column="FlowElementName"
+	                  not-null="true" />
+	                  
+	        <property name="action"
+	                  type="java.lang.String"
+	                  column="Action"
+	                  not-null="true" />
+	                  
+	        <property name="exceptionClass"
+	                  type="java.lang.String"
+	                  column="ExceptionClass"
+	                  not-null="true" />
+	                  
+	    </properties>
+	    
+	    <many-to-one name="errorCategorisation" column="ErrorCategorisationId" 
+       		class="org.ikasan.error.reporting.model.ErrorCategorisation" not-null="false" lazy="false"/>
 
-        <property name="flowName"
-                  type="java.lang.String"
-                  column="FlowName"
-                  not-null="true" />
-
-        <property name="flowElementName"
-                  type="java.lang.String"
-                  column="FlowElementName"
-                  not-null="false" />
-
-        <property name="errorDetail"
-                  type="text"
-                  column="ErrorDetail"
-                  not-null="false" />
-
-        <property name="eventLifeIdentifier"
-                  type="java.lang.String"
-                  column="EventLifeIdentifier"
-                  not-null="false" />
-
-        <property name="eventRelatedIdentifier"
-                  type="java.lang.String"
-                  column="EventRelatedIdentifier"
-                  not-null="false" />
-
-        <property name="action"
-                  type="java.lang.String"
-                  column="Action"
-                  not-null="false" />
-
-        <property name="event"
-                  type="byte[]"
-                  column="Event"
-                  not-null="false" />
-
-        <property name="timestamp"
-                  type="long"
-                  column="Timestamp"
-                  not-null="true" />
-
-        <property name="expiry"
-                  type="long"
-                  column="Expiry"
-                  not-null="true" />
     </class>
 
 </hibernate-mapping>

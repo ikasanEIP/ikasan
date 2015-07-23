@@ -63,22 +63,17 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
-import org.ikasan.dashboard.ui.topology.graph.ArcImpl;
-import org.ikasan.dashboard.ui.topology.graph.NodeImpl;
-import org.ikasan.dashboard.ui.topology.graph.SimpleGraphRepositoryImpl;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
-import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -99,6 +94,7 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.wiretap.service.TriggerManagementService;
 import org.springframework.security.core.GrantedAuthority;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -112,10 +108,6 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.graph.GraphExplorer;
-import com.vaadin.graph.layout.JungCircleLayoutEngine;
-import com.vaadin.graph.layout.JungFRLayoutEngine;
-import com.vaadin.graph.layout.JungISOMLayoutEngine;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Resource;
@@ -124,7 +116,6 @@ import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -252,13 +243,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private SystemEventService systemEventService;
 	private ErrorCategorisationService errorCategorisationService;
+	private TriggerManagementService triggerManagementService;
 	
 	private HashMap<String, String> flowStates = new HashMap<String, String>();
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
-			 ErrorCategorisationService errorCategorisationService)
+			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -301,9 +293,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			throw new IllegalArgumentException("systemEventService cannot be null!");
 		}
 		this.errorCategorisationService = errorCategorisationService;
-		if(this.systemEventService == null)
+		if(this.errorCategorisationService == null)
 		{
 			throw new IllegalArgumentException("errorCategorisationService cannot be null!");
+		}
+		this.triggerManagementService = triggerManagementService;
+		if(this.triggerManagementService == null)
+		{
+			throw new IllegalArgumentException("triggerManagementService cannot be null!");
 		}
 
 		init();
@@ -444,7 +441,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		final VerticalLayout tab8 = new VerticalLayout();
 		tab8.setSizeFull();
 		CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-				(this.errorCategorisationService, this.treeViewBusinessStreamCombo);
+				(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.serialiserFactory);
 		tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
 		tabsheet.addTab(tab8, "Categorised Errors");		
 
@@ -1029,11 +1026,17 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	{
 		this.systemEventTable = new Table();
 		this.systemEventTable.setSizeFull();
-		this.systemEventTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.systemEventTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.systemEventTable.addContainerProperty("Subject", String.class,  null);
-		this.systemEventTable.addContainerProperty("Action", TextArea.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Subject", .3f);
+		this.systemEventTable.addContainerProperty("Action", String.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Action", .4f);
 		this.systemEventTable.addContainerProperty("Actioned By", String.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Actioned By", .15f);
 		this.systemEventTable.addContainerProperty("Timestamp", String.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Timestamp", .15f);
+		
+		this.systemEventTable.setStyleName("wordwrap-table");
 		
 		this.systemEventTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
@@ -1077,22 +1080,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             	    String timestamp = format.format(systemEvent.getTimestamp());
             	    
-            	    TextArea action = new TextArea();
-            	    action.setRows(3);
-            	    action.setWordwrap(true);
-            	    action.setValue(systemEvent.getAction());
-            	    action.setSizeFull();
-            	    action.setReadOnly(true);
-            	    
-            		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), action
+            		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
         				, systemEvent.getActor(), timestamp}, systemEvent);
             	}
             }
         });
 		
 
-		GridLayout layout = new GridLayout(1, 2);
-		layout.setMargin(true);				
+		GridLayout layout = new GridLayout(1, 2);			
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
@@ -1123,35 +1118,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		return layout;
 	}
-
-	
-//	protected void refreshExcludedEventsTable()
-//	{
-//		exclusionsTable.removeAllItems();
-//    	
-//    	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
-//
-//    	for(ExclusionEvent exclusionEvent: exclusionEvents)
-//    	{
-//    		Date date = new Date(exclusionEvent.getTimestamp());
-//    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-//    	    String timestamp = format.format(date);
-//    	    
-//    	    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-//    	    
-//    	    String actionString = "";
-//    	    String actionedByString = "";
-//    	    
-//    	    if(action != null)
-//    	    {
-//    	    	actionString = action.getAction();
-//    	    	actionedByString = action.getActionedBy();
-//    	    }
-//    	    
-//    	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(), actionString, actionedByString,
-//    				timestamp}, exclusionEvent);
-//    	}
-//	}
 
 	/* (non-Javadoc)
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
@@ -1529,7 +1495,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         	}
         	if(action.equals(WIRETAP))
         	{
-        		UI.getCurrent().addWindow(new WiretapConfigurationWindow());
+        		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target
+        			, triggerManagementService));
         	}
         	if(action.equals(ERROR_CATEGORISATION))
         	{

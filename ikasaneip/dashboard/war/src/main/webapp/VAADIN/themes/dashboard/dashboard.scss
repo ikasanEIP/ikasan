@@ -18,6 +18,11 @@ $v-font-weight: 400;
   @include valo;
   @include dashboard-dashboard-view;
 
+	.wordwrap-table .v-table-cell-wrapper {
+	   white-space: normal;
+	   overflow: hidden;
+	   padding: 5px;
+	}
   
 	.v-header {
 		background-color: #F9AF56;
@@ -101,6 +106,24 @@ $v-font-weight: 400;
 	.v-table-cell-content-ikasan-orange {
 		font-size: $v-font-size;
 		background-color: rgba(255, 153, 0, 0.2);
+	}
+	
+	.v-table-cell-content-ikasan-green-small {
+		font-size: $v-font-size;
+		background-color: rgba(0, 153, 51, 0.2);
+		font-size: 9px;
+	}
+	
+	.v-table-cell-content-ikasan-red-small {
+		font-size: $v-font-size;
+		background-color: rgba(255, 0, 0, 0.2);
+		font-size: 9px;
+	}
+	
+	.v-table-cell-content-ikasan-orange-small {
+		font-size: $v-font-size;
+		background-color: rgba(255, 153, 0, 0.2);
+		font-size: 9px;
 	}
 	
 	.v-table-cell-content-ikasan-small {

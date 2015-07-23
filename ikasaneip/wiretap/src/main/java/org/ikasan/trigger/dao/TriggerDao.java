@@ -67,6 +67,13 @@ public interface TriggerDao {
 	public List<Trigger> findAll();
 	
 	/**
+	 * returns all persisted Triggers, narrowed by module flow and element
+	 * 
+	 * @return List of Triggers
+	 */
+	public List<Trigger> findTriggers(String moduleName, String flowname, String flowElementName);
+	
+	/**
 	 * Finds a specific previously persisted Trigger
 	 * 
 	 * @param triggerId

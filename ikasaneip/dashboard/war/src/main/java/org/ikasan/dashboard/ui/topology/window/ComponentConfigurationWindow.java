@@ -53,9 +53,17 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
+import org.ikasan.dashboard.ui.framework.validation.IntegerValidator;
+import org.ikasan.dashboard.ui.framework.validation.StringValidator;
+import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
@@ -69,6 +77,8 @@ import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.data.Validator;
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
@@ -225,20 +235,29 @@ public class ComponentConfigurationWindow extends Window
 		int i=2;
 		
 		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getValue() instanceof Integer ||
-					parameter.getValue() instanceof String ||
-					parameter.getValue() instanceof Boolean ||
-					parameter.getValue() instanceof Long)
+		{	
+			if(parameter instanceof ConfigurationParameterIntegerImpl)
     		{
-    			this.layout.addComponent(this.createTextAreaPanel(parameter), 0, i, 1, i);
-    		} 
-			else if (parameter.getValue() instanceof Map)
+				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterStringImpl)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter, new StringValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterBooleanImpl)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter, new BooleanValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterLongImpl)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter, new LongValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterMapImpl)
     		{
     			this.layout.addComponent(this.createMapPanel
     					((ConfigurationParameterMapImpl)parameter), 0, i, 1, i);
     		}
-			else if (parameter.getValue() instanceof List)
+    		else if(parameter instanceof ConfigurationParameterListImpl)
     		{
     			this.layout.addComponent(this.createListPanel
     					((ConfigurationParameterListImpl)parameter), 0, i, 1, i);
@@ -253,6 +272,23 @@ public class ComponentConfigurationWindow extends Window
     	{
             public void buttonClick(ClickEvent event) 
             {
+            	try 
+                {
+            		for(TextArea textField: textFields.values())
+                	{
+                		textField.validate();
+                	}
+                } 
+                catch (InvalidValueException e) 
+                {
+                	e.printStackTrace();
+                	for(TextArea textField: textFields.values())
+                	{
+                		textField.setValidationVisible(true);
+                	}
+                    return;
+                }
+  
             	for(ConfigurationParameter parameter: parameters)
         		{
             		TextArea textField = ComponentConfigurationWindow
@@ -265,32 +301,32 @@ public class ComponentConfigurationWindow extends Window
             			parameter.setDescription(descriptionTextField.getValue());
             		}
 
-            		if(parameter.getValue() != null)
-            		{
-            			logger.info("parameter.getValue().getClass(): " + parameter.getValue().getClass());
-            		}
-            		
-            		if(parameter.getValue() instanceof Integer)
+            		if(parameter instanceof ConfigurationParameterIntegerImpl)
             		{
             			logger.info("Setting Integer value: " + textField.getValue());
-            			parameter.setValue(new Integer(textField.getValue()));
+            			
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(new Integer(textField.getValue()));
             		}
-            		else if(parameter.getValue() instanceof String)
+            		else if(parameter instanceof ConfigurationParameterStringImpl)
             		{
             			logger.info("Setting String value: " + textField.getValue());
-            			parameter.setValue(textField.getValue());
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(textField.getValue());
             		}
-            		else if(parameter.getValue() instanceof Boolean)
+            		else if(parameter instanceof ConfigurationParameterBooleanImpl)
             		{
             			logger.info("Setting Boolean value: " + textField.getValue());
-            			parameter.setValue(new Boolean(textField.getValue()));
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(new Boolean(textField.getValue()));
             		}
-            		else if(parameter.getValue() instanceof Long)
+            		else if(parameter instanceof ConfigurationParameterLongImpl)
             		{
             			logger.info("Setting Boolean value: " + textField.getValue());
-            			parameter.setValue(new Long	(textField.getValue()));
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(new Long	(textField.getValue()));
             		}
-            		else if(parameter.getValue() instanceof Map)
+            		else if(parameter instanceof ConfigurationParameterMapImpl)
             		{
             			ConfigurationParameterMapImpl mapParameter = (ConfigurationParameterMapImpl) parameter;
             			
@@ -315,7 +351,7 @@ public class ComponentConfigurationWindow extends Window
             			
             			parameter.setValue(map);
             		}
-            		else if(parameter.getValue() instanceof List)
+            		else if(parameter instanceof ConfigurationParameterListImpl)
             		{
             			ConfigurationParameterListImpl mapParameter = (ConfigurationParameterListImpl) parameter;
             			
@@ -378,7 +414,7 @@ public class ComponentConfigurationWindow extends Window
 		this.setContent(configurationPanel);
     }
     
-    protected Panel createTextAreaPanel(ConfigurationParameter parameter)
+    protected Panel createTextAreaPanel(ConfigurationParameter parameter, Validator validator)
     {
     	Panel paramPanel = new Panel();
 		paramPanel.setStyleName("dashboard");
@@ -403,6 +439,8 @@ public class ComponentConfigurationWindow extends Window
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		TextArea textField = new TextArea();
+		textField.addValidator(validator);
+		textField.setValidationVisible(false);
 		textField.setRows(4);
 		textField.setWidth("80%");
 		textField.setId(parameter.getName());
