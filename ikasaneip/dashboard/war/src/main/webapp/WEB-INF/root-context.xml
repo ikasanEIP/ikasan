@@ -116,6 +116,50 @@
                    <constructor-arg value="policyManagementView"/>
                    <constructor-arg ref="policyManagementPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="searchResultsPanel"/>
+                   <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="existingMappingConfigurationPanel"/>
+                   <constructor-arg ref="existingMappingConfigurationPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="newClientPanel"/>
+                   <constructor-arg ref="newClientPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="newContextPanel"/>
+                   <constructor-arg ref="newContextPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="newConfigurationTypePanel"/>
+                   <constructor-arg ref="newConfigurationTypePanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="newMappingConfigurationPanel"/>
+                   <constructor-arg ref="newMappingConfigurationPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="userPanel"/>
+                   <constructor-arg ref="userPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="roleManagementPanel"/>
+                   <constructor-arg ref="roleManagementPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="policyManagementPanel"/>
+                   <constructor-arg ref="policyManagementPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>

@@ -66,7 +66,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -137,7 +137,7 @@ public class NewClientPanel extends Panel implements View
         HorizontalLayout buttons = new HorizontalLayout();
         
         Button saveButton = new Button("Save");
-        saveButton.setStyleName(Reindeer.BUTTON_SMALL);
+        saveButton.setStyleName(ValoTheme.BUTTON_SMALL);
         saveButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event)
@@ -171,7 +171,7 @@ public class NewClientPanel extends Panel implements View
         buttons.addComponent(saveButton);
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
+        cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
         cancelButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

@@ -52,11 +52,11 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
        
-       <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		    <property name="sessionFactory">
-		        <ref bean="errorReportingSessionFactory"/>
-		    </property>
-		</bean>
+   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	    <property name="sessionFactory">
+	        <ref bean="errorReportingSessionFactory"/>
+	    </property>
+	</bean>
 
     <bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl">
         <constructor-arg name="serializers">
@@ -76,17 +76,19 @@
     </bean>
 
     <aop:config>
-            <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
-            <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
+		<aop:pointcut id="ecDaoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorCategorisationDao.*(..))"/>
+        <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
+        <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
 
-            <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="daoMethods"/>
-            <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="serviceMethods"/>
-	    </aop:config>
-	
-	    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
-	        <tx:attributes>
-	            <tx:method name="*" propagation="REQUIRES_NEW"/>
-	        </tx:attributes>
-	    </tx:advice>
+		<aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="ecDaoMethods"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="daoMethods"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="serviceMethods"/>
+    </aop:config>
+
+    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
 
 </beans>

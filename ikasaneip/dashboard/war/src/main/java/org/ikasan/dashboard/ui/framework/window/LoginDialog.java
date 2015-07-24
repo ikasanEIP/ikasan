@@ -51,6 +51,7 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -60,7 +61,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -105,7 +106,6 @@ public class LoginDialog extends Window
         super.setModal(true);
         super.setResizable(false);
         super.center();
-        super.setStyleName("ikasan");
 
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(LoginFieldGroup.USERNAME, new ObjectProperty<String>(""));
@@ -140,7 +140,9 @@ public class LoginDialog extends Window
         HorizontalLayout buttons = new HorizontalLayout();
         
         Button loginButton = new Button("Login");
-        loginButton.setStyleName(Reindeer.BUTTON_SMALL);
+        loginButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        loginButton.setClickShortcut(KeyCode.ENTER);
+
         loginButton.addClickListener(new ClickListener() 
         {
             @Override
@@ -172,7 +174,7 @@ public class LoginDialog extends Window
         buttons.addComponent(loginButton);
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
+        cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
         cancelButton.addClickListener(new ClickListener() 
         {
             @Override

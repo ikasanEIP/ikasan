@@ -1,0 +1,46 @@
+@import "../valo/valo.scss";
+@import "../graph-explorer/graph-explorer.scss";
+
+@mixin codeGraph {
+  @include valo;
+  @include graph-explorer;
+    
+  .v-graph-explorer .node.root {
+	background-color: yellow;
+  }
+
+  .v-graph-explorer .node.blue {
+	background-color: blue;
+  }
+
+  .thick-blue-svg {
+	stroke: blue;
+	stroke-width: 5;
+  }
+
+  .arc.thick-blue {
+  	border: 5px dotted blue; 
+  }
+
+  .thin-red-svg {
+	stroke: red;
+  }
+  
+  .arc.thin-red {
+  	border: 1px dotted red; 
+  }
+    
+  /* Center the loading indicator */
+  .v-loading-indicator,.v-loading-indicator-delay,.v-loading-indicator-wait {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	/* 	background-color: gray; */
+	opacity: .8;
+	-ms-filter: alpha(opacity =   80);
+	filter: alpha(opacity =   80);
+  }  
+}

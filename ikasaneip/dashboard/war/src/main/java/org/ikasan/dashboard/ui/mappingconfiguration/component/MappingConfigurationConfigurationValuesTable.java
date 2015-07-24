@@ -74,7 +74,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -284,7 +284,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         final DeleteRowAction action = new DeleteRowAction(sourceConfigurationValues, this.mappingConfiguration
             , this, this.mappingConfigurationService, this.systemEventService);
 
-        deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+        deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
         deleteButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -393,7 +393,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                     final Button deleteButton = new Button("Delete");
                     deleteButton.setData(value);
-                    deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+                    deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
                     deleteButton.addClickListener(new Button.ClickListener() {
                         public void buttonClick(ClickEvent event) {
                             IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 

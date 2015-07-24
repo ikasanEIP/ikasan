@@ -81,7 +81,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
 import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
@@ -272,7 +272,7 @@ public class RoleManagementPanel extends Panel implements View
 				ThemeResource deleteIcon = new ThemeResource(
 						"images/remove-icon.png");
 				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(Reindeer.BUTTON_LINK);				
+				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);				
 				
 				deleteButton.addClickListener(new Button.ClickListener() 
 		        {
@@ -379,7 +379,7 @@ public class RoleManagementPanel extends Panel implements View
 					ThemeResource deleteIcon = new ThemeResource(
 							"images/remove-icon.png");
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 					
 					deleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -475,7 +475,7 @@ public class RoleManagementPanel extends Panel implements View
 	 */
 	protected Layout initControlLayout()
 	{
-		this.newButton.setStyleName(Reindeer.BUTTON_LINK);
+		this.newButton.setStyleName(ValoTheme.BUTTON_LINK);
     	this.newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -497,7 +497,7 @@ public class RoleManagementPanel extends Panel implements View
             }
         });
     	
-    	this.saveButton.setStyleName(Reindeer.BUTTON_LINK);
+    	this.saveButton.setStyleName(ValoTheme.BUTTON_LINK);
     	this.saveButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -520,7 +520,7 @@ public class RoleManagementPanel extends Panel implements View
             }
         });
     	
-    	this.deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    	this.deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     	this.deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
