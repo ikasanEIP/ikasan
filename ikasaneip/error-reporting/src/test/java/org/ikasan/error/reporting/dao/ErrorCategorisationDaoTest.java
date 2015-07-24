@@ -104,7 +104,7 @@ public class ErrorCategorisationDaoTest
 
         
         ErrorCategorisationLink foundErrorCategorisationLink = this.errorCategorisationDao.find("moduleName", "flowName", 
-        		"flowElementName");
+        		"flowElementName", "");
         
         Assert.assertEquals(link, foundErrorCategorisationLink);
     }

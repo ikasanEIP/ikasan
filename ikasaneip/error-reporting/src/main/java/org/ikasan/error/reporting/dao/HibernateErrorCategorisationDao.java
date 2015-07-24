@@ -96,14 +96,14 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	@Override
 	public void delete(ErrorCategorisationLink errorCategorisationLink)
 	{
-		this.getHibernateTemplate().saveOrUpdate(errorCategorisationLink);
+		this.getHibernateTemplate().delete(errorCategorisationLink);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#find(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ErrorCategorisationLink find(String moduleName, String flowName,
+	public List<ErrorCategorisationLink> find(String moduleName, String flowName,
 			String flowElementName)
 	{
 		if(moduleName == null || flowName == null || flowElementName == null)
@@ -115,6 +115,27 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
         criteria.add(Restrictions.eq("moduleName", moduleName));
         criteria.add(Restrictions.eq("flowName", flowName));
         criteria.add(Restrictions.eq("flowElementName", flowElementName));
+
+        return (List<ErrorCategorisationLink>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#find(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public ErrorCategorisationLink find(String moduleName, String flowName,
+			String flowElementName, String action)
+	{
+		if(moduleName == null || flowName == null || flowElementName == null || action == null)
+		{
+			return null;
+		}
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorCategorisationLink.class);
+        criteria.add(Restrictions.eq("moduleName", moduleName));
+        criteria.add(Restrictions.eq("flowName", flowName));
+        criteria.add(Restrictions.eq("flowElementName", flowElementName));
+        criteria.add(Restrictions.eq("action", action));
         
         ErrorCategorisationLink errorCategorisationLink = (ErrorCategorisationLink) DataAccessUtils
         		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));

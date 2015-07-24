@@ -129,7 +129,6 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.Tree.TreeDragMode;
@@ -181,11 +180,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action WIRETAP = new Action("Wiretap");
     private final Action ERROR_CATEGORISATION = new Action("Categorise Error");
     private final Action STARTUP_CONTROL = new Action("Startup Type");
-    private final Action[] serverActions = new Action[] { DETAILS };
-    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
-    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL };
-    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL };
-    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL };
+    private final Action[] serverActions = new Action[] { DETAILS, ERROR_CATEGORISATION };
+    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION };
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION };
+    private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
@@ -1461,6 +1461,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			{
 				return this.flowActionsPaused;
 			}
+			else
+			{
+				return this.flowActions;
+			}
         }
 		else if(target instanceof Component)
         {
@@ -1500,8 +1504,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         	}
         	if(action.equals(ERROR_CATEGORISATION))
         	{
-        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(((Component)target)
-        				, errorCategorisationService));
+        		Component component = (Component)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(component.getFlow().getModule().getServer(),
+        				component.getFlow().getModule(), component.getFlow(), component, errorCategorisationService));
         	}
         }
         else if(target != null && target instanceof Flow)
@@ -1547,8 +1553,35 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        {       	
 	        	UI.getCurrent().addWindow(new StartupControlConfigurationWindow());
 	        }
+	        else if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Flow component = (Flow)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(flow.getModule().getServer(),
+        				flow.getModule(), flow, null, errorCategorisationService));
+        	}
 	        
 	        this.refreshFlowStates(flow.getModule().getServer().getModules());
+        }
+        else if(target != null && target instanceof Module)
+        {
+        	if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Module module = (Module)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(module.getServer(),
+        				module, null, null, errorCategorisationService));
+        	}
+        }
+        else if(target != null && target instanceof Server)
+        {
+        	if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Server server = (Server)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(server,
+        				null, null, null, errorCategorisationService));
+        	}
         }
 	}
 	
