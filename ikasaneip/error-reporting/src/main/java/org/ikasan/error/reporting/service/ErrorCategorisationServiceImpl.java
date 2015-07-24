@@ -100,10 +100,20 @@ public class ErrorCategorisationServiceImpl implements
 	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#find(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ErrorCategorisationLink find(String moduleName, String flowName,
+	public List<ErrorCategorisationLink> find(String moduleName, String flowName,
 			String flowElementName)
 	{
 		return this.errorCategorisationDao.find(moduleName, flowName, flowElementName);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#find(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public ErrorCategorisationLink find(String moduleName, String flowName,
+			String flowElementName, String action)
+	{
+		return this.errorCategorisationDao.find(moduleName, flowName, flowElementName, action);
 	}
 
 	/* (non-Javadoc)
@@ -154,6 +164,10 @@ public class ErrorCategorisationServiceImpl implements
 		{			
 			logger.info("Action: " + this.getAction(errorOccurrence));
 			
+			logger.info("Using key " + new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence)));
+			
+			// Casacade down the configured error occurrences to get the most focused 
+			// error categorisation associated with the error occurrence.
 			ErrorCategorisation errorCategorisation = categorisedErrorMap.get
 					(new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
 							, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence)));
@@ -199,14 +213,14 @@ public class ErrorCategorisationServiceImpl implements
 		
 		for(ErrorCategorisationLink errorCategorisationLink: errorCategorisations)
 		{
-			logger.info("Addin key " + new CategorisedErrorKey(errorCategorisationLink.getModuleName()
-					, errorCategorisationLink.getFlowName(), errorCategorisationLink.getFlowElementName()
-					, errorCategorisationLink.getAction()));
+			logger.info("Addin key " + new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
+					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
+					, errorCategorisationLink.getAction().trim()));
 			logger.info("Addin value " + errorCategorisationLink.getErrorCategorisation());
 			
-			map.put(new CategorisedErrorKey(errorCategorisationLink.getModuleName()
-					, errorCategorisationLink.getFlowName(), errorCategorisationLink.getFlowElementName()
-					, errorCategorisationLink.getAction())
+			map.put(new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
+					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
+					, errorCategorisationLink.getAction().trim())
 					, errorCategorisationLink.getErrorCategorisation());	
 		}
 		

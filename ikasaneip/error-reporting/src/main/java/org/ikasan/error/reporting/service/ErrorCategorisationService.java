@@ -76,7 +76,19 @@ public interface ErrorCategorisationService
 	 * @param flowElementName
 	 * @return
 	 */	
-	public ErrorCategorisationLink find(String moduleName, String flowName, String flowElementName);
+	public List<ErrorCategorisationLink> find(String moduleName, String flowName, String flowElementName);
+	
+	/**
+	 * Method to find an error categorisation link.
+	 * 
+	 * @param moduleName
+	 * @param flowName
+	 * @param flowElementName
+	 * @param action
+	 * @return
+	 */
+	public ErrorCategorisationLink find(String moduleName, String flowName,
+			String flowElementName, String action);
 	
 	/**
 	 * Method to delete an error categorisation.
