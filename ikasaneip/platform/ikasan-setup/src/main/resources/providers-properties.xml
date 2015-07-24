@@ -3980,7 +3980,7 @@
 					ALTER TABLE ErrorCategorisationLink
 					ADD FOREIGN KEY
 					(ErrorCategorisationId)
-					REFERENCES FlowEventTrigger(IErrorCategorisationd);
+					REFERENCES ErrorCategorisation(Id);
 
 					CREATE UNIQUE INDEX
 					ErrorCategorisationLink01u ON

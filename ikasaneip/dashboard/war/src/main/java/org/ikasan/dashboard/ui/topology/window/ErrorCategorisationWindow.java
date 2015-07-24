@@ -550,23 +550,23 @@ public class ErrorCategorisationWindow extends Window
     	{
     		Label errorCategory = new Label(errorCategorisationLink.getErrorCategorisation().getErrorCategory());
     		
-    		String moduleName = "";
+    		String moduleName = errorCategorisationLink.getModuleName();
     		
-    		if(errorCategorisationLink.getModuleName() == null || errorCategorisationLink.getModuleName().trim().length() == 0)
+    		if(moduleName == null || moduleName.trim().length() == 0)
     		{
     			moduleName = "All";
     		}
     		
-    		String flowName = "";
+    		String flowName = errorCategorisationLink.getFlowName();
     		
-    		if(errorCategorisationLink.getFlowName() == null || errorCategorisationLink.getFlowName().trim().length() == 0)
+    		if(flowName == null || flowName.trim().length() == 0)
     		{
     			flowName = "All";
     		}
     		
-    		String componentName = "";
+    		String componentName = errorCategorisationLink.getFlowElementName();
     		
-    		if(errorCategorisationLink.getFlowElementName() == null || errorCategorisationLink.getFlowElementName().trim().length() == 0)
+    		if(componentName == null || componentName.trim().length() == 0)
     		{
     			componentName = "All";
     		}
