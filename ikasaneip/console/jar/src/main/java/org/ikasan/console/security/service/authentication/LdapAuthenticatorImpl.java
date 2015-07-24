@@ -40,16 +40,16 @@
  */
 package org.ikasan.console.security.service.authentication;
 
-import org.springframework.ldap.UncategorizedLdapException;
+import javax.naming.ldap.InitialLdapContext;
+
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
-
-import javax.naming.AuthenticationException;
-import javax.naming.ldap.InitialLdapContext;
 
 /**
  * Custom Spring Security LDAP authenticator which tries to bind to an LDAP server using the passed-in credentials; does
@@ -80,19 +80,21 @@ public class LdapAuthenticatorImpl implements LdapAuthenticator
             contextFactory.setPassword(password);
             contextFactory.setUserDn(principal);
             InitialLdapContext ldapContext;
+            
+            
             try
             {
                 ldapContext = (InitialLdapContext) contextFactory.getReadWriteContext();
             }
-            catch (UncategorizedLdapException ex)
+            catch (Exception ex)
             {
-                if (ex.getRootCause() instanceof AuthenticationException)
+                if (ex.getCause() instanceof AuthenticationException)
                 {
-                    throw new BadCredentialsException("Invalid credentials", ex.getRootCause());
+                    throw new BadCredentialsException("Invalid credentials", ex.getCause());
                 }
                 else
                 {
-                    throw ex;
+                	throw new AuthenticationServiceException("Unknown authentication exception occurred!", ex.getCause());
                 }
             }
             // We need to pass the context back out, so that the auth provider can add it to the
