@@ -145,17 +145,27 @@
 
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
-			expression="execution(* org.ikasan.security.service.*.*(..))" />
+			expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..)) ||
+						execution(* org.ikasan.security.service.UserService.revokeAuthority(..)) ||
+						execution(* org.ikasan.security.service.UserService.changeUsersPassword(..)) ||
+						execution(* org.ikasan.security.service.UserService.changeUsersEmail(..)) || 
+						execution(* org.ikasan.security.service.UserService.disableUser(..)) ||
+						execution(* org.ikasan.security.service.UserService.enableUser(..)) ||
+						execution(* org.ikasan.security.service.UserService.createAuthority(..)) ||
+						execution(* org.ikasan.security.service.UserService.deleteUser(..))" />
 		<aop:pointcut id="systemEventServiceMethods"
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
-			expression="execution(* org.ikasan.configurationService.service.*.*(..))" />
+			expression="execution(* org.ikasan.spec.configuration.ConfigurationManagement.saveConfiguration(..)) ||
+						execution(* org.ikasan.spec.configuration.ConfigurationManagement.deleteConfiguration(..))" />
 		<aop:pointcut id="moduleServiceServiceMethods"
-			expression="execution(* org.ikasan.module.startup.dao.*.*(..))" />
+			expression="execution(* org.ikasan.module.startup.dao.StartupControlDao.save(..))" />
 		<aop:pointcut id="hospitalServiceMethods"
-			expression="execution(* org.ikasan.hospital.service.*.*(..))" />
+			expression="execution(* org.ikasan.hospital.service.HospitalService.resubmit(..)) ||
+						execution(* org.ikasan.hospital.service.HospitalService.ignore(..))" />
 		<aop:pointcut id="triggerDaoMethods"
-			expression="execution(* org.ikasan.trigger.dao.*.*(..))" />
+			expression="execution(* org.ikasan.trigger.dao.TriggerDao.save(..)) ||
+						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..))" />
 			
 		<aop:advisor advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
