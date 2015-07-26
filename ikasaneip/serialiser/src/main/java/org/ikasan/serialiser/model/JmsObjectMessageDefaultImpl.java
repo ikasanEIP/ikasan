@@ -38,60 +38,80 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.serialiser.converter;
-
-import java.util.Enumeration;
+package org.ikasan.serialiser.model;
 
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
+import java.io.Serializable;
 
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
-import org.ikasan.spec.serialiser.Converter;
-
-public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessageDefaultImpl>
+/**
+ * Light JMS object message implementation purely for serialiser usage.
+ * 
+ * @author Ikasan Development Team
+ * 
+ */
+public class JmsObjectMessageDefaultImpl extends JmsMessageDefaultImpl implements ObjectMessage
 {
-    
-    public JmsMapMessageDefaultImpl convert(MapMessage message)
+   	/**  Object */
+    private Serializable object;
+
+    public JmsObjectMessageDefaultImpl()
     {
-    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
-    	
-    	try
-    	{
-	    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	//jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsMapMessageDefault.setJMSExpiration(message.getJMSExpiration());
-	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    //	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsMapMessageDefault.setJMSType(message.getJMSType());
-	    	    	
-	    	Enumeration<String> names  = message.getPropertyNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
-	    	}
-	    	
-	    	names  = message.getMapNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObject(name, message.getObject(name));
-	    	}
-    	}
-    	catch (JMSException e)
-    	{
-    		throw new RuntimeException(e);
-    	}
-    	
-    	return jmsMapMessageDefault;
+    	super();
     }
+
+    @Override
+    public void setObject(Serializable object) throws JMSException
+    {
+        this.object = object;
+    }
+
+    @Override
+    public Serializable getObject() throws JMSException {
+        return this.object;
+    }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((object == null) ? 0 : object.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JmsObjectMessageDefaultImpl other = (JmsObjectMessageDefaultImpl) obj;
+		if (object == null)
+		{
+			if (other.object != null)
+				return false;
+		} else if (!object.equals(other.object))
+			return false;
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "JmsObjectMessageDefaultImpl [object=" + object + "]";
+	}
 }
