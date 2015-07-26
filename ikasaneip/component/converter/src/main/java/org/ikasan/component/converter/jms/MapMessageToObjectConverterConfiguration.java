@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,60 +38,23 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.serialiser.converter;
+package org.ikasan.component.converter.jms;
 
-import java.util.Enumeration;
+import java.util.Map;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
-import org.ikasan.spec.serialiser.Converter;
-
-public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessageDefaultImpl>
+/**
+ * Configuration for an MapMessage to Object converter.
+ */
+public class MapMessageToObjectConverterConfiguration
 {
-    
-    public JmsMapMessageDefaultImpl convert(MapMessage message)
-    {
-    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
-    	
-    	try
-    	{
-	    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	//jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsMapMessageDefault.setJMSExpiration(message.getJMSExpiration());
-	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    //	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsMapMessageDefault.setJMSType(message.getJMSType());
-	    	    	
-	    	Enumeration<String> names  = message.getPropertyNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
-	    	}
-	    	
-	    	names  = message.getMapNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObject(name, message.getObject(name));
-	    	}
-    	}
-    	catch (JMSException e)
-    	{
-    		throw new RuntimeException(e);
-    	}
-    	
-    	return jmsMapMessageDefault;
+
+    private String attributeName;
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
     }
 }
