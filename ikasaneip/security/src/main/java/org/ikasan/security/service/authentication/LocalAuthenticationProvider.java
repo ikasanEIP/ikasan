@@ -108,8 +108,6 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 			Set<IkasanPrincipal> principals = user.getPrincipals();
 
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			
-			logger.info("Logging in user: " + user.getName());
 
 			for(IkasanPrincipal principal: principals)
 			{
@@ -119,15 +117,10 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 				{
 					Set<Policy> policies = role.getPolicies();
 					
-					logger.info("User: " + user.getName() + " has role: " + role + " via association with principal: " + principal);
-					
 					for(Policy policy: policies)
-					{
-						logger.info("Attempting to add granted authority: " + policy);
-						
+					{						
 						if(!authorities.contains(policy))
 						{
-							logger.info("Adding granted authority: " + policy);
 							authorities.add(policy);
 						}
 					}
