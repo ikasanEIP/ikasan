@@ -60,13 +60,13 @@ public class JmsTextMessageConverter implements Converter<TextMessage, JmsTextMe
 	    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
 	    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
 	    	//jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsTextMessageDefault.setJMSExpiration(jmsTextMessageDefault.getJMSExpiration());
+	    	jmsTextMessageDefault.setJMSExpiration(message.getJMSExpiration());
 	    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
 	    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
 	    	jmsTextMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    	jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+	    	//jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
 	    	jmsTextMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsTextMessageDefault.setJMSType(jmsTextMessageDefault.getJMSType());
+	    	jmsTextMessageDefault.setJMSType(message.getJMSType());
 	    	    	
 	    	Enumeration<String> names  = message.getPropertyNames();
 	    	

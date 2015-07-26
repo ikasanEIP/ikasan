@@ -40,58 +40,49 @@
  */
 package org.ikasan.serialiser.converter;
 
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
+import org.ikasan.serialiser.model.JmsObjectMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessageDefaultImpl>
-{
-    
-    public JmsMapMessageDefaultImpl convert(MapMessage message)
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
+import java.util.Enumeration;
+
+public class JmsObjectMessageConverter implements Converter<ObjectMessage, JmsObjectMessageDefaultImpl>
+{   
+    public JmsObjectMessageDefaultImpl convert(ObjectMessage message)
     {
-    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
+		JmsObjectMessageDefaultImpl jmsObjectMessageDefault = new JmsObjectMessageDefaultImpl();
     	
     	try
-    	{
-	    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	//jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsMapMessageDefault.setJMSExpiration(message.getJMSExpiration());
-	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    //	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsMapMessageDefault.setJMSType(message.getJMSType());
+    	{	    	
+	    	jmsObjectMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
+	    	jmsObjectMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
+	    	jmsObjectMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
+	    	//jmsObjectMessageDefault.setJMSDestination(message.getJMSDestination());
+	    	jmsObjectMessageDefault.setJMSExpiration(message.getJMSExpiration());
+	    	jmsObjectMessageDefault.setJMSMessageID(message.getJMSMessageID());
+	    	jmsObjectMessageDefault.setJMSPriority(message.getJMSPriority());
+	    	jmsObjectMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
+	    	//jmsObjectMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+	    	jmsObjectMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
+	    	jmsObjectMessageDefault.setJMSType(message.getJMSType());
 	    	    	
 	    	Enumeration<String> names  = message.getPropertyNames();
 	    	
 	    	while(names.hasMoreElements())
 	    	{
 	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+
+                jmsObjectMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
 	    	}
 	    	
-	    	names  = message.getMapNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObject(name, message.getObject(name));
-	    	}
+	    	jmsObjectMessageDefault.setObject(message.getObject());
     	}
     	catch (JMSException e)
     	{
     		throw new RuntimeException(e);
     	}
     	
-    	return jmsMapMessageDefault;
+    	return jmsObjectMessageDefault;
     }
 }
