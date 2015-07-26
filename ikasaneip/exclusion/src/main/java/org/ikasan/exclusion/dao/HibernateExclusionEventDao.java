@@ -50,6 +50,7 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -134,5 +135,45 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 return null;
         }
         });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
+	 */
+	@Override
+	public List<ExclusionEvent> find(List<String> moduleName,
+			List<String> flowName, Date startDate, Date endDate,
+			String identifier)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		
+		if(moduleName != null && moduleName.size() > 0)
+		{
+			criteria.add(Restrictions.in("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.size() > 0)
+		{
+			criteria.add(Restrictions.in("flowName", flowName));
+		}
+		
+		if(identifier != null && identifier.length() > 0)
+		{
+			criteria.add(Restrictions.eq("identifier", identifier));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+		
+		criteria.addOrder(Order.desc("timestamp"));	
+		
+		return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 }

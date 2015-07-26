@@ -41,12 +41,26 @@
 package org.ikasan.dashboard.ui.framework.panel;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.component.DashboardTable;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Responsive;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.Command;
+import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -58,6 +72,8 @@ public class LandingViewPanel extends Panel implements View
 
     private Logger logger = Logger.getLogger(LandingViewPanel.class);
 
+    private CssLayout dashboardPanels;
+    
     /**
      * Constructor
      * 
@@ -72,10 +88,17 @@ public class LandingViewPanel extends Panel implements View
 
     protected void init()
     {       
+//    	GridLayout layout = new GridLayout(1, 1);
+//    	layout.setSpacing(true);
+//    	layout.setSizeFull();
+    	
+    	addStyleName(ValoTheme.PANEL_BORDERLESS);
+    	
     	VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidth("100%");
         verticalLayout.setHeight("100%");
         verticalLayout.setMargin(true);
+        verticalLayout.addStyleName("dashboard-view");
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.setStyleName("xlarge");
@@ -99,17 +122,125 @@ public class LandingViewPanel extends Panel implements View
         ikasanWelcomeLabel4.setStyleName("large");
         ikasanWelcomeLabel4.setWidth("60%");
         ikasanWelcomeLabel4.setHeight("100px");
-        
-             
 
-        verticalLayout.addComponent(ikasanWelcomeLabel1);
-        verticalLayout.addComponent(ikasanWelcomeLabel2);
-        verticalLayout.addComponent(ikasanWelcomeLabel3);
-        verticalLayout.addComponent(ikasanWelcomeLabel4);
+//        verticalLayout.addComponent(ikasanWelcomeLabel1);
+//        verticalLayout.addComponent(ikasanWelcomeLabel2);
+//        verticalLayout.addComponent(ikasanWelcomeLabel3);
+//        verticalLayout.addComponent(ikasanWelcomeLabel4);
+        
+        Responsive.makeResponsive(verticalLayout);
+        
+        Component content = buildContent();
+        verticalLayout.addComponent(content);
+        
+        
+        
+//        layout.addComponent(verticalLayout);
+//        
+//        VerticalLayout wrapper = new VerticalLayout();
+//        wrapper.setSizeFull();
+//        wrapper.addComponent(layout);
        
+        verticalLayout.setExpandRatio(content, 1);
+        
+        this.setSizeFull();
         this.setContent(verticalLayout);
     }
     
+    private Component createContentWrapper(final Component content) {
+        final CssLayout slot = new CssLayout();
+        slot.setWidth("100%");
+        slot.addStyleName("dashboard-panel-slot");
+
+        CssLayout card = new CssLayout();
+        card.setWidth("100%");
+        card.addStyleName(ValoTheme.LAYOUT_CARD);
+
+        HorizontalLayout toolbar = new HorizontalLayout();
+        toolbar.addStyleName("dashboard-panel-toolbar");
+        toolbar.setWidth("100%");
+
+        Label caption = new Label(content.getCaption());
+        caption.addStyleName(ValoTheme.LABEL_H4);
+        caption.addStyleName(ValoTheme.LABEL_COLORED);
+        caption.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+        content.setCaption(null);
+
+        MenuBar tools = new MenuBar();
+        tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
+        MenuItem max = tools.addItem("", VaadinIcons.EXPAND, new Command() {
+
+            @Override
+            public void menuSelected(final MenuItem selectedItem) {
+                if (!slot.getStyleName().contains("max")) {
+                    selectedItem.setIcon(FontAwesome.COMPRESS);
+                    toggleMaximized(slot, true);
+                } else {
+                    slot.removeStyleName("max");
+                    selectedItem.setIcon(FontAwesome.EXPAND);
+                    toggleMaximized(slot, false);
+                }
+            }
+        });
+        max.setStyleName("icon-only");
+        MenuItem root = tools.addItem("", VaadinIcons.COG, null);
+        root.addItem("Configure", new Command() {
+            @Override
+            public void menuSelected(final MenuItem selectedItem) {
+                Notification.show("Not implemented in this demo");
+            }
+        });
+        root.addSeparator();
+        root.addItem("Close", new Command() {
+            @Override
+            public void menuSelected(final MenuItem selectedItem) {
+                Notification.show("Not implemented in this demo");
+            }
+        });
+
+        toolbar.addComponents(caption, tools);
+        toolbar.setExpandRatio(caption, 1);
+        toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
+
+        card.addComponents(toolbar, content);
+        slot.addComponent(card);
+        return slot;
+    }
+    
+    
+    private Component buildContent() 
+    {
+        dashboardPanels = new CssLayout();
+        dashboardPanels.addStyleName("dashboard-panels");
+        Responsive.makeResponsive(dashboardPanels);
+
+        dashboardPanels.addComponent(buildDashboard());
+        dashboardPanels.addComponent(buildDashboard());
+        dashboardPanels.addComponent(buildDashboard());
+        dashboardPanels.addComponent(buildDashboard());
+
+        return dashboardPanels;
+    }
+    
+    private Component buildDashboard() 
+    {
+        Component contentWrapper = createContentWrapper(new DashboardTable());
+        contentWrapper.addStyleName("top10-revenue");
+        return contentWrapper;
+    }
+    
+    private void toggleMaximized(final Component panel, final boolean maximized) 
+    {
+        if (maximized) 
+        {
+            panel.setVisible(true);
+            panel.addStyleName("max");
+        } 
+        else 
+        {
+            panel.removeStyleName("max");
+        }
+    }
 
     /* (non-Javadoc)
      * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)

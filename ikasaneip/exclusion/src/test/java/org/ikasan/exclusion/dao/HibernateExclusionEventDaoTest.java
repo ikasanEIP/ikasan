@@ -40,6 +40,10 @@
  */
 package org.ikasan.exclusion.dao;
 
+import java.util.ArrayList;
+
+import javax.annotation.Resource;
+
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,8 +51,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * Test class for HibernateExclusionServiceDao.
@@ -83,6 +85,50 @@ public class HibernateExclusionEventDaoTest
 
         exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
         Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+    }
+    
+    
+    /**
+     * Test exclusion
+     */
+    @DirtiesContext
+    @Test
+    public void test_find_by_various_criteria()
+    {
+        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
+        exclusionEventDao.save(exclusionEvent);
+        
+        
+        exclusionEvent = new ExclusionEvent("moduleName1", "flowName1", "lifeIdentifier1", "event".getBytes(), "errorUri1");
+        exclusionEventDao.save(exclusionEvent);
+        
+        exclusionEvent = new ExclusionEvent("moduleName5", "flowName5", "lifeIdentifier5", "event".getBytes(), "errorUri2");
+        exclusionEventDao.save(exclusionEvent);
+        
+        exclusionEvent = new ExclusionEvent("moduleName2", "flowName2", "lifeIdentifier2", "event".getBytes(), "errorUri3");
+        exclusionEventDao.save(exclusionEvent);
+        
+        exclusionEvent = new ExclusionEvent("moduleName3", "flowName3", "lifeIdentifier3", "event".getBytes(), "errorUri4");
+        exclusionEventDao.save(exclusionEvent);
+        
+        exclusionEvent = new ExclusionEvent("moduleName4", "flowName4", "lifeIdentifier4", "event".getBytes(), "errorUri5");
+        exclusionEventDao.save(exclusionEvent);
+       
+        ArrayList<String> moduleNames = new ArrayList<String>();
+        moduleNames.add("moduleName1");
+        moduleNames.add("moduleName2");
+        
+        Assert.assertTrue("Should be found size == 2", exclusionEventDao.find(moduleNames, null, null, null, null).size() == 2);
+        
+        ArrayList<String> flowNames = new ArrayList<String>();
+        flowNames.add("flowName1");
+        
+        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, null).size());
+        
+        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier1").size());
+        
+        Assert.assertEquals("Should be found size == 0", 0, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier2").size());
+
     }
 
 }

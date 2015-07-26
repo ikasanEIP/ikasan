@@ -93,7 +93,7 @@ import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -194,7 +194,7 @@ public class MappingConfigurationImportWindow extends Window
 
         });
 
-        importButton.setStyleName(Reindeer.BUTTON_SMALL);
+        importButton.setStyleName(ValoTheme.BUTTON_SMALL);
         importButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try
@@ -248,7 +248,7 @@ public class MappingConfigurationImportWindow extends Window
 
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
+        cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
 
         cancelButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {

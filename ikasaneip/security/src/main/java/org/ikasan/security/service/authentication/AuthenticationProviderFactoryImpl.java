@@ -40,6 +40,9 @@
  */
 package org.ikasan.security.service.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -183,7 +186,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 * @throws Exception 
 	 */
 	private LdapAuthenticationProvider createLdapAuthenticationProvider(AuthenticationMethod authMethod) throws Exception
-	{		
+	{	
 		// TODO consider making the LDAP stuff a singleton
 		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(authMethod.getLdapServerUrl().trim());
 		contextSource.setUserDn(authMethod.getLdapBindUserDn().trim());
@@ -206,7 +209,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 * @throws Exception 
 	 */
 	private LdapLocalAuthenticationProvider createLdapLocalAuthenticationProvider(AuthenticationMethod authMethod) throws Exception
-	{	
+	{		
 		// TODO consider making the LDAP stuff a singleton
 		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(authMethod.getLdapServerUrl().trim());
 		contextSource.setUserDn(authMethod.getLdapBindUserDn().trim());

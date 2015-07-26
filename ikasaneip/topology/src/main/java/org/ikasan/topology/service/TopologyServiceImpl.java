@@ -40,7 +40,6 @@
  */
 package org.ikasan.topology.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -63,8 +62,6 @@ import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ikasan.topology.exception.DiscoveryException;
 

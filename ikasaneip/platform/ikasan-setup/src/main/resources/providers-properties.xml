@@ -94,11 +94,45 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
 
 				<!--prop key="driver">com.sybase.jdbc4.jdbc.SybDataSource</prop -->
 				<!--prop key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</prop -->
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategorisationId	NUMERIC(18, 0) NOT NULL,
+						ModuleName 				VARCHAR(64) NOT NULL,
+						FlowName 				VARCHAR(64) NOT NULL,
+						FlowElementName 		VARCHAR(64) NOT NULL,
+						Action 					VARCHAR(32) NOT NULL,
+						ExceptionClass 			VARCHAR(255) NOT NULL,
+						PRIMARY KEY (Id),
+						FOREIGN KEY (ErrorCategorisationId) REFERENCES ErrorCategorisation(Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX
+					ErrorCategorisationLink01u ON
+					ErrorCategorisationLink(ModuleName,FlowName,FlowElementName, Action, ExceptionClass)</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE ErrorCategorisation
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategory 			VARCHAR(64) NOT NULL,
+						ErrorDescription	 	VARCHAR(2048) NOT NULL,
+						PRIMARY KEY (Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1</prop>		
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
@@ -1367,9 +1401,43 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
 
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategorisationId	NUMERIC(18, 0) NOT NULL,
+						ModuleName 				VARCHAR(64) NOT NULL,
+						FlowName 				VARCHAR(64) NOT NULL,
+						FlowElementName 		VARCHAR(64) NOT NULL,
+						Action 					VARCHAR(32) NOT NULL,
+						ExceptionClass 			VARCHAR(255) NOT NULL,
+						PRIMARY KEY (Id),
+						FOREIGN KEY (ErrorCategorisationId) REFERENCES ErrorCategorisation(Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX
+					ErrorCategorisationLink01u ON
+					ErrorCategorisationLink(ModuleName,FlowName,FlowElementName, Action, ExceptionClass)</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE ErrorCategorisation
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategory 			VARCHAR(64) NOT NULL,
+						ErrorDescription	 	VARCHAR(2048) NOT NULL,
+						PRIMARY KEY (Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1</prop>
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
@@ -2670,9 +2738,45 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
 
                 <prop key="driver">com.microsoft.sqlserver.jdbc.SQLServerDriver</prop>
                 <prop key="url">jdbc:sqlserver://HOSTNAME:PORT/DATABASE</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						[Id]             			[NUMERIC](18) 		IDENTITY NOT NULL,
+						[ErrorCategorisationId]		[NUMERIC](18) 		NOT NULL,
+						[ModuleName] 				[VARCHAR](64) 		NOT NULL,
+						[FlowName] 					[VARCHAR](64) 		NOT NULL,
+						[FlowElementName] 			[VARCHAR](64) 		NOT NULL,
+						[Action]					[VARCHAR](32) 		NOT NULL,
+						[ExceptionClass] 			[VARCHAR](255) 		NOT NULL,
+						CONSTRAINT                  [PK_ErrorCategorisationLink_Id] PRIMARY KEY CLUSTERED
+						(
+						[Id] ASC
+						),
+						CONSTRAINT [FK_ErrorCategorisationLink_ErrorCategorisationId] FOREIGN KEY (ErrorCategorisationId) REFERENCES ErrorCategorisation(Id)
+					)
+
+					CREATE UNIQUE INDEX [IX_Error_Categorisation_Unique] ON [ErrorCategorisationLink](ModuleName, FlowName, FlowElementName, Action, ExceptionClass)
+					</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE [ErrorCategorisation]
+					(
+						[Id]            		[NUMERIC](18) 		IDENTITY NOT NULL,
+						[ErrorCategory] 		[VARCHAR](64) 		NOT NULL,
+						[ErrorDescription]	 	[VARCHAR](2048) 	NOT NULL,
+						CONSTRAINT              [PK_ErrorCategorisation_Id] PRIMARY KEY CLUSTERED
+						(
+						[Id] ASC
+						)
+					)
+					</prop>
 
 
                 <prop key="create.wiretap">CREATE TABLE [IkasanWiretap]
@@ -3859,6 +3963,39 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						Id             			IDENTITY NOT NULL,
+						ErrorCategorisationId	NUMERIC NOT NULL,
+						ModuleName 				VARCHAR(64) NOT NULL,
+						FlowName 				VARCHAR(64) NOT NULL,
+						FlowElementName 		VARCHAR(64) NOT NULL,
+						Action 					VARCHAR(32) NOT NULL,
+						ExceptionClass 			VARCHAR(255) NOT NULL
+					);
+					
+					ALTER TABLE ErrorCategorisationLink
+					ADD FOREIGN KEY
+					(ErrorCategorisationId)
+					REFERENCES ErrorCategorisation(Id);
+
+					CREATE UNIQUE INDEX
+					ErrorCategorisationLink01u ON
+					ErrorCategorisationLink(ModuleName,FlowName,FlowElementName, Action, ExceptionClass)</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE ErrorCategorisation
+					(
+						Id             			IDENTITY NOT NULL,
+						ErrorCategory 			VARCHAR(64) NOT NULL,
+						ErrorDescription	 	VARCHAR(2048) NOT NULL
+					);</prop>
+
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(

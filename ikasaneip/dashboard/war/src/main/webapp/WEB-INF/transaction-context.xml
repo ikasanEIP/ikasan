@@ -37,7 +37,10 @@
                 expression="execution(* org.ikasan.trigger.dao.*.*(..))"/>
         <aop:pointcut id="systemEventServiceMethods"
                 expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
+        <aop:pointcut id="errorCategorisationServiceMethods"
+                expression="execution(* org.ikasan.error.reporting.service.ErrorCategorisationService*.*(..))"/>
 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="errorCategorisationServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
