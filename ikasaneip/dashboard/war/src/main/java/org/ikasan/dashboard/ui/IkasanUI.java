@@ -40,8 +40,9 @@
  */
 package org.ikasan.dashboard.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -50,34 +51,38 @@ import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.google.common.eventbus.EventBus;
-import com.vaadin.annotations.PreserveOnRefresh;
-import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.communication.PushMode;
-import com.vaadin.shared.ui.ui.Transport;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.ConnectorTracker;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
-@Theme("mytheme")
+@Theme("dashboard")
 @SuppressWarnings("serial")
 //@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
 //@PreserveOnRefresh
@@ -97,11 +102,21 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private EventBus eventBus = new EventBus();
     private NavigationPanel navigationPanel;
     
+    private static final String STYLE_VISIBLE = "valo-menu-visible";
+    
     private final Table table = new Table();
     private Container container = new IndexedContainer();
 //    private FeederThread feederThread = new FeederThread();
     
     private ConnectorTracker tracker;
+    
+    private CssLayout menu = new CssLayout();
+    private final LinkedHashMap<String, String> menuItems = new LinkedHashMap<String, String>();
+    private CssLayout menuItemsLayout = new CssLayout();
+    private MenuLayout menuLayout = new MenuLayout();
+    private Component menuComponent;
+    
+    private ArrayList<Component> menuComponents = new ArrayList<Component>();
 
     /**
      * Constructor 
@@ -144,9 +159,11 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     @Override
     protected void init(VaadinRequest request)
     {
+//    	Responsive.ma	keResponsive(this);
+        addStyleName(ValoTheme.UI_WITH_MENU);
+        
         final GridLayout layout = new GridLayout(1, 4);	
         layout.setSizeFull();   
-        layout.setMargin(true);
         this.setContent(layout);
 
         imagePanelLayout.removeAllComponents();
@@ -168,35 +185,243 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         imagePanelLayout.setExpandRatio(label, 0.5f);
         imagePanelLayout.setComponentAlignment(label, Alignment.BOTTOM_LEFT);
 
+        
         layout.addComponent(navigationPanel, 0, 1);
         
-        layout.addComponent(this.views.get("dashboard").getContainer(), 0, 2);
+        loadTopLevelNavigator();
+        menuComponent = buildContent();
+        menuLayout.addMenu(menuComponent);
+        layout.addComponent(menuLayout, 0, 2);
+        
         layout.setRowExpandRatio(2, 1);
-
-        boolean usersTablesExist = true;
-
-        Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
-
-        List<IkasanUIView> mappingViews = this.views.get("topLevel").getIkasanViews();
-        
-        for(IkasanUIView view: mappingViews)
-        {
-            navigator.addView(view.getPath(), view.getView());
-        }
-       
+     
         this.navigationPanel.resetCurrentView();
+        this.navigationPanel.setToggleButton(buildToggleButton());
         
-        if(!usersTablesExist)
+        for(Component component: this.menuComponents)
         {
-        	navigator.navigateTo("persistanceSetupView");
-        	navigationPanel.setVisible(false);
+        	component.setVisible(false);
         }
-        else
-        {
-	       	 navigator.navigateTo("landingView");  
-	       	 navigationPanel.setVisible(true);
-        }
+        
+        this.navigationPanel.setMenuComponents(menuComponents);
+        
+        UI.getCurrent().getNavigator().navigateTo("landingView");  
+	       	navigationPanel.setVisible(true);
     }
+    
+    private Component buildContent() {
+        final CssLayout menuContent = new CssLayout();
+        menuContent.addStyleName("sidebar");
+        menuContent.addStyleName(ValoTheme.MENU_PART);
+        menuContent.addStyleName("no-vertical-drag-hints");
+        menuContent.addStyleName("no-horizontal-drag-hints");
+        menuContent.setWidth(null);
+        menuContent.setHeight("100%");
+
+        menuContent.addComponent(buildMenu());
+
+        return menuContent;
+    }
+    
+    protected CssLayout buildMenu() 
+    {
+        menuItemsLayout.setPrimaryStyleName("valo-menuitems");
+        menu.addComponent(menuItemsLayout);
+        
+        Label label = null;
+        
+        label = new Label("General", ContentMode.HTML);
+        label.setPrimaryStyleName("valo-menu-subtitle");
+        label.addStyleName("h4");
+        label.setSizeUndefined();
+        menuItemsLayout.addComponent(label);
+        
+        final Button dashboardMenuItem = new Button("Dashboard", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("landingView");
+            }
+        });
+        
+        dashboardMenuItem.setHtmlContentAllowed(true);
+        dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
+        dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
+        menuItemsLayout.addComponent(dashboardMenuItem);
+
+        label = null;
+        
+        label = new Label("Services", ContentMode.HTML);
+        label.setPrimaryStyleName("valo-menu-subtitle");
+        label.addStyleName("h4");
+        label.setSizeUndefined();
+        menuItemsLayout.addComponent(label);
+        
+        this.menuComponents.add(label);
+        
+        final Button topologyMenuItem = new Button("Topology", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("topologyView");
+            }
+        });
+        
+        topologyMenuItem.setHtmlContentAllowed(true);
+        topologyMenuItem.setPrimaryStyleName("valo-menu-item");
+        topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
+        menuItemsLayout.addComponent(topologyMenuItem);
+        
+        this.menuComponents.add(topologyMenuItem);
+        
+        final Button mappingMenuItem = new Button("Mapping", new ClickListener()
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("mappingView");
+            }
+        });
+        
+        mappingMenuItem.setHtmlContentAllowed(true);
+        mappingMenuItem.setPrimaryStyleName("valo-menu-item");
+        mappingMenuItem.setIcon(VaadinIcons.COPY_O);
+        menuItemsLayout.addComponent(mappingMenuItem);
+        
+        this.menuComponents.add(mappingMenuItem);
+        
+        label = new Label("Administration", ContentMode.HTML);
+        label.setPrimaryStyleName("valo-menu-subtitle");
+        label.addStyleName("h4");
+        label.setSizeUndefined();
+        menuItemsLayout.addComponent(label);
+        
+        this.menuComponents.add(label);
+        
+        final Button usersItem = new Button("Users", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("userPanel");
+            }
+        });
+        
+        usersItem.setHtmlContentAllowed(true);
+        usersItem.setPrimaryStyleName("valo-menu-item");
+        usersItem.setIcon(VaadinIcons.USER);
+        menuItemsLayout.addComponent(usersItem);
+        
+        this.menuComponents.add(usersItem);
+        
+        final Button groupsItem = new Button("Groups", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
+            }
+        });
+        
+        groupsItem.setHtmlContentAllowed(true);
+        groupsItem.setPrimaryStyleName("valo-menu-item");
+        groupsItem.setIcon(VaadinIcons.USERS);
+        menuItemsLayout.addComponent(groupsItem);
+        
+        this.menuComponents.add(groupsItem);
+        
+        final Button rolesItem = new Button("Roles", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
+            }
+        });
+        
+        rolesItem.setHtmlContentAllowed(true);
+        rolesItem.setPrimaryStyleName("valo-menu-item");
+        rolesItem.setIcon(VaadinIcons.SPECIALIST);
+        menuItemsLayout.addComponent(rolesItem);
+        
+        this.menuComponents.add(rolesItem);
+        
+        final Button policyItem = new Button("Policies", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("policyManagementPanel");
+            }
+        });
+        
+        policyItem.setHtmlContentAllowed(true);
+        policyItem.setPrimaryStyleName("valo-menu-item");
+        policyItem.setIcon(VaadinIcons.SAFE);
+        menuItemsLayout.addComponent(policyItem);
+        
+        this.menuComponents.add(policyItem);
+        
+        final Button authItem = new Button("User Directories", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	UI.getCurrent().getNavigator().navigateTo("authenticationMethodView");
+            }
+        });
+        
+        authItem.setHtmlContentAllowed(true);
+        authItem.setPrimaryStyleName("valo-menu-item");
+        authItem.setIcon(VaadinIcons.COG);
+        menuItemsLayout.addComponent(authItem);
+        
+        this.menuComponents.add(authItem);
+
+        return menu;
+    }
+    
+    private Component buildToggleButton() 
+    {
+    	 final Button showMenu = new Button("Menu", new ClickListener() 
+         {
+             @Override
+             public void buttonClick(final ClickEvent event) 
+             {
+                 if(menu.getStyleName().contains("valo-menu-visible")) 
+                 {
+ 	                menu.setVisible(false);	
+                    menu.removeStyleName("valo-menu-visible");
+                 } 
+                 else 	
+                 {
+                 	menu.setVisible(true);	
+                 	menu.addStyleName("valo-menu-visible");
+                 }
+             }
+         });
+    	 
+         showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
+         showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
+         showMenu.setIcon(FontAwesome.LIST);
+         showMenu.setPrimaryStyleName("valo-menu-item");
+         menu.setStyleName("valo-menu-visible");
+         
+         return showMenu;
+    }
+    
+    public void loadTopLevelNavigator()
+	{
+		Navigator navigator = new Navigator(UI.getCurrent(), this.menuLayout.getContentContainer());
+
+		for (IkasanUIView view : this.views.get("topLevel").getIkasanViews())
+		{
+			logger.info("Adding view:" + view.getPath());
+			navigator.addView(view.getPath(), view.getView());
+		}
+	}
     
 //    static class FeederThread extends Thread {
 //        int count = 0;

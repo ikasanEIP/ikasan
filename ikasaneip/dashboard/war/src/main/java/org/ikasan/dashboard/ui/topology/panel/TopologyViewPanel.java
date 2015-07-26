@@ -41,13 +41,11 @@
 package org.ikasan.dashboard.ui.topology.panel;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -65,16 +63,18 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
+import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
+import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
+import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
+import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
-import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
@@ -83,7 +83,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.model.BusinessStream;
@@ -95,7 +94,9 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.wiretap.service.TriggerManagementService;
 import org.springframework.security.core.GrantedAuthority;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -109,8 +110,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
@@ -129,15 +129,14 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -179,27 +178,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action DISABLE = new Action("Disable");
     private final Action DETAILS = new Action("Details");
     private final Action WIRETAP = new Action("Wiretap");
+    private final Action ERROR_CATEGORISATION = new Action("Categorise Error");
     private final Action STARTUP_CONTROL = new Action("Startup Type");
-    private final Action[] serverActions = new Action[] { DETAILS };
-    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
-    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL };
-    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL };
-    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL };
-    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP };
-    private final Action[] componentActions = new Action[] { WIRETAP };
+    private final Action[] serverActions = new Action[] { DETAILS, ERROR_CATEGORISATION };
+    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION };
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION };
+    private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION };
+    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
-	
-	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
-	private ThemeResource moduleResource = new ThemeResource("images/module.png");
-	private ThemeResource flowResource = new ThemeResource("images/flow.png");
-	private ThemeResource flowStartedResource = new ThemeResource("images/flow_started.png");
-	private ThemeResource flowPausedResource = new ThemeResource("images/flow_paused.png");
-	private ThemeResource flowStoppedResource = new ThemeResource("images/flow_stopped.png");
-	private ThemeResource flowStoppedInErrorResource = new ThemeResource("images/flow_stopped_in_error.png");
-	private ThemeResource componentResource = new ThemeResource("images/component.png");
-	private ThemeResource componentConfigurableResource = new ThemeResource("images/component_configurable.png");
 
-	private TopologyService topologyService;
 	private Panel topologyTreePanel;
 	private Tree moduleTree;
 	private ComponentConfigurationWindow componentConfigurationWindow;
@@ -239,24 +229,28 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private PopupDateField systemEventFromDate;
 	private PopupDateField systemEventToDate;
 	
-	private TextField eventId;
-	private TextField payloadContent;
-	
+//	private TextField eventId;
+//	private TextField payloadContent;
+//	
 	private ErrorReportingService errorReportingService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private TopologyService topologyService;
 	
 	private SerialiserFactory serialiserFactory;
 	
 	private BusinessStream businessStream;
 	
 	private SystemEventService systemEventService;
+	private ErrorCategorisationService errorCategorisationService;
+	private TriggerManagementService triggerManagementService;
 	
 	private HashMap<String, String> flowStates = new HashMap<String, String>();
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService)
+			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
+			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -298,6 +292,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("systemEventService cannot be null!");
 		}
+		this.errorCategorisationService = errorCategorisationService;
+		if(this.errorCategorisationService == null)
+		{
+			throw new IllegalArgumentException("errorCategorisationService cannot be null!");
+		}
+		this.triggerManagementService = triggerManagementService;
+		if(this.triggerManagementService == null)
+		{
+			throw new IllegalArgumentException("triggerManagementService cannot be null!");
+		}
 
 		init();
 	}
@@ -314,6 +318,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.setHeight("100%");
 
 		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+		hsplit.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
 		HorizontalLayout leftLayout = new HorizontalLayout();
 		leftLayout.setSizeFull();
@@ -351,6 +356,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
 			VerticalLayout tab1 = new VerticalLayout();
 			tab1.setSizeFull();
+			
 			tab1.addComponent(createBusinessStreamPanel());
 			tabsheet.addTab(tab1, "Business Stream");
     	}
@@ -361,7 +367,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
     		VerticalLayout tab2 = new VerticalLayout();
     		tab2.setSizeFull();
-    		tab2.addComponent(createWiretapPanel());
+    		
+    		WiretapTab wiretapTab = new WiretapTab
+					(this.wiretapDao, this.treeViewBusinessStreamCombo);
+			tab2.addComponent(wiretapTab.createWiretapLayout());
+			
     		tabsheet.addTab(tab2, "Wiretaps");
     	}
     	
@@ -371,7 +381,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
     		VerticalLayout tab3 = new VerticalLayout();
     		tab3.setSizeFull();
-    		tab3.addComponent(createErrorOccurencePanel());
+    		
+    		ErrorOccurrenceTab errorOccurrenceTab = new ErrorOccurrenceTab
+					(this.errorReportingService, this.treeViewBusinessStreamCombo);
+			tab3.addComponent(errorOccurrenceTab.createCategorisedErrorLayout());
+			
     		tabsheet.addTab(tab3, "Errors");
     	}
     	
@@ -381,32 +395,55 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
     		final VerticalLayout tab4 = new VerticalLayout();
     		tab4.setSizeFull();
-    		tab4.addComponent(createExclusionPanel());
+    		final ExclusionsTab actionedExclusionsTab = new ExclusionsTab(this.errorReportingService, 
+    				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
+    				this.serialiserFactory, this.treeViewBusinessStreamCombo);
+    		
+    		tab4.addComponent(actionedExclusionsTab.createLayout());
     		tabsheet.addTab(tab4, "Exclusions");
+    		
+    		tabsheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
+ 	           
+                public void selectedTabChange(SelectedTabChangeEvent event) 
+                {
+                	if(authentication != null 
+                			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+                					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
+                	{
+                		actionedExclusionsTab.refreshExcludedEventsTable();
+                	}
+                }
+            });
     	}
 		
     	final VerticalLayout tab5 = new VerticalLayout();
 		tab5.setSizeFull();
-		tab5.addComponent(createActionedExclusionsPanel());
+		ActionedExclusionTab actionedExclusionTab = new ActionedExclusionTab
+				(this.exclusionManagementService, this.hospitalManagementService,
+						this.errorReportingService, this.topologyService, this.serialiserFactory,
+						this.treeViewBusinessStreamCombo);
+		tab5.addComponent(actionedExclusionTab.createLayout());
 		tabsheet.addTab(tab5, "Actioned Exclusions");
+	
 		
 		final VerticalLayout tab6 = new VerticalLayout();
 		tab6.setSizeFull();
 		tab6.addComponent(this.createSystemEventPanel());
 		tabsheet.addTab(tab6, "System Events");
 		
-		tabsheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
-	           
-            public void selectedTabChange(SelectedTabChangeEvent event) 
-            {
-            	if(authentication != null 
-            			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-            					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
-            	{
-            		refreshExcludedEventsTable();
-            	}
-            }
-        });
+		
+		// Graph stuff was a demo. Commenting out for now.
+//		final VerticalLayout tab7 = new VerticalLayout();
+//		tab7.setSizeFull();
+//		tab7.addComponent(this.initGraph());
+//		tabsheet.addTab(tab7, "Graph");
+		
+		final VerticalLayout tab8 = new VerticalLayout();
+		tab8.setSizeFull();
+		CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
+				(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.serialiserFactory);
+		tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
+		tabsheet.addTab(tab8, "Categorised Errors");		
 
 		this.tabsheetPanel.setContent(tabsheet);
 	}
@@ -421,14 +458,52 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.moduleTree.setSizeFull();
 		this.moduleTree.addActionHandler(this);
 		this.moduleTree.setDragMode(TreeDragMode.NODE);
+		this.moduleTree.setItemStyleGenerator(new ItemStyleGenerator() 
+		{
+			@Override
+			public String getStyle(Tree source, Object itemId)
+			{
+				if(itemId instanceof Flow)
+				{
+					Flow flow = (Flow)itemId;
+					
+					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+	            	
+					logger.info("State = " + state);
+					
+	    			if(state != null && state.equals(RUNNING))
+	    			{
+	    				return "greenicon";
+	    			}
+	    			else if(state != null && state.equals(RECOVERING))
+	    			{
+	    				return "orangeicon";
+	    			}
+	    			else if (state != null && state.equals(STOPPED))
+	    			{
+	    				return "redicon";
+	    			}
+	    			else if (state != null && state.equals(STOPPED_IN_ERROR))
+	    			{
+	    				return "redicon";
+	    			}
+	    			else if (state != null && state.equals(PAUSED))
+	    			{
+	    				return "yellowicon";
+	    			}
+				}				
+				
+				return "";
+			}
+		});
 		
-		VerticalLayout layout = new VerticalLayout();
+		GridLayout layout = new GridLayout(1, 3);
 		layout.setMargin(true);
-		layout.setSizeFull();
+		layout.setSpacing(true);
+		layout.setWidth("100%");
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
-		this.treeViewBusinessStreamCombo.setHeight(40, Unit.PIXELS);
-		
+				
 		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() {
             public void valueChange(ValueChangeEvent event) 
             {
@@ -458,7 +533,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 			TopologyViewPanel.this.moduleTree.addItem(server);
                 			TopologyViewPanel.this.moduleTree.setItemCaption(server, server.getName());
                 			TopologyViewPanel.this.moduleTree.setChildrenAllowed(server, true);
-                			TopologyViewPanel.this.moduleTree.setItemIcon(server, serverResource);
+                			TopologyViewPanel.this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 
                 	        for(Module module: modules)
                 	        {
@@ -466,7 +541,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	        	TopologyViewPanel.this.moduleTree.setItemCaption(module, module.getName());
                 	        	TopologyViewPanel.this.moduleTree.setParent(module, server);
                 	        	TopologyViewPanel.this.moduleTree.setChildrenAllowed(module, true);
-                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, FontAwesome.DATABASE);
+                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
                 	            
                 	            Set<Flow> flows = module.getFlows();
                 	
@@ -478,26 +553,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
                 	            	
                 	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-        			    			if(state != null && state.equals(RUNNING))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStartedResource);
-        			    			}
-        			    			else if(state != null &&(state.equals(RUNNING) || state.equals(RECOVERING)))
-        			    			{
-        			    				moduleTree.setItemIcon(flow,flowStartedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
-        			    			}
-        			    			else if (state != null && state.equals(PAUSED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowPausedResource);
-        			    			}
+                	            	                	            	
+                	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
                 	                
                 	                Set<Component> components = flow.getComponents();
                 	
@@ -510,11 +567,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	                	
                 	                	if(component.isConfigurable())
                 	                	{
-                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, TopologyViewPanel.this.componentConfigurableResource);
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
                 	                	}
                 	                	else
                 	                	{
-                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, TopologyViewPanel.this.componentResource);
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
                 	                	}
                 	                }
                 	            }
@@ -542,41 +599,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		            		moduleTree.addItem(server);
             		                    moduleTree.setItemCaption(server, server.getName());
             		                    moduleTree.setChildrenAllowed(server, true);
-            		                    moduleTree.setItemIcon(server, serverResource);
+            		                    moduleTree.setItemIcon(server, VaadinIcons.SERVER);
             		        		}
             		                
             		                moduleTree.addItem(module);
             		                moduleTree.setItemCaption(module, module.getName());
             		                moduleTree.setParent(module, server);
             		                moduleTree.setChildrenAllowed(module, true);
-            		                moduleTree.setItemIcon(module, moduleResource);
+            		                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
             		                
             		                moduleTree.addItem(flow);
             		                moduleTree.setItemCaption(flow, flow.getName());
             		                moduleTree.setParent(flow, module);
             		                moduleTree.setChildrenAllowed(flow, true);
             		                
-            		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-        			    			if(state != null && state.equals(RUNNING))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStartedResource);
-        			    			}
-        			    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-        			    			{
-        			    				moduleTree.setItemIcon(flow,flowStartedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedResource);
-        			    			}
-        			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
-        			    			}
-        			    			else if (state != null && state.equals(PAUSED))
-        			    			{
-        			    				moduleTree.setItemIcon(flow, flowPausedResource);
-        			    			}
+            		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
             		                
             		                Set<Component> components = flow.getComponents();
             		
@@ -588,13 +625,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		                	moduleTree.setChildrenAllowed(component, false);
             		                	
             		                	if(component.isConfigurable())
-            		                	{
-            		                		moduleTree.setItemIcon(component, componentConfigurableResource);
-            		                	}
-            		                	else
-            		                	{
-            		                		moduleTree.setItemIcon(component, componentResource);
-            		                	}
+                	                	{
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+                	                	}
+                	                	else
+                	                	{
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+                	                	}
             		                }
             		        	}
             	        	}
@@ -613,41 +650,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                		moduleTree.addItem(server);
 		                        moduleTree.setItemCaption(server, server.getName());
 		                        moduleTree.setChildrenAllowed(server, true);
-		                        moduleTree.setItemIcon(server, serverResource);
+		                        moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 	                		}
 	                        
 	                        moduleTree.addItem(module);
 	    	                moduleTree.setItemCaption(module, module.getName());
 	                        moduleTree.setParent(module, server);
 	    	                moduleTree.setChildrenAllowed(module, true);
-	    	                moduleTree.setItemIcon(module, moduleResource);
+	    	                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 	                        
 	                        moduleTree.addItem(flow);
 	    	                moduleTree.setItemCaption(flow, flow.getName());
 	                        moduleTree.setParent(flow, module);
 	    	                moduleTree.setChildrenAllowed(flow, true);
 	    	                
-	    	                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-			    			if(state != null && state.equals(RUNNING))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowStartedResource);
-			    			}
-			    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-			    			{
-			    				moduleTree.setItemIcon(flow,flowStartedResource);
-			    			}
-			    			else if (state != null && state.equals(STOPPED))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowStoppedResource);
-			    			}
-			    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowStoppedInErrorResource);
-			    			}
-			    			else if (state != null && state.equals(PAUSED))
-			    			{
-			    				moduleTree.setItemIcon(flow, flowPausedResource);
-			    			}
+	    	                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	    	                
 	    	                Set<Component> components = flow.getComponents();
 	    	
@@ -659,13 +676,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    	                	moduleTree.setChildrenAllowed(component, false);
 	    	                	
 	    	                	if(component.isConfigurable())
-	    	                	{
-	    	                		moduleTree.setItemIcon(component, componentConfigurableResource);
-	    	                	}
-	    	                	else
-	    	                	{
-	    	                		moduleTree.setItemIcon(component, componentResource);
-	    	                	}
+        	                	{
+        	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+        	                	}
+        	                	else
+        	                	{
+        	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+        	                	}
 	    	                }
 	                	}
                 	}        	
@@ -674,10 +691,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 
 		layout.addComponent(this.treeViewBusinessStreamCombo);
-		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.12f);
 		
 		Button discoverButton = new Button("Discover");
-		discoverButton.setStyleName(Reindeer.BUTTON_SMALL);
+		discoverButton.setStyleName(ValoTheme.BUTTON_SMALL);
+		
 		discoverButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -701,7 +718,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		Button refreshButton = new Button("Refresh");
-		refreshButton.setStyleName(Reindeer.BUTTON_SMALL);
+		refreshButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -712,13 +729,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 		
 		GridLayout buttonLayout = new GridLayout(2, 1);
+		buttonLayout.setSpacing(true);
 		buttonLayout.addComponent(discoverButton);
 		buttonLayout.addComponent(refreshButton);
-		layout.addComponent(buttonLayout);
-		layout.setExpandRatio(buttonLayout, 0.1f);
 		
+		layout.addComponent(buttonLayout);
 		layout.addComponent(this.moduleTree);
-		layout.setExpandRatio(this.moduleTree, 0.78f);
 
 		this.topologyTreePanel.setContent(layout);
 	}
@@ -729,7 +745,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.businessStreamTable.addContainerProperty("Flow Name", String.class,  null);
 		this.businessStreamTable.addContainerProperty("", Button.class,  null);
 		this.businessStreamTable.setSizeFull();
-		this.businessStreamTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+//		this.businessStreamTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.businessStreamTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.businessStreamTable.setDragMode(TableDragMode.ROW);
 		this.businessStreamTable.setDropHandler(new DropHandler()
 		{
@@ -775,15 +792,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
 						
 						Button deleteButton = new Button();
-    					ThemeResource deleteIcon = new ThemeResource(
-    							"images/remove-icon.png");
+    					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
     					deleteButton.setIcon(deleteIcon);
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);    					
+
     					
-						Button flowButton = new Button();
-						flowButton.setIcon(flowResource);
-    					
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     					deleteButton.setData(businessStreamFlow);
     					
     					// Add the delete functionality to each role that is added
@@ -829,15 +843,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							businessStream.getFlows().add(businessStreamFlow);
 							
 							TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-							
-							Button flowButton = new Button();
-							flowButton.setIcon(flowResource);
-	    					
+							    					
 							Button deleteButton = new Button();
-	    					ThemeResource deleteIcon = new ThemeResource(
-	    							"images/remove-icon.png");
+							Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+							
 	    					deleteButton.setIcon(deleteIcon);
-	    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+	    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 	    					deleteButton.setData(businessStreamFlow);
 	    					
 	    					// Add the delete functionality to each role that is added
@@ -903,14 +914,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	{
                 		logger.info("Adding flow: " + businessStreamFlow);
                 		Button deleteButton = new Button();
-    					ThemeResource deleteIcon = new ThemeResource(
-    							"images/remove-icon.png");
+                		Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
+                		
     					deleteButton.setIcon(deleteIcon);
-    					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-    					
-    					Button flowButton = new Button();
-						flowButton.setIcon(flowResource);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     					
     					// Add the delete functionality to each role that is added
     					deleteButton.addClickListener(new Button.ClickListener() 
@@ -951,7 +958,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		controlsLayout.addComponent(businessStreamCombo, 1, 0);
 		
 		Button newButton = new Button("New");
-		newButton.setStyleName(Reindeer.BUTTON_LINK);
+		newButton.setStyleName(ValoTheme.BUTTON_LINK);
     	newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -989,7 +996,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	controlsLayout.addComponent(newButton, 2, 0);
     	
     	Button deleteButton = new Button("Delete");
-    	deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    	deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     	deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -1015,1180 +1022,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		return layout;
 	}
 	
-	
-	
-	protected Layout createWiretapPanel()
-	{
-		this.wiretapTable = new Table();
-		this.wiretapTable.setSizeFull();
-		this.wiretapTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		this.wiretapTable.addContainerProperty("Module Name", String.class,  null);
-		this.wiretapTable.addContainerProperty("Flow Name", String.class,  null);
-		this.wiretapTable.addContainerProperty("Component Name", String.class,  null);
-		this.wiretapTable.addContainerProperty("Timestamp", String.class,  null);
-		
-		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) {
-		    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
-		    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
-		    
-		    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
-		    }
-		});
-		
-		
-		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
-		searchButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	wiretapTable.removeAllItems();
-
-            	HashSet<String> modulesNames = null;
-            	
-            	if(wiretapModules.getItemIds().size() > 0)
-            	{
-	            	modulesNames = new HashSet<String>();
-	            	for(Object module: wiretapModules.getItemIds())
-	            	{
-	            		modulesNames.add(((Module)module).getName());
-	            	}
-            	}
-            	
-            	HashSet<String> flowNames = null;
-            	
-            	if(wiretapFlows.getItemIds().size() > 0)
-            	{
-            		flowNames = new HashSet<String>();
-            		for(Object flow: wiretapFlows.getItemIds())
-                	{
-                		flowNames.add(((Flow)flow).getName());
-                	}
-            	}
-            	
-            	HashSet<String> componentNames = null;
-            	
-            	if(wiretapComponents.getItemIds().size() > 0)
-            	{
-            		componentNames = new HashSet<String>();
-	            	for(Object component: wiretapComponents.getItemIds())
-	            	{
-	            		componentNames.add("before " + ((Component)component).getName());
-	            		componentNames.add("after " + ((Component)component).getName());
-	            	}
-            	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
-            			&& !((BusinessStream)treeViewBusinessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)treeViewBusinessStreamCombo.getValue());
-            		
-            		modulesNames = new HashSet<String>();
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}
-         
-            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
-            			, flowNames, componentNames, null, null, fromDate.getValue(), toDate.getValue(), null);
-
-            	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
-            	{
-            		Date date = new Date(wiretapEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            	    String timestamp = format.format(date);
-            	    
-            		wiretapTable.addItem(new Object[]{wiretapEvent.getModuleName(), wiretapEvent.getFlowName()
-            				, wiretapEvent.getComponentName(), timestamp}, wiretapEvent);
-            	}
-            }
-        });
-		
-		Button clearButton = new Button("Clear");
-		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
-		clearButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	wiretapModules.removeAllItems();
-            	wiretapFlows.removeAllItems();
-            	wiretapComponents.removeAllItems();
-            }
-        });
-
-		GridLayout layout = new GridLayout(1, 5);
-		layout.setMargin(true);
-		
-		GridLayout listSelectLayout = new GridLayout(3, 1);
-		listSelectLayout.setSizeFull();
-		
-		wiretapModules.addContainerProperty("Module Name", String.class,  null);
-		wiretapModules.addContainerProperty("", Button.class,  null);
-		wiretapModules.setSizeFull();
-		wiretapModules.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		wiretapModules.setDragMode(TableDragMode.ROW);
-		wiretapModules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	wiretapModules.removeItem(module);
-			            }
-			        });
-					
-					wiretapModules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	wiretapFlows.removeItem(flow);
-				            }
-				        });
-						
-						wiretapFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	wiretapComponents.removeItem(component);
-					            }
-					        });
-							
-							wiretapComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(wiretapModules, 0, 0);
-		wiretapFlows.addContainerProperty("Flow Name", String.class,  null);
-		wiretapFlows.addContainerProperty("", Button.class,  null);
-		wiretapFlows.setSizeFull();
-		wiretapFlows.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		wiretapFlows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	wiretapFlows.removeItem(flow);
-			            }
-			        });
-					
-					wiretapFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	wiretapComponents.removeItem(component);
-				            }
-				        });
-						
-						wiretapComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(wiretapFlows, 1, 0);
-		wiretapComponents.setSizeFull();
-		wiretapComponents.addContainerProperty("Component Name", String.class,  null);
-		wiretapComponents.addContainerProperty("", Button.class,  null);
-		wiretapComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		wiretapComponents.setSizeFull();
-		wiretapComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		wiretapComponents.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	wiretapComponents.removeItem(component);
-			            }
-			        });
-					
-					wiretapComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.wiretapComponents, 2, 0);
-		
-		GridLayout dateSelectLayout = new GridLayout(2, 2);
-		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
-		dateSelectLayout.setColumnExpandRatio(1, 0.75f);
-		dateSelectLayout.setSizeFull();
-		this.fromDate = new PopupDateField("From date");
-		this.fromDate.setResolution(Resolution.MINUTE);
-		this.fromDate.setValue(this.getMidnightToday());
-		dateSelectLayout.addComponent(this.fromDate, 0, 0);
-		this.toDate = new PopupDateField("To date");
-		this.toDate.setResolution(Resolution.MINUTE);
-		this.toDate.setValue(this.getTwentyThreeFixtyNineToday());
-		dateSelectLayout.addComponent(this.toDate, 0, 1);
-		
-		this.eventId = new TextField("Event Id");
-		this.eventId.setWidth("80%");
-		this.payloadContent = new TextField("Payload Content");
-		this.payloadContent.setWidth("80%");
-		dateSelectLayout.addComponent(this.eventId, 1, 0);
-		dateSelectLayout.addComponent(this.payloadContent, 1, 1);
-		
-		
-		GridLayout searchLayout = new GridLayout(2, 1);
-		searchLayout.addComponent(searchButton, 0, 0);
-		searchLayout.addComponent(clearButton, 1, 0);
-		
-		
-		HorizontalLayout hListSelectLayout = new HorizontalLayout();
-		hListSelectLayout.setHeight(100 , Unit.PIXELS);
-		hListSelectLayout.setWidth("100%");
-		hListSelectLayout.addComponent(listSelectLayout);
-		layout.addComponent(hListSelectLayout);
-		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(80 , Unit.PIXELS);
-		hDateSelectLayout.setWidth("100%");
-		hDateSelectLayout.addComponent(dateSelectLayout);
-		layout.addComponent(hDateSelectLayout);
-		HorizontalLayout hSearchLayout = new HorizontalLayout();
-		hSearchLayout.setHeight(30 , Unit.PIXELS);
-		hSearchLayout.setWidth("100%");
-		hSearchLayout.addComponent(searchLayout);
-		layout.addComponent(hSearchLayout);
-		HorizontalLayout hWiretapTable = new HorizontalLayout();
-		hWiretapTable.setWidth("100%");
-		hWiretapTable.setHeight(450, Unit.PIXELS);
-		hWiretapTable.addComponent(this.wiretapTable);
-		layout.addComponent(hWiretapTable);
-		layout.setSizeFull();
-		
-		return layout;
-	}
-	
-	protected Layout createErrorOccurencePanel()
-	{
-		this.errorOccurenceTable = new Table();
-		this.errorOccurenceTable.setSizeFull();
-		this.errorOccurenceTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
-		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
-		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
-		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
-		
-		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) {
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
-		    
-		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
-		    }
-		});
-		
-		
-		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
-		searchButton.addClickListener(new Button.ClickListener() 
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event) 
-            {
-            	errorOccurenceTable.removeAllItems();
-
-            	ArrayList<String> modulesNames = null;
-            	
-            	if(errorOccurenceModules.getItemIds().size() > 0)
-            	{
-	            	modulesNames = new ArrayList<String>();
-	            	for(Object module: errorOccurenceModules.getItemIds())
-	            	{
-	            		modulesNames.add(((Module)module).getName());
-	            	}
-            	}
-            	
-            	ArrayList<String> flowNames = null;
-            	
-            	if(errorOccurenceFlows.getItemIds().size() > 0)
-            	{
-            		flowNames = new ArrayList<String>();
-            		for(Object flow: errorOccurenceFlows.getItemIds())
-                	{
-                		flowNames.add(((Flow)flow).getName());
-                	}
-            	}
-            	
-            	ArrayList<String> componentNames = null;
-            	
-            	if(errorOccurenceComponents.getItemIds().size() > 0)
-            	{
-            		componentNames = new ArrayList<String>();
-	            	for(Object component: errorOccurenceComponents.getItemIds())
-	            	{
-	            		componentNames.add(((Component)component).getName());
-	            	}
-            	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
-            			&& !((BusinessStream)treeViewBusinessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)treeViewBusinessStreamCombo.getValue());
-            		
-            		modulesNames = new ArrayList<String>();
-            		
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}
-         
-            	List<ErrorOccurrence> errorOccurences = errorReportingService
-            			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
-
-            	for(ErrorOccurrence errorOccurrence: errorOccurences)
-            	{
-            		Date date = new Date(errorOccurrence.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            	    String timestamp = format.format(date);
-            	    
-            	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), timestamp}, errorOccurrence);
-            	}
-            }
-        });
-		
-		Button clearButton = new Button("Clear");
-		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
-		clearButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	errorOccurenceModules.removeAllItems();
-            	errorOccurenceFlows.removeAllItems();
-            	errorOccurenceComponents.removeAllItems();
-            }
-        });
-
-		GridLayout layout = new GridLayout(1, 5);
-		layout.setMargin(true);
-		
-		GridLayout listSelectLayout = new GridLayout(3, 1);
-		listSelectLayout.setSizeFull();
-		
-		errorOccurenceModules.addContainerProperty("Module Name", String.class,  null);
-		errorOccurenceModules.addContainerProperty("", Button.class,  null);
-		errorOccurenceModules.setSizeFull();
-		errorOccurenceModules.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceModules.setDragMode(TableDragMode.ROW);
-		errorOccurenceModules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceModules.removeItem(module);
-			            }
-			        });
-					
-					errorOccurenceModules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	errorOccurenceFlows.removeItem(flow);
-				            }
-				        });
-						
-						errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	errorOccurenceComponents.removeItem(component);
-					            }
-					        });
-							
-							errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(errorOccurenceModules, 0, 0);
-		errorOccurenceFlows.addContainerProperty("Flow Name", String.class,  null);
-		errorOccurenceFlows.addContainerProperty("", Button.class,  null);
-		errorOccurenceFlows.setSizeFull();
-		errorOccurenceFlows.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceFlows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceFlows.removeItem(flow);
-			            }
-			        });
-					
-					errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	errorOccurenceComponents.removeItem(component);
-				            }
-				        });
-						
-						errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(errorOccurenceFlows, 1, 0);
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.addContainerProperty("Component Name", String.class,  null);
-		errorOccurenceComponents.addContainerProperty("", Button.class,  null);
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceComponents.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceComponents.removeItem(component);
-			            }
-			        });
-					
-					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.errorOccurenceComponents, 2, 0);
-		
-		GridLayout dateSelectLayout = new GridLayout(2, 2);
-		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
-		dateSelectLayout.setColumnExpandRatio(1, 0.75f);
-		dateSelectLayout.setSizeFull();
-		errorFromDate = new PopupDateField("From date");
-		errorFromDate.setResolution(Resolution.MINUTE);
-		errorFromDate.setValue(this.getMidnightToday());
-		dateSelectLayout.addComponent(errorFromDate, 0, 0);
-		errorToDate = new PopupDateField("To date");
-		errorToDate.setResolution(Resolution.MINUTE);
-		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		dateSelectLayout.addComponent(errorToDate, 1, 0);
-				
-		
-		GridLayout searchLayout = new GridLayout(2, 1);
-		searchLayout.addComponent(searchButton, 0, 0);
-		searchLayout.addComponent(clearButton, 1, 0);
-		
-		
-		HorizontalLayout hListSelectLayout = new HorizontalLayout();
-		hListSelectLayout.setHeight(100 , Unit.PIXELS);
-		hListSelectLayout.setWidth("100%");
-		hListSelectLayout.addComponent(listSelectLayout);
-		layout.addComponent(hListSelectLayout);
-		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(40, Unit.PIXELS);
-		hDateSelectLayout.setWidth("100%");
-		hDateSelectLayout.addComponent(dateSelectLayout);
-		layout.addComponent(hDateSelectLayout);
-		HorizontalLayout hSearchLayout = new HorizontalLayout();
-		hSearchLayout.setHeight(30 , Unit.PIXELS);
-		hSearchLayout.setWidth("100%");
-		hSearchLayout.addComponent(searchLayout);
-		layout.addComponent(hSearchLayout);
-		HorizontalLayout hErrorTable = new HorizontalLayout();
-		hErrorTable.setWidth("100%");
-		hErrorTable.setHeight(500, Unit.PIXELS);
-		hErrorTable.addComponent(this.errorOccurenceTable);
-		layout.addComponent(hErrorTable);
-		layout.setSizeFull();
-		
-		return layout;
-	}
-
-	protected Layout createExclusionPanel()
-	{
-		this.exclusionsTable = new Table();
-		this.exclusionsTable.setSizeFull();
-		this.exclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Action", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Actioned By", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
-		
-		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
-		{
-		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) 
-		    {
-		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
-		    			, action, hospitalManagementService, topologyService);
-		    	
-		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
-		    	{
-		            // inline close-listener
-		            public void windowClose(CloseEvent e) 
-		            {
-		            	refreshExcludedEventsTable();
-		            }
-		        });
-		    
-		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
-		    }
-		});
-		
-		
-		Button refreshButton = new Button("Refresh");
-		refreshButton.setStyleName(Reindeer.BUTTON_SMALL);
-		refreshButton.addClickListener(new Button.ClickListener() 
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event) 
-            {
-            	refreshExcludedEventsTable();
-            }
-        });
-		
-
-		GridLayout layout = new GridLayout(1, 2);
-		layout.setMargin(true);				
-		
-		GridLayout searchLayout = new GridLayout(1, 1);
-		searchLayout.addComponent(refreshButton, 0, 0);
-
-		HorizontalLayout hSearchLayout = new HorizontalLayout();
-		hSearchLayout.setHeight(30 , Unit.PIXELS);
-		hSearchLayout.setWidth("100%");
-		hSearchLayout.addComponent(searchLayout);
-		layout.addComponent(hSearchLayout);
-		HorizontalLayout hErrorTable = new HorizontalLayout();
-		hErrorTable.setWidth("100%");
-		hErrorTable.setHeight(600, Unit.PIXELS);
-		hErrorTable.addComponent(this.exclusionsTable);
-		layout.addComponent(hErrorTable);
-		layout.setSizeFull();
-		
-		return layout;
-	}
-	
-	protected Layout createActionedExclusionsPanel()
-	{
-		this.actionedExclusionsTable = new Table();
-		this.actionedExclusionsTable.setSizeFull();
-		this.actionedExclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		this.actionedExclusionsTable.addContainerProperty("Module Name", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Flow Name", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Action", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Actioned By", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Timestamp", String.class,  null);
-		
-		this.actionedExclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) 
-		    {
-		    	ExclusionEventAction exclusionEventAction = (ExclusionEventAction)itemClickEvent.getItemId();
-		    	
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
-		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
-		    	ActionedExclusionEventViewWindow actionExclusionEventViewWindow = new ActionedExclusionEventViewWindow(errorOccurrence, serialiserFactory
-		    			, action, hospitalManagementService, topologyService);
-		    
-		    	UI.getCurrent().addWindow(actionExclusionEventViewWindow);
-		    }
-		});
-		
-		
-		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
-		searchButton.addClickListener(new Button.ClickListener() 
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event) 
-            {
-            	actionedExclusionsTable.removeAllItems();
-
-            	         
-            	ArrayList<String> modulesNames = null;
-            	
-            	if(actionedExclusionsModules.getItemIds().size() > 0)
-            	{
-	            	modulesNames = new ArrayList<String>();
-	            	for(Object module: actionedExclusionsModules.getItemIds())
-	            	{
-	            		modulesNames.add(((Module)module).getName());
-	            	}
-            	}
-            	
-            	ArrayList<String> flowNames = null;
-            	
-            	if(actionedExclusionsFlows.getItemIds().size() > 0)
-            	{
-            		flowNames = new ArrayList<String>();
-            		for(Object flow: actionedExclusionsFlows.getItemIds())
-                	{
-                		flowNames.add(((Flow)flow).getName());
-                	}
-            	}
-            	
-            	ArrayList<String> componentNames = null;
-            	
-            	if(actionedExclusionsComponents.getItemIds().size() > 0)
-            	{
-            		componentNames = new ArrayList<String>();
-	            	for(Object component: actionedExclusionsComponents.getItemIds())
-	            	{
-	            		componentNames.add(((Component)component).getName());
-	            	}
-            	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
-            			&& !((BusinessStream)treeViewBusinessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)treeViewBusinessStreamCombo.getValue());
-            		
-            		modulesNames = new ArrayList<String>();
-            		
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}
-         
-            	List<ExclusionEventAction> exclusionEventActions = hospitalManagementService.getActionedExclusions
-            			(modulesNames, flowNames, actionedExclusionFromDate.getValue(), actionedExclusionToDate.getValue());
-
-            	for(ExclusionEventAction exclusionEventAction: exclusionEventActions)
-            	{
-            		Date date = new Date(exclusionEventAction.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            	    String timestamp = format.format(date);
-            	    
-            	    actionedExclusionsTable.addItem(new Object[]{exclusionEventAction.getModuleName(), exclusionEventAction.getFlowName()
-            				, exclusionEventAction.getAction(), exclusionEventAction.getActionedBy(), timestamp}, exclusionEventAction);
-            	}
-
-            }
-        });
-
-		GridLayout listSelectLayout = new GridLayout(3, 1);
-		listSelectLayout.setSizeFull();
-		
-		actionedExclusionsModules.addContainerProperty("Module Name", String.class,  null);
-		actionedExclusionsModules.addContainerProperty("", Button.class,  null);
-		actionedExclusionsModules.setSizeFull();
-		actionedExclusionsModules.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		actionedExclusionsModules.setDragMode(TableDragMode.ROW);
-		actionedExclusionsModules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
-					
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	actionedExclusionsModules.removeItem(module);
-			            }
-			        });
-					
-					actionedExclusionsModules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	actionedExclusionsFlows.removeItem(flow);
-				            }
-				        });
-						
-						actionedExclusionsFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	actionedExclusionsComponents.removeItem(component);
-					            }
-					        });
-							
-							actionedExclusionsComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(actionedExclusionsModules, 0, 0);
-		actionedExclusionsFlows.addContainerProperty("Flow Name", String.class,  null);
-		actionedExclusionsFlows.addContainerProperty("", Button.class,  null);
-		actionedExclusionsFlows.setSizeFull();
-		actionedExclusionsFlows.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		actionedExclusionsFlows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	actionedExclusionsFlows.removeItem(flow);
-			            }
-			        });
-					
-					actionedExclusionsFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	actionedExclusionsComponents.removeItem(component);
-				            }
-				        });
-						
-						actionedExclusionsComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(actionedExclusionsFlows, 1, 0);
-		actionedExclusionsComponents.setSizeFull();
-		actionedExclusionsComponents.addContainerProperty("Component Name", String.class,  null);
-		actionedExclusionsComponents.addContainerProperty("", Button.class,  null);
-		actionedExclusionsComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		actionedExclusionsComponents.setSizeFull();
-		actionedExclusionsComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		actionedExclusionsComponents.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-										
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	actionedExclusionsComponents.removeItem(component);
-			            }
-			        });
-					
-					actionedExclusionsComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.actionedExclusionsComponents, 2, 0);
-
-				
-		GridLayout dateSelectLayout = new GridLayout(2, 1);
-		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
-		dateSelectLayout.setWidth("50%");
-		this.actionedExclusionFromDate = new PopupDateField("From date");
-		this.actionedExclusionFromDate.setResolution(Resolution.MINUTE);
-		this.actionedExclusionFromDate.setValue(this.getMidnightToday());
-		dateSelectLayout.addComponent(this.actionedExclusionFromDate, 0, 0);
-		this.actionedExclusionToDate = new PopupDateField("To date");
-		this.actionedExclusionToDate.setResolution(Resolution.MINUTE);
-		this.actionedExclusionToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		dateSelectLayout.addComponent(this.actionedExclusionToDate, 1, 0);
-		
-		Button clearButton = new Button("Clear");
-		clearButton.setStyleName(Reindeer.BUTTON_SMALL);
-		clearButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	actionedExclusionsModules.removeAllItems();
-            	actionedExclusionsFlows.removeAllItems();
-            	actionedExclusionsComponents.removeAllItems();
-            }
-        });
-		
-		GridLayout searchLayout = new GridLayout(2, 1);
-		searchLayout.addComponent(searchButton, 0, 0);	
-		searchLayout.addComponent(clearButton, 1, 0);	
-		
-		GridLayout layout = new GridLayout(1, 4);
-		layout.setMargin(true);
-		
-		HorizontalLayout hListSelectLayout = new HorizontalLayout();
-		hListSelectLayout.setHeight(100 , Unit.PIXELS);
-		hListSelectLayout.setWidth("100%");
-		hListSelectLayout.addComponent(listSelectLayout);
-		layout.addComponent(hListSelectLayout);
-		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
-		hDateSelectLayout.setHeight(40, Unit.PIXELS);
-		hDateSelectLayout.setWidth("100%");
-		hDateSelectLayout.addComponent(dateSelectLayout);
-		layout.addComponent(hDateSelectLayout);
-		HorizontalLayout hSearchLayout = new HorizontalLayout();
-		hSearchLayout.setHeight(30 , Unit.PIXELS);
-		hSearchLayout.setWidth("100%");
-		hSearchLayout.addComponent(searchLayout);
-		layout.addComponent(hSearchLayout);
-		HorizontalLayout hActionedExclusionsTableLayout = new HorizontalLayout();
-		hActionedExclusionsTableLayout.setWidth("100%");
-		hActionedExclusionsTableLayout.setHeight(500, Unit.PIXELS);
-		hActionedExclusionsTableLayout.addComponent(this.actionedExclusionsTable);
-		layout.addComponent(hActionedExclusionsTableLayout);
-		layout.setSizeFull();
-		
-		return layout;
-	}
-	
 	protected Layout createSystemEventPanel()
 	{
 		this.systemEventTable = new Table();
 		this.systemEventTable.setSizeFull();
-		this.systemEventTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.systemEventTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.systemEventTable.addContainerProperty("Subject", String.class,  null);
-		this.systemEventTable.addContainerProperty("Action", TextArea.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Subject", .3f);
+		this.systemEventTable.addContainerProperty("Action", String.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Action", .4f);
 		this.systemEventTable.addContainerProperty("Actioned By", String.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Actioned By", .15f);
 		this.systemEventTable.addContainerProperty("Timestamp", String.class,  null);
+		this.systemEventTable.setColumnExpandRatio("Timestamp", .15f);
+		
+		this.systemEventTable.setStyleName("wordwrap-table");
 		
 		this.systemEventTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
@@ -2216,7 +1064,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		Button searchButton = new Button("Search");
-		searchButton.setStyleName(Reindeer.BUTTON_SMALL);
+		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -2232,22 +1080,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             	    String timestamp = format.format(systemEvent.getTimestamp());
             	    
-            	    TextArea action = new TextArea();
-            	    action.setRows(3);
-            	    action.setWordwrap(true);
-            	    action.setValue(systemEvent.getAction());
-            	    action.setSizeFull();
-            	    action.setReadOnly(true);
-            	    
-            		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), action
+            		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
         				, systemEvent.getActor(), timestamp}, systemEvent);
             	}
             }
         });
 		
 
-		GridLayout layout = new GridLayout(1, 2);
-		layout.setMargin(true);				
+		GridLayout layout = new GridLayout(1, 2);			
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
@@ -2277,35 +1117,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setSizeFull();
 		
 		return layout;
-	}
-
-	
-	protected void refreshExcludedEventsTable()
-	{
-		exclusionsTable.removeAllItems();
-    	
-    	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
-
-    	for(ExclusionEvent exclusionEvent: exclusionEvents)
-    	{
-    		Date date = new Date(exclusionEvent.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-    	    String timestamp = format.format(date);
-    	    
-    	    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-    	    
-    	    String actionString = "";
-    	    String actionedByString = "";
-    	    
-    	    if(action != null)
-    	    {
-    	    	actionString = action.getAction();
-    	    	actionedByString = action.getActionedBy();
-    	    }
-    	    
-    	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(), actionString, actionedByString,
-    				timestamp}, exclusionEvent);
-    	}
 	}
 
 	/* (non-Javadoc)
@@ -2342,7 +1153,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				this.moduleTree.addItem(server);
 	            this.moduleTree.setItemCaption(server, server.getName());
 	            this.moduleTree.setChildrenAllowed(server, true);
-	            this.moduleTree.setItemIcon(server, serverResource);
+	            this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 	
 		        for(Module module: modules)
 		        {
@@ -2352,7 +1163,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		            this.moduleTree.setItemCaption(module, module.getName());
 		            this.moduleTree.setParent(module, server);
 		            this.moduleTree.setChildrenAllowed(module, true);
-		            this.moduleTree.setItemIcon(module, moduleResource);
+		            this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 		            
 		            Set<Flow> flows = module.getFlows();
 		
@@ -2363,27 +1174,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	                    this.moduleTree.setParent(flow, module);
 		                this.moduleTree.setChildrenAllowed(flow, true);
 		    			
-		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-		    			if(state != null && state.equals(RUNNING))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
-		    			}
-		    			else if (state != null && state.equals(PAUSED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
-		    			}
+		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 		                
 		                Set<Component> components = flow.getComponents();
 		                
@@ -2395,13 +1186,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                	this.moduleTree.setChildrenAllowed(component, false);
 		                	
 		                	if(component.isConfigurable())
-		                	{
-		                		this.moduleTree.setItemIcon(component, this.componentConfigurableResource);
-		                	}
-		                	else
-		                	{
-		                		this.moduleTree.setItemIcon(component, this.componentResource);
-		                	}
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+    	                	}
+    	                	else
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+    	                	}
 		                }
 		            }
 		        }
@@ -2469,41 +1260,20 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		            		moduleTree.addItem(server);
 		                    moduleTree.setItemCaption(server, server.getName());
 		                    moduleTree.setChildrenAllowed(server, true);
-		                    moduleTree.setItemIcon(server, serverResource);
-		        		}
+		                    		        		}
 		                
 		                moduleTree.addItem(module);
 		                moduleTree.setItemCaption(module, module.getName());
 		                moduleTree.setParent(module, server);
 		                moduleTree.setChildrenAllowed(module, true);
-		                moduleTree.setItemIcon(module, moduleResource);
+		                moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
 		                
 		                moduleTree.addItem(flow);
 		                moduleTree.setItemCaption(flow, flow.getName());
 		                moduleTree.setParent(flow, module);
 		                moduleTree.setChildrenAllowed(flow, true);
 
-		                String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-		    			if(state != null && state.equals(RUNNING))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStartedResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED_IN_ERROR))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedInErrorResource);
-		    			}
-		    			else if (state != null && state.equals(STOPPED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowStoppedResource);
-		    			}
-		    			else if (state != null && state.equals(PAUSED))
-		    			{
-		    				this.moduleTree.setItemIcon(flow, this.flowPausedResource);
-		    			}
+		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 		                
 		                Set<Component> components = flow.getComponents();
 		
@@ -2515,13 +1285,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		                	moduleTree.setChildrenAllowed(component, false);
 		                	
 		                	if(component.isConfigurable())
-		                	{
-		                		moduleTree.setItemIcon(component, componentConfigurableResource);
-		                	}
-		                	else
-		                	{
-		                		moduleTree.setItemIcon(component, componentResource);
-		                	}
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
+    	                	}
+    	                	else
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
+    	                	}
 		                }
 		                
 		                this.businessStreamCombo.addItem(businessStream);
@@ -2542,7 +1312,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		for (Iterator<?> it = this.moduleTree.getItemIds().iterator(); it.hasNext();) 
 		{
 			Object nextItem = it.next();
-			if(nextItem instanceof Flow)
+			if(nextItem instanceof Module)
 			{
 				this.moduleTree.collapseItemsRecursively(nextItem);
 			}
@@ -2588,70 +1358,71 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    return true;
 	}
 	
-	
+
+	// TODO removing below functionality. We need to cache flow state data somewhere due to performance.
 	protected void refreshFlowStates(Set<Module> modules)
 	{
-		for(Module module: modules)
-		{
-			this.flowStates.putAll(this.getFlowStates(module));
-		}
+//		for(Module module: modules)
+//		{
+//			this.flowStates.putAll(this.getFlowStates(module));
+//		}
 	}
 
-	protected String getFlowState(Flow flow)
-	{
-		String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort() 
-				+ flow.getModule().getContextRoot() 
-				+ "/rest/moduleControl/flowState/"
-				+ flow.getModule().getName() + "/"
-				+ flow.getName();
-		
-		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-    	
-    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-	    WebTarget webTarget = client.target(url);
-	    
-	    return webTarget.request().get(String.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected HashMap<String, String> getFlowStates(Module module)
-	{
-		HashMap<String, String> results = new HashMap<String, String>();
-		try
-		{
-			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
-					+ module.getContextRoot() 
-					+ "/rest/moduleControl/flowStates/"
-					+ module.getName();
-			
-			IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-		        	.getAttribute(DashboardSessionValueConstants.USER);
-	    	
-	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-	    	
-	    	ClientConfig clientConfig = new ClientConfig();
-	    	clientConfig.register(feature) ;
-	    	
-	    	Client client = ClientBuilder.newClient(clientConfig);
-	    	
-	    	WebTarget webTarget = client.target(url);
-		    
-	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
-		}
-		catch(Exception e)
-		{
-			return new HashMap<String, String>();
-		}
-	    
-	    return results;
-	}
+//	protected String getFlowState(Flow flow)
+//	{
+//		String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort() 
+//				+ flow.getModule().getContextRoot() 
+//				+ "/rest/moduleControl/flowState/"
+//				+ flow.getModule().getName() + "/"
+//				+ flow.getName();
+//		
+//		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+//	        	.getAttribute(DashboardSessionValueConstants.USER);
+//    	
+//    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+//    	
+//    	ClientConfig clientConfig = new ClientConfig();
+//    	clientConfig.register(feature) ;
+//    	
+//    	Client client = ClientBuilder.newClient(clientConfig);
+//    	
+//	    WebTarget webTarget = client.target(url);
+//	    
+//	    return webTarget.request().get(String.class);
+//	}
+//	
+//	@SuppressWarnings("unchecked")
+//	protected HashMap<String, String> getFlowStates(Module module)
+//	{
+//		HashMap<String, String> results = new HashMap<String, String>();
+//		try
+//		{
+//			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+//					+ module.getContextRoot() 
+//					+ "/rest/moduleControl/flowStates/"
+//					+ module.getName();
+//			
+//			IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+//		        	.getAttribute(DashboardSessionValueConstants.USER);
+//	    	
+//	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+//	    	
+//	    	ClientConfig clientConfig = new ClientConfig();
+//	    	clientConfig.register(feature) ;
+//	    	
+//	    	Client client = ClientBuilder.newClient(clientConfig);
+//	    	
+//	    	WebTarget webTarget = client.target(url);
+//		    
+//	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
+//		}
+//		catch(Exception e)
+//		{
+//			return new HashMap<String, String>();
+//		}
+//	    
+//	    return results;
+//	}
 	
 	/* (non-Javadoc)
 	 * @see com.vaadin.event.Action.Handler#getActions(java.lang.Object, java.lang.Object)
@@ -2690,6 +1461,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			{
 				return this.flowActionsPaused;
 			}
+			else
+			{
+				return this.flowActions;
+			}
         }
 		else if(target instanceof Component)
         {
@@ -2724,7 +1499,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         	}
         	if(action.equals(WIRETAP))
         	{
-        		UI.getCurrent().addWindow(new WiretapConfigurationWindow());
+        		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target
+        			, triggerManagementService));
+        	}
+        	if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Component component = (Component)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(component.getFlow().getModule().getServer(),
+        				component.getFlow().getModule(), component.getFlow(), component, errorCategorisationService));
         	}
         }
         else if(target != null && target instanceof Flow)
@@ -2735,43 +1518,70 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        {
 	     		if(this.actionFlow(flow, "start"))
 	     		{
-	     			senderTree.setItemIcon(flow, this.flowStartedResource);
+	     			TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	     		}
 	        }
 	        else if(action.equals(STOP))
 	        {
 	        	if(this.actionFlow(flow, "stop"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowStoppedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(PAUSE))
 	        {
 	        	if(this.actionFlow(flow, "pause"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowPausedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(RESUME))
 	        {
 	        	if(this.actionFlow(flow, "resume"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowStartedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(START_PAUSE))
 	        {       	
 	        	if(this.actionFlow(flow, "startPause"))
 	        	{
-	        		senderTree.setItemIcon(flow, this.flowPausedResource);
+	        		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
 	        	}
 	        }
 	        else if(action.equals(STARTUP_CONTROL))
 	        {       	
 	        	UI.getCurrent().addWindow(new StartupControlConfigurationWindow());
 	        }
+	        else if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Flow component = (Flow)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(flow.getModule().getServer(),
+        				flow.getModule(), flow, null, errorCategorisationService));
+        	}
 	        
 	        this.refreshFlowStates(flow.getModule().getServer().getModules());
+        }
+        else if(target != null && target instanceof Module)
+        {
+        	if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Module module = (Module)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(module.getServer(),
+        				module, null, null, errorCategorisationService));
+        	}
+        }
+        else if(target != null && target instanceof Server)
+        {
+        	if(action.equals(ERROR_CATEGORISATION))
+        	{
+        		Server server = (Server)target;
+        		
+        		UI.getCurrent().addWindow(new ErrorCategorisationWindow(server,
+        				null, null, null, errorCategorisationService));
+        	}
         }
 	}
 	
@@ -2798,4 +1608,108 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		return date.getTime();
 	}
+	
+	
+	// Graph stuff below was in as a demo. Just commenting out for now.
+
+//    private SimpleGraphRepositoryImpl graphRepo;
+//    private GraphExplorer<?, ?> graph;
+//    private CssLayout layout;
+//	
+//
+//    public Layout initGraph() {
+//    	graphRepo = createGraphRepository();    	
+//    	VerticalLayout content = new VerticalLayout();
+//    	layout = new CssLayout();
+//    	layout.setSizeFull();
+//    	ComboBox select = createLayoutSelect();
+//    	content.addComponent(select);
+//    	content.addComponent(layout);
+//    	content.setExpandRatio(layout, 1);
+//    	content.setSizeFull();
+//    	refreshGraph();
+//    	
+//    	return content;
+//    }
+//    
+//    private SimpleGraphRepositoryImpl createGraphRepository() {
+//    	SimpleGraphRepositoryImpl repo = new SimpleGraphRepositoryImpl();
+//    	repo.addNode("node1", "Node 1").setIcon(VaadinIcons.COG);
+//    	repo.setHomeNodeId("node1");
+//    	
+//    	repo.addNode("node2", "Node 2").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node3", "Node 3").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node4", "Node 4").setIcon(VaadinIcons.COG);
+//
+//    	repo.addNode("node10", "Node 10").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node11", "Node 11").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node12", "Node 12").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node13", "Node 13").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node14", "Node 14").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node15", "Node 15").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node16", "Node 16").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node17", "Node 17").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node18", "Node 18").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node19", "Node 19").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node20", "Node 20").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node21", "Node 21").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node22", "Node 22").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node23", "Node 23").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node24", "Node 24").setIcon(VaadinIcons.COG);
+//    	repo.addNode("node25", "Node 25").setIcon(VaadinIcons.COG);
+//
+//    	repo.joinNodes("node1", "node2", "edge12", "Edge 1-2");
+//    	repo.joinNodes("node1", "node3", "edge13", "Edge 1-3");
+//    	repo.joinNodes("node3", "node4", "edge34", "Edge 3-4");
+//
+//    	repo.joinNodes("node2", "node10", "edge210", "Edge type A");
+//    	repo.joinNodes("node2", "node11", "edge211", "Edge type A");
+//    	repo.joinNodes("node2", "node12", "edge212", "Edge type A");
+//    	repo.joinNodes("node2", "node13", "edge213", "Edge type A");
+//    	repo.joinNodes("node2", "node14", "edge214", "Edge type A");
+//    	repo.joinNodes("node2", "node15", "edge215", "Edge type A");
+//    	repo.joinNodes("node2", "node16", "edge216", "Edge type A");
+//    	repo.joinNodes("node2", "node17", "edge217", "Edge type A");
+//    	repo.joinNodes("node2", "node18", "edge218", "Edge type A");
+//    	repo.joinNodes("node2", "node19", "edge219", "Edge type A");
+//    	repo.joinNodes("node2", "node20", "edge220", "Edge type A");
+//    	repo.joinNodes("node2", "node21", "edge221", "Edge type A");
+//    	repo.joinNodes("node2", "node22", "edge222", "Edge type B");
+//    	repo.joinNodes("node2", "node23", "edge223", "Edge type B");
+//    	repo.joinNodes("node2", "node24", "edge224", "Edge type B");
+//    	repo.joinNodes("node2", "node25", "edge225", "Edge type C");
+//    	
+//    	return repo;
+//    }
+//
+//    private ComboBox createLayoutSelect() {
+//    	final ComboBox select = new ComboBox("Select layout algorithm");
+//    	select.addItem("FR");
+//    	select.addItem("Circle");
+//    	select.addItem("ISOM");
+//    	select.addValueChangeListener(new ValueChangeListener() {
+//			
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public void valueChange(ValueChangeEvent event) {
+//				if ("FR".equals(select.getValue())) {
+//					graph.setLayoutEngine(new JungFRLayoutEngine());
+//				} else if ("Circle".equals(select.getValue())) {
+//					graph.setLayoutEngine(new JungCircleLayoutEngine());					
+//				} if ("ISOM".equals(select.getValue())) {
+//					graph.setLayoutEngine(new JungISOMLayoutEngine());
+//				}
+//				refreshGraph();
+//			}
+//		});
+//    	return select;
+//    }
+//    
+//    private void refreshGraph() {
+//    	layout.removeAllComponents();
+//        graph = new GraphExplorer<NodeImpl, ArcImpl>(graphRepo);
+//        graph.setSizeFull();
+//        layout.addComponent(graph);
+//    }
 }

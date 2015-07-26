@@ -87,6 +87,23 @@
 		   <artifactId>aceeditor</artifactId>
 		</dependency>
 		
+		<dependency>
+		   <groupId>org.vaadin.icons</groupId>
+		   <artifactId>vaadin-icons</artifactId>
+		   <version>1.0.1</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>graph-explorer</artifactId>
+		   <version>0.7.0</version>
+		</dependency>	
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>filteringtable</artifactId>
+		   <version>0.9.13.v7</version>
+		</dependency>	
 	
 		<dependency>
 			<groupId>com.google.guava</groupId>

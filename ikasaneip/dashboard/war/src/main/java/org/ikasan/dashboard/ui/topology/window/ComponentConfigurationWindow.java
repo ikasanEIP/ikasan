@@ -53,9 +53,17 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
+import org.ikasan.dashboard.ui.framework.validation.IntegerValidator;
+import org.ikasan.dashboard.ui.framework.validation.StringValidator;
+import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
@@ -66,14 +74,17 @@ import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.data.Validator;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -82,7 +93,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -108,6 +119,7 @@ public class ComponentConfigurationWindow extends Window
 	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
 		super("Component Configuration");
+		this.setIcon(VaadinIcons.COG_O);
 				
 		this.configurationManagement = configurationManagement;
 		
@@ -185,12 +197,8 @@ public class ComponentConfigurationWindow extends Window
 		this.layout.setWidth("95%");
 		this.layout.setMargin(true);
 		
-		Panel paramPanel = new Panel();
-		paramPanel.setStyleName("dashboard");
-		paramPanel.setWidth("100%");
-		
 		Label configurationParametersLabel = new Label("Configuration Parameters");
-		configurationParametersLabel.setStyleName("large-bold");
+		configurationParametersLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
 		
 		GridLayout paramLayout = new GridLayout(2, 2);
@@ -201,9 +209,11 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 
 		Label configuredResourceIdLabel = new Label("Configured Resource Id");
-		configuredResourceIdLabel.setStyleName("large");
+		configuredResourceIdLabel.addStyleName(ValoTheme.LABEL_LARGE);
+		configuredResourceIdLabel.addStyleName(ValoTheme.LABEL_BOLD);
 		Label configuredResourceIdValueLabel = new Label(configuration.getConfigurationId());
-		configuredResourceIdValueLabel.setStyleName("large");
+		configuredResourceIdValueLabel.addStyleName(ValoTheme.LABEL_LARGE);
+		configuredResourceIdValueLabel.addStyleName(ValoTheme.LABEL_BOLD);
 		
 		paramLayout.addComponent(configuredResourceIdLabel, 0, 0);
 		paramLayout.setComponentAlignment(configuredResourceIdLabel, Alignment.TOP_RIGHT);
@@ -218,27 +228,36 @@ public class ComponentConfigurationWindow extends Window
 		conmfigurationDescriptionTextField.setRows(4);
 		conmfigurationDescriptionTextField.setWidth("80%");
 		paramLayout.addComponent(conmfigurationDescriptionTextField, 1, 1);
+
 		
-		paramPanel.setContent(paramLayout);
-		this.layout.addComponent(paramPanel, 0, 1, 1, 1);
+		this.layout.addComponent(paramLayout, 0, 1, 1, 1);
 		
 		int i=2;
 		
 		for(ConfigurationParameter parameter: parameters)
-		{
-			if(parameter.getValue() instanceof Integer ||
-					parameter.getValue() instanceof String ||
-					parameter.getValue() instanceof Boolean ||
-					parameter.getValue() instanceof Long)
+		{	
+			if(parameter instanceof ConfigurationParameterIntegerImpl)
     		{
-    			this.layout.addComponent(this.createTextAreaPanel(parameter), 0, i, 1, i);
-    		} 
-			else if (parameter.getValue() instanceof Map)
+				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterStringImpl)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter, new StringValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterBooleanImpl)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter, new BooleanValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterLongImpl)
+    		{
+    			this.layout.addComponent(this.createTextAreaPanel(parameter, new LongValidator()), 0, i, 1, i);
+    		}
+    		else if(parameter instanceof ConfigurationParameterMapImpl)
     		{
     			this.layout.addComponent(this.createMapPanel
     					((ConfigurationParameterMapImpl)parameter), 0, i, 1, i);
     		}
-			else if (parameter.getValue() instanceof List)
+    		else if(parameter instanceof ConfigurationParameterListImpl)
     		{
     			this.layout.addComponent(this.createListPanel
     					((ConfigurationParameterListImpl)parameter), 0, i, 1, i);
@@ -248,11 +267,28 @@ public class ComponentConfigurationWindow extends Window
 		}
 		
 		Button saveButton = new Button("Save");   
-		saveButton.addStyleName(Reindeer.BUTTON_SMALL);
+		saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
     	saveButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
             {
+            	try 
+                {
+            		for(TextArea textField: textFields.values())
+                	{
+                		textField.validate();
+                	}
+                } 
+                catch (InvalidValueException e) 
+                {
+                	e.printStackTrace();
+                	for(TextArea textField: textFields.values())
+                	{
+                		textField.setValidationVisible(true);
+                	}
+                    return;
+                }
+  
             	for(ConfigurationParameter parameter: parameters)
         		{
             		TextArea textField = ComponentConfigurationWindow
@@ -265,32 +301,32 @@ public class ComponentConfigurationWindow extends Window
             			parameter.setDescription(descriptionTextField.getValue());
             		}
 
-            		if(parameter.getValue() != null)
-            		{
-            			logger.info("parameter.getValue().getClass(): " + parameter.getValue().getClass());
-            		}
-            		
-            		if(parameter.getValue() instanceof Integer)
+            		if(parameter instanceof ConfigurationParameterIntegerImpl)
             		{
             			logger.info("Setting Integer value: " + textField.getValue());
-            			parameter.setValue(new Integer(textField.getValue()));
+            			
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(new Integer(textField.getValue()));
             		}
-            		else if(parameter.getValue() instanceof String)
+            		else if(parameter instanceof ConfigurationParameterStringImpl)
             		{
             			logger.info("Setting String value: " + textField.getValue());
-            			parameter.setValue(textField.getValue());
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(textField.getValue());
             		}
-            		else if(parameter.getValue() instanceof Boolean)
+            		else if(parameter instanceof ConfigurationParameterBooleanImpl)
             		{
             			logger.info("Setting Boolean value: " + textField.getValue());
-            			parameter.setValue(new Boolean(textField.getValue()));
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(new Boolean(textField.getValue()));
             		}
-            		else if(parameter.getValue() instanceof Long)
+            		else if(parameter instanceof ConfigurationParameterLongImpl)
             		{
             			logger.info("Setting Boolean value: " + textField.getValue());
-            			parameter.setValue(new Long	(textField.getValue()));
+            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            				parameter.setValue(new Long	(textField.getValue()));
             		}
-            		else if(parameter.getValue() instanceof Map)
+            		else if(parameter instanceof ConfigurationParameterMapImpl)
             		{
             			ConfigurationParameterMapImpl mapParameter = (ConfigurationParameterMapImpl) parameter;
             			
@@ -308,7 +344,6 @@ public class ComponentConfigurationWindow extends Window
             					
             					if(pair.key.getValue() != "")
             					{
-            						logger.info("Saving value: " + pair.key.getValue());
             						map.put(pair.key.getValue(), pair.value.getValue());
             					}
             				}
@@ -316,7 +351,7 @@ public class ComponentConfigurationWindow extends Window
             			
             			parameter.setValue(map);
             		}
-            		else if(parameter.getValue() instanceof List)
+            		else if(parameter instanceof ConfigurationParameterListImpl)
             		{
             			ConfigurationParameterListImpl mapParameter = (ConfigurationParameterListImpl) parameter;
             			
@@ -333,17 +368,23 @@ public class ComponentConfigurationWindow extends Window
             			parameter.setValue(map);
             		}
   
-        			logger.info(parameter.getName() + " " + parameter.getValue());
+        			
         		}
             	
             	ComponentConfigurationWindow.this.configurationManagement
             		.saveConfiguration(configuration);      
             	
-            	Notification.show("Saved!");
+            	Notification notification = new Notification(
+            		    "Saved",
+            		    "The configuration has been saved successfully!",
+            		    Type.HUMANIZED_MESSAGE);
+            	notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+            	notification.show(Page.getCurrent());
             }
         });
     	
-    	Button deleteButton = new Button("Delete");    	
+    	Button deleteButton = new Button("Delete");    
+    	deleteButton.addStyleName(ValoTheme.BUTTON_SMALL);
     	deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -363,21 +404,17 @@ public class ComponentConfigurationWindow extends Window
     	buttonLayout.addComponent(saveButton, 0 , 0);
     	buttonLayout.addComponent(deleteButton, 1 , 0);
     	
-    	this.layout.addComponent(buttonLayout, 1, i);
+    	this.layout.addComponent(buttonLayout, 0, i, 1, i);
+    	this.layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
     	
     	Panel configurationPanel = new Panel();
-    	configurationPanel.setStyleName("dashboard");
     	configurationPanel.setContent(this.layout);
+
     	
-    	HorizontalLayout mainLayout = new HorizontalLayout();
-    	mainLayout.setMargin(true);
-    	mainLayout.setSizeFull();
-    	mainLayout.addComponent(configurationPanel);
-    	
-		this.setContent(mainLayout);
+		this.setContent(configurationPanel);
     }
     
-    protected Panel createTextAreaPanel(ConfigurationParameter parameter)
+    protected Panel createTextAreaPanel(ConfigurationParameter parameter, Validator validator)
     {
     	Panel paramPanel = new Panel();
 		paramPanel.setStyleName("dashboard");
@@ -391,7 +428,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
 		Label label = new Label(parameter.getName());
-		label.setStyleName("large-bold");
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
@@ -400,6 +439,8 @@ public class ComponentConfigurationWindow extends Window
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		TextArea textField = new TextArea();
+		textField.addValidator(validator);
+		textField.setValidationVisible(false);
 		textField.setRows(4);
 		textField.setWidth("80%");
 		textField.setId(parameter.getName());
@@ -452,7 +493,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
 		Label label = new Label(parameter.getName());
-		label.setStyleName("large-bold");
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
@@ -488,7 +531,7 @@ public class ComponentConfigurationWindow extends Window
 			this.mapTextFields.put(mapKey, pair);
 			
 			final Button removeButton = new Button("remove");
-			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
 			removeButton.addClickListener(new Button.ClickListener() 
 	    	{
 	            public void buttonClick(ClickEvent event) 
@@ -510,7 +553,7 @@ public class ComponentConfigurationWindow extends Window
 		}
 		
 		final Button addButton = new Button("add");
-		addButton.setStyleName(Reindeer.BUTTON_LINK);
+		addButton.setStyleName(ValoTheme.BUTTON_LINK);
 		addButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -538,7 +581,7 @@ public class ComponentConfigurationWindow extends Window
     			mapTextFields.put(mapKey, pair);
     			
     			final Button removeButton = new Button("remove");
-    			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+    			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
     			removeButton.addClickListener(new Button.ClickListener() 
     	    	{
     	            public void buttonClick(ClickEvent event) 
@@ -606,7 +649,9 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
 		Label label = new Label(parameter.getName());
-		label.setStyleName("large-bold");
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
@@ -640,7 +685,7 @@ public class ComponentConfigurationWindow extends Window
 			this.valueTextFields.put(mapKey, valueField);
 			
 			final Button removeButton = new Button("remove");
-			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
 			removeButton.addClickListener(new Button.ClickListener() 
 	    	{
 	            public void buttonClick(ClickEvent event) 
@@ -660,7 +705,7 @@ public class ComponentConfigurationWindow extends Window
 		}
 		
 		final Button addButton = new Button("add");
-		addButton.setStyleName(Reindeer.BUTTON_LINK);
+		addButton.setStyleName(ValoTheme.BUTTON_LINK);
 		addButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -681,7 +726,7 @@ public class ComponentConfigurationWindow extends Window
     			valueTextFields.put(mapKey, valueField);
     			
     			final Button removeButton = new Button("remove");
-    			removeButton.setStyleName(Reindeer.BUTTON_LINK);
+    			removeButton.setStyleName(ValoTheme.BUTTON_LINK);
     			removeButton.addClickListener(new Button.ClickListener() 
     	    	{
     	            public void buttonClick(ClickEvent event) 
