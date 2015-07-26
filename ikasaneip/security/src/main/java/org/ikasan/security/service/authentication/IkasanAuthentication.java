@@ -168,7 +168,6 @@ public class IkasanAuthentication implements Authentication
      */
     public boolean canAccessLinkedItem(String linkedItemType, Long linkedItemId)
     {
-    	System.out.println("Trying to access item: " + linkedItemType + " " + linkedItemId);
     	for(GrantedAuthority grantedAuthority: this.getAuthorities())
     	{
     		System.out.println("Policy: " + (Policy)grantedAuthority);
