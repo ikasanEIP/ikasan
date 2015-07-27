@@ -247,6 +247,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private HashMap<String, String> flowStates = new HashMap<String, String>();
 	
+	private TabSheet tabsheet;
+	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
@@ -337,7 +339,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	protected void createTabSheet()
 	{			
-		TabSheet tabsheet = new TabSheet();
+		tabsheet = new TabSheet();
 		tabsheet.setSizeFull();
 
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -1130,7 +1132,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	protected void refresh()
 	{
-		this.createTabSheet();
+		if(this.tabsheet == null)
+		{
+			this.createTabSheet();
+		}
+		
 		this.refreshTree();
 	}
 	

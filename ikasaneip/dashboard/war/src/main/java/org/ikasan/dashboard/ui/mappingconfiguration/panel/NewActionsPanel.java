@@ -44,7 +44,9 @@ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow;
+import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -53,6 +55,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.BaseTheme;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -130,62 +133,63 @@ public class NewActionsPanel extends Panel
     @SuppressWarnings("serial")
     protected void init()
     {
-        this.setStyleName("grey");
+        this.addStyleName(ValoTheme.PANEL_BORDERLESS);
 
         // Set up the grid layout that is the container for the 
         // components.
         final GridLayout contentLayout = new GridLayout(2, 6);
         contentLayout.setColumnExpandRatio(0, 0.7f);
         contentLayout.setColumnExpandRatio(1, 0.3f);
-        contentLayout.setRowExpandRatio(0, 1);
-        contentLayout.setRowExpandRatio(1, 1);
-        contentLayout.setRowExpandRatio(2, 1);
-        contentLayout.setRowExpandRatio(3, 1);
-        contentLayout.setRowExpandRatio(4, 1);
-        contentLayout.setRowExpandRatio(5, 1);
         
         contentLayout.setWidth(300, Unit.PIXELS);
         contentLayout.setHeight("100%");
-        contentLayout.setMargin(true);
+        contentLayout.setSpacing(true);
 
         // Add the new client label and button.
-        HorizontalLayout clientLabelLayout = new HorizontalLayout();
-        clientLabelLayout.setHeight(20, Unit.PIXELS);
-        clientLabelLayout.setWidth(180, Unit.PIXELS);
-        clientLabelLayout.addComponent(this.newClientLabel);
-        contentLayout.addComponent(clientLabelLayout, 0, 0);
+        this.newClientLabel.setSizeUndefined();
+        contentLayout.addComponent(this.newClientLabel, 0, 0);
+        contentLayout.setComponentAlignment(this.newClientLabel, Alignment.MIDDLE_RIGHT);
         
-        this.newClientButton.setStyleName(BaseTheme.BUTTON_LINK);
-        this.newClientButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.newClientButton.setIcon(VaadinIcons.PLUS);
+//        this.newClientButton.addStyleName(BaseTheme.BUTTON_LINK);
+        this.newClientButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.newClientButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.newClientButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event)
+            {
                 saveRequiredMonitor.manageSaveRequired("newClientPanel");
             }
         });
         contentLayout.addComponent(this.newClientButton, 1, 0);
 
-        // Add the new context label and button
-        HorizontalLayout contextLabelLayout = new HorizontalLayout();
-        contextLabelLayout.setHeight(20, Unit.PIXELS);
-        contextLabelLayout.setWidth(180, Unit.PIXELS);
-        contextLabelLayout.addComponent(this.newContextLabel);
-        contentLayout.addComponent(contextLabelLayout, 0, 1);
+        // Add the new context label and button        
+        this.newContextLabel.setSizeUndefined();        
+        contentLayout.addComponent( this.newContextLabel, 0, 1);
+        contentLayout.setComponentAlignment(this.newContextLabel, Alignment.MIDDLE_RIGHT);
 
-        this.newContextButton.setStyleName(BaseTheme.BUTTON_LINK);
-        this.newContextButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.newContextButton.setIcon(VaadinIcons.PLUS);
+//        this.newContextButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newContextButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.newContextButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.newContextButton.addClickListener(new Button.ClickListener()
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 saveRequiredMonitor.manageSaveRequired("newContextPanel");
             }
         });
         contentLayout.addComponent(this.newContextButton, 1, 1);
 
         // Add the new type label and button.
-        HorizontalLayout typeLabelLayout = new HorizontalLayout();
-        typeLabelLayout.setHeight(20, Unit.PIXELS);
-        typeLabelLayout.setWidth(180, Unit.PIXELS);
-        typeLabelLayout.addComponent(this.newTypeLabel);
-        contentLayout.addComponent(typeLabelLayout, 0, 2);
-
-        this.newTypeButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newTypeLabel.setSizeUndefined();
+        contentLayout.addComponent(this.newTypeLabel, 0, 2);
+        contentLayout.setComponentAlignment(this.newTypeLabel, Alignment.MIDDLE_RIGHT);
+        
+        this.newTypeButton.setIcon(VaadinIcons.PLUS);
+//        this.newTypeButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newTypeButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.newTypeButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.newTypeButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 saveRequiredMonitor.manageSaveRequired("newConfigurationTypePanel");
@@ -195,13 +199,15 @@ public class NewActionsPanel extends Panel
 
         
         // Add the new type label and button.
-        HorizontalLayout configurationLabelLayout = new HorizontalLayout();
-        configurationLabelLayout.setHeight(20, Unit.PIXELS);
-        configurationLabelLayout.setWidth(180, Unit.PIXELS);
-        configurationLabelLayout.addComponent(this.newMappingConfigurationLabel);
-        contentLayout.addComponent(configurationLabelLayout, 0, 3);
+        this.newMappingConfigurationLabel.setSizeUndefined();
+        contentLayout.addComponent(this.newMappingConfigurationLabel, 0, 3);
+        contentLayout.setComponentAlignment(this.newMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
 
-        this.newMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+
+        this.newMappingConfigurationButton.setIcon(VaadinIcons.PLUS);
+//        this.newMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.newMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.newMappingConfigurationButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 newMappingConfigurationPanel.init();
@@ -214,14 +220,15 @@ public class NewActionsPanel extends Panel
         });
         contentLayout.addComponent(this.newMappingConfigurationButton, 1, 3);
 
-//      Add the import label and button.
-        HorizontalLayout importMappingConfigurationLayout = new HorizontalLayout();
-        importMappingConfigurationLayout.setHeight(20, Unit.PIXELS);
-        importMappingConfigurationLayout.setWidth(180, Unit.PIXELS);
-        importMappingConfigurationLayout.addComponent(this.importMappingConfigurationLabel);
-        contentLayout.addComponent(importMappingConfigurationLayout, 0, 4);
 
-        this.importMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.importMappingConfigurationLabel.setSizeUndefined();
+        contentLayout.addComponent(importMappingConfigurationLabel, 0, 4);
+        contentLayout.setComponentAlignment(this.importMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
+
+        this.importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
+//        this.importMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
           public void buttonClick(ClickEvent event) {
               UI.getCurrent().addWindow(mappingConfigurationImportWindow);

@@ -241,6 +241,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("landingView");
             }
         });
@@ -265,6 +266,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("topologyView");
             }
         });
@@ -281,7 +283,10 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("mappingView");
+            	
+            	loadNavigator("mapping");
             }
         });
         
@@ -305,6 +310,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("userPanel");
             }
         });
@@ -321,6 +327,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
             }
         });
@@ -337,6 +344,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
             }
         });
@@ -353,6 +361,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("policyManagementPanel");
             }
         });
@@ -369,6 +378,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             @Override
             public void buttonClick(final ClickEvent event) 
             {
+            	loadTopLevelNavigator();
             	UI.getCurrent().getNavigator().navigateTo("authenticationMethodView");
             }
         });
@@ -417,6 +427,18 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 		Navigator navigator = new Navigator(UI.getCurrent(), this.menuLayout.getContentContainer());
 
 		for (IkasanUIView view : this.views.get("topLevel").getIkasanViews())
+		{
+			logger.info("Adding view:" + view.getPath());
+			navigator.addView(view.getPath(), view.getView());
+		}
+	}
+    
+    public void loadNavigator(String name)
+	{
+    	IkasanUINavigator uiNavigator = this.views.get(name);
+		Navigator navigator = new Navigator(UI.getCurrent(), uiNavigator.getContainer());
+
+		for (IkasanUIView view : uiNavigator.getIkasanViews())
 		{
 			logger.info("Adding view:" + view.getPath());
 			navigator.addView(view.getPath(), view.getView());

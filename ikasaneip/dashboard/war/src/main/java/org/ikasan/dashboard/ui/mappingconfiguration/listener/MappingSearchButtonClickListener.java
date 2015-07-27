@@ -145,13 +145,8 @@ public class MappingSearchButtonClickListener implements ClickListener
             targetContextName = ((ConfigurationContext)this.targetContextComboBox.getValue()).getName();
         }
 
-        long time1 = System.currentTimeMillis();
-
         List<MappingConfigurationLite> mappingConfigurations = this.mappingConfigurationService.getMappingConfigurationLites(clientName
             , typeName, sourceContextName, targetContextName);
-
-        long time2 = System.currentTimeMillis();
-        long queryTime = time2 - time1;
 
         this.searchResultsTable.removeAllItems();
 

@@ -12985,6 +12985,50 @@ div.v-layout.v-horizontal.v-widget {
 	color: gray;
 }
 
+.dashboard .v-Notification.error {
+	padding-right: 40px;
+	overflow: hidden !important;
+	cursor: pointer;
+}
+
+.dashboard .v-Notification.error:after {
+	content: "\00d7";
+	font-size: 1.5em;
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
+	right: 8px;
+	width: 17px;
+	height: 17px;
+	line-height: 16px;
+	cursor: pointer;
+	color: #000;
+	opacity: 0.5;
+	filter: alpha(opacity=50) ;
+	text-align: center;
+	border: 1px solid #000;
+	border-color: rgba(0, 0, 0, 0.3);
+	border-radius: 50%;
+	-webkit-transition: opacity 200ms;
+	-moz-transition: opacity 200ms;
+	transition: opacity 200ms;
+}
+
+.dashboard .v-Notification.error:hover:after {
+	opacity: 1;
+	filter: none ;
+}
+
+.dashboard .v-Notification.error:active:after {
+	background-color: #000;
+	color: #fff;
+	opacity: 0.3;
+	filter: alpha(opacity=30.0) ;
+	-webkit-transition: none 200ms;
+	-moz-transition: none 200ms;
+	transition: none 200ms;
+}
+
 .dashboard .wordwrap-table .v-table-cell-wrapper {
 	white-space: normal;
 	overflow: hidden;
