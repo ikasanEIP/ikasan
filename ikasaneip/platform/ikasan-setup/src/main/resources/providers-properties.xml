@@ -4359,8 +4359,8 @@
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
 					   Description			VARCHAR(1024)		    NOT NULL,
-					   CreatedDateTime      DATETIME NOT NULL,
-					   UpdatedDateTime      DATETIME NOT NULL,
+					   CreatedDateTime      DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id) 
 					);
 				</prop>
@@ -4369,8 +4369,8 @@
 					   Id               	IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
 					   Description	     	VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      DATETIME NOT NULL,
-					   UpdatedDateTime      DATETIME NOT NULL,
+					   CreatedDateTime      DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -4792,6 +4792,179 @@
 					   PRIMARY KEY (Id)
 					);
                 </prop>
+				
+				<prop key="create.defaultPrincipal">
+					
+					INSERT INTO 
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user');
+					
+					set @securityPrincipalId = select Id 
+					from SecurityPrincipal 
+					where Name = 'admin';
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'ADMIN',
+					'Users who may perform administration functions on
+					the system' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'ADMIN';
+					
+					set @userId = select Id from Users where Username = 'admin';
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId );
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'ALL', 'Policy to do everything' );
+					
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'ALL';
+					
+					INSERT
+					INTO PrincipalRole ( PrincipalId, RoleId )
+					VALUES ( @securityPrincipalId, @securityRoleId );
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'User';
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' );
+					
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'Read Only';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator';
+					
+					set @securityPolicyId =  select Id 
+					from SecurityPolicy 
+					where Name = 'Read Only';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Control';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'COP Stream User';
+					
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' );
+				
+				</prop>
 				
 			</props>
 
