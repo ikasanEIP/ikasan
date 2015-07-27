@@ -166,7 +166,7 @@
     <bean id="mappingConfigurationValuesExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper" scope="session">
     </bean>
 
-    <bean id="mappingView" class="org.ikasan.dashboard.ui.framework.tab.HomeTab" scope="session">
+    <bean id="mappingView" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationView" scope="session">
         <constructor-arg ref="mappingConfigurationSearchPanel"/>
         <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
         <constructor-arg ref="mappingViewComponentContainer"/>
@@ -425,54 +425,54 @@
 
     <bean id="newClientButton" class="com.vaadin.ui.Button" scope="session">
         <!--  property name="icon" ref="addIcon"/ -->
-        <constructor-arg value="Add"/>
+        <constructor-arg value=""/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newContextButton" class="com.vaadin.ui.Button" scope="session">
         <!--  property name="icon" ref="addIcon"/ -->
-        <constructor-arg value="Add"/>
+        <constructor-arg value=""/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newTypeButton" class="com.vaadin.ui.Button" scope="session">
         <!--  property name="icon" ref="addIcon"/ -->
-        <constructor-arg value="Add"/>
+        <constructor-arg value=""/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newMappingConfigurationButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Add"/>
+        <constructor-arg value=""/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="importMappingConfigurationButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Import"/>
+        <constructor-arg value=""/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newClientLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration client"/>
+        <constructor-arg value="New client:"/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newContextLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration context"/>
+        <constructor-arg value="New context:"/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newTypeLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration type"/>
+        <constructor-arg value="New type:"/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="newMappingConfigurationLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration"/>
+        <constructor-arg value="New mapping configuration:"/>
         <property name="visible" value="false"/>
     </bean>
 
     <bean id="importMappingConfigurationLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="Import mapping configuration"/>
+        <constructor-arg value="Import mapping configuration:"/>
         <property name="visible" value="false"/>
     </bean>
 

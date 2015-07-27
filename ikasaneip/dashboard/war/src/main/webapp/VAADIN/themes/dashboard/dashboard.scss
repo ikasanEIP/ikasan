@@ -17,6 +17,11 @@ $v-font-weight: 400;
 @mixin dashboard {
   @include valo;
   @include dashboard-dashboard-view;
+  
+	.v-Notification.error {
+		@include valo-notification-error-style;
+		@include valo-notification-closable-style;
+	}
 
 	.wordwrap-table .v-table-cell-wrapper {
 	   white-space: normal;

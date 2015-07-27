@@ -75,6 +75,7 @@ import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -83,6 +84,7 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -216,7 +218,10 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(linkButton);
         toolBarLayout.setExpandRatio(linkButton, 0.865f);
 
-        this.editButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.editButton.setIcon(VaadinIcons.EDIT);
+        this.editButton.setDescription("Edit the mapping configuration");
+        this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.editButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 setEditable(true);
@@ -227,7 +232,10 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.editButton);
         toolBarLayout.setExpandRatio(this.editButton, 0.045f);
 
-        this.saveButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
+        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.saveButton.setDescription("Save the mapping configuration");
+        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.saveButton.setVisible(false);
         this.saveButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -260,7 +268,10 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.saveButton);
         toolBarLayout.setExpandRatio(this.saveButton, 0.045f);
 
-        this.cancelButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.cancelButton.setDescription("Cancel the current edit");
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -276,7 +287,10 @@ public class MappingConfigurationPanel extends Panel implements View
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
         fd.extend(exportMappingConfigurationButton);
 
-        this.exportMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        this.exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.exportMappingConfigurationButton.setDescription("Export the current mapping configuration");
+        this.exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         toolBarLayout.addComponent(this.exportMappingConfigurationButton);
         toolBarLayout.setExpandRatio(this.exportMappingConfigurationButton, 0.045f);
 
@@ -456,7 +470,10 @@ public class MappingConfigurationPanel extends Panel implements View
         HorizontalLayout controlsLayout = new HorizontalLayout();
         controlsLayout.setWidth("100%");
         
-        this.addNewRecordButton.setStyleName(ValoTheme.BUTTON_LINK);
+        this.addNewRecordButton.setIcon(VaadinIcons.PLUS);
+        this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.addNewRecordButton.setDescription("Add a mapping configuration value to the table below");
+        this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.addNewRecordButton.setVisible(buttonsVisible);
         this.addNewRecordButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -474,7 +491,11 @@ public class MappingConfigurationPanel extends Panel implements View
         });
 
         final RemoveAllItemsAction removeAllItemsAction = new RemoveAllItemsAction(this.mappingConfigurationConfigurationValuesTable);
-        this.deleteAllRecordsButton.setStyleName(ValoTheme.BUTTON_LINK);
+
+        this.deleteAllRecordsButton.setIcon(VaadinIcons.TRASH);
+        this.deleteAllRecordsButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.deleteAllRecordsButton.setDescription("Delete all values from the table below");
+        this.deleteAllRecordsButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.deleteAllRecordsButton.setVisible(buttonsVisible);
         this.deleteAllRecordsButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -486,7 +507,10 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        this.importMappingConfigurationButton.setStyleName(ValoTheme.BUTTON_LINK);
+        this.importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
+        this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.importMappingConfigurationButton.setDescription("Import mapping configuration values");
+        this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.importMappingConfigurationButton.setVisible(buttonsVisible);
         this.importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -497,7 +521,10 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        this.exportMappingConfigurationValuesButton.setStyleName(ValoTheme.BUTTON_LINK);
+        this.exportMappingConfigurationValuesButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        this.exportMappingConfigurationValuesButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.exportMappingConfigurationValuesButton.setDescription("Export mapping configuration values");
+        this.exportMappingConfigurationValuesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.exportMappingConfigurationValuesButton.setVisible(buttonsVisible);
 
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationValuesExportStream());
@@ -505,15 +532,15 @@ public class MappingConfigurationPanel extends Panel implements View
 
         Label spacer = new Label("&nbsp;",  ContentMode.HTML);
         controlsLayout.addComponent(spacer);
-        controlsLayout.setExpandRatio(spacer, 0.8f);
+        controlsLayout.setExpandRatio(spacer, 0.84f);
         controlsLayout.addComponent(this.addNewRecordButton);
         controlsLayout.setExpandRatio(this.addNewRecordButton, 0.04f);
         controlsLayout.addComponent(this.deleteAllRecordsButton);
-        controlsLayout.setExpandRatio(this.deleteAllRecordsButton, 0.06f);
+        controlsLayout.setExpandRatio(this.deleteAllRecordsButton, 0.04f);
         controlsLayout.addComponent(this.importMappingConfigurationButton);
-        controlsLayout.setExpandRatio(this.importMappingConfigurationButton, 0.05f);
+        controlsLayout.setExpandRatio(this.importMappingConfigurationButton, 0.04f);
         controlsLayout.addComponent(this.exportMappingConfigurationValuesButton);
-        controlsLayout.setExpandRatio(this.exportMappingConfigurationValuesButton, 0.05f);
+        controlsLayout.setExpandRatio(this.exportMappingConfigurationValuesButton, 0.04f);
 
         tableLayout.addComponent(controlsLayout);
         tableLayout.addComponent(this.mappingConfigurationConfigurationValuesTable);

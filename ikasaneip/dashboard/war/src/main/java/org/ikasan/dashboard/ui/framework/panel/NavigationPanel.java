@@ -240,8 +240,6 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.setContent(layout);
 	}
 
-	
-
 	/**
 	 * Method to manage a logout
 	 */
