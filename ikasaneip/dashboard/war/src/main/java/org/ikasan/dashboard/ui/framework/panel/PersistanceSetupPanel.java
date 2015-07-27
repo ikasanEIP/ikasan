@@ -62,7 +62,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -157,7 +157,7 @@ public class PersistanceSetupPanel extends Panel implements View
         persistanceStoreTypeCombo.setHeight("30px");
         
         Button button = new Button("Create");
-        button.setStyleName(Reindeer.BUTTON_SMALL);
+        button.setStyleName(ValoTheme.BUTTON_SMALL);
         button.setHeight("30px");
 
         button.addClickListener(new Button.ClickListener() {

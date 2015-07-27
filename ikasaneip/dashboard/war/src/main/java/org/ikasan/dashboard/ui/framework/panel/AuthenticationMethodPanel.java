@@ -163,18 +163,7 @@ public class AuthenticationMethodPanel extends Panel
     }
 
     protected void init()
-    {
-    	logger.info("init method called");
-    	
-    	try
-    	{
-    		throw new Throwable();
-    	}
-    	catch(Throwable t)
-    	{
-    		t.printStackTrace();
-    	}
-    	
+    {    	
         this.setWidth("100%");
         this.setHeight("100%");
         

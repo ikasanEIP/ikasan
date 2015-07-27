@@ -97,7 +97,11 @@ public class WiretapApplication
 		}
     	
     	HashMap<String, String> params = new HashMap<String, String>();
-    	params.put("timeToLive", timeToLive);
+    	
+    	if(timeToLive != null && timeToLive.length() > 0)
+    	{
+    		params.put("timeToLive", timeToLive);
+    	}
     	
         Trigger trigger = new Trigger(moduleName, flowName, relationship, jobType, flowElementName, params);
         
@@ -135,7 +139,7 @@ public class WiretapApplication
 	                .entity("An error has occurred trying to delete a trigger: " + e.getMessage()).build());
         }
         
-        return Response.ok("Trigger successfully created!").build();
+        return Response.ok("Trigger successfully deleted!").build();
     }
 
 }

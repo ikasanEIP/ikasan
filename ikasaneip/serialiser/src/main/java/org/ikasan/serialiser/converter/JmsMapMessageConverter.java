@@ -61,13 +61,13 @@ public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessa
 	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
 	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
 	    	//jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsMapMessageDefault.setJMSExpiration(jmsMapMessageDefault.getJMSExpiration());
+	    	jmsMapMessageDefault.setJMSExpiration(message.getJMSExpiration());
 	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
 	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
 	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+	    //	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
 	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsMapMessageDefault.setJMSType(jmsMapMessageDefault.getJMSType());
+	    	jmsMapMessageDefault.setJMSType(message.getJMSType());
 	    	    	
 	    	Enumeration<String> names  = message.getPropertyNames();
 	    	

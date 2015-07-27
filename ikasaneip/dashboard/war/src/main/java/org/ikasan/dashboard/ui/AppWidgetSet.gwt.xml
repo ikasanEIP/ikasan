@@ -35,4 +35,12 @@
     <inherits name="com.vaadin.DefaultWidgetSet" />
 
     <inherits name="org.vaadin.aceeditor.AceEditorWidgetSet" />
+
+    <inherits name="com.vaadin.graph.GraphExplorerWidgetset" />
+
+    
+
+    <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
+
+    <inherits name="org.tepi.filtertable.gwt.FilterTableWidgetset" />
 </module>

@@ -63,7 +63,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -161,7 +161,7 @@ public class MappingSearchButtonClickListener implements ClickListener
                 , this.searchResultsTable, this.mappingConfigurationService, this.systemEventService);
 
             final Button deleteButton = new Button("Delete");
-            deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+            deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
             deleteButton.addClickListener(new Button.ClickListener() {
                 public void buttonClick(ClickEvent event) {
                     IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 

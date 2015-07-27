@@ -191,13 +191,13 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         if(event instanceof FlowEvent)
         {
             FlowEvent<String,Object> flowEvent = (FlowEvent)event;
-            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()));
+            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()));
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
             return errorOccurrence;
         }
 
-        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
+        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), this.timeToLive, this.serialiser.serialise(event));
     }
 
     /**
@@ -208,7 +208,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      */
     private ErrorOccurrence newErrorOccurrence(String flowElementName, Throwable throwable)
     {
-        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive);
+        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), this.timeToLive);
     }
 
     /**

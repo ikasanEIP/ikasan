@@ -47,14 +47,15 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -91,8 +92,7 @@ public class ErrorOccurrenceViewWindow extends Window
 		this.setWidth("90%");
 		
 		GridLayout layout = new GridLayout(1, 1);
-		layout.setSizeFull();
-		layout.setMargin(true);
+		layout.setWidth("100%");
 
 		layout.addComponent(createErrorOccurrenceDetailsPanel(), 0, 0);
 		
@@ -101,50 +101,65 @@ public class ErrorOccurrenceViewWindow extends Window
 
 	protected Panel createErrorOccurrenceDetailsPanel()
 	{
-		Panel errorOccurrenceDetailsPanel = new Panel("Error Occurence");
-		errorOccurrenceDetailsPanel.setSizeFull();
-		errorOccurrenceDetailsPanel.setStyleName("dashboard");
+		Panel errorOccurrenceDetailsPanel = new Panel();
 		
-		GridLayout layout = new GridLayout(2, 4);
+		GridLayout layout = new GridLayout(2, 5);
 		layout.setSizeFull();
-		layout.setMargin(true);
-		layout.setColumnExpandRatio(0, 0.3f);
-		layout.setColumnExpandRatio(1, 0.7f);
-		layout.addComponent(new Label("Module Name"), 0, 0);
+		layout.setSpacing(true);
+		layout.setColumnExpandRatio(0, 0.25f);
+		layout.setColumnExpandRatio(1, 0.75f);
+		
+		Label errorOccurrenceDetailsLabel = new Label("Error Occurence Details");
+		errorOccurrenceDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		layout.addComponent(errorOccurrenceDetailsLabel);
+		
+		Label label = new Label("Module Name:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 1);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf1 = new TextField();
 		tf1.setValue(this.errorOccurrence.getModuleName());
 		tf1.setReadOnly(true);
 		tf1.setWidth("80%");
-		layout.addComponent(tf1, 1, 0);
+		layout.addComponent(tf1, 1, 1);
 		
-		layout.addComponent(new Label("Flow Name"), 0, 1);
+		label = new Label("Flow Name:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 2);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf2 = new TextField();
 		tf2.setValue(this.errorOccurrence.getFlowName());
 		tf2.setReadOnly(true);
 		tf2.setWidth("80%");
-		layout.addComponent(tf2, 1, 1);
+		layout.addComponent(tf2, 1, 2);
 		
-		layout.addComponent(new Label("Component Name"), 0, 2);
+		label = new Label("Component Name:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 3);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf3 = new TextField();
 		tf3.setValue(this.errorOccurrence.getFlowElementName());
 		tf3.setReadOnly(true);
 		tf3.setWidth("80%");
-		layout.addComponent(tf3, 1, 2);
+		layout.addComponent(tf3, 1, 3);
 		
-		layout.addComponent(new Label("Date/Time"), 0, 3);
+		label = new Label("Date/Time:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 4);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf4 = new TextField();
 		tf4.setValue(new Date(this.errorOccurrence.getTimestamp()).toString());
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
-		layout.addComponent(tf4, 1, 3);
+		layout.addComponent(tf4, 1, 4);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
-		wrapperLayout.setSizeFull();
+		wrapperLayout.setWidth("100%");
 		
 		AceEditor editor = new AceEditor();
 		editor.setCaption("Error Details");
@@ -152,8 +167,7 @@ public class ErrorOccurrenceViewWindow extends Window
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setTheme(AceTheme.eclipse);
-		editor.setWidth("100%");
-		editor.setHeight(300, Unit.PIXELS);
+		editor.setSizeFull();
 		
 		AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
@@ -166,20 +180,32 @@ public class ErrorOccurrenceViewWindow extends Window
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
-		eventEditor.setWidth("100%");
-		eventEditor.setHeight(300, Unit.PIXELS);
+		eventEditor.setSizeFull();
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(100, Unit.PIXELS);
+		formLayout.setHeight(150, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
-		Label seperator = new Label("<hr />",ContentMode.HTML);
-		wrapperLayout.addComponent(seperator, 0, 1);
-		wrapperLayout.addComponent(eventEditor, 0, 2);
-		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
-		wrapperLayout.addComponent(editor, 0, 3);
-		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
+		
+		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
+		vSplitPanel.setWidth("100%");
+		vSplitPanel.setHeight(800, Unit.PIXELS);
+		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
+		
+		HorizontalLayout h1 = new HorizontalLayout();
+		h1.setSizeFull();
+		h1.setMargin(true);
+		h1.addComponent(eventEditor);
+		vSplitPanel.setFirstComponent(h1);
+		
+		HorizontalLayout h2 = new HorizontalLayout();
+		h2.setSizeFull();
+		h2.setMargin(true);
+		h2.addComponent(editor);
+		vSplitPanel.setSecondComponent(h2);
+		
+		wrapperLayout.addComponent(vSplitPanel, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;

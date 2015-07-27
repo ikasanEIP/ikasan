@@ -54,6 +54,7 @@ import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.springframework.transaction.UnexpectedRollbackException;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -130,6 +131,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
         parapraphTwo.setWidth("50%");
         
         this.mainLayout.setWidth("100%");
+        this.mainLayout.setSpacing(true);
         
         this.mainLayout.addComponent(parapraphOne);
         this.mainLayout.addComponent(parapraphTwo);
@@ -168,7 +170,8 @@ public class AuthenticationMethodTabPanel extends Panel implements View
         this.setHeight("100%");
         
         this.directoryTable = new Table();
-		this.directoryTable.setSizeFull();
+		this.directoryTable.setWidth("100%");
+		this.directoryTable.setHeight("600px");
 		this.directoryTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
 		this.directoryTable.addContainerProperty("Directory Name", String.class,  null);
 		this.directoryTable.addContainerProperty("Type", String.class,  null);
@@ -470,7 +473,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		
 		if(authenticationMethod.getOrder() != 1)
 		{
-			Button upArrow = new Button(new ThemeResource("images/arrow-up-2.png"));
+			Button upArrow = new Button(VaadinIcons.ARROW_UP);
 			upArrow.setStyleName(BaseTheme.BUTTON_LINK);
 			upArrow.addClickListener(new Button.ClickListener() 
 	        {
@@ -499,7 +502,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		
 		if(authenticationMethod.getOrder() != numberOfAuthMethods)
 		{
-			Button downArrow = new Button(new ThemeResource("images/arrow-down-2.png"));
+			Button downArrow = new Button(VaadinIcons.ARROW_DOWN);
 			downArrow.setStyleName(BaseTheme.BUTTON_LINK);
 			downArrow.addClickListener(new Button.ClickListener() 
 	        {

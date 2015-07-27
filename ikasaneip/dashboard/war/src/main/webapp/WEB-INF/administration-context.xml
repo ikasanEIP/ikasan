@@ -51,8 +51,7 @@
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementPanel"/>
                    <constructor-arg ref="principalManagementPanel"/>
-                </bean>
-                
+                </bean>                
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>

@@ -135,6 +135,9 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String AUTHORITIES_TABLE_EXISTS = "authoritiesTableExists";
     private static String USERS_AUTHORITIES_TABLE_EXISTS = "usersAuthoritiesTableExists";
     
+    private static String ERROR_CATEGORISATION_LINK = "errorCategorisationLink";
+    private static String ERROR_CATEGORISATION = "errorCategorisation";
+    
     private static String AUTHENTICATION_METHOD ="authenticationMethod";
     
     private static final String DEFAULT_PRINCIPAL = "defaultPrincipal";
@@ -247,6 +250,8 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(USER_BUSINESS_STREAM);
         this.providerDAO.create(EXCLUSION_EVENT_ACTION);
         this.providerDAO.create(AUTHENTICATION_METHOD);
+        this.providerDAO.create(ERROR_CATEGORISATION);
+        this.providerDAO.create(ERROR_CATEGORISATION_LINK);
     }
 
     @Override

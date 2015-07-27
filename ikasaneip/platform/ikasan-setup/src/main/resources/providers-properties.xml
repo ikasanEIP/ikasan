@@ -94,11 +94,45 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
 
 				<!--prop key="driver">com.sybase.jdbc4.jdbc.SybDataSource</prop -->
 				<!--prop key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</prop -->
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategorisationId	NUMERIC(18, 0) NOT NULL,
+						ModuleName 				VARCHAR(64) NOT NULL,
+						FlowName 				VARCHAR(64) NOT NULL,
+						FlowElementName 		VARCHAR(64) NOT NULL,
+						Action 					VARCHAR(32) NOT NULL,
+						ExceptionClass 			VARCHAR(255) NOT NULL,
+						PRIMARY KEY (Id),
+						FOREIGN KEY (ErrorCategorisationId) REFERENCES ErrorCategorisation(Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX
+					ErrorCategorisationLink01u ON
+					ErrorCategorisationLink(ModuleName,FlowName,FlowElementName, Action, ExceptionClass)</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE ErrorCategorisation
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategory 			VARCHAR(64) NOT NULL,
+						ErrorDescription	 	VARCHAR(2048) NOT NULL,
+						PRIMARY KEY (Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1</prop>		
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
@@ -169,7 +203,8 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     FlowElementName VARCHAR(255) NOT NULL,
-                    ErrorDetail TEXT NULL,
+					ErrorDetail TEXT NULL,
+					ErrorMessage TEXT NULL,
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
@@ -1366,9 +1401,43 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
 
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategorisationId	NUMERIC(18, 0) NOT NULL,
+						ModuleName 				VARCHAR(64) NOT NULL,
+						FlowName 				VARCHAR(64) NOT NULL,
+						FlowElementName 		VARCHAR(64) NOT NULL,
+						Action 					VARCHAR(32) NOT NULL,
+						ExceptionClass 			VARCHAR(255) NOT NULL,
+						PRIMARY KEY (Id),
+						FOREIGN KEY (ErrorCategorisationId) REFERENCES ErrorCategorisation(Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX
+					ErrorCategorisationLink01u ON
+					ErrorCategorisationLink(ModuleName,FlowName,FlowElementName, Action, ExceptionClass)</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE ErrorCategorisation
+					(
+						Id             			NUMERIC(18, 0) 		IDENTITY NOT NULL,
+						ErrorCategory 			VARCHAR(64) NOT NULL,
+						ErrorDescription	 	VARCHAR(2048) NOT NULL,
+						PRIMARY KEY (Id)
+					)
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1</prop>
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
@@ -1421,7 +1490,8 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     FlowElementName VARCHAR(255) NOT NULL,
-                    ErrorDetail TEXT NULL,
+					ErrorDetail TEXT NULL,
+					ErrorMessage TEXT NULL,
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
@@ -2668,9 +2738,45 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
 
                 <prop key="driver">com.microsoft.sqlserver.jdbc.SQLServerDriver</prop>
                 <prop key="url">jdbc:sqlserver://HOSTNAME:PORT/DATABASE</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						[Id]             			[NUMERIC](18) 		IDENTITY NOT NULL,
+						[ErrorCategorisationId]		[NUMERIC](18) 		NOT NULL,
+						[ModuleName] 				[VARCHAR](64) 		NOT NULL,
+						[FlowName] 					[VARCHAR](64) 		NOT NULL,
+						[FlowElementName] 			[VARCHAR](64) 		NOT NULL,
+						[Action]					[VARCHAR](32) 		NOT NULL,
+						[ExceptionClass] 			[VARCHAR](255) 		NOT NULL,
+						CONSTRAINT                  [PK_ErrorCategorisationLink_Id] PRIMARY KEY CLUSTERED
+						(
+						[Id] ASC
+						),
+						CONSTRAINT [FK_ErrorCategorisationLink_ErrorCategorisationId] FOREIGN KEY (ErrorCategorisationId) REFERENCES ErrorCategorisation(Id)
+					)
+
+					CREATE UNIQUE INDEX [IX_Error_Categorisation_Unique] ON [ErrorCategorisationLink](ModuleName, FlowName, FlowElementName, Action, ExceptionClass)
+					</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE [ErrorCategorisation]
+					(
+						[Id]            		[NUMERIC](18) 		IDENTITY NOT NULL,
+						[ErrorCategory] 		[VARCHAR](64) 		NOT NULL,
+						[ErrorDescription]	 	[VARCHAR](2048) 	NOT NULL,
+						CONSTRAINT              [PK_ErrorCategorisation_Id] PRIMARY KEY CLUSTERED
+						(
+						[Id] ASC
+						)
+					)
+					</prop>
 
 
                 <prop key="create.wiretap">CREATE TABLE [IkasanWiretap]
@@ -2717,7 +2823,8 @@
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
                     [FlowElementName]     	[varchar](255) NOT NULL,
-                    [ErrorDetail]           [text] NULL,
+					[ErrorDetail]           [text] NULL,
+					[ErrorMessage]          [text] NULL,
                     [EventLifeIdentifier]   [varchar](255) NULL,
                     [EventRelatedIdentifier] [varchar](255) NULL,
                     [Action]                [varchar](255) NULL,
@@ -3856,6 +3963,39 @@
 				
 				<!-- Hospital tables-->
 				<prop key="drop.exclusionEventAction">DROP TABLE ExclusionEventAction;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="drop.errorCategorisationLink">DROP TABLE ErrorCategorisationLink;</prop>
+				<prop key="drop.errorCategorisation">DROP TABLE ErrorCategorisation;</prop>
+				
+				<!-- Error categorisation tables-->
+				<prop key="create.errorCategorisationLink">CREATE TABLE ErrorCategorisationLink
+					(
+						Id             			IDENTITY NOT NULL,
+						ErrorCategorisationId	NUMERIC NOT NULL,
+						ModuleName 				VARCHAR(64) NOT NULL,
+						FlowName 				VARCHAR(64) NOT NULL,
+						FlowElementName 		VARCHAR(64) NOT NULL,
+						Action 					VARCHAR(32) NOT NULL,
+						ExceptionClass 			VARCHAR(255) NOT NULL
+					);
+					
+					ALTER TABLE ErrorCategorisationLink
+					ADD FOREIGN KEY
+					(ErrorCategorisationId)
+					REFERENCES ErrorCategorisation(Id);
+
+					CREATE UNIQUE INDEX
+					ErrorCategorisationLink01u ON
+					ErrorCategorisationLink(ModuleName,FlowName,FlowElementName, Action, ExceptionClass)</prop>
+					
+				<prop key="create.errorCategorisation">CREATE TABLE ErrorCategorisation
+					(
+						Id             			IDENTITY NOT NULL,
+						ErrorCategory 			VARCHAR(64) NOT NULL,
+						ErrorDescription	 	VARCHAR(2048) NOT NULL
+					);</prop>
+
 
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
@@ -3882,7 +4022,8 @@
                     ModuleName VARCHAR(256) NOT NULL,
                     FlowName VARCHAR(256) NOT NULL,
                     FlowComponentName VARCHAR(256) NOT NULL,
-                    ErrorDetail TEXT NULL,
+					ErrorDetail TEXT NULL,
+					ErrorMessage TEXT NULL,
                     EventLifeIdentifier VARCHAR(256) NULL,
                     EventRelatedIdentifier VARCHAR(256) NULL,
                     Action VARCHAR(256) NULL,
@@ -4222,8 +4363,8 @@
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
 					   Description			VARCHAR(1024)		    NOT NULL,
-					   CreatedDateTime      DATETIME NOT NULL,
-					   UpdatedDateTime      DATETIME NOT NULL,
+					   CreatedDateTime      DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id) 
 					);
 				</prop>
@@ -4232,8 +4373,8 @@
 					   Id               	IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
 					   Description	     	VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      DATETIME NOT NULL,
-					   UpdatedDateTime      DATETIME NOT NULL,
+					   CreatedDateTime      DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -4542,8 +4683,8 @@
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
 					   LdapUserDescAttributeName	VARCHAR(256) NULL,
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -4571,8 +4712,8 @@
                     DiagramUrl      			VARCHAR(256) 		NULL,
                     Version						VARCHAR(256) 		NULL,
                     ServerId					NUMERIC(18, 0) 		NULL,
-                    CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
-                    UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+                    CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+                    UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
                     PRIMARY KEY (Id)
 					);
                 </prop>
@@ -4599,8 +4740,8 @@
 					   FlowId						NUMERIC(18, 0) 		NULL,
 					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
-					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
                 </prop>
@@ -4655,6 +4796,179 @@
 					   PRIMARY KEY (Id)
 					);
                 </prop>
+				
+				<prop key="create.defaultPrincipal">
+					
+					INSERT INTO 
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user');
+					
+					set @securityPrincipalId = select Id 
+					from SecurityPrincipal 
+					where Name = 'admin';
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'ADMIN',
+					'Users who may perform administration functions on
+					the system' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'ADMIN';
+					
+					set @userId = select Id from Users where Username = 'admin';
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId );
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'ALL', 'Policy to do everything' );
+					
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'ALL';
+					
+					INSERT
+					INTO PrincipalRole ( PrincipalId, RoleId )
+					VALUES ( @securityPrincipalId, @securityRoleId );
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'User';
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' );
+					
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'Read Only';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator';
+					
+					set @securityPolicyId =  select Id 
+					from SecurityPolicy 
+					where Name = 'Read Only';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Control';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' );
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' );
+					
+					set @securityRoleId = select Id 
+					from SecurityRole 
+					where Name = 'COP Stream User';
+					
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+
+					set @securityPolicyId = select Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors';
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId );
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' );
+				
+				</prop>
 				
 			</props>
 
