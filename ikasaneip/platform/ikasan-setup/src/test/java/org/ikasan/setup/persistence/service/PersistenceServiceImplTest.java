@@ -88,6 +88,7 @@ public class PersistenceServiceImplTest
     public void setup()
     {
         persistenceService.createPersistence();
+        persistenceService.createAdminAccount();
 
     }
     
