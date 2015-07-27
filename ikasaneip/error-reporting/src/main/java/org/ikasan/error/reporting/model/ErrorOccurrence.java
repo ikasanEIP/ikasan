@@ -70,11 +70,16 @@ public class ErrorOccurrence<EVENT>
     private String flowElementName;
 
     /**
-	 * raw dump of the error as it occurred
-	 */
-	private String errorDetail;
+     * raw dump of the error as it occurred
+     */
+    private String errorDetail;
 
-	/**
+    /**
+     * the error message extracted from the errorDetail
+     */
+    private String errorMessage;
+
+    /**
 	 * Id of the event associated with this error, if it was event/flow related
 	 */
 	private String eventLifeIdentifier;
@@ -118,7 +123,7 @@ public class ErrorOccurrence<EVENT>
      * @param errorDetail
      * @param event
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, long timeToLive, EVENT event)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, long timeToLive, EVENT event)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -144,6 +149,7 @@ public class ErrorOccurrence<EVENT>
             throw new IllegalArgumentException("errorDetail cannot be 'null");
         }
 
+        this.errorMessage = errorMessage;
         this.event = event;
         this.timestamp = System.currentTimeMillis();
         this.uri = String.valueOf(this.hashCode());
@@ -157,9 +163,9 @@ public class ErrorOccurrence<EVENT>
      * @param flowElementName
      * @param errorDetail
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, long timeToLive)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, long timeToLive)
     {
-        this(moduleName, flowName, flowElementName, errorDetail, timeToLive, null);
+        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, timeToLive, null);
     }
 
     public String getModuleName() {
@@ -252,6 +258,14 @@ public class ErrorOccurrence<EVENT>
         this.action = action;
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    private void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -288,6 +302,7 @@ public class ErrorOccurrence<EVENT>
                 ", flowName='" + flowName + '\'' +
                 ", flowElementName='" + flowElementName + '\'' +
                 ", errorDetail='" + errorDetail + '\'' +
+                ", errorMessage='" + errorMessage + '\'' +
                 ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
                 ", eventRelatedIdentifier='" + eventRelatedIdentifier + '\'' +
                 ", action='" + action + '\'' +

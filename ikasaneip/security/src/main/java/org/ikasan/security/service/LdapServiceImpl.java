@@ -143,59 +143,47 @@ public class LdapServiceImpl implements LdapService
 		} 
 		catch (RuntimeException e)
 		{
-			e.printStackTrace();
 			throw new LdapServiceException(e);
 		}
 
 		String accountType = dir.getStringAttribute(authenticationMethod.getAccountTypeAttributeName());
 		LdapUser user = null;
-
-//		if (accountType == null || (accountType != null && accountType.equals("Regular User")))
-//		{
-//			String accountName = dir.getStringAttribute(authenticationMethod.getUserAccountNameAttributeName());
-//			String cn = dir.getStringAttribute("cn");
-//
-//			if(accountType == null && accountName != null && cn != null && !accountName.equals(cn))
-//			{
-//				return null;
-//			}
 			
-			String email = dir.getStringAttribute(authenticationMethod.getEmailAttributeName());
-			String surname = dir.getStringAttribute(authenticationMethod.getSurnameAttributeName());
-			String firstName = dir.getStringAttribute(authenticationMethod.getFirstNameAttributeName());
-			
-			String accountName = dir.getStringAttribute(authenticationMethod.getUserAccountNameAttributeName());
-			
-			if(accountName == null)
-			{
-				return null;
-			}
-			
-			if (email == null || email.length() == 0)
-			{
-				email = "no email";
-			}
-			
-			if (surname == null || surname.length() == 0)
-			{
-				surname = "no surname";
-			}
-			
-			if (firstName == null || firstName.length() == 0)
-			{
-				firstName = "no firstname";
-			}
-			
-			user = new LdapUser();
-			user.accountName = accountName.toLowerCase();
-			user.email = email;
-			user.surname = surname;
-			user.accountType = accountType;
-			user.firstName = firstName;
-			user.department = dir.getStringAttribute(authenticationMethod.getDepartmentAttributeName());
-			user.description = dir.getStringAttribute(authenticationMethod.getLdapUserDescriptionAttributeName());
-			user.memberOf = dir.getStringAttributes(authenticationMethod.getMemberofAttributeName());
-//		}
+		String email = dir.getStringAttribute(authenticationMethod.getEmailAttributeName());
+		String surname = dir.getStringAttribute(authenticationMethod.getSurnameAttributeName());
+		String firstName = dir.getStringAttribute(authenticationMethod.getFirstNameAttributeName());
+		
+		String accountName = dir.getStringAttribute(authenticationMethod.getUserAccountNameAttributeName());
+		
+		if(accountName == null)
+		{
+			return null;
+		}
+		
+		if (email == null || email.length() == 0)
+		{
+			email = "no email";
+		}
+		
+		if (surname == null || surname.length() == 0)
+		{
+			surname = "no surname";
+		}
+		
+		if (firstName == null || firstName.length() == 0)
+		{
+			firstName = "no firstname";
+		}
+		
+		user = new LdapUser();
+		user.accountName = accountName.toLowerCase();
+		user.email = email;
+		user.surname = surname;
+		user.accountType = accountType;
+		user.firstName = firstName;
+		user.department = dir.getStringAttribute(authenticationMethod.getDepartmentAttributeName());
+		user.description = dir.getStringAttribute(authenticationMethod.getLdapUserDescriptionAttributeName());
+		user.memberOf = dir.getStringAttributes(authenticationMethod.getMemberofAttributeName());
 
 		return user;
 	}
@@ -213,7 +201,6 @@ public class LdapServiceImpl implements LdapService
 		} 
 		catch (Exception e)
 		{
-			e.printStackTrace();
 			throw new LdapServiceException();
 		}
 
@@ -231,7 +218,8 @@ public class LdapServiceImpl implements LdapService
 			result = getAllGroups(cookie, ldapTemplate);
 			results.addAll(result.getResultList());
 			cookie = result.getCookie();
-		} while (cookie.getCookie() != null);
+		} 
+		while (cookie.getCookie() != null);
 
 		return results;
 	}
@@ -313,8 +301,6 @@ public class LdapServiceImpl implements LdapService
 		
 		for (String applicationSecurity : applicationSecurities)
 		{
-			logger.info("Trying to get principal by name: " + applicationSecurity);
-
 			IkasanPrincipal principal = securityDao
 					.getPrincipalByName(applicationSecurity);
 
@@ -323,7 +309,6 @@ public class LdapServiceImpl implements LdapService
 				principal = getApplicationSecurity(applicationSecurity);
 			}
 
-			logger.info("Adding app sec principal: " + principal);
 			if(principal != null)
 			{
 				this.securityDao.saveOrUpdatePrincipal(principal);
@@ -336,10 +321,8 @@ public class LdapServiceImpl implements LdapService
 
 		for (String username : users)
 		{
-			logger.info("Trying to get user: " + username);
 			LdapUser ldapUser = getLdapUser(username.substring(3, username.length()));
 			
-			logger.info("Got user: " + ldapUser);
 			if (ldapUser == null)
 			{
 				continue;
@@ -356,7 +339,6 @@ public class LdapServiceImpl implements LdapService
 				user.setSurname(ldapUser.surname);
 				user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 				
-				logger.info(user);
 				this.userDao.save(user);
 				
 				user = userDao.getUser(ldapUser.accountName);
@@ -390,8 +372,6 @@ public class LdapServiceImpl implements LdapService
 				
 				principal.setRoles(roles);
 			}
-
-			logger.info(principal);
 			
 			securityDao.saveOrUpdatePrincipal(principal);				
 			ikasanPrincipals.add(principal);
@@ -421,7 +401,6 @@ public class LdapServiceImpl implements LdapService
 			user.setDepartment(ldapUser.department);
 			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 
-			logger.info(user);
 			this.userDao.save(user);
 				
 		}
@@ -451,7 +430,6 @@ public class LdapServiceImpl implements LdapService
 			} 
 			catch (Exception e)
 			{
-				e.printStackTrace();
 				throw new LdapServiceException();
 			}
 

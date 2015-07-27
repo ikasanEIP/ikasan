@@ -70,6 +70,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
@@ -89,7 +90,6 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
-import com.vaadin.ui.themes.Reindeer;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
 import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
@@ -248,7 +248,7 @@ public class PolicyManagementPanel extends Panel implements View
 		linkLayout.setColumnExpandRatio(0, 1);
 		linkLayout.setColumnExpandRatio(1, 5);
 		
-		linkButton.setStyleName(Reindeer.BUTTON_LINK);
+		linkButton.setStyleName(ValoTheme.BUTTON_LINK);
     	linkButton.setVisible(false);
     	linkButton.addClickListener(new Button.ClickListener() 
     	{
@@ -453,7 +453,7 @@ public class PolicyManagementPanel extends Panel implements View
 						ThemeResource deleteIcon = new ThemeResource(
 								"images/remove-icon.png");
 						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 						
 						deleteButton.addClickListener(new Button.ClickListener() 
 				        {
@@ -509,7 +509,7 @@ public class PolicyManagementPanel extends Panel implements View
 				ThemeResource deleteIcon = new ThemeResource(
 						"images/remove-icon.png");
 				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 				
 				final Policy policy = PolicyManagementPanel.this.securityService
 						.findPolicyByName(sourceContainer.getText());
@@ -543,7 +543,7 @@ public class PolicyManagementPanel extends Panel implements View
 				{
 					Button roleDeleteButton = new Button();
 					roleDeleteButton.setIcon(deleteIcon);
-					roleDeleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					roleDeleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 					
 					roleDeleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -651,7 +651,7 @@ public class PolicyManagementPanel extends Panel implements View
 					ThemeResource deleteIcon = new ThemeResource(
 							"images/remove-icon.png");
 					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
 					
 					// Add the delete functionality to each role that is added
 					deleteButton.addClickListener(new Button.ClickListener() 
@@ -693,7 +693,7 @@ public class PolicyManagementPanel extends Panel implements View
 		this.cancelButton.setVisible(false);
 		this.deleteButton.setVisible(false);
 		
-		this.newButton.setStyleName(Reindeer.BUTTON_LINK);		
+		this.newButton.setStyleName(ValoTheme.BUTTON_LINK);		
     	this.newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -727,7 +727,7 @@ public class PolicyManagementPanel extends Panel implements View
             }
         });
     	
-    	this.saveButton.setStyleName(Reindeer.BUTTON_LINK);
+    	this.saveButton.setStyleName(ValoTheme.BUTTON_LINK);
     	this.saveButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -755,7 +755,7 @@ public class PolicyManagementPanel extends Panel implements View
             }
         });
     	
-    	this.deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+    	this.deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
     	this.deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -791,7 +791,7 @@ public class PolicyManagementPanel extends Panel implements View
             }
         });
     	
-    	this.cancelButton.setStyleName(Reindeer.BUTTON_LINK);
+    	this.cancelButton.setStyleName(ValoTheme.BUTTON_LINK);
     	this.cancelButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 

@@ -8,37 +8,37 @@
 		<!-- Ikasan esb configuration -->
         <file>
             <source>module/ikasan-jndi-datasource.properties</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>
             <source>module/module.xml</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
-            <filtered>false</filtered>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
+            <filtered>true</filtered>
         </file>
         <file>
             <source>module/hibernate.properties</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>
             <source>module/monitor-conf.xml</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>
             <source>module/ikasan-transaction-manager-conf.xml</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>
             <source>module/ikasan-console.properties</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>
             <source>module/ikasan-environment.properties</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/ikasan/${dashed.project.version}/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>

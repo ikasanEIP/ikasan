@@ -57,6 +57,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -106,58 +107,86 @@ public class WiretapPayloadViewWindow extends Window
 
 	protected Panel createWiretapDetailsPanel()
 	{
-		Panel errorOccurrenceDetailsPanel = new Panel("Wiretap");
+		Panel errorOccurrenceDetailsPanel = new Panel();
 		errorOccurrenceDetailsPanel.setSizeFull();
 		errorOccurrenceDetailsPanel.setStyleName("dashboard");
 		
-		GridLayout layout = new GridLayout(2, 5);
+		GridLayout layout = new GridLayout(2, 6);
 		layout.setSizeFull();
-		layout.setMargin(true);
-		layout.setColumnExpandRatio(0, 0.3f);
-		layout.setColumnExpandRatio(1, 0.7f);
-		layout.addComponent(new Label("Module Name"), 0, 0);
+		layout.setSpacing(true);
+		layout.setColumnExpandRatio(0, 0.2f);
+		layout.setColumnExpandRatio(1, 0.8f);
 		
-		TextField tf1 = new TextField();
-		tf1.setValue(this.wiretapEvent.getModuleName());
-		tf1.setReadOnly(true);
-		tf1.setWidth("80%");
-		layout.addComponent(tf1, 1, 0);
+		Label wiretapDetailsLabel = new Label("Wiretap Details");
+		wiretapDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		layout.addComponent(wiretapDetailsLabel);
 		
-		layout.addComponent(new Label("Flow Name"), 0, 1);
+		
+		Label moduleNameLabel = new Label("Module Name:");
+		moduleNameLabel.setSizeUndefined();
+		
+		layout.addComponent(moduleNameLabel, 0, 1);
+		layout.setComponentAlignment(moduleNameLabel, Alignment.MIDDLE_RIGHT);
+		
+		TextField moduleName = new TextField();
+		moduleName.setValue(this.wiretapEvent.getModuleName());
+		moduleName.setReadOnly(true);
+		moduleName.setWidth("80%");
+		layout.addComponent(moduleName, 1, 1);
+		
+		Label flowNameLabel = new Label("Flow Name:");
+		flowNameLabel.setSizeUndefined();
+		
+		layout.addComponent(flowNameLabel, 0, 2);
+		layout.setComponentAlignment(flowNameLabel, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf2 = new TextField();
 		tf2.setValue(this.wiretapEvent.getFlowName());
 		tf2.setReadOnly(true);
 		tf2.setWidth("80%");
-		layout.addComponent(tf2, 1, 1);
+		layout.addComponent(tf2, 1, 2);
 		
-		layout.addComponent(new Label("Component Name"), 0, 2);
+		Label componentNameLabel = new Label("Component Name:");
+		componentNameLabel.setSizeUndefined();
+		
+		layout.addComponent(componentNameLabel, 0, 3);
+		layout.setComponentAlignment(componentNameLabel, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf3 = new TextField();
 		tf3.setValue(this.wiretapEvent.getComponentName());
 		tf3.setReadOnly(true);
 		tf3.setWidth("80%");
-		layout.addComponent(tf3, 1, 2);
+		layout.addComponent(tf3, 1, 3);
 		
-		layout.addComponent(new Label("Date/Time"), 0, 3);
+		Label dateTimeLabel = new Label("Date/Time:");
+		dateTimeLabel.setSizeUndefined();
+		
+		layout.addComponent(dateTimeLabel, 0, 4);
+		layout.setComponentAlignment(dateTimeLabel, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf4 = new TextField();
 		tf4.setValue(new Date(this.wiretapEvent.getTimestamp()).toString());
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
-		layout.addComponent(tf4, 1, 3);
+		layout.addComponent(tf4, 1, 4);
 		
-		layout.addComponent(new Label("Event Id"), 0, 4);
+		
+		Label eventIdLabel = new Label("Event Id:");
+		eventIdLabel.setSizeUndefined();
+		
+		layout.addComponent(eventIdLabel, 0, 5);
+		layout.setComponentAlignment(eventIdLabel, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf5 = new TextField();
 		tf5.setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
-		layout.addComponent(tf5, 1, 4);
+		layout.addComponent(tf5, 1, 5);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
-		wrapperLayout.setMargin(true);
-		wrapperLayout.setSizeFull();
+		wrapperLayout.setWidth("100%");
+//		wrapperLayout.setMargin(true);
+//		wrapperLayout.setSizeFull();
 		
 		AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
@@ -166,16 +195,14 @@ public class WiretapPayloadViewWindow extends Window
 		editor.setMode(AceMode.xml);
 		editor.setTheme(AceTheme.eclipse);
 		editor.setWidth("100%");
-		editor.setHeight(600, Unit.PIXELS);
+		editor.setHeight(550, Unit.PIXELS);
 		
 
-		HorizontalLayout formLayout = new HorizontalLayout();
-		formLayout.setWidth("100%");
-		formLayout.setHeight(120, Unit.PIXELS);
-		formLayout.addComponent(layout);
-		wrapperLayout.addComponent(formLayout, 0, 0);
-		Label seperator = new Label("<hr />",ContentMode.HTML);
-		wrapperLayout.addComponent(seperator, 0, 1);
+//		HorizontalLayout formLayout = new HorizontalLayout();
+//		formLayout.setWidth("100%");
+//		formLayout.setHeight(120, Unit.PIXELS);
+//		formLayout.addComponent(layout);
+		wrapperLayout.addComponent(layout, 0, 0);
 		wrapperLayout.addComponent(editor, 0, 2);
 		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 

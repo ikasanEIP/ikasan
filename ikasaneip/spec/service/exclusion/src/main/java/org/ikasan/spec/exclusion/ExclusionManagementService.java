@@ -40,6 +40,7 @@
  */
 package org.ikasan.spec.exclusion;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -59,6 +60,18 @@ public interface ExclusionManagementService<ENTITY, IDENTIFIER>
 	 * @return
 	 */
     public ENTITY find(String moduleName, String flowName, IDENTIFIER identifier);
+    
+    /**
+     * Find a list of event entities based on criteria.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param starteDate
+     * @param endDate
+     * @param identifier
+     * @return
+     */
+    public List<ENTITY> find(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, IDENTIFIER identifier);
 
     /**
 	 * Find all exclusion event entities.
