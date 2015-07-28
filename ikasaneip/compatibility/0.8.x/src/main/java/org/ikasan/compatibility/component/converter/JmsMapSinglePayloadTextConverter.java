@@ -96,6 +96,12 @@ public class JmsMapSinglePayloadTextConverter implements Converter<MapMessage,St
     protected String getMessageContent(MapMessage mapMessage, String payloadContent)
         throws JMSException
     {
-        return mapMessage.getString(payloadContent);
+        byte[] bytesPayloadContent = mapMessage.getBytes(payloadContent);
+
+        if (null == bytesPayloadContent) {
+            return null;
+        } else {
+            return new String(bytesPayloadContent);
+        }
     }
 }
