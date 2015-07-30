@@ -42,7 +42,9 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
@@ -52,6 +54,7 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
 
@@ -69,6 +72,7 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     private MappingConfigurationPanel mappingConfigurationPanel;
     private VisibilityGroup visibilityGroup;
+    private IkasanUINavigator mapingNavigator;
 
     /**
      * Constructor
@@ -79,13 +83,15 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
      */
     public MappingSearchResultTableItemClickListener(MappingConfigurationService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationPanel mappingConfigurationPanel, VisibilityGroup visibilityGroup)
+            MappingConfigurationPanel mappingConfigurationPanel, VisibilityGroup visibilityGroup,
+            IkasanUINavigator mappingNavigator)
     {
         super();
         this.mappingConfigurationService = mappingConfigurationService;
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.mappingConfigurationPanel = mappingConfigurationPanel;
         this.visibilityGroup = visibilityGroup;
+        this.mapingNavigator = mappingNavigator;
     }
 
     /* (non-Javadoc)
@@ -109,6 +115,14 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
     		this.visibilityGroup.setVisible(false);
     	}
     	
+    	Navigator navigator = new Navigator(UI.getCurrent(), mapingNavigator.getParentContainer());
+
+		for (IkasanUIView view : mapingNavigator.getIkasanViews())
+		{
+			logger.info("Adding view:" + view.getPath());
+			navigator.addView(view.getPath(), view.getView());
+		}
+		
         UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
 
         MappingConfiguration mappingConfiguration = this.mappingConfigurationService

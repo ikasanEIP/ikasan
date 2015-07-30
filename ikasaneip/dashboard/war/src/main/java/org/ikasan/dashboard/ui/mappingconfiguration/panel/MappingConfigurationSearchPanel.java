@@ -75,6 +75,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     private TargetContextComboBox targetContextComboBox;
     private MappingConfigurationService mappingConfigurationService;
     private ClickListener searchButtonClickListener;
+    private NewActions newActions;
 
     /**
      * Constructor
@@ -88,7 +89,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
      */
     public MappingConfigurationSearchPanel(MappingConfigurationService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, ClickListener searchButtonClickListener)
+            TargetContextComboBox targetContextComboBox, ClickListener searchButtonClickListener, NewActions newActions)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.clientComboBox = clientComboBox;
@@ -96,6 +97,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         this.sourceContextComboBox = sourceContextComboBox;
         this.targetContextComboBox = targetContextComboBox;
         this.searchButtonClickListener = searchButtonClickListener;
+        this.newActions = newActions;
 
         this.init();
     }
@@ -112,7 +114,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     	final Label sourceContextLabel = new Label("Source Context:");
     	final Label targetContextLabel = new Label("Target Context:");    	
 
-        final GridLayout contentLayout = new GridLayout(2, 6);        
+        final GridLayout contentLayout = new GridLayout(3, 6);        
         contentLayout.setHeight("100%");
         contentLayout.setSpacing(true);
 
@@ -149,6 +151,8 @@ public class MappingConfigurationSearchPanel extends Panel implements View
             }
         });
         contentLayout.addComponent(clientComboBoxLayout, 1, 1);
+        contentLayout.addComponent(newActions.getNewClientButton(), 2, 1);
+        contentLayout.setComponentAlignment(newActions.getNewClientButton(), Alignment.MIDDLE_LEFT);
 
         HorizontalLayout typeLabelLayout = new HorizontalLayout();
         typeLabelLayout.setHeight(25, Unit.PIXELS);

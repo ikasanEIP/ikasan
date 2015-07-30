@@ -32,6 +32,7 @@
         <constructor-arg ref="eventBus"/>
         <constructor-arg ref="imagePanelLayout"/>
         <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="menuLayout"/>
     </bean>
 
 	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
@@ -52,7 +53,7 @@
       <entry key="policyManagement" value-ref="policyManagementNavigator" />
     </util:map>
 
-	<bean id="topLevelNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+	<bean id="topLevelNavigatorBean" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
 		<constructor-arg value="topLevel"/>
         <constructor-arg>
             <list>
@@ -164,6 +165,15 @@
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
     </bean>
+    
+    <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="topLevelNavigator" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="topLevelNavigatorBean"/></property>
+        </bean>
+      </property>
+    </bean>
 	
 	<!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
     <bean id="navigationPanelProxy" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
@@ -173,6 +183,8 @@
         </bean>
       </property>
     </bean>
+    
+    <bean id="menuLayout" class="org.ikasan.dashboard.ui.framework.navigation.MenuLayout" scope="session"/>
     
     <bean id="landingViewPanel" class=" org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session"/>
     

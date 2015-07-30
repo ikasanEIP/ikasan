@@ -50,7 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
@@ -81,10 +84,10 @@ import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -102,7 +105,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -142,7 +144,9 @@ public class MappingConfigurationPanel extends Panel implements View
     protected MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
     protected SystemEventService systemEventService;
     protected String name;
-    
+    protected IkasanUINavigator mappingNavigator;
+    protected IkasanUINavigator topLevelNavigator;
+    protected MenuLayout menuLayout;
 
     /**
      * Constructor
@@ -171,7 +175,8 @@ public class MappingConfigurationPanel extends Panel implements View
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup mappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator
+            , IkasanUINavigator mappingNavigator, MenuLayout menuLayout)
     {
         super();
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
@@ -194,7 +199,9 @@ public class MappingConfigurationPanel extends Panel implements View
         this.mappingConfigurationValuesExportHelper = mappingConfigurationValuesExportHelper;
         this.systemEventService = systemEventService;
         this.name = name;
-        
+        this.mappingNavigator = mappingNavigator;
+        this.topLevelNavigator = topLevelNavigator;
+        this.menuLayout = menuLayout;
     }
 
     /**
@@ -205,6 +212,7 @@ public class MappingConfigurationPanel extends Panel implements View
     {    
     	layout = new GridLayout(5, 6);
         layout.setSpacing(true);
+        layout.setMargin(true);
         layout.setWidth("100%");
         
         this.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -221,9 +229,25 @@ public class MappingConfigurationPanel extends Panel implements View
         linkButton.setDescription("Return to search results");
         linkButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
-        linkButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                saveRequiredMonitor.manageSaveRequired("searchResultsPanel");
+        linkButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	Navigator navigator = new Navigator(UI.getCurrent(), menuLayout.getContentContainer());
+
+        		for (IkasanUIView view : topLevelNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
+            	
+                saveRequiredMonitor.manageSaveRequired("mappingView");
+                
+                navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
+
+        		for (IkasanUIView view : mappingNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
             }
         });
 
@@ -285,11 +309,27 @@ public class MappingConfigurationPanel extends Panel implements View
         this.cancelButton.setDescription("Cancel the current edit");
         this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.cancelButton.setVisible(false);
-        this.cancelButton.addClickListener(new Button.ClickListener() {
+        this.cancelButton.addClickListener(new Button.ClickListener() 
+        {
             public void buttonClick(ClickEvent event) {
                 setEditable(false);
                 mappingConfigurationFunctionalGroup.saveOrCancelButtonPressed();
-                UI.getCurrent().getNavigator().navigateTo("searchResultsPanel");
+
+                Navigator navigator = new Navigator(UI.getCurrent(), menuLayout.getContentContainer());
+
+        		for (IkasanUIView view : topLevelNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
+            	
+                saveRequiredMonitor.manageSaveRequired("mappingView");
+                
+                navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
+
+        		for (IkasanUIView view : mappingNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
             }
         });
 
@@ -323,7 +363,7 @@ public class MappingConfigurationPanel extends Panel implements View
         queryParamsPanel.setContent(paramQueriesLayout);
         this.layout.addComponent(queryParamsPanel, 2, 2, 3, 5);
 
-        vpanel.setSplitPosition(50, Unit.PERCENTAGE);
+        vpanel.setSplitPosition(315, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
@@ -369,7 +409,7 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     protected GridLayout createMappingConfigurationForm()
     {
-    	 Label mappingConfigurationLabel = new Label(this.name);
+        Label mappingConfigurationLabel = new Label(this.name);
  		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
  		layout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
     	

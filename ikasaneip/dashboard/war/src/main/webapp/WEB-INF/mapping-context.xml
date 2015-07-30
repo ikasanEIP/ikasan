@@ -18,9 +18,10 @@
         <constructor-arg ref="sourceContextComboBox"/>
         <constructor-arg ref="targetContextComboBox"/>
         <constructor-arg ref="searchButtonClickListener"/>
+        <constructor-arg ref="newActions"/>
     </bean>
 
-	<bean id="mappingNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+	<bean id="mappingNavigatorBean" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
 		<constructor-arg value="mapping"/>
         <constructor-arg>
             <list>
@@ -56,6 +57,15 @@
         </constructor-arg>
         <constructor-arg ref="mappingViewComponentContainer"/>
     </bean>
+    
+    <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="mappingNavigator" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="mappingNavigatorBean"/></property>
+        </bean>
+      </property>
+    </bean>
 
 	<bean id="mappingViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
     	<constructor-arg value="false"/>
@@ -68,7 +78,7 @@
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
     </bean>
 
-    <bean id="newActionsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewActionsPanel" scope="session">
+    <bean id="newActions" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewActions" scope="session">
         <constructor-arg ref="newMappingConfigurationPanel"/>
         <constructor-arg ref="typeComboBoxRefreshGroup"/>
         <constructor-arg ref="clientComboBoxRefreshGroup"/>
@@ -85,6 +95,7 @@
         <constructor-arg ref="newMappingConfigurationLabel"/>
         <constructor-arg ref="importMappingConfigurationLabel"/>
         <constructor-arg ref="mappingConfigurationImportWindow"/>
+        <constructor-arg ref="mappingNavigator"/>
     </bean>
 
     <bean id="mappingConfigurationImportWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow" scope="session">
@@ -135,6 +146,9 @@
         <constructor-arg ref="mappingConfigurationExportHelper"/>
         <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="topLevelNavigator"/>
+        <constructor-arg ref="mappingNavigator"/>
+        <constructor-arg ref="menuLayout"/>
     </bean>
 
     <bean id="newMappingConfigurationPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationPanel" scope="session">
@@ -157,6 +171,9 @@
         <constructor-arg ref="mappingConfigurationExportHelper"/>
         <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="topLevelNavigator"/>
+        <constructor-arg ref="mappingNavigator"/>
+        <constructor-arg ref="menuLayout"/>
     </bean>
 
     <bean id="mappingConfigurationExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper" scope="session">
@@ -170,7 +187,6 @@
         <constructor-arg ref="mappingConfigurationSearchPanel"/>
         <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
         <constructor-arg ref="mappingViewComponentContainer"/>
-        <constructor-arg ref="newActionsPanel"/>
     </bean>
 
 
@@ -321,6 +337,7 @@
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
         <constructor-arg ref="modifyExistingMappingConfigurationVisibilityGroup"/>
+        <constructor-arg ref="mappingNavigator"/>
     </bean>
 
     <!-- Components -->
