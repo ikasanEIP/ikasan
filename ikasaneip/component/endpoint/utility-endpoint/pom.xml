@@ -55,6 +55,24 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-quartz-endpoint</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-scheduler</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
             <scope>provided</scope>
         </dependency>
