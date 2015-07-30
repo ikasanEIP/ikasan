@@ -45,8 +45,11 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.Editable;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
@@ -64,6 +67,7 @@ import org.vaadin.teemu.VaadinIcons;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -117,13 +121,14 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup newMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator,
+            IkasanUINavigator uiNavigator, MenuLayout menuLayout)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "New Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, newMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper, systemEventService);
+            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout);
 
         this.registerListeners();
     }
@@ -270,7 +275,22 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             public void buttonClick(ClickEvent event) {
                 setEditable(false);
                 mappingConfigurationFunctionalGroup.saveOrCancelButtonPressed();
-                UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+                
+                Navigator navigator = new Navigator(UI.getCurrent(), menuLayout.getContentContainer());
+
+        		for (IkasanUIView view : topLevelNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
+            	
+                saveRequiredMonitor.manageSaveRequired("mappingView");
+                
+                navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
+
+        		for (IkasanUIView view : mappingNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
             }
         });
     }

@@ -42,12 +42,15 @@ package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
 
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -67,9 +70,10 @@ public class MappingConfigurationView extends Panel implements View
     private MappingConfigurationSearchPanel searchPanel;
     private MappingConfigurationSearchResultsPanel searchResultsPanel;
     private ViewComponentContainer viewComponentContainer;
-    private NewActionsPanel newActionsPanel;
     private VerticalSplitPanel verticalSplitPanel;
-    private Panel leftPanelLayout;
+    
+    private float splitPosition;
+	private Unit splitUnit;
 
     /**
      * Constructor
@@ -81,13 +85,11 @@ public class MappingConfigurationView extends Panel implements View
      */
     public MappingConfigurationView(MappingConfigurationSearchPanel searchPanel,
             MappingConfigurationSearchResultsPanel searchResultsPanel,
-            ViewComponentContainer viewComponentContainer,
-            NewActionsPanel newActionsPanel)
+            ViewComponentContainer viewComponentContainer)
     {
         this.searchPanel = searchPanel;
         this.searchResultsPanel = searchResultsPanel;
         this.viewComponentContainer = viewComponentContainer;
-        this.newActionsPanel = newActionsPanel;
 
         this.init();
     }
@@ -99,106 +101,73 @@ public class MappingConfigurationView extends Panel implements View
     {
         this.setSizeFull();
         
-        this.leftPanelLayout = getExpandedLeftSplitPanelLayout();
+        HorizontalLayout topContainer = new HorizontalLayout();
+        topContainer.setSizeFull();
+        topContainer.setMargin(true);
+        topContainer.addComponent(this.searchPanel);
+        HorizontalLayout bottomContainer = new HorizontalLayout();
+        bottomContainer.setMargin(true);
+        bottomContainer.setSizeFull();
+        bottomContainer.addComponent(this.viewComponentContainer);
         
-        HorizontalLayout leftContainer = new HorizontalLayout();
-        leftContainer.setSizeFull();
-        leftContainer.setMargin(true);
-        leftContainer.addComponent(this.leftPanelLayout);
-        HorizontalLayout rightContainer = new HorizontalLayout();
-        rightContainer.setMargin(true);
-        rightContainer.setSizeFull();
-        rightContainer.addComponent(this.viewComponentContainer);
+        final Button hideFilterButton = new Button();
+		hideFilterButton.setIcon(VaadinIcons.MINUS);
+		hideFilterButton.setCaption("Hide Filter");
+		hideFilterButton.setStyleName(ValoTheme.BUTTON_LINK);
+		hideFilterButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		
+		final Button showFilterButton = new Button();
+		showFilterButton.setIcon(VaadinIcons.PLUS);
+		showFilterButton.setCaption("Show Filter");
+		showFilterButton.addStyleName(ValoTheme.BUTTON_LINK);
+		showFilterButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		showFilterButton.setVisible(false);
+		
+		hideFilterButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	hideFilterButton.setVisible(false);
+            	showFilterButton.setVisible(true);
+            	splitPosition = verticalSplitPanel.getSplitPosition();
+            	splitUnit = verticalSplitPanel.getSplitPositionUnit();
+            	verticalSplitPanel.setSplitPosition(0, Unit.PIXELS);
+            }
+        });
+
+		
+		showFilterButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	hideFilterButton.setVisible(true);
+            	showFilterButton.setVisible(false);
+            	verticalSplitPanel.setSplitPosition(splitPosition, splitUnit);
+            }
+        });
+		
+		GridLayout filterButtonLayout = new GridLayout(2, 1);
+		filterButtonLayout.setHeight(25, Unit.PIXELS);
+		filterButtonLayout.addComponent(hideFilterButton, 0, 0);
+		filterButtonLayout.addComponent(showFilterButton, 1, 0);
         
         this.verticalSplitPanel 
-            = new VerticalSplitPanel(leftContainer, rightContainer);
+            = new VerticalSplitPanel(topContainer, bottomContainer);
         this.verticalSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
         this.verticalSplitPanel.setSizeFull();
-        this.verticalSplitPanel.setSplitPosition(285, Unit.PIXELS);
-        this.setContent(verticalSplitPanel);
+        this.verticalSplitPanel.setSplitPosition(260, Unit.PIXELS);
+        
+        GridLayout wrapper = new GridLayout(1, 2);
+		wrapper.setRowExpandRatio(0, .01f);
+		wrapper.setRowExpandRatio(1, .99f);
+		wrapper.setSizeFull();
+		wrapper.addComponent(filterButtonLayout);
+		wrapper.setComponentAlignment(filterButtonLayout, Alignment.MIDDLE_RIGHT);
+		wrapper.addComponent(verticalSplitPanel);
+		
+        this.setContent(wrapper);
     }
 
-    /**
-     * Setup the layout for the left panel.
-     * 
-     * @return
-     */
-    private Panel getExpandedLeftSplitPanelLayout()
-    {   
-    	
-        Button collapseButton = new Button("<<");
-        collapseButton.setVisible(true);
-        collapseButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-            	
-                verticalSplitPanel.setSplitPosition(70, Unit.PIXELS);
-                
-                HorizontalLayout leftContainer = new HorizontalLayout();
-                leftContainer.setSizeFull();
-                leftContainer.setMargin(true);
-                leftContainer.addComponent(getCollapsedLeftSplitPanelLayout());
-                verticalSplitPanel.setFirstComponent(leftContainer);
-            }
-        });
-
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setMargin(true);
-        layout.addComponent(collapseButton);
-        collapseButton.setHeight(15, Unit.PIXELS);
-        collapseButton.setWidth(15, Unit.PIXELS);
-        collapseButton.setStyleName(BaseTheme.BUTTON_LINK);
-        layout.setComponentAlignment(collapseButton, Alignment.TOP_RIGHT);
-        layout.addComponent(searchPanel);
-        layout.setComponentAlignment(searchPanel, Alignment.TOP_RIGHT);
-        layout.addComponent(newActionsPanel);
-        layout.setComponentAlignment(newActionsPanel, Alignment.TOP_RIGHT);
-
-        layout.setStyleName("grey");
-        
-        Panel panel = new Panel();
-        panel.setSizeFull();
-        panel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        panel.setContent(layout);
-        
-        return panel;
-    }
-
-    private Panel getCollapsedLeftSplitPanelLayout()
-    {   
-        Button expandButton = new Button(">>");
-        expandButton.setVisible(true);
-        expandButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                verticalSplitPanel.setLocked(false);
-                verticalSplitPanel.setSplitPosition(385, Unit.PIXELS);
-                verticalSplitPanel.setLocked(true);
-                
-                HorizontalLayout leftContainer = new HorizontalLayout();
-                leftContainer.setSizeFull();
-                leftContainer.setMargin(true);
-                leftContainer.addComponent(getExpandedLeftSplitPanelLayout());
-                verticalSplitPanel.setFirstComponent(leftContainer);
-                
-                verticalSplitPanel.setFirstComponent(leftContainer);
-            }
-        });
-
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.addComponent(expandButton);
-        expandButton.setHeight(15, Unit.PIXELS);
-        expandButton.setWidth(15, Unit.PIXELS);
-        layout.setComponentAlignment(expandButton, Alignment.TOP_CENTER);
-        expandButton.setStyleName(BaseTheme.BUTTON_LINK);
-        layout.setStyleName("grey");
-        layout.setHeight("100%");
-
-        Panel panel = new Panel();
-        panel.setSizeFull();
-        panel.setStyleName("dashboard-grey");
-        panel.setContent(layout);
-        
-        return panel;
-    }
 
 	@Override
 	public void enter(ViewChangeEvent event) {

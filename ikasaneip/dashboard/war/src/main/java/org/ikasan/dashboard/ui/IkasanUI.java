@@ -113,7 +113,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private CssLayout menu = new CssLayout();
     private final LinkedHashMap<String, String> menuItems = new LinkedHashMap<String, String>();
     private CssLayout menuItemsLayout = new CssLayout();
-    private MenuLayout menuLayout = new MenuLayout();
+    private MenuLayout menuLayout;
     private Component menuComponent;
     
     private ArrayList<Component> menuComponents = new ArrayList<Component>();
@@ -139,7 +139,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	        ViewComponentContainer viewComponentContainer, UserService userService,
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
-            EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel)
+            EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -152,6 +152,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	    this.eventBus = eventBus;
 	    this.imagePanelLayout = imagePanelLayout;
 	    this.navigationPanel = navigationPanel;
+	    this.menuLayout = menuLayout;
 	    
 //	    Broadcaster.register(this);
 	}
@@ -436,6 +437,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     public void loadNavigator(String name)
 	{
     	IkasanUINavigator uiNavigator = this.views.get(name);
+    	uiNavigator.setParentContainer(this.menuLayout.getContentContainer());
 		Navigator navigator = new Navigator(UI.getCurrent(), uiNavigator.getContainer());
 
 		for (IkasanUIView view : uiNavigator.getIkasanViews())

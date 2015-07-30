@@ -45,6 +45,8 @@ import java.util.List;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 
+import com.vaadin.ui.ComponentContainer;
+
 /**
  * @author Ikasan Development Team
  *
@@ -56,6 +58,7 @@ public class IkasanUINavigator
     private String name;
     private List<IkasanUIView> ikasanViews;
     private ViewComponentContainer container;
+    private ComponentContainer parentContainer;
    
     /**
      * Constructor 
@@ -96,5 +99,21 @@ public class IkasanUINavigator
 	public List<IkasanUIView> getIkasanViews() 
 	{
 		return ikasanViews;
+	}
+
+	/**
+	 * @return the parentContainer
+	 */
+	public ComponentContainer getParentContainer()
+	{
+		return parentContainer;
+	}
+
+	/**
+	 * @param parentContainer the parentContainer to set
+	 */
+	public void setParentContainer(ComponentContainer parentContainer)
+	{
+		this.parentContainer = parentContainer;
 	}
 }
