@@ -97,45 +97,61 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     /////////////////////////////
 
     @Override
-    public boolean equals(Object object)
+    public boolean equals(Object o)
     {
-        if(object instanceof SFTPConnectionRequestInfo)
-        {
-            SFTPConnectionRequestInfo cri = (SFTPConnectionRequestInfo)object;
-            if(this.cleanupJournalOnComplete.equals(cri.cleanupJournalOnComplete()) &&
-               this.remoteHostname.equalsIgnoreCase(cri.getRemoteHostname()) &&
-               this.getClientID().equalsIgnoreCase(cri.getClientID()) &&
-               this.knownHostsFilename.equalsIgnoreCase(knownHostsFilename) &&
-               this.maxRetryAttempts.equals(cri.getMaxRetryAttempts()) &&
-               this.pollTime.equals(cri.getPollRate()) &&
-               this.remotePort.equals(cri.getRemotePort()) &&
-               this.privateKeyFilename.equalsIgnoreCase(cri.getPrivateKeyFilename()) &&
-               this.preferredAuthentications.equals(cri.getPreferredAuthentications()) &&
-               this.connectionTimeout.equals(cri.getConnectionTimeout()) &&
-               this.username.equals(cri.getUsername()))
-            {
-                return true;
-            }
-        }
-        return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        SFTPConnectionRequestInfo that = (SFTPConnectionRequestInfo) o;
+        if (cleanupJournalOnComplete != null ?
+                !cleanupJournalOnComplete.equals(that.cleanupJournalOnComplete) :
+                that.cleanupJournalOnComplete != null)
+            return false;
+        if (connectionTimeout != null ?
+                !connectionTimeout.equals(that.connectionTimeout) :
+                that.connectionTimeout != null)
+            return false;
+        if (knownHostsFilename != null ?
+                !knownHostsFilename.equals(that.knownHostsFilename) :
+                that.knownHostsFilename != null)
+            return false;
+        if (maxRetryAttempts != null ? !maxRetryAttempts.equals(that.maxRetryAttempts) : that.maxRetryAttempts != null)
+            return false;
+        if (pollTime != null ? !pollTime.equals(that.pollTime) : that.pollTime != null)
+            return false;
+        if (preferredAuthentications != null ?
+                !preferredAuthentications.equals(that.preferredAuthentications) :
+                that.preferredAuthentications != null)
+            return false;
+        if (privateKeyFilename != null ?
+                !privateKeyFilename.equals(that.privateKeyFilename) :
+                that.privateKeyFilename != null)
+            return false;
+        if (remoteHostname != null ? !remoteHostname.equals(that.remoteHostname) : that.remoteHostname != null)
+            return false;
+        if (remotePort != null ? !remotePort.equals(that.remotePort) : that.remotePort != null)
+            return false;
+        if (username != null ? !username.equals(that.username) : that.username != null)
+            return false;
+        return true;
     }
 
     @Override
     public int hashCode()
     {
-        return this.cleanupJournalOnComplete.hashCode()
-             + this.remoteHostname.hashCode()
-             + this.getClientID().hashCode()
-             + this.knownHostsFilename.hashCode()
-             + this.maxRetryAttempts.hashCode()
-             + this.pollTime.hashCode()
-             + this.remotePort.hashCode()
-             + this.privateKeyFilename.hashCode()
-             + this.username.hashCode()
-             + this.connectionTimeout.hashCode()
-             + this.preferredAuthentications.hashCode();
+        int result = remoteHostname != null ? remoteHostname.hashCode() : 0;
+        result = 31 * result + (remotePort != null ? remotePort.hashCode() : 0);
+        result = 31 * result + (knownHostsFilename != null ? knownHostsFilename.hashCode() : 0);
+        result = 31 * result + (maxRetryAttempts != null ? maxRetryAttempts.hashCode() : 0);
+        result = 31 * result + (pollTime != null ? pollTime.hashCode() : 0);
+        result = 31 * result + (connectionTimeout != null ? connectionTimeout.hashCode() : 0);
+        result = 31 * result + (privateKeyFilename != null ? privateKeyFilename.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (cleanupJournalOnComplete != null ? cleanupJournalOnComplete.hashCode() : 0);
+        result = 31 * result + (preferredAuthentications != null ? preferredAuthentications.hashCode() : 0);
+        return result;
     }
-
     //////////////////////////////////////////////////////////////////
     // Getters/Setters
     // properties provided via the ra.xml which are required to
