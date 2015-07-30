@@ -58,7 +58,55 @@
         <property name="cronExpression" value="0/5 * * * * ?"/>
     </bean>
 
-    <!-- Producer Component -->
+    <!--  ================================================================== -->
+    <!--  Scheduled Sample Local File System Components                      -->
+    <!--  ================================================================== -->
+    <bean id="sampleScheduledFileConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <constructor-arg ref="scheduler" />
+        <property name="messageProvider" ref="fileMessageProvider"/>
+        <property name="managedEventIdentifierService">
+            <bean class="org.ikasan.component.endpoint.filesystem.messageprovider.FileLineEventIdentifierServiceImpl">
+                <constructor-arg value="sample-sampleScheduledFlow"/>
+            </bean>
+        </property>
+        <property name="jobDetail" >
+            <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory" />
+                <property name="targetMethod" value="createJobDetail" />
+                <property name="arguments">
+                    <list>
+                        <ref bean="sampleScheduledFileConsumer" />
+                        <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
+                        <value>sampleScheduledFileConsumer</value>
+                        <value>sample</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuration" ref="sampleScheduledFileConsumerConfiguration"/>
+        <property name="configuredResourceId" value="sample-sampleScheduledFileConsumer"/>
+    </bean>
+
+    <bean id="fileMessageProvider" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider">
+        <property name="messageProviderPostProcessor">
+            <bean class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProviderPostProcessorImpl"/>
+        </property>
+        <property name="configuration" ref="sampleScheduledFileConsumerConfiguration" />
+    </bean>
+
+    <bean id="sampleScheduledFileConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
+        <property name="cronExpression" value="0/5 * * * * ?" />
+        <property name="encoding" value="UTF-8"/>
+        <property name="includeHeader" value="true"/>
+        <property name="includeTrailer" value="true"/>
+        <property name="sortByModifiedDateTime" value="true" />
+        <property name="sortAscending" value="true" />
+        <property name="directoryDepth" value="1"/>
+    </bean>
+
+    <!--  ================================================================== -->
+    <!--  Producer Component                                                 -->
+    <!--  ================================================================== -->
     <bean id="sampleScheduledProducer" class="org.ikasan.component.endpoint.util.producer.LogProducer" />
 
 </beans>
