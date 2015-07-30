@@ -107,6 +107,10 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     protected void init()
     {
     	this.addStyleName(ValoTheme.PANEL_BORDERLESS);
+    	
+    	final Label typeLabel = new Label("Type:");
+    	final Label sourceContextLabel = new Label("Source Context:");
+    	final Label targetContextLabel = new Label("Target Context:");    	
 
         final GridLayout contentLayout = new GridLayout(2, 6);        
         contentLayout.setHeight("100%");
@@ -138,6 +142,9 @@ public class MappingConfigurationSearchPanel extends Panel implements View
                     typeComboBox.refresh(((ConfigurationServiceClient)event.getProperty().getValue()).getName());
                     sourceContextComboBox.refresh(((ConfigurationServiceClient)event.getProperty().getValue()).getName(), null);
                     targetContextComboBox.refresh(((ConfigurationServiceClient)event.getProperty().getValue()).getName(), null, null);
+                    
+                    typeLabel.setVisible(true);
+                    typeComboBox.setVisible(true);
                 }
             }
         });
@@ -147,16 +154,17 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         typeLabelLayout.setHeight(25, Unit.PIXELS);
         typeLabelLayout.setWidth(200, Unit.PIXELS);
         
-        Label typeLabel = new Label("Type:");
         typeLabel.setSizeUndefined();        
         typeLabelLayout.addComponent(typeLabel);
         typeLabelLayout.setComponentAlignment(typeLabel, Alignment.MIDDLE_RIGHT);
+        typeLabel.setVisible(false);
         
         contentLayout.addComponent(typeLabelLayout, 0, 2);
         HorizontalLayout typeComboBoxLayout = new HorizontalLayout();
         typeComboBoxLayout.setHeight(25, Unit.PIXELS);
         typeComboBoxLayout.setWidth(180, Unit.PIXELS);
         this.typeComboBox.setWidth(180, Unit.PIXELS);
+        this.typeComboBox.setVisible(false);
         this.typeComboBox.addValueChangeListener(new ValueChangeListener() {
             public void valueChange(ValueChangeEvent event) {
                 String client = null;
@@ -170,6 +178,9 @@ public class MappingConfigurationSearchPanel extends Panel implements View
                 {
                     sourceContextComboBox.refresh(client , ((ConfigurationType)event.getProperty().getValue()).getName());
                     targetContextComboBox.refresh(client , ((ConfigurationType)event.getProperty().getValue()).getName(), null);
+                    
+                    sourceContextLabel.setVisible(true);
+                    sourceContextComboBox.setVisible(true);
                 }
             }
         });
@@ -180,16 +191,17 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         sourceContextLabelLayout.setHeight(25, Unit.PIXELS);
         sourceContextLabelLayout.setWidth(200, Unit.PIXELS);
         
-        Label sourceContextLabel = new Label("Source Context:");
         sourceContextLabel.setSizeUndefined();        
         sourceContextLabelLayout.addComponent(sourceContextLabel);
         sourceContextLabelLayout.setComponentAlignment(sourceContextLabel, Alignment.MIDDLE_RIGHT);
+        sourceContextLabel.setVisible(false);
         
         contentLayout.addComponent(sourceContextLabelLayout, 0, 3);
         HorizontalLayout sourceContextComboBoxLayout = new HorizontalLayout();
         sourceContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         sourceContextComboBoxLayout.setWidth(180, Unit.PIXELS);
         this.sourceContextComboBox.setWidth(180, Unit.PIXELS);
+        this.sourceContextComboBox.setVisible(false);
         this.sourceContextComboBox.addValueChangeListener(new ValueChangeListener() 
         {
             public void valueChange(ValueChangeEvent event) 
@@ -210,6 +222,9 @@ public class MappingConfigurationSearchPanel extends Panel implements View
                 if(event.getProperty() != null && event.getProperty().getValue() != null)
                 {
                     targetContextComboBox.refresh(client, type, ((ConfigurationContext)event.getProperty().getValue()).getName());
+                    
+                    targetContextLabel.setVisible(true);
+                    targetContextComboBox.setVisible(true);
                 }
             }
         });
@@ -220,16 +235,17 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         targetContextLabelLayout.setHeight(25, Unit.PIXELS);
         targetContextLabelLayout.setWidth(200, Unit.PIXELS);
         
-        Label targetContextLabel = new Label("Target Context:");
         targetContextLabel.setSizeUndefined();        
         targetContextLabelLayout.addComponent(targetContextLabel);
         targetContextLabelLayout.setComponentAlignment(targetContextLabel, Alignment.MIDDLE_RIGHT);
+        targetContextLabel.setVisible(false);
         
         contentLayout.addComponent(targetContextLabelLayout, 0, 4);
         HorizontalLayout targetContextComboBoxLayout = new HorizontalLayout();
         targetContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         targetContextComboBoxLayout.setWidth(180, Unit.PIXELS);
         this.targetContextComboBox.setWidth(180, Unit.PIXELS);
+        this.targetContextComboBox.setVisible(false);
         targetContextComboBoxLayout.addComponent(this.targetContextComboBox);
         contentLayout.addComponent(this.targetContextComboBox, 1, 4);
 
@@ -239,7 +255,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
 
         contentLayout.addComponent(button, 1, 5);
         
-//        this.clientComboBox.loadClientSelectValues();
+        this.clientComboBox.loadClientSelectValues();
 //        this.sourceContextComboBox.loadContextValues();
 //        this.targetContextComboBox.loadContextValues();
 //        this.typeComboBox.loadClientTypeValues();

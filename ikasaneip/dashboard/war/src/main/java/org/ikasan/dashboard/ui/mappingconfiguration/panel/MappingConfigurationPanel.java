@@ -88,6 +88,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -140,6 +141,7 @@ public class MappingConfigurationPanel extends Panel implements View
     protected MappingConfigurationExportHelper mappingConfigurationExportHelper;
     protected MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
     protected SystemEventService systemEventService;
+    protected String name;
     
 
     /**
@@ -171,7 +173,7 @@ public class MappingConfigurationPanel extends Panel implements View
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
             mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
     {
-        super(name);
+        super();
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.clientComboBox = clientComboBox;
         this.typeComboBox = typeComboBox;
@@ -191,6 +193,8 @@ public class MappingConfigurationPanel extends Panel implements View
         this.mappingConfigurationExportHelper = mappingConfigurationExportHelper;
         this.mappingConfigurationValuesExportHelper = mappingConfigurationValuesExportHelper;
         this.systemEventService = systemEventService;
+        this.name = name;
+        
     }
 
     /**
@@ -198,16 +202,24 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     @SuppressWarnings("serial")
     protected void init()
-    {
-    	this.setStyleName("dashboard");
-        layout = new GridLayout(4, 5);
+    {    
+    	layout = new GridLayout(5, 6);
+        layout.setSpacing(true);
+        layout.setWidth("100%");
+        
+        this.addStyleName(ValoTheme.PANEL_BORDERLESS);
+        
         paramQueriesLayout = new VerticalLayout();
 
         toolBarLayout = new HorizontalLayout();
         toolBarLayout.setWidth("100%");
 
-        Button linkButton = new Button("Return to search results");
-        linkButton.setStyleName(BaseTheme.BUTTON_LINK);
+        Button linkButton = new Button();
+        
+        linkButton.setIcon(VaadinIcons.REPLY_ALL);
+        linkButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        linkButton.setDescription("Return to search results");
+        linkButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         linkButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -294,7 +306,8 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.exportMappingConfigurationButton);
         toolBarLayout.setExpandRatio(this.exportMappingConfigurationButton, 0.045f);
 
-        final VerticalLayout contentLayout = new VerticalLayout();
+        final GridLayout contentLayout = new GridLayout(1, 2);
+        contentLayout.setWidth("100%");
         
         contentLayout.addComponent(toolBarLayout);
         contentLayout.addComponent(createMappingConfigurationForm());
@@ -304,10 +317,11 @@ public class MappingConfigurationPanel extends Panel implements View
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
         Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
-        queryParamsPanel.setHeight(200, Unit.PIXELS);
+        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+        queryParamsPanel.setHeight(100, Unit.PIXELS);
         queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
         queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 4);
+        this.layout.addComponent(queryParamsPanel, 2, 2, 3, 5);
 
         vpanel.setSplitPosition(50, Unit.PERCENTAGE);
         this.setContent(vpanel);
@@ -355,13 +369,22 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     protected GridLayout createMappingConfigurationForm()
     {
-        layout.setMargin(true);
-
-        HorizontalLayout clientLabelLayout = new HorizontalLayout();
+    	 Label mappingConfigurationLabel = new Label(this.name);
+ 		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		layout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
+    	
+    	HorizontalLayout clientLabelLayout = new HorizontalLayout();
         clientLabelLayout.setHeight(25, Unit.PIXELS);
         clientLabelLayout.setWidth(100, Unit.PIXELS);
-        clientLabelLayout.addComponent(new Label("Client"));
-        layout.addComponent(clientLabelLayout, 0, 0);
+        
+        Label clientLabel = new Label("Client:");
+        clientLabel.setSizeUndefined();
+        clientLabelLayout.addComponent(clientLabel);
+        clientLabelLayout.setComponentAlignment(clientLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(clientLabelLayout, 0, 1);
+        layout.setComponentAlignment(clientLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout clientComboBoxLayout = new HorizontalLayout();
         clientComboBoxLayout.setHeight(25, Unit.PIXELS);
         clientComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -370,13 +393,20 @@ public class MappingConfigurationPanel extends Panel implements View
         this.clientComboBox.addValidator(new NullValidator("A client must be selected!", false));
         this.clientComboBox.setValidationVisible(false);
         clientComboBoxLayout.addComponent(this.clientComboBox);
-        layout.addComponent(clientComboBoxLayout, 1, 0);
+        layout.addComponent(clientComboBoxLayout, 1, 1);
 
         HorizontalLayout typeLabelLayout = new HorizontalLayout();
         typeLabelLayout.setHeight(25, Unit.PIXELS);
         typeLabelLayout.setWidth(100, Unit.PIXELS);
-        typeLabelLayout.addComponent(new Label("Type"));
-        layout.addComponent(typeLabelLayout, 0, 1);
+        
+        Label typeLabel = new Label("Type:");
+        typeLabel.setSizeUndefined();
+        typeLabelLayout.addComponent(typeLabel);
+        typeLabelLayout.setComponentAlignment(typeLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(typeLabelLayout, 0, 2);
+        layout.setComponentAlignment(typeLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout typeComboBoxLayout = new HorizontalLayout();
         typeComboBoxLayout.setHeight(25, Unit.PIXELS);
         typeComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -385,13 +415,20 @@ public class MappingConfigurationPanel extends Panel implements View
         this.typeComboBox.addValidator(new NullValidator("A type must be selected!", false));
         this.typeComboBox.setValidationVisible(false);
         typeComboBoxLayout.addComponent(this.typeComboBox);
-        layout.addComponent(typeComboBoxLayout, 1, 1);
+        layout.addComponent(typeComboBoxLayout, 1, 2);
 
         HorizontalLayout sourceContextLabelLayout = new HorizontalLayout();
         sourceContextLabelLayout.setHeight(25, Unit.PIXELS);
         sourceContextLabelLayout.setWidth(100, Unit.PIXELS);
-        sourceContextLabelLayout.addComponent(new Label("Source Context"));
-        layout.addComponent(sourceContextLabelLayout, 0, 2);
+        
+        Label sourceContextLabel = new Label("Source Context:");
+        sourceContextLabel.setSizeUndefined();
+        sourceContextLabelLayout.addComponent(sourceContextLabel);
+        sourceContextLabelLayout.setComponentAlignment(sourceContextLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(sourceContextLabelLayout, 0, 3);
+        layout.setComponentAlignment(sourceContextLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout sourceContextComboBoxLayout = new HorizontalLayout();
         sourceContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         sourceContextComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -400,13 +437,20 @@ public class MappingConfigurationPanel extends Panel implements View
         this.sourceContextComboBox.addValidator(new NullValidator("A source context must be selected", false));
         this.sourceContextComboBox.setValidationVisible(false);
         sourceContextComboBoxLayout.addComponent(this.sourceContextComboBox);
-        layout.addComponent(sourceContextComboBoxLayout, 1, 2);
+        layout.addComponent(sourceContextComboBoxLayout, 1, 3);
 
         HorizontalLayout targetContextLabelLayout = new HorizontalLayout();
         targetContextLabelLayout.setHeight(25, Unit.PIXELS);
         targetContextLabelLayout.setWidth(100, Unit.PIXELS);
-        targetContextLabelLayout.addComponent(new Label("Target Context"));
-        layout.addComponent(targetContextLabelLayout, 0, 3);
+        
+        Label targetContextLabel = new Label("Target Context:");
+        targetContextLabel.setSizeUndefined();
+        targetContextLabelLayout.addComponent(targetContextLabel);
+        targetContextLabelLayout.setComponentAlignment(targetContextLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(targetContextLabelLayout, 0, 4);
+        layout.setComponentAlignment(targetContextLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout targetContextComboBoxLayout = new HorizontalLayout();
         targetContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         targetContextComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -415,25 +459,32 @@ public class MappingConfigurationPanel extends Panel implements View
         this.targetContextComboBox.addValidator(new NullValidator("A target context must be selected",false));
         this.targetContextComboBox.setValidationVisible(false);
         targetContextComboBoxLayout.addComponent(this.targetContextComboBox);
-        layout.addComponent(this.targetContextComboBox, 1, 3);
+        layout.addComponent(this.targetContextComboBox, 1, 4);
 
         HorizontalLayout descriptionLabelLayout = new HorizontalLayout();
         descriptionLabelLayout.setHeight(25, Unit.PIXELS);
         descriptionLabelLayout.setWidth(100, Unit.PIXELS);
-        descriptionLabelLayout.addComponent(new Label("Description"));
-        layout.addComponent(descriptionLabelLayout, 0, 4);
+        
+        Label descriptionLabel = new Label("Description:");
+        descriptionLabel.setSizeUndefined();
+        descriptionLabelLayout.addComponent(descriptionLabel);
+        descriptionLabelLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
+        
+        layout.addComponent(descriptionLabelLayout, 0, 5);
+        layout.setComponentAlignment(descriptionLabelLayout, Alignment.TOP_RIGHT);
+        
         HorizontalLayout descriptionTextAreaLayout = new HorizontalLayout();
-        descriptionTextAreaLayout.setHeight(25, Unit.PIXELS);
+        descriptionTextAreaLayout.setHeight(150, Unit.PIXELS);
         descriptionTextAreaLayout.setWidth(350, Unit.PIXELS);
         this.descriptionTextArea = new TextArea();
         this.descriptionTextArea.setWidth(300, Unit.PIXELS);
-        this.descriptionTextArea.setRows(6);
+        this.descriptionTextArea.setRows(4);
         this.descriptionTextArea.addValidator(new StringLengthValidator(
             "A description must be entered.",
             1, null, true));
         this.descriptionTextArea.setValidationVisible(false);
         descriptionTextAreaLayout.addComponent(this.descriptionTextArea);
-        layout.addComponent(descriptionTextAreaLayout, 1, 4);
+        layout.addComponent(descriptionTextAreaLayout, 1, 5);
 
         HorizontalLayout paramsLabelLayout = new HorizontalLayout();
         paramsLabelLayout.setHeight(25, Unit.PIXELS);

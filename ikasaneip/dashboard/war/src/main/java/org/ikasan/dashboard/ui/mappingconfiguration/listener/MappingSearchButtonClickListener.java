@@ -58,6 +58,7 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.MappingConfigurationLite;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -155,8 +156,11 @@ public class MappingSearchButtonClickListener implements ClickListener
             final DeleteMappingConfigurationAction action = new DeleteMappingConfigurationAction( mappingConfiguration.getId()
                 , this.searchResultsTable, this.mappingConfigurationService, this.systemEventService);
 
-            final Button deleteButton = new Button("Delete");
-            deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+            final Button deleteButton = new Button();
+            deleteButton.setIcon(VaadinIcons.TRASH);
+            deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            deleteButton.setDescription("Delete this mapping configuration");
+            deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
             deleteButton.addClickListener(new Button.ClickListener() {
                 public void buttonClick(ClickEvent event) {
                     IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
