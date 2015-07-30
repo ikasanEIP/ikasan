@@ -151,7 +151,7 @@ public class NewActionsPanel extends Panel
         contentLayout.setComponentAlignment(this.newClientLabel, Alignment.MIDDLE_RIGHT);
         
         this.newClientButton.setIcon(VaadinIcons.PLUS);
-//        this.newClientButton.addStyleName(BaseTheme.BUTTON_LINK);
+        this.newClientButton.setDescription("Create a new mapping configuration client");
         this.newClientButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.newClientButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.newClientButton.addClickListener(new Button.ClickListener() 
@@ -169,7 +169,7 @@ public class NewActionsPanel extends Panel
         contentLayout.setComponentAlignment(this.newContextLabel, Alignment.MIDDLE_RIGHT);
 
         this.newContextButton.setIcon(VaadinIcons.PLUS);
-//        this.newContextButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newContextButton.setDescription("Create a new mapping configuration context");
         this.newContextButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.newContextButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.newContextButton.addClickListener(new Button.ClickListener()
@@ -187,7 +187,7 @@ public class NewActionsPanel extends Panel
         contentLayout.setComponentAlignment(this.newTypeLabel, Alignment.MIDDLE_RIGHT);
         
         this.newTypeButton.setIcon(VaadinIcons.PLUS);
-//        this.newTypeButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newTypeButton.setDescription("Create a new mapping configuration type");
         this.newTypeButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.newTypeButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.newTypeButton.addClickListener(new Button.ClickListener() {
@@ -205,7 +205,7 @@ public class NewActionsPanel extends Panel
 
 
         this.newMappingConfigurationButton.setIcon(VaadinIcons.PLUS);
-//        this.newMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.newMappingConfigurationButton.setDescription("Create a new mapping configuration");
         this.newMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.newMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.newMappingConfigurationButton.addClickListener(new Button.ClickListener() {
@@ -226,7 +226,7 @@ public class NewActionsPanel extends Panel
         contentLayout.setComponentAlignment(this.importMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
 
         this.importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
-//        this.importMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.importMappingConfigurationButton.setDescription("Import a mapping configuration");
         this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.importMappingConfigurationButton.addClickListener(new Button.ClickListener() {

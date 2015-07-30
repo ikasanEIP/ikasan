@@ -51,7 +51,9 @@ public class SecurityConstants
 	public static String VIEW_BUSINESS_STREAM_AUTHORITY = "ViewBusinessStream";
 	public static String VIEW_WIRETAP_AUTHORITY = "ViewWiretap";
 	public static String VIEW_EXCLUSION_AUTHORITY = "ViewExclusion";
+	public static String VIEW_ACTIONED_EXCLUSIONS_AUTHORITY = "ViewActionedExclusions";
 	public static String VIEW_ERRORS_AUTHORITY = "ViewErrors";
+	public static String VIEW_CATEGORISED_ERRORS_AUTHORITY = "ViewCategorisedErrors";
 	public static String ACTION_EXCLUSIONS_AUTHORITY = "ActionExclusion";
 	public static String CREATE_BUSINESS_STREAM_AUTHORITY = "CreateBusinessStream";
 	public static String MODIFY_BUSINESS_STREAM_AUTHORITY = "ModifyBusinessStream";

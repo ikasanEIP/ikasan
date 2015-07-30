@@ -68,7 +68,7 @@ public class MappingConfigurationView extends Panel implements View
     private MappingConfigurationSearchResultsPanel searchResultsPanel;
     private ViewComponentContainer viewComponentContainer;
     private NewActionsPanel newActionsPanel;
-    private VerticalSplitPanel horizontalSplitPanel;
+    private VerticalSplitPanel verticalSplitPanel;
     private Panel leftPanelLayout;
 
     /**
@@ -110,12 +110,12 @@ public class MappingConfigurationView extends Panel implements View
         rightContainer.setSizeFull();
         rightContainer.addComponent(this.viewComponentContainer);
         
-        this.horizontalSplitPanel 
+        this.verticalSplitPanel 
             = new VerticalSplitPanel(leftContainer, rightContainer);
-        this.horizontalSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
-        this.horizontalSplitPanel.setSizeFull();
-        this.horizontalSplitPanel.setSplitPosition(285, Unit.PIXELS);
-        this.setContent(horizontalSplitPanel);
+        this.verticalSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
+        this.verticalSplitPanel.setSizeFull();
+        this.verticalSplitPanel.setSplitPosition(285, Unit.PIXELS);
+        this.setContent(verticalSplitPanel);
     }
 
     /**
@@ -130,15 +130,14 @@ public class MappingConfigurationView extends Panel implements View
         collapseButton.setVisible(true);
         collapseButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                horizontalSplitPanel.setLocked(false);
-                horizontalSplitPanel.setSplitPosition(70, Unit.PIXELS);
-                horizontalSplitPanel.setLocked(true);
+            	
+                verticalSplitPanel.setSplitPosition(70, Unit.PIXELS);
                 
                 HorizontalLayout leftContainer = new HorizontalLayout();
                 leftContainer.setSizeFull();
                 leftContainer.setMargin(true);
                 leftContainer.addComponent(getCollapsedLeftSplitPanelLayout());
-                horizontalSplitPanel.setFirstComponent(leftContainer);
+                verticalSplitPanel.setFirstComponent(leftContainer);
             }
         });
 
@@ -158,7 +157,7 @@ public class MappingConfigurationView extends Panel implements View
         
         Panel panel = new Panel();
         panel.setSizeFull();
-        panel.setStyleName("dashboard-grey");
+        panel.addStyleName(ValoTheme.PANEL_BORDERLESS);
         panel.setContent(layout);
         
         return panel;
@@ -170,17 +169,17 @@ public class MappingConfigurationView extends Panel implements View
         expandButton.setVisible(true);
         expandButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                horizontalSplitPanel.setLocked(false);
-                horizontalSplitPanel.setSplitPosition(385, Unit.PIXELS);
-                horizontalSplitPanel.setLocked(true);
+                verticalSplitPanel.setLocked(false);
+                verticalSplitPanel.setSplitPosition(385, Unit.PIXELS);
+                verticalSplitPanel.setLocked(true);
                 
                 HorizontalLayout leftContainer = new HorizontalLayout();
                 leftContainer.setSizeFull();
                 leftContainer.setMargin(true);
                 leftContainer.addComponent(getExpandedLeftSplitPanelLayout());
-                horizontalSplitPanel.setFirstComponent(leftContainer);
+                verticalSplitPanel.setFirstComponent(leftContainer);
                 
-                horizontalSplitPanel.setFirstComponent(leftContainer);
+                verticalSplitPanel.setFirstComponent(leftContainer);
             }
         });
 

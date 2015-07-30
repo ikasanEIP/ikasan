@@ -59,6 +59,7 @@ import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -284,7 +285,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         final DeleteRowAction action = new DeleteRowAction(sourceConfigurationValues, this.mappingConfiguration
             , this, this.mappingConfigurationService, this.systemEventService);
 
-        deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+        deleteButton.setIcon(VaadinIcons.TRASH);
+        deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        deleteButton.setDescription("Delete this record");
+        deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         deleteButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -393,7 +397,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                     final Button deleteButton = new Button("Delete");
                     deleteButton.setData(value);
-                    deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+                    deleteButton.setIcon(VaadinIcons.TRASH);
+                    deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                    deleteButton.setDescription("Delete this record");
+                    deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
                     deleteButton.addClickListener(new Button.ClickListener() {
                         public void buttonClick(ClickEvent event) {
                             IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 

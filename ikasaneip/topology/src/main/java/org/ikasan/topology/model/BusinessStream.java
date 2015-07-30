@@ -51,8 +51,8 @@ import java.util.Set;
 public class BusinessStream
 {
 	private Long id;
-	private String name;
-	private String description;
+	private String name = "";
+	private String description = "";
 	private Set<BusinessStreamFlow> flows;
 	
 	/** The data time stamp when an instance was first created */
