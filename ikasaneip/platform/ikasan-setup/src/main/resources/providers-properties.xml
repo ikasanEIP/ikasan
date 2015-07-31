@@ -1807,8 +1807,8 @@
 					Username 			VARCHAR(50) NOT NULL UNIQUE,
 					Password			VARCHAR(50) NOT NULL,
 					Email 				VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled 			BIT NOT NULL
 					)
@@ -3072,8 +3072,8 @@
                     [Username] [VARCHAR] (50) NOT NULL UNIQUE,
                     [Password] [VARCHAR] (50) NOT NULL,
                     [Email]    [VARCHAR] (255) NULL,
-                    [FirstName] [VARCHAR] (50) NOT NULL,
-                    [Surname] [VARCHAR] (50) NOT NULL,
+                    [FirstName] [VARCHAR] (50) NULL,
+                    [Surname] [VARCHAR] (50)   NULL,
                     [Department] [VARCHAR] (50) NULL,
                     [Enabled]  [BIT] NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
@@ -4273,8 +4273,8 @@
 					Username VARCHAR(50) NOT NULL UNIQUE,
 					Password VARCHAR(50) NOT NULL,
 					Email VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled BIT NOT NULL
 					);
