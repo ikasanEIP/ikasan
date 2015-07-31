@@ -59,7 +59,7 @@
     </bean>
     
     <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
-    <bean id="mappingNavigator" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <bean id="mappingNavigator" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
       <property name="targetSource">
         <bean class="org.springframework.aop.target.LazyInitTargetSource">
           <property name="targetBeanName"><idref local="mappingNavigatorBean"/></property>
@@ -342,15 +342,15 @@
 
     <!-- Components -->
 
-    <bean id="editIcon" class="com.vaadin.server.ThemeResource" scope="singleton">
+    <bean id="editIcon" class="com.vaadin.server.ThemeResource" scope="session">
         <constructor-arg value="images/edit.png"/>
     </bean>
 
-    <bean id="saveIcon" class="com.vaadin.server.ThemeResource" scope="singleton">
+    <bean id="saveIcon" class="com.vaadin.server.ThemeResource" scope="session">
         <constructor-arg value="images/save.png"/>
     </bean>
 
-    <bean id="addIcon" class="com.vaadin.server.ThemeResource" scope="singleton">
+    <bean id="addIcon" class="com.vaadin.server.ThemeResource" scope="session">
         <constructor-arg value="images/plus-button.JPG"/>
     </bean>
 
@@ -494,50 +494,49 @@
     </bean>
 
     <bean id="adminUserVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
-        <property name="components">
-            <list>
-                <ref bean="newMappingConfigurationEditButton" />
-                <ref bean="newMappingConfigurationSaveButton" />
-                <ref bean="newMappingConfigurationCancelButton" />
-                <ref bean="newMappingConfigurationValueNewRecordButton" />
-                <ref bean="newMappingConfigurationValueDeleteAllButton" />
-                <ref bean="newMappingConfigurationValueImportButton" />
-                <ref bean="newMappingConfigurationValueExportButton" />
-                <ref bean="newMappingConfigurationExportButton" />
-                <ref bean="existingMappingConfigurationEditButton" />
-                <ref bean="existingMappingConfigurationSaveButton" />
-                <ref bean="existingMappingConfigurationCancelButton" />
-                <ref bean="existingMappingConfigurationValueNewRecordButton" />
-                <ref bean="existingMappingConfigurationValueDeleteAllButton" />
-                <ref bean="existingMappingConfigurationValueImportButton" />
-                <ref bean="existingMappingConfigurationValueExportButton" />
-                <ref bean="existingMappingConfigurationExportButton" />
-                <ref bean="newClientButton" />
-                <ref bean="newContextButton" />
-                <ref bean="newTypeButton" />
-                <ref bean="newMappingConfigurationButton" />
-                <ref bean="importMappingConfigurationButton" />
-                <ref bean="newClientLabel" />
-                <ref bean="newContextLabel" />
-                <ref bean="newTypeLabel" />
-                <ref bean="newMappingConfigurationLabel" />
-                <ref bean="importMappingConfigurationLabel" />
-            </list>
-        </property>
+        <property name="components" ref="mappingEditVisibilityMap" />
     </bean>
     
+    <util:map id="mappingEditVisibilityMap" value-type="java.lang.String" map-class="java.util.HashMap" scope="session">
+	  <entry value="editMapping" key-ref="newMappingConfigurationEditButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationSaveButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationCancelButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationValueNewRecordButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationValueDeleteAllButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationValueImportButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationValueExportButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationExportButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationEditButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationSaveButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationCancelButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationValueNewRecordButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationValueDeleteAllButton" /> 
+      <entry value="editMapping" key-ref="existingMappingConfigurationValueImportButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationValueExportButton" />
+      <entry value="editMapping" key-ref="existingMappingConfigurationExportButton" />
+      <entry value="editMapping" key-ref="newClientButton" />
+      <entry value="editMapping" key-ref="newContextButton" />
+      <entry value="editMapping" key-ref="newTypeButton" />
+      <entry value="editMapping" key-ref="newClientLabel" />
+      <entry value="editMapping" key-ref="newContextLabel" />
+      <entry value="editMapping" key-ref="importMappingConfigurationButton" />
+      <entry value="editMapping" key-ref="newMappingConfigurationLabel" />
+      <entry value="editMapping" key-ref="importMappingConfigurationLabel" />
+    </util:map>
+    
     <bean id="modifyExistingMappingConfigurationVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
-        <property name="components">
-            <list>
-                <ref bean="existingMappingConfigurationEditButton" />
-                <ref bean="existingMappingConfigurationSaveButton" />
-                <ref bean="existingMappingConfigurationCancelButton" />
-                <ref bean="existingMappingConfigurationValueNewRecordButton" />
-                <ref bean="existingMappingConfigurationValueDeleteAllButton" />
-                <ref bean="existingMappingConfigurationValueImportButton" />
-                <ref bean="existingMappingConfigurationValueExportButton" />
-                <ref bean="existingMappingConfigurationExportButton" />
-            </list>
-        </property>
+        <property name="components" ref="mappingModifyExistingVisibilityMap" />
     </bean>
+    
+     <util:map id="mappingModifyExistingVisibilityMap" value-type="java.lang.String" map-class="java.util.HashMap" scope="session">
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationEditButton" />
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationSaveButton" />
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationCancelButton" />
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationValueNewRecordButton" />
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationValueDeleteAllButton" /> 
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationValueImportButton" />
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationValueExportButton" />
+      <entry value="modifyExistingMapping" key-ref="existingMappingConfigurationExportButton" />
+    </util:map>
+    
 </beans>

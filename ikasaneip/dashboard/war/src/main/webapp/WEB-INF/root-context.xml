@@ -33,6 +33,7 @@
         <constructor-arg ref="imagePanelLayout"/>
         <constructor-arg ref="navigationPanel"/>
         <constructor-arg ref="menuLayout"/>
+        <constructor-arg ref="bannerImage"/>
     </bean>
 
 	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
@@ -167,7 +168,7 @@
     </bean>
     
     <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
-    <bean id="topLevelNavigator" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <bean id="topLevelNavigator" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
       <property name="targetSource">
         <bean class="org.springframework.aop.target.LazyInitTargetSource">
           <property name="targetBeanName"><idref local="topLevelNavigatorBean"/></property>
@@ -219,6 +220,10 @@
 		 <constructor-arg ref="securityService"/>
 		 <constructor-arg ref="authenticationProviderFactory"/>
 		 <constructor-arg ref="ldapService"/>
+    </bean>
+    
+    <bean id="bannerImage" class="com.vaadin.server.ThemeResource" scope="session">
+        <constructor-arg value="images/Ikasan_Logo_Transp.png"/>
     </bean>
 
 </beans>

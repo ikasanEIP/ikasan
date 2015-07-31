@@ -119,14 +119,11 @@ public class LoginFieldGroup extends FieldGroup
             Authentication authentication = authenticationService.login(username.getValue(), password.getValue());
 
             logger.info("Loaded authentication: " + authentication);
-
-            if(canAccessAll(authentication))
-            {
-                this.visibilityGroup.setVisible(true);
-            }
-
+            
             VaadinService.getCurrentRequest().getWrappedSession()
                 .setAttribute(DashboardSessionValueConstants.USER, authentication);
+            
+            this.visibilityGroup.setVisible();
         }
         catch (AuthenticationServiceException e)
         {
@@ -136,21 +133,4 @@ public class LoginFieldGroup extends FieldGroup
         }
     }
 
-    /**
-     * Method to determine id the user is an admin user.
-     * 
-     * @param userDetails
-     * @return
-     */
-    private boolean canAccessAll(Authentication authentication)
-    {
-        if(((IkasanAuthentication)authentication).hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
-        {
-        	return true;
-        }
-        else
-        {
-        	return false;
-        }
-    }
 }
