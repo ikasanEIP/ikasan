@@ -114,13 +114,14 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     	final Label sourceContextLabel = new Label("Source Context:");
     	final Label targetContextLabel = new Label("Target Context:");    	
 
-        final GridLayout contentLayout = new GridLayout(3, 6);        
-        contentLayout.setHeight("100%");
+        final GridLayout contentLayout = new GridLayout(4, 6);   
+        contentLayout.setColumnExpandRatio(0, .25f);
+        contentLayout.setColumnExpandRatio(1, .15f);
+        contentLayout.setColumnExpandRatio(2, .25f);
+        contentLayout.setColumnExpandRatio(3, .35f);
+        contentLayout.setWidth("100%");
         contentLayout.setSpacing(true);
 
-        HorizontalLayout clientLabelLayout = new HorizontalLayout();
-        clientLabelLayout.setHeight(25, Unit.PIXELS);
-        clientLabelLayout.setWidth(200, Unit.PIXELS);
         
         Label errorOccurrenceDetailsLabel = new Label("Mapping Configuration Search");
 		errorOccurrenceDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
@@ -128,10 +129,9 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         
         Label clientLabel = new Label("Client:");
         clientLabel.setSizeUndefined();        
-        clientLabelLayout.addComponent(clientLabel);
-        clientLabelLayout.setComponentAlignment(clientLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(clientLabel, 0, 1);
+        contentLayout.setComponentAlignment(clientLabel, Alignment.MIDDLE_RIGHT);
         
-        contentLayout.addComponent(clientLabelLayout, 0, 1);
         HorizontalLayout clientComboBoxLayout = new HorizontalLayout();
         clientComboBoxLayout.setHeight(25, Unit.PIXELS);
         clientComboBoxLayout.setWidth(180, Unit.PIXELS);
@@ -151,19 +151,12 @@ public class MappingConfigurationSearchPanel extends Panel implements View
             }
         });
         contentLayout.addComponent(clientComboBoxLayout, 1, 1);
-        contentLayout.addComponent(newActions.getNewClientButton(), 2, 1);
-        contentLayout.setComponentAlignment(newActions.getNewClientButton(), Alignment.MIDDLE_LEFT);
-
-        HorizontalLayout typeLabelLayout = new HorizontalLayout();
-        typeLabelLayout.setHeight(25, Unit.PIXELS);
-        typeLabelLayout.setWidth(200, Unit.PIXELS);
         
         typeLabel.setSizeUndefined();        
-        typeLabelLayout.addComponent(typeLabel);
-        typeLabelLayout.setComponentAlignment(typeLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(typeLabel, 0, 2);
+        contentLayout.setComponentAlignment(typeLabel, Alignment.MIDDLE_RIGHT);
         typeLabel.setVisible(false);
         
-        contentLayout.addComponent(typeLabelLayout, 0, 2);
         HorizontalLayout typeComboBoxLayout = new HorizontalLayout();
         typeComboBoxLayout.setHeight(25, Unit.PIXELS);
         typeComboBoxLayout.setWidth(180, Unit.PIXELS);
@@ -190,17 +183,12 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         });
         typeComboBoxLayout.addComponent(this.typeComboBox);
         contentLayout.addComponent(typeComboBoxLayout, 1, 2);
-
-        HorizontalLayout sourceContextLabelLayout = new HorizontalLayout();
-        sourceContextLabelLayout.setHeight(25, Unit.PIXELS);
-        sourceContextLabelLayout.setWidth(200, Unit.PIXELS);
         
         sourceContextLabel.setSizeUndefined();        
-        sourceContextLabelLayout.addComponent(sourceContextLabel);
-        sourceContextLabelLayout.setComponentAlignment(sourceContextLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(sourceContextLabel, 0, 3);
+        contentLayout.setComponentAlignment(sourceContextLabel, Alignment.MIDDLE_RIGHT);
         sourceContextLabel.setVisible(false);
         
-        contentLayout.addComponent(sourceContextLabelLayout, 0, 3);
         HorizontalLayout sourceContextComboBoxLayout = new HorizontalLayout();
         sourceContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         sourceContextComboBoxLayout.setWidth(180, Unit.PIXELS);
@@ -234,17 +222,12 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         });
         sourceContextComboBoxLayout.addComponent(this.sourceContextComboBox);
         contentLayout.addComponent(sourceContextComboBoxLayout, 1, 3);
-
-        HorizontalLayout targetContextLabelLayout = new HorizontalLayout();
-        targetContextLabelLayout.setHeight(25, Unit.PIXELS);
-        targetContextLabelLayout.setWidth(200, Unit.PIXELS);
         
         targetContextLabel.setSizeUndefined();        
-        targetContextLabelLayout.addComponent(targetContextLabel);
-        targetContextLabelLayout.setComponentAlignment(targetContextLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(targetContextLabel, 0, 4);
+        contentLayout.setComponentAlignment(targetContextLabel, Alignment.MIDDLE_RIGHT);
         targetContextLabel.setVisible(false);
         
-        contentLayout.addComponent(targetContextLabelLayout, 0, 4);
         HorizontalLayout targetContextComboBoxLayout = new HorizontalLayout();
         targetContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         targetContextComboBoxLayout.setWidth(180, Unit.PIXELS);
@@ -252,6 +235,31 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         this.targetContextComboBox.setVisible(false);
         targetContextComboBoxLayout.addComponent(this.targetContextComboBox);
         contentLayout.addComponent(this.targetContextComboBox, 1, 4);
+        
+        Label actionsLabel = new Label("Actions");
+        actionsLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		contentLayout.addComponent(actionsLabel, 2, 0, 3, 0);
+        
+        Label createNewClientLabel = new Label("New Client:");
+        createNewClientLabel.setSizeUndefined();
+        contentLayout.addComponent(createNewClientLabel, 2, 1);
+        contentLayout.setComponentAlignment(createNewClientLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(newActions.getNewClientButton(), 3, 1);
+        contentLayout.setComponentAlignment(newActions.getNewClientButton(), Alignment.MIDDLE_LEFT);
+        
+        Label createNewTypeLabel = new Label("New Type:");
+        createNewTypeLabel.setSizeUndefined();
+        contentLayout.addComponent(createNewTypeLabel, 2, 2);
+        contentLayout.setComponentAlignment(createNewTypeLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(newActions.getNewTypeButton(), 3, 2);
+        contentLayout.setComponentAlignment(newActions.getNewTypeButton(), Alignment.MIDDLE_LEFT);
+        
+        Label createContextTypeLabel = new Label("New Context:");
+        createContextTypeLabel.setSizeUndefined();
+        contentLayout.addComponent(createContextTypeLabel, 2, 3);
+        contentLayout.setComponentAlignment(createContextTypeLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.addComponent(newActions.getNewContextButton(), 3, 3);
+        contentLayout.setComponentAlignment(newActions.getNewContextButton(), Alignment.MIDDLE_LEFT);
 
         Button button = new Button("Search");
         button.setStyleName(ValoTheme.BUTTON_SMALL);

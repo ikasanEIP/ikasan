@@ -41,21 +41,17 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
 
 /**
@@ -100,20 +96,23 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
     @Override
     public void itemClick(ItemClickEvent event)
     {
-    	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-        	.getAttribute(DashboardSessionValueConstants.USER);
+    	this.visibilityGroup.setVisible();
     	
-    	if(authentication.canAccessLinkedItem(SecurityConstants.MAPPING_CONFIGURATION_LINKED_TYPE, (Long)event.getItemId()) 
-    			|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
-    	{
-    		logger.info("User can access modify configuration: " + (Long)event.getItemId());
-    		this.visibilityGroup.setVisible(true);
-    	}
-    	else
-    	{
-    		logger.info("User can NOT access modify configuration: " + (Long)event.getItemId());
-    		this.visibilityGroup.setVisible(false);
-    	}
+//    	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+//        	.getAttribute(DashboardSessionValueConstants.USER);
+//    	
+//    	
+//    	if(authentication.canAccessLinkedItem(SecurityConstants.MAPPING_CONFIGURATION_LINKED_TYPE, (Long)event.getItemId()) 
+//    			|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+//    	{
+//    		logger.info("User can access modify configuration: " + (Long)event.getItemId());
+//    		this.visibilityGroup.setVisible();
+//    	}
+//    	else
+//    	{
+//    		logger.info("User can NOT access modify configuration: " + (Long)event.getItemId());
+//    		this.visibilityGroup.setVisible(false);
+//    	}
     	
     	Navigator navigator = new Navigator(UI.getCurrent(), mapingNavigator.getParentContainer());
 

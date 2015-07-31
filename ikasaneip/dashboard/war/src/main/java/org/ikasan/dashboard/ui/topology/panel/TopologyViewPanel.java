@@ -331,13 +331,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
-		
-		Collection<GrantedAuthority> auths = (Collection<GrantedAuthority>)authentication.getAuthorities();
-		
-		for(GrantedAuthority auth: auths)
-		{
-			logger.info("Auth: " + auth.getAuthority());
-		}
 	    	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)

@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -289,6 +290,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         deleteButton.setDescription("Delete this record");
         deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        deleteButton.setVisible(false);
         deleteButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -298,7 +300,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 UI.getCurrent().addWindow(dialog);
             }
         });
-        this.visibilityGroup.registerComponent(deleteButton);
+        this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
 
 
         Item item = this.container.addItemAt(0, sourceConfigurationValue);
@@ -410,7 +412,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             UI.getCurrent().addWindow(dialog);
                         }
                     });
-                    this.visibilityGroup.registerComponent(deleteButton);
+                    this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
 
                     this.addItem(new Object[] {tableCellLayout,
                             targetConfigurationTextField, deleteButton}, value);

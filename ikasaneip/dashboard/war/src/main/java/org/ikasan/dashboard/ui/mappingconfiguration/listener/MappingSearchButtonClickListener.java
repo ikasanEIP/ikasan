@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -171,7 +172,7 @@ public class MappingSearchButtonClickListener implements ClickListener
                 }
             });
 
-            this.visibilityGroup.registerComponent(deleteButton);
+            this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
             this.searchResultsTable.addItem(new Object[] {mappingConfiguration.getConfigurationServiceClient().getName(),
                     mappingConfiguration.getConfigurationType().getName(), mappingConfiguration.getSourceContext().getName(),
                     mappingConfiguration.getTargetContext().getName(), deleteButton}

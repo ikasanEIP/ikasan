@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
@@ -53,8 +54,11 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.google.common.eventbus.EventBus;
@@ -66,6 +70,7 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -116,8 +121,10 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private MenuLayout menuLayout;
     private Component menuComponent;
     
-    private ArrayList<Component> menuComponents = new ArrayList<Component>();
+    private HashMap<Component, String> menuComponents = new HashMap<Component, String>();
 
+    private ThemeResource bannerImage;
+    
     /**
      * Constructor 
      * 
@@ -139,7 +146,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	        ViewComponentContainer viewComponentContainer, UserService userService,
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
-            EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout)
+            EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout,
+            ThemeResource bannerImage)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -153,6 +161,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	    this.imagePanelLayout = imagePanelLayout;
 	    this.navigationPanel = navigationPanel;
 	    this.menuLayout = menuLayout;
+	    this.bannerImage = bannerImage;
 	    
 //	    Broadcaster.register(this);
 	}
@@ -174,8 +183,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 
         imagePanelLayout.setStyleName("v-header");
 
-        ThemeResource resource = new ThemeResource("images/Ikasan_Logo_Transp.png");
-        Image image = new Image("", resource);
+        Image image = new Image("", bannerImage);
         imagePanelLayout.addComponent(image);
         image.setHeight("150%");
         imagePanelLayout.setExpandRatio(image, 0.5f);
@@ -199,8 +207,9 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         this.navigationPanel.resetCurrentView();
         this.navigationPanel.setToggleButton(buildToggleButton());
         
-        for(Component component: this.menuComponents)
+        for(Component component: menuComponents.keySet())
         {
+        	logger.info("Setting visible false: " + component);
         	component.setVisible(false);
         }
         
@@ -260,7 +269,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
         
-        this.menuComponents.add(label);
+        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);
+        
         
         final Button topologyMenuItem = new Button("Topology", new ClickListener() 
         {
@@ -276,8 +286,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         topologyMenuItem.setPrimaryStyleName("valo-menu-item");
         topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
         menuItemsLayout.addComponent(topologyMenuItem);
-        
-        this.menuComponents.add(topologyMenuItem);
+        this.menuComponents.put(topologyMenuItem, SecurityConstants.VIEW_TOPOLOGY_AUTHORITY);
         
         final Button mappingMenuItem = new Button("Mapping", new ClickListener()
         {
@@ -295,8 +304,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         mappingMenuItem.setPrimaryStyleName("valo-menu-item");
         mappingMenuItem.setIcon(VaadinIcons.COPY_O);
         menuItemsLayout.addComponent(mappingMenuItem);
-        
-        this.menuComponents.add(mappingMenuItem);
+        this.menuComponents.put(mappingMenuItem, SecurityConstants.VIEW_MAPPING_AUTHORITY);
         
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
@@ -304,7 +312,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
         
-        this.menuComponents.add(label);
+        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);
         
         final Button usersItem = new Button("Users", new ClickListener() 
         {
@@ -321,7 +329,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         usersItem.setIcon(VaadinIcons.USER);
         menuItemsLayout.addComponent(usersItem);
         
-        this.menuComponents.add(usersItem);
+        this.menuComponents.put(usersItem, SecurityConstants.ALL_AUTHORITY);
         
         final Button groupsItem = new Button("Groups", new ClickListener() 
         {
@@ -338,7 +346,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         groupsItem.setIcon(VaadinIcons.USERS);
         menuItemsLayout.addComponent(groupsItem);
         
-        this.menuComponents.add(groupsItem);
+        this.menuComponents.put(groupsItem, SecurityConstants.ALL_AUTHORITY);
         
         final Button rolesItem = new Button("Roles", new ClickListener() 
         {
@@ -355,7 +363,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         rolesItem.setIcon(VaadinIcons.SPECIALIST);
         menuItemsLayout.addComponent(rolesItem);
         
-        this.menuComponents.add(rolesItem);
+        this.menuComponents.put(rolesItem, SecurityConstants.ALL_AUTHORITY);
         
         final Button policyItem = new Button("Policies", new ClickListener() 
         {
@@ -372,7 +380,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         policyItem.setIcon(VaadinIcons.SAFE);
         menuItemsLayout.addComponent(policyItem);
         
-        this.menuComponents.add(policyItem);
+        this.menuComponents.put(policyItem, SecurityConstants.ALL_AUTHORITY);
         
         final Button authItem = new Button("User Directories", new ClickListener() 
         {
@@ -389,7 +397,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         authItem.setIcon(VaadinIcons.COG);
         menuItemsLayout.addComponent(authItem);
         
-        this.menuComponents.add(authItem);
+        this.menuComponents.put(authItem, SecurityConstants.ALL_AUTHORITY);
 
         return menu;
     }
