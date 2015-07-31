@@ -203,7 +203,8 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     FlowElementName VARCHAR(255) NOT NULL,
-                    ErrorDetail TEXT NULL,
+					ErrorDetail TEXT NULL,
+					ErrorMessage TEXT NULL,
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
@@ -1489,7 +1490,8 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     FlowElementName VARCHAR(255) NOT NULL,
-                    ErrorDetail TEXT NULL,
+					ErrorDetail TEXT NULL,
+					ErrorMessage TEXT NULL,
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
@@ -1805,8 +1807,8 @@
 					Username 			VARCHAR(50) NOT NULL UNIQUE,
 					Password			VARCHAR(50) NOT NULL,
 					Email 				VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled 			BIT NOT NULL
 					)
@@ -2821,7 +2823,8 @@
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
                     [FlowElementName]     	[varchar](255) NOT NULL,
-                    [ErrorDetail]           [text] NULL,
+					[ErrorDetail]           [text] NULL,
+					[ErrorMessage]          [text] NULL,
                     [EventLifeIdentifier]   [varchar](255) NULL,
                     [EventRelatedIdentifier] [varchar](255) NULL,
                     [Action]                [varchar](255) NULL,
@@ -3069,8 +3072,8 @@
                     [Username] [VARCHAR] (50) NOT NULL UNIQUE,
                     [Password] [VARCHAR] (50) NOT NULL,
                     [Email]    [VARCHAR] (255) NULL,
-                    [FirstName] [VARCHAR] (50) NOT NULL,
-                    [Surname] [VARCHAR] (50) NOT NULL,
+                    [FirstName] [VARCHAR] (50) NULL,
+                    [Surname] [VARCHAR] (50)   NULL,
                     [Department] [VARCHAR] (50) NULL,
                     [Enabled]  [BIT] NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
@@ -4019,7 +4022,8 @@
                     ModuleName VARCHAR(256) NOT NULL,
                     FlowName VARCHAR(256) NOT NULL,
                     FlowComponentName VARCHAR(256) NOT NULL,
-                    ErrorDetail TEXT NULL,
+					ErrorDetail TEXT NULL,
+					ErrorMessage TEXT NULL,
                     EventLifeIdentifier VARCHAR(256) NULL,
                     EventRelatedIdentifier VARCHAR(256) NULL,
                     Action VARCHAR(256) NULL,
@@ -4269,8 +4273,8 @@
 					Username VARCHAR(50) NOT NULL UNIQUE,
 					Password VARCHAR(50) NOT NULL,
 					Email VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled BIT NOT NULL
 					);
@@ -4679,8 +4683,8 @@
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
 					   LdapUserDescAttributeName	VARCHAR(256) NULL,
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -4708,8 +4712,8 @@
                     DiagramUrl      			VARCHAR(256) 		NULL,
                     Version						VARCHAR(256) 		NULL,
                     ServerId					NUMERIC(18, 0) 		NULL,
-                    CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
-                    UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+                    CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+                    UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
                     PRIMARY KEY (Id)
 					);
                 </prop>
@@ -4736,8 +4740,8 @@
 					   FlowId						NUMERIC(18, 0) 		NULL,
 					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
-					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME 			default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
                 </prop>
