@@ -86,6 +86,10 @@ public class PersistenceDAOHibernateImpl extends HibernateDaoSupport implements 
             public String doInHibernate(Session session) throws HibernateException {
 
                 String sql = properties.getProperty(getIkasanVersion);
+                if(sql == null)
+                {
+                    throw new RuntimeException("sql properties has no entry for [" + getIkasanVersion + "]");
+                }
                 Query query = session.createSQLQuery(sql);
                 Object result = query.uniqueResult();
                 if(result instanceof String) { return (String)result; } else { return null;}
@@ -102,7 +106,12 @@ public class PersistenceDAOHibernateImpl extends HibernateDaoSupport implements 
         getHibernateTemplate().execute(new HibernateCallback() {
             public Object doInHibernate(Session session) throws HibernateException {
 
-                Query query = session.createSQLQuery( properties.getProperty(create + resourceName) );
+                String sql = properties.getProperty(create + resourceName);
+                if(sql == null)
+                {
+                    throw new RuntimeException("sql properties has no entry for [" + create + resourceName + "]");
+                }
+                Query query = session.createSQLQuery(sql);
                 query.executeUpdate();
                 return null;
             }
@@ -116,7 +125,13 @@ public class PersistenceDAOHibernateImpl extends HibernateDaoSupport implements 
         getHibernateTemplate().execute(new HibernateCallback() {
             public Object doInHibernate(Session session) throws HibernateException {
 
-                Query query = session.createSQLQuery( properties.getProperty(delete + resourceName) );
+                String sql = properties.getProperty(delete + resourceName);
+                if(sql == null)
+                {
+                    throw new RuntimeException("sql properties has no entry for [" + delete + resourceName + "]");
+                }
+
+                Query query = session.createSQLQuery(sql);
                 query.executeUpdate();
                 return null;
             }
@@ -131,7 +146,12 @@ public class PersistenceDAOHibernateImpl extends HibernateDaoSupport implements 
 
             public List doInHibernate(Session session) throws HibernateException {
 
-                Query query = session.createSQLQuery( properties.getProperty(find + resourceName) );
+                String sql = properties.getProperty(find + resourceName);
+                if(sql == null)
+                {
+                    throw new RuntimeException("sql properties has no entry for [" + find + resourceName + "]");
+                }
+                Query query = session.createSQLQuery(sql);
                 return query.list();
             }
 
