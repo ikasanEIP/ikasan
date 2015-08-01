@@ -14,6 +14,9 @@
         <!-- (optional) transaction pointcut for quartz driven flows -->
         <value>ikasan-transaction-pointcut-quartz.xml</value>
 
+        <!-- (optional) transaction pointcut for generic non-transactional event listener flows -->
+        <value>ikasan-transaction-pointcut-eventListener.xml</value>
+
         <!-- (optional) transaction pointcut for jms driven flows -->
         <value>ikasan-transaction-pointcut-jms.xml</value>
 
