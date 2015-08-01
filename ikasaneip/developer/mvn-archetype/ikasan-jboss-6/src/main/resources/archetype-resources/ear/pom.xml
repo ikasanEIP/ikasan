@@ -34,7 +34,7 @@
 					<archive>
 						<manifestEntries>
 							<Dependencies>deployment.${artifactId}-ear-${project.version}.ear,
-                                org.ikasan.${dashed.project.version}.configuration,
+                                org.ikasan.${dashed.ikasan.version}.configuration,
                                 javax.servlet.jsp.api,javax.servlet.jstl.api,javax.servlet.api, org.apache.log4j,
                                 ${jbossModuleNamespace}</Dependencies>
 						</manifestEntries>
