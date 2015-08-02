@@ -40,8 +40,6 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.util.Map;
-
 /**
  * Sample configuration class for testing
  * Ikasan Development Team.
@@ -49,18 +47,8 @@ import java.util.Map;
 public class SampleConfiguration
 {
     public String one;
-    
-    public Map<String,String>map;
 
-    public Map<String, String> getMap() {
-		return map;
-	}
-
-	public void setMap(Map<String, String> map) {
-		this.map = map;
-	}
-
-	public String getOne()
+    public String getOne()
     {
         return one;
     }

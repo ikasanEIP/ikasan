@@ -40,14 +40,11 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
@@ -283,48 +280,4 @@ public class ConfiguredResourceConfigurationServiceTest
         Assert.assertEquals("Should have retrieved config from db with parameter value set", "1", foundConfig.getParameters().get(0).getValue());
         this.mockery.assertIsSatisfied();
     }
-    
-    /**
-     *  IKASAN-924: ConfiguredResoureConfigurationService failing on update of dynamic configurations containing a map property
-     */
-    @Test
-    @DirtiesContext
-    public void test_configurationService_update_of_a_dynamic_configuration_with_map_property()
-    {
-    	Map<String,String>map = new HashMap();
-    	map.put("key", "value");
-        ConfigurationParameter<Map<String,String>> mapParam = new ConfigurationParameterMapImpl("map", map, "description");
-        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
-        persistedConfiguration.getParameters().add(mapParam);
-   
-        final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
-        runtimeConfiguration.setMap(map);
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                allowing(configuredResource).getConfiguration();
-                will(returnValue(runtimeConfiguration));
-                // find by dao id
-                allowing(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));            
-                allowing(configuredResource).getConfiguration();
-                will(returnValue(runtimeConfiguration));
-                // find by dao id
-                allowing(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));  
-            }
-        });
-
-        configurationService.update(configuredResource);
-        configurationService.update(configuredResource); // update twice to ensure configuration is persisted
-        Configuration<List<ConfigurationParameter>> foundConfig = configurationServiceDao.findByConfigurationId("configuredResourceId");
-        Assert.assertEquals("Should have retrieved config from db with parameter name set", "map", foundConfig.getParameters().get(1).getName());
-        Assert.assertEquals("Should have retrieved config from db with parameter value set", map, foundConfig.getParameters().get(1).getValue());
-        this.mockery.assertIsSatisfied();
-    }
-
-    
-
 }
