@@ -52,6 +52,7 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.dd.DragAndDropEvent;
@@ -60,8 +61,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.DragAndDropWrapper;
@@ -99,7 +99,7 @@ public class RoleManagementPanel extends Panel implements View
 	private UserService userService;
 	private SecurityService securityService;
 	private Panel policyDropPanel;
-	private Table policyTable;;
+	private Table policyTable;
 	private Button newButton = new Button("New");
 	private Button saveButton = new Button("Save");
 	private Button deleteButton = new Button("Delete");
@@ -152,60 +152,80 @@ public class RoleManagementPanel extends Panel implements View
 		this.createPolicyDropPanel();
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
 		layout.setSizeFull();
 
-		Panel roleAdministrationPanel = new Panel("Role Management");
-		roleAdministrationPanel.setStyleName("dashboard");
+		Panel roleAdministrationPanel = new Panel();
+		roleAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		roleAdministrationPanel.setHeight("100%");
 		roleAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 4);
+		GridLayout gridLayout = new GridLayout(2, 6);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
-		gridLayout.setRowExpandRatio(0, 0.25f);
-		gridLayout.setRowExpandRatio(1, 1.0f);
-		gridLayout.setRowExpandRatio(2, 0.20f);
-		gridLayout.setRowExpandRatio(3, 5.00f);
+		
+		Label roleManagementLabel = new Label("Role Management");
+ 		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		gridLayout.addComponent(roleManagementLabel, 0, 0, 1, 0);
+ 		
+ 		Label roleSearchHintLabel = new Label();
+		roleSearchHintLabel.setCaptionAsHtml(true);
+		roleSearchHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Type into the Role Name field to find a role.");
+		roleSearchHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		roleSearchHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(roleSearchHintLabel, 0, 1, 1, 1);
 		
 		
 		Layout controlLayout = this.initControlLayout();
 		
-    	gridLayout.addComponent(controlLayout, 0, 0, 1, 0);
+    	gridLayout.addComponent(controlLayout, 0, 2, 1, 2);
     	
-    	Label roleNameLabel = new Label("Role Name");
+    	Label roleNameLabel = new Label("Role Name:");
+    	roleNameLabel.setSizeUndefined();
 		initRoleNameField();
 		
 		GridLayout formLayout = new GridLayout(2, 2);
 		formLayout.setWidth("100%");
 		formLayout.setHeight("115px");
+		formLayout.setSpacing(true);
 		
 		formLayout.setColumnExpandRatio(0, 1);
 		formLayout.setColumnExpandRatio(1, 5);
 
-		this.roleNameField.setWidth("40%");
+		this.roleNameField.setWidth("70%");
 		formLayout.addComponent(roleNameLabel, 0, 0);
+		formLayout.setComponentAlignment(roleNameLabel, Alignment.MIDDLE_RIGHT);
 		formLayout.addComponent(this.roleNameField, 1, 0);
 
-		Label descriptionLabel = new Label("Description");
+		Label descriptionLabel = new Label("Description:");
+		descriptionLabel.setSizeUndefined();
 		this.descriptionField = new TextArea();
-		this.descriptionField.setWidth("40%");
+		this.descriptionField.setWidth("70%");
 		this.descriptionField.setHeight("60px");
 		formLayout.addComponent(descriptionLabel, 0, 1);
+		formLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
 		formLayout.addComponent(descriptionField, 1, 1);
 		
-		gridLayout.addComponent(formLayout, 0, 1, 1, 1);
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 2, 1, 2);
+		gridLayout.addComponent(formLayout, 0, 3, 1, 3);
+		
+		Label roleTableHintLabel = new Label();
+		roleTableHintLabel.setCaptionAsHtml(true);
+		roleTableHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The Associated Users/Groups table below displays the users/groups that are assigned the current role.");
+		roleTableHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		roleTableHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(roleTableHintLabel, 0, 4, 1, 4);
 		
 		this.associatedPrincipalsTable = new Table();
 		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
-		this.associatedPrincipalsTable.addContainerProperty("Associated Principals", String.class, null);
-		this.associatedPrincipalsTable.setHeight("400px");
+		this.associatedPrincipalsTable.addContainerProperty("Associated Users/Groups", String.class, null);
+		this.associatedPrincipalsTable.addContainerProperty("", Button.class, null);
+		this.associatedPrincipalsTable.setHeight("600px");
 		this.associatedPrincipalsTable.setWidth("650px");
 		
-		gridLayout.addComponent(this.associatedPrincipalsTable, 0, 3, 1, 3);
+		gridLayout.addComponent(this.associatedPrincipalsTable, 0, 5, 1, 5);
 
 		roleAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(roleAdministrationPanel);
@@ -232,16 +252,16 @@ public class RoleManagementPanel extends Panel implements View
 	 */
 	protected void createPolicyDropPanel()
 	{
-		this.policyDropPanel = new Panel("Associated Policies");
-		
-		this.policyDropPanel.setStyleName("dashboard");
+		this.policyDropPanel = new Panel();
+		 		
+		this.policyDropPanel.setStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.policyDropPanel.setHeight("100%");
 		this.policyDropPanel.setWidth("100%");
 				
 		this.policyTable = new Table();
 		this.policyTable.addContainerProperty("Role Policies", String.class, null);
 		this.policyTable.addContainerProperty("", Button.class, null);
-		this.policyTable.setHeight("400px");
+		this.policyTable.setHeight("700px");
 		this.policyTable.setWidth("300px");
 		
 		this.policyTable.setDragMode(TableDragMode.ROW);
@@ -269,10 +289,10 @@ public class RoleManagementPanel extends Panel implements View
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
-				ThemeResource deleteIcon = new ThemeResource(
-						"images/remove-icon.png");
-				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);				
+				deleteButton.setIcon(VaadinIcons.TRASH);
+				deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+				deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
+				deleteButton.setDescription("Remove Policy from this Role");
 				
 				deleteButton.addClickListener(new Button.ClickListener() 
 		        {
@@ -317,14 +337,34 @@ public class RoleManagementPanel extends Panel implements View
 			}
 		});
 		
-		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
+		GridLayout layout = new GridLayout();
+		layout.setSpacing(true);
 		layout.setWidth("100%");
-		layout.setHeight("100%");
-		layout.addComponent(this.policyNameFieldWrap);
-		layout.setExpandRatio(this.policyNameFieldWrap, 0.05f);
+		Label associatedPoliciesLabel = new Label("Associated Policies");
+		associatedPoliciesLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		
+		Label policy1HintLabel = new Label();
+		policy1HintLabel.setCaptionAsHtml(true);
+		policy1HintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Type into the text box below to find a policy.");
+		policy1HintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		policy1HintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+ 		
+ 		layout.addComponent(associatedPoliciesLabel); 		
+		layout.addComponent(policy1HintLabel);
+		
+		layout.addComponent(policyNameFieldWrap);
+		
+		Label policy2HintLabel = new Label();
+		policy2HintLabel.setCaptionAsHtml(true);
+		policy2HintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Drag below to associate policy with current role.");
+		policy2HintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		policy2HintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		
+		layout.addComponent(policy2HintLabel);
+		
 		layout.addComponent(this.policyTable);
-		layout.setExpandRatio(this.policyTable, 0.95f);
 		
 		this.policyDropPanel.setContent(layout);
 	}
@@ -376,10 +416,10 @@ public class RoleManagementPanel extends Panel implements View
 				for(final Policy policy: role.getPolicies())
 				{
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.setDescription("Remove Policy from this Role");
 					
 					deleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -387,13 +427,9 @@ public class RoleManagementPanel extends Panel implements View
 			            {
 			            	Policy selectedPolicy = RoleManagementPanel.this.securityService
 									.findPolicyByName(policy.getName());
-			            	
-			            	logger.info("Trying to remove policy: " + selectedPolicy);
-							
+			            								
 							Role selectedRole = RoleManagementPanel.this.securityService
 									.findRoleByName(role.getName());
-							
-							logger.info("From role: " + selectedRole);
 							
 			            	selectedRole.getPolicies().remove(selectedPolicy);		            	
 			            	RoleManagementPanel.this.saveRole(selectedRole);
@@ -416,10 +452,31 @@ public class RoleManagementPanel extends Panel implements View
 				
 				logger.info("Adding the following number of principals : " + principals.size());
 				
-				for(IkasanPrincipal ikasanPrincipal: principals)
+				for(final IkasanPrincipal ikasanPrincipal: principals)
 		        {
-		        		RoleManagementPanel.this.associatedPrincipalsTable.addItem(new Object[]
-			        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+					Button deleteButton = new Button();
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);			
+					deleteButton.setDescription("Unassign this role from the given User/Group");
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {	
+			            	Role selectedRole = RoleManagementPanel.this.securityService
+									.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
+							
+							logger.info("Removing principal role: " + selectedRole);
+							ikasanPrincipal.getRoles().remove(selectedRole);            	
+			            	RoleManagementPanel.this.securityService.savePrincipal(ikasanPrincipal);
+			            	
+			            	RoleManagementPanel.this.associatedPrincipalsTable.removeItem(ikasanPrincipal);
+			            }
+			        });
+					
+					RoleManagementPanel.this.associatedPrincipalsTable.addItem(new Object[]
+			        		{ ikasanPrincipal.getName(), deleteButton}, ikasanPrincipal);
 		        }
 	        }
 		});
@@ -475,12 +532,15 @@ public class RoleManagementPanel extends Panel implements View
 	 */
 	protected Layout initControlLayout()
 	{
-		this.newButton.setStyleName(ValoTheme.BUTTON_LINK);
+		this.newButton.setIcon(VaadinIcons.PLUS);
+		this.newButton.setDescription("Create a New Role");
+    	this.newButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	this.newButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
     	this.newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	final NewRoleWindow newRoleWindow = new NewRoleWindow();
+            	final NewRoleWindow newRoleWindow = new NewRoleWindow(securityService);
                 UI.getCurrent().addWindow(newRoleWindow);
                 
                 newRoleWindow.addCloseListener(new Window.CloseListener() {
@@ -520,7 +580,10 @@ public class RoleManagementPanel extends Panel implements View
             }
         });
     	
-    	this.deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+    	this.deleteButton.setIcon(VaadinIcons.TRASH);
+    	this.deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	this.deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+    	this.deleteButton.setDescription("Delete the Current Role");
     	this.deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -553,11 +616,10 @@ public class RoleManagementPanel extends Panel implements View
     	controlLayout.setHeight("20px");
     	Label spacerLabel = new Label("");
     	controlLayout.addComponent(spacerLabel);
-    	controlLayout.setExpandRatio(spacerLabel, 0.865f);
+    	controlLayout.setExpandRatio(spacerLabel, 0.91f);
     	controlLayout.addComponent(newButton);
     	controlLayout.setExpandRatio(newButton, 0.045f);
-    	controlLayout.addComponent(saveButton);
-    	controlLayout.setExpandRatio(saveButton, 0.045f);
+    	
     	controlLayout.addComponent(deleteButton);
     	controlLayout.setExpandRatio(deleteButton, 0.045f);
     	
@@ -617,10 +679,31 @@ public class RoleManagementPanel extends Panel implements View
 			
 			logger.info("Adding the following number of principals : " + principals.size());
 			
-			for(IkasanPrincipal ikasanPrincipal: principals)
+			for(final IkasanPrincipal ikasanPrincipal: principals)
 	        {
-	        		RoleManagementPanel.this.associatedPrincipalsTable.addItem(new Object[]
-		        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+				Button deleteButton = new Button();
+				deleteButton.setIcon(VaadinIcons.TRASH);
+				deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+				deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);			
+				deleteButton.setDescription("Unassign this role from the given User/Group");
+				
+				deleteButton.addClickListener(new Button.ClickListener() 
+		        {
+		            public void buttonClick(ClickEvent event) 
+		            {	
+		            	Role selectedRole = RoleManagementPanel.this.securityService
+								.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
+						
+						logger.info("Removing principal role: " + selectedRole);
+						ikasanPrincipal.getRoles().remove(selectedRole);            	
+		            	RoleManagementPanel.this.securityService.savePrincipal(ikasanPrincipal);
+		            	
+		            	RoleManagementPanel.this.associatedPrincipalsTable.removeItem(ikasanPrincipal);
+		            }
+		        });
+				
+				RoleManagementPanel.this.associatedPrincipalsTable.addItem(new Object[]
+		        		{ ikasanPrincipal.getName(), deleteButton}, ikasanPrincipal);
 	        }
 		}
 	}

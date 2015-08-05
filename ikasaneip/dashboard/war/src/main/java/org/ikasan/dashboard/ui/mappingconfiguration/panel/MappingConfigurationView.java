@@ -167,8 +167,9 @@ public class MappingConfigurationView extends Panel implements View
 
 
 	@Override
-	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void enter(ViewChangeEvent event) 
+	{
+		this.searchPanel.enter(event);
+		this.searchResultsPanel.enter(event);
 	}
 }

@@ -47,6 +47,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -68,7 +69,7 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
     public MappingConfigurationSearchResultsPanel(MappingConfigurationService mappingConfigurationService,
             Table searchResultsTable)
     {
-        super("Search Results");
+        super();
         this.mappingConfigurationService = mappingConfigurationService;
         this.searchResultsTable = searchResultsTable;
         this.init();
@@ -80,12 +81,13 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
     @SuppressWarnings("serial")
     protected void init()
     {
-    	this.setStyleName("dashboard");
+    	this.addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
         final HorizontalLayout contentLayout = new HorizontalLayout();
 
         contentLayout.setSizeFull();
         contentLayout.setMargin(true);
+        contentLayout.setSpacing(true);
         contentLayout.addComponent(this.searchResultsTable);
         this.setContent(contentLayout);
         this.setSizeFull();

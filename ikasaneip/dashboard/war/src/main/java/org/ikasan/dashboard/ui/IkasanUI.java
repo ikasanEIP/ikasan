@@ -337,7 +337,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             public void buttonClick(final ClickEvent event) 
             {
             	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
+            	UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
             }
         });
         
@@ -354,7 +354,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
             public void buttonClick(final ClickEvent event) 
             {
             	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
+            	UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
             }
         });
         

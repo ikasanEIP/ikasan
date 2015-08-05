@@ -140,7 +140,8 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     protected void init()
     {
     	layout = new GridLayout(5, 6);
-        layout.setSpacing(true);
+    	layout.setSpacing(true);
+        layout.setMargin(true);
         layout.setWidth("100%");
         
         this.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -201,11 +202,12 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(contentLayout
             , createTableLayout(false));
+        vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
         Button addParametersButton = new Button();
-        addParametersButton.setIcon(VaadinIcons.PLUS);
+        addParametersButton.setIcon(VaadinIcons.FORM);
         addParametersButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        addParametersButton.setDescription("Add new key location queries");
+        addParametersButton.setDescription("Add new key location queries. The number of fields created corresponds to the number of query parameters.");
         addParametersButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         addParametersButton.addClickListener(new Button.ClickListener() {
@@ -214,18 +216,22 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             }
         });
 
-        logger.info("Trying to add create button! " + addParametersButton);
         paramQueriesLayout.removeAllComponents();
-        paramQueriesLayout.addComponent(addParametersButton);
+//        paramQueriesLayout.addComponent(addParametersButton);
+        paramQueriesLayout.setSpacing(true);
+        
+        Label configValueLabels = new Label("Source Configuration Value Queries:");
+        layout.addComponent(configValueLabels, 2, 2);
+        layout.addComponent(addParametersButton, 3, 2);        
 
-        Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
+        Panel queryParamsPanel = new Panel();
         queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        queryParamsPanel.setHeight(200, Unit.PIXELS);
+        queryParamsPanel.setHeight(140, Unit.PIXELS);
         queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
         queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 2, 3, 5);
+        this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
-        vpanel.setSplitPosition(290, Unit.PIXELS);
+        vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
 
@@ -332,17 +338,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     public void addParamQueryFields()
     {
         paramQueriesLayout.removeAllComponents();
-
-        Button addParametersButton = new Button("Create");
-        addParametersButton.setStyleName(BaseTheme.BUTTON_LINK);
-
-        addParametersButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                addParamQueryFields();
-            }
-        });
-
-        paramQueriesLayout.addComponent(addParametersButton);
 
         Long numberOfParams = (Long)super.numberOfParametersTextField.getPropertyDataSource().getValue();
         for(int i=0; i<numberOfParams; i++)

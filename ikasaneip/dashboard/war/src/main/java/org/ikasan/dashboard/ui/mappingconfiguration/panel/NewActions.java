@@ -46,18 +46,16 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow;
+import org.ikasan.dashboard.ui.mappingconfiguration.window.NewClientWindow;
+import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationContextWindow;
+import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationTypeWindow;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -78,14 +76,18 @@ public class NewActions
     protected Button newTypeButton;
     protected Button newMappingConfigurationButton;
     protected Button importMappingConfigurationButton;
-//    protected Label newClientLabel;
-//    protected Label newContextLabel;
-//    protected Label newTypeLabel;
-//    protected Label newMappingConfigurationLabel;
-//    protected Label importMappingConfigurationLabel;
+    protected Label newClientLabel;
+    protected Label newContextLabel;
+    protected Label newTypeLabel;
+    protected Label actionsLabel;
+    protected Label newMappingConfigurationLabel;
+    protected Label importMappingConfigurationLabel;
     protected FunctionalGroup functionalGroup;
     protected MappingConfigurationImportWindow mappingConfigurationImportWindow;
     protected IkasanUINavigator uiNavigator;
+    protected NewClientWindow newClientWindow;
+    protected NewMappingConfigurationContextWindow newMappingConfigurationContextWindow;
+    protected NewMappingConfigurationTypeWindow newMappingConfigurationTypeWindow;
 
     /**
      * Constructor
@@ -107,9 +109,10 @@ public class NewActions
     public NewActions(NewMappingConfigurationPanel newMappingConfigurationPanel, RefreshGroup typeRefreshGroup,
             RefreshGroup clientRefreshGroup, RefreshGroup contextRefreshGroup, SaveRequiredMonitor saveRequiredMonitor,
             Button newClientButton, Button newContextButton, Button newTypeButton, Button newMappingConfigurationButton,
-            Button importMappingConfigurationButton, Label newClientLabel, Label newContextLabel, Label newTypeLabel, 
+            Button importMappingConfigurationButton, Label newClientLabel, Label newContextLabel, Label newTypeLabel, Label actionsLabel,
             Label newMappingConfigurationLabel, Label importMappingConfigurationLabel,
-            MappingConfigurationImportWindow mappingConfigurationImportWindow, IkasanUINavigator uiNavigator)
+            MappingConfigurationImportWindow mappingConfigurationImportWindow, IkasanUINavigator uiNavigator, NewClientWindow newClientWindow,
+            NewMappingConfigurationContextWindow newMappingConfigurationContextWindow, NewMappingConfigurationTypeWindow newMappingConfigurationTypeWindow)
     {
         this.newMappingConfigurationPanel = newMappingConfigurationPanel;
         this.typeRefreshGroup = typeRefreshGroup;
@@ -119,15 +122,19 @@ public class NewActions
         this.newClientButton = newClientButton;
         this.newContextButton = newContextButton;
         this.newTypeButton = newTypeButton;
+        this.actionsLabel = actionsLabel;
         this.newMappingConfigurationButton = newMappingConfigurationButton;
         this.importMappingConfigurationButton = importMappingConfigurationButton;
-//        this.newClientLabel = newClientLabel;
-//        this.newTypeLabel = newTypeLabel;
-//        this.newContextLabel = newContextLabel;
-//        this.newMappingConfigurationLabel = newMappingConfigurationLabel;
-//        this.importMappingConfigurationLabel = importMappingConfigurationLabel;
+        this.newClientLabel = newClientLabel;
+        this.newTypeLabel = newTypeLabel;
+        this.newContextLabel = newContextLabel;
+        this.newMappingConfigurationLabel = newMappingConfigurationLabel;
+        this.importMappingConfigurationLabel = importMappingConfigurationLabel;
         this.mappingConfigurationImportWindow = mappingConfigurationImportWindow;
         this.uiNavigator = uiNavigator;
+        this.newClientWindow = newClientWindow;
+        this.newMappingConfigurationContextWindow = newMappingConfigurationContextWindow;
+        this.newMappingConfigurationTypeWindow = newMappingConfigurationTypeWindow;
         
         init();
     }
@@ -137,24 +144,7 @@ public class NewActions
      */
     @SuppressWarnings("serial")
     protected void init()
-    {
-//        this.addStyleName(ValoTheme.PANEL_BORDERLESS);
-
-        // Set up the grid layout that is the container for the 
-        // components.
-//        final GridLayout contentLayout = new GridLayout(2, 6);
-//        contentLayout.setColumnExpandRatio(0, 0.7f);
-//        contentLayout.setColumnExpandRatio(1, 0.3f);
-//        
-//        contentLayout.setWidth(300, Unit.PIXELS);
-//        contentLayout.setHeight("100%");
-//        contentLayout.setSpacing(true);
-
-        // Add the new client label and button.
-//        this.newClientLabel.setSizeUndefined();
-//        contentLayout.addComponent(this.newClientLabel, 0, 0);
-//        contentLayout.setComponentAlignment(this.newClientLabel, Alignment.MIDDLE_RIGHT);
-        
+    {        
         this.newClientButton.setIcon(VaadinIcons.PLUS);
         this.newClientButton.setDescription("Create a new mapping configuration client");
         this.newClientButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -163,15 +153,9 @@ public class NewActions
         {
             public void buttonClick(ClickEvent event)
             {
-                saveRequiredMonitor.manageSaveRequired("newClientPanel");
+            	UI.getCurrent().addWindow(newClientWindow);
             }
         });
-//        contentLayout.addComponent(this.newClientButton, 1, 0);
-
-        // Add the new context label and button        
-//        this.newContextLabel.setSizeUndefined();        
-//        contentLayout.addComponent( this.newContextLabel, 0, 1);
-//        contentLayout.setComponentAlignment(this.newContextLabel, Alignment.MIDDLE_RIGHT);
 
         this.newContextButton.setIcon(VaadinIcons.PLUS);
         this.newContextButton.setDescription("Create a new mapping configuration context");
@@ -181,15 +165,9 @@ public class NewActions
         {
             public void buttonClick(ClickEvent event) 
             {
-                saveRequiredMonitor.manageSaveRequired("newContextPanel");
+            	UI.getCurrent().addWindow(newMappingConfigurationContextWindow);
             }
         });
-//        contentLayout.addComponent(this.newContextButton, 1, 1);
-
-        // Add the new type label and button.
-//        this.newTypeLabel.setSizeUndefined();
-//        contentLayout.addComponent(this.newTypeLabel, 0, 2);
-//        contentLayout.setComponentAlignment(this.newTypeLabel, Alignment.MIDDLE_RIGHT);
         
         this.newTypeButton.setIcon(VaadinIcons.PLUS);
         this.newTypeButton.setDescription("Create a new mapping configuration type");
@@ -199,17 +177,9 @@ public class NewActions
         {
             public void buttonClick(ClickEvent event) 
             {
-                saveRequiredMonitor.manageSaveRequired("newConfigurationTypePanel");
+            	UI.getCurrent().addWindow(newMappingConfigurationTypeWindow);
             }
         });
-//        contentLayout.addComponent(this.newTypeButton, 1, 2);
-
-        
-        // Add the new type label and button.
-//        this.newMappingConfigurationLabel.setSizeUndefined();
-//        contentLayout.addComponent(this.newMappingConfigurationLabel, 0, 3);
-//        contentLayout.setComponentAlignment(this.newMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
-
 
         this.newMappingConfigurationButton.setIcon(VaadinIcons.COPY_O);
         this.newMappingConfigurationButton.setDescription("Create a new mapping configuration");
@@ -235,12 +205,6 @@ public class NewActions
                 contextRefreshGroup.refresh();
             }
         });
-//        contentLayout.addComponent(this.newMappingConfigurationButton, 1, 3);
-
-
-//        this.importMappingConfigurationLabel.setSizeUndefined();
-//        contentLayout.addComponent(importMappingConfigurationLabel, 0, 4);
-//        contentLayout.setComponentAlignment(this.importMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
 
         this.importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
         this.importMappingConfigurationButton.setDescription("Import a mapping configuration");
@@ -253,9 +217,6 @@ public class NewActions
 			    UI.getCurrent().addWindow(mappingConfigurationImportWindow);
 			}
         });
-//        contentLayout.addComponent(this.importMappingConfigurationButton, 1, 4);
-
-//        this.setContent(contentLayout);
     }
 
 	/**
@@ -296,5 +257,53 @@ public class NewActions
 	public Button getImportMappingConfigurationButton()
 	{
 		return importMappingConfigurationButton;
+	}
+
+	/**
+	 * @return the newClientLabel
+	 */
+	public Label getNewClientLabel()
+	{
+		return newClientLabel;
+	}
+
+	/**
+	 * @return the newContextLabel
+	 */
+	public Label getNewContextLabel()
+	{
+		return newContextLabel;
+	}
+
+	/**
+	 * @return the newTypeLabel
+	 */
+	public Label getNewTypeLabel()
+	{
+		return newTypeLabel;
+	}
+
+	/**
+	 * @return the newMappingConfigurationLabel
+	 */
+	public Label getNewMappingConfigurationLabel()
+	{
+		return newMappingConfigurationLabel;
+	}
+
+	/**
+	 * @return the importMappingConfigurationLabel
+	 */
+	public Label getImportMappingConfigurationLabel()
+	{
+		return importMappingConfigurationLabel;
+	}
+
+	/**
+	 * @return the actionsLabel
+	 */
+	public Label getActionsLabel()
+	{
+		return actionsLabel;
 	}
 }
