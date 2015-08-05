@@ -38,16 +38,16 @@
                    <constructor-arg ref="existingMappingConfigurationPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newClientPanel"/>
-                   <constructor-arg ref="newClientPanel"/>
+                   <constructor-arg value="newClientWindow"/>
+                   <constructor-arg ref="newClientWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newContextPanel"/>
-                   <constructor-arg ref="newContextPanel"/>
+                   <constructor-arg value="newContextWindow"/>
+                   <constructor-arg ref="newContextWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newConfigurationTypePanel"/>
-                   <constructor-arg ref="newConfigurationTypePanel"/>
+                   <constructor-arg value="newConfigurationTypeWindow"/>
+                   <constructor-arg ref="newConfigurationTypeWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="newMappingConfigurationPanel"/>
@@ -92,10 +92,14 @@
         <constructor-arg ref="newClientLabel"/>
         <constructor-arg ref="newContextLabel"/>
         <constructor-arg ref="newTypeLabel"/>
+        <constructor-arg ref="actionsLabel"/>
         <constructor-arg ref="newMappingConfigurationLabel"/>
         <constructor-arg ref="importMappingConfigurationLabel"/>
         <constructor-arg ref="mappingConfigurationImportWindow"/>
         <constructor-arg ref="mappingNavigator"/>
+        <constructor-arg ref="newClientWindow"/>
+        <constructor-arg ref="newContextWindow"/>
+        <constructor-arg ref="newConfigurationTypeWindow"/>
     </bean>
 
     <bean id="mappingConfigurationImportWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow" scope="session">
@@ -105,21 +109,21 @@
         <constructor-arg ref="systemEventService"/>
     </bean>
 
-    <bean id="newConfigurationTypePanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationTypePanel" scope="session">
+    <bean id="newConfigurationTypeWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationTypeWindow" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="typeComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="systemEventService"/>
     </bean>
 
-    <bean id="newClientPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewClientPanel" scope="session">
+    <bean id="newClientWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.NewClientWindow" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="clientComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="systemEventService"/>
     </bean>
 
-    <bean id="newContextPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationContextPanel" scope="session">
+    <bean id="newContextWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationContextWindow" scope="session">
         <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="contextComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
@@ -482,6 +486,11 @@
         <constructor-arg value="New type:"/>
         <property name="visible" value="false"/>
     </bean>
+    
+    <bean id="actionsLabel" class="com.vaadin.ui.Label" scope="session">
+        <constructor-arg value="Actions"/>
+        <property name="visible" value="false"/>
+    </bean>
 
     <bean id="newMappingConfigurationLabel" class="com.vaadin.ui.Label" scope="session">
         <constructor-arg value="New mapping configuration:"/>
@@ -519,9 +528,12 @@
       <entry value="editMapping" key-ref="newTypeButton" />
       <entry value="editMapping" key-ref="newClientLabel" />
       <entry value="editMapping" key-ref="newContextLabel" />
+      <entry value="editMapping" key-ref="newTypeLabel" />
+      <entry value="editMapping" key-ref="actionsLabel" />
       <entry value="editMapping" key-ref="importMappingConfigurationButton" />
       <entry value="editMapping" key-ref="newMappingConfigurationLabel" />
       <entry value="editMapping" key-ref="importMappingConfigurationLabel" />
+      <entry value="editMapping" key-ref="newMappingConfigurationButton" />
     </util:map>
     
     <bean id="modifyExistingMappingConfigurationVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">

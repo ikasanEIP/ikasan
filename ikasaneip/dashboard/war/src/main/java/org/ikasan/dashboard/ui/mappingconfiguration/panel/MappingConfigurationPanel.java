@@ -356,14 +356,18 @@ public class MappingConfigurationPanel extends Panel implements View
             , createTableLayout(false));
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
+        paramQueriesLayout.setSpacing(true);
+        
+        Label configValueLabels = new Label("Source Configuration Value Queries:");
+        layout.addComponent(configValueLabels, 2, 2, 3, 2);
+        Panel queryParamsPanel = new Panel();
         queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
         queryParamsPanel.setHeight(100, Unit.PIXELS);
         queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
         queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 2, 3, 5);
+        this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
-        vpanel.setSplitPosition(315, Unit.PIXELS);
+        vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
@@ -514,7 +518,7 @@ public class MappingConfigurationPanel extends Panel implements View
         layout.setComponentAlignment(descriptionLabelLayout, Alignment.TOP_RIGHT);
         
         HorizontalLayout descriptionTextAreaLayout = new HorizontalLayout();
-        descriptionTextAreaLayout.setHeight(150, Unit.PIXELS);
+        descriptionTextAreaLayout.setHeight(75, Unit.PIXELS);
         descriptionTextAreaLayout.setWidth(350, Unit.PIXELS);
         this.descriptionTextArea = new TextArea();
         this.descriptionTextArea.setWidth(300, Unit.PIXELS);
@@ -525,14 +529,13 @@ public class MappingConfigurationPanel extends Panel implements View
         this.descriptionTextArea.setValidationVisible(false);
         descriptionTextAreaLayout.addComponent(this.descriptionTextArea);
         layout.addComponent(descriptionTextAreaLayout, 1, 5);
-
-        HorizontalLayout paramsLabelLayout = new HorizontalLayout();
-        paramsLabelLayout.setHeight(25, Unit.PIXELS);
-        paramsLabelLayout.setWidth(260, Unit.PIXELS);
-        paramsLabelLayout.addComponent(new Label("Number source of parameters"));
-        layout.addComponent(paramsLabelLayout, 2, 1);
+        
+        Label numParamsLabel = new Label("Number of source parameters:");
+        numParamsLabel.setWidth(175, Unit.PIXELS);
+        
+        layout.addComponent(numParamsLabel, 2, 1);
         this.numberOfParametersTextField = new TextField();
-        this.numberOfParametersTextField.setWidth(100, Unit.PIXELS);
+        this.numberOfParametersTextField.setWidth(75, Unit.PIXELS);
         this.numberOfParametersTextField.removeAllValidators();
         this.numberOfParametersTextField.addValidator(new LongValidator("Number of source parameters " +
         		"and key location queries must be defined."));
@@ -931,6 +934,8 @@ public class MappingConfigurationPanel extends Panel implements View
     	this.sourceContextComboBox.loadContextValues();
     	this.targetContextComboBox.loadContextValues();
     	this.typeComboBox.loadClientTypeValues();
+    	
+    	this.mappingConfigurationFunctionalGroup.initialiseButtonState();
     }
 
     /**

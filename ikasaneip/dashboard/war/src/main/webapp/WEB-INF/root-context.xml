@@ -127,16 +127,16 @@
                    <constructor-arg ref="existingMappingConfigurationPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newClientPanel"/>
-                   <constructor-arg ref="newClientPanel"/>
+                   <constructor-arg value="newClientWindow"/>
+                   <constructor-arg ref="newClientWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newContextPanel"/>
-                   <constructor-arg ref="newContextPanel"/>
+                   <constructor-arg value="newContextWindow"/>
+                   <constructor-arg ref="newContextWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newConfigurationTypePanel"/>
-                   <constructor-arg ref="newConfigurationTypePanel"/>
+                   <constructor-arg value="newConfigurationTypeWindow"/>
+                   <constructor-arg ref="newConfigurationTypeWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="newMappingConfigurationPanel"/>

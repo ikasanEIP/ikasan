@@ -50,13 +50,13 @@ import org.ikasan.dashboard.ui.administration.window.PolicyAssociationBusinessSt
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationFlowSearchWindow;
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow;
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationModuleSearchWindow;
-import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -68,9 +68,8 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
@@ -86,10 +85,12 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
+import com.vaadin.ui.themes.ValoTheme;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
 import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
@@ -107,14 +108,12 @@ public class PolicyManagementPanel extends Panel implements View
 	private UserService userService;
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
-	private ComboBox linkTypeCombo  = new ComboBox();
+	private TextField linkType  = new TextField();
 	private Panel associatedRolesPanel;
 	private Panel policyDropPanel;
 	private Table roleTable;
 	private Table policyDropTable;
-	private Button linkButton = new Button("Link");
 	private Button newButton = new Button("New");
-	private Button saveButton = new Button("Save");
 	private Button deleteButton = new Button("Delete");
 	private Button cancelButton = new Button("Cancel");
 	private PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow;
@@ -125,8 +124,9 @@ public class PolicyManagementPanel extends Panel implements View
 	private AutocompleteField<Policy> policyNameField;
 	private TextArea descriptionField;
 	private BeanItem<Policy> policyItem;
-	private Long associatedEntityId;
 	private TextArea linkedEntity;
+	private Label linkedEntityLabel = new Label("Linked to:");
+	private Label linkTypeLabel = new Label("Policy Link Type:");
 
 	/**
 	 * Constructor
@@ -190,197 +190,92 @@ public class PolicyManagementPanel extends Panel implements View
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
-		layout.setSizeFull();
+		layout.setSpacing(true);
+		layout.setWidth("100%");
 
-		Panel securityAdministrationPanel = new Panel("Policy Management");
-		securityAdministrationPanel.setStyleName("dashboard");
-		securityAdministrationPanel.setHeight("100%");
-		securityAdministrationPanel.setWidth("100%");
+		Panel policyAdministrationPanel = new Panel();
+		policyAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		policyAdministrationPanel.setHeight("100%");
+		policyAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 5);
-		gridLayout.setWidth("100%");
-		gridLayout.setHeight("100%");
-		gridLayout.setMargin(true);
+		GridLayout gridLayout = new GridLayout(2, 6);
 		gridLayout.setSizeFull();
-		gridLayout.setRowExpandRatio(0, 0.25f);
-		gridLayout.setRowExpandRatio(1, 1.5f);
-		gridLayout.setRowExpandRatio(2, 1.5f);
-		gridLayout.setRowExpandRatio(3, 0.20f);
-		gridLayout.setRowExpandRatio(4, 5.00f);
+		
+		Label roleManagementLabel = new Label("Policy Management");
+ 		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		gridLayout.addComponent(roleManagementLabel, 0, 0, 1, 0);
+ 		
+ 		Label roleSearchHintLabel = new Label();
+		roleSearchHintLabel.setCaptionAsHtml(true);
+		roleSearchHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Type into the Policy Name field to find a policy.");
+		roleSearchHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		roleSearchHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(roleSearchHintLabel, 0, 1, 1, 1);
 		
 		
 		Layout controlLayout = this.initControlLayout();
 		
-    	gridLayout.addComponent(controlLayout, 0, 0, 1, 0);
+    	gridLayout.addComponent(controlLayout, 0, 2, 1, 2);
     	
-    	GridLayout formLayout = new GridLayout(2, 3);
+    	GridLayout formLayout = new GridLayout(2, 4);
     	formLayout.setWidth("100%");
-		formLayout.setHeight("125px");
-		formLayout.setRowExpandRatio(0, 1f);
-		formLayout.setRowExpandRatio(1, 2f);
-		formLayout.setRowExpandRatio(2, 1f);		
+		formLayout.setSpacing(true);
 		formLayout.setColumnExpandRatio(0, 1);
 		formLayout.setColumnExpandRatio(1, 5);
 
-    	Label policyNameLabel = new Label("Policy Name");
+    	Label policyNameLabel = new Label("Policy Name:");
+    	policyNameLabel.setSizeUndefined();
 		final DragAndDropWrapper policyNameFieldWrap = initPolicyNameField();
 		
 		formLayout.addComponent(policyNameLabel, 0, 0);
+		formLayout.setComponentAlignment(policyNameLabel, Alignment.MIDDLE_RIGHT);
 		formLayout.addComponent(policyNameFieldWrap, 1, 0);
 
-		Label descriptionLabel = new Label("Description");
+		Label descriptionLabel = new Label("Description:");
+		descriptionLabel.setSizeUndefined();
 		this.descriptionField = new TextArea();
-		this.descriptionField.setWidth("40%");
+		this.descriptionField.setWidth("70%");
 		this.descriptionField.setHeight("60px");
 		formLayout.addComponent(descriptionLabel, 0, 1);
-		formLayout.addComponent(descriptionField, 1, 1);
+		formLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
+		formLayout.addComponent(this.descriptionField, 1, 1);
 		
-		Label linkTypeLabel = new Label("Policy Link Type");
-		formLayout.addComponent(linkTypeLabel, 0, 2);
-		this.linkTypeCombo.setWidth("40%");
-		formLayout.addComponent(this.linkTypeCombo, 1, 2);
-		
-		GridLayout linkLayout = new GridLayout(2, 2);
-		linkLayout.setWidth("100%");
-		linkLayout.setHeight("80px");
-		linkLayout.setRowExpandRatio(0, 1f);
-		linkLayout.setRowExpandRatio(1, 2f);		
-		linkLayout.setColumnExpandRatio(0, 1);
-		linkLayout.setColumnExpandRatio(1, 5);
-		
-		linkButton.setStyleName(ValoTheme.BUTTON_LINK);
-    	linkButton.setVisible(false);
-    	linkButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	PolicyLinkType policyLinkType = (PolicyLinkType)PolicyManagementPanel.this.linkTypeCombo.getValue();
-            	
-            	if(policyLinkType.getName().equals(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE))
-            	{
-            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
-            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationMappingSearchWindow);
-            	}
-            	else if(policyLinkType.getName().equals(PolicyLinkTypeConstants.MODULE_LINK_TYPE))
-            	{
-            		PolicyManagementPanel.this.policyAssociationModuleSearchWindow.clear();
-            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationModuleSearchWindow);
-            	}
-            	else if(policyLinkType.getName().equals(PolicyLinkTypeConstants.FLOW_LINK_TYPE))
-            	{
-            		PolicyManagementPanel.this.policyAssociationFlowSearchWindow.clear();
-            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationFlowSearchWindow);
-            	}
-            	else if(policyLinkType.getName().equals(PolicyLinkTypeConstants.BUSINESS_STREAM_LINK_TYPE))
-            	{
-            		PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow.clear();
-            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow);
-            	}
-            }
-        });
-    	linkLayout.addComponent(this.linkButton, 1, 0);
-    	
-    	final Label linkedEntityLabel = new Label("Linked to");
-		linkedEntity = new TextArea();
-		linkedEntity.setWidth("40%");
-		linkedEntity.setHeight("60px");
-		
-		linkLayout.addComponent(linkedEntityLabel, 0, 1);
-		linkLayout.addComponent(linkedEntity, 1, 1);
-		linkedEntityLabel.setVisible(false);
-		linkedEntity.setVisible(false);
-    	
-    	this.policyAssociationMappingSearchWindow.addCloseListener(new Window.CloseListener() 
-    	{
-            // inline close-listener
-            public void windowClose(CloseEvent e) 
-            {
-            	if(policyAssociationMappingSearchWindow.getMappingConfiguration() != null)
-            	{
-	            	PolicyManagementPanel.this.linkedEntity.setValue
-	            		(policyAssociationMappingSearchWindow.getMappingConfiguration().toStringLite());
-	            	PolicyManagementPanel.this.associatedEntityId 
-	            		= PolicyManagementPanel.this.policyAssociationMappingSearchWindow.getMappingConfiguration().getId();
-            	}
-            }
-        });
 
-    	this.policyAssociationFlowSearchWindow.addCloseListener(new Window.CloseListener() 
-    	{
-            // inline close-listener
-            public void windowClose(CloseEvent e) 
-            {
-            	if(policyAssociationFlowSearchWindow.getFlow() != null)
-            	{
-	            	PolicyManagementPanel.this.linkedEntity.setValue
-	            		(policyAssociationFlowSearchWindow.getFlow().toString());
-	            	PolicyManagementPanel.this.associatedEntityId 
-	            		= PolicyManagementPanel.this.policyAssociationFlowSearchWindow.getFlow().getId();
-            	}
-            }
-        });
+		this.linkTypeLabel.setSizeUndefined();
+		formLayout.addComponent(this.linkTypeLabel, 0, 2);
+		formLayout.setComponentAlignment(this.linkTypeLabel, Alignment.MIDDLE_RIGHT);
+		this.linkType.setWidth("70%");
+		formLayout.addComponent(this.linkType, 1, 2);
+		this.linkTypeLabel.setVisible(false);
+		this.linkType.setVisible(false);
+		
     	
-    	this.policyAssociationModuleSearchWindow.addCloseListener(new Window.CloseListener() 
-    	{
-            // inline close-listener
-            public void windowClose(CloseEvent e) 
-            {
-            	if(policyAssociationModuleSearchWindow.getModule() != null)
-            	{
-	            	PolicyManagementPanel.this.linkedEntity.setValue
-	            		(policyAssociationModuleSearchWindow.getModule().toString());
-	            	PolicyManagementPanel.this.associatedEntityId 
-	            		= PolicyManagementPanel.this.policyAssociationModuleSearchWindow.getModule().getId();
-            	}
-            }
-        });
-    	
-    	this.policyAssociationBusinessStreamSearchWindow.addCloseListener(new Window.CloseListener() 
-    	{
-            // inline close-listener
-            public void windowClose(CloseEvent e) 
-            {
-            	if(policyAssociationBusinessStreamSearchWindow.getBusinessStream() != null)
-        		{
-	            	PolicyManagementPanel.this.linkedEntity.setValue
-	            		(policyAssociationBusinessStreamSearchWindow.getBusinessStream().toString());
-	            	PolicyManagementPanel.this.associatedEntityId 
-	            		= PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow.getBusinessStream().getId();
-        		}
-            }
-    		
-        });
+		this.linkedEntityLabel.setSizeUndefined();
+		this.linkedEntity = new TextArea();
+		this.linkedEntity.setWidth("70%");
+		this.linkedEntity.setHeight("60px");
 		
-		this.linkTypeCombo.addValueChangeListener(new Property.ValueChangeListener() {
-		    public void valueChange(ValueChangeEvent event) {
-		        final PolicyLinkType policyLinkType = (PolicyLinkType)event.getProperty().getValue();
-		        
-		        if(policyLinkType != null)
-		        {		        	
-		        	linkButton.setVisible(true);
-		        	linkedEntityLabel.setVisible(true);
-		        	linkedEntity.setVisible(true);
-		        	
-		        }
-		        else
-		        {
-		        	linkButton.setVisible(false);
-		        	linkedEntityLabel.setVisible(false);
-		        	linkedEntity.setVisible(false);
-		        }
-		    }
-		});
+		formLayout.addComponent(this.linkedEntityLabel, 0, 3);
+		formLayout.setComponentAlignment(this.linkedEntityLabel, Alignment.MIDDLE_RIGHT);
+		formLayout.addComponent(linkedEntity, 1, 3);
+		this.linkedEntityLabel.setVisible(false);
+		this.linkedEntity.setVisible(false);
+    			
+		gridLayout.addComponent(formLayout,0, 3, 1, 3);		
+
+		Label roleTableHintLabel = new Label();
+		roleTableHintLabel.setCaptionAsHtml(true);
+		roleTableHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The Roles table below displays the roles that are assigned the current policy.");
+		roleTableHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		roleTableHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(roleTableHintLabel, 0, 4, 1, 4);
 		
-		gridLayout.addComponent(formLayout,0, 1, 1, 1);
-		gridLayout.addComponent(linkLayout,0, 2, 1, 2);
-		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 3, 1, 3);
+		gridLayout.addComponent(this.roleTable, 0, 5, 1, 5);
 
-		gridLayout.addComponent(this.roleTable, 0, 4, 1, 4);
-
-		securityAdministrationPanel.setContent(gridLayout);
-		layout.addComponent(securityAdministrationPanel);
-
+		policyAdministrationPanel.setContent(gridLayout);
+		layout.addComponent(policyAdministrationPanel);
 		
 		HorizontalLayout roleMemberPanelLayout = new HorizontalLayout();
 		roleMemberPanelLayout.setMargin(true);
@@ -406,14 +301,14 @@ public class PolicyManagementPanel extends Panel implements View
 	{
 		this.associatedRolesPanel = new Panel("Roles Associated with this Policy");
 
-		this.associatedRolesPanel.setHeight("600px");
-		this.associatedRolesPanel.setWidth("500px");
+		this.associatedRolesPanel.setHeight("500px");
+		this.associatedRolesPanel.setWidth("100%");
 		
 		this.roleTable = new Table();
 		this.roleTable.addContainerProperty("Role", String.class, null);
 		this.roleTable.addContainerProperty("", Button.class, null);
-		this.roleTable.setHeight("400px");
-		this.roleTable.setWidth("300px");
+		this.roleTable.setHeight("550px");
+		this.roleTable.setWidth("100%");
 		
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
@@ -429,13 +324,17 @@ public class PolicyManagementPanel extends Panel implements View
 	 */
 	protected void createPolicyDropPanel()
 	{
-		this.policyDropPanel = new Panel("Role/Policy Associations");
+		this.policyDropPanel = new Panel();
 		
-		this.policyDropPanel.setStyleName("dashboard");
+		Label rolePoliciesLabel = new Label("Role/Policy Associations");
+		rolePoliciesLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		
+		this.policyDropPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.policyDropPanel.setHeight("100%");
 		this.policyDropPanel.setWidth("100%");
 		
-		this.rolesCombo = new ComboBox();
+		this.rolesCombo = new ComboBox("Roles");
+		this.rolesCombo.setWidth("90%");
 		this.rolesCombo.addValueChangeListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
@@ -450,10 +349,10 @@ public class PolicyManagementPanel extends Panel implements View
 					for(final Policy policy: policies)
 					{
 						Button deleteButton = new Button();
-						ThemeResource deleteIcon = new ThemeResource(
-								"images/remove-icon.png");
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
+						deleteButton.setDescription("Remove Policy from this Role");
 						
 						deleteButton.addClickListener(new Button.ClickListener() 
 				        {
@@ -478,7 +377,7 @@ public class PolicyManagementPanel extends Panel implements View
 		this.policyDropTable = new Table();
 		this.policyDropTable.addContainerProperty("Role Policies", String.class, null);
 		this.policyDropTable.addContainerProperty("", Button.class, null);
-		this.policyDropTable.setHeight("400px");
+		this.policyDropTable.setHeight("700px");
 		this.policyDropTable.setWidth("300px");
 		
 		this.policyDropTable.setDragMode(TableDragMode.ROW);
@@ -506,10 +405,10 @@ public class PolicyManagementPanel extends Panel implements View
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
-				ThemeResource deleteIcon = new ThemeResource(
-						"images/remove-icon.png");
-				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+				deleteButton.setIcon(VaadinIcons.TRASH);
+				deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+				deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
+				deleteButton.setDescription("Remove Policy from this Role");
 				
 				final Policy policy = PolicyManagementPanel.this.securityService
 						.findPolicyByName(sourceContainer.getText());
@@ -542,8 +441,10 @@ public class PolicyManagementPanel extends Panel implements View
 				for (final Role role : policy.getRoles())
 				{
 					Button roleDeleteButton = new Button();
-					roleDeleteButton.setIcon(deleteIcon);
-					roleDeleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					roleDeleteButton.setIcon(VaadinIcons.TRASH);
+					roleDeleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
+					deleteButton.setDescription("Remove Policy from this Role");
 					
 					roleDeleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -569,14 +470,24 @@ public class PolicyManagementPanel extends Panel implements View
 			}
 		});
 		
-		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
+		GridLayout layout = new GridLayout();
+		layout.setSpacing(true);
 		layout.setWidth("100%");
 		layout.setHeight("100%");
+		
+		layout.addComponent(rolePoliciesLabel);
 		layout.addComponent(this.rolesCombo);
-		layout.setExpandRatio(this.rolesCombo, 0.05f);
+		
+		Label policyDropHintLabel = new Label();
+		policyDropHintLabel.setCaptionAsHtml(true);
+		policyDropHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Drop a policy into the table below to associate with a role.");
+		policyDropHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		policyDropHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		layout.addComponent(policyDropHintLabel);
+		
 		layout.addComponent(this.policyDropTable);
-		layout.setExpandRatio(this.policyDropTable, 0.95f);
+		
 		
 		this.policyDropPanel.setContent(layout);
 	}
@@ -590,7 +501,7 @@ public class PolicyManagementPanel extends Panel implements View
 	{
 		// The policy field name is an autocomplete field.
 		this.policyNameField = new AutocompleteField<Policy>();
-		this.policyNameField.setWidth("40%");
+		this.policyNameField.setWidth("70%");
 
 		// We also want it to be drag and drop friendly.
 		final DragAndDropWrapper policyNameFieldWrap = new DragAndDropWrapper(
@@ -630,16 +541,22 @@ public class PolicyManagementPanel extends Panel implements View
 		        
 				if(PolicyManagementPanel.this.policy.getPolicyLink() != null)
 				{
-					PolicyManagementPanel.this.linkTypeCombo.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getPolicyLinkType());
+					PolicyManagementPanel.this.linkedEntity.setVisible(true);
+					PolicyManagementPanel.this.linkType.setVisible(true);
+					PolicyManagementPanel.this.linkTypeLabel.setVisible(true);
+					PolicyManagementPanel.this.linkedEntityLabel.setVisible(true);
+					PolicyManagementPanel.this.linkType.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getPolicyLinkType().getName());
 					PolicyManagementPanel.this.linkedEntity.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getName());
 				}
 				else
 				{
-					PolicyManagementPanel.this.linkTypeCombo.setValue(null);
+					PolicyManagementPanel.this.linkType.setValue(null);
 					PolicyManagementPanel.this.linkedEntity.setValue(new String());
 					
-					PolicyManagementPanel.this.linkButton.setVisible(false);
             		PolicyManagementPanel.this.linkedEntity.setVisible(false);
+            		PolicyManagementPanel.this.linkedEntityLabel.setVisible(false);
+            		PolicyManagementPanel.this.linkType.setVisible(false);
+					PolicyManagementPanel.this.linkTypeLabel.setVisible(false);
 				}
 				
 				roleTable.removeAllItems();
@@ -648,10 +565,10 @@ public class PolicyManagementPanel extends Panel implements View
 				for (final Role role : policy.getRoles())
 				{
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
+					deleteButton.setDescription("Remove Policy from this Role");
 					
 					// Add the delete functionality to each role that is added
 					deleteButton.addClickListener(new Button.ClickListener() 
@@ -674,7 +591,6 @@ public class PolicyManagementPanel extends Panel implements View
 							{ role.getName(), deleteButton }, role);
 				}
 				
-				PolicyManagementPanel.this.saveButton.setVisible(false);
         		PolicyManagementPanel.this.cancelButton.setVisible(false);
         		PolicyManagementPanel.this.newButton.setVisible(true);
         		PolicyManagementPanel.this.deleteButton.setVisible(true);
@@ -689,16 +605,20 @@ public class PolicyManagementPanel extends Panel implements View
 	 */
 	protected Layout initControlLayout()
 	{
-		this.saveButton.setVisible(false);
 		this.cancelButton.setVisible(false);
 		this.deleteButton.setVisible(false);
 		
-		this.newButton.setStyleName(ValoTheme.BUTTON_LINK);		
+		this.newButton.setIcon(VaadinIcons.PLUS);
+		this.newButton.setDescription("Create a New Policy");
+    	this.newButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	this.newButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
     	this.newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	final NewPolicyWindow newPolicyWindow = new NewPolicyWindow();
+            	final NewPolicyWindow newPolicyWindow = new NewPolicyWindow(userService, securityService,
+            			policyAssociationMappingSearchWindow, policyAssociationFlowSearchWindow,
+            			policyAssociationModuleSearchWindow, policyAssociationBusinessStreamSearchWindow);
                 UI.getCurrent().addWindow(newPolicyWindow);
                 
                 newPolicyWindow.addCloseListener(new Window.CloseListener() {
@@ -710,52 +630,34 @@ public class PolicyManagementPanel extends Panel implements View
                 		PolicyManagementPanel.this.policyNameField.setText(PolicyManagementPanel.this.policy.getName());
                 		PolicyManagementPanel.this.policyNameField.setPropertyDataSource(policyItem.getItemProperty("name"));
                 		PolicyManagementPanel.this.descriptionField.setPropertyDataSource(policyItem.getItemProperty("description"));
-                		PolicyManagementPanel.this.linkTypeCombo.setValue(null);
-                		PolicyManagementPanel.this.linkedEntity.setValue(new String());
                 		
-                		PolicyManagementPanel.this.linkButton.setVisible(false);
-                		PolicyManagementPanel.this.linkedEntity.setVisible(false);
+                		if(PolicyManagementPanel.this.policy.getPolicyLink() != null)
+                		{
+	                		PolicyManagementPanel.this.linkType.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getPolicyLinkType().getName());
+	                		PolicyManagementPanel.this.linkedEntity.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getName());
+	                		
+	                		PolicyManagementPanel.this.linkedEntity.setVisible(true);
+                			PolicyManagementPanel.this.linkType.setVisible(true);
+                		}
+                		else
+                		{
+                			PolicyManagementPanel.this.linkedEntity.setVisible(false);
+                			PolicyManagementPanel.this.linkType.setVisible(false);
+                		}
 
                 		PolicyManagementPanel.this.roleTable.removeAllItems();
                 		
-                		PolicyManagementPanel.this.saveButton.setVisible(true);
-                		PolicyManagementPanel.this.cancelButton.setVisible(true);
-                		PolicyManagementPanel.this.newButton.setVisible(false);
+                		PolicyManagementPanel.this.newButton.setVisible(true);
                 		PolicyManagementPanel.this.deleteButton.setVisible(false);
                     }
                 });
             }
         });
     	
-    	this.saveButton.setStyleName(ValoTheme.BUTTON_LINK);
-    	this.saveButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	try
-            	{
-            		PolicyManagementPanel.this.save();
-            		
-            		Notification.show("Saved");
-            		
-            		PolicyManagementPanel.this.saveButton.setVisible(false);
-            		PolicyManagementPanel.this.cancelButton.setVisible(false);
-            		PolicyManagementPanel.this.newButton.setVisible(true);
-            		PolicyManagementPanel.this.deleteButton.setVisible(false);
-            	}
-            	catch(RuntimeException e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-                    
-            		Notification.show("Cauget exception trying to save a Policy!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-            	}
-            }
-        });
-    	
-    	this.deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+    	this.deleteButton.setIcon(VaadinIcons.TRASH);
+    	this.deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	this.deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+    	this.deleteButton.setDescription("Delete the Current Policy");
     	this.deleteButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -766,15 +668,13 @@ public class PolicyManagementPanel extends Panel implements View
             		
             		PolicyManagementPanel.this.policyNameField.setText("");
             		PolicyManagementPanel.this.descriptionField.setValue("");
-            		PolicyManagementPanel.this.linkTypeCombo.setValue(null);
+            		PolicyManagementPanel.this.linkType.setValue(null);
             		PolicyManagementPanel.this.linkedEntity.setValue("");
             		
             		PolicyManagementPanel.this.linkedEntity.setVisible(false);
-            		PolicyManagementPanel.this.linkButton.setVisible(false);
             		
             		Notification.show("Deleted");
             		
-            		PolicyManagementPanel.this.saveButton.setVisible(false);
             		PolicyManagementPanel.this.cancelButton.setVisible(false);
             		PolicyManagementPanel.this.newButton.setVisible(true);
             		PolicyManagementPanel.this.deleteButton.setVisible(false);
@@ -798,12 +698,10 @@ public class PolicyManagementPanel extends Panel implements View
             {
         		PolicyManagementPanel.this.policyNameField.setText("");
         		PolicyManagementPanel.this.descriptionField.setValue("");
-        		PolicyManagementPanel.this.linkTypeCombo.setValue(null);
+        		PolicyManagementPanel.this.linkType.setValue(null);
         		PolicyManagementPanel.this.linkedEntity.setValue("");
         		PolicyManagementPanel.this.linkedEntity.setVisible(false);
-        		PolicyManagementPanel.this.linkButton.setVisible(false);
         		
-        		PolicyManagementPanel.this.saveButton.setVisible(false);
         		PolicyManagementPanel.this.cancelButton.setVisible(false);
         		PolicyManagementPanel.this.newButton.setVisible(true);
         		PolicyManagementPanel.this.deleteButton.setVisible(false);
@@ -814,11 +712,9 @@ public class PolicyManagementPanel extends Panel implements View
     	controlLayout.setWidth("100%");
     	Label spacerLabel = new Label("");
     	controlLayout.addComponent(spacerLabel);
-    	controlLayout.setExpandRatio(spacerLabel, 0.82f);
+    	controlLayout.setExpandRatio(spacerLabel, 0.865f);
     	controlLayout.addComponent(newButton);
     	controlLayout.setExpandRatio(newButton, 0.045f);
-    	controlLayout.addComponent(saveButton);
-    	controlLayout.setExpandRatio(saveButton, 0.045f);
     	controlLayout.addComponent(deleteButton);
     	controlLayout.setExpandRatio(deleteButton, 0.045f);
     	controlLayout.addComponent(cancelButton);
@@ -869,37 +765,7 @@ public class PolicyManagementPanel extends Panel implements View
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	protected void save()
-	{
-		if(this.linkTypeCombo.getValue() != null)
-		{
-			PolicyLinkType policyLinkType = (PolicyLinkType)this.linkTypeCombo.getValue();
-			String linkedEntityName = this.linkedEntity.getValue();
-			PolicyLink policyLink = new PolicyLink(policyLinkType, 
-					this.associatedEntityId, linkedEntityName);
-			
-			this.securityService.savePolicyLink(policyLink);
-			
-			this.policy.setPolicyLink(policyLink);
-			
-			this.securityService.savePolicy(this.policy);
-		}
-		else
-		{
-			PolicyLink policyLink = this.policy.getPolicyLink();
-			this.policy.setPolicyLink(null);
-			
-			this.securityService.savePolicy(this.policy);
-			
-			if(policyLink != null)
-			{
-				this.securityService.deletePolicyLink(policyLink);
-			}
-		}
-	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -920,16 +786,6 @@ public class PolicyManagementPanel extends Panel implements View
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
-		}
-		
-		List<PolicyLinkType> policyLinkTypes = this.securityService.getAllPolicyLinkTypes();
-		
-		this.linkTypeCombo.removeAllItems();
-		
-		for(PolicyLinkType policyLinkType: policyLinkTypes)
-		{
-			this.linkTypeCombo.addItem(policyLinkType);
-			this.linkTypeCombo.setItemCaption(policyLinkType, policyLinkType.getName());
 		}
 		
 		this.policyNameField.clearChoices();
