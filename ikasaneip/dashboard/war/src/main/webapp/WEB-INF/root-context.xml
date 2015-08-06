@@ -34,6 +34,12 @@
         <constructor-arg ref="navigationPanel"/>
         <constructor-arg ref="menuLayout"/>
         <constructor-arg ref="bannerImage"/>
+        <constructor-arg ref="menu"/>
+    </bean>
+    
+    <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
+        <constructor-arg ref="navigatorMap"/>
+        <constructor-arg ref="menuLayout"/>
     </bean>
 
 	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
@@ -216,7 +222,7 @@
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
     </bean>
 
-	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodTabPanel" scope="session">
+	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.administration.panel.UserDirectoriesPanel" scope="session">
 		 <constructor-arg ref="securityService"/>
 		 <constructor-arg ref="authenticationProviderFactory"/>
 		 <constructor-arg ref="ldapService"/>

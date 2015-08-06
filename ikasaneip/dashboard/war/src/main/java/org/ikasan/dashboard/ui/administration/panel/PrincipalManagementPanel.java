@@ -45,6 +45,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 import org.vaadin.teemu.VaadinIcons;
@@ -57,8 +58,6 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -97,6 +96,7 @@ public class PrincipalManagementPanel extends Panel implements View
 	private TextField principalTypeField = new TextField();
 	private TextArea descriptionField = new TextArea();
 	private Table roleTable = new Table();
+	private Table userTable = new Table();
 	private IkasanPrincipal principal;
 	private AutocompleteField<IkasanPrincipal> principalNameField;
 
@@ -174,6 +174,10 @@ public class PrincipalManagementPanel extends Panel implements View
 		roleTable.addContainerProperty("", Button.class, null);
 		roleTable.setHeight("520px");
 		roleTable.setWidth("300px");
+		
+		userTable.addContainerProperty("Associated Users", String.class, null);
+		userTable.setHeight("520px");
+		userTable.setWidth("300px");
 		
 		principalDropTable.addContainerProperty("Members", String.class, null);
 		principalDropTable.addContainerProperty("", Button.class, null);
@@ -329,7 +333,8 @@ public class PrincipalManagementPanel extends Panel implements View
 		roleTableHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
 		gridLayout.addComponent(roleTableHintLabel, 0, 3, 1, 3);
 		
-		gridLayout.addComponent(roleTable, 0, 4, 1, 4);
+		gridLayout.addComponent(roleTable, 0, 4);
+		gridLayout.addComponent(userTable, 1, 4);
 					
 		this.rolesCombo = new ComboBox("Roles");
 		this.rolesCombo.setWidth("90%");
@@ -440,6 +445,18 @@ public class PrincipalManagementPanel extends Panel implements View
 		this.descriptionField.setValue(this.principal.getDescription());
 
 		this.roleTable.removeAllItems();
+		this.userTable.removeAllItems();
+		
+		List<User> users = this.securityService.getUsersAssociatedWithPrincipal(this.principal.getId());
+		
+		for(final User user: users)
+		{
+			String userString = "(" + user.getName() + ") " + user.getFirstName() +
+					" " + user.getSurname();
+			
+			userTable.addItem(new Object[]
+					{ userString }, user);
+		}
 
 		for (final Role role : principal.getRoles())
 		{

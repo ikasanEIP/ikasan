@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,24 +38,95 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.dao.constants;
+package org.ikasan.security.model;
+
+import java.io.Serializable;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public interface SecurityConstants
+public class UserPrincipalPk implements Serializable
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = new Long(1);
+	private static final long serialVersionUID = -1724759502309436272L;
 	
-	public static final String PRINCIPAL_ID = "principalId";
+	Long userId;
+	Long ikasanPrincipalId;
 	
-	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
-            " User as u " +
-            " where  u.id = up.userId" +
-            " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
+	/**
+	 * @return the userId
+	 */
+	public Long getUserId()
+	{
+		return userId;
+	}
+	
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+	
+	/**
+	 * @return the ikasanPrincipalId
+	 */
+	public Long getIkasanPrincipalId()
+	{
+		return ikasanPrincipalId;
+	}
+	
+	/**
+	 * @param ikasanPrincipalId the ikasanPrincipalId to set
+	 */
+	public void setIkasanPrincipalId(Long ikasanPrincipalId)
+	{
+		this.ikasanPrincipalId = ikasanPrincipalId;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((ikasanPrincipalId == null) ? 0 : ikasanPrincipalId
+						.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserPrincipalPk other = (UserPrincipalPk) obj;
+		if (ikasanPrincipalId == null)
+		{
+			if (other.ikasanPrincipalId != null)
+				return false;
+		} else if (!ikasanPrincipalId.equals(other.ikasanPrincipalId))
+			return false;
+		if (userId == null)
+		{
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
+	}
 }

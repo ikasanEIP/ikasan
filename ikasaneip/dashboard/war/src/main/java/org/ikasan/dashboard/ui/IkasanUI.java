@@ -40,12 +40,10 @@
  */
 package org.ikasan.dashboard.ui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
@@ -54,14 +52,11 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.vaadin.teemu.VaadinIcons;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.IndexedContainer;
@@ -70,8 +65,6 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -90,7 +83,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @Theme("dashboard")
 @SuppressWarnings("serial")
 //@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
-//@PreserveOnRefresh
+@PreserveOnRefresh
 public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 {   
 	private Logger logger = Logger.getLogger(IkasanUI.class);
@@ -115,7 +108,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     
     private ConnectorTracker tracker;
     
-    private CssLayout menu = new CssLayout();
+//    private CssLayout menu = new CssLayout();
     private final LinkedHashMap<String, String> menuItems = new LinkedHashMap<String, String>();
     private CssLayout menuItemsLayout = new CssLayout();
     private MenuLayout menuLayout;
@@ -124,6 +117,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
     private HashMap<Component, String> menuComponents = new HashMap<Component, String>();
 
     private ThemeResource bannerImage;
+    
+    private Menu menu;
     
     /**
      * Constructor 
@@ -147,7 +142,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout,
-            ThemeResource bannerImage)
+            ThemeResource bannerImage, Menu menu)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -162,7 +157,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	    this.navigationPanel = navigationPanel;
 	    this.menuLayout = menuLayout;
 	    this.bannerImage = bannerImage;
-	    
+	    this.menu = menu;
 //	    Broadcaster.register(this);
 	}
 
@@ -207,13 +202,13 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         this.navigationPanel.resetCurrentView();
         this.navigationPanel.setToggleButton(buildToggleButton());
         
-        for(Component component: menuComponents.keySet())
+        for(Component component: menu.getMenuComponents().keySet())
         {
         	logger.info("Setting visible false: " + component);
         	component.setVisible(false);
         }
         
-        this.navigationPanel.setMenuComponents(menuComponents);
+        this.navigationPanel.setMenuComponents(menu.getMenuComponents());
         
         UI.getCurrent().getNavigator().navigateTo("landingView");  
 	       	navigationPanel.setVisible(true);
@@ -228,179 +223,11 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
 
-        menuContent.addComponent(buildMenu());
+        menuContent.addComponent(this.menu);
 
         return menuContent;
     }
     
-    protected CssLayout buildMenu() 
-    {
-        menuItemsLayout.setPrimaryStyleName("valo-menuitems");
-        menu.addComponent(menuItemsLayout);
-        
-        Label label = null;
-        
-        label = new Label("General", ContentMode.HTML);
-        label.setPrimaryStyleName("valo-menu-subtitle");
-        label.addStyleName("h4");
-        label.setSizeUndefined();
-        menuItemsLayout.addComponent(label);
-        
-        final Button dashboardMenuItem = new Button("Dashboard", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("landingView");
-            }
-        });
-        
-        dashboardMenuItem.setHtmlContentAllowed(true);
-        dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
-        dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
-        menuItemsLayout.addComponent(dashboardMenuItem);
-
-        label = null;
-        
-        label = new Label("Services", ContentMode.HTML);
-        label.setPrimaryStyleName("valo-menu-subtitle");
-        label.addStyleName("h4");
-        label.setSizeUndefined();
-        menuItemsLayout.addComponent(label);
-        
-        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);
-        
-        
-        final Button topologyMenuItem = new Button("Topology", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("topologyView");
-            }
-        });
-        
-        topologyMenuItem.setHtmlContentAllowed(true);
-        topologyMenuItem.setPrimaryStyleName("valo-menu-item");
-        topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
-        menuItemsLayout.addComponent(topologyMenuItem);
-        this.menuComponents.put(topologyMenuItem, SecurityConstants.VIEW_TOPOLOGY_AUTHORITY);
-        
-        final Button mappingMenuItem = new Button("Mapping", new ClickListener()
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("mappingView");
-            	
-            	loadNavigator("mapping");
-            }
-        });
-        
-        mappingMenuItem.setHtmlContentAllowed(true);
-        mappingMenuItem.setPrimaryStyleName("valo-menu-item");
-        mappingMenuItem.setIcon(VaadinIcons.COPY_O);
-        menuItemsLayout.addComponent(mappingMenuItem);
-        this.menuComponents.put(mappingMenuItem, SecurityConstants.VIEW_MAPPING_AUTHORITY);
-        
-        label = new Label("Administration", ContentMode.HTML);
-        label.setPrimaryStyleName("valo-menu-subtitle");
-        label.addStyleName("h4");
-        label.setSizeUndefined();
-        menuItemsLayout.addComponent(label);
-        
-        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);
-        
-        final Button usersItem = new Button("Users", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("userPanel");
-            }
-        });
-        
-        usersItem.setHtmlContentAllowed(true);
-        usersItem.setPrimaryStyleName("valo-menu-item");
-        usersItem.setIcon(VaadinIcons.USER);
-        menuItemsLayout.addComponent(usersItem);
-        
-        this.menuComponents.put(usersItem, SecurityConstants.ALL_AUTHORITY);
-        
-        final Button groupsItem = new Button("Groups", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
-            }
-        });
-        
-        groupsItem.setHtmlContentAllowed(true);
-        groupsItem.setPrimaryStyleName("valo-menu-item");
-        groupsItem.setIcon(VaadinIcons.USERS);
-        menuItemsLayout.addComponent(groupsItem);
-        
-        this.menuComponents.put(groupsItem, SecurityConstants.ALL_AUTHORITY);
-        
-        final Button rolesItem = new Button("Roles", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("roleManagementPanel");
-            }
-        });
-        
-        rolesItem.setHtmlContentAllowed(true);
-        rolesItem.setPrimaryStyleName("valo-menu-item");
-        rolesItem.setIcon(VaadinIcons.SPECIALIST);
-        menuItemsLayout.addComponent(rolesItem);
-        
-        this.menuComponents.put(rolesItem, SecurityConstants.ALL_AUTHORITY);
-        
-        final Button policyItem = new Button("Policies", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("policyManagementPanel");
-            }
-        });
-        
-        policyItem.setHtmlContentAllowed(true);
-        policyItem.setPrimaryStyleName("valo-menu-item");
-        policyItem.setIcon(VaadinIcons.SAFE);
-        menuItemsLayout.addComponent(policyItem);
-        
-        this.menuComponents.put(policyItem, SecurityConstants.ALL_AUTHORITY);
-        
-        final Button authItem = new Button("User Directories", new ClickListener() 
-        {
-            @Override
-            public void buttonClick(final ClickEvent event) 
-            {
-            	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("authenticationMethodView");
-            }
-        });
-        
-        authItem.setHtmlContentAllowed(true);
-        authItem.setPrimaryStyleName("valo-menu-item");
-        authItem.setIcon(VaadinIcons.COG);
-        menuItemsLayout.addComponent(authItem);
-        
-        this.menuComponents.put(authItem, SecurityConstants.ALL_AUTHORITY);
-
-        return menu;
-    }
     
     private Component buildToggleButton() 
     {
@@ -437,42 +264,9 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 
 		for (IkasanUIView view : this.views.get("topLevel").getIkasanViews())
 		{
-			logger.info("Adding view:" + view.getPath());
 			navigator.addView(view.getPath(), view.getView());
 		}
 	}
-    
-    public void loadNavigator(String name)
-	{
-    	IkasanUINavigator uiNavigator = this.views.get(name);
-    	uiNavigator.setParentContainer(this.menuLayout.getContentContainer());
-		Navigator navigator = new Navigator(UI.getCurrent(), uiNavigator.getContainer());
-
-		for (IkasanUIView view : uiNavigator.getIkasanViews())
-		{
-			logger.info("Adding view:" + view.getPath());
-			navigator.addView(view.getPath(), view.getView());
-		}
-	}
-    
-//    static class FeederThread extends Thread {
-//        int count = 0;
-//        
-//        @Override
-//        public void run() {
-//	    	for(int i=0; i<100; i++)
-//	    	{
-//	    		Broadcaster.broadcast("" + System.currentTimeMillis());
-//	    		System.out.println("Sending Alert!");
-//    	    	try {
-//					Thread.sleep(3000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//	    	}
-//	    }
-//    }
 
 //    @Override
 //	public void receiveBroadcast(final String message)
