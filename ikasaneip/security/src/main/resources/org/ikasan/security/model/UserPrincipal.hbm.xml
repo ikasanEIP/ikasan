@@ -43,53 +43,18 @@
 
  Author:  Ikasan Development Team
  
+ Purpose: User table hibernate mapping file.
 -->
 <!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class
-        name="org.ikasan.security.model.IkasanPrincipal"
-        table="SecurityPrincipal">
-
-        <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-        </id>
-
-        <set name="roles" table="PrincipalRole" lazy="false">
-	        <key column="PrincipalId"/>
-	        <many-to-many column="RoleId"
-	            class="org.ikasan.security.model.Role"/>
-	    </set>
-
-        <property name="name"
-                  type="java.lang.String"
-                  column="Name"
-                  not-null="true"
-                  unique="true"/>
-
-        <property name="type"
-                  type="java.lang.String"
-                  column="PrincipalType"
-                  not-null="true"/>
-                  
-        <property name="description"
-                  type="java.lang.String"
-                  column="Description"
-                  not-null="true"/>
-
-        <property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
-
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
-                  
-    </class>
+  <class name="org.ikasan.security.model.UserPrincipal" table="UserPrincipal">
+    <composite-id name="id" class="org.ikasan.security.model.UserPrincipalPk">
+	    <key-property name="userId"/>
+	    <key-property name="ikasanPrincipalId"/>
+	</composite-id>
+	<property name="userId" type="java.lang.Long" column="UserId"/>
+	<property name="ikasanPrincipalId" type="java.lang.Long" column="PrincipalId"/>
+  </class>
 </hibernate-mapping>

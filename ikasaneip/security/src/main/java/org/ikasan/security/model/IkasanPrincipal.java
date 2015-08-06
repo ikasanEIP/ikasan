@@ -186,6 +186,7 @@ public class IkasanPrincipal implements Principal
 		this.description = description;
 	}
 
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -275,7 +276,5 @@ public class IkasanPrincipal implements Principal
 				+ type + ", description=" + description + ", roles=" + roles
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";
-	}
-
-   
+	}   
 }

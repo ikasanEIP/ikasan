@@ -295,8 +295,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	protected void init()
 	{
-		this.tabsheetPanel = new Panel("Topology Stuff");
-		this.tabsheetPanel.setStyleName("dashboard");
+		this.tabsheetPanel = new Panel();
+		this.tabsheetPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.tabsheetPanel.setSizeFull();
 		
 		this.createModuleTreePanel();
@@ -448,8 +448,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	protected void createModuleTreePanel()
 	{
-		this.topologyTreePanel = new Panel("Topology");
-		this.topologyTreePanel.setStyleName("dashboard");
+		this.topologyTreePanel = new Panel();
+		this.topologyTreePanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.topologyTreePanel.setSizeFull();
 
 		this.moduleTree = new Tree();
@@ -495,8 +495,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			}
 		});
 		
-		GridLayout layout = new GridLayout(1, 3);
-		layout.setMargin(true);
+		GridLayout layout = new GridLayout(1, 4);
+		
+		Label roleManagementLabel = new Label("Topology");
+ 		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		layout.addComponent(roleManagementLabel, 0, 0);
+ 		
 		layout.setSpacing(true);
 		layout.setWidth("100%");
 		
@@ -688,6 +692,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             }
         });
 
+		this.treeViewBusinessStreamCombo.setWidth("250px");
 		layout.addComponent(this.treeViewBusinessStreamCombo);
 		
 		Button discoverButton = new Button("Discover");
@@ -737,288 +742,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.topologyTreePanel.setContent(layout);
 	}
 
-//	protected Layout createBusinessStreamPanel()
-//	{
-//		this.businessStreamTable = new Table();
-//		this.businessStreamTable.addContainerProperty("Flow Name", String.class,  null);
-//		this.businessStreamTable.addContainerProperty("", Button.class,  null);
-//		this.businessStreamTable.setSizeFull();
-////		this.businessStreamTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
-//		this.businessStreamTable.addStyleName(ValoTheme.TABLE_SMALL);
-//		this.businessStreamTable.setDragMode(TableDragMode.ROW);
-//		this.businessStreamTable.setDropHandler(new DropHandler()
-//		{
-//			@Override
-//			public void drop(final DragAndDropEvent dropEvent)
-//			{
-//				// criteria verify that this is safe
-//				logger.info("Trying to drop: " + dropEvent);
-//				
-//				final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//			        	.getAttribute(DashboardSessionValueConstants.USER);
-//				
-//				if(authentication != null 
-//		    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-//		    					&& !authentication.hasGrantedAuthority(SecurityConstants.MODIFY_BUSINESS_STREAM_AUTHORITY)))
-//		    	{
-//					Notification.show("You do not have the privilege to modify a business stream.");
-//					return;
-//		    	}
-//
-//				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-//	                        .getTransferable();
-//
-//				if(t.getItemId() instanceof Flow)
-//				{
-//					final Flow sourceContainer = (Flow) t
-//							.getItemId();
-//					logger.info("sourceContainer.getText(): "
-//							+ sourceContainer.getName());
-//					
-//					final BusinessStream businessStream = (BusinessStream)TopologyViewPanel.this.businessStreamCombo.getValue();
-//					BusinessStreamFlowKey key = new BusinessStreamFlowKey();
-//					key.setBusinessStreamId(businessStream.getId());
-//					key.setFlowId(sourceContainer.getId());
-//					final BusinessStreamFlow businessStreamFlow = new BusinessStreamFlow(key);
-//					businessStreamFlow.setFlow(sourceContainer);
-//					businessStreamFlow.setOrder(TopologyViewPanel.this.businessStreamTable.getItemIds().size());
-//					
-//					if(!businessStream.getFlows().contains(businessStreamFlow))
-//					{
-//						businessStream.getFlows().add(businessStreamFlow);
-//						
-//						TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-//						
-//						Button deleteButton = new Button();
-//    					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-//    					deleteButton.setIcon(deleteIcon);
-//    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);    					
-//
-//    					
-//    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-//    					deleteButton.setData(businessStreamFlow);
-//    					
-//    					// Add the delete functionality to each role that is added
-//    					deleteButton.addClickListener(new Button.ClickListener() 
-//    			        {
-//    			            public void buttonClick(ClickEvent event) 
-//    			            {		
-//    			            	logger.info("Attempting to remove businessStreamFlow: " + businessStreamFlow);
-//    			            	logger.info("Number of flows before: " + businessStream.getFlows().size());
-//    			            	businessStream.getFlows().remove(businessStreamFlow);
-//    			            	logger.info("Number of flows after: " + businessStream.getFlows().size());
-//    			            	
-//    			            	TopologyViewPanel.this.topologyService.deleteBusinessStreamFlow(businessStreamFlow);
-//    			            	TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-//    			            	
-//    			            	businessStreamTable.removeItem(businessStreamFlow.getFlow());
-//    			            }
-//    			        });
-//						
-//						businessStreamTable.addItem(new Object[]{sourceContainer.getName(), deleteButton}, sourceContainer);
-//					}
-//				}
-//				else if(t.getItemId() instanceof Module)
-//				{
-//					final Module sourceContainer = (Module) t
-//							.getItemId();
-//					logger.info("sourceContainer.getText(): "
-//							+ sourceContainer.getName());
-//					
-//					for(Flow flow: sourceContainer.getFlows())
-//					{
-//						
-//						final BusinessStream businessStream = (BusinessStream)TopologyViewPanel.this.businessStreamCombo.getValue();
-//						BusinessStreamFlowKey key = new BusinessStreamFlowKey();
-//						key.setBusinessStreamId(businessStream.getId());
-//						key.setFlowId(flow.getId());
-//						final BusinessStreamFlow businessStreamFlow = new BusinessStreamFlow(key);
-//						businessStreamFlow.setFlow(flow);
-//						businessStreamFlow.setOrder(TopologyViewPanel.this.businessStreamTable.getItemIds().size());
-//						
-//						if(!businessStream.getFlows().contains(businessStreamFlow))
-//						{
-//							businessStream.getFlows().add(businessStreamFlow);
-//							
-//							TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-//							    					
-//							Button deleteButton = new Button();
-//							Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-//							
-//	    					deleteButton.setIcon(deleteIcon);
-//	    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-//	    					deleteButton.setData(businessStreamFlow);
-//	    					
-//	    					// Add the delete functionality to each role that is added
-//	    					deleteButton.addClickListener(new Button.ClickListener() 
-//	    			        {
-//	    			            public void buttonClick(ClickEvent event) 
-//	    			            {		
-//	    			            	logger.info("Attempting to remove businessStreamFlow: " + businessStreamFlow);
-//	    			            	logger.info("Number of flows before: " + businessStream.getFlows().size());
-//	    			            	businessStream.getFlows().remove(businessStreamFlow);
-//	    			            	logger.info("Number of flows after: " + businessStream.getFlows().size());
-//	    			            	
-//	    			            	TopologyViewPanel.this.topologyService.deleteBusinessStreamFlow(businessStreamFlow);
-//	    			            	TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-//	    			            	
-//	    			            	businessStreamTable.removeItem(businessStreamFlow.getFlow());
-//	    			            }
-//	    			        });
-//							
-//							businessStreamTable.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-//						}
-//					}
-//				}
-//				else
-//				{
-//					Notification.show("Only modules or flows can be dragged to this table.");
-//				}
-//			}
-//
-//			@Override
-//			public AcceptCriterion getAcceptCriterion()
-//			{
-//				return AcceptAll.get();
-//			}
-//		});
-//
-//		VerticalLayout layout = new VerticalLayout();
-//		layout.setMargin(true);
-//		layout.setSizeFull();
-//		
-//		GridLayout controlsLayout = new GridLayout(5, 1);
-//		controlsLayout.setColumnExpandRatio(0, .2f);
-//		controlsLayout.setColumnExpandRatio(1, .3f);
-//		controlsLayout.setColumnExpandRatio(2, .05f);
-//		controlsLayout.setColumnExpandRatio(3, .05f);
-//		controlsLayout.setColumnExpandRatio(4, .4f);
-//		
-//		controlsLayout.setSizeFull();
-//		Label businessStreamLabel = new Label("Business Stream");
-//		this.businessStreamCombo = new ComboBox();
-//		
-//		this.businessStreamCombo.addValueChangeListener(new ValueChangeListener() {
-//            public void valueChange(ValueChangeEvent event) {
-//                if(event.getProperty() != null && event.getProperty().getValue() != null)
-//                {
-//                	final BusinessStream businessStream  = (BusinessStream)event.getProperty().getValue();
-//                	
-//                	logger.info("Value changed to business stream: " + businessStream.getName());
-//                	businessStreamTable.removeAllItems();
-//                	logger.info("Removed all items from table.");
-//
-//                	for(final BusinessStreamFlow businessStreamFlow: businessStream.getFlows())
-//                	{
-//                		logger.info("Adding flow: " + businessStreamFlow);
-//                		Button deleteButton = new Button();
-//                		Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-//                		
-//    					deleteButton.setIcon(deleteIcon);
-//    					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-//    					
-//    					// Add the delete functionality to each role that is added
-//    					deleteButton.addClickListener(new Button.ClickListener() 
-//    			        {
-//    			            public void buttonClick(ClickEvent event) 
-//    			            {		
-//    			            	logger.info("Attempting to remove businessStreamFlow: " + businessStreamFlow);
-//    			            	logger.info("Number of flows before: " + businessStream.getFlows().size());
-//    			            	businessStream.getFlows().remove(businessStreamFlow);
-//    			            	logger.info("Number of flows after: " + businessStream.getFlows().size());
-//    			            	
-//    			            	TopologyViewPanel.this.topologyService.deleteBusinessStreamFlow(businessStreamFlow);
-//    			            	TopologyViewPanel.this.topologyService.saveBusinessStream(businessStream);
-//    			            	
-//    			            	businessStreamTable.removeItem(businessStreamFlow.getFlow());
-//    			            }
-//    			        });
-//    					
-//    					logger.info("Adding flow: " + businessStreamFlow.getFlow());
-//    					
-//    					final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//    				        	.getAttribute(DashboardSessionValueConstants.USER);
-//    					
-//    					if(authentication != null 
-//    			    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-//    			    					&& !authentication.hasGrantedAuthority(SecurityConstants.MODIFY_BUSINESS_STREAM_AUTHORITY)))
-//    			    	{
-//    						deleteButton.setVisible(false);
-//    			    	}
-//    					
-//                		businessStreamTable.addItem(new Object[]{businessStreamFlow.getFlow().getName(), deleteButton}, businessStreamFlow.getFlow());
-//                	}
-//                }
-//            }
-//        });
-//		
-//		controlsLayout.addComponent(businessStreamLabel, 0, 0);
-//		controlsLayout.addComponent(businessStreamCombo, 1, 0);
-//		
-//		Button newButton = new Button("New");
-//		newButton.setStyleName(ValoTheme.BUTTON_LINK);
-//    	newButton.addClickListener(new Button.ClickListener() 
-//    	{
-//            public void buttonClick(ClickEvent event) 
-//            {
-//            	final NewBusinessStreamWindow newBusinessStreamWindow = new NewBusinessStreamWindow();
-//            	UI.getCurrent().addWindow(newBusinessStreamWindow);
-//            	
-//            	newBusinessStreamWindow.addCloseListener(new Window.CloseListener() {
-//                    // inline close-listener
-//                    public void windowClose(CloseEvent e) {
-//                    	TopologyViewPanel.this.topologyService.saveBusinessStream(newBusinessStreamWindow.getBusinessStream());
-//                    	
-//                    	TopologyViewPanel.this.businessStreamCombo.addItem(newBusinessStreamWindow.getBusinessStream());
-//                    	TopologyViewPanel.this.businessStreamCombo.setItemCaption(newBusinessStreamWindow.getBusinessStream(), 
-//                    			newBusinessStreamWindow.getBusinessStream().getName());
-//                    	
-//                    	TopologyViewPanel.this.businessStreamCombo.select(newBusinessStreamWindow.getBusinessStream());
-//                    	
-//                    	TopologyViewPanel.this.businessStreamTable.removeAllItems();
-//                    }
-//                });
-//            }
-//        });
-//    	
-//    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//	        	.getAttribute(DashboardSessionValueConstants.USER);
-//		
-//		if(authentication != null 
-//    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-//    					&& !authentication.hasGrantedAuthority(SecurityConstants.CREATE_BUSINESS_STREAM_AUTHORITY)))
-//    	{
-//			newButton.setVisible(false);
-//    	}
-//    	
-//    	controlsLayout.addComponent(newButton, 2, 0);
-//    	
-//    	Button deleteButton = new Button("Delete");
-//    	deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
-//    	deleteButton.addClickListener(new Button.ClickListener() 
-//    	{
-//            public void buttonClick(ClickEvent event) 
-//            {
-//            	
-//            }
-//        });
-//    	
-//    	if(authentication != null 
-//    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-//    					&& !authentication.hasGrantedAuthority(SecurityConstants.DELETE_BUSINESS_STREAM_AUTHORITY)))
-//    	{
-//    		deleteButton.setVisible(false);
-//    	}
-//
-//    	controlsLayout.addComponent(deleteButton, 3, 0);
-//    	
-//    	layout.addComponent(controlsLayout);
-//    	layout.setExpandRatio(controlsLayout, .07f);
-//		layout.addComponent(this.businessStreamTable);
-//		layout.setExpandRatio(this.businessStreamTable, .93f);
-//		
-//		return layout;
-//	}
 	
 	protected Layout createSystemEventPanel()
 	{

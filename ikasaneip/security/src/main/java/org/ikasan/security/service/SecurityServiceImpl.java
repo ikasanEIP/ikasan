@@ -50,6 +50,7 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
 
 
 /**
@@ -378,5 +379,14 @@ public class SecurityServiceImpl implements SecurityService
 	public AuthenticationMethod getAuthenticationMethodByOrder(long order)
 	{
 		return this.securityDao.getAuthenticationMethodByOrder(order);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getUsersAssociatedWithPrincipal(long)
+	 */
+	@Override
+	public List<User> getUsersAssociatedWithPrincipal(long principalId)
+	{
+		return this.securityDao.getUsersAssociatedWithPrincipal(principalId);
 	}
 }
