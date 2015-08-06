@@ -61,6 +61,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -225,17 +226,18 @@ public class XsltConverterTest
         transformationParams.put("name", "value");
 
         // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+        this.mockery.checking(new Expectations() {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
                 one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Because using translets was switched on, create Templates from factory
-                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+                one(mockTransformerFactory).newTemplates(with(any(Source.class)));
+                will(returnValue(mockTemplates));
 
                 // Create a new Transformer instance
-                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+                one(mockTemplates).newTransformer();
+                will(returnValue(mockTransformer));
 
                 // Setting the provided parameters on transformer
                 one(mockTransformer).setParameter("name", "value");
@@ -417,14 +419,14 @@ public class XsltConverterTest
         final TransformerConfigurationException expectedException = new TransformerConfigurationException();
 
         // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+        this.mockery.checking(new Expectations() {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
                 one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Create a new Transformer instance (using translets is switched off)
-                one(mockTransformerFactory).newTransformer(with(any(Source.class))); will(throwException(expectedException));
+                one(mockTransformerFactory).newTransformer(with(any(Source.class)));
+                will(throwException(expectedException));
             }
         });
 
@@ -567,8 +569,59 @@ public class XsltConverterTest
     }
 
     /**
-     * Utility method refactored for steps required to run a test case 
+     * Test successful transformation using the default configuration but with
+     * extra transformation parameters to be set on {@link javax.xml.transform.Transformer}
+     *
+     * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
+    @Test
+    public void transformation_successful_with_xsltconverterconfiguration_parameters_injected() throws TransformerException
+    {
+        final Converter<XsltConverterConfiguration, Map<String, String>> configurationParameterConverter = mockery.mock(Converter.class);
+        final Map<String, String> convertedConfig = new HashMap<>();
+        convertedConfig.put("name", "value");
+
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Because using translets was switched on, create Templates from factory
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+
+                // Create a new Transformer instance
+                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+
+                one(configurationParameterConverter).convert(defaultConfig);
+                will(returnValue(convertedConfig));
+
+                // Setting the provided parameters on transformer
+                one(mockTransformer).setParameter("name", "value");
+
+                // Transformer instance needs its own ErrorListener to control error handling for tranformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // The transformation itself
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
+            }
+        });
+
+        // Run the test:
+        this.uut = new XsltConverter(this.mockTransformerFactory);
+        // Setup the transformer to be tested with extra transformation parameters
+        this.uut.setConfigurationParameterConverter(configurationParameterConverter);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+      * Utility method refactored for steps required to run a test case
+    */
     private void runTest()
     {
         // As this transformer is a ConfiguredResource, set the configuration object
