@@ -42,6 +42,7 @@ package org.ikasan.dashboard.ui.framework.panel;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.component.DashboardTable;
+import org.ikasan.dashboard.ui.framework.component.EventExclusionsTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
@@ -51,7 +52,6 @@ import com.vaadin.server.Responsive;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
@@ -73,25 +73,28 @@ public class LandingViewPanel extends Panel implements View
     private Logger logger = Logger.getLogger(LandingViewPanel.class);
 
     private CssLayout dashboardPanels;
+    private EventExclusionsTable eventExclusionsTable;
     
     /**
      * Constructor
      * 
      * @param ikasanModuleService
      */
-    public LandingViewPanel()
+    public LandingViewPanel(EventExclusionsTable eventExclusionsTable)
     {
         super();
 
+        this.eventExclusionsTable = eventExclusionsTable;
+        if(eventExclusionsTable == null)
+		{
+			throw new IllegalArgumentException("eventExclusionsTable cannot be null!");
+		}
+        
         init();
     }
 
     protected void init()
     {       
-//    	GridLayout layout = new GridLayout(1, 1);
-//    	layout.setSpacing(true);
-//    	layout.setSizeFull();
-    	
     	addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
     	VerticalLayout verticalLayout = new VerticalLayout();
@@ -99,55 +102,20 @@ public class LandingViewPanel extends Panel implements View
         verticalLayout.setHeight("100%");
         verticalLayout.setMargin(true);
         verticalLayout.addStyleName("dashboard-view");
-
-        Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
-        ikasanWelcomeLabel1.setStyleName("xlarge");
-        ikasanWelcomeLabel1.setWidth("100%");
-        ikasanWelcomeLabel1.setHeight("30px");
-        
-        Label ikasanWelcomeLabel2 = new Label("Welcome to the console for Ikasan EIP, your gateway to many Ikasan EIP services.");
-        ikasanWelcomeLabel2.setStyleName("large");
-        ikasanWelcomeLabel2.setWidth("60%");
-        ikasanWelcomeLabel2.setHeight("30px");
-        
-        Label ikasanWelcomeLabel3 = new Label("What does the Ikasan EIP console do?");
-        ikasanWelcomeLabel3.setStyleName("xlarge");
-        ikasanWelcomeLabel3.setWidth("100%");
-        ikasanWelcomeLabel3.setHeight("30px");
-        
-        Label ikasanWelcomeLabel4 = new Label("This browser based console allows end users and " +
-        		"administrators to execute Ikasan EIP services. This includes wiretapped event search " +
-        		"and user administration, error management and resubmission." +
-        		" It also provides access to the Mapping Configuration Service.");
-        ikasanWelcomeLabel4.setStyleName("large");
-        ikasanWelcomeLabel4.setWidth("60%");
-        ikasanWelcomeLabel4.setHeight("100px");
-
-//        verticalLayout.addComponent(ikasanWelcomeLabel1);
-//        verticalLayout.addComponent(ikasanWelcomeLabel2);
-//        verticalLayout.addComponent(ikasanWelcomeLabel3);
-//        verticalLayout.addComponent(ikasanWelcomeLabel4);
         
         Responsive.makeResponsive(verticalLayout);
         
         Component content = buildContent();
         verticalLayout.addComponent(content);
-        
-        
-        
-//        layout.addComponent(verticalLayout);
-//        
-//        VerticalLayout wrapper = new VerticalLayout();
-//        wrapper.setSizeFull();
-//        wrapper.addComponent(layout);
-       
+               
         verticalLayout.setExpandRatio(content, 1);
         
         this.setSizeFull();
         this.setContent(verticalLayout);
     }
     
-    private Component createContentWrapper(final Component content) {
+    private Component createContentWrapper(final Component content) 
+    {
         final CssLayout slot = new CssLayout();
         slot.setWidth("100%");
         slot.addStyleName("dashboard-panel-slot");
@@ -168,14 +136,18 @@ public class LandingViewPanel extends Panel implements View
 
         MenuBar tools = new MenuBar();
         tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
-        MenuItem max = tools.addItem("", VaadinIcons.EXPAND, new Command() {
+        MenuItem max = tools.addItem("", VaadinIcons.EXPAND, new Command() 
+        {
 
             @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                if (!slot.getStyleName().contains("max")) {
+            public void menuSelected(final MenuItem selectedItem)
+            {
+                if (!slot.getStyleName().contains("max")) 
+                {
                     selectedItem.setIcon(FontAwesome.COMPRESS);
                     toggleMaximized(slot, true);
-                } else {
+                } else 
+                {
                     slot.removeStyleName("max");
                     selectedItem.setIcon(FontAwesome.EXPAND);
                     toggleMaximized(slot, false);
@@ -184,16 +156,20 @@ public class LandingViewPanel extends Panel implements View
         });
         max.setStyleName("icon-only");
         MenuItem root = tools.addItem("", VaadinIcons.COG, null);
-        root.addItem("Configure", new Command() {
+        root.addItem("Configure", new Command() 
+        {
             @Override
-            public void menuSelected(final MenuItem selectedItem) {
+            public void menuSelected(final MenuItem selectedItem) 
+            {
                 Notification.show("Not implemented in this demo");
             }
         });
         root.addSeparator();
-        root.addItem("Close", new Command() {
+        root.addItem("Close", new Command() 
+        {
             @Override
-            public void menuSelected(final MenuItem selectedItem) {
+            public void menuSelected(final MenuItem selectedItem) 
+            {
                 Notification.show("Not implemented in this demo");
             }
         });
@@ -215,16 +191,16 @@ public class LandingViewPanel extends Panel implements View
         Responsive.makeResponsive(dashboardPanels);
 
         dashboardPanels.addComponent(buildDashboard());
-        dashboardPanels.addComponent(buildDashboard());
-        dashboardPanels.addComponent(buildDashboard());
-        dashboardPanels.addComponent(buildDashboard());
+//        dashboardPanels.addComponent(buildDashboard());
+//        dashboardPanels.addComponent(buildDashboard());
+//        dashboardPanels.addComponent(buildDashboard());
 
         return dashboardPanels;
     }
     
     private Component buildDashboard() 
     {
-        Component contentWrapper = createContentWrapper(new DashboardTable());
+        Component contentWrapper = createContentWrapper(this.eventExclusionsTable);
         contentWrapper.addStyleName("top10-revenue");
         return contentWrapper;
     }
@@ -248,6 +224,6 @@ public class LandingViewPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
-        // TODO Auto-generated method stub
+    	eventExclusionsTable.populate();
     }
 }

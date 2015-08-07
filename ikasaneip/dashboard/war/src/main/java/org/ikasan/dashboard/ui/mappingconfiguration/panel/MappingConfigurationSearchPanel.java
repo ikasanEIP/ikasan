@@ -255,7 +255,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
         Label importMappingConfigurationLabel = newActions.getImportMappingConfigurationLabel();
         importMappingConfigurationLabel.setSizeUndefined();
         contentLayout.addComponent(importMappingConfigurationLabel, 2, 5);
-        contentLayout.setComponentAlignment(createMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
+        contentLayout.setComponentAlignment(importMappingConfigurationLabel, Alignment.MIDDLE_RIGHT);
         contentLayout.addComponent(newActions.getImportMappingConfigurationButton(), 3, 5);
         contentLayout.setComponentAlignment(newActions.getImportMappingConfigurationButton(), Alignment.MIDDLE_LEFT);
 

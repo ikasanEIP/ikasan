@@ -261,7 +261,7 @@ public class RoleManagementPanel extends Panel implements View
 		this.policyTable = new Table();
 		this.policyTable.addContainerProperty("Role Policies", String.class, null);
 		this.policyTable.addContainerProperty("", Button.class, null);
-		this.policyTable.setHeight("650px");
+		this.policyTable.setHeight("720px");
 		this.policyTable.setWidth("300px");
 		
 		this.policyTable.setDragMode(TableDragMode.ROW);

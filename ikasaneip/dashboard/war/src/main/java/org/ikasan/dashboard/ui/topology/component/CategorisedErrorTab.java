@@ -360,9 +360,9 @@ public class CategorisedErrorTab extends TopologyTab
 							+ module.getName());
 					
 					Button deleteButton = new Button();
-					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added
@@ -379,8 +379,9 @@ public class CategorisedErrorTab extends TopologyTab
 					for(final Flow flow: module.getFlows())
 					{
 						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -396,8 +397,9 @@ public class CategorisedErrorTab extends TopologyTab
 						for(final Component component: flow.getComponents())
 						{
 							deleteButton = new Button();
-							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+							deleteButton.setIcon(VaadinIcons.TRASH);
+							deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+							deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 							
 							// Add the delete functionality to each role that is added
 							deleteButton.addClickListener(new Button.ClickListener() 
@@ -448,9 +450,9 @@ public class CategorisedErrorTab extends TopologyTab
 							+ flow.getName());
 					
 					Button deleteButton = new Button();
-					deleteButton.setCaptionAsHtml(true);
-					deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added
@@ -467,9 +469,9 @@ public class CategorisedErrorTab extends TopologyTab
 					for(final Component component: flow.getComponents())
 					{
 						deleteButton = new Button();
-						deleteButton.setCaptionAsHtml(true);
-						deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -521,9 +523,9 @@ public class CategorisedErrorTab extends TopologyTab
 							+ component.getName());
 					
 					Button deleteButton = new Button();
-					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added

@@ -61,8 +61,8 @@ public class SecurityConstants
 	
 	public static String VIEW_TOPOLOGY_AUTHORITY = "ViewTopology";
 	public static String VIEW_MAPPING_AUTHORITY = "ViewMapping";
-	public static String EDIT_MAPPING_AUTHORITY = "editMapping";
-	public static String MODIFY_EXISTING_MAPPING_AUTHORITY = "modifyExistingMapping";
+	public static String EDIT_MAPPING_AUTHORITY = "EditMapping";
+	public static String MODIFY_EXISTING_MAPPING_AUTHORITY = "ModifyExistingMapping";
 	
 	public static String MAPPING_CONFIGURATION_LINKED_TYPE = "Mapping Configuration";
 }

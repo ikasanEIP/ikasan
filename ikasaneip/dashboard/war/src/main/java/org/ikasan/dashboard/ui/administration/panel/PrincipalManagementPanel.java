@@ -172,11 +172,11 @@ public class PrincipalManagementPanel extends Panel implements View
 		
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
-		roleTable.setHeight("520px");
+		roleTable.setHeight("610px");
 		roleTable.setWidth("300px");
 		
 		userTable.addContainerProperty("Associated Users", String.class, null);
-		userTable.setHeight("520px");
+		userTable.setHeight("610px");
 		userTable.setWidth("300px");
 		
 		principalDropTable.addContainerProperty("Members", String.class, null);

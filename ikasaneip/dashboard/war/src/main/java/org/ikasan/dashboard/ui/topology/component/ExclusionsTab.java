@@ -269,9 +269,9 @@ public class ExclusionsTab extends TopologyTab
 							+ module.getName());
 					
 					Button deleteButton = new Button();
-					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added
@@ -289,9 +289,9 @@ public class ExclusionsTab extends TopologyTab
 					{
 						
 						deleteButton = new Button();
-						deleteButton.setCaptionAsHtml(true);
-						deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -341,9 +341,9 @@ public class ExclusionsTab extends TopologyTab
 							+ flow.getName());
 					
 					Button deleteButton = new Button();
-					deleteButton.setCaptionAsHtml(true);
-					deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added

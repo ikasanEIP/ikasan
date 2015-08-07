@@ -193,7 +193,14 @@
     
     <bean id="menuLayout" class="org.ikasan.dashboard.ui.framework.navigation.MenuLayout" scope="session"/>
     
-    <bean id="landingViewPanel" class=" org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session"/>
+    <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
+    	<constructor-arg ref="eventExclusionsTable"/>
+    </bean>
+    
+    <bean id="eventExclusionsTable" class=" org.ikasan.dashboard.ui.framework.component.EventExclusionsTable" scope="session">
+    	<constructor-arg value="Event Exclusions"/>
+    	<constructor-arg ref="exclusionManagementService"/>
+    </bean>
     
     <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
 		<constructor-arg ref="authenticationService"/>

@@ -50,11 +50,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -94,6 +96,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -258,8 +261,11 @@ public class MappingConfigurationPanel extends Panel implements View
         this.editButton.setDescription("Edit the mapping configuration");
         this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-        this.editButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.editButton.setVisible(false);
+        this.editButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 setEditable(true);
                 mappingConfigurationFunctionalGroup.editButtonPressed();
             }
@@ -273,8 +279,10 @@ public class MappingConfigurationPanel extends Panel implements View
         this.saveButton.setDescription("Save the mapping configuration");
         this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.saveButton.setVisible(false);
-        this.saveButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.saveButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 try
                 {
                     logger.info("Save button clicked!!");
@@ -290,7 +298,8 @@ public class MappingConfigurationPanel extends Panel implements View
                     // We can ignore this one as we have already dealt with the
                     // validation messages using the validation framework.
                 }
-                catch (Exception e) {
+                catch (Exception e) 
+                {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -311,7 +320,8 @@ public class MappingConfigurationPanel extends Panel implements View
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickListener(new Button.ClickListener() 
         {
-            public void buttonClick(ClickEvent event) {
+            public void buttonClick(ClickEvent event) 
+            {
                 setEditable(false);
                 mappingConfigurationFunctionalGroup.saveOrCancelButtonPressed();
 
@@ -935,7 +945,17 @@ public class MappingConfigurationPanel extends Panel implements View
     	this.targetContextComboBox.loadContextValues();
     	this.typeComboBox.loadClientTypeValues();
     	
-    	this.mappingConfigurationFunctionalGroup.initialiseButtonState();
+    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+        	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY)
+    					|| (this.mappingConfiguration != null && authentication.canAccessLinkedItem
+    						(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE, this.mappingConfiguration.getId()))))
+    	{
+    		this.mappingConfigurationFunctionalGroup.initialiseButtonState();
+    	}
     }
 
     /**
