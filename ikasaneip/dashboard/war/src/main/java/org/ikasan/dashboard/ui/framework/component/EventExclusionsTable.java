@@ -40,25 +40,71 @@
  */
 package org.ikasan.dashboard.ui.framework.component;
 
-import com.vaadin.ui.Table;
-import com.vaadin.ui.themes.ValoTheme;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
-@SuppressWarnings("serial")
-public abstract class DashboardTable extends Table 
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+
+import com.vaadin.ui.Component;
+
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class EventExclusionsTable extends DashboardTable
 {
-
-	public DashboardTable(String caption) 
-    {
-		setCaption(caption);
-
-        addStyleName(ValoTheme.TABLE_BORDERLESS);
-        addStyleName(ValoTheme.TABLE_NO_STRIPES);
-        addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
-        addStyleName(ValoTheme.TABLE_SMALL);
-       
-        setSortEnabled(false);
-
-        setRowHeaderMode(RowHeaderMode.INDEX);
-        setSizeFull();
-    }
+	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
+	/**
+	 * Constructor
+	 * 
+	 * @param caption
+	 */
+	public EventExclusionsTable(String caption, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService)
+	{
+		super(caption);
+		
+		this.exclusionManagementService = exclusionManagementService;
+		if(exclusionManagementService == null)
+		{
+			throw new IllegalArgumentException("exclusionManagementService cannot be null!");
+		}
+		
+		init();
+	}
+	
+	protected void init()
+	{
+		addContainerProperty("Module Name", String.class,  null);
+        addContainerProperty("Flow Name", String.class,  null);
+        addContainerProperty("Timestamp", String.class,  null);
+        
+        setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+        
+        setItemDescriptionGenerator(new ItemDescriptionGenerator() 
+        {                             
+	    	public String generateDescription(Component source, Object itemId, Object propertyId) 
+	    	{
+	    	    return ((ExclusionEvent)itemId).getIdentifier();
+	    	}
+	    });
+	}
+	
+	public void populate()
+	{
+		List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
+		
+		for(ExclusionEvent exclusionEvent: exclusionEvents)
+		{
+			Date date = new Date(exclusionEvent.getTimestamp());
+    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    	    String timestamp = format.format(date);
+    	    
+			this.addItem(new Object[] {exclusionEvent.getModuleName(),
+					exclusionEvent.getFlowName(), timestamp}, exclusionEvent);
+		}
+	}
 }

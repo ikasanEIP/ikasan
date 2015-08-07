@@ -95,6 +95,39 @@ public class VisibilityGroup
             table.refreshRowCache();
         }
     }
+    
+    /**
+     * Method to set if the components are visible.
+     * 
+     * @param visible
+     */
+    public void setVisible(String linkedItemType, Long linkedItemId)
+    {
+    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	 
+        for(Component component: components.keySet())
+        {
+        	String policyName = this.components.get(component);
+        	
+        	if(authentication != null 
+        			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+        					|| authentication.hasGrantedAuthority(policyName))
+        					|| authentication.canAccessLinkedItem(linkedItemType, linkedItemId))
+        	{
+        		component.setVisible(true);
+        	}
+            else
+            {
+            	component.setVisible(false);
+            }
+        }
+
+        for(Table table: refreshableTables)
+        {
+            table.refreshRowCache();
+        }
+    }
 
     /**
      * Register a component with this group.
@@ -102,8 +135,6 @@ public class VisibilityGroup
      */
     public void registerComponent(String policyName, Component component)
     {
-//        logger.debug("Registering component: " + component.getCaption() + ". Visible = " + this.isVisible);
-//        component.setVisible(this.isVisible);
         this.components.put(component, policyName);
     }
 

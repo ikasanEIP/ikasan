@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
 import org.ikasan.mapping.model.MappingConfiguration;
@@ -96,23 +97,10 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
     @Override
     public void itemClick(ItemClickEvent event)
     {
-    	this.visibilityGroup.setVisible();
+    	MappingConfiguration mappingConfiguration = this.mappingConfigurationService
+                .getMappingConfigurationById((Long)event.getItemId());
     	
-//    	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//        	.getAttribute(DashboardSessionValueConstants.USER);
-//    	
-//    	
-//    	if(authentication.canAccessLinkedItem(SecurityConstants.MAPPING_CONFIGURATION_LINKED_TYPE, (Long)event.getItemId()) 
-//    			|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
-//    	{
-//    		logger.info("User can access modify configuration: " + (Long)event.getItemId());
-//    		this.visibilityGroup.setVisible();
-//    	}
-//    	else
-//    	{
-//    		logger.info("User can NOT access modify configuration: " + (Long)event.getItemId());
-//    		this.visibilityGroup.setVisible(false);
-//    	}
+    	this.visibilityGroup.setVisible(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE, (Long)event.getItemId());
     	
     	Navigator navigator = new Navigator(UI.getCurrent(), mapingNavigator.getParentContainer());
 
@@ -121,16 +109,14 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
 			logger.info("Adding view:" + view.getPath());
 			navigator.addView(view.getPath(), view.getView());
 		}
-		
-        UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
 
-        MappingConfiguration mappingConfiguration = this.mappingConfigurationService
-                .getMappingConfigurationById((Long)event.getItemId());
 
         this.mappingConfigurationPanel.setMappingConfiguration(mappingConfiguration);
         this.mappingConfigurationPanel.populateMappingConfigurationForm();
 
 
         this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
+        
+        UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
     }
 }

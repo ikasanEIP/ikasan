@@ -46,9 +46,12 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -116,13 +119,30 @@ public class Menu extends CssLayout
 
         label = null;
         
+        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+        	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_MAPPING_AUTHORITY)))
+    	{
+    		label = new Label("Services", ContentMode.HTML);
+            label.setPrimaryStyleName("valo-menu-subtitle");
+            label.addStyleName("h4");
+            label.setSizeUndefined();
+            menuItemsLayout.addComponent(label);
+    	}
+    	
         label = new Label("Services", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
         
-        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);       
+        this.menuComponents.put(label, SecurityConstants.VIEW_TOPOLOGY_AUTHORITY);        
+        this.menuComponents.put(label, SecurityConstants.VIEW_MAPPING_AUTHORITY);
         
         
         final Button topologyMenuItem = new Button("Topology", new ClickListener() 

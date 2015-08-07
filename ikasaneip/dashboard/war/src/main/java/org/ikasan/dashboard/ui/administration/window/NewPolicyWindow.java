@@ -40,6 +40,8 @@
  */
 package org.ikasan.dashboard.ui.administration.window;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
@@ -48,9 +50,9 @@ import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.thoughtworks.selenium.webdriven.commands.GetValue;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator.InvalidValueException;
@@ -416,14 +418,56 @@ public class NewPolicyWindow extends Window
         			
         			policy.setPolicyLink(policyLink);
         			
-        			securityService.savePolicy(policy);
+        			try
+        			{
+        				securityService.savePolicy(policy);
+        			}
+        			catch(DataIntegrityViolationException e)
+        			{
+        				Notification.show("Policy name must be unique. Please confirm that this policy does not already exist!"
+            	                , Notification.Type.ERROR_MESSAGE);
+        				
+        				return;
+        			}
+        			catch(RuntimeException e)
+        			{
+        				StringWriter sw = new StringWriter();
+        	            PrintWriter pw = new PrintWriter(sw);
+        	            e.printStackTrace(pw);
+        	            
+        	    		Notification.show("Caught exception trying to save a Policy!", sw.toString()
+        	                , Notification.Type.ERROR_MESSAGE);
+        	    		
+        	    		return;
+        			}
         		}
         		else
         		{
         			PolicyLink policyLink = policy.getPolicyLink();
         			policy.setPolicyLink(null);
         			
-        			securityService.savePolicy(policy);
+        			try
+        			{
+        				securityService.savePolicy(policy);
+        			}
+        			catch(DataIntegrityViolationException e)
+        			{
+        				Notification.show("Policy name must be unique. Please confirm that this policy does not already exist!"
+            	                , Notification.Type.ERROR_MESSAGE);
+        				
+        				return;
+        			}
+        			catch(RuntimeException e)
+        			{
+        				StringWriter sw = new StringWriter();
+        	            PrintWriter pw = new PrintWriter(sw);
+        	            e.printStackTrace(pw);
+        	            
+        	    		Notification.show("Caught exception trying to save a Policy!", sw.toString()
+        	                , Notification.Type.ERROR_MESSAGE);
+        	    		
+        	    		return;
+        			}
         			
         			if(policyLink != null)
         			{

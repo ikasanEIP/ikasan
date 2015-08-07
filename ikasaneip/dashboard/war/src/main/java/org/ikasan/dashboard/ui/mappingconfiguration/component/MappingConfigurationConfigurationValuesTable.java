@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
@@ -71,6 +72,7 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -290,7 +292,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         deleteButton.setDescription("Delete this record");
         deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-        deleteButton.setVisible(false);
         deleteButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -300,7 +301,22 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 UI.getCurrent().addWindow(dialog);
             }
         });
-        this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
+        
+        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	 
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY))
+    					|| authentication.canAccessLinkedItem(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE
+    							, mappingConfiguration.getId()))
+    	{
+    		deleteButton.setVisible(true);
+    	}
+    	else
+    	{
+    		deleteButton.setVisible(false);
+    	}
 
 
         Item item = this.container.addItemAt(0, sourceConfigurationValue);
@@ -412,7 +428,22 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             UI.getCurrent().addWindow(dialog);
                         }
                     });
-                    this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
+                    
+                    final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+             	        	.getAttribute(DashboardSessionValueConstants.USER);
+                	 
+                	if(authentication != null 
+                			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+                					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY))
+                					|| authentication.canAccessLinkedItem(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE
+                							, mappingConfiguration.getId()))
+                	{
+                		deleteButton.setVisible(true);
+                	}
+                	else
+                	{
+                		deleteButton.setVisible(false);
+                	}
 
                     this.addItem(new Object[] {tableCellLayout,
                             targetConfigurationTextField, deleteButton}, value);
