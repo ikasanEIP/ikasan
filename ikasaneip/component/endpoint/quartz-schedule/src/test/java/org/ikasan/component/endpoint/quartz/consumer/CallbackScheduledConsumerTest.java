@@ -136,7 +136,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setCallBackMessageProvider(mockCallBackMessageProvider);
@@ -172,7 +172,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -205,7 +205,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -237,7 +237,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.stop();
@@ -270,7 +270,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.stop();
         mockery.assertIsSatisfied();
@@ -291,7 +291,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -316,7 +316,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -357,7 +357,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
@@ -376,9 +376,9 @@ public class CallbackScheduledConsumerTest
      * @author Ikasan Development Team
      *
      */
-    private class StubbedScheduledConsumer extends CallBackScheduledConsumer
+    private class StubbedCallBackScheduledConsumer extends CallBackScheduledConsumer
     {
-        protected StubbedScheduledConsumer(Scheduler scheduler)
+        protected StubbedCallBackScheduledConsumer(Scheduler scheduler)
         {
             super(scheduler);
         }
