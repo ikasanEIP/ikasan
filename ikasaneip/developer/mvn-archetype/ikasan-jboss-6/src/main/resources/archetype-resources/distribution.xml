@@ -8,12 +8,12 @@
         <file>
             <source>conf/log4j.xml</source>
             <outputDirectory>jboss-eap/modules/${jbossModuleDir}</outputDirectory>
-            <filtered>false</filtered>
+            <filtered>true</filtered>
         </file>
         <file>
             <source>conf/module.xml</source>
             <outputDirectory>jboss-eap/modules/${jbossModuleDir}</outputDirectory>
-            <filtered>false</filtered>
+            <filtered>true</filtered>
         </file>
     </files>
 
