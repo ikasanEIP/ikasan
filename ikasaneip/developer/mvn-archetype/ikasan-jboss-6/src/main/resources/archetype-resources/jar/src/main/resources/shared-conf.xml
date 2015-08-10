@@ -6,7 +6,7 @@
 
     <!-- module name -->
     <bean id="moduleName" class="java.lang.String">
-        <constructor-arg value="Module Name" />
+        <constructor-arg value="${artifactId}" />
     </bean>
 
 </beans>

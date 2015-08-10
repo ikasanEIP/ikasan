@@ -8,24 +8,24 @@
     <!--  ================================================================== -->
     <bean id="sampleScheduledFlow"          class="org.ikasan.builder.FlowFactory">
         <property name="moduleName"         ref="moduleName" />
-        <property name="name"               value="Sample Scheduled Flow Name" />
-        <property name="description"        value="Sample Scheduled Flow Description" />
+        <property name="name"               value="${flowName}" />
+        <property name="description"        value="${flowName} Description" />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
         <property name="consumer">
             <bean class="org.ikasan.builder.FlowElementFactory">
                 <property name="name"       value="Scheduled Consumer Name"/>
-                <property name="component"  ref="sampleScheduledConsumer"/>
-                <property name="transition" ref="sampleScheduledProducerFlowElement"/>
+                <property name="component"  ref="${flowName}ScheduledConsumer"/>
+                <property name="transition" ref="${flowName}ScheduledProducerFlowElement"/>
             </bean>
         </property>
         <property name="monitor" ref="monitor"/>
     </bean>
 
     <!-- Flow Element - Producer -->
-    <bean id="sampleScheduledProducerFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+    <bean id="${flowName}ScheduledProducerFlowElement"    class="org.ikasan.builder.FlowElementFactory">
         <property name="name"               value="Scheduled Producer Name"/>
-        <property name="component"          ref="sampleScheduledProducer" />
+        <property name="component"          ref="${flowName}ScheduledProducer" />
     </bean>
 
 
@@ -33,7 +33,7 @@
     <!--  Scheduled Sample Components                                        -->
     <!--  ================================================================== -->
 
-    <bean id="sampleScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+    <bean id="${flowName}ScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
         <property name="jobDetail" >
             <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -41,32 +41,32 @@
                 <property name="targetMethod" value="createJobDetail" />
                 <property name="arguments">
                     <list>
-                        <ref bean="sampleScheduledConsumer" />
+                        <ref bean="${flowName}ScheduledConsumer" />
                         <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
-                        <value>sampleScheduledConsumer</value>
-                        <value>sample-scheduled-flow-consumer</value>
+                        <value>${flowName}ScheduledConsumer</value>
+                        <value>${artifactId}-${flowName}ScheduledConsumer</value>
                     </list>
                 </property>
             </bean>
         </property>
-        <property name="configuredResourceId" value="sample-scheduled-flow-consumer"/>
-        <property name="configuration" ref="sampleScheduledConsumerConfiguration"/>
+        <property name="configuredResourceId" value="${arteifactId}-${flowName}ScheduledConsumer"/>
+        <property name="configuration" ref="${flowName}ScheduledConsumerConfiguration"/>
     </bean>
 
     <!-- Consumer Component Configuration -->
-    <bean id="sampleScheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
+    <bean id="${flowName}ScheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
         <property name="cronExpression" value="0/5 * * * * ?"/>
     </bean>
 
     <!--  ================================================================== -->
     <!--  Scheduled Sample Local File System Components                      -->
     <!--  ================================================================== -->
-    <bean id="sampleScheduledFileConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+    <bean id="${flowName}ScheduledFileConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
         <property name="messageProvider" ref="fileMessageProvider"/>
         <property name="managedEventIdentifierService">
             <bean class="org.ikasan.component.endpoint.filesystem.messageprovider.FileLineEventIdentifierServiceImpl">
-                <constructor-arg value="sample-sampleScheduledFlow"/>
+                <constructor-arg value="${artifactId}-${flowName}ScheduledFlow"/>
             </bean>
         </property>
         <property name="jobDetail" >
@@ -75,26 +75,26 @@
                 <property name="targetMethod" value="createJobDetail" />
                 <property name="arguments">
                     <list>
-                        <ref bean="sampleScheduledFileConsumer" />
+                        <ref bean="${flowName}ScheduledFileConsumer" />
                         <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
-                        <value>sampleScheduledFileConsumer</value>
-                        <value>sample</value>
+                        <value>${flowName}ScheduledFileConsumer</value>
+                        <value>${artifactId}-${flowName}ScheduledFileConsumer</value>
                     </list>
                 </property>
             </bean>
         </property>
-        <property name="configuration" ref="sampleScheduledFileConsumerConfiguration"/>
-        <property name="configuredResourceId" value="sample-sampleScheduledFileConsumer"/>
+        <property name="configuration" ref="${flowName}ScheduledFileConsumerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${flowName}ScheduledFileConsumer"/>
     </bean>
 
     <bean id="fileMessageProvider" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider">
         <property name="messageProviderPostProcessor">
             <bean class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProviderPostProcessorImpl"/>
         </property>
-        <property name="configuration" ref="sampleScheduledFileConsumerConfiguration" />
+        <property name="configuration" ref="${flowName}ScheduledFileConsumerConfiguration" />
     </bean>
 
-    <bean id="sampleScheduledFileConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
+    <bean id="${flowName}ScheduledFileConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
         <property name="cronExpression" value="0/5 * * * * ?" />
         <property name="encoding" value="UTF-8"/>
         <property name="includeHeader" value="true"/>
@@ -107,6 +107,6 @@
     <!--  ================================================================== -->
     <!--  Producer Component                                                 -->
     <!--  ================================================================== -->
-    <bean id="sampleScheduledProducer" class="org.ikasan.component.endpoint.util.producer.LogProducer" />
+    <bean id="${flowName}ScheduledProducer" class="org.ikasan.component.endpoint.util.producer.LogProducer" />
 
 </beans>
