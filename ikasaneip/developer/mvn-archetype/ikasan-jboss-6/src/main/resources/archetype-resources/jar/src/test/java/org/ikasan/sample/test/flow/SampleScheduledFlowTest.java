@@ -55,12 +55,6 @@ public class SampleScheduledFlowTest extends IkasanEIPTest
     FlowSubject testHarnessFlowEventListener;
 
     /**
-     * Allow configuration to be changed as part of the test
-     */
-    @Resource (name = "sampleScheduledConsumerConfiguration")
-    ScheduledConsumerConfiguration configuration;
-
-    /**
      * Setup will clear down any previously defined observers and ignore all exception transformations.
      *
      */

@@ -47,9 +47,9 @@
         <version>1.0.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-integration-module-jboss6-maven-plugin</artifactId>
+    <artifactId>ikasan-im-jboss6-scheduled-filesystem-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>IkasanEIP Maven Archetype for an Integration Module</name>
+    <name>IkasanEIP Maven Archetype for a Schedule Driven Local File System Integration Module</name>
 
 	<dependencies>
 		<dependency>
@@ -66,7 +66,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                    <goalPrefix>ikasan-integration-module-jboss</goalPrefix>
+                    <goalPrefix>ikasan-im-jboss</goalPrefix>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
                 <executions>
