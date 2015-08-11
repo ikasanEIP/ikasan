@@ -40,11 +40,11 @@
 <archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
-                      name="ikasan-integration-module-jboss6-maven-plugin" partial="true">
+                      name="ikasan-im-jboss6-scheduled-filesystem-maven-plugin" partial="true">
 
     <requiredProperties>
         <requiredProperty key="buildParentGroupId">
-            <defaultValue>org.ikasan</defaultValue>
+            <defaultValue>${groupId}</defaultValue>
         </requiredProperty>
         <requiredProperty key="buildParentArtifactId">
             <defaultValue>esb-build</defaultValue>
@@ -52,11 +52,11 @@
         <requiredProperty key="buildParentVersion">
             <defaultValue>1.0.0-SNAPSHOT</defaultValue>
         </requiredProperty>
-        <requiredProperty key="jbossModuleNamespace">
-            <defaultValue>org.ikasan.configuration.${artifactId}.conf</defaultValue>
-        </requiredProperty>
         <requiredProperty key="jbossModuleDir">
-            <defaultValue>org/ikasan/configuration/${artifactId}/conf/main</defaultValue>
+            <defaultValue>org/ikasan/configuration/${artifactId}/version/conf/main</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="flowName">
+            <defaultValue>sampleFlow</defaultValue>
         </requiredProperty>
     </requiredProperties>
 
