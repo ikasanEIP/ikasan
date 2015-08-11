@@ -170,7 +170,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         container.addContainerProperty("Target Configuration Value", TextField.class,  null);
         container.addContainerProperty("Delete", Button.class,  null);
 
-        this.setCellStyleGenerator(new IkasanCellStyleGenerator());
+        this.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
         this.setContainerDataSource(container);
     }
 

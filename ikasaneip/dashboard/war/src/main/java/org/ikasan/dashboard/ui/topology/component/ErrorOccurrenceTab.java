@@ -125,7 +125,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 	{
 		this.errorOccurenceTable = new Table();
 		this.errorOccurenceTable.setSizeFull();
-		this.errorOccurenceTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.errorOccurenceTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.errorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.errorOccurenceTable.addStyleName("ikasan");
 		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);

@@ -42,10 +42,8 @@ package org.ikasan.dashboard.ui.topology.panel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +58,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
@@ -72,7 +71,6 @@ import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
-import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
@@ -88,7 +86,6 @@ import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
-import org.ikasan.topology.model.BusinessStreamFlowKey;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
@@ -96,22 +93,15 @@ import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.service.TriggerManagementService;
-import org.springframework.security.core.GrantedAuthority;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.Action;
-import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
@@ -129,14 +119,11 @@ import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -230,14 +217,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private ErrorCategorisationService errorCategorisationService;
 	private TriggerManagementService triggerManagementService;
 	
-	private HashMap<String, String> flowStates = new HashMap<String, String>();
+//	private HashMap<String, String> flowStates = new HashMap<String, String>();
+	
+	private TopologyStateCache topologyCache;
 	
 	private TabSheet tabsheet;
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
-			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService)
+			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -288,6 +277,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.triggerManagementService == null)
 		{
 			throw new IllegalArgumentException("triggerManagementService cannot be null!");
+		}
+		this.topologyCache = topologyCache;
+		if(this.topologyCache == null)
+		{
+			throw new IllegalArgumentException("topologyCache cannot be null!");
 		}
 
 		init();
@@ -465,7 +459,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				{
 					Flow flow = (Flow)itemId;
 					
-					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+					String state = topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
 	            	
 					logger.info("State = " + state);
 					
@@ -530,8 +524,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 		{
                 			Set<Module> modules = server.getModules();
                 			
-                			refreshFlowStates(modules);
-
                 			TopologyViewPanel.this.moduleTree.addItem(server);
                 			TopologyViewPanel.this.moduleTree.setItemCaption(server, server.getName());
                 			TopologyViewPanel.this.moduleTree.setChildrenAllowed(server, true);
@@ -554,7 +546,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setParent(flow, module);
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
                 	            	
-                	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+//                	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
                 	            	                	            	
                 	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
                 	                
@@ -872,7 +864,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			List<Server> servers = this.topologyService.getAllServers();
 			
 			for(Server server: servers)
-			{
+			{	
 				Set<Module> modules = server.getModules();
 	
 				this.moduleTree.addItem(server);
@@ -881,9 +873,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	            this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
 	
 		        for(Module module: modules)
-		        {
-		        	refreshFlowStates(modules);
-		        	
+		        {	        	
 		            this.moduleTree.addItem(module);
 		            this.moduleTree.setItemCaption(module, module.getName());
 		            this.moduleTree.setParent(module, server);
@@ -1084,70 +1074,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	}
 	
 
-	// TODO removing below functionality. We need to cache flow state data somewhere due to performance.
-	protected void refreshFlowStates(Set<Module> modules)
-	{
-//		for(Module module: modules)
-//		{
-//			this.flowStates.putAll(this.getFlowStates(module));
-//		}
-	}
-
-//	protected String getFlowState(Flow flow)
-//	{
-//		String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort() 
-//				+ flow.getModule().getContextRoot() 
-//				+ "/rest/moduleControl/flowState/"
-//				+ flow.getModule().getName() + "/"
-//				+ flow.getName();
-//		
-//		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//	        	.getAttribute(DashboardSessionValueConstants.USER);
-//    	
-//    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-//    	
-//    	ClientConfig clientConfig = new ClientConfig();
-//    	clientConfig.register(feature) ;
-//    	
-//    	Client client = ClientBuilder.newClient(clientConfig);
-//    	
-//	    WebTarget webTarget = client.target(url);
-//	    
-//	    return webTarget.request().get(String.class);
-//	}
-//	
-//	@SuppressWarnings("unchecked")
-//	protected HashMap<String, String> getFlowStates(Module module)
-//	{
-//		HashMap<String, String> results = new HashMap<String, String>();
-//		try
-//		{
-//			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
-//					+ module.getContextRoot() 
-//					+ "/rest/moduleControl/flowStates/"
-//					+ module.getName();
-//			
-//			IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//		        	.getAttribute(DashboardSessionValueConstants.USER);
-//	    	
-//	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-//	    	
-//	    	ClientConfig clientConfig = new ClientConfig();
-//	    	clientConfig.register(feature) ;
-//	    	
-//	    	Client client = ClientBuilder.newClient(clientConfig);
-//	    	
-//	    	WebTarget webTarget = client.target(url);
-//		    
-//	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
-//		}
-//		catch(Exception e)
-//		{
-//			return new HashMap<String, String>();
-//		}
-//	    
-//	    return results;
-//	}
+	
 	
 	/* (non-Javadoc)
 	 * @see com.vaadin.event.Action.Handler#getActions(java.lang.Object, java.lang.Object)
@@ -1169,7 +1096,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         {
 			Flow flow = ((Flow)target);
 			
-			String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
+			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
 			if(state != null && state.equals(RUNNING))
 			{
 				return this.flowActionsStarted;
@@ -1286,7 +1213,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         				flow.getModule(), flow, null, errorCategorisationService));
         	}
 	        
-	        this.refreshFlowStates(flow.getModule().getServer().getModules());
         }
         else if(target != null && target instanceof Module)
         {
@@ -1438,3 +1364,4 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 //        layout.addComponent(graph);
 //    }
 }
+

@@ -44,7 +44,13 @@
         <constructor-arg ref="systemEventService"/>
         <constructor-arg ref="errorCategorisationService"/>
         <constructor-arg ref="triggerManagementService"/>
+        <constructor-arg ref="topologyStateCache"/>
     </bean>
+    
+    <bean id="topologyStateCache" class="org.ikasan.dashboard.ui.framework.cache.TopologyStateCache" scope="singleton">
+        <constructor-arg ref="topologyService" />
+    </bean>
+    
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
