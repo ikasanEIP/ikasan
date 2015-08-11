@@ -195,11 +195,17 @@
     
     <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
     	<constructor-arg ref="eventExclusionsTable"/>
+    	<constructor-arg ref="flowStateTable"/>
     </bean>
     
     <bean id="eventExclusionsTable" class=" org.ikasan.dashboard.ui.framework.component.EventExclusionsTable" scope="session">
     	<constructor-arg value="Event Exclusions"/>
     	<constructor-arg ref="exclusionManagementService"/>
+    </bean>
+    
+    <bean id="flowStateTable" class=" org.ikasan.dashboard.ui.framework.component.FlowStateTable" scope="session">
+    	<constructor-arg value="Flow States"/>
+    	<constructor-arg ref="topologyService"/>
     </bean>
     
     <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">

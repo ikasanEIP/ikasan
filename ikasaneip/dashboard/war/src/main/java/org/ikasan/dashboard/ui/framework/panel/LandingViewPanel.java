@@ -41,8 +41,9 @@
 package org.ikasan.dashboard.ui.framework.panel;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.component.DashboardTable;
+import org.ikasan.dashboard.ui.dashboard.chart.DashboardChart;
 import org.ikasan.dashboard.ui.framework.component.EventExclusionsTable;
+import org.ikasan.dashboard.ui.framework.component.FlowStateTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
@@ -74,13 +75,15 @@ public class LandingViewPanel extends Panel implements View
 
     private CssLayout dashboardPanels;
     private EventExclusionsTable eventExclusionsTable;
+    private DashboardChart dashboardChart;
+    private FlowStateTable flowStateTable;
     
     /**
      * Constructor
      * 
      * @param ikasanModuleService
      */
-    public LandingViewPanel(EventExclusionsTable eventExclusionsTable)
+    public LandingViewPanel(EventExclusionsTable eventExclusionsTable, FlowStateTable flowStateTable)
     {
         super();
 
@@ -88,6 +91,11 @@ public class LandingViewPanel extends Panel implements View
         if(eventExclusionsTable == null)
 		{
 			throw new IllegalArgumentException("eventExclusionsTable cannot be null!");
+		}
+        this.flowStateTable = flowStateTable;
+        if(flowStateTable == null)
+		{
+			throw new IllegalArgumentException("flowStateTable cannot be null!");
 		}
         
         init();
@@ -190,17 +198,44 @@ public class LandingViewPanel extends Panel implements View
         dashboardPanels.addStyleName("dashboard-panels");
         Responsive.makeResponsive(dashboardPanels);
 
-        dashboardPanels.addComponent(buildDashboard());
-//        dashboardPanels.addComponent(buildDashboard());
-//        dashboardPanels.addComponent(buildDashboard());
-//        dashboardPanels.addComponent(buildDashboard());
+        dashboardPanels.addComponent(buildDashboard(this.eventExclusionsTable));
+        dashboardPanels.addComponent(buildDashboardChart());
+        dashboardPanels.addComponent(buildDashboard(this.flowStateTable));
 
         return dashboardPanels;
     }
     
-    private Component buildDashboard() 
+    private Component buildDashboard(Component component) 
     {
-        Component contentWrapper = createContentWrapper(this.eventExclusionsTable);
+        Component contentWrapper = createContentWrapper(component);
+        contentWrapper.addStyleName("top10-revenue");
+        return contentWrapper;
+    }
+    
+    private Component buildDashboardChart() 
+    {
+    	this.dashboardChart = new DashboardChart();
+    	this.dashboardChart.setHcjs("var options = {        chart: {            type: 'pie'        },        " +
+    			"title: {            text: 'Browser market shares. January, 2015 to May, 2015'        },        " +
+    			"subtitle: {            text: 'Click the slices to view versions. Source: netmarketshare.com.'        },        " +
+    			"plotOptions: {            series: {                dataLabels: {                    enabled: true,                    " +
+    			"format: '{point.name}: {point.y:.1f}%'                }            }        },        " +
+    			"tooltip: {            headerFormat: '<span style=\"font-size:11px\">{series.name}</span><br>',            " +
+    			"pointFormat: '<span style=\"color:{point.color}\">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'        },        " +
+    			"series: [{            name: \"Brands\",            colorByPoint: true,            " +
+    			"data: [{                name: \"Microsoft Internet Explorer\",                y: 56.33,                " +
+    			"drilldown: \"Microsoft Internet Explorer\"            }, " +
+    			"{                name: \"Chrome\",                y: 24.03,                drilldown: \"Chrome\"            }," +
+    			"{                name: \"Firefox\",                y: 10.38,                drilldown: \"Firefox\"            }, " +
+    			"{                name: \"Safari\",                y: 4.77,                drilldown: \"Safari\"            }, " +
+    			"{                name: \"Opera\",                y: 0.91,                drilldown: \"Opera\"            }, " +
+    			"{                name: \"Proprietary or Undetectable\",                y: 0.2,                drilldown: null            }]        }],        " +
+    			"drilldown: {            series: [{                name: \"Microsoft Internet Explorer\",                id: \"Microsoft Internet Explorer\",                data: [                    [\"v11.0\", 24.13],                    [\"v8.0\", 17.2],                    [\"v9.0\", 8.11],                    [\"v10.0\", 5.33],                    [\"v6.0\", 1.06],                    [\"v7.0\", 0.5]                ]            }, " +
+    			"{                name: \"Chrome\",                id: \"Chrome\",                data: [                    [\"v40.0\", 5],                    [\"v41.0\", 4.32],                    [\"v42.0\", 3.68],                    [\"v39.0\", 2.96],                    [\"v36.0\", 2.53],                    [\"v43.0\", 1.45],                    [\"v31.0\", 1.24],                    [\"v35.0\", 0.85],                    [\"v38.0\", 0.6],                    [\"v32.0\", 0.55],                    [\"v37.0\", 0.38],                    [\"v33.0\", 0.19],                    [\"v34.0\", 0.14],                    [\"v30.0\", 0.14]                ]            }, " +
+    			"{                name: \"Firefox\",                id: \"Firefox\",                data: [                    [\"v35\", 2.76],                    [\"v36\", 2.32],                    [\"v37\", 2.31],                    [\"v34\", 1.27],                    [\"v38\", 1.02],                    [\"v31\", 0.33],                    [\"v33\", 0.22],                    [\"v32\", 0.15]                ]            }, " +
+    			"{                name: \"Safari\",                id: \"Safari\",                data: [                    [\"v8.0\", 2.56],                    [\"v7.1\", 0.77],                    [\"v5.1\", 0.42],                    [\"v5.0\", 0.3],                    [\"v6.1\", 0.29],                    [\"v7.0\", 0.26],                    [\"v6.2\", 0.17]                ]            }, " +
+    			"{                name: \"Opera\",                id: \"Opera\",                data: [                    [\"v12.x\", 0.34],                    [\"v28\", 0.24],                    [\"v27\", 0.17],                    [\"v29\", 0.16]                ]            }]        }    }");
+        Component contentWrapper = createContentWrapper(this.dashboardChart);
         contentWrapper.addStyleName("top10-revenue");
         return contentWrapper;
     }

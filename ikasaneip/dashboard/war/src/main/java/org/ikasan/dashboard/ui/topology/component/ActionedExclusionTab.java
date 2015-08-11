@@ -137,7 +137,7 @@ public class ActionedExclusionTab extends TopologyTab
 	{
 		this.actionedExclusionsTable = new Table();
 		this.actionedExclusionsTable.setSizeFull();
-		this.actionedExclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.actionedExclusionsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.actionedExclusionsTable.addContainerProperty("Module Name", String.class,  null);
 		this.actionedExclusionsTable.addContainerProperty("Flow Name", String.class,  null);
 		this.actionedExclusionsTable.addContainerProperty("Action", String.class,  null);

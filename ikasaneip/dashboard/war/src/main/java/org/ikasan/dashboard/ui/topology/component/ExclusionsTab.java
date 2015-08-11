@@ -136,7 +136,7 @@ public class ExclusionsTab extends TopologyTab
 	{
 		this.exclusionsTable = new Table();
 		this.exclusionsTable.setSizeFull();
-		this.exclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.exclusionsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);

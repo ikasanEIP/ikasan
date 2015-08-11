@@ -46,6 +46,7 @@ import java.util.LinkedHashMap;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
+import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
@@ -57,6 +58,7 @@ import org.ikasan.security.service.UserService;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.IndexedContainer;
@@ -65,6 +67,8 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -82,9 +86,9 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @Theme("dashboard")
 @SuppressWarnings("serial")
-//@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
+@Push(value=PushMode.AUTOMATIC, transport=Transport.WEBSOCKET)
 @PreserveOnRefresh
-public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
+public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 {   
 	private Logger logger = Logger.getLogger(IkasanUI.class);
 	
@@ -158,7 +162,7 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 	    this.menuLayout = menuLayout;
 	    this.bannerImage = bannerImage;
 	    this.menu = menu;
-//	    Broadcaster.register(this);
+	    Broadcaster.register(this);
 	}
 
     @Override
@@ -212,6 +216,8 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
         
         UI.getCurrent().getNavigator().navigateTo("landingView");  
 	       	navigationPanel.setVisible(true);
+	       	
+//	    UI.getCurrent().push();
     }
     
     private Component buildContent() {
@@ -268,23 +274,26 @@ public class IkasanUI extends UI //implements Broadcaster.BroadcastListener
 		}
 	}
 
-//    @Override
-//	public void receiveBroadcast(final String message)
-//	{
-//		access(new Runnable() {
-//            @Override
-//            public void run() {
-//            	eventBus.post(new AlertEvent("Alert:" + message, "Module:" + message));
-//            	eventBus.post(new HealthEvent("Health Alert:" + message, "Module:" + message));
-//            }
-//        });	
-//	}
+    @Override
+	public void receiveBroadcast(final Object message)
+	{
+		access(new Runnable() 
+		{
+            @Override
+            public void run() 
+            {
+            	logger.info("Broadcasting new FlowStateEvent");
+            	eventBus.post(new FlowStateEvent((HashMap<String, String>)message));
+            }
+        });	
+	}
 	
 	// Must also unregister when the UI expires    
     @Override
     public void detach() 
     {    	
     	logger.info("detaching UI");
+    	Broadcaster.unregister(this);
     }
     
     @Override

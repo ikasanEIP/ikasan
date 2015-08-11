@@ -135,7 +135,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		this.existingCategorisedErrorsTable = new Table();
 		this.existingCategorisedErrorsTable.setWidth("100%");
-		this.existingCategorisedErrorsTable.setHeight(300, Unit.PIXELS);
+		this.existingCategorisedErrorsTable.setHeight(200, Unit.PIXELS);
 		this.existingCategorisedErrorsTable.addContainerProperty("Module Name", String.class,  null);
 		this.existingCategorisedErrorsTable.setColumnExpandRatio("Module Name", .1f);
 		this.existingCategorisedErrorsTable.addContainerProperty("Flow Name", String.class,  null);
