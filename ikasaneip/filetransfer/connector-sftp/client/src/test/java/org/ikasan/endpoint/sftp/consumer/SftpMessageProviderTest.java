@@ -212,7 +212,7 @@ public class SftpMessageProviderTest
                 exactly(1).of(configuration).getAgeOfFiles();
                 will(returnValue(ageOfFiles));
 
-                exactly(1).of(fileTransferConnectionTemplate).housekeep(maxRow,ageOfFiles);
+                exactly(1).of(activeFileTransferConnectionTemplate).housekeep(maxRow,ageOfFiles);
 
             }
         });
