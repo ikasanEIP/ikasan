@@ -44,6 +44,7 @@
         <version.org.jmock>2.6.0</version.org.jmock>
         <version.org.jmock.jmock-legacy>2.5.1</version.org.jmock.jmock-legacy>
         <version.com.h2database>1.4.178</version.com.h2database>
+        <version.activemq.core>5.7.0</version.activemq.core>
     </properties>
 
     <dependencyManagement>
@@ -120,6 +121,12 @@
                 <artifactId>geronimo-spec-j2ee</artifactId>
                 <version>${version.geronimo.spec}</version>
                 <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-core</artifactId>
+                <version>${version.activemq.core}</version>
             </dependency>
 
             <dependency>

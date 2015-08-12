@@ -28,6 +28,18 @@
             <artifactId>ikasan-builder-spring</artifactId>
         </dependency>
 
+        <!-- Ikasan JMS -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring</artifactId>
+        </dependency>
+
+        <!-- commons IO for file IO -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
@@ -38,6 +50,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -28,8 +28,10 @@
         <value>shared-conf.xml</value>
         <value>exception-conf.xml</value>
         <value>module-conf.xml</value>
-        <value>sample-flow-conf.xml</value>
-        <value>sample-scheduled-flow-conf.xml</value>
+        <value>filesystem-conf.xml</value>
+        <value>jms-conf.xml</value>
+        <value>scheduled-conf.xml</value>
+        <value>source-scheduled-flow-conf.xml</value>
 
         <!-- (optional) if you want to have an alternate exception flow for excluded events -->
         <value>exclusion-flow-conf.xml</value>

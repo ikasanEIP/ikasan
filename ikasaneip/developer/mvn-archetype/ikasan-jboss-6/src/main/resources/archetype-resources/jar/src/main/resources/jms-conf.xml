@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="${flowName}SourceProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+        <constructor-arg>
+            <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
+        </constructor-arg>
+        <property name="configuration" ref="${flowName}SourceProducerConfiguration"/>
+        <property name="configuredResourceId" value="${module.name}-${flowName}SourceProducerConfiguration"/>
+    </bean>
+
+    <bean id="${flowName}SourceProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+        <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
+        <property name="destinationJndiName" value="/jms/topic/bdm.topic"/>
+        <property name="destinationJndiProperties">
+            <map>
+                <entry key="java.naming.provider.url" value="remote://localhost:4597"/>
+                <entry key="java.naming.factory.initial" value="org.jboss.naming.remote.client.InitialContextFactory"/>
+                <entry key="java.naming.factory.url.pkgs" value="java.naming.factory.url.pkgs"/>
+            </map>
+        </property>
+        <property name="sessionTransacted" value="true"/>
+        <property name="pubSubDomain" value="true"/>
+        <property name="messageIdEnabled" value="true"/>
+        <property name="deliveryPersistent" value="true"/>
+    </bean>
+
+</beans>
