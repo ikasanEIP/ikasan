@@ -10,8 +10,7 @@
         <property name="description"     value="Sample Module Description." />
         <property name="flows">
             <util:list>
-                <ref bean="sampleFlow" />
-                <ref bean="sampleScheduledFlow" />
+                <ref bean="sourceFlow" />
             </util:list>
         </property>
     </bean>
