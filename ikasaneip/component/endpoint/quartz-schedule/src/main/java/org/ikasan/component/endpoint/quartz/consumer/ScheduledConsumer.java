@@ -317,7 +317,7 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    private void triggerSchedulerNow() throws SchedulerException {
+    protected void triggerSchedulerNow() throws SchedulerException {
         JobKey jobkey = jobDetail.getKey();
         scheduler.triggerJob(jobkey);
     }

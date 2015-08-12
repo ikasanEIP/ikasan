@@ -94,7 +94,12 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     {
         try
         {
-            messageProvider.invoke(context);
+            boolean isSuccessful = messageProvider.invoke(context);
+            if(this.getConfiguration().isEager() && isSuccessful){
+                // if this consumer is eager to consume messages and message provided returned not null
+                // results then quartz scheduler should be triggered
+                triggerSchedulerNow();
+            }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
         {
