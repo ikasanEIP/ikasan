@@ -45,8 +45,6 @@ import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +52,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,12 +67,6 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = { "/substitute-beans.xml" })
 public class HibernateBaseFileTransferDaoImplTest
 {
-    private final Mockery mockery = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
 
     @Resource SessionFactory sessionFactory;
 
@@ -97,7 +88,7 @@ public class HibernateBaseFileTransferDaoImplTest
         jdbcTemplate = new JdbcTemplate(xaDataSource);
     }
 
-    @Test public void housekeep()
+    @Test public void housekeep_when_nothing_to_process()
     {
         uut.housekeep("clientId", 1, 1);
     }
