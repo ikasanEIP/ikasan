@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+    <!--  ================================================================== -->
+    <!--  Target Flow                                                        -->
+    <!--  ================================================================== -->
+    <bean id="targetFlow"        class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         ref="moduleName" />
+        <property name="name"               value="${flowName} Target" />
+        <property name="description"        value="${flowName} Taregt Description" />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
+        <property name="consumer">
+            <bean class="org.ikasan.builder.FlowElementFactory">
+                <property name="name"       value="JMS Consumer Name"/>
+                <property name="component"  ref="${flowName}TargetJmsConsumer"/>
+                <property name="transition" ref="${flowName}TargetFilesystemProducerFlowElement"/>
+            </bean>
+        </property>
+        <property name="monitor" ref="monitor"/>
+    </bean>
+
+    <!-- Flow Element - Producer -->
+    <bean id="${flowName}TargetFilesystemProducerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Filesystem Producer Name"/>
+        <property name="component"          ref="${flowName}TargetProducer" />
+    </bean>
+
+    <!--  ================================================================== -->
+    <!--  Producer Component                                                 -->
+    <!--  ================================================================== -->
+    <!--bean id="${flowName}SourceScheduledProducer" class="org.ikasan.component.endpoint.util.producer.LogProducer" /-->
+    <bean id="${flowName}TargetProducer" class="org.ikasan.component.endpoint.filesystem.producer.FileProducer">
+        <property name="configuration">
+            <bean class="org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration"/>
+        </property>
+        <property name="configuredResourceId" value="${moduleName}-${flowName}TargetProducer"/>
+    </bean>
+
+</beans>
