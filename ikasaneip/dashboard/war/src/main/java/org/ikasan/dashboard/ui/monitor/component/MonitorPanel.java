@@ -283,8 +283,6 @@ public class MonitorPanel extends Panel implements View
         filterTable.addStyleName(ValoTheme.TABLE_NO_STRIPES);
         filterTable.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
         filterTable.addStyleName(ValoTheme.TABLE_SMALL);
-       
-        filterTable.setFilterOnDemand(true);
         
         filterTable.setSizeFull();
         
