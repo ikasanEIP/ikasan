@@ -11,6 +11,7 @@
         <property name="flows">
             <util:list>
                 <ref bean="sourceFlow" />
+                <ref bean="targetFlow" />
             </util:list>
         </property>
     </bean>

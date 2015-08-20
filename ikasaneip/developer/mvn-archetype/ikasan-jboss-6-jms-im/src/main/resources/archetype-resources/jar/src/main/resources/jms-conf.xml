@@ -4,17 +4,47 @@
        xsi:schemaLocation="
    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="${flowName}SourceProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+    <bean id="${flowName}Consumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        <property name="messageProvider" ref="jmsListener"/>
+        <property name="configuration" ref="${flowName}ConsumerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${flowName}Consumer"/>
+    </bean>
+
+    <bean id="jmsListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
+        <property name="messageListener" ref="${flowName}Consumer" />
+        <property name="exceptionListener" ref="${flowName}Consumer" />
+        <property name="errorHandler" ref="${flowName}Consumer" />
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+
+    <bean id="${flowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+        <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
+        <property name="destinationJndiName" value="/jms/topic/sample"/>
+        <property name="destinationJndiProperties">
+            <map>
+                <entry key="java.naming.provider.url" value="remote://localhost:4597"/>
+                <entry key="java.naming.factory.initial" value="org.jboss.naming.remote.client.InitialContextFactory"/>
+                <entry key="java.naming.factory.url.pkgs" value="java.naming.factory.url.pkgs"/>
+            </map>
+        </property>
+        <property name="sessionTransacted" value="true"/>
+        <property name="pubSubDomain" value="true"/>
+        <property name="durable" value="true"/>
+        <property name="durableSubscriptionName" value="${artifactId}-${flowName}Consumer"/>
+        <property name="autoContentConversion" value="true"/>
+    </bean>
+
+    <bean id="${flowName}Producer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
         <constructor-arg>
             <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
         </constructor-arg>
-        <property name="configuration" ref="${flowName}SourceProducerConfiguration"/>
-        <property name="configuredResourceId" value="${module.name}-${flowName}SourceProducerConfiguration"/>
+        <property name="configuration" ref="${flowName}ProducerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${flowName}ProducerConfiguration"/>
     </bean>
 
     <bean id="${flowName}SourceProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
         <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
-        <property name="destinationJndiName" value="/jms/topic/bdm.topic"/>
+        <property name="destinationJndiName" value="/jms/topic/sample"/>
         <property name="destinationJndiProperties">
             <map>
                 <entry key="java.naming.provider.url" value="remote://localhost:4597"/>
@@ -26,21 +56,6 @@
         <property name="pubSubDomain" value="true"/>
         <property name="messageIdEnabled" value="true"/>
         <property name="deliveryPersistent" value="true"/>
-    </bean>
-
-    <bean id="${flowName}TargetJmsConsumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
-        <property name="messageProvider" ref="jmsListener"/>
-        <property name="configuration">
-            <bean class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration"/>
-        </property>
-        <property name="configuredResourceId" value="${module.name}-${flowName}JmsConsumer"/>
-    </bean>
-
-    <bean id="jmsListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
-        <property name="messageListener" ref="${flowName}TargetJmsConsumer" />
-        <property name="exceptionListener" ref="${flowName}TargetJmsConsumer" />
-        <property name="errorHandler" ref="${flowName}TargetJmsConsumer" />
-        <property name="transactionManager" ref="transactionManager" />
     </bean>
 
 </beans>
