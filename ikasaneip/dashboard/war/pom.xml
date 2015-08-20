@@ -360,7 +360,7 @@
         </dependency>
         
         <!-- Jersey REST dependencies -->
-        <dependency>
+        <!--  dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
         </dependency>
@@ -434,7 +434,7 @@
         <dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-		</dependency>
+		</dependency -->
 		
 	</dependencies>
 	<build>
