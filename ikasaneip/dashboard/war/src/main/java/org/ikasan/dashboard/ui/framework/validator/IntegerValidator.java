@@ -38,26 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.validation;
+package org.ikasan.dashboard.ui.framework.validator;
 
-import com.vaadin.data.Validator;
+import com.vaadin.data.validator.AbstractValidator;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class IntegerValidator implements Validator
+public class IntegerValidator extends AbstractValidator<Integer>
 {
+	private static final long serialVersionUID = 260136880681431010L;
 
-	/* (non-Javadoc)
-	 * @see com.vaadin.data.Validator#validate(java.lang.Object)
-	 */
-	@Override
-	public void validate(Object value) throws InvalidValueException
-	{
-		// TODO Auto-generated method stub
+	public IntegerValidator(String errorMessage)
+    {
+        super(errorMessage);
+    }
 
-	}
+    /* (non-Javadoc)
+     * @see com.vaadin.data.validator.AbstractValidator#isValidValue(java.lang.Object)
+     */
+    @Override
+    protected boolean isValidValue(Integer value)
+    {
+        if(value == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 
+    /* (non-Javadoc)
+     * @see com.vaadin.data.validator.AbstractValidator#getType()
+     */
+    @Override
+    public Class<Integer> getType()
+    {
+        return Integer.class;
+    }
 }

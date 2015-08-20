@@ -61,9 +61,9 @@ import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
-import org.ikasan.dashboard.ui.framework.validation.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.validation.StringValidator;
+import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
@@ -238,7 +238,7 @@ public class ComponentConfigurationWindow extends Window
 		{	
 			if(parameter instanceof ConfigurationParameterIntegerImpl)
     		{
-				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator()), 0, i, 1, i);
+				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
     		}
     		else if(parameter instanceof ConfigurationParameterStringImpl)
     		{

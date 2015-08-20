@@ -179,6 +179,22 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(mappingMenuItem);
         this.menuComponents.put(mappingMenuItem, SecurityConstants.VIEW_MAPPING_AUTHORITY);
         
+        final Button monitoringMenuItem = new Button("Monitoring", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	loadTopLevelNavigator();
+            	UI.getCurrent().getNavigator().navigateTo("monitorView");
+            }
+        });
+        
+        monitoringMenuItem.setHtmlContentAllowed(true);
+        monitoringMenuItem.setPrimaryStyleName("valo-menu-item");
+        monitoringMenuItem.setIcon(VaadinIcons.DESKTOP);
+        menuItemsLayout.addComponent(monitoringMenuItem);
+        this.menuComponents.put(monitoringMenuItem, SecurityConstants.VIEW_MONITORING_AUTHORITY);
+        
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");

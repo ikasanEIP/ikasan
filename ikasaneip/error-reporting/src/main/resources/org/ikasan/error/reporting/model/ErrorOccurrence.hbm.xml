@@ -76,10 +76,15 @@
                   column="ErrorDetail"
                   not-null="false" />
 
-        <!--property name="errorMessage"
+        <property name="errorMessage"
                   type="text"
                   column="ErrorMessage"
-                  not-null="false" /-->
+                  not-null="false" />
+                  
+        <property name="exceptionClass"
+                  type="java.lang.String"
+                  column="ExceptionClass"
+                  not-null="false" />
 
         <property name="eventLifeIdentifier"
                   type="java.lang.String"

@@ -35,6 +35,7 @@
         <constructor-arg ref="menuLayout"/>
         <constructor-arg ref="bannerImage"/>
         <constructor-arg ref="menu"/>
+        <constructor-arg ref="topologyStateCache"/>
     </bean>
     
     <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
@@ -103,6 +104,10 @@
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="topologyViewPanel"/>
+                </bean> 
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="monitorView"/>
+                   <constructor-arg ref="monitorViewPanel"/>
                 </bean> 
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="persistanceSetupView"/>
@@ -196,6 +201,11 @@
     <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
     	<constructor-arg ref="eventExclusionsTable"/>
     	<constructor-arg ref="flowStateTable"/>
+    	<constructor-arg ref="graphCache"/>
+    </bean>
+    
+    <bean id="graphCache" class="org.ikasan.dashboard.ui.framework.cache.GraphCache" scope="singleton">
+    	<constructor-arg ref="errorReportingService"/>
     </bean>
     
     <bean id="eventExclusionsTable" class=" org.ikasan.dashboard.ui.framework.component.EventExclusionsTable" scope="session">
