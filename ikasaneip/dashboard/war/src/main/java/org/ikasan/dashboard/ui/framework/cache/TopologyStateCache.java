@@ -70,7 +70,7 @@ public class TopologyStateCache
 	private TopologyService topologyService;
 	private HashMap<String, String> stateMap;
 	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-	private CacheRefreshTask task = new CacheRefreshTask();
+	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
 	
 	
 	
@@ -82,7 +82,9 @@ public class TopologyStateCache
 		super();
 		this.topologyService = topologyService;
 		
-		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+		logger.info("TopologyStateCache constructor");
+		executor.scheduleAtFixedRate(task, 30, 60, TimeUnit.SECONDS);
+		
 	}
 
 	public String getState(String key)
@@ -92,7 +94,7 @@ public class TopologyStateCache
 
 
 
-	private class CacheRefreshTask implements Runnable
+	private class TopologyCacheRefreshTask implements Runnable
 	{
 
 		/* (non-Javadoc)
@@ -101,52 +103,80 @@ public class TopologyStateCache
 		@Override
 		public void run()
 		{
-			stateMap = new HashMap<String, String>();
-					
-			logger.info("Synchronising topology state cache.");
-			List<Server> servers = topologyService.getAllServers();
-			
-			for(Server server: servers)
-			{
-				for(Module module: server.getModules())
-				{
-					stateMap.putAll(getFlowStates(module));
-				}
-			}
-			
-			Broadcaster.broadcast(stateMap);
-			
-			logger.info("Finished synchronising topology state cache.");
+			update();
 		}
 		
-		@SuppressWarnings("unchecked")
-		protected HashMap<String, String> getFlowStates(Module module)
-		{
-			HashMap<String, String> results = new HashMap<String, String>();
-			try
-			{
-				String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
-						+ module.getContextRoot() 
-						+ "/rest/moduleControl/flowStates/"
-						+ module.getName();
+	}
+	
+	protected void update()
+	{
+		stateMap = new HashMap<String, String>();
 				
-		    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
-		    	
-		    	ClientConfig clientConfig = new ClientConfig();
-		    	clientConfig.register(feature) ;
-		    	
-		    	Client client = ClientBuilder.newClient(clientConfig);
-		    	
-		    	WebTarget webTarget = client.target(url);
-			    
-		    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
-			}
-			catch(Exception e)
+		logger.info("Synchronising topology state cache.");
+		List<Server> servers = topologyService.getAllServers();
+		
+		logger.info("Number of servers to synch: " + servers.size());
+		for(Server server: servers)
+		{
+			logger.info("Synchronising server: " + server.getName());
+			for(Module module: server.getModules())
 			{
-				return new HashMap<String, String>();
+				logger.info("Synchronising module: " + module.getName());
+				
+				HashMap<String, String> results = getFlowStates(module);
+				
+				for(String key: results.keySet())
+				{
+					stateMap.put(server.getName() + "-" + key, results.get(key));
+				}
 			}
-		    
-		    return results;
 		}
+		
+		Broadcaster.broadcast(stateMap);
+		
+		logger.info("Finished synchronising topology state cache.");
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected HashMap<String, String> getFlowStates(Module module)
+	{
+		HashMap<String, String> results = new HashMap<String, String>();
+		try
+		{
+			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+					+ module.getContextRoot() 
+					+ "/rest/moduleControl/flowStates/"
+					+ module.getName();
+			
+	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
+	    	
+	    	ClientConfig clientConfig = new ClientConfig();
+	    	clientConfig.register(feature) ;
+	    	
+	    	Client client = ClientBuilder.newClient(clientConfig);
+	    	
+	    	logger.info("Calling URL: " + url);
+	    	WebTarget webTarget = client.target(url);
+		    
+	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
+	    	
+	    	logger.info("results: " + results);
+		}
+		catch(Exception e)
+		{
+			logger.info("caught exception: " + e.getMessage());
+			e.printStackTrace();
+			return new HashMap<String, String>();
+		}
+	    
+	    return results;
+	}
+
+	/**
+	 * @return the stateMap
+	 */
+	public HashMap<String, String> getStateMap()
+	{
+		return stateMap;
 	}
 }

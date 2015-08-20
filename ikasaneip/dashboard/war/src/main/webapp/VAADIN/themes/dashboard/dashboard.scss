@@ -159,10 +159,44 @@ $v-font-weight: 400;
 		color: green;
 	}
 	
+	.v-monitor-caption-greenicon {
+		color: green;
+		font-size: 72px;
+		line-height: normal;
+	}
+	
 
 	.white .v-button-caption {
 		padding-top: 5px;
 		font-family: "Calibri";
 		color: white;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels .monitor-panel-slot {
+		padding: 6px;
+		min-height: 220px;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[width-range~="0-700px"] .monitor-panel-slot {
+		width: 50% !important;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[width-range~="701px-"] .monitor-panel-slot {
+		width: 33% !important;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[height-range~="0-440px"] .monitor-panel-slot {
+		height: 50%;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[height-range~="441px-"] .monitor-panel-slot {
+		height: 33%;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels .monitor-panel-slot.max {
+		width: 100% !important;
+		height: 100%;
+		padding-top: 0;
+		padding-bottom: 0;
 	}
 }

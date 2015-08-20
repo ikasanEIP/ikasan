@@ -27,6 +27,7 @@
         			 /WEB-INF/policy-context.xml,
         			 /WEB-INF/service-context.xml,
         			 /WEB-INF/topology-context.xml, 
+        			 /WEB-INF/monitor-context.xml, 
         			 classpath:platform-service-conf.xml, 
         			 classpath:serialiser-service-conf.xml, 
         			 classpath:systemevent-service-conf.xml, 

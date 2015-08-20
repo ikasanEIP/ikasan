@@ -71,6 +71,7 @@ import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
+import org.ikasan.dashboard.ui.topology.window.NewServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
@@ -117,7 +118,6 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
@@ -380,19 +380,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		
     		tab4.addComponent(actionedExclusionsTab.createLayout());
     		tabsheet.addTab(tab4, "Exclusions");
-    		
-    		tabsheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
- 	           
-                public void selectedTabChange(SelectedTabChangeEvent event) 
-                {
-                	if(authentication != null 
-                			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-                					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
-                	{
-                		actionedExclusionsTab.refreshExcludedEventsTable();
-                	}
-                }
-            });
     	}
     	
     	if(authentication != null 
@@ -418,13 +405,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tab6.addComponent(this.createSystemEventPanel());
     		tabsheet.addTab(tab6, "System Events");
     	}
-		
-		// Graph stuff was a demo. Commenting out for now.
-//		final VerticalLayout tab7 = new VerticalLayout();
-//		tab7.setSizeFull();
-//		tab7.addComponent(this.initGraph());
-//		tabsheet.addTab(tab7, "Graph");
-		
+				
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
@@ -545,9 +526,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setItemCaption(flow, flow.getName());
                 	            	TopologyViewPanel.this.moduleTree.setParent(flow, module);
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
-                	            	
-//                	            	String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
-                	            	                	            	
+                	                            	            	                	            	
                 	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
                 	                
                 	                Set<Component> components = flow.getComponents();
@@ -723,10 +702,22 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             }
         });
 		
-		GridLayout buttonLayout = new GridLayout(2, 1);
+		Button newServerButton = new Button("New Server");
+		newServerButton.setStyleName(ValoTheme.BUTTON_SMALL);
+		newServerButton.addClickListener(new Button.ClickListener() 
+    	{
+            @SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event) 
+            {
+				UI.getCurrent().addWindow(new NewServerWindow(topologyService));
+            }
+        });
+		
+		GridLayout buttonLayout = new GridLayout(3, 1);
 		buttonLayout.setSpacing(true);
 		buttonLayout.addComponent(discoverButton);
 		buttonLayout.addComponent(refreshButton);
+		buttonLayout.addComponent(newServerButton);
 		
 		layout.addComponent(buttonLayout);
 		layout.addComponent(this.moduleTree);

@@ -7,7 +7,7 @@
     <!--  Flow                                                               -->
     <!--  ================================================================== -->
     <bean id="demoScheduledConverterFlow"   class="org.ikasan.builder.FlowFactory">
-        <property name="moduleName"         value="Demo Sample Scheduled Module" />
+        <property name="moduleName"         value="Sample Scheduled Module" />
         <property name="name"               value="Demo Scheduled Flow" />
         <property name="description"        value="Demonstrates scheduled callbacks for a flow." />
         <property name="exceptionResolver"  ref="exceptionResolver" />

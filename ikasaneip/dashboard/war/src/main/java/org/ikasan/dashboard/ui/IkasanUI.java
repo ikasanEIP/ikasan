@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
@@ -53,6 +54,7 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 
@@ -67,6 +69,7 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
@@ -86,7 +89,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @Theme("dashboard")
 @SuppressWarnings("serial")
-@Push(value=PushMode.AUTOMATIC, transport=Transport.WEBSOCKET)
+@Push(value=PushMode.AUTOMATIC, transport=Transport.LONG_POLLING)
 @PreserveOnRefresh
 public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 {   
@@ -124,6 +127,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     
     private Menu menu;
     
+    private TopologyStateCache topologyStateCache;
+    
     /**
      * Constructor 
      * 
@@ -146,7 +151,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout,
-            ThemeResource bannerImage, Menu menu)
+            ThemeResource bannerImage, Menu menu, TopologyStateCache topologyStateCache)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -162,6 +167,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.menuLayout = menuLayout;
 	    this.bannerImage = bannerImage;
 	    this.menu = menu;
+	    this.topologyStateCache = topologyStateCache;
 	    Broadcaster.register(this);
 	}
 
@@ -169,6 +175,10 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     protected void init(VaadinRequest request)
     {
 //    	Responsive.ma	keResponsive(this);
+    	
+    	VaadinSession.getCurrent().setAttribute
+    		(DashboardSessionValueConstants.TOPOLOGY_STATE_CACHE, this.topologyStateCache);
+    	
         addStyleName(ValoTheme.UI_WITH_MENU);
         
         final GridLayout layout = new GridLayout(1, 4);	
@@ -215,9 +225,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         this.navigationPanel.setMenuComponents(menu.getMenuComponents());
         
         UI.getCurrent().getNavigator().navigateTo("landingView");  
-	       	navigationPanel.setVisible(true);
-	       	
-//	    UI.getCurrent().push();
+	       	navigationPanel.setVisible(true);	
     }
     
     private Component buildContent() {

@@ -13856,6 +13856,14 @@ div.v-layout.v-horizontal.v-widget {
 	color: green;
 }
 
+.mytheme .v-monitor-caption-greenicon {
+	margin-left: 16px;
+	padding-bottom: 3px;
+	color: green;
+	font-size: 72px;
+	line-height: normal;
+}
+
 .mytheme .white .v-button-caption {
 	padding-top: 5px;
 	font-family: "Calibri";
