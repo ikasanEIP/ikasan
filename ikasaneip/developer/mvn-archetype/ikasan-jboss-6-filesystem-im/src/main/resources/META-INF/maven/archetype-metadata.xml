@@ -55,11 +55,11 @@
         <requiredProperty key="jbossModuleDir">
             <defaultValue>org/ikasan/configuration/${artifactId}/version/conf/main</defaultValue>
         </requiredProperty>
-        <requiredProperty key="jbossModuleNamespace">
-            <defaultValue>org.ikasan.configuration.${artifactId}.version.conf</defaultValue>
+        <requiredProperty key="sourceFlowName">
+            <defaultValue>sampleSourceFlow</defaultValue>
         </requiredProperty>
-        <requiredProperty key="flowName">
-            <defaultValue>sampleFlow</defaultValue>
+        <requiredProperty key="targetFlowName">
+            <defaultValue>sampleTargetFlow</defaultValue>
         </requiredProperty>
     </requiredProperties>
 

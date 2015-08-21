@@ -100,15 +100,15 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         {
             {
                 // main request flow
-                expectation(new ConsumerComponent("Scheduled Consumer Name"), "Scheduled Consumer Name");
-                expectation(new ProducerComponent("Scheduled Producer Name"), "Scheduled Producer Name");
+                expectation(new ConsumerComponent("Consumer Name"), "Consumer Name");
+                expectation(new ProducerComponent("Producer Name"), "Producer Name");
             }
         });
 
         testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
         testHarnessFlowEventListener.setIgnoreEventCapture(true);
 
-        FlowElement consumerFlowElement = this.sourceFlow.getFlowElement("Scheduled Consumer Name");
+        FlowElement consumerFlowElement = this.sourceFlow.getFlowElement("Consumer Name");
         FileConsumerConfiguration configuration = ((ConfiguredResource<FileConsumerConfiguration>)consumerFlowElement.getFlowComponent()).getConfiguration();
         List<String> filenames = new ArrayList<String>();
         filenames.add(testFilename);
@@ -120,7 +120,7 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         jndiProperties.put("java.naming.provider.url", "vm://localhost?broker.persistent=false");
 
         // configure the JMS producer for the test
-        FlowElement<?> producerFlowElement = this.sourceFlow.getFlowElement("Scheduled Producer Name");
+        FlowElement<?> producerFlowElement = this.sourceFlow.getFlowElement("Producer Name");
         ConfiguredResource<SpringMessageProducerConfiguration> configuredProducer = (ConfiguredResource)producerFlowElement.getFlowComponent();
         SpringMessageProducerConfiguration producerConfiguration = configuredProducer.getConfiguration();
         producerConfiguration.setConnectionFactoryName("ConnectionFactory");

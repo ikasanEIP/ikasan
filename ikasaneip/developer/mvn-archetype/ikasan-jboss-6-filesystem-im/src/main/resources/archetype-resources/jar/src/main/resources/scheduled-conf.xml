@@ -7,7 +7,7 @@
     <!--  ================================================================== -->
     <!--  Scheduled Component                                                -->
     <!--  ================================================================== -->
-    <bean id="${flowName}SourceScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+    <bean id="${sourceFlowName}Consumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
         <property name="messageProvider" ref="messageProvider"/>
         <property name="managedEventIdentifierService" ref="eventIdentifierService">
@@ -18,16 +18,16 @@
                 <property name="targetMethod" value="createJobDetail" />
                 <property name="arguments">
                     <list>
-                        <ref bean="${flowName}SourceScheduledConsumer" />
+                        <ref bean="${sourceFlowName}Consumer" />
                         <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
-                        <value>${flowName}SourceScheduledConsumer</value>
-                        <value>${artifactId}-${flowName}SourceScheduledConsumer</value>
+                        <value>${sourceFlowName}Consumer</value>
+                        <value>${artifactId}</value>
                     </list>
                 </property>
             </bean>
         </property>
-        <property name="configuration" ref="${flowName}SourceScheduledConsumerConfiguration"/>
-        <property name="configuredResourceId" value="${artifactId}-${flowName}SourceScheduledConsumer"/>
+        <property name="configuration" ref="${sourceFlowName}ConsumerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${sourceFlowName}Consumer"/>
     </bean>
 
 </beans>
