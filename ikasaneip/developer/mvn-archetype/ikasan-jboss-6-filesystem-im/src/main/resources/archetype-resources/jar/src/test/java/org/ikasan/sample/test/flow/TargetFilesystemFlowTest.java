@@ -55,6 +55,7 @@ import java.util.Map;
         "/exception-conf.xml",
         "/ikasan-transaction-conf.xml",
         "/mock-conf.xml",
+        "/test-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
 })
@@ -69,7 +70,7 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
     VisitingInvokerFlow targetFlow;
 
     @Resource
-    Producer myFlowSourceProducer;
+    Producer testDataProducer;
 
     /**
      * Captures the actual components invoked and events created within the flow
@@ -109,8 +110,8 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
         {
             {
                 // main request flow
-                expectation(new ConsumerComponent("JMS Consumer Name"), "JMS Consumer Name");
-                expectation(new ProducerComponent("Filesystem Producer Name"), "Filesystem Producer Name");
+                expectation(new ConsumerComponent("Consumer Name"), "Consumer Name");
+                expectation(new ProducerComponent("Producer Name"), "Producer Name");
             }
         });
 
@@ -123,24 +124,25 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
         jndiProperties.put("java.naming.provider.url", "vm://localhost?broker.persistent=false");
 
         // configure the JMS consumer for the test
-        FlowElement<?> consumerFlowElement = this.targetFlow.getFlowElement("JMS Consumer Name");
+        FlowElement<?> consumerFlowElement = this.targetFlow.getFlowElement("Consumer Name");
         ConfiguredResource<SpringMessageConsumerConfiguration> configuredProducer = (ConfiguredResource)consumerFlowElement.getFlowComponent();
         SpringMessageConsumerConfiguration consumerConfiguration = configuredProducer.getConfiguration();
         consumerConfiguration.setConnectionFactoryName("ConnectionFactory");
         consumerConfiguration.setConnectionFactoryJndiProperties(jndiProperties);
         consumerConfiguration.setDestinationJndiName("dynamicTopics/queue");
+        consumerConfiguration.setDurable(false);
         consumerConfiguration.setDestinationJndiProperties(jndiProperties);
 
         // test data producer
-        SpringMessageProducerConfiguration testProducerConfiguration = ((ConfiguredResource<SpringMessageProducerConfiguration>) myFlowSourceProducer).getConfiguration();
+        SpringMessageProducerConfiguration testProducerConfiguration = ((ConfiguredResource<SpringMessageProducerConfiguration>) testDataProducer).getConfiguration();
         testProducerConfiguration.setConnectionFactoryJndiProperties(jndiProperties);
         testProducerConfiguration.setConnectionFactoryName("ConnectionFactory");
         testProducerConfiguration.setDestinationJndiName("dynamicTopics/queue");
         testProducerConfiguration.setDestinationJndiProperties(jndiProperties);
-        ((ManagedResource)myFlowSourceProducer).startManagedResource();
+        ((ManagedResource)testDataProducer).startManagedResource();
 
         // target flow file system producer
-        FlowElement producerFlowElement = this.targetFlow.getFlowElement("Filesystem Producer Name");
+        FlowElement producerFlowElement = this.targetFlow.getFlowElement("Producer Name");
         FileProducerConfiguration configuration = ((ConfiguredResource<FileProducerConfiguration>)producerFlowElement.getFlowComponent()).getConfiguration();
         configuration.setFilename(testFilename);
 
@@ -149,7 +151,7 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
         Assert.assertEquals("flow should be running", "running", this.targetFlow.getState());
 
         // publish test message
-        myFlowSourceProducer.invoke("test message");
+        testDataProducer.invoke("test message");
 
         // wait for the flow to fully execute
         try

@@ -8,14 +8,13 @@
         <property name="messageProviderPostProcessor">
             <bean class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProviderPostProcessorImpl"/>
         </property>
-        <!--property name="configuration" ref="${flowName}SourceScheduledFileConsumerConfiguration" /-->
     </bean>
 
     <bean id="eventIdentifierService" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileLineEventIdentifierServiceImpl">
-        <constructor-arg value="${artifactId}-${flowName}"/>
+        <constructor-arg value="${artifactId}-${sourceFlowName}"/>
     </bean>
 
-    <bean id="${flowName}SourceScheduledConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
+    <bean id="${sourceFlowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
         <property name="cronExpression" value="0/5 * * * * ?" />
         <property name="encoding" value="UTF-8"/>
         <property name="includeHeader" value="true"/>

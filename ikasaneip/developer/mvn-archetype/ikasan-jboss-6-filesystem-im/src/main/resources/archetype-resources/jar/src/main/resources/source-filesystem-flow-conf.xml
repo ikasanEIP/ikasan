@@ -6,26 +6,26 @@
     <!--  ================================================================== -->
     <!--  Source Flow                                                        -->
     <!--  ================================================================== -->
-    <bean id="sourceFlow"        class="org.ikasan.builder.FlowFactory">
+    <bean id="sourceFlow"                   class="org.ikasan.builder.FlowFactory">
         <property name="moduleName"         ref="moduleName" />
-        <property name="name"               value="${flowName} Source" />
-        <property name="description"        value="${flowName} Source Description" />
+        <property name="name"               value="${sourceFlowName}" />
+        <property name="description"        value="${sourceFlowName} Description" />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
         <property name="consumer">
             <bean class="org.ikasan.builder.FlowElementFactory">
-                <property name="name"       value="Scheduled Consumer Name"/>
-                <property name="component"  ref="${flowName}SourceScheduledConsumer"/>
-                <property name="transition" ref="${flowName}SourceScheduledProducerFlowElement"/>
+                <property name="name"       value="Consumer Name"/>
+                <property name="component"  ref="${sourceFlowName}Consumer"/>
+                <property name="transition" ref="${sourceFlowName}ProducerFlowElement"/>
             </bean>
         </property>
         <property name="monitor" ref="monitor"/>
     </bean>
 
     <!-- Flow Element - Producer -->
-    <bean id="${flowName}SourceScheduledProducerFlowElement" class="org.ikasan.builder.FlowElementFactory">
-        <property name="name"               value="Scheduled Producer Name"/>
-        <property name="component"          ref="${flowName}SourceProducer" />
+    <bean id="${sourceFlowName}ProducerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Producer Name"/>
+        <property name="component"          ref="${sourceFlowName}Producer" />
     </bean>
 
     <!--  ================================================================== -->

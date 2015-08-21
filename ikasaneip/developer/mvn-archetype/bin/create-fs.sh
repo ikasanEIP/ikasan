@@ -12,5 +12,4 @@ mvn archetype:generate \
 -Dversion=${VERSION} \
 -DartifactId=${MODULENAME} \
 -DflowName=${FLOWNAME} \
--DjbossModuleDir=com/mizuho/esb/mhsa/${MODULENAME}/${DASHED_VERSION}/conf/main \
--DjbossModuleNamespace=com.mizuho.esb.mhsa.${MODULENAME}.${DASHED_VERSION}.conf
+-DjbossModuleDir=com/mizuho/esb/mhsa/${MODULENAME}/${DASHED_VERSION}/conf/main

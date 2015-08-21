@@ -42,7 +42,7 @@
         <property name="configuredResourceId" value="${artifactId}-${flowName}ProducerConfiguration"/>
     </bean>
 
-    <bean id="${flowName}SourceProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+    <bean id="${flowName}ProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
         <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
         <property name="destinationJndiName" value="/jms/topic/sample"/>
         <property name="destinationJndiProperties">

@@ -19,6 +19,9 @@
         <constructor-arg>
             <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
         </constructor-arg>
+        <property name="configuration">
+            <bean class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration"/>
+        </property>
     </bean>
 
 </beans>

@@ -4,15 +4,15 @@
        xsi:schemaLocation="
    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="${flowName}SourceProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+    <bean id="${sourceFlowName}Producer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
         <constructor-arg>
             <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
         </constructor-arg>
-        <property name="configuration" ref="${flowName}SourceProducerConfiguration"/>
-        <property name="configuredResourceId" value="${artifactId}-${flowName}SourceProducerConfiguration"/>
+        <property name="configuration" ref="${sourceFlowName}ProducerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${sourceFlowName}ProducerConfiguration"/>
     </bean>
 
-    <bean id="${flowName}SourceProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+    <bean id="${sourceFlowName}ProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
         <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
         <property name="destinationJndiName" value="/jms/topic/sample"/>
         <property name="destinationJndiProperties">
@@ -28,20 +28,20 @@
         <property name="deliveryPersistent" value="true"/>
     </bean>
 
-    <bean id="${flowName}TargetJmsConsumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+    <bean id="${targetFlowName}Consumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
         <property name="messageProvider" ref="jmsListener"/>
-        <property name="configuration" ref="${flowName}TargetJmsConsumerConfiguration"/>
-        <property name="configuredResourceId" value="${artifactId}-${flowName}TargetJmsConsumer"/>
+        <property name="configuration" ref="${targetFlowName}ConsumerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${targetFlowName}Consumer"/>
     </bean>
 
     <bean id="jmsListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
-        <property name="messageListener" ref="${flowName}TargetJmsConsumer" />
-        <property name="exceptionListener" ref="${flowName}TargetJmsConsumer" />
-        <property name="errorHandler" ref="${flowName}TargetJmsConsumer" />
+        <property name="messageListener" ref="${targetFlowName}Consumer" />
+        <property name="exceptionListener" ref="${targetFlowName}Consumer" />
+        <property name="errorHandler" ref="${targetFlowName}Consumer" />
         <property name="transactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="${flowName}TargetJmsConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+    <bean id="${targetFlowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
         <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
         <property name="destinationJndiName" value="/jms/topic/sample"/>
         <property name="destinationJndiProperties">
@@ -54,7 +54,7 @@
         <property name="sessionTransacted" value="true"/>
         <property name="pubSubDomain" value="true"/>
         <property name="durable" value="true"/>
-        <property name="durableSubscriptionName" value="${artifactId}-${flowName}TargetJmsConsumer"/>
+        <property name="durableSubscriptionName" value="${artifactId}-${targetFlowName}Consumer"/>
         <property name="autoContentConversion" value="true"/>
     </bean>
 
