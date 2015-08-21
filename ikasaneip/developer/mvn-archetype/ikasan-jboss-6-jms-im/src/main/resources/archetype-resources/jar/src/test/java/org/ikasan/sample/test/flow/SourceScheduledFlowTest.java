@@ -1,10 +1,10 @@
 package org.ikasan.sample.test.flow;
 
-import org.apache.commons.io.FileUtils;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.platform.IkasanEIPTest;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
@@ -15,7 +15,6 @@ import org.ikasan.testharness.flow.FlowTestHarnessImpl;
 import org.ikasan.testharness.flow.expectation.model.*;
 import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
 import org.jmock.Mockery;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +23,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,6 +44,7 @@ import java.util.Map;
         "/exception-conf.xml",
         "/ikasan-transaction-conf.xml",
         "/mock-conf.xml",
+        "/test-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
 })
@@ -103,13 +100,20 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
         testHarnessFlowEventListener.setIgnoreEventCapture(true);
 
-        FlowElement consumerFlowElement = this.sourceFlow.getFlowElement("Consumer Name");
-        FileConsumerConfiguration configuration = ((ConfiguredResource<FileConsumerConfiguration>)consumerFlowElement.getFlowComponent()).getConfiguration();
-
         // configure AMQ to provide in-memory destinations for the test
         Map<String,String> jndiProperties = new HashMap<String,String>();
         jndiProperties.put("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         jndiProperties.put("java.naming.provider.url", "vm://localhost?broker.persistent=false");
+
+        // configure the JMS consumer for the test
+        FlowElement<?> consumerFlowElement = this.sourceFlow.getFlowElement("Consumer Name");
+        ConfiguredResource<SpringMessageConsumerConfiguration> configuredConsumer = (ConfiguredResource)consumerFlowElement.getFlowComponent();
+        SpringMessageConsumerConfiguration consumerConfiguration = configuredConsumer.getConfiguration();
+        consumerConfiguration.setConnectionFactoryName("ConnectionFactory");
+        consumerConfiguration.setConnectionFactoryJndiProperties(jndiProperties);
+        consumerConfiguration.setDestinationJndiName("dynamicTopics/queue");
+        consumerConfiguration.setDestinationJndiProperties(jndiProperties);
+        consumerConfiguration.setDurable(false);
 
         // configure the JMS producer for the test
         FlowElement<?> producerFlowElement = this.sourceFlow.getFlowElement("Producer Name");
@@ -125,17 +129,19 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         Assert.assertEquals("flow should be running", "running", this.sourceFlow.getState());
 
         // test data producer
-        SpringMessageProducerConfiguration testProducerConfiguration = ((ConfiguredResource<SpringMessageProducerConfiguration>) myFlowSourceProducer).getConfiguration();
+        SpringMessageProducerConfiguration testProducerConfiguration = ((ConfiguredResource<SpringMessageProducerConfiguration>) testDataProducer).getConfiguration();
         testProducerConfiguration.setConnectionFactoryJndiProperties(jndiProperties);
         testProducerConfiguration.setConnectionFactoryName("ConnectionFactory");
         testProducerConfiguration.setDestinationJndiName("dynamicTopics/queue");
         testProducerConfiguration.setDestinationJndiProperties(jndiProperties);
         testDataProducer.startManagedResource();
 
+        ((Producer)testDataProducer).invoke("test msg");
+
         // wait for the flow to fully execute
         try
         {
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         }
         catch(InterruptedException e)
         {
