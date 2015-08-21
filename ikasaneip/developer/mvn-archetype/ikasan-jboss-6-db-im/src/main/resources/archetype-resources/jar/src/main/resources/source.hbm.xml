@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="Sample"
+		table="Sample">
+
+		<id name="id" type="long" column="Id">
+			<generator class="native" />
+		</id>
+		<property name="currency" type="java.lang.String" column="CURRENCY"
+			not-null="true" />
+		<property name="updateDate" type="java.lang.String" column="UPDATE_DATE"
+			not-null="true" />
+	</class>
+
+</hibernate-mapping>
