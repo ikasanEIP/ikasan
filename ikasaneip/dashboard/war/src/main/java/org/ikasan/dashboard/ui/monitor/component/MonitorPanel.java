@@ -294,7 +294,7 @@ public class MonitorPanel extends Panel implements View
 				
 				Flow flow = (Flow)itemId;
 				
-				String state = stateMap.get(flow.getModule().getServer().getName() + "-" + flow.getModule().getName() + "-" + flow.getName());
+				String state = stateMap.get(flow.getModule().getName() + "-" + flow.getName());
 				
 				if (propertyId == null) 
 				{
@@ -380,7 +380,7 @@ public class MonitorPanel extends Panel implements View
 		{
 			for(Flow flow: module.getFlows())
 			{
-				String state = stateMap.get(server.getName() + "-" + flow.getModule().getName() + "-" + flow.getName());
+				String state = stateMap.get(flow.getModule().getName() + "-" + flow.getName());
 				
 				if(state == null)
 				{

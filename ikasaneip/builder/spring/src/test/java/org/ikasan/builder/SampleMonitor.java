@@ -63,32 +63,26 @@ public class SampleMonitor implements Monitor
     }
 
     @Override
-    public void setName(String monitorName) {
+    public void setEnvironment(String environmentName) 
+    {
 
     }
 
     @Override
-    public String getName() {
+    public String getEnvironment() 
+    {
         return null;
     }
 
     @Override
-    public void setEnvironment(String environmentName) {
-
-    }
-
-    @Override
-    public String getEnvironment() {
+    public List<Notifier> getNotifiers() 
+    {
         return null;
     }
 
     @Override
-    public List<Notifier> getNotifiers() {
-        return null;
-    }
-
-    @Override
-    public void setNotifiers(List list) {
+    public void setNotifiers(List list) 
+    {
 
     }
 
@@ -96,4 +90,47 @@ public class SampleMonitor implements Monitor
     public void destroy()
     {
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.monitor.Monitor#setModuleName(java.lang.String)
+	 */
+	@Override
+	public void setModuleName(String moduleName)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.monitor.Monitor#getModuleName()
+	 */
+	@Override
+	public String getModuleName()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.monitor.Monitor#setFlowName(java.lang.String)
+	 */
+	@Override
+	public void setFlowName(String flowName)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.monitor.Monitor#getFlowName()
+	 */
+	@Override
+	public String getFlowName()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

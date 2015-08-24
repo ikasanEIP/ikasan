@@ -16,6 +16,8 @@
         <value>exclusion-flow-conf.xml</value>
         <value>module-conf.xml</value>
         <value>exception-conf.xml</value>
+        <value>monitor-conf.xml</value>
+        <value>monitor-service-conf.xml</value>
         <!--value>hsqldb-datasource-conf.xml</value-->
     </util:list>
 

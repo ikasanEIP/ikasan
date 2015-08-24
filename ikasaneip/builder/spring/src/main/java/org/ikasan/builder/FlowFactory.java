@@ -327,9 +327,14 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
                 monitor.setEnvironment("Undefined Environment");
             }
 
-            if(monitor.getName() == null)
+            if(monitor.getModuleName() == null)
             {
-                monitor.setName("Module[" + moduleName + "] Flow[" + name + "]");
+                monitor.setModuleName(moduleName);
+            }
+            
+            if(monitor.getFlowName() == null)
+            {
+                monitor.setFlowName(name);
             }
 
             ((MonitorSubject)flow).setMonitor(monitor);
