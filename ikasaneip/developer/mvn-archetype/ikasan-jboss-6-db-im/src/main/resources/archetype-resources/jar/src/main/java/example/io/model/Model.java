@@ -38,21 +38,75 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.database.messageprovider;
-
-import java.util.Collection;
+package example.io.model;
 
 /**
- * Contract for a simple CRUD DAO.
+ * Simple Java bean model.
  *
  * @author Ikasan Development Team
  */
-public interface ReaderDao<MODEL>
+public class Model
 {
-    /**
-     * Read a model based on the given identifier
-     * @return
-     */
-    public Collection<MODEL> getAll();
+    String id;
+    String value;
+    long createDateTime;
+    long updateDateTime;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public long getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(long createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public long getUpdateDateTime() {
+        return updateDateTime;
+    }
+
+    public void setUpdateDateTime(long updateDateTime) {
+        this.updateDateTime = updateDateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Model model = (Model) o;
+
+        return !(id != null ? !id.equals(model.id) : model.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Model{" +
+                "id='" + id + '\'' +
+                ", value='" + value + '\'' +
+                ", createDateTime=" + createDateTime +
+                ", updateDateTime=" + updateDateTime +
+                '}';
+    }
 }

@@ -38,82 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.database.messageprovider;
+package example.io.dao;
 
-import org.apache.log4j.Logger;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.quartz.JobExecutionContext;
-
-import java.util.Collection;
+import java.util.List;
 
 /**
- * Simple Java bean model.
+ * Contract for a simple CRUD DAO.
  *
  * @author Ikasan Development Team
  */
-public class Model
+public interface WriterDao<MODEL>
 {
-    String identifier;
-    String value;
-    long createDateTime;
-    long updateDateTime;
+    /**
+     * Save collection of models
+     * @return
+     */
+    public void deleteAll(List<MODEL> models);
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public long getCreateDateTime() {
-        return createDateTime;
-    }
-
-    public void setCreateDateTime(long createDateTime) {
-        this.createDateTime = createDateTime;
-    }
-
-    public long getUpdateDateTime() {
-        return updateDateTime;
-    }
-
-    public void setUpdateDateTime(long updateDateTime) {
-        this.updateDateTime = updateDateTime;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Model model = (Model) o;
-
-        if (identifier != null ? !identifier.equals(model.identifier) : model.identifier != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return identifier != null ? identifier.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "Model{" +
-                "identifier='" + identifier + '\'' +
-                ", value='" + value + '\'' +
-                ", createDateTime=" + createDateTime +
-                ", updateDateTime=" + updateDateTime +
-                '}';
-    }
 }

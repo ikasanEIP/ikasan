@@ -4,24 +4,31 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="messageProvider" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider">
-        <property name="messageProviderPostProcessor">
-            <bean class="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProviderPostProcessorImpl"/>
-        </property>
+    <bean id="messageProvider" class="example.db.messageprovider.DBMessageProvider">
+        <constructor-arg ref="sourceService"/>
     </bean>
 
-    <bean id="eventIdentifierService" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileLineEventIdentifierServiceImpl">
-        <constructor-arg value="${artifactId}-${sourceFlowName}"/>
-    </bean>
-
-    <bean id="${sourceFlowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration">
+    <bean id="${sourceFlowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
         <property name="cronExpression" value="0/5 * * * * ?" />
-        <property name="encoding" value="UTF-8"/>
-        <property name="includeHeader" value="true"/>
-        <property name="includeTrailer" value="true"/>
-        <property name="sortByModifiedDateTime" value="true" />
-        <property name="sortAscending" value="true" />
-        <property name="directoryDepth" value="1"/>
+    </bean>
+
+    <bean id="sourceService" class="example.io.service.SourceServiceImpl">
+        <constructor-arg ref="dao"/>
+    </bean>
+
+    <bean id="dao" class="example.io.dao.HibernateDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>example/io/model/Model.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
 </beans>
