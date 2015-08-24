@@ -38,71 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package example.io.dao;
+
+import example.io.model.Model;
+import org.hibernate.criterion.DetachedCriteria;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+import java.util.List;
 
 /**
- * Configuration for an XML to Object JAXB converter.
- * 
- * @author Ikasan Development Team
+ * Hibernate implementation of the ReaderDao contract.
+ *
+ * Ikasan Development Team.
  */
-public class XmlStringToObjectConfiguration
+public class HibernateDaoImpl extends HibernateDaoSupport implements ReaderDao<Model>,  WriterDao<Model>
 {
-    
-    private Class<?>[] classesToBeBound;
-    
-    private String contextPath;
-    
-    private String[] contextPaths;
-    
-    private String schema;
+    private static final String DELETE_QUERY = "delete Model w where w.id <= ?";
 
-    private boolean autoConvertElementToValue;
-
-    public String[] getContextPaths()
+    @Override
+    public List<Model> getAll()
     {
-        return contextPaths;
+        DetachedCriteria criteria = DetachedCriteria.forClass(Model.class);
+        return (List<Model>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
-    public void setContextPaths(String[] contextPaths)
+    @Override
+    public void deleteAll(List<Model> models)
     {
-        this.contextPaths = contextPaths;
+        this.getHibernateTemplate().deleteAll(models);
     }
 
-    public String getContextPath()
+    public void saveAll(List<Model> models)
     {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath)
-    {
-        this.contextPath = contextPath;
-    }
-
-    public Class<?>[] getClassesToBeBound()
-    {
-        return classesToBeBound;
-    }
-
-    public void setClassesToBeBound(Class<?>[] classesToBeBound)
-    {
-        this.classesToBeBound = classesToBeBound;
-    }
-
-    public String getSchema()
-    {
-        return schema;
-    }
-
-    public void setSchema(String schema)
-    {
-        this.schema = schema;
-    }
-
-    public boolean isAutoConvertElementToValue() {
-        return autoConvertElementToValue;
-    }
-
-    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
-        this.autoConvertElementToValue = autoConvertElementToValue;
+        this.getHibernateTemplate().bulkUpdate(DELETE_QUERY, models);
     }
 }

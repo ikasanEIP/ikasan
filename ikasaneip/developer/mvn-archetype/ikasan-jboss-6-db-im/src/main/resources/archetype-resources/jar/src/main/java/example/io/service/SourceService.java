@@ -38,71 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package example.io.service;
+
+import java.util.List;
 
 /**
- * Configuration for an XML to Object JAXB converter.
- * 
+ * Contract for a simple CRUD DAO.
+ *
  * @author Ikasan Development Team
  */
-public class XmlStringToObjectConfiguration
+public interface SourceService<MODEL>
 {
-    
-    private Class<?>[] classesToBeBound;
-    
-    private String contextPath;
-    
-    private String[] contextPaths;
-    
-    private String schema;
+    /**
+     * Find all entities
+     * @return
+     */
+    public List<MODEL> findAllEntities();
 
-    private boolean autoConvertElementToValue;
+    /**
+     * Remove all given entities
+     * @param models
+     */
+    public void remove(List<MODEL> models);
 
-    public String[] getContextPaths()
-    {
-        return contextPaths;
-    }
-
-    public void setContextPaths(String[] contextPaths)
-    {
-        this.contextPaths = contextPaths;
-    }
-
-    public String getContextPath()
-    {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath)
-    {
-        this.contextPath = contextPath;
-    }
-
-    public Class<?>[] getClassesToBeBound()
-    {
-        return classesToBeBound;
-    }
-
-    public void setClassesToBeBound(Class<?>[] classesToBeBound)
-    {
-        this.classesToBeBound = classesToBeBound;
-    }
-
-    public String getSchema()
-    {
-        return schema;
-    }
-
-    public void setSchema(String schema)
-    {
-        this.schema = schema;
-    }
-
-    public boolean isAutoConvertElementToValue() {
-        return autoConvertElementToValue;
-    }
-
-    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
-        this.autoConvertElementToValue = autoConvertElementToValue;
-    }
 }

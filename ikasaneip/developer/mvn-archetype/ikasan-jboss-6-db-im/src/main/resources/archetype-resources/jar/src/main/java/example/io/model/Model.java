@@ -38,71 +38,75 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package example.io.model;
 
 /**
- * Configuration for an XML to Object JAXB converter.
- * 
+ * Simple Java bean model.
+ *
  * @author Ikasan Development Team
  */
-public class XmlStringToObjectConfiguration
+public class Model
 {
-    
-    private Class<?>[] classesToBeBound;
-    
-    private String contextPath;
-    
-    private String[] contextPaths;
-    
-    private String schema;
+    String id;
+    String value;
+    long createDateTime;
+    long updateDateTime;
 
-    private boolean autoConvertElementToValue;
-
-    public String[] getContextPaths()
-    {
-        return contextPaths;
+    public String getId() {
+        return id;
     }
 
-    public void setContextPaths(String[] contextPaths)
-    {
-        this.contextPaths = contextPaths;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getContextPath()
-    {
-        return contextPath;
+    public String getValue() {
+        return value;
     }
 
-    public void setContextPath(String contextPath)
-    {
-        this.contextPath = contextPath;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public Class<?>[] getClassesToBeBound()
-    {
-        return classesToBeBound;
+    public long getCreateDateTime() {
+        return createDateTime;
     }
 
-    public void setClassesToBeBound(Class<?>[] classesToBeBound)
-    {
-        this.classesToBeBound = classesToBeBound;
+    public void setCreateDateTime(long createDateTime) {
+        this.createDateTime = createDateTime;
     }
 
-    public String getSchema()
-    {
-        return schema;
+    public long getUpdateDateTime() {
+        return updateDateTime;
     }
 
-    public void setSchema(String schema)
-    {
-        this.schema = schema;
+    public void setUpdateDateTime(long updateDateTime) {
+        this.updateDateTime = updateDateTime;
     }
 
-    public boolean isAutoConvertElementToValue() {
-        return autoConvertElementToValue;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Model model = (Model) o;
+
+        return !(id != null ? !id.equals(model.id) : model.id != null);
+
     }
 
-    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
-        this.autoConvertElementToValue = autoConvertElementToValue;
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Model{" +
+                "id='" + id + '\'' +
+                ", value='" + value + '\'' +
+                ", createDateTime=" + createDateTime +
+                ", updateDateTime=" + updateDateTime +
+                '}';
     }
 }
