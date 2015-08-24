@@ -17,28 +17,31 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
+import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.module.StartupType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Module application implementing the REST contract
  */
 @Path("/moduleControl")
-public class ModuleControlApplication
+public class ModuleControlApplication extends IkasanRestApplication
 {
 	private static Logger logger = Logger.getLogger(ModuleControlApplication.class);
 	
+	@Autowired
     private ModuleService moduleService;
     
-    public ModuleControlApplication(ModuleService moduleService)
+    public ModuleControlApplication()
     {
-    	this.moduleService = moduleService;
-    	if(this.moduleService == null)
-    	{
-    		throw new IllegalArgumentException("moduleService cannot be null!");
-    	}
+//    	this.moduleService = moduleService;
+//    	if(this.moduleService == null)
+//    	{
+//    		throw new IllegalArgumentException("moduleService cannot be null!");
+//    	}
     }
 
     @PUT
@@ -155,7 +158,9 @@ public class ModuleControlApplication
 	@Produces(MediaType.APPLICATION_JSON)	
 	public Map<String, String> getFlowStates(@Context SecurityContext context, @PathParam("moduleName") String moduleName)
 	{
-		if(!context.isUserInRole("WebServiceAdmin"))
+		logger.info("Attempting to get states for module: " + moduleName);
+		
+    	if(!context.isUserInRole("WebServiceAdmin"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
@@ -164,6 +169,9 @@ public class ModuleControlApplication
 		HashMap<String, String> results = new HashMap<String, String>();
 
 		Module<Flow> module = moduleService.getModule(moduleName);
+		
+		logger.info("moduleService: " + moduleService);
+		
 		List<Flow> flows = module.getFlows();
 		
 		for(Flow flow: flows)
@@ -171,6 +179,8 @@ public class ModuleControlApplication
 			results.put(module.getName() + "-" + flow.getName()
 					, flow.getState());
 		}
+		
+		logger.info("results: " + results);
 		
 		return results;
 	}

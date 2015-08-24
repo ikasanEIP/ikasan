@@ -54,6 +54,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -110,20 +111,25 @@ public class TopologyCacheApplication
     {
     	try
 		{
-			String url = "http://svc-stewmi:8380/ikasan-dashboard/rest/topologyCache/updateCache/Sample Scheduled Module/Demo Exclusion Scheduled Flow";
+			String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/moduleControl/flowStates/gloss-referencemarketDataTgt";
 		
 	    	
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
+	    	
 	    	ClientConfig clientConfig = new ClientConfig();
-//	    	clientConfig.register(feature) ;
+	    	clientConfig.register(feature) ;
+	    	
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
 	    	
 	    	logger.info("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
-	    	Response response = webTarget.request().put(Entity.entity("stopped",MediaType.APPLICATION_JSON));
+	    	Response response = webTarget.request().get();
 
 	    	System.out.println(response);
+	    	
+	    	System.out.println(response.getStatusInfo().getReasonPhrase());
 		}
 		catch(Exception e)
 		{

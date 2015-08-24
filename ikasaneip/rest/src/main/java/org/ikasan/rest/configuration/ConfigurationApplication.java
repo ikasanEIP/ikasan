@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
+import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.rest.submit.ResubmissionApplication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -19,36 +20,38 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Configuration application implementing the REST contract
  */
 @Path("/configuration")
-public class ConfigurationApplication
+public class ConfigurationApplication extends IkasanRestApplication
 {
 
 private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	
+	@Autowired
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+	@Autowired
 	private ModuleContainer moduleContainer;
 
 	/**
 	 * @param hospitalService
 	 */
-	public ConfigurationApplication(ConfigurationManagement configurationManagement,
-			ModuleContainer moduleContainer)
+	public ConfigurationApplication()
 	{
 		super();
-		this.configurationManagement = configurationManagement;
-		if(this.configurationManagement == null)
-		{
-			throw new IllegalArgumentException("configurationManagement cannot be null!");
-		}
-		this.moduleContainer = moduleContainer;
-		if(this.moduleContainer == null)
-		{
-			throw new IllegalArgumentException("moduleContainer cannot be null!");
-		}
+//		this.configurationManagement = configurationManagement;
+//		if(this.configurationManagement == null)
+//		{
+//			throw new IllegalArgumentException("configurationManagement cannot be null!");
+//		}
+//		this.moduleContainer = moduleContainer;
+//		if(this.moduleContainer == null)
+//		{
+//			throw new IllegalArgumentException("moduleContainer cannot be null!");
+//		}
 	}
 
 	/**
