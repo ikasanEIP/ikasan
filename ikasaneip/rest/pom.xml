@@ -52,6 +52,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+	<groupId>org.ikasan</groupId>
     <artifactId>ikasan-rest</artifactId>
     <packaging>jar</packaging>
 
@@ -86,37 +87,42 @@
 			<artifactId>javax.ws.rs-api</artifactId>
 		</dependency>
 		
-		<dependency>
+		<!--dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-		</dependency>
+		</dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-        </dependency>
+        </dependency-->
                 
-        <dependency>
+        <!-- dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.json</artifactId>
-		</dependency>
+		</dependency -->
 		
-		<dependency>
+		<!-- dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-processing</artifactId>
-		</dependency>
+		</dependency -->
 		
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
         </dependency>
         
-        <dependency>
+        <!--dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-        </dependency>
+        </dependency-->
         
-        <dependency>
+        <!--dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+		</dependency-->
+        
+        <!--dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-spring3</artifactId>
             <exclusions>
@@ -133,7 +139,7 @@
                     <artifactId>spring-beans</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency -->
         
         <dependency>
 			<groupId>commons-codec</groupId>
@@ -153,11 +159,6 @@
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>se.jiderhamn</groupId>
-            <artifactId>classloader-leak-prevention</artifactId>
         </dependency>
 
     </dependencies>

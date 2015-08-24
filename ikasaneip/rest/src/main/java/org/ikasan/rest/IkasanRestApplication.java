@@ -14,5 +14,6 @@ public class IkasanRestApplication extends ResourceConfig
     public IkasanRestApplication()
     {
         register(RolesAllowedDynamicFeature.class);
+//        register(MoxyJsonFeature.class);
     }
 }

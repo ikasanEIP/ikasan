@@ -182,6 +182,8 @@ public class MonitorPanel extends Panel implements View
 					icon = MonitorIcons.EXCLAMATION_CIRCLE_O;
 					icon.setSizePixels(64);
 			    	icon.setColor("red");
+			    	
+			    	return;
 				}
 			}
 		}
