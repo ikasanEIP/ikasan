@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
-  <deployment>
-  	<exclude-subsystems>
-        <subsystem name="jaxrs" />
-    </exclude-subsystems>
+    <deployment>
+
+        <exclude-subsystems>
+            <subsystem name="jaxrs" />
+			<subsystem name="resteasy" />
+        </exclude-subsystems>
+
+        <!-- Exclusions allow you to prevent the server from automatically adding some dependencies -->
+        <exclusions>
+            <module name="org.apache.commons.logging" />
+            <module name="org.apache.log4j" />
+            <module name="org.jboss.logging" />
+            <module name="org.jboss.logging.jul-to-slf4j-stub" />
+            <module name="org.jboss.logmanager" />
+            <module name="org.jboss.logmanager.log4j" />
+            <module name="org.slf4j" />
+            <module name="org.slf4j.impl" />
+			<module name="javax.ws.rs.api" />  
+			<module name="javaee.api" />
+			<module name="javax.ws.rs.api"/>
+			<module name="org.jboss.resteasy.resteasy-jaxrs" />
+        </exclusions>
+		
 	<dependencies>  
       <!-- Expose JCA Adapter to get to oracle.jdbc.OracleConnection from java.sql.Connection -->  
-      <module name="org.jboss.ironjacamar.jdbcadapters" export="true" /> 
-	  
-	  <!-- Manually add all JEE6-apis except the javax.ws.rs.api api -->
+		<module name="org.jboss.ironjacamar.jdbcadapters" export="true" /> 
+      
+      <!-- Manually add all JEE6-apis except the javax.ws.rs.api api -->
         <module name="javax.activation.api" export="true" />
         <module name="javax.annotation.api" export="true" />
         <module name="javax.ejb.api" export="true" />
@@ -29,7 +48,7 @@
         <module name="javax.security.jacc.api" export="true" />
         <module name="javax.servlet.api" export="true" />
         <module name="javax.servlet.jsp.api" export="true" />
-		<module name="javax.servlet.jstl.api" export="true"/>
+        <module name="javax.servlet.jstl.api" export="true"/>
         <module name="javax.transaction.api" export="true" />
         <module name="javax.validation.api" export="true" />
         <!-- <module name="javax.ws.rs.api" export="true" services="export"/> -->
@@ -40,5 +59,19 @@
         <!-- This one always goes last. -->
         <module name="javax.api" export="true" />
     </dependencies>
-	</deployment>
+
+    </deployment>
+    <sub-deployment name="ikasan-webconsole-skinny-war-1.0.3-SNAPSHOT.war">
+        <exclusions>
+            <module name="org.apache.commons.logging" />
+            <module name="org.apache.log4j" />
+            <module name="org.jboss.logging" />
+            <module name="org.jboss.logging.jul-to-slf4j-stub" />
+            <module name="org.jboss.logmanager" />
+            <module name="org.jboss.logmanager.log4j" />
+            <module name="org.slf4j" />
+            <module name="org.slf4j.impl" />
+			<module name="javax.ws.rs.api" />
+        </exclusions>
+    </sub-deployment>
 </jboss-deployment-structure>

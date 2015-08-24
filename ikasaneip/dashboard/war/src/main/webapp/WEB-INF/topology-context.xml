@@ -47,6 +47,9 @@
         <constructor-arg ref="topologyStateCache"/>
     </bean>
     
+    <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">
+    </bean>
+    
     <bean id="topologyStateCache" class="org.ikasan.dashboard.ui.framework.cache.TopologyStateCache" scope="singleton">
         <constructor-arg ref="topologyService" />
     </bean>

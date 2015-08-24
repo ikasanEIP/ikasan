@@ -127,7 +127,7 @@ public class TopologyStateCache
 				
 				for(String key: results.keySet())
 				{
-					stateMap.put(server.getName() + "-" + key, results.get(key));
+					stateMap.put(key, results.get(key));
 				}
 			}
 		}
@@ -135,6 +135,13 @@ public class TopologyStateCache
 		Broadcaster.broadcast(stateMap);
 		
 		logger.info("Finished synchronising topology state cache.");
+	}
+	
+	public void update(String key, String value)
+	{
+		stateMap.put(key, value);
+		
+		Broadcaster.broadcast(stateMap);
 	}
 	
 	@SuppressWarnings("unchecked")

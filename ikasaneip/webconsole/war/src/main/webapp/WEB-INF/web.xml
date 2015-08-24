@@ -1,53 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-
-
- $Id$
- $URL$
- 
- ====================================================================
- Ikasan Enterprise Integration Platform
- 
- Distributed under the Modified BSD License.
- Copyright notice: The copyright for this software and a full listing 
- of individual contributors are as shown in the packaged copyright.txt 
- file. 
- 
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without 
- modification, are permitted provided that the following conditions are met:
-
-  - Redistributions of source code must retain the above copyright notice, 
-    this list of conditions and the following disclaimer.
-
-  - Redistributions in binary form must reproduce the above copyright notice, 
-    this list of conditions and the following disclaimer in the documentation 
-    and/or other materials provided with the distribution.
-
-  - Neither the name of the ORGANIZATION nor the names of its contributors may
-    be used to endorse or promote products derived from this software without 
-    specific prior written permission.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ====================================================================
-
- Author:  Ikasan Development Team
- 
--->
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-    version="2.4">
+<!-- $Id$ $URL$ ==================================================================== 
+	Ikasan Enterprise Integration Platform Distributed under the Modified BSD 
+	License. Copyright notice: The copyright for this software and a full listing 
+	of individual contributors are as shown in the packaged copyright.txt file. 
+	All rights reserved. Redistribution and use in source and binary forms, with 
+	or without modification, are permitted provided that the following conditions 
+	are met: - Redistributions of source code must retain the above copyright 
+	notice, this list of conditions and the following disclaimer. - Redistributions 
+	in binary form must reproduce the above copyright notice, this list of conditions 
+	and the following disclaimer in the documentation and/or other materials 
+	provided with the distribution. - Neither the name of the ORGANIZATION nor 
+	the names of its contributors may be used to endorse or promote products 
+	derived from this software without specific prior written permission. THIS 
+	SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+	IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY 
+	DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND 
+	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
+	THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ==================================================================== 
+	Author: Ikasan Development Team -->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -84,39 +62,39 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-    <listener>
-        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
-    </listener>
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
 
-    <listener>
-        <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
-    </listener>
-    
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    
-    <filter>
-        <filter-name>hibernateFilter</filter-name>
-        <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
-        <init-param>
-            <param-name>sessionFactoryBeanName</param-name>
-            <param-value>securitySessionFactory</param-value>
-        </init-param>
-        <init-param>
-          <param-name>singleSession</param-name>
-          <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>flushMode</param-name>
-            <param-value>MANUAL</param-value>
-        </init-param>
-    </filter>
+	<listener>
+		<listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
+	</listener>
 
-    <filter-mapping>
-        <filter-name>hibernateFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>hibernateFilter</filter-name>
+		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+		<init-param>
+			<param-name>sessionFactoryBeanName</param-name>
+			<param-value>securitySessionFactory</param-value>
+		</init-param>
+		<init-param>
+			<param-name>singleSession</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>flushMode</param-name>
+			<param-value>MANUAL</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>springapp</servlet-name>
@@ -129,18 +107,16 @@
 		<url-pattern>*.htm</url-pattern>
 	</servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>springapp</servlet-name>
-        <url-pattern>/dwr/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
+	<servlet-mapping>
+		<servlet-name>springapp</servlet-name>
+		<url-pattern>/dwr/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>jersey-servlet</servlet-name>
-		<servlet-class>
-			com.sun.jersey.spi.spring.container.servlet.SpringServlet
-		</servlet-class>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-name>jersey.config.server.provider.packages</param-name>
 			<param-value>
 				org.ikasan.rest.submit;
 				org.ikasan.rest.security;
@@ -148,24 +124,36 @@
 				org.ikasan.rest.configuration;
 				org.ikasan.rest.module;
 				org.ikasan.rest.wiretap;
+				org.ikasan.rest.security;
 			</param-value>
 		</init-param>
-		 <init-param>
-	        <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-	        <param-value>org.ikasan.rest.security.SecurityFilter</param-value>
-	    </init-param>
-        <init-param>
+		<!-- init-param> <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name> 
+			<param-value>org.ikasan.rest.security.SecurityFilter</param-value> </init-param -->
+		<!-- init-param>
 			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
 			<param-value>true</param-value>
-		</init-param>
+		</init-param -->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
- 
+
 	<servlet-mapping>
 		<servlet-name>jersey-servlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
-    
+
+	<context-param>
+		<param-name>resteasy.scan</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.scan.providers</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.scan.resources</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
@@ -175,7 +163,7 @@
 			<taglib-uri>/spring</taglib-uri>
 			<taglib-location>/WEB-INF/spring.tld</taglib-location>
 		</taglib>
-	
+
 		<taglib>
 			<taglib-uri>/spring-form</taglib-uri>
 			<taglib-location>/WEB-INF/spring-form.tld</taglib-location>

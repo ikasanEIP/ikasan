@@ -14,6 +14,7 @@
         <property name="exclusionFlowHeadElement"  ref="exclusionProducerFlowElement" />
         <property name="consumer"           ref="demoExclusionScheduledConsumerFlowElement" />
         <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
+        <property name="monitor" ref="monitor"/>
     </bean>
 
     <bean id="demoExclusionScheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">

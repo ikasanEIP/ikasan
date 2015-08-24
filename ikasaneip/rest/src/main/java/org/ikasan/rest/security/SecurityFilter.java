@@ -40,13 +40,19 @@
  */
 package org.ikasan.rest.security;
 
+import java.io.IOException;
 import java.security.Principal;
 
+import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -55,9 +61,6 @@ import org.ikasan.security.service.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 /**
  * 
@@ -68,26 +71,29 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
  * A Jersey ContainerRequestFilter that provides a SecurityContext for all
  * requests processed by this application.
  */
-@PreMatching
+@Provider
+@Priority(Priorities.AUTHORIZATION)
 public class SecurityFilter implements ContainerRequestFilter {
  
+	private static Logger logger = Logger.getLogger(SecurityFilter.class);
+	
     @Context
     UriInfo uriInfo;
  
     @Context
     HttpServletRequest request;
  
-    @InjectParam
+    @Inject
     private AuthenticationService authenticationService;
  
     /**
      * Perform the required authentication checks, and return the User instance
      * for the authenticated user.
      */
-    private Authentication authenticate(ContainerRequest request) 
+    private Authentication authenticate(ContainerRequestContext request) 
     {
     	
-    	String auth = request.getHeaderValue("Authorization");
+    	String auth = request.getHeaderString("Authorization");
     	
         if (auth == null || !auth.startsWith("Basic ")) 
         {
@@ -98,6 +104,8 @@ public class SecurityFilter implements ContainerRequestFilter {
         String[] vals = auth.split(":");
         String username = vals[0];
         String password = vals[1];
+        
+        logger.info("Authentication user: " + username);
 
         Authentication authentication = null;
         
@@ -161,19 +169,22 @@ public class SecurityFilter implements ContainerRequestFilter {
         }
  
     }
-	
-	@Override
-	public ContainerRequest filter(ContainerRequest request) 
-	{
 
-		Authentication authentication = authenticate(request);
-	
+	/* (non-Javadoc)
+	 * @see javax.ws.rs.container.ContainerRequestFilter#filter(javax.ws.rs.container.ContainerRequestContext)
+	 */
+	@Override
+	public void filter(ContainerRequestContext context) throws IOException
+	{
+		logger.info("Attempting web service authentication!");
+		Authentication authentication = authenticate(context);
+		
+		logger.info("Authentication object: " + authentication);
+		
 		if(authentication != null)
 		{
-			request.setSecurityContext(new Authorizer(authentication));
+			context.setSecurityContext(new Authorizer(authentication));
 		}
-		
-        return request;
-    }
+	}
  
 }

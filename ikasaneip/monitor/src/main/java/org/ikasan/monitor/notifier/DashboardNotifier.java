@@ -40,38 +40,85 @@
  */
 package org.ikasan.monitor.notifier;
 
-import org.ikasan.spec.configuration.Configured;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientConfig;
 import org.ikasan.spec.monitor.Notifier;
 
+
 /**
- * Ikasan default monitor factory implementation.
+ * Ikasan default email notifier implementation.
  *
  * @author Ikasan Development Team
  */
-public class NotifierFactoryImpl implements NotifierFactory
+public class DashboardNotifier implements Notifier<String>
 {
+    /** logger instance */
+    private static Logger logger = Logger.getLogger(DashboardNotifier.class);
 
-    /**
-     * Get an instance of a monitor
-     * @return
-     */
-    public Notifier getEmailNotifier()
+    /** only interested in state changes */
+    boolean notifyStateChangesOnly = true;
+
+    /** last update sent time */
+    long lastUpdateDateTime;
+
+    /** buffer updates the occur ousaide the notification window*/
+    StringBuilder pendingContent = new StringBuilder();
+
+    @Override
+    public void invoke(String environment, String moduleName, String flowName, String state)
     {
-        Notifier notifier = new EmailNotifier();
-        if(notifier instanceof Configured)
-        {
-            ((Configured)notifier).setConfiguration(new EmailNotifierConfiguration());
-        }
-        return notifier;
+    	notify(environment, moduleName, flowName, state);
     }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.monitor.notifier.NotifierFactory#getDashboardNotifier()
-	 */
-	@Override
-	public Notifier getDashboardNotifier()
-	{
-		return new DashboardNotifier();
-	}
+    @Override
+    public void setNotifyStateChangesOnly(boolean notifyStateChangesOnly)
+    {
+        this.notifyStateChangesOnly = notifyStateChangesOnly;
+    }
+
+    @Override
+    public boolean isNotifyStateChangesOnly()
+    {
+        return this.notifyStateChangesOnly;
+    }
+
+    /**
+     * Internal notify method
+     * @param environment
+     * @param name
+     * @param state
+     */
+    protected void notify(String environment, String moduleName, String flowName, String state)
+    {
+    	try
+		{
+			String url = "http://svc-stewmi:8380/ikasan-dashboard/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
+		
+	    	
+	    	ClientConfig clientConfig = new ClientConfig();
+	    	
+	    	Client client = ClientBuilder.newClient(clientConfig);
+	    	
+	    	logger.info("Calling URL: " + url);
+	    	WebTarget webTarget = client.target(url);
+		    
+	    	Response response = webTarget.request().put(Entity.entity(state, MediaType.APPLICATION_JSON));
+
+	    	System.out.println(response);
+		}
+		catch(Exception e)
+		{
+			logger.info("caught exception: " + e.getMessage());
+			e.printStackTrace();
+		}
+    }
 
 }
