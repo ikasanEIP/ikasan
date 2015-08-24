@@ -38,71 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package example.db.messageprovider;
+
+import example.io.model.Model;
+import example.io.service.SourceService;
+import org.apache.log4j.Logger;
+import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
+import org.quartz.JobExecutionContext;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Configuration for an XML to Object JAXB converter.
- * 
+ * Implementation of a MessageProvider based on database CRUD operations.
+ *
  * @author Ikasan Development Team
  */
-public class XmlStringToObjectConfiguration
+public class DBMessageProvider implements MessageProvider<Collection<Model>>
 {
-    
-    private Class<?>[] classesToBeBound;
-    
-    private String contextPath;
-    
-    private String[] contextPaths;
-    
-    private String schema;
+    /** logger instance */
+    private static Logger logger = Logger.getLogger(DBMessageProvider.class);
 
-    private boolean autoConvertElementToValue;
+    /** service handle */
+    private SourceService ioService;
 
-    public String[] getContextPaths()
+    /**
+     * Constructor
+     * @param ioService
+     */
+    public DBMessageProvider(SourceService ioService)
     {
-        return contextPaths;
+        this.ioService = ioService;
+        if(ioService == null)
+        {
+            throw new IllegalArgumentException("ioService cannot be 'null'");
+        }
     }
 
-    public void setContextPaths(String[] contextPaths)
+    @Override
+    public Collection<Model> invoke(JobExecutionContext context)
     {
-        this.contextPaths = contextPaths;
+        List<Model> entities = ioService.findAllEntities();
+        ioService.remove(entities);
+        return entities;
     }
 
-    public String getContextPath()
-    {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath)
-    {
-        this.contextPath = contextPath;
-    }
-
-    public Class<?>[] getClassesToBeBound()
-    {
-        return classesToBeBound;
-    }
-
-    public void setClassesToBeBound(Class<?>[] classesToBeBound)
-    {
-        this.classesToBeBound = classesToBeBound;
-    }
-
-    public String getSchema()
-    {
-        return schema;
-    }
-
-    public void setSchema(String schema)
-    {
-        this.schema = schema;
-    }
-
-    public boolean isAutoConvertElementToValue() {
-        return autoConvertElementToValue;
-    }
-
-    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
-        this.autoConvertElementToValue = autoConvertElementToValue;
-    }
 }

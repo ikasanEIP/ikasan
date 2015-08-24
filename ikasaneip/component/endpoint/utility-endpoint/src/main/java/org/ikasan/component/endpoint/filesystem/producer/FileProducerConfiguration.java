@@ -38,71 +38,89 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package org.ikasan.component.endpoint.filesystem.producer;
 
 /**
- * Configuration for an XML to Object JAXB converter.
+ * File producer configuration bean.
  * 
- * @author Ikasan Development Team
+ * @author mitcje
  */
-public class XmlStringToObjectConfiguration
+public class FileProducerConfiguration
 {
-    
-    private Class<?>[] classesToBeBound;
-    
-    private String contextPath;
-    
-    private String[] contextPaths;
-    
-    private String schema;
+    /** filename to be written */
+    private String filename;
 
-    private boolean autoConvertElementToValue;
+    /** filename to be written */
+    private String tempFilename;
 
-    public String[] getContextPaths()
-    {
-        return contextPaths;
+    /** use temp file for initial write */
+    private boolean useTempFile;
+
+    /** write checksum file */
+    private boolean writeChecksum;
+
+    /** encoding of the files */
+    private String encoding = "UTF-8";
+
+    /** overwrite existing file of same name */
+    private boolean overwrite;
+
+    /** EOL type for collection line writes */
+    private String lineEnding;
+
+    public String getFilename() {
+        return filename;
     }
 
-    public void setContextPaths(String[] contextPaths)
-    {
-        this.contextPaths = contextPaths;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
-    public String getContextPath()
-    {
-        return contextPath;
+    public String getTempFilename() {
+        return tempFilename;
     }
 
-    public void setContextPath(String contextPath)
-    {
-        this.contextPath = contextPath;
+    public void setTempFilename(String tempFilename) {
+        this.tempFilename = tempFilename;
     }
 
-    public Class<?>[] getClassesToBeBound()
-    {
-        return classesToBeBound;
+    public boolean isUseTempFile() {
+        return useTempFile;
     }
 
-    public void setClassesToBeBound(Class<?>[] classesToBeBound)
-    {
-        this.classesToBeBound = classesToBeBound;
+    public void setUseTempFile(boolean useTempFile) {
+        this.useTempFile = useTempFile;
     }
 
-    public String getSchema()
-    {
-        return schema;
+    public String getEncoding() {
+        return encoding;
     }
 
-    public void setSchema(String schema)
-    {
-        this.schema = schema;
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
-    public boolean isAutoConvertElementToValue() {
-        return autoConvertElementToValue;
+    public boolean isOverwrite() {
+        return overwrite;
     }
 
-    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
-        this.autoConvertElementToValue = autoConvertElementToValue;
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
+    }
+
+    public boolean isWriteChecksum() {
+        return writeChecksum;
+    }
+
+    public void setWriteChecksum(boolean writeChecksum) {
+        this.writeChecksum = writeChecksum;
+    }
+
+    public String getLineEnding() {
+        return lineEnding;
+    }
+
+    public void setLineEnding(String lineEnding) {
+        this.lineEnding = lineEnding;
     }
 }

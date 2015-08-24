@@ -38,71 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package example.io.service;
+
+import example.io.dao.ReaderDao;
+import example.io.model.Model;
+
+import java.util.List;
 
 /**
- * Configuration for an XML to Object JAXB converter.
- * 
- * @author Ikasan Development Team
+ * Implementation of the SourceService contract
+ * Ikasan Developmnet Team
  */
-public class XmlStringToObjectConfiguration
+public class SourceServiceImpl implements SourceService<Model>
 {
-    
-    private Class<?>[] classesToBeBound;
-    
-    private String contextPath;
-    
-    private String[] contextPaths;
-    
-    private String schema;
+    /** handle to the reader DAO */
+    private ReaderDao readerDao;
 
-    private boolean autoConvertElementToValue;
-
-    public String[] getContextPaths()
+    /**
+     * Constructor
+     * @param readerDao
+     */
+    public SourceServiceImpl(ReaderDao readerDao)
     {
-        return contextPaths;
+        this.readerDao = readerDao;
+        if(readerDao == null)
+        {
+            throw new IllegalArgumentException("readerDao cannot be 'null");
+        }
     }
 
-    public void setContextPaths(String[] contextPaths)
+    @Override
+    public List<Model> findAllEntities()
     {
-        this.contextPaths = contextPaths;
+        return this.readerDao.getAll();
     }
 
-    public String getContextPath()
+    @Override
+    public void remove(List<Model> models)
     {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath)
-    {
-        this.contextPath = contextPath;
-    }
-
-    public Class<?>[] getClassesToBeBound()
-    {
-        return classesToBeBound;
-    }
-
-    public void setClassesToBeBound(Class<?>[] classesToBeBound)
-    {
-        this.classesToBeBound = classesToBeBound;
-    }
-
-    public String getSchema()
-    {
-        return schema;
-    }
-
-    public void setSchema(String schema)
-    {
-        this.schema = schema;
-    }
-
-    public boolean isAutoConvertElementToValue() {
-        return autoConvertElementToValue;
-    }
-
-    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
-        this.autoConvertElementToValue = autoConvertElementToValue;
+        this.readerDao.deleteAll(models);
     }
 }
