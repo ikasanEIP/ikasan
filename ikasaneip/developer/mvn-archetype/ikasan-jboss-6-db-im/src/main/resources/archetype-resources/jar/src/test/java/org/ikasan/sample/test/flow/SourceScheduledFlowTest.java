@@ -1,7 +1,5 @@
 package org.ikasan.sample.test.flow;
 
-import org.apache.commons.io.FileUtils;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.platform.IkasanEIPTest;
@@ -14,7 +12,6 @@ import org.ikasan.testharness.flow.FlowTestHarnessImpl;
 import org.ikasan.testharness.flow.expectation.model.*;
 import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
 import org.jmock.Mockery;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +20,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,10 +62,6 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
     @Resource
     FlowSubject testHarnessFlowEventListener;
 
-    // test file details
-    String testFilename = "test.txt";
-    File testFile = new File(testFilename);
-
     /**
      * Setup will clear down any previously defined observers and ignore all exception transformations.
      *
@@ -91,9 +81,6 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
     {
         flowTest_setup();
 
-        // create test file
-        FileUtils.write(testFile, "test data");
-
         //
         // setup expectations
         FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
@@ -107,12 +94,6 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
 
         testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
         testHarnessFlowEventListener.setIgnoreEventCapture(true);
-
-        FlowElement consumerFlowElement = this.sourceFlow.getFlowElement("Consumer Name");
-        FileConsumerConfiguration configuration = ((ConfiguredResource<FileConsumerConfiguration>)consumerFlowElement.getFlowComponent()).getConfiguration();
-        List<String> filenames = new ArrayList<String>();
-        filenames.add(testFilename);
-        configuration.setFilenames(filenames);
 
         // configure AMQ to provide in-memory destinations for the test
         Map<String,String> jndiProperties = new HashMap<String,String>();
@@ -154,12 +135,4 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         mockery.assertIsSatisfied();
     }
 
-    @After
-    public void teardown()
-    {
-        if(testFile.exists())
-        {
-            FileUtils.deleteQuietly(testFile);
-        }
-    }
 }

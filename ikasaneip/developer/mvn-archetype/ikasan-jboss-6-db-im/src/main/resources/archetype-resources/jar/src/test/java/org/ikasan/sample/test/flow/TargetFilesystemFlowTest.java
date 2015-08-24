@@ -123,7 +123,7 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
         jndiProperties.put("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         jndiProperties.put("java.naming.provider.url", "vm://localhost?broker.persistent=false");
 
-        // configure the JMS consumer for the test
+        // configure the JMS db for the test
         FlowElement<?> consumerFlowElement = this.targetFlow.getFlowElement("Consumer Name");
         ConfiguredResource<SpringMessageConsumerConfiguration> configuredProducer = (ConfiguredResource)consumerFlowElement.getFlowComponent();
         SpringMessageConsumerConfiguration consumerConfiguration = configuredProducer.getConfiguration();

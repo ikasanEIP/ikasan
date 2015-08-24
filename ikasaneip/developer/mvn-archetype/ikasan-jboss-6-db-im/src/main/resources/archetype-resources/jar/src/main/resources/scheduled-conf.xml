@@ -10,8 +10,7 @@
     <bean id="${sourceFlowName}Consumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
         <property name="messageProvider" ref="messageProvider"/>
-        <property name="managedEventIdentifierService" ref="eventIdentifierService">
-        </property>
+        <!--property name="managedEventIdentifierService" ref="eventIdentifierService"-->
         <property name="jobDetail" >
             <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetObject" ref="scheduledJobFactory" />

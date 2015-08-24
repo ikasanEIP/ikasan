@@ -38,44 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.database.messageprovider;
+package example.io.service;
 
-import org.apache.log4j.Logger;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.quartz.JobExecutionContext;
+import example.io.dao.ReaderDao;
+import example.io.model.Model;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
- * Implementation of a MessageProvider based on database CRUD operations.
- *
- * @author Ikasan Development Team
+ * Implementation of the SourceService contract
+ * Ikasan Developmnet Team
  */
-public class DBMessageProvider implements MessageProvider<Collection<Model>>
+public class SourceServiceImpl implements SourceService<Model>
 {
-    /** logger instance */
-    private static Logger logger = Logger.getLogger(DBMessageProvider.class);
-
-    /** DAO handle */
-    private ReaderDao dao;
+    /** handle to the reader DAO */
+    private ReaderDao readerDao;
 
     /**
      * Constructor
-     * @param crudDao
+     * @param readerDao
      */
-    public DBMessageProvider(ReaderDao dao)
+    public SourceServiceImpl(ReaderDao readerDao)
     {
-        this.dao = dao;
-        if(dao == null)
+        this.readerDao = readerDao;
+        if(readerDao == null)
         {
-            throw new IllegalArgumentException("dao cannot be 'null'");
+            throw new IllegalArgumentException("readerDao cannot be 'null");
         }
     }
 
     @Override
-    public Collection<Model> invoke(JobExecutionContext context)
+    public List<Model> findAllEntities()
     {
-        return dao.getAll();
+        return this.readerDao.getAll();
     }
 
+    @Override
+    public void remove(List<Model> models)
+    {
+        this.readerDao.deleteAll(models);
+    }
 }

@@ -105,7 +105,7 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         jndiProperties.put("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         jndiProperties.put("java.naming.provider.url", "vm://localhost?broker.persistent=false");
 
-        // configure the JMS consumer for the test
+        // configure the JMS db for the test
         FlowElement<?> consumerFlowElement = this.sourceFlow.getFlowElement("Consumer Name");
         ConfiguredResource<SpringMessageConsumerConfiguration> configuredConsumer = (ConfiguredResource)consumerFlowElement.getFlowComponent();
         SpringMessageConsumerConfiguration consumerConfiguration = configuredConsumer.getConfiguration();
