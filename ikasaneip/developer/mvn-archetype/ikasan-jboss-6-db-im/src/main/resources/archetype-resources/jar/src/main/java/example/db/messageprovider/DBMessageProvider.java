@@ -79,7 +79,11 @@ public class DBMessageProvider implements MessageProvider<Collection<Model>>
     public Collection<Model> invoke(JobExecutionContext context)
     {
         List<Model> entities = ioService.findAllEntities();
-        ioService.remove(entities);
+        if(entities != null)
+        {
+            ioService.remove(entities);
+        }
+
         return entities;
     }
 

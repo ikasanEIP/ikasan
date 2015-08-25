@@ -12,12 +12,24 @@
         <property name="cronExpression" value="0/5 * * * * ?" />
     </bean>
 
-    <bean id="sourceService" class="example.io.service.SourceServiceImpl">
-        <constructor-arg ref="dao"/>
+    <bean id="${targetFlowName}Producer" class="example.component.endpoint.producer.DBProducer">
+        <constructor-arg ref="targetService"/>
     </bean>
 
-    <bean id="dao" class="example.io.dao.HibernateDaoImpl">
-        <property name="sessionFactory" ref="sessionFactory"/>
+    <bean id="sourceService" class="example.io.service.SourceServiceImpl">
+        <constructor-arg>
+            <bean id="dao" class="example.io.dao.HibernateReaderDaoImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="targetService" class="example.io.service.TargetServiceImpl">
+        <constructor-arg>
+            <bean id="dao" class="example.io.dao.HibernateWriterDaoImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
     </bean>
 
     <bean id="sessionFactory"

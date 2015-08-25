@@ -28,15 +28,4 @@
         <property name="component"          ref="${targetFlowName}Producer" />
     </bean>
 
-    <!--  ================================================================== -->
-    <!--  Producer Component                                                 -->
-    <!--  ================================================================== -->
-    <!--bean id="${flowName}SourceScheduledProducer" class="org.ikasan.component.endpoint.util.producer.LogProducer" /-->
-    <bean id="${targetFlowName}Producer" class="org.ikasan.component.endpoint.filesystem.producer.FileProducer">
-        <property name="configuration">
-            <bean class="org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration"/>
-        </property>
-        <property name="configuredResourceId" value="${artifactId}-${targetFlowName}Producer"/>
-    </bean>
-
 </beans>

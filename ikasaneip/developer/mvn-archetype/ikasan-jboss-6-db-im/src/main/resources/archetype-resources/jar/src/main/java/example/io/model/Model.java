@@ -40,17 +40,26 @@
  */
 package example.io.model;
 
+import java.io.Serializable;
+
 /**
  * Simple Java bean model.
  *
  * @author Ikasan Development Team
  */
-public class Model
+public class Model implements Serializable
 {
     String id;
     String value;
     long createDateTime;
     long updateDateTime;
+
+    public Model()
+    {
+        long now = System.currentTimeMillis();
+        this.createDateTime = now;
+        this.updateDateTime = now;
+    }
 
     public String getId() {
         return id;
