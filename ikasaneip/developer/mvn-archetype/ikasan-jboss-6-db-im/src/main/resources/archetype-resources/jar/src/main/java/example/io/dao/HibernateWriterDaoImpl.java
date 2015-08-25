@@ -40,36 +40,19 @@
  */
 package example.io.dao;
 
-import example.io.model.Model;
-import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
-
-import java.util.List;
 
 /**
  * Hibernate implementation of the ReaderDao contract.
  *
  * Ikasan Development Team.
  */
-public class HibernateDaoImpl extends HibernateDaoSupport implements ReaderDao<Model>,  WriterDao<Model>
+public class HibernateWriterDaoImpl extends HibernateDaoSupport implements WriterDao<example.io.model.Model>
 {
-    private static final String DELETE_QUERY = "delete Model w where w.id <= ?";
-
     @Override
-    public List<Model> getAll()
+    public void saveOrUpdate(example.io.model.Model model)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Model.class);
-        return (List<Model>)this.getHibernateTemplate().findByCriteria(criteria);
+        this.getHibernateTemplate().saveOrUpdate(model);
     }
 
-    @Override
-    public void deleteAll(List<Model> models)
-    {
-        this.getHibernateTemplate().deleteAll(models);
-    }
-
-    public void saveAll(List<Model> models)
-    {
-        this.getHibernateTemplate().bulkUpdate(DELETE_QUERY, models);
-    }
 }

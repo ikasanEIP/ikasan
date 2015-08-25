@@ -40,25 +40,22 @@
  */
 package example.io.service;
 
-import example.io.dao.ReaderDao;
-import example.io.model.Model;
-
 import java.util.List;
 
 /**
  * Implementation of the SourceService contract
  * Ikasan Developmnet Team
  */
-public class SourceServiceImpl implements SourceService<Model>
+public class SourceServiceImpl implements example.io.service.SourceService<example.io.model.Model>
 {
     /** handle to the reader DAO */
-    private ReaderDao readerDao;
+    private example.io.dao.ReaderDao readerDao;
 
     /**
      * Constructor
      * @param readerDao
      */
-    public SourceServiceImpl(ReaderDao readerDao)
+    public SourceServiceImpl(example.io.dao.ReaderDao readerDao)
     {
         this.readerDao = readerDao;
         if(readerDao == null)
@@ -68,13 +65,19 @@ public class SourceServiceImpl implements SourceService<Model>
     }
 
     @Override
-    public List<Model> findAllEntities()
+    public List<example.io.model.Model> findAllEntities()
     {
-        return this.readerDao.getAll();
+        List<example.io.model.Model> models = this.readerDao.getAll();
+        if(models == null || models.size() == 0)
+        {
+            return null;
+        }
+
+        return models;
     }
 
     @Override
-    public void remove(List<Model> models)
+    public void remove(List<example.io.model.Model> models)
     {
         this.readerDao.deleteAll(models);
     }

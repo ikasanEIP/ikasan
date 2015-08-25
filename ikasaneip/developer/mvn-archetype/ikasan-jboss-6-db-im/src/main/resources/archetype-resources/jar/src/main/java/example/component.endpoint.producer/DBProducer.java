@@ -38,18 +38,41 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package example.io.dao;
+package example.component.endpoint.producer;
+
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
- * Contract for a simple CRUD DAO.
- *
- * @author Ikasan Development Team
+ * Simple producer
+ * Ikasan Development Team.
  */
-public interface WriterDao<MODEL>
+public class DBProducer implements Producer<FlowEvent<String,String>>
 {
+
+    /** handle to the target service */
+    example.io.service.TargetService targetService;
+
     /**
-     * Save given model
-     * @param model
+     * Constructor
+     * @param targetService
      */
-    public void saveOrUpdate(MODEL model);
+    public DBProducer(example.io.service.TargetService targetService)
+    {
+        this.targetService = targetService;
+        if(targetService == null)
+        {
+            throw new IllegalArgumentException("targetService cannot be 'null'");
+        }
+    }
+
+    @Override
+    public void invoke(FlowEvent<String, String> flowEvent) throws EndpointException
+    {
+        example.io.model.Model model = new example.io.model.Model();
+        model.setId(flowEvent.getIdentifier());
+        model.setValue(flowEvent.getPayload());
+        this.targetService.save(model);
+    }
 }

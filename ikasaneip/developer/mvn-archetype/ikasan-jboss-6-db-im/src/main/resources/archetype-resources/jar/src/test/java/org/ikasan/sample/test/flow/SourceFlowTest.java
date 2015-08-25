@@ -1,5 +1,7 @@
 package org.ikasan.sample.test.flow;
 
+import example.io.model.Model;
+import example.io.service.TargetService;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.platform.IkasanEIPTest;
@@ -46,7 +48,7 @@ import java.util.Map;
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
 })
-public class SourceScheduledFlowTest extends IkasanEIPTest
+public class SourceFlowTest extends IkasanEIPTest
 {
     /** mockery instance */
     @Resource
@@ -61,6 +63,9 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
      */
     @Resource
     FlowSubject testHarnessFlowEventListener;
+
+    @Resource
+    TargetService targetService;
 
     /**
      * Setup will clear down any previously defined observers and ignore all exception transformations.
@@ -80,6 +85,11 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
     public void test_successful_sampleFlow_invocation() throws IOException
     {
         flowTest_setup();
+
+        Model testDataModel = new Model();
+        testDataModel.setId("1");
+        testDataModel.setValue("one");
+        targetService.save(testDataModel);
 
         //
         // setup expectations
