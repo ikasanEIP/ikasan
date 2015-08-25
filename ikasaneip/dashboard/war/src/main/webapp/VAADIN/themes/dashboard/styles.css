@@ -13138,6 +13138,12 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 9px;
 }
 
+.dashboard .v-table-cell-content-ikasan-indigo-small {
+	font-size: 11px;
+	background-color: rgba(75, 0, 130, 0.2);
+	font-size: 9px;
+}
+
 .dashboard .v-table-cell-content-ikasan-small {
 	font-size: 9px;
 }
@@ -13152,6 +13158,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .v-tree-node-caption-redicon {
 	color: red;
+}
+
+.dashboard .v-tree-node-caption-indigoicon {
+	color: indigo;
 }
 
 .dashboard .v-tree-node-caption-yellowicon {

@@ -40,9 +40,11 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.client.Client;
@@ -79,6 +81,9 @@ import org.vaadin.teemu.VaadinIcons;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.data.Validator;
 import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.converter.StringToIntegerConverter;
+import com.vaadin.data.util.converter.StringToLongConverter;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
@@ -286,6 +291,9 @@ public class ComponentConfigurationWindow extends Window
                 	{
                 		textField.setValidationVisible(true);
                 	}
+                	
+                	Notification.show("There are errors on the form above", Type.ERROR_MESSAGE);
+                	
                     return;
                 }
   
@@ -440,16 +448,51 @@ public class ComponentConfigurationWindow extends Window
 		valueLabel.setSizeUndefined();
 		TextArea textField = new TextArea();
 		textField.addValidator(validator);
+		textField.setNullSettingAllowed(true);
+		textField.setNullRepresentation("");
 		textField.setValidationVisible(false);
 		textField.setRows(4);
 		textField.setWidth("80%");
 		textField.setId(parameter.getName());
+		
+		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		{
+			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
+			{
+			    protected java.text.NumberFormat getFormat(Locale locale) 
+			    {
+			        NumberFormat format = super.getFormat(locale);
+			        format.setGroupingUsed(false);
+			        return format;
+			    };
+			};
+			
+			// either set for the field or in your field factory for multiple fields
+			textField.setConverter(plainIntegerConverter);
+		}
+		else if (parameter instanceof ConfigurationParameterLongImpl)
+		{
+			StringToLongConverter plainLongConverter = new StringToLongConverter() 
+			{
+			    protected java.text.NumberFormat getFormat(Locale locale) 
+			    {
+			        NumberFormat format = super.getFormat(locale);
+			        format.setGroupingUsed(false);
+			        return format;
+			    };
+			};
+			
+			// either set for the field or in your field factory for multiple fields
+			textField.setConverter(plainLongConverter);
+		}
 
 		textFields.put(parameter.getName(), textField);
 
+		BeanItem<ConfigurationParameter> parameterItem = new BeanItem<ConfigurationParameter>(parameter);
+
 		if(parameter.getValue() != null)
 		{
-			textField.setValue(parameter.getValue().toString());
+			textField.setPropertyDataSource(parameterItem.getItemProperty("value"));
 		}
 		
 		paramLayout.addComponent(valueLabel, 0, 1);

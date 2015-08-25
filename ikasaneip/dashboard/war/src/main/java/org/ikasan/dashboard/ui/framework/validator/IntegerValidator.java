@@ -62,14 +62,7 @@ public class IntegerValidator extends AbstractValidator<Integer>
     @Override
     protected boolean isValidValue(Integer value)
     {
-        if(value == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return true;
     }
 
     /* (non-Javadoc)
