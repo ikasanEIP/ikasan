@@ -38,18 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package example.io.dao;
+package example.io.service;
 
 /**
  * Contract for a simple CRUD DAO.
  *
  * @author Ikasan Development Team
  */
-public interface WriterDao<MODEL>
+public interface TargetService<MODEL>
 {
     /**
-     * Save given model
+     * Save given entity
      * @param model
      */
-    public void saveOrUpdate(MODEL model);
+    public void save(MODEL model);
+
 }
