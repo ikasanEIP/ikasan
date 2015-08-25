@@ -42,6 +42,7 @@ package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.management.ManagedResource;
 import org.quartz.*;
 
 /**
@@ -93,7 +94,12 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     {
         try
         {
-            messageProvider.invoke(context);
+            boolean isSuccessful = messageProvider.invoke(context);
+            if(this.getConfiguration().isEager() && isSuccessful){
+                // if this consumer is eager to consume messages and message provided returned not null
+                // results then quartz scheduler should be triggered
+                triggerSchedulerNow();
+            }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
         {
@@ -108,5 +114,23 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     public void setCallBackMessageProvider(CallBackMessageProvider messageProvider)
     {
         this.messageProvider = messageProvider;
+    }
+
+    @Override
+    public void startManagedResource()
+    {
+        if(messageProvider instanceof ManagedResource)
+        {
+            ((ManagedResource)messageProvider).startManagedResource();
+        }
+    }
+
+    @Override
+    public void stopManagedResource()
+    {
+        if(messageProvider instanceof ManagedResource)
+        {
+            ((ManagedResource)messageProvider).stopManagedResource();
+        }
     }
 }
