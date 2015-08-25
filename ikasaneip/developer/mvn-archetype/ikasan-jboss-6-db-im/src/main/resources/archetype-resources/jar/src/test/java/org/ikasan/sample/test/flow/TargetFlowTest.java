@@ -1,15 +1,10 @@
 package org.ikasan.sample.test.flow;
 
-import org.apache.commons.io.FileUtils;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.*;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
@@ -17,10 +12,10 @@ import org.ikasan.testharness.flow.FlowObserver;
 import org.ikasan.testharness.flow.FlowSubject;
 import org.ikasan.testharness.flow.FlowTestHarness;
 import org.ikasan.testharness.flow.FlowTestHarnessImpl;
-import org.ikasan.testharness.flow.expectation.model.*;
+import org.ikasan.testharness.flow.expectation.model.ConsumerComponent;
+import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
 import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
 import org.jmock.Mockery;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +24,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,11 +47,11 @@ import java.util.Map;
         "/exception-conf.xml",
         "/ikasan-transaction-conf.xml",
         "/mock-conf.xml",
-        "/test-conf.xml",
         "/substitute-components.xml",
+        "/test-conf.xml",
         "/h2db-datasource-conf.xml"
 })
-public class TargetFilesystemFlowTest extends IkasanEIPTest
+public class TargetFlowTest extends IkasanEIPTest
 {
     /** mockery instance */
     @Resource
@@ -77,10 +69,6 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
      */
     @Resource
     FlowSubject testHarnessFlowEventListener;
-
-    // test file details
-    String testFilename = "test.txt";
-    File testFile = new File(testFilename);
 
     /**
      * Setup will clear down any previously defined observers and ignore all exception transformations.
@@ -100,9 +88,6 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
     public void test_successful_sampleFlow_invocation() throws IOException
     {
         flowTest_setup();
-
-        // create test file
-        FileUtils.write(testFile, "test data");
 
         //
         // setup expectations
@@ -125,8 +110,8 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
 
         // configure the JMS db for the test
         FlowElement<?> consumerFlowElement = this.targetFlow.getFlowElement("Consumer Name");
-        ConfiguredResource<SpringMessageConsumerConfiguration> configuredProducer = (ConfiguredResource)consumerFlowElement.getFlowComponent();
-        SpringMessageConsumerConfiguration consumerConfiguration = configuredProducer.getConfiguration();
+        ConfiguredResource<SpringMessageConsumerConfiguration> configuredConsumer = (ConfiguredResource)consumerFlowElement.getFlowComponent();
+        SpringMessageConsumerConfiguration consumerConfiguration = configuredConsumer.getConfiguration();
         consumerConfiguration.setConnectionFactoryName("ConnectionFactory");
         consumerConfiguration.setConnectionFactoryJndiProperties(jndiProperties);
         consumerConfiguration.setDestinationJndiName("dynamicTopics/queue");
@@ -141,17 +126,11 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
         testProducerConfiguration.setDestinationJndiProperties(jndiProperties);
         ((ManagedResource)testDataProducer).startManagedResource();
 
-        // target flow file system producer
-        FlowElement producerFlowElement = this.targetFlow.getFlowElement("Producer Name");
-        FileProducerConfiguration configuration = ((ConfiguredResource<FileProducerConfiguration>)producerFlowElement.getFlowComponent()).getConfiguration();
-        configuration.setFilename(testFilename);
-
         // start the flow
         this.targetFlow.start();
         Assert.assertEquals("flow should be running", "running", this.targetFlow.getState());
 
-        // publish test message
-        testDataProducer.invoke("test message");
+        this.testDataProducer.invoke("test data");
 
         // wait for the flow to fully execute
         try
@@ -175,12 +154,4 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
         mockery.assertIsSatisfied();
     }
 
-    @After
-    public void teardown()
-    {
-        if(testFile.exists())
-        {
-            FileUtils.deleteQuietly(testFile);
-        }
-    }
 }

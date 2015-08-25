@@ -22,11 +22,15 @@
     </bean>
 
     <aop:config>
-        <aop:pointcut id="daoMethods" expression="execution(* example.io.dao.HibernateDaoImpl.*(..))"/>
-        <aop:pointcut id="serviceMethods" expression="execution(* example.io.dao.HibernateDaoImpl.*(..))"/>
+        <aop:pointcut id="readerDaoMethods" expression="execution(* example.io.dao.HibernateReaderDaoImpl.*(..))"/>
+        <aop:pointcut id="writerDaoMethods" expression="execution(* example.io.dao.HibernateWriterDaoImpl.*(..))"/>
+        <aop:pointcut id="sourceServiceMethods" expression="execution(* example.io.service.SourceServiceImpl.*(..))"/>
+        <aop:pointcut id="targetServiceMethods" expression="execution(* example.io.service.TargetServiceImpl.*(..))"/>
 
-        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="daoMethods"/>
-        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="serviceMethods"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="readerDaoMethods"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="writerDaoMethods"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="sourceServiceMethods"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="targetServiceMethods"/>
     </aop:config>
 
 </beans>

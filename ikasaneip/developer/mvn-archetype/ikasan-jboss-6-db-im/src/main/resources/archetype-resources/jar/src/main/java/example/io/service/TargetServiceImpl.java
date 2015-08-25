@@ -38,18 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package example.io.dao;
+package example.io.service;
 
 /**
- * Contract for a simple CRUD DAO.
- *
- * @author Ikasan Development Team
+ * Implementation of the TargetService contract
+ * Ikasan Developmnet Team
  */
-public interface WriterDao<MODEL>
+public class TargetServiceImpl implements TargetService<example.io.model.Model>
 {
+    /** handle to the writer DAO */
+    private example.io.dao.WriterDao writerDao;
+
     /**
-     * Save given model
-     * @param model
+     * Constructor
+     * @param writerDao
      */
-    public void saveOrUpdate(MODEL model);
+    public TargetServiceImpl(example.io.dao.WriterDao writerDao)
+    {
+        this.writerDao = writerDao;
+        if(writerDao == null)
+        {
+            throw new IllegalArgumentException("writerDao cannot be 'null");
+        }
+    }
+
+    @Override
+    public void save(example.io.model.Model model)
+    {
+        this.writerDao.saveOrUpdate(model);
+    }
 }

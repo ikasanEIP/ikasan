@@ -40,16 +40,28 @@
  */
 package example.io.dao;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+import java.util.List;
+
 /**
- * Contract for a simple CRUD DAO.
+ * Hibernate implementation of the ReaderDao contract.
  *
- * @author Ikasan Development Team
+ * Ikasan Development Team.
  */
-public interface WriterDao<MODEL>
+public class HibernateReaderDaoImpl extends HibernateDaoSupport implements ReaderDao<example.io.model.Model>
 {
-    /**
-     * Save given model
-     * @param model
-     */
-    public void saveOrUpdate(MODEL model);
+    @Override
+    public List<example.io.model.Model> getAll()
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(example.io.model.Model.class);
+        return (List<example.io.model.Model>)this.getHibernateTemplate().findByCriteria(criteria);
+    }
+
+    @Override
+    public void deleteAll(List<example.io.model.Model> models)
+    {
+        this.getHibernateTemplate().deleteAll(models);
+    }
 }
