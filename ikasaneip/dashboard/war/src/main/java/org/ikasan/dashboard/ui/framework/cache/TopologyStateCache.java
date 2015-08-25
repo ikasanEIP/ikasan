@@ -82,8 +82,9 @@ public class TopologyStateCache
 		super();
 		this.topologyService = topologyService;
 		
-		logger.info("TopologyStateCache constructor");
-		executor.scheduleAtFixedRate(task, 30, 60, TimeUnit.SECONDS);
+		stateMap = new HashMap<String, String>();
+		
+		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
 		
 	}
 

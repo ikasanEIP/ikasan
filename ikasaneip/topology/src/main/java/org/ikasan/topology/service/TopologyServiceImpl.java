@@ -244,9 +244,11 @@ public class TopologyServiceImpl implements TopologyService
 			    {
 			    	flowResponse = webTarget.request().get(JsonArray.class);
 			    }
-			    catch(NotFoundException e)
+			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
+			    	logger.info("Caught exception attempting to discover module with the following URL: " + url 
+			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
 			    

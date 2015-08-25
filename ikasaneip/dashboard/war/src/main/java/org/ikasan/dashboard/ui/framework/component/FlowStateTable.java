@@ -139,7 +139,7 @@ public class FlowStateTable extends DashboardTable
 	    			}
 	    			else if (state != null && state.equals(PAUSED))
 	    			{
-	    				return "ikasan-orange-small";
+	    				return "ikasan-indigo-small";
 	    			}
 				}
 				
@@ -161,7 +161,7 @@ public class FlowStateTable extends DashboardTable
     			}
     			else if (state != null && state.equals(PAUSED))
     			{
-    				return "ikasan-orange-small";
+    				return "ikasan-indigo-small";
     			}
 				
 				return "ikasan-small";

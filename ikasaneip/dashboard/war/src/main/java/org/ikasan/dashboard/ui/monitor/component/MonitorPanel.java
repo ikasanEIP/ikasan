@@ -128,9 +128,9 @@ public class MonitorPanel extends Panel implements View
     {
     	Panel component = new Panel();
     	component.setSizeFull();
-//    	component.addStyleName(ValoTheme.PANEL_BORDERLESS);
+    	component.addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
-    	GridLayout layout = new GridLayout();
+    	GridLayout layout = new GridLayout(2, 4);
     	layout.setSizeFull();
     	layout.setMargin(true);
     	
@@ -144,15 +144,24 @@ public class MonitorPanel extends Panel implements View
     	serverUrlLabel.setStyleName(ValoTheme.LABEL_LARGE);
     	serverUrlLabel.setWidth("100%");
     	
-    	layout.addComponent(serverNameLabel);
-    	layout.addComponent(serverDescriptionLabel);
-    	layout.addComponent(serverUrlLabel);
+    	layout.addComponent(serverNameLabel, 0, 0);
+    	layout.addComponent(serverDescriptionLabel, 0, 1);
+    	layout.addComponent(serverUrlLabel, 0, 2);
     	
     	statusLabel.setCaptionAsHtml(true);
     	
+    	MonitorIcons icon = MonitorIcons.SERVER;
+    	icon.setSizePixels(64);
+    	
+    	Label serverLabel = new Label();
+    	serverLabel.setCaption(icon.getHtml());
+    	serverLabel.setCaptionAsHtml(true);
+    	
+    	layout.addComponent(serverLabel, 1, 0, 1, 2);
+    	layout.setComponentAlignment(serverLabel, Alignment.MIDDLE_CENTER);
     	
     	
-    	layout.addComponent(statusLabel);
+    	layout.addComponent(statusLabel, 0, 3, 1, 3);
     	layout.setComponentAlignment(statusLabel, Alignment.MIDDLE_CENTER);
     	
     	buildFilterTable(); 
@@ -170,26 +179,31 @@ public class MonitorPanel extends Panel implements View
 		MonitorIcons icon = MonitorIcons.CHECK_CIRCLE_O;
     	icon.setSizePixels(64);
     	icon.setColor("green");
+
     	
 		for(String key: stateMap.keySet())
 		{
-			if(key.startsWith(server.getName()))
+			for(Module module: server.getModules())
 			{
-				String state = this.stateMap.get(key);
-				
-				if(state.equals(STOPPED) || state.equals(RECOVERING) || state.equals(STOPPED_IN_ERROR))
+				if(key.startsWith(module.getName()))
 				{
-					icon = MonitorIcons.EXCLAMATION_CIRCLE_O;
-					icon.setSizePixels(64);
-			    	icon.setColor("red");
-			    	
-			    	return;
+					String state = this.stateMap.get(key);
+					
+					if(state.equals(STOPPED) || state.equals(RECOVERING) || state.equals(STOPPED_IN_ERROR))
+					{
+						icon = MonitorIcons.EXCLAMATION_CIRCLE_O;
+						icon.setSizePixels(64);
+				    	icon.setColor("red");
+				    	
+				    	statusLabel.setCaption(icon.getHtml());
+				    	
+				    	return;
+					}
 				}
 			}
 		}
 		
-    	
-    	statusLabel.setCaption(icon.getHtml());
+		statusLabel.setCaption(icon.getHtml());
 	}
 	
 	protected Component createContentWrapper(final Component small, final Component large) 
@@ -319,7 +333,7 @@ public class MonitorPanel extends Panel implements View
 	    			}
 	    			else if (state != null && state.equals(PAUSED))
 	    			{
-	    				return "ikasan-orange-small";
+	    				return "ikasan-indigo-small";
 	    			}
 				}
 				
@@ -341,7 +355,7 @@ public class MonitorPanel extends Panel implements View
     			}
     			else if (state != null && state.equals(PAUSED))
     			{
-    				return "ikasan-orange-small";
+    				return "ikasan-indigo-small";
     			}
 				
 				return "ikasan-small";
@@ -411,9 +425,8 @@ public class MonitorPanel extends Panel implements View
 	}	
 	
 	@Subscribe
-	public void receiveAlertEvent(final FlowStateEvent event)
+	public void receiveFlowStateEvent(final FlowStateEvent event)
 	{
-		logger.info("received event: " + event);
 		UI.getCurrent().access(new Runnable() 
 		{
             @Override

@@ -131,6 +131,12 @@ $v-font-weight: 400;
 		font-size: 9px;
 	}
 	
+	.v-table-cell-content-ikasan-indigo-small {
+		font-size: 11px;
+		background-color: rgba(75, 0, 130, 0.2);
+		font-size: 9px;
+	}
+	
 	.v-table-cell-content-ikasan-small {
 		font-size: 9px;
 	}
@@ -157,6 +163,10 @@ $v-font-weight: 400;
 
 	.v-tree-node-caption-greenicon {
 		color: green;
+	}
+	
+	.v-tree-node-caption-indigoicon {
+		color: indigo;
 	}
 	
 	.v-monitor-caption-greenicon {

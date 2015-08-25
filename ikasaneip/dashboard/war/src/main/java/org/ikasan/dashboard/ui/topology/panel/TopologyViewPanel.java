@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -58,11 +59,14 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
 import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
@@ -96,6 +100,8 @@ import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.service.TriggerManagementService;
 import org.vaadin.teemu.VaadinIcons;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -104,6 +110,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -201,9 +208,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private PopupDateField systemEventFromDate;
 	private PopupDateField systemEventToDate;
 	
-//	private TextField eventId;
-//	private TextField payloadContent;
-//	
 	private ErrorReportingService errorReportingService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
@@ -217,7 +221,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private ErrorCategorisationService errorCategorisationService;
 	private TriggerManagementService triggerManagementService;
 	
-//	private HashMap<String, String> flowStates = new HashMap<String, String>();
+	private HashMap<String, String> flowStates = new HashMap<String, String>();
 	
 	private TopologyStateCache topologyCache;
 	
@@ -315,6 +319,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		hsplit.setSecondComponent(rightLayout);
 		hsplit.setSplitPosition(30, Unit.PERCENTAGE);
 
+		this.flowStates = this.topologyCache.getStateMap();
+		
 		this.setContent(hsplit);
 	}
 	
@@ -428,6 +434,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.topologyTreePanel.setSizeFull();
 
 		this.moduleTree = new Tree();
+		this.moduleTree.setImmediate(true);
 		this.moduleTree.setSizeFull();
 		this.moduleTree.addActionHandler(this);
 		this.moduleTree.setDragMode(TreeDragMode.NODE);
@@ -440,7 +447,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				{
 					Flow flow = (Flow)itemId;
 					
-					String state = topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
+					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
 	            	
 					logger.info("State = " + state);
 					
@@ -462,13 +469,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    			}
 	    			else if (state != null && state.equals(PAUSED))
 	    			{
-	    				return "yellowicon";
+	    				return "indigoicon";
 	    			}
 				}				
 				
 				return "";
 			}
 		});
+		
 		
 		GridLayout layout = new GridLayout(1, 4);
 		
@@ -829,6 +837,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
+		EventBus eventBus = ((IkasanUI)UI.getCurrent()).getEventBus();   
+    	eventBus.register(this);
+    	
 		refresh();
 	}
 	
@@ -859,9 +870,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				Set<Module> modules = server.getModules();
 	
 				this.moduleTree.addItem(server);
-	            this.moduleTree.setItemCaption(server, server.getName());
+				this.moduleTree.setCaptionAsHtml(true);
+				
+				MonitorIcons icon = MonitorIcons.SERVER;
+	        	icon.setSizePixels(14);
+	        	icon.setColor("green");
+	        	
+	            this.moduleTree.setItemCaption(server, icon.getHtml() + " " + server.getName());
 	            this.moduleTree.setChildrenAllowed(server, true);
-	            this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
+	        	
+//	        	this.moduleTree.setItemIcon(server, icon);
 	
 		        for(Module module: modules)
 		        {	        	
@@ -1249,6 +1267,30 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		date.set(Calendar.MILLISECOND, 0);
 
 		return date.getTime();
+	}
+	
+	@Subscribe
+	public void receiveFlowStateEvent(final FlowStateEvent event)
+	{
+		UI.getCurrent().access(new Runnable() 
+		{
+            @Override
+            public void run() 
+            {
+            	VaadinSession.getCurrent().getLockInstance().lock();
+        		try 
+        		{
+        			flowStates = event.getFlowStateMap();
+        			moduleTree.markAsDirty();
+        		} 
+        		finally 
+        		{
+        			VaadinSession.getCurrent().getLockInstance().unlock();
+        		}
+            	
+            	UI.getCurrent().push();	
+            }
+        });	
 	}
 	
 	
