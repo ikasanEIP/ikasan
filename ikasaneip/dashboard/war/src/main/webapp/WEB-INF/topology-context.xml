@@ -37,7 +37,6 @@
         <constructor-arg ref="topologyService" />
         <constructor-arg ref="componentConfigurationWindow" />
         <constructor-arg ref="wiretapDao" />
-        <constructor-arg ref="errorReportingService" />
         <constructor-arg ref="exclusionManagementService" />
         <constructor-arg ref="ikasanSerialiserFactory" />
         <constructor-arg ref="hospitalManagementService" />
@@ -45,6 +44,8 @@
         <constructor-arg ref="errorCategorisationService"/>
         <constructor-arg ref="triggerManagementService"/>
         <constructor-arg ref="topologyStateCache"/>
+        <constructor-arg ref="startupControlService"/>
+        <constructor-arg ref="errorReportingService"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">
