@@ -10,6 +10,11 @@
         <constructor-arg ref="startupControlDao" />
     </bean>
     
+    <bean id="startupControlService" class="org.ikasan.module.service.StartupControlServiceImpl">
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="startupControlDao" />
+    </bean>
+    
     <bean id="moduleActivator" class="org.ikasan.module.service.ModuleActivatorDefaultImpl">
         <constructor-arg ref="startupControlDao"/>
     </bean>

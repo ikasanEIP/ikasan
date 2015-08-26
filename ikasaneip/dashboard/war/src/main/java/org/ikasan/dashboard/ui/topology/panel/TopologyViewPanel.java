@@ -85,6 +85,7 @@ import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.systemevent.model.SystemEvent;
@@ -198,20 +199,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private WiretapDao wiretapDao;
 
-	
-	private PopupDateField fromDate;
-	private PopupDateField toDate;
-	private PopupDateField errorFromDate;
-	private PopupDateField errorToDate;
-	private PopupDateField actionedExclusionFromDate;
-	private PopupDateField actionedExclusionToDate;
 	private PopupDateField systemEventFromDate;
 	private PopupDateField systemEventToDate;
 	
-	private ErrorReportingService errorReportingService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
+	
+	private StartupControlService startupControlService;
+	private ErrorReportingService errorReportingService;
 	
 	private SerialiserFactory serialiserFactory;
 	
@@ -228,9 +224,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TabSheet tabsheet;
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
-			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache)
+			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
+			 StartupControlService startupControlService, ErrorReportingService errorReportingService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -246,11 +243,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.wiretapDao == null)
 		{
 			throw new IllegalArgumentException("wiretapDao cannot be null!");
-		}
-		this.errorReportingService = errorReportingService;
-		if(this.errorReportingService == null)
-		{
-			throw new IllegalArgumentException("errorReportingService cannot be null!");
 		}
 		this.exclusionManagementService = exclusionManagementService;
 		if(this.exclusionManagementService == null)
@@ -286,6 +278,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.topologyCache == null)
 		{
 			throw new IllegalArgumentException("topologyCache cannot be null!");
+		}
+		this.startupControlService = startupControlService;
+		if(this.startupControlService == null)
+		{
+			throw new IllegalArgumentException("startupControlService cannot be null!");
+		}
+		this.errorReportingService = errorReportingService;
+		if(this.errorReportingService == null)
+		{
+			throw new IllegalArgumentException("errorReportingService cannot be null!");
 		}
 
 		init();
@@ -1212,7 +1214,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        }
 	        else if(action.equals(STARTUP_CONTROL))
 	        {       	
-	        	UI.getCurrent().addWindow(new StartupControlConfigurationWindow());
+	        	UI.getCurrent().addWindow(new StartupControlConfigurationWindow(this.startupControlService, flow));
 	        }
 	        else if(action.equals(ERROR_CATEGORISATION))
         	{

@@ -37,11 +37,6 @@ public class ModuleControlApplication extends IkasanRestApplication
     
     public ModuleControlApplication()
     {
-//    	this.moduleService = moduleService;
-//    	if(this.moduleService == null)
-//    	{
-//    		throw new IllegalArgumentException("moduleService cannot be null!");
-//    	}
     }
 
     @PUT
