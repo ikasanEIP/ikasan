@@ -169,7 +169,7 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
         // If the values have been set then housekeep, else don't
         if (maxRows > -1 && ageOfFiles > -1)
         {
-            this.fileTransferConnectionTemplate.housekeep(maxRows, ageOfFiles);
+            this.activeFileTransferConnectionTemplate.housekeep(maxRows, ageOfFiles);
         }
     }
 

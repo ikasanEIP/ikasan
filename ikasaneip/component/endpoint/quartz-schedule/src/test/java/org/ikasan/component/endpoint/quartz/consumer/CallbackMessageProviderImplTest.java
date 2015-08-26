@@ -157,6 +157,11 @@ public class CallbackMessageProviderImplTest
                 exactly(1).of(flowEventFactory).newEvent("3","three");
                 will(returnValue(mockFlowEvent));
                 exactly(1).of(eventListener).invoke(mockFlowEvent);
+
+                // check if consumer is eager
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(false));
+
             }
         });
 
@@ -215,7 +220,7 @@ public class CallbackMessageProviderImplTest
         }
 
         @Override
-        public void invoke(JobExecutionContext context)
+        public boolean invoke(JobExecutionContext context)
         {
             List<String> strings = new ArrayList<String>();
             strings.add("one");
@@ -226,6 +231,7 @@ public class CallbackMessageProviderImplTest
             {
                 callBackMessageConsumer.invoke(str);
             }
+            return true;
         }
 
         @Override

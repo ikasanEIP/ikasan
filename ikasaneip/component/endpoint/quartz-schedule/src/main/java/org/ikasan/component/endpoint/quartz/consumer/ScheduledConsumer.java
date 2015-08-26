@@ -226,7 +226,13 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            this.invoke((T) messageProvider.invoke(context));
+            T t = (T) messageProvider.invoke(context);
+            this.invoke(t);
+            if(this.getConfiguration().isEager() && t != null){
+                // if this consumer is eager to consume messages and message provided returned not null
+                // results then quartz scheduler should be triggered
+                triggerSchedulerNow();
+            }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
         {
@@ -237,6 +243,7 @@ public class ScheduledConsumer<T>
             managedResourceRecoveryManager.recover(thr);
         }
     }
+
 
     /**
      * Invoke the eventListener with the incoming mes
@@ -305,6 +312,14 @@ public class ScheduledConsumer<T>
         FlowEvent<?, ?> flowEvent = this.flowEventFactory
                 .newEvent(this.managedEventIdentifierService.getEventIdentifier(message), message);
         return flowEvent;
+    }
+
+    /**
+     *  Trigger Scheduler now.
+     */
+    protected void triggerSchedulerNow() throws SchedulerException {
+        JobKey jobkey = jobDetail.getKey();
+        scheduler.triggerJob(jobkey);
     }
 
     public void setEventFactory(EventFactory flowEventFactory)
