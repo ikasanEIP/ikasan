@@ -74,11 +74,6 @@ public class TopologyCacheApplication
      */
     public TopologyCacheApplication()
     {
-//    	this.topologyStateCache = topologyStateCache;
-//    	if(this.topologyStateCache == null)
-//    	{
-//    		throw new IllegalArgumentException("topologyStateCache cannot be null!!");
-//    	}
     }
 
     @PUT
@@ -111,7 +106,7 @@ public class TopologyCacheApplication
     {
     	try
 		{
-			String url = "http://svc-stewmi:8380/gloss-referencemarketDataTgt/rest/moduleControl/flowStates/gloss-referencemarketDataTgt";
+			String url = "http://svc-ikasand:8080/ikasan-dashboard/rest/topologyCache/updateCache/murex-equityTrade/Equity Allocation Flow";
 		
 	    	
 			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
@@ -125,7 +120,7 @@ public class TopologyCacheApplication
 	    	logger.info("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
-	    	Response response = webTarget.request().get();
+	    	Response response = webTarget.request().put(Entity.entity("stopped", MediaType.APPLICATION_JSON));
 
 	    	System.out.println(response);
 	    	
