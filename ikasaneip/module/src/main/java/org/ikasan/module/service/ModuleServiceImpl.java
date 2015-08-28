@@ -227,6 +227,13 @@ public class ModuleServiceImpl implements ModuleService
         }
         else
         {
+        	StartupControl flowStartupControl = this.startupControlDao.getStartupControl(moduleName, flowName);
+            if(StartupType.DISABLED.equals(flowStartupControl.getStartupType()))
+            {
+                throw new IllegalStateException("flow [" + flowName + "] module [" 
+                    + moduleName + "] is disabled so cannot be resumed.");
+            }
+            
             flow.resume();
         }
     }
@@ -236,7 +243,7 @@ public class ModuleServiceImpl implements ModuleService
      */
     public void startFlow(String moduleName, String flowName, String actor)
     {
-//      //log the request
+    	//log the request
         this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION,  actor);
     	this.logger.info("startFlow : " + moduleName + "." + flowName + " requested by [" + actor + "]");
     	Flow flow = this.resolveFlow(moduleName, flowName);
