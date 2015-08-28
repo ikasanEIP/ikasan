@@ -69,8 +69,7 @@ public class DashboardNotifier implements Notifier<String>
     /** last update sent time */
     long lastUpdateDateTime;
 
-    /** buffer updates the occur ousaide the notification window*/
-    StringBuilder pendingContent = new StringBuilder();
+    private String dashboardBaseUrl;
 
     @Override
     public void invoke(String environment, String moduleName, String flowName, String state)
@@ -89,6 +88,14 @@ public class DashboardNotifier implements Notifier<String>
     {
         return this.notifyStateChangesOnly;
     }
+    
+    /**
+	 * @return the dashboardBaseUrl
+	 */
+	public void setDashboardBaseUrl(String dashboardBaseUrl)
+	{
+		this.dashboardBaseUrl = dashboardBaseUrl;
+	}
 
     /**
      * Internal notify method
@@ -100,19 +107,18 @@ public class DashboardNotifier implements Notifier<String>
     {
     	try
 		{
-			String url = "http://svc-stewmi:8380/ikasan-dashboard/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
+			String url = "http://svc-ikasand:8080/ikasan-dashboard/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
+			
+			logger.info("Attempting to call URL: " + url);	
 		
 	    	
 	    	ClientConfig clientConfig = new ClientConfig();
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
 	    	
-	    	logger.info("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
 	    	Response response = webTarget.request().put(Entity.entity(state, MediaType.APPLICATION_JSON));
-
-	    	System.out.println(response);
 		}
 		catch(Exception e)
 		{
@@ -120,5 +126,4 @@ public class DashboardNotifier implements Notifier<String>
 			e.printStackTrace();
 		}
     }
-
 }

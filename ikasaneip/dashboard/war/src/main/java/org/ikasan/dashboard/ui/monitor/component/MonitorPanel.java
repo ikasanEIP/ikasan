@@ -42,11 +42,25 @@ package org.ikasan.dashboard.ui.monitor.component;
 
 import java.util.HashMap;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
+import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
+import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
+import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -59,10 +73,15 @@ import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.event.Action;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -71,8 +90,10 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Tree;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
@@ -83,11 +104,25 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class MonitorPanel extends Panel implements View
+public class MonitorPanel extends Panel implements View, Action.Handler
 {
 	private static final long serialVersionUID = -3174124965136021440L;
 
 	private Logger logger = Logger.getLogger(MonitorPanel.class);
+	
+	private final Action START = new Action("Start");
+    private final Action STOP = new Action("Stop");
+    private final Action PAUSE = new Action("Pause");
+    private final Action START_PAUSE = new Action("Start/Pause");
+    private final Action RESUME = new Action("Resume");
+    private final Action RESTART = new Action("Re-start");
+
+
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE };
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE };
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME };
+
+    private final Action[] actionsEmpty = new Action[]{};
 	
 	private TopologyService topologyService;
 	private Server server;
@@ -301,6 +336,9 @@ public class MonitorPanel extends Panel implements View
         filterTable.addStyleName(ValoTheme.TABLE_SMALL);
         
         filterTable.setSizeFull();
+        filterTable.setImmediate(true);
+        
+        filterTable.addActionHandler(this);
         
         filterTable.setCellStyleGenerator(new CustomTable.CellStyleGenerator() 
         {
@@ -405,7 +443,7 @@ public class MonitorPanel extends Panel implements View
 				
 				Item item = this.cont.getItem(flow);
 							
-				if(item != null)
+				if(item != null && !item.getItemProperty("Flow State").getValue().equals(state))
 				{
 					item.getItemProperty("Flow State").setValue(state);
 				}
@@ -447,6 +485,114 @@ public class MonitorPanel extends Panel implements View
             	UI.getCurrent().push();	
             }
         });	
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.vaadin.event.Action.Handler#getActions(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public Action[] getActions(Object target, Object sender)
+	{     
+		logger.info("Getting action: " + target + " " + sender);
+		
+		if(target instanceof Flow)
+        {
+			Flow flow = ((Flow)target);
+			
+			String state = this.stateMap.get(flow.getModule().getName() + "-" + flow.getName());
+			
+			if(state != null && state.equals(RUNNING))
+			{
+				return this.flowActionsStarted;
+			}
+			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
+			{
+				return this.flowActionsStarted;
+			}
+			else if (state != null &&(state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR)))
+			{
+				return this.flowActionsStopped;
+			}
+			else if (state != null && state.equals(PAUSED))
+			{
+				return this.flowActionsPaused;
+			}
+        }
+		
+        return actionsEmpty;
+
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vaadin.event.Action.Handler#handleAction(com.vaadin.event.Action, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public void handleAction(Action action, Object sender, Object target)
+	{	                
+        if(target != null && target instanceof Flow)
+        {
+        	Flow flow = ((Flow)target);
+        	
+	        if(action.equals(START))
+	        {
+	        	this.actionFlow(flow, "start");
+	        }
+	        else if(action.equals(STOP))
+	        {
+	        	this.actionFlow(flow, "stop");
+	        }
+	        else if(action.equals(PAUSE))
+	        {
+	        	this.actionFlow(flow, "pause");
+	        }
+	        else if(action.equals(RESUME))
+	        {
+	        	this.actionFlow(flow, "resume");
+	        }
+	        else if(action.equals(START_PAUSE))
+	        {       	
+	        	this.actionFlow(flow, "startPause");
+	        }	        
+        }
+	}
+	
+	protected boolean actionFlow(Flow flow, String action)
+	{		
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	
+    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+		
+    	String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
+				+ flow.getModule().getContextRoot() 
+				+ "/rest/moduleControl/controlFlowState/"
+				+ flow.getModule().getName() 
+	    		+ "/"
+	    		+ flow.getName();
+    	
+	    WebTarget webTarget = client.target(url);
+	    Response response = webTarget.request().put(Entity.entity(action, MediaType.APPLICATION_OCTET_STREAM));
+	    
+	    if(response.getStatus()  == 200)
+	    {
+	    	Notification.show(flow.getName() + " flow " + action + "!");
+	    }  
+	    else
+	    {
+	    	response.bufferEntity();
+	        
+	        String responseMessage = response.readEntity(String.class);
+	        
+	    	Notification.show(responseMessage, Type.ERROR_MESSAGE);
+	    	return false;
+	    }
+	    
+	    return true;
 	}
 
 	/* (non-Javadoc)
