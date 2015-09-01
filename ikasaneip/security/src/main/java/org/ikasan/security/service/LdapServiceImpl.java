@@ -337,6 +337,7 @@ public class LdapServiceImpl implements LdapService
 			
 			if(user == null)
 			{
+				// todo need to sort out password stuff
 				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
 				user.setDepartment(ldapUser.department);
 				user.setFirstName(ldapUser.firstName);

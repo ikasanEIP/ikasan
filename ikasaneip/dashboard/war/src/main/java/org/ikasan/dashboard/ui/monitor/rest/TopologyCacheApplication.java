@@ -79,7 +79,7 @@ public class TopologyCacheApplication
     @PUT
 	@Path("/updateCache/{moduleName}/{flowName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTrigger(@PathParam("moduleName") String moduleName, 
+    public Response updateCache(@PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, String state)
     {
         logger.info("Updating topology state cache: ModuleName: " 

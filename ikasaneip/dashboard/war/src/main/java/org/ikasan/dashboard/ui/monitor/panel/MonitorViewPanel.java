@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui.monitor.panel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -72,6 +73,7 @@ public class MonitorViewPanel extends Panel implements View
     private CssLayout dashboardPanels;
     private GraphCache graphCache;
     private TopologyService topologyService;
+    private List<View> views;
     
     /**
      * Constructor
@@ -122,10 +124,14 @@ public class MonitorViewPanel extends Panel implements View
 
         List<Server> servers = topologyService.getAllServers();
         
+        this.views = new ArrayList<View>();
+        
         for(Server server: servers)
         {
         	MonitorPanel panel = new MonitorPanel(this.topologyService, server);
         	dashboardPanels.addComponent(panel.buildServerComponent());
+        	
+        	this.views.add(panel);
         }
 
         return dashboardPanels;
@@ -138,7 +144,10 @@ public class MonitorViewPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
-//    	eventExclusionsTable.populate();
+		for(View view: views)
+		{
+			view.enter(event);
+		}
     }
 }
 
