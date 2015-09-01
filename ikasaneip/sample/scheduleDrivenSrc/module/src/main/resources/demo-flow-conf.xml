@@ -7,13 +7,14 @@
     <!--  Flow                                                               -->
     <!--  ================================================================== -->
     <bean id="demoScheduledConverterFlow"   class="org.ikasan.builder.FlowFactory">
-        <property name="moduleName"         value="Demo Sample Scheduled Module" />
+        <property name="moduleName"         value="Sample Scheduled Module" />
         <property name="name"               value="Demo Scheduled Flow" />
         <property name="description"        value="Demonstrates scheduled callbacks for a flow." />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="consumer"           ref="demoScheduledConsumerFlowElement" />
         <property name="resubmissionService"           ref="demoScheduledConsumer" />
         <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
+        <!-- property name="monitor" ref="monitor"/ -->
     </bean>
 
     <bean id="demoScheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">

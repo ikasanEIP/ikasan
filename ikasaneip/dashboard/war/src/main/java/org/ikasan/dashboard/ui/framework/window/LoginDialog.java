@@ -52,11 +52,15 @@ import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -87,7 +91,7 @@ public class LoginDialog extends Window
             VisibilityGroup visibilityGroup,
             NavigationPanel commitHandler)
     {
-        super("Login");
+        super();
         init(authenticationService, visibilityGroup, commitHandler);
     }
 
@@ -106,31 +110,49 @@ public class LoginDialog extends Window
         super.setModal(true);
         super.setResizable(false);
         super.center();
+        this.setWidth(300, Unit.PIXELS);
+    	this.setHeight(200, Unit.PIXELS);
 
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(LoginFieldGroup.USERNAME, new ObjectProperty<String>(""));
         item.addItemProperty(LoginFieldGroup.PASSWORD, new ObjectProperty<String>(""));
-        
-        FormLayout form = new FormLayout();
-        form.setWidth("280px");
-        form.setHeight("140px");
+       
+        GridLayout form = new GridLayout(2, 4);
+        form.setColumnExpandRatio(0, .15f);
+        form.setColumnExpandRatio(1, .85f);
+        form.setWidth(100, Unit.PERCENTAGE);
         form.setMargin(true);
+        form.setSpacing(true);
         
-        final TextField userNameField = new TextField("Username");
+        Label newTypeLabel =new Label("Login");
+        newTypeLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		form.addComponent(newTypeLabel, 0, 0, 1, 0);
+        
+		Label usernameLabel = new Label("Username:");
+		usernameLabel.setSizeUndefined();
+		form.addComponent(usernameLabel, 0, 1);
+		form.setComponentAlignment(usernameLabel, Alignment.MIDDLE_RIGHT);
+		
+        final TextField userNameField = new TextField();
         userNameField.addValidator(new StringLengthValidator(
             "The username must not be empty",
             1, null, true));
         userNameField.setValidationVisible(false);
         userNameField.setStyleName("ikasan");
-        form.addComponent(userNameField);
+        form.addComponent(userNameField, 1, 1);
 
-        final PasswordField passwordField = new PasswordField("Password");
+        Label passwordLabel = new Label("Password:");
+        passwordLabel.setSizeUndefined();
+		form.addComponent(passwordLabel, 0, 2);
+		form.setComponentAlignment(passwordLabel, Alignment.MIDDLE_RIGHT);
+		
+        final PasswordField passwordField = new PasswordField();
         passwordField.setStyleName("ikasan");
         passwordField.addValidator(new StringLengthValidator(
             "The password must not be empty",
             1, null, true));
         passwordField.setValidationVisible(false);
-        form.addComponent(passwordField);
+        form.addComponent(passwordField, 1, 2);
 
         final LoginFieldGroup binder = new LoginFieldGroup(item, visibilityGroup
             , authenticationService);
@@ -138,6 +160,7 @@ public class LoginDialog extends Window
         binder.bind(passwordField, LoginFieldGroup.PASSWORD);
 
         HorizontalLayout buttons = new HorizontalLayout();
+        buttons.setSpacing(true);
         
         Button loginButton = new Button("Login");
         loginButton.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -186,7 +209,9 @@ public class LoginDialog extends Window
         });
         buttons.addComponent(cancelButton);
 
-        form.addComponent(buttons);
+        form.addComponent(buttons, 0, 3, 1, 3);
+        form.setComponentAlignment(buttons, Alignment.MIDDLE_CENTER);
+        
         this.setContent(form);
     }
 }

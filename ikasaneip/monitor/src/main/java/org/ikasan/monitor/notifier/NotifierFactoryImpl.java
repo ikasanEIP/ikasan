@@ -65,4 +65,13 @@ public class NotifierFactoryImpl implements NotifierFactory
         return notifier;
     }
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.monitor.notifier.NotifierFactory#getDashboardNotifier()
+	 */
+	@Override
+	public Notifier getDashboardNotifier()
+	{
+		return new DashboardNotifier();
+	}
+
 }

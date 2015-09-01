@@ -87,6 +87,7 @@
         <constructor-arg ref="policyLinkSourceContextComboBox"/>
         <constructor-arg ref="policyLinkTargetContextComboBox"/>
         <constructor-arg ref="policyLinkSearchButtonClickListener"/>
+        <constructor-arg ref="newActions"/>
     </bean>
     
     <bean id="policyLinkMappingSearchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.PolicyLinkMappingConfigurationSearchResultsTable" scope="session">

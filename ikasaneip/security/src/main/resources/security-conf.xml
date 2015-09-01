@@ -96,6 +96,7 @@
 				<value>/org/ikasan/security/model/Role.hbm.xml</value>
 				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
 				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/UserPrincipal.hbm.xml</value>
 				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
 				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>

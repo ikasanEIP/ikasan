@@ -45,8 +45,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -56,8 +58,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -95,6 +96,7 @@ public class PrincipalManagementPanel extends Panel implements View
 	private TextField principalTypeField = new TextField();
 	private TextArea descriptionField = new TextArea();
 	private Table roleTable = new Table();
+	private Table userTable = new Table();
 	private IkasanPrincipal principal;
 	private AutocompleteField<IkasanPrincipal> principalNameField;
 
@@ -128,41 +130,58 @@ public class PrincipalManagementPanel extends Panel implements View
 		this.setHeight("100%");
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
+		layout.setSpacing(true);
 		layout.setSizeFull();
 
-		Panel securityAdministrationPanel = new Panel("Group Management");
-		securityAdministrationPanel.setStyleName("dashboard");
+		Panel securityAdministrationPanel = new Panel();
+		securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 3);
+		GridLayout gridLayout = new GridLayout(2, 5);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
 
-		Label principalNameLabel = new Label("Group Name");
+		Label groupManagementLabel = new Label("Group Management");
+ 		groupManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		gridLayout.addComponent(groupManagementLabel, 0, 0, 1, 0);
+ 		
+ 		Label groupSearchHintLabel = new Label();
+		groupSearchHintLabel.setCaptionAsHtml(true);
+		groupSearchHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Type into the Group Name field to find a group.");
+		groupSearchHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		groupSearchHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(groupSearchHintLabel, 0, 1, 1, 1);
+		
+		Label principalNameLabel = new Label("Group Name:");
+		principalNameLabel.setSizeUndefined();
 
 		principalNameField = new AutocompleteField<IkasanPrincipal>();
-		principalNameField.setWidth("40%");
+		principalNameField.setWidth("70%");
 
 		final DragAndDropWrapper principalNameFieldWrap = new DragAndDropWrapper(
 				principalNameField);
 		principalNameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
 
-		principalTypeField.setWidth("40%");
-		descriptionField.setWidth("40%");
+		principalTypeField.setWidth("70%");
+		descriptionField.setWidth("70%");
 		descriptionField.setHeight("60px");
 		
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
-		roleTable.setHeight("520px");
+		roleTable.setHeight("610px");
 		roleTable.setWidth("300px");
+		
+		userTable.addContainerProperty("Associated Users", String.class, null);
+		userTable.setHeight("610px");
+		userTable.setWidth("300px");
 		
 		principalDropTable.addContainerProperty("Members", String.class, null);
 		principalDropTable.addContainerProperty("", Button.class, null);
-		principalDropTable.setHeight("100%");
+		principalDropTable.setHeight("700px");
 		principalDropTable.setWidth("300px");
 
 		principalNameField.setQueryListener(new AutocompleteQueryListener<IkasanPrincipal>()
@@ -191,24 +210,28 @@ public class PrincipalManagementPanel extends Panel implements View
 		GridLayout formLayout = new GridLayout(2, 3);
 		formLayout.setWidth("100%");
 		formLayout.setHeight("135px");
+		formLayout.setSpacing(true);
 		
-		formLayout.setColumnExpandRatio(0, 1);
-		formLayout.setColumnExpandRatio(1, 5);
+		formLayout.setColumnExpandRatio(0, .1f);
+		formLayout.setColumnExpandRatio(1, .8f);
 
 		formLayout.addComponent(principalNameLabel, 0, 0);
+		formLayout.setComponentAlignment(principalNameLabel, Alignment.MIDDLE_RIGHT);
 		formLayout.addComponent(principalNameFieldWrap, 1, 0);
 
-		Label principalTypeLabel = new Label("Group Type");
+		Label principalTypeLabel = new Label("Group Type:");
+		principalTypeLabel.setSizeUndefined();
 		formLayout.addComponent(principalTypeLabel, 0, 1);
+		formLayout.setComponentAlignment(principalTypeLabel, Alignment.MIDDLE_RIGHT);
 		formLayout.addComponent(principalTypeField, 1, 1);
 
-		Label descriptionLabel = new Label("Description");
+		Label descriptionLabel = new Label("Description:");
+		descriptionLabel.setSizeUndefined();
 		formLayout.addComponent(descriptionLabel, 0, 2);
+		formLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
 		formLayout.addComponent(descriptionField, 1, 2);
 		
-		gridLayout.addComponent(formLayout, 0, 0, 1, 0);
-		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 1, 1, 1);
+		gridLayout.addComponent(formLayout, 0, 2, 1, 2);
 
 		principalDropTable.setDragMode(TableDragMode.ROW);
 		principalDropTable.setDropHandler(new DropHandler()
@@ -235,10 +258,10 @@ public class PrincipalManagementPanel extends Panel implements View
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
-				ThemeResource deleteIcon = new ThemeResource(
-						"images/remove-icon.png");
-				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+				
+				deleteButton.setIcon(VaadinIcons.TRASH);
+				deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+				deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 				
 				final IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
 				final Role roleToRemove = (Role)rolesCombo.getValue();
@@ -272,8 +295,9 @@ public class PrincipalManagementPanel extends Panel implements View
 				for (final Role role : principal.getRoles())
 				{
 					Button roleDeleteButton = new Button();
-					roleDeleteButton.setIcon(deleteIcon);
-					roleDeleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					roleDeleteButton.setIcon(VaadinIcons.TRASH);
+					roleDeleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					roleDeleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 					
 					roleDeleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -301,9 +325,19 @@ public class PrincipalManagementPanel extends Panel implements View
 			}
 		});
 		
-		gridLayout.addComponent(roleTable, 0, 2, 1, 2);
+		Label roleTableHintLabel = new Label();
+		roleTableHintLabel.setCaptionAsHtml(true);
+		roleTableHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The Roles table below displays the roles that are assigned to the group. Roles can be deleted from this table.");
+		roleTableHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		roleTableHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(roleTableHintLabel, 0, 3, 1, 3);
+		
+		gridLayout.addComponent(roleTable, 0, 4);
+		gridLayout.addComponent(userTable, 1, 4);
 					
-		this.rolesCombo = new ComboBox();
+		this.rolesCombo = new ComboBox("Roles");
+		this.rolesCombo.setWidth("90%");
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
@@ -320,10 +354,10 @@ public class PrincipalManagementPanel extends Panel implements View
 					for(final IkasanPrincipal principal: principals)
 					{
 						Button deleteButton = new Button();
-						ThemeResource deleteIcon = new ThemeResource(
-								"images/remove-icon.png");
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 						
 						deleteButton.addClickListener(new Button.ClickListener() 
 				        {
@@ -350,20 +384,31 @@ public class PrincipalManagementPanel extends Panel implements View
 		    }
 		});
 			
-		Panel roleMemberPanel = new Panel("Role/Member Associations");
+		Panel roleMemberPanel = new Panel();
 		
-		roleMemberPanel.setStyleName("dashboard");
+		
+		roleMemberPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		roleMemberPanel.setHeight("100%");
 		roleMemberPanel.setWidth("100%");
 
-		VerticalLayout roleMemberLayout = new VerticalLayout();
-		roleMemberLayout.setMargin(true);
+		GridLayout roleMemberLayout = new GridLayout();
+		roleMemberLayout.setSpacing(true);
 		roleMemberLayout.setWidth("100%");
 		roleMemberLayout.setHeight("100%");
+		
+		Label roleGroupLabels = new Label("Role/Group Associations");
+		roleGroupLabels.setStyleName(ValoTheme.LABEL_HUGE);
+ 		gridLayout.addComponent(roleGroupLabels);
+ 		
+ 		Label groupDragHintLabel = new Label();
+		groupDragHintLabel.setCaptionAsHtml(true);
+		groupDragHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Drop groups into the table below to assign them the role.");
+ 		
+ 		roleMemberLayout.addComponent(roleGroupLabels);
+ 		roleMemberLayout.addComponent(groupDragHintLabel);
 		roleMemberLayout.addComponent(this.rolesCombo);
-		roleMemberLayout.setExpandRatio(this.rolesCombo, 0.05f);
 		roleMemberLayout.addComponent(this.principalDropTable);
-		roleMemberLayout.setExpandRatio(this.principalDropTable, 0.95f);
 		
 		roleMemberPanel.setContent(roleMemberLayout);
 
@@ -400,14 +445,25 @@ public class PrincipalManagementPanel extends Panel implements View
 		this.descriptionField.setValue(this.principal.getDescription());
 
 		this.roleTable.removeAllItems();
+		this.userTable.removeAllItems();
+		
+		List<User> users = this.securityService.getUsersAssociatedWithPrincipal(this.principal.getId());
+		
+		for(final User user: users)
+		{
+			String userString = "(" + user.getName() + ") " + user.getFirstName() +
+					" " + user.getSurname();
+			
+			userTable.addItem(new Object[]
+					{ userString }, user);
+		}
 
 		for (final Role role : principal.getRoles())
 		{
 			Button deleteButton = new Button();
-			ThemeResource deleteIcon = new ThemeResource(
-					"images/remove-icon.png");
-			deleteButton.setIcon(deleteIcon);
-			deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+			deleteButton.setIcon(VaadinIcons.TRASH);
+			deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			
 			deleteButton.addClickListener(new Button.ClickListener() 
 	        {

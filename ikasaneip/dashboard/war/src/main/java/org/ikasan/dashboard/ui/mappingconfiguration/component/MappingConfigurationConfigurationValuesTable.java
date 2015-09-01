@@ -47,8 +47,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
@@ -59,6 +61,7 @@ import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -69,6 +72,7 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -166,7 +170,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         container.addContainerProperty("Target Configuration Value", TextField.class,  null);
         container.addContainerProperty("Delete", Button.class,  null);
 
-        this.setCellStyleGenerator(new IkasanCellStyleGenerator());
+        this.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
         this.setContainerDataSource(container);
     }
 
@@ -284,7 +288,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         final DeleteRowAction action = new DeleteRowAction(sourceConfigurationValues, this.mappingConfiguration
             , this, this.mappingConfigurationService, this.systemEventService);
 
-        deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+        deleteButton.setIcon(VaadinIcons.TRASH);
+        deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        deleteButton.setDescription("Delete this record");
+        deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         deleteButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -294,7 +301,22 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 UI.getCurrent().addWindow(dialog);
             }
         });
-        this.visibilityGroup.registerComponent(deleteButton);
+        
+        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	 
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY))
+    					|| authentication.canAccessLinkedItem(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE
+    							, mappingConfiguration.getId()))
+    	{
+    		deleteButton.setVisible(true);
+    	}
+    	else
+    	{
+    		deleteButton.setVisible(false);
+    	}
 
 
         Item item = this.container.addItemAt(0, sourceConfigurationValue);
@@ -393,7 +415,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                     final Button deleteButton = new Button("Delete");
                     deleteButton.setData(value);
-                    deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+                    deleteButton.setIcon(VaadinIcons.TRASH);
+                    deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                    deleteButton.setDescription("Delete this record");
+                    deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
                     deleteButton.addClickListener(new Button.ClickListener() {
                         public void buttonClick(ClickEvent event) {
                             IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -403,7 +428,22 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             UI.getCurrent().addWindow(dialog);
                         }
                     });
-                    this.visibilityGroup.registerComponent(deleteButton);
+                    
+                    final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+             	        	.getAttribute(DashboardSessionValueConstants.USER);
+                	 
+                	if(authentication != null 
+                			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+                					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY))
+                					|| authentication.canAccessLinkedItem(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE
+                							, mappingConfiguration.getId()))
+                	{
+                		deleteButton.setVisible(true);
+                	}
+                	else
+                	{
+                		deleteButton.setVisible(false);
+                	}
 
                     this.addItem(new Object[] {tableCellLayout,
                             targetConfigurationTextField, deleteButton}, value);

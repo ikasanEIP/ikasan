@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="messageProvider" class="example.db.messageprovider.DBMessageProvider">
+        <constructor-arg ref="sourceService"/>
+    </bean>
+
+    <bean id="${sourceFlowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
+        <property name="cronExpression" value="0/5 * * * * ?" />
+    </bean>
+
+    <bean id="${targetFlowName}Producer" class="example.component.endpoint.producer.DBProducer">
+        <constructor-arg ref="targetService"/>
+    </bean>
+
+    <bean id="sourceService" class="example.io.service.SourceServiceImpl">
+        <constructor-arg>
+            <bean id="dao" class="example.io.dao.HibernateReaderDaoImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="targetService" class="example.io.service.TargetServiceImpl">
+        <constructor-arg>
+            <bean id="dao" class="example.io.dao.HibernateWriterDaoImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>example/io/model/Model.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+</beans>
