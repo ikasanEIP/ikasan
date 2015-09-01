@@ -36,6 +36,10 @@
         <constructor-arg ref="bannerImage"/>
         <constructor-arg ref="menu"/>
         <constructor-arg ref="topologyStateCache"/>
+        <constructor-arg ref="bannerLabel"/>
+        <constructor-arg ref="mainLayout"/>
+        <constructor-arg ref="menuContent"/>
+        <constructor-arg ref="showMenuButton"/>
     </bean>
     
     <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
@@ -201,12 +205,12 @@
     <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
     	<constructor-arg ref="eventExclusionsTable"/>
     	<constructor-arg ref="flowStateTable"/>
-    	<constructor-arg ref="graphCache"/>
+    	<!-- constructor-arg ref="graphCache"/ -->
     </bean>
     
-    <bean id="graphCache" class="org.ikasan.dashboard.ui.framework.cache.GraphCache" scope="singleton">
+    <!-- bean id="graphCache" class="org.ikasan.dashboard.ui.framework.cache.GraphCache" scope="singleton">
     	<constructor-arg ref="errorReportingService"/>
-    </bean>
+    </bean -->
     
     <bean id="eventExclusionsTable" class=" org.ikasan.dashboard.ui.framework.component.EventExclusionsTable" scope="session">
     	<constructor-arg value="Event Exclusions"/>
@@ -251,8 +255,29 @@
 		 <constructor-arg ref="ldapService"/>
     </bean>
     
-    <bean id="bannerImage" class="com.vaadin.server.ThemeResource" scope="session">
+    <bean id="bannerImage" class="com.vaadin.ui.Image" scope="session">
+    	<constructor-arg value=""/>
+        <constructor-arg ref="bannerImageResource"/>
+    </bean>
+    
+    <bean id="bannerImageResource" class="com.vaadin.server.ThemeResource" scope="session">
         <constructor-arg value="images/Ikasan_Logo_Transp.png"/>
+    </bean>
+    
+    <bean id="bannerLabel" class="com.vaadin.ui.Label" scope="session">
+        <constructor-arg value="Enterprise Integration Platform"/>
+    </bean>
+    
+    <bean id="showMenuButton" class="com.vaadin.ui.Button" scope="session">
+        <constructor-arg value="Menu"/>
+    </bean>
+    
+    <bean id="menuContent" class="com.vaadin.ui.CssLayout" scope="session">
+    </bean>
+    
+    <bean id="mainLayout" class="com.vaadin.ui.GridLayout" scope="session">
+        <constructor-arg value="1"/>
+        <constructor-arg value="4"/>
     </bean>
 
 </beans>

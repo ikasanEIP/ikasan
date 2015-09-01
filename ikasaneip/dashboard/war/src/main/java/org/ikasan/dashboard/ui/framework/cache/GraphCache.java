@@ -407,18 +407,15 @@ public class GraphCache
 	
 	protected Date getMidnightToday()
 	{
-//		Calendar date = new GregorianCalendar();
-//		// reset hour, minutes, seconds and millis
-//		date.set(Calendar.DAY_OF_YEAR, -2);
-//		date.set(Calendar.HOUR_OF_DAY, 0);
-//		date.set(Calendar.MINUTE, 0);
-//		date.set(Calendar.SECOND, 0);
-//		date.set(Calendar.MILLISECOND, 0);
-//
-//		return date.getTime();
-		
-		long DAY_IN_MS = 1000 * 60 * 60 * 24;
-		return new Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
+		Calendar date = new GregorianCalendar();
+		// reset hour, minutes, seconds and millis
+		date.set(Calendar.DAY_OF_YEAR, -2);
+		date.set(Calendar.HOUR_OF_DAY, 0);
+		date.set(Calendar.MINUTE, 0);
+		date.set(Calendar.SECOND, 0);
+		date.set(Calendar.MILLISECOND, 0);
+
+		return date.getTime();
 	}
 	
 	protected Date getTwentyThreeFixtyNineToday()

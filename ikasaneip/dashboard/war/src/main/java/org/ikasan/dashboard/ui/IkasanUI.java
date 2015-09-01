@@ -62,12 +62,9 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
-import com.vaadin.data.Container;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
@@ -82,7 +79,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -109,25 +105,31 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     
     private static final String STYLE_VISIBLE = "valo-menu-visible";
     
-    private final Table table = new Table();
-    private Container container = new IndexedContainer();
+//    private final Table table = new Table();
+//    private Container container = new IndexedContainer();
 //    private FeederThread feederThread = new FeederThread();
     
     private ConnectorTracker tracker;
     
 //    private CssLayout menu = new CssLayout();
     private final LinkedHashMap<String, String> menuItems = new LinkedHashMap<String, String>();
-    private CssLayout menuItemsLayout = new CssLayout();
+//    private CssLayout menuItemsLayout = new CssLayout();
     private MenuLayout menuLayout;
-    private Component menuComponent;
+//    private Component menuComponent;
     
     private HashMap<Component, String> menuComponents = new HashMap<Component, String>();
 
-    private ThemeResource bannerImage;
+    private Image bannerImage;
     
     private Menu menu;
     
     private TopologyStateCache topologyStateCache;
+    
+    private Label bannerLabel;
+    
+    private GridLayout mainLayout;
+    private CssLayout menuContent;
+    private Button showMenuButton;
     
     /**
      * Constructor 
@@ -151,7 +153,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout,
-            ThemeResource bannerImage, Menu menu, TopologyStateCache topologyStateCache)
+            Image bannerImage, Menu menu, TopologyStateCache topologyStateCache, Label bannerLabel, GridLayout mainLayout,
+            CssLayout menuContent, Button showMenuButton)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -168,50 +171,51 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.bannerImage = bannerImage;
 	    this.menu = menu;
 	    this.topologyStateCache = topologyStateCache;
+	    this.bannerLabel = bannerLabel;
+	    this.mainLayout = mainLayout;
+	    this.menuContent = menuContent;
+	    this.showMenuButton = showMenuButton;
 	    Broadcaster.register(this);
 	}
 
     @Override
     protected void init(VaadinRequest request)
-    {
-//    	Responsive.ma	keResponsive(this);
-    	
+    {    	
     	VaadinSession.getCurrent().setAttribute
     		(DashboardSessionValueConstants.TOPOLOGY_STATE_CACHE, this.topologyStateCache);
     	
         addStyleName(ValoTheme.UI_WITH_MENU);
         
-        final GridLayout layout = new GridLayout(1, 4);	
-        layout.setSizeFull();   
-        this.setContent(layout);
+        this.mainLayout.setSizeFull();   
+        this.setContent(this.mainLayout);
 
-        imagePanelLayout.removeAllComponents();
-        imagePanelLayout.setHeight("70px");
+        this.imagePanelLayout.removeAllComponents();
+        this.imagePanelLayout.setHeight("70px");
 
-        layout.addComponent(imagePanelLayout, 0, 0);
+//        this.mainLayout.removeAllComponents();
+        this.mainLayout.addComponent(imagePanelLayout, 0, 0);
 
-        imagePanelLayout.setStyleName("v-header");
+        this.imagePanelLayout.setStyleName("v-header");
 
-        Image image = new Image("", bannerImage);
-        imagePanelLayout.addComponent(image);
-        image.setHeight("150%");
-        imagePanelLayout.setExpandRatio(image, 0.5f);
-        Label label = new Label("Enterprise Integration Platform");
-        label.setStyleName("ikasan-maroon");
-        label.setHeight("100%");
-        imagePanelLayout.addComponent(label);
-        imagePanelLayout.setExpandRatio(label, 0.5f);
-        imagePanelLayout.setComponentAlignment(label, Alignment.BOTTOM_LEFT);
+        this.imagePanelLayout.addComponent(this.bannerImage);
+        this.bannerImage.setHeight("150%");
+        this.imagePanelLayout.setExpandRatio(this.bannerImage, 0.5f);
+        
+        this.bannerLabel.setStyleName("ikasan-maroon");
+        this.bannerLabel.setHeight("100%");
+        this.imagePanelLayout.addComponent(this.bannerLabel);
+        this.imagePanelLayout.setExpandRatio(this.bannerLabel, 0.5f);
+        this.imagePanelLayout.setComponentAlignment(this.bannerLabel, Alignment.BOTTOM_LEFT);
 
         
-        layout.addComponent(navigationPanel, 0, 1);
+        this.mainLayout.addComponent(navigationPanel, 0, 1);
         
         loadTopLevelNavigator();
-        menuComponent = buildContent();
-        menuLayout.addMenu(menuComponent);
-        layout.addComponent(menuLayout, 0, 2);
+        buildContent();
+        this.menuLayout.addMenu(this.menuContent);
+        this.mainLayout.addComponent(this.menuLayout, 0, 2);
         
-        layout.setRowExpandRatio(2, 1);
+        this.mainLayout.setRowExpandRatio(2, 1);
      
         this.navigationPanel.resetCurrentView();
         this.navigationPanel.setToggleButton(buildToggleButton());
@@ -225,11 +229,11 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         this.navigationPanel.setMenuComponents(menu.getMenuComponents());
         
         UI.getCurrent().getNavigator().navigateTo("landingView");  
-	       	navigationPanel.setVisible(true);	
+        this.navigationPanel.setVisible(true);	
     }
     
-    private Component buildContent() {
-        final CssLayout menuContent = new CssLayout();
+    private Component buildContent() 
+    {
         menuContent.addStyleName("sidebar");
         menuContent.addStyleName(ValoTheme.MENU_PART);
         menuContent.addStyleName("no-vertical-drag-hints");
@@ -245,7 +249,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     
     private Component buildToggleButton() 
     {
-    	 final Button showMenu = new Button("Menu", new ClickListener() 
+    	 showMenuButton.addClickListener(new ClickListener() 
          {
              @Override
              public void buttonClick(final ClickEvent event) 
@@ -263,13 +267,13 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
              }
          });
     	 
-         showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
-         showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
-         showMenu.setIcon(FontAwesome.LIST);
-         showMenu.setPrimaryStyleName("valo-menu-item");
+         showMenuButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+         showMenuButton.addStyleName(ValoTheme.BUTTON_SMALL);
+         showMenuButton.setIcon(FontAwesome.LIST);
+         showMenuButton.setPrimaryStyleName("valo-menu-item");
          menu.setStyleName("valo-menu-visible");
          
-         return showMenu;
+         return showMenuButton;
     }
     
     public void loadTopLevelNavigator()
@@ -317,7 +321,15 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
           {
             try 
             {
-              super.registerConnector(connector);
+              if(super.getConnector(connector.getConnectorId()) == null)
+              {
+            	  super.registerConnector(connector);
+              }
+              else
+              {
+            	  unregisterConnector(connector);
+            	  super.registerConnector(connector);
+              }
             } 
             catch (RuntimeException e) 
             {
@@ -325,6 +337,15 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
               throw e;
             }
           }
+
+		/* (non-Javadoc)
+		 * @see com.vaadin.ui.ConnectorTracker#unregisterConnector(com.vaadin.server.ClientConnector)
+		 */
+		@Override
+		public void unregisterConnector(ClientConnector connector)
+		{
+			super.unregisterConnector(connector);
+		}
         };
       }
 

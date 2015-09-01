@@ -176,11 +176,8 @@ public class SecurityFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException
 	{
-		logger.info("Attempting web service authentication!");
 		Authentication authentication = authenticate(context);
-		
-		logger.info("Authentication object: " + authentication);
-		
+				
 		if(authentication != null)
 		{
 			context.setSecurityContext(new Authorizer(authentication));
