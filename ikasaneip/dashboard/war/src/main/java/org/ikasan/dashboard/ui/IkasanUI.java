@@ -222,7 +222,6 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         
         for(Component component: menu.getMenuComponents().keySet())
         {
-        	logger.info("Setting visible false: " + component);
         	component.setVisible(false);
         }
         
