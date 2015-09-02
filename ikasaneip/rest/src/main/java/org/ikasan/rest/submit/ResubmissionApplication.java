@@ -50,6 +50,8 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
 import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.rest.IkasanRestApplication;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -57,23 +59,24 @@ import org.ikasan.hospital.service.HospitalService;
  *
  */
 @Path("/resubmission")
-public class ResubmissionApplication
+public class ResubmissionApplication extends IkasanRestApplication
 {
 	private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	
+	@Autowired
 	private HospitalService hospitalService;
 
 	/**
 	 * @param hospitalService
 	 */
-	public ResubmissionApplication(HospitalService hospitalService)
+	public ResubmissionApplication()
 	{
 		super();
-		this.hospitalService = hospitalService;
-		if(this.hospitalService == null)
-		{
-			throw new IllegalArgumentException("hospitalService cannot be null!");
-		}
+//		this.hospitalService = hospitalService;
+//		if(this.hospitalService == null)
+//		{
+//			throw new IllegalArgumentException("hospitalService cannot be null!");
+//		}
 	}
 
 	/**

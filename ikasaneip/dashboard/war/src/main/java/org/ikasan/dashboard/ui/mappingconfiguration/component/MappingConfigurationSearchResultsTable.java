@@ -79,6 +79,6 @@ public class MappingConfigurationSearchResultsTable extends Table
         
         this.addItemClickListener(listener);
         
-        this.setCellStyleGenerator(new IkasanCellStyleGenerator());
+        this.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
     }
 }

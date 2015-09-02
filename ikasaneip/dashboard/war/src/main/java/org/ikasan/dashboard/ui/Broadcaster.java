@@ -56,7 +56,7 @@ public class Broadcaster implements Serializable {
 
 	public interface BroadcastListener 
 	{
-		void receiveBroadcast(String message);
+		void receiveBroadcast(Object message);
 	}
 
 	private static LinkedList<BroadcastListener> listeners = new LinkedList<BroadcastListener>();
@@ -71,7 +71,7 @@ public class Broadcaster implements Serializable {
 		listeners.remove(listener);
 	}
 
-	public static synchronized void broadcast(final String message)
+	public static synchronized void broadcast(final Object message)
 	{
 		for (final BroadcastListener listener : listeners)
 			executorService.execute(new Runnable() {

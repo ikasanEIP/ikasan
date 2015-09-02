@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.panel;
+package org.ikasan.dashboard.ui.administration.panel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -75,7 +75,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Ikasan Development Team
  *
  */
-public class AuthenticationMethodPanel extends Panel
+public class UserDirectoryManagementPanel extends Panel
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 	
@@ -91,7 +91,7 @@ public class AuthenticationMethodPanel extends Panel
 	private static final String APPLICATION_SECURITY_DESCRIPTION_ATTRIBUTE_NAME = "description";
 	private static final String MEMBER_OF_ATTRIBUTE_NAME = "memberOf";
 	
-    private Logger logger = Logger.getLogger(AuthenticationMethodPanel.class);
+    private Logger logger = Logger.getLogger(UserDirectoryManagementPanel.class);
 
     private HashMap<String, AuthenticationMethodDropdownValue> authenticationMethodDropdownValuesMap 
     	= new HashMap<String, AuthenticationMethodDropdownValue>();
@@ -132,7 +132,7 @@ public class AuthenticationMethodPanel extends Panel
      * 
      * @param ikasanModuleService
      */
-    public AuthenticationMethodPanel(AuthenticationMethod authenticationMethod, SecurityService securityService,
+    public UserDirectoryManagementPanel(AuthenticationMethod authenticationMethod, SecurityService securityService,
     		AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory,
     		LdapService ldapService)
     {

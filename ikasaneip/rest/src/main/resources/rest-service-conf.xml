@@ -53,6 +53,21 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<bean id="resubmissionApplication" class="org.ikasan.rest.submit.ResubmissionApplication">
+	</bean>
+	
+	<bean id="discoveryApplication" class="org.ikasan.rest.discovery.DiscoveryApplication">
+	</bean>
+	
+	<bean id="configurationApplication" class="org.ikasan.rest.configuration.ConfigurationApplication">
+	</bean>
+	
+	<bean id="moduleControlApplication" class="org.ikasan.rest.module.ModuleControlApplication">
+	</bean>
+	
+	<bean id="wiretapApplication" class="org.ikasan.rest.wiretap.WiretapApplication">
+	</bean>
+	
+	<!-- bean id="resubmissionApplication" class="org.ikasan.rest.submit.ResubmissionApplication">
 		<constructor-arg ref="hospitalService" />
 	</bean>
 	
@@ -71,6 +86,6 @@
 	
 	<bean id="wiretapApplication" class="org.ikasan.rest.wiretap.WiretapApplication">
 		<constructor-arg ref="wiretapFlowEventListener" />
-	</bean>
+	</bean -->
 	
 </beans>

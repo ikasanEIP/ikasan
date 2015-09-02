@@ -10,13 +10,18 @@ $v-font-size: 11px;
 $view-padding: round($v-unit-size / 1.5) !default;
 
 // Slight adjustment to menu background-color
-$valo-menu-background-color: #414B56;
+$valo-menu-background-color	: #414B56;
 
 $v-font-weight: 400;
 
 @mixin dashboard {
   @include valo;
   @include dashboard-dashboard-view;
+  
+	.v-Notification.error {
+		@include valo-notification-error-style;
+		@include valo-notification-closable-style;
+	}
 
 	.wordwrap-table .v-table-cell-wrapper {
 	   white-space: normal;
@@ -126,6 +131,12 @@ $v-font-weight: 400;
 		font-size: 9px;
 	}
 	
+	.v-table-cell-content-ikasan-indigo-small {
+		font-size: 11px;
+		background-color: rgba(75, 0, 130, 0.2);
+		font-size: 9px;
+	}
+	
 	.v-table-cell-content-ikasan-small {
 		font-size: 9px;
 	}
@@ -154,10 +165,48 @@ $v-font-weight: 400;
 		color: green;
 	}
 	
+	.v-tree-node-caption-indigoicon {
+		color: indigo;
+	}
+	
+	.v-monitor-caption-greenicon {
+		color: green;
+		font-size: 72px;
+		line-height: normal;
+	}
+	
 
 	.white .v-button-caption {
 		padding-top: 5px;
 		font-family: "Calibri";
 		color: white;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels .monitor-panel-slot {
+		padding: 6px;
+		min-height: 220px;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[width-range~="0-700px"] .monitor-panel-slot {
+		width: 50% !important;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[width-range~="701px-"] .monitor-panel-slot {
+		width: 33% !important;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[height-range~="0-440px"] .monitor-panel-slot {
+		height: 50%;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[height-range~="441px-"] .monitor-panel-slot {
+		height: 33%;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels .monitor-panel-slot.max {
+		width: 100% !important;
+		height: 100%;
+		padding-top: 0;
+		padding-bottom: 0;
 	}
 }

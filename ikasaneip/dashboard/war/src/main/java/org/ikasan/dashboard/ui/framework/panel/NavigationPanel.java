@@ -100,7 +100,6 @@ public class NavigationPanel extends Panel implements ViewContext
 	private String currentView;
 	private List<RefreshGroup> refreshGroups;
 	private Component toggleButton = new Button();
-	private List<Component> menuComponents;
 
 	/**
 	 * 
@@ -240,8 +239,6 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.setContent(layout);
 	}
 
-	
-
 	/**
 	 * Method to manage a logout
 	 */
@@ -327,10 +324,9 @@ public class NavigationPanel extends Panel implements ViewContext
 	/**
 	 * @param menuComponents the menuComponents to set
 	 */
-	public void setMenuComponents(List<Component> menuComponents)
+	public void setMenuComponents(HashMap<Component, String> menuComponents)
 	{
-		this.menuComponents = menuComponents;
-		this.visibilityGroup.getComponents().addAll(menuComponents);
+		this.visibilityGroup.getComponents().putAll(menuComponents);
 	}
 
 }

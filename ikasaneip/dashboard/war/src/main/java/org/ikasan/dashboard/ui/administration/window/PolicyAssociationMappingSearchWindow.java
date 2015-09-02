@@ -47,7 +47,9 @@ import org.ikasan.mapping.model.MappingConfigurationLite;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -63,7 +65,7 @@ public class PolicyAssociationMappingSearchWindow extends Window
 
 	private MappingConfigurationSearchPanel mappingConfigurationSearchPanel;
 	private MappingConfigurationSearchResultsPanel mappingConfigurationSearchResultsPanel;
-	private HorizontalSplitPanel horizontalSplitPanel;
+	private VerticalSplitPanel verticalSplitPanel;
 	private MappingConfigurationLite mappingConfiguration;
 
 	/**
@@ -88,26 +90,28 @@ public class PolicyAssociationMappingSearchWindow extends Window
      */
     protected void init()
     {
-    	this.setSizeFull();
+    	this.setHeight("80%");
+    	this.setWidth("80%");
     	this.setModal(true);
     	
     	this.mappingConfigurationSearchPanel.setWidth("100%");
-    	VerticalLayout leftPanelLayout = new VerticalLayout();
-    	leftPanelLayout.setWidth(320, Unit.PIXELS);
-    	leftPanelLayout.setHeight("100%");
-    	leftPanelLayout.addComponent(this.mappingConfigurationSearchPanel);
+    	VerticalLayout topPanelLayout = new VerticalLayout();
+    	topPanelLayout.setWidth(100, Unit.PERCENTAGE);
+    	topPanelLayout.setMargin(true);
+    	topPanelLayout.setHeight("100%");
+    	topPanelLayout.addComponent(this.mappingConfigurationSearchPanel);
     	
-    	HorizontalLayout rightPanelLayout = new HorizontalLayout();
-    	rightPanelLayout.setSizeFull();
-    	rightPanelLayout.addComponent(this.mappingConfigurationSearchResultsPanel);
+    	HorizontalLayout bottomPanelLayout = new HorizontalLayout();
+    	bottomPanelLayout.setSizeFull();
+    	bottomPanelLayout.addComponent(this.mappingConfigurationSearchResultsPanel);
     	
-    	this.horizontalSplitPanel 
-        	= new HorizontalSplitPanel(leftPanelLayout, rightPanelLayout);
-	    this.horizontalSplitPanel.setSizeFull();
-	    this.horizontalSplitPanel.setSplitPosition(320, Unit.PIXELS);
-	    this.horizontalSplitPanel.setLocked(true);
-	    this.horizontalSplitPanel.addStyleName("ikasansplitpanel");
-	    this.setContent(horizontalSplitPanel);
+    	this.verticalSplitPanel 
+        	= new VerticalSplitPanel(topPanelLayout, bottomPanelLayout);
+	    this.verticalSplitPanel.setSizeFull();
+	    this.verticalSplitPanel.setSplitPosition(320, Unit.PIXELS);
+	    this.verticalSplitPanel.setLocked(true);
+	    this.verticalSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
+	    this.setContent(verticalSplitPanel);
     }
     
     public void clear()

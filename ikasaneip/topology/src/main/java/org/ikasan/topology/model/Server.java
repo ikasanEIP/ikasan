@@ -53,8 +53,8 @@ public class Server
 	private Long id;
 	private String name = "";
 	private String description = "";
-	private String url;
-	private Integer port;
+	private String url  = "";
+	private Integer port = new Integer(0);
 	private Set<Module> modules;
 	
 	/** The data time stamp when an instance was first created */
@@ -66,7 +66,12 @@ public class Server
 	/**
 	 * Default constructor for Hibernate
 	 */
-	protected Server(){}
+    public Server()
+    {
+    	long now = System.currentTimeMillis();
+        this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+    }
 
 
 	/**

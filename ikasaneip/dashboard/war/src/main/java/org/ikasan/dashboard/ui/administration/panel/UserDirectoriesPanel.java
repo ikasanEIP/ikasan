@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.panel;
+package org.ikasan.dashboard.ui.administration.panel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -58,7 +58,6 @@ import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -74,15 +73,16 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.BaseTheme;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class AuthenticationMethodTabPanel extends Panel implements View
+public class UserDirectoriesPanel extends Panel implements View
 {
-	private Logger logger = Logger.getLogger(AuthenticationMethodTabPanel.class);
+	private Logger logger = Logger.getLogger(UserDirectoriesPanel.class);
 	
 	private SecurityService securityService;
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
@@ -95,7 +95,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
      * 
      * @param ikasanModuleService
      */
-    public AuthenticationMethodTabPanel(SecurityService securityService,
+    public UserDirectoriesPanel(SecurityService securityService,
     		AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory,
     		LdapService ldapService)
     {
@@ -119,20 +119,29 @@ public class AuthenticationMethodTabPanel extends Panel implements View
     }
 
     protected void init()
-    {        
-        Label parapraphOne = new Label("The table below shows the user directories currently configured for Ikasan.");
-        parapraphOne.setStyleName("large");
-        parapraphOne.setHeight("30px");
-        parapraphOne.setWidth("50%");
-        Label parapraphTwo = new Label("The order of the directory is the order in which it will be searched for users and groups." +
+    {     
+    	Label userDirectories = new Label("User Directories");
+    	userDirectories.setStyleName(ValoTheme.LABEL_HUGE);
+ 		
+    	Label parapraphOne = new Label();
+		parapraphOne.setCaptionAsHtml(true);
+		parapraphOne.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The table below shows the user directories currently configured for Ikasan.");
+		parapraphOne.addStyleName(ValoTheme.LABEL_TINY);
+		parapraphOne.addStyleName(ValoTheme.LABEL_LIGHT);
+		
+        Label parapraphTwo = new Label();
+        parapraphTwo.setCaptionAsHtml(true);
+        parapraphTwo.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The order of the directory is the order in which it will be searched for users and groups." +
         		" It is recommended that each user exists in a single directory.");
-        parapraphTwo.setStyleName("large");
-        parapraphTwo.setHeight("60px");
-        parapraphTwo.setWidth("50%");
+        parapraphTwo.addStyleName(ValoTheme.LABEL_TINY);
+        parapraphTwo.addStyleName(ValoTheme.LABEL_LIGHT);
         
         this.mainLayout.setWidth("100%");
         this.mainLayout.setSpacing(true);
         
+        this.mainLayout.addComponent(userDirectories);
         this.mainLayout.addComponent(parapraphOne);
         this.mainLayout.addComponent(parapraphTwo);
         
@@ -141,7 +150,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
         {
             public void buttonClick(ClickEvent event) 
             {
-            	final AuthenticationMethodPanel authMethodPanel = new AuthenticationMethodPanel(new AuthenticationMethod(), 
+            	final UserDirectoryManagementPanel authMethodPanel = new UserDirectoryManagementPanel(new AuthenticationMethod(), 
     					securityService, authenticationProviderFactory, ldapService);
         		
         		Window window = new Window("Configure User Directory");
@@ -177,20 +186,24 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		this.directoryTable.addContainerProperty("Type", String.class,  null);
 		this.directoryTable.addContainerProperty("Order", Layout.class,  null);
 		this.directoryTable.addContainerProperty("Operations", Layout.class,  null);
+
+		this.directoryTable.setColumnExpandRatio("Directory Name", 25);
+		this.directoryTable.setColumnExpandRatio("Type", 25);
 		
 		this.directoryTable.setColumnAlignment("Order",
                 Align.CENTER);
+		this.directoryTable.setColumnExpandRatio("Order", 10);
 		this.directoryTable.setColumnAlignment("Operations",
                 Align.CENTER);
-		this.directoryTable.setColumnWidth("Operations", 250);
+		this.directoryTable.setColumnWidth("Operations", 300);
 		
 		this.mainLayout.addComponent(this.directoryTable);
         
         this.mainLayout.setMargin(true);
         
-        Panel wrapperPanel = new Panel("User Directories");
+        Panel wrapperPanel = new Panel();
+        wrapperPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
         wrapperPanel.setSizeFull();
-        wrapperPanel.setStyleName("dashboard");
         wrapperPanel.setContent(this.mainLayout);
         
         HorizontalLayout wrapperLayout = new HorizontalLayout();
@@ -365,7 +378,7 @@ public class AuthenticationMethodTabPanel extends Panel implements View
         {
             public void buttonClick(ClickEvent event) 
             {            	
-        		AuthenticationMethodPanel authMethodPanel = new AuthenticationMethodPanel(authenticationMethod, 
+        		UserDirectoryManagementPanel authMethodPanel = new UserDirectoryManagementPanel(authenticationMethod, 
     					securityService, authenticationProviderFactory, ldapService);
         		
         		Window window = new Window("Configure User Directory");
@@ -474,7 +487,8 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		if(authenticationMethod.getOrder() != 1)
 		{
 			Button upArrow = new Button(VaadinIcons.ARROW_UP);
-			upArrow.setStyleName(BaseTheme.BUTTON_LINK);
+			upArrow.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			upArrow.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			upArrow.addClickListener(new Button.ClickListener() 
 	        {
 	            public void buttonClick(ClickEvent event) 
@@ -503,7 +517,8 @@ public class AuthenticationMethodTabPanel extends Panel implements View
 		if(authenticationMethod.getOrder() != numberOfAuthMethods)
 		{
 			Button downArrow = new Button(VaadinIcons.ARROW_DOWN);
-			downArrow.setStyleName(BaseTheme.BUTTON_LINK);
+			downArrow.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			downArrow.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			downArrow.addClickListener(new Button.ClickListener() 
 	        {
 	            public void buttonClick(ClickEvent event) 
