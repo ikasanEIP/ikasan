@@ -42,14 +42,13 @@ package org.ikasan.component.converter.xml;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.*;
+import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
@@ -60,7 +59,9 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.oxm.support.SaxResourceUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -92,6 +93,15 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     /** whether to route or throw exception on validation failure */
     private boolean routeOnValidationException;
 
+    /** list of potential classes for this context */
+    private List<Class> classes;
+
+    /** overriding root class */
+    private Class rootClass;
+
+    /** QNAME of the root element */
+    private QName rootQName;
+
     /**
      * Constructor
      * @param classes
@@ -100,6 +110,12 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     {
         try
         {
+            this.classes = classes;
+            if(classes == null)
+            {
+                throw new IllegalArgumentException("classes cannot be 'null'");
+            }
+
             this.context = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
         }
         catch(JAXBException e)
@@ -116,6 +132,13 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     {
         try
         {
+            if(cls == null)
+            {
+                throw new IllegalArgumentException("class cannot be 'null'");
+            }
+
+            this.classes = new ArrayList<Class>();
+            this.classes.add(cls);
             this.context = JAXBContext.newInstance(cls);
         }
         catch(JAXBException e)
@@ -134,10 +157,22 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
         {
             Marshaller marshaller = this.context.createMarshaller();
             StringWriter writer = new StringWriter();
-            
+
+            if(rootQName != null)
+            {
+                object = new JAXBElement(rootQName, rootClass, object);
+            }
+
             if(this.xmlConfiguration.getSchemaLocation() != null)
             {
-                marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, this.xmlConfiguration.getSchemaLocation());
+                if(this.xmlConfiguration.isNoNamespaceSchema())
+                {
+                    marshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, this.xmlConfiguration.getSchemaLocation());
+                }
+                else
+                {
+                    marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, this.xmlConfiguration.getSchemaLocation());
+                }
             }
 
             if(this.xmlConfiguration.isValidate())
@@ -169,7 +204,7 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
                 return e;
             }
 
-            throw new TransformationException(e);
+            throw new TransformationException("Failed XML Validation on[" + failedXml + "]", e);
         }
         catch (JAXBException e)
         {
@@ -186,7 +221,7 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
                 }
             }
             
-            throw new TransformationException(e);
+            throw new TransformationException("Failed XML Validation on[" + failedXml + "]", e);
         }
     }
 
@@ -204,15 +239,39 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
         {
             return schemaFactory.newSchema();
         }
-        
-        Resource resource = new ClassPathResource(schema);
-        InputSource inputSource = SaxResourceUtils.createInputSource(resource);
+
+        InputSource inputSource = getResource(new ClassPathResource(schema));
+        if(inputSource == null)
+        {
+            inputSource = getResource(new UrlResource(schema));
+            if(inputSource == null)
+            {
+                inputSource = getResource(new FileSystemResource(schema));
+                if(inputSource == null)
+                {
+                    throw new IOException("Unable to load " + schema);
+                }
+            }
+        }
+
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+        xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", this.xmlConfiguration.isUseNamespacePrefix());
         Source schemaSource = new SAXSource(xmlReader, inputSource);
         return schemaFactory.newSchema(schemaSource);
     }
-    
+
+    protected InputSource getResource(Resource resource)
+    {
+        try
+        {
+            return SaxResourceUtils.createInputSource(resource);
+        }
+        catch(IOException e)
+        {
+            return null;
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguration()
      */
@@ -237,8 +296,57 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     @Override
     public void setConfiguration(XmlConfiguration xmlConfiguration)
     {
+        this.rootClass = null;
+        this.rootQName = null;
         this.xmlConfiguration = xmlConfiguration;
         this.routeOnValidationException = this.xmlConfiguration.isRouteOnValidationException();
+
+        // do we need to override the root name
+        if(this.xmlConfiguration.getRootClassName() != null && this.xmlConfiguration.getRootName() == null)
+        {
+            try
+            {
+                rootClass = Class.forName(this.xmlConfiguration.getRootClassName());
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new RuntimeException(e);
+            }
+
+            int period = this.xmlConfiguration.getRootClassName().lastIndexOf(".");
+            if(period <= 0)
+            {
+                rootQName = new QName( this.xmlConfiguration.getRootClassName() );
+            }
+            else
+            {
+                rootQName = new QName( this.xmlConfiguration.getRootClassName().substring(period + 1) );
+            }
+        }
+
+        if(this.xmlConfiguration.getRootClassName() == null && this.xmlConfiguration.getRootName() != null)
+        {
+            rootQName= new QName(this.xmlConfiguration.getRootName());
+
+            // try guessing
+            for(Class cls:this.classes)
+            {
+                if( cls.getName().endsWith(this.xmlConfiguration.getRootName()) )
+                {
+                    if(rootClass != null)
+                    {
+                        throw new RuntimeException("Too many matches for root class. Specifically override the rootClassName on the configuration.");
+                    }
+
+                    rootClass = cls;
+                }
+            }
+
+            if(rootClass == null)
+            {
+                throw new RuntimeException("rootClass is 'null'. Specifically override the rootClassName on the configuration.");
+            }
+        }
 
         // try to load the schema
         try
