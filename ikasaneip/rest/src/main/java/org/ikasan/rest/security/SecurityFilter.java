@@ -105,8 +105,6 @@ public class SecurityFilter implements ContainerRequestFilter {
         String username = vals[0];
         String password = vals[1];
         
-        logger.info("Authentication user: " + username);
-
         Authentication authentication = null;
         
         try

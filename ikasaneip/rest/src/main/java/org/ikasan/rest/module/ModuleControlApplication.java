@@ -152,9 +152,7 @@ public class ModuleControlApplication extends IkasanRestApplication
 	@Path("/flowStates/{moduleName}")
 	@Produces(MediaType.APPLICATION_JSON)	
 	public Map<String, String> getFlowStates(@Context SecurityContext context, @PathParam("moduleName") String moduleName)
-	{
-		logger.info("Attempting to get states for module: " + moduleName);
-		
+	{		
     	if(!context.isUserInRole("WebServiceAdmin"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
@@ -164,9 +162,7 @@ public class ModuleControlApplication extends IkasanRestApplication
 		HashMap<String, String> results = new HashMap<String, String>();
 
 		Module<Flow> module = moduleService.getModule(moduleName);
-		
-		logger.info("moduleService: " + moduleService);
-		
+				
 		List<Flow> flows = module.getFlows();
 		
 		for(Flow flow: flows)
@@ -174,9 +170,7 @@ public class ModuleControlApplication extends IkasanRestApplication
 			results.put(module.getName() + "-" + flow.getName()
 					, flow.getState());
 		}
-		
-		logger.info("results: " + results);
-		
+				
 		return results;
 	}
 
