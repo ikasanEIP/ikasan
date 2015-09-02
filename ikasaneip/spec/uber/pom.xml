@@ -101,6 +101,7 @@
 									<include>org.ikasan:ikasan-spec-*:jar:</include>
 								</includes>
 							</artifactSet>
+							<createSourcesJar>true</createSourcesJar>
 						</configuration>
 					</execution>
 				</executions>
