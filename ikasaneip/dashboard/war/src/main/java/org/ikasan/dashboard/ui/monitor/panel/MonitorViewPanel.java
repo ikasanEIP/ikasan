@@ -122,7 +122,17 @@ public class MonitorViewPanel extends Panel implements View
         dashboardPanels.addStyleName("dashboard-panels");
         Responsive.makeResponsive(dashboardPanels);
 
-        List<Server> servers = topologyService.getAllServers();
+        List<Server> servers = new ArrayList<Server>();
+        
+		try
+		{
+			servers = topologyService.getAllServers();
+		}
+		catch(Exception e)
+		{
+			logger.warn("An exception has occurred trying to update the topology state cache", e);
+			// Ignoring this exception, as it may be the case that the database is not yet setup.
+		}
         
         this.views = new ArrayList<View>();
         
@@ -144,6 +154,8 @@ public class MonitorViewPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
+    	this.buildContent();
+    	
 		for(View view: views)
 		{
 			view.enter(event);

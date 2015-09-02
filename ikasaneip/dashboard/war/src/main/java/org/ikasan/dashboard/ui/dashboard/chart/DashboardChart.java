@@ -40,7 +40,8 @@
  */
 package org.ikasan.dashboard.ui.dashboard.chart;
 
-import org.vaadin.highcharts.AbstractHighChart;
+
+import org.vaadin.higncharts.AbstractHighChart;
 
 import com.vaadin.annotations.JavaScript;
 

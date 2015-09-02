@@ -200,8 +200,8 @@ public class LandingViewPanel extends Panel implements View
         Responsive.makeResponsive(dashboardPanels);
 
         dashboardPanels.addComponent(buildDashboard(this.eventExclusionsTable));
-        dashboardPanels.addComponent(buildDashboardChart());
-        dashboardPanels.addComponent(buildAnotherChart());
+//        dashboardPanels.addComponent(buildDashboardChart());
+//        dashboardPanels.addComponent(buildAnotherChart());
         dashboardPanels.addComponent(buildDashboard(this.flowStateTable));
 
         return dashboardPanels;
