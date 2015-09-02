@@ -92,30 +92,17 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	private Logger logger = Logger.getLogger(IkasanUI.class);
 	
     private HashMap<String, IkasanUINavigator> views;
-    private ViewComponentContainer viewComponentContainer;
-    private UserService userService;
-    private AuthenticationService authenticationService;
-    private VisibilityGroup visibilityGroup;
-    private EditableGroup editableGroup;
-    private FunctionalGroup newMappingConfigurationFunctionalGroup;
-    private FunctionalGroup existingMappingConfigurationFunctionalGroup;
     private VerticalLayout imagePanelLayout;
-    private EventBus eventBus = new EventBus();
+    private EventBus eventBus;
     private NavigationPanel navigationPanel;
     
     private static final String STYLE_VISIBLE = "valo-menu-visible";
     
-//    private final Table table = new Table();
-//    private Container container = new IndexedContainer();
-//    private FeederThread feederThread = new FeederThread();
-    
     private ConnectorTracker tracker;
-    
-//    private CssLayout menu = new CssLayout();
+
     private final LinkedHashMap<String, String> menuItems = new LinkedHashMap<String, String>();
-//    private CssLayout menuItemsLayout = new CssLayout();
+    
     private MenuLayout menuLayout;
-//    private Component menuComponent;
     
     private HashMap<Component, String> menuComponents = new HashMap<Component, String>();
 
@@ -149,21 +136,12 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
      * @param navigationPanel
      */
 	public IkasanUI(HashMap<String, IkasanUINavigator> views,
-	        ViewComponentContainer viewComponentContainer, UserService userService,
-	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
-            FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
-            EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel, MenuLayout menuLayout,
+	        ViewComponentContainer viewComponentContainer, EventBus eventBus, VerticalLayout imagePanelLayout, 
+	        NavigationPanel navigationPanel, MenuLayout menuLayout,
             Image bannerImage, Menu menu, TopologyStateCache topologyStateCache, Label bannerLabel, GridLayout mainLayout,
             CssLayout menuContent, Button showMenuButton)
 	{
 	    this.views = views;
-	    this.userService = userService;
-	    this.authenticationService = authenticationService;
-	    this.visibilityGroup = visibilityGroup;
-	    this.viewComponentContainer = viewComponentContainer;
-	    this.editableGroup = editableGroup;
-	    this.newMappingConfigurationFunctionalGroup = newMappingConfigurationFunctionalGroup;
-	    this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;
 	    this.eventBus = eventBus;
 	    this.imagePanelLayout = imagePanelLayout;
 	    this.navigationPanel = navigationPanel;
@@ -192,7 +170,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         this.imagePanelLayout.removeAllComponents();
         this.imagePanelLayout.setHeight("70px");
 
-//        this.mainLayout.removeAllComponents();
+        this.mainLayout.removeAllComponents();
         this.mainLayout.addComponent(imagePanelLayout, 0, 0);
 
         this.imagePanelLayout.setStyleName("v-header");
