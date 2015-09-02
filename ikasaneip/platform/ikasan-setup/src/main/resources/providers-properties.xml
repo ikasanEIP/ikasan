@@ -4024,7 +4024,7 @@
                     Uri VARCHAR(256) NOT NULL,
                     ModuleName VARCHAR(256) NOT NULL,
                     FlowName VARCHAR(256) NOT NULL,
-                    FlowComponentName VARCHAR(256) NOT NULL,
+                    FlowElementName VARCHAR(256) NOT NULL,
 					ErrorDetail TEXT NULL,
 					ErrorMessage TEXT NULL,
 					ExceptionClass VARCHAR(512) NULL,
@@ -4036,7 +4036,7 @@
                     Expiry NUMERIC NOT NULL
                     );
                     CREATE UNIQUE INDEX ErrorOccurrence01u ON
-                    ErrorOccurrence(ModuleName,FlowName,FlowComponentName,Uri,Timestamp)
+                    ErrorOccurrence(ModuleName,FlowName,FlowElementName,Uri,Timestamp)
                 </prop>
 
                 <prop key="create.filter">CREATE TABLE MessageFilter
