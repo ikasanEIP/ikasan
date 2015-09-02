@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -243,9 +244,11 @@ public class TopologyServiceImpl implements TopologyService
 			    {
 			    	flowResponse = webTarget.request().get(JsonArray.class);
 			    }
-			    catch(NotFoundException e)
+			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
+			    	logger.info("Caught exception attempting to discover module with the following URL: " + url 
+			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
 			    
@@ -253,18 +256,18 @@ public class TopologyServiceImpl implements TopologyService
 			    
 			    this.topologyDao.save(module);
 			    
-		    	List<Flow> dbFlows = topologyDao.getFlowsByServerIdAndModuleId
-						(server.getId(), module.getId());
-		    	
-				for(Flow dbFlow: dbFlows)
-				{
-					for(Component component: dbFlow.getComponents())
-					{
-						this.topologyDao.delete(component);
-					}
-					
-					this.topologyDao.delete(dbFlow);
-				}
+//		    	List<Flow> dbFlows = topologyDao.getFlowsByServerIdAndModuleId
+//						(server.getId(), module.getId());
+//		    	
+//				for(Flow dbFlow: dbFlows)
+//				{
+//					for(Component component: dbFlow.getComponents())
+//					{
+//						this.topologyDao.delete(component);
+//					}
+//					
+//					this.topologyDao.delete(dbFlow);
+//				}
 
 			    
 			    for(JsonValue flowValue: flowResponse)
@@ -283,13 +286,21 @@ public class TopologyServiceImpl implements TopologyService
 					
 					Set<Component> components = flow.getComponents();
 					
-					flow.setComponents(null);
+					Flow dbFlow = this.topologyDao.getFlowsByServerIdModuleIdAndFlowname
+						(server.getId(), module.getId(), flow.getName());
+					
+					if(dbFlow != null)
+					{
+						flow = dbFlow;
+					}
+					
 					flow.setModule(module);
 					
 					this.topologyDao.save(flow);
-												
+											
 					for(Component component: components)
 					{
+						component = getComponent(flow.getComponents(), component);
 						component.setFlow(flow);
 						
 						logger.info("Saving component: " + component.getName());
@@ -301,4 +312,29 @@ public class TopologyServiceImpl implements TopologyService
 		}
 	}
 	
+	protected Component getComponent(Set<Component> components, Component component)
+	{
+		Iterator<Component> componentsItr = components.iterator();
+		
+		while(componentsItr.hasNext())
+		{
+			Component c = componentsItr.next();
+			
+			if(c.getName().trim().equals(component.getName().trim()))
+			{
+				return c;
+			}
+		}
+		
+		return component;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStream(org.ikasan.topology.model.BusinessStream)
+	 */
+	@Override
+	public void deleteBusinessStream(BusinessStream businessStream)
+	{
+		this.topologyDao.deleteBusinessStream(businessStream);
+	}
 }

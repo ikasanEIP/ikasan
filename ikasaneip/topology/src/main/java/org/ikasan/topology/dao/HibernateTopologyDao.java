@@ -279,6 +279,15 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 		this.getHibernateTemplate().saveOrUpdate(component);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStream(org.ikasan.topology.model.BusinessStream)
+	 */
+	@Override
+	public void deleteBusinessStream(BusinessStream businessStream)
+	{
+		this.getHibernateTemplate().delete(businessStream);
+	}
+
     
    
 }

@@ -80,7 +80,7 @@ public class HibernateErrorReportingServiceDaoTest
     @Test
     public void test_save_and_find()
     {
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
         ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
         Assert.assertNull("Should not be found", persistedErrorOccurrence);
@@ -98,7 +98,7 @@ public class HibernateErrorReportingServiceDaoTest
     public void test_deleteExpired_operation()
     {
         // new event with 1 milli expiry
-        ErrorOccurrence errorOccurrenceExpired = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), 1L);
+        ErrorOccurrence errorOccurrenceExpired = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), 1L);
 
         try
         {
@@ -109,7 +109,7 @@ public class HibernateErrorReportingServiceDaoTest
             Assert.fail("sleep woken early!");
         }
 
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         Assert.assertNull("Non expired should not be found", errorReportingServiceDao.find(errorOccurrence.getUri()));
         Assert.assertNull("Expired should not be found", errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) );
 

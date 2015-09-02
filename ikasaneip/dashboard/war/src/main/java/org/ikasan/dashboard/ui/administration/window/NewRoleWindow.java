@@ -41,6 +41,7 @@
 package org.ikasan.dashboard.ui.administration.window;
 
 import org.ikasan.security.model.Role;
+import org.ikasan.security.service.SecurityService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -51,9 +52,12 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -68,17 +72,20 @@ public class NewRoleWindow extends Window
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private TextField roleName;
-	private TextField roleDescription;
+	private TextArea roleDescription;
 	private Role role;
+	private SecurityService securityService;
 	
 
 	/**
 	 * @param policy
 	 */
-	public NewRoleWindow()
+	public NewRoleWindow(SecurityService securityService)
 	{
 		super();
 		this.role = new Role();
+		
+		this.securityService = securityService;
 		
 		this.init();
 	}
@@ -86,48 +93,63 @@ public class NewRoleWindow extends Window
 
 	public void init()
 	{
-//		this.setWidth("300px");
-//		this.setHeight("200px");
+		this.setWidth("550px");
+		this.setHeight("240px");
 		this.setModal(true);
 		this.setResizable(false);
 		
-		GridLayout gridLayout = new GridLayout(2, 3);
-		gridLayout.setWidth("280px");
-		gridLayout.setHeight("140px");
+		GridLayout gridLayout = new GridLayout(2, 4);
+		gridLayout.setWidth("100%");
 		gridLayout.setMargin(true);
+		gridLayout.setSpacing(true);
+		
+		gridLayout.setColumnExpandRatio(0, .1f);
+		gridLayout.setColumnExpandRatio(1, .9f);
+		
+		Label createNewRoleLabel = new Label("Create a New Role");
+		createNewRoleLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		
+		gridLayout.addComponent(createNewRoleLabel, 0, 0, 1, 0);
 
-		Label nameLabel = new Label("Name");
+		Label nameLabel = new Label("Name:");
+		nameLabel.setSizeUndefined();
 		this.roleName = new TextField();
 		this.roleName.addValidator(new StringLengthValidator(
 	            "A name must be entered.",
 	            1, null, false));
+		this.roleName.setWidth("80%");
 		
-		gridLayout.addComponent(nameLabel, 0, 0);
-		gridLayout.addComponent(roleName, 1, 0);
+		gridLayout.addComponent(nameLabel, 0, 1);
+		gridLayout.setComponentAlignment(nameLabel, Alignment.MIDDLE_RIGHT);
+		gridLayout.addComponent(roleName, 1, 1);
 		
-		Label descriptionLabel = new Label("Description");
-		this.roleDescription = new TextField();
+		Label descriptionLabel = new Label("Description:");
+		descriptionLabel.setSizeUndefined();
+		this.roleDescription = new TextArea();
 		this.roleDescription.addValidator(new StringLengthValidator(
 	            "A description must be entered.",
 	            1, null, false));
+		this.roleDescription.setRows(4);
+		roleDescription.setWidth("80%");
 		
 		this.roleName.setValidationVisible(false);
     	this.roleDescription.setValidationVisible(false);
 		
-		gridLayout.addComponent(descriptionLabel, 0, 1);
-		gridLayout.addComponent(roleDescription, 1, 1);
+		gridLayout.addComponent(descriptionLabel, 0, 2);
+		gridLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
+		gridLayout.addComponent(roleDescription, 1, 2);
 		
-		Button createButton = new Button("Create");
+		Button createButton = new Button("Save");
 		Button cancelButton = new Button("Cancel");
 		
 		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setWidth("200px");
+		buttonLayout.setSpacing(true);
 		buttonLayout.addComponent(createButton);
 		buttonLayout.setComponentAlignment(createButton, Alignment.MIDDLE_CENTER);
 		buttonLayout.addComponent(cancelButton);
 		buttonLayout.setComponentAlignment(cancelButton, Alignment.MIDDLE_CENTER);
 		
-		gridLayout.addComponent(buttonLayout, 0, 2, 1, 2);
+		gridLayout.addComponent(buttonLayout, 0, 3, 1, 3);
 		gridLayout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 		
 		BeanItem<Role> policyItem = new BeanItem<Role>(this.role);
@@ -156,6 +178,10 @@ public class NewRoleWindow extends Window
             	NewRoleWindow.this.roleDescription.setValidationVisible(false);
 
             	UI.getCurrent().removeWindow(NewRoleWindow.this);
+            	
+            	securityService.saveRole(role);
+            	
+            	Notification.show("Role successfully created!");
             }
         });
 		

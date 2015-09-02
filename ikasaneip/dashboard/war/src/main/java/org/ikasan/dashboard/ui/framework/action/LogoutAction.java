@@ -102,7 +102,7 @@ public class LogoutAction implements Action
     {
     	VaadinService.getCurrentRequest().getWrappedSession()
         	.setAttribute(DashboardSessionValueConstants.USER, null);
-        this.visibilityGroup.setVisible(false);
+        this.visibilityGroup.setVisible();
         this.editableGroup.setEditable(false);
 
         layout.removeComponent(this.logOutButton);

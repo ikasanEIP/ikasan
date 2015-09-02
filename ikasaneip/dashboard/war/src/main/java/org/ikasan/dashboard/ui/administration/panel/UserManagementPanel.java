@@ -49,6 +49,7 @@ import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -60,8 +61,6 @@ import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -73,7 +72,6 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextField;
@@ -141,18 +139,30 @@ public class UserManagementPanel extends Panel implements View
 		this.setHeight("100%");
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
 		layout.setSizeFull();
 
-		Panel securityAdministrationPanel = new Panel("User Management");
-		securityAdministrationPanel.setStyleName("dashboard");
+		Panel securityAdministrationPanel = new Panel();
+		securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 3);
+		GridLayout gridLayout = new GridLayout(2, 6);
 		gridLayout.setMargin(true);
+		gridLayout.setSpacing(true);
 		gridLayout.setSizeFull();
 	
+		Label mappingConfigurationLabel = new Label("User Management");
+ 		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		gridLayout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
+ 		
+ 		Label userSearchHintLabel = new Label();
+		userSearchHintLabel.setCaptionAsHtml(true);
+		userSearchHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Type into the Username, Firstname or Surname fields to find a user.");
+		userSearchHintLabel.addStyleName(ValoTheme.LABEL_TINY);
+		userSearchHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
+		gridLayout.addComponent(userSearchHintLabel, 0, 1, 1, 1);
+	 		
 		Label usernameLabel = new Label("Username:");
 		
 		usernameField.setWidth("40%");
@@ -175,7 +185,7 @@ public class UserManagementPanel extends Panel implements View
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
 		roleTable.setHeight("520px");
-		roleTable.setWidth("200px");
+		roleTable.setWidth("250px");
 
 		usernameField.setQueryListener(new AutocompleteQueryListener<User>()
 		{
@@ -209,10 +219,10 @@ public class UserManagementPanel extends Panel implements View
 				for (final Role role : principal.getRoles())
 				{
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					
 					
 					deleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -278,10 +288,10 @@ public class UserManagementPanel extends Panel implements View
 				for (final Role role : principal.getRoles())
 				{
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					
 					
 					deleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -347,10 +357,10 @@ public class UserManagementPanel extends Panel implements View
 				for (final Role role : principal.getRoles())
 				{
 					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					
 					
 					deleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -419,15 +429,32 @@ public class UserManagementPanel extends Panel implements View
 		formLayout.setComponentAlignment(emailLabel, Alignment.MIDDLE_RIGHT);
 		formLayout.addComponent(email, 1, 4);
 		
-		gridLayout.addComponent(formLayout, 0, 0, 1, 0);
+		gridLayout.addComponent(formLayout, 0, 2, 1, 2);
 		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 1, 1, 1);
-
+		Label rolesAndGroupsHintLabel1 = new Label();
+		rolesAndGroupsHintLabel1.setCaptionAsHtml(true);
+		rolesAndGroupsHintLabel1.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The Roles table below displays the roles that the user has. Roles can be deleted from this table.");
+		rolesAndGroupsHintLabel1.addStyleName(ValoTheme.LABEL_TINY);
+		rolesAndGroupsHintLabel1.addStyleName(ValoTheme.LABEL_LIGHT);
+		rolesAndGroupsHintLabel1.setWidth(300, Unit.PIXELS);
+		gridLayout.addComponent(rolesAndGroupsHintLabel1, 0, 3, 1, 3);
+		
+		Label rolesAndGroupsHintLabel2 = new Label();
+		rolesAndGroupsHintLabel2.setCaptionAsHtml(true);
+		rolesAndGroupsHintLabel2.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The Groups table below displays all the LDAP groups that the user is a member of. You cannot manage these " +
+				"from this application.");
+		rolesAndGroupsHintLabel2.addStyleName(ValoTheme.LABEL_TINY);
+		rolesAndGroupsHintLabel2.addStyleName(ValoTheme.LABEL_LIGHT);
+		rolesAndGroupsHintLabel2.setWidth(300, Unit.PIXELS);
+		gridLayout.addComponent(rolesAndGroupsHintLabel2, 0, 4, 1, 4);
+		
 		final ClientSideCriterion acceptCriterion = new SourceIs(usernameField);
 
 		userDropTable.addContainerProperty("Members", String.class, null);
 		userDropTable.addContainerProperty("", Button.class, null);
-		userDropTable.setHeight("100%");
+		userDropTable.setHeight("715px");
 		userDropTable.setWidth("300px");
 
 		userDropTable.setDragMode(TableDragMode.ROW);
@@ -455,10 +482,11 @@ public class UserManagementPanel extends Panel implements View
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
-				ThemeResource deleteIcon = new ThemeResource(
-						"images/remove-icon.png");
-				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+				
+				deleteButton.setIcon(VaadinIcons.TRASH);
+				deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+				deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+				
 				
 				final IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
 				final Role roleToRemove = (Role)rolesCombo.getValue();
@@ -492,8 +520,9 @@ public class UserManagementPanel extends Panel implements View
 				for (final Role role : principal.getRoles())
 				{
 					Button roleDeleteButton = new Button();
-					roleDeleteButton.setIcon(deleteIcon);
-					roleDeleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					roleDeleteButton.setIcon(VaadinIcons.TRASH);
+					roleDeleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+					roleDeleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 					
 					roleDeleteButton.addClickListener(new Button.ClickListener() 
 			        {
@@ -521,17 +550,18 @@ public class UserManagementPanel extends Panel implements View
 			}
 		});
 		
-		gridLayout.addComponent(roleTable, 0, 2);
+		gridLayout.addComponent(roleTable, 0, 5);
 		
-		this.associatedPrincipalsTable.addContainerProperty("Member of", String.class, null);
+		this.associatedPrincipalsTable.addContainerProperty("Groups", String.class, null);
 		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
 		associatedPrincipalsTable.setHeight("520px");
-		associatedPrincipalsTable.setWidth("450px");
+		associatedPrincipalsTable.setWidth("400px");
 		
-		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 2);
+		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 5);
 					
-		this.rolesCombo = new ComboBox();
-		this.rolesCombo.addListener(new Property.ValueChangeListener() {
+		this.rolesCombo = new ComboBox("Roles");
+		this.rolesCombo.setWidth("90%");
+		this.rolesCombo.addValueChangeListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
 		        
@@ -546,10 +576,10 @@ public class UserManagementPanel extends Panel implements View
 					for(final IkasanPrincipal principal: principals)
 					{
 						Button deleteButton = new Button();
-						ThemeResource deleteIcon = new ThemeResource(
-								"images/remove-icon.png");
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+						
 						
 						deleteButton.addClickListener(new Button.ClickListener() 
 				        {
@@ -576,20 +606,28 @@ public class UserManagementPanel extends Panel implements View
 		    }
 		});
 		
-		Panel roleMemberPanel = new Panel("Role/Member Associations");
-		
-		roleMemberPanel.setStyleName("dashboard");
+		Panel roleMemberPanel = new Panel();
+ 		
+		roleMemberPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		roleMemberPanel.setHeight("100%");
 		roleMemberPanel.setWidth("100%");
 		
-		VerticalLayout roleMemberLayout = new VerticalLayout();
-		roleMemberLayout.setMargin(true);
+		GridLayout roleMemberLayout = new GridLayout();
+		roleMemberLayout.setSpacing(true);
 		roleMemberLayout.setWidth("100%");
-		roleMemberLayout.setHeight("100%");
+		
+		Label roleMemberAssociationsLabel = new Label("Role/Member Associations");
+		roleMemberAssociationsLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		
+		Label userDragHintLabel = new Label();
+		userDragHintLabel.setCaptionAsHtml(true);
+		userDragHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" Drop users into the table below to assign them the role.");
+		
+ 		roleMemberLayout.addComponent(roleMemberAssociationsLabel);
+ 		roleMemberLayout.addComponent(userDragHintLabel);
 		roleMemberLayout.addComponent(this.rolesCombo);
-		roleMemberLayout.setExpandRatio(this.rolesCombo, 0.05f);
 		roleMemberLayout.addComponent(this.userDropTable);
-		roleMemberLayout.setExpandRatio(this.userDropTable, 0.95f);
 		
 		roleMemberPanel.setContent(roleMemberLayout);
 

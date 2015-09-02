@@ -56,12 +56,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
+import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.spec.module.ModuleService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -69,23 +70,24 @@ import org.ikasan.spec.module.ModuleService;
  *
  */
 @Path("/discovery")
-public class DiscoveryApplication
+public class DiscoveryApplication extends IkasanRestApplication
 {
 	private static Logger logger = Logger.getLogger(DiscoveryApplication.class);
 	
+	@Autowired
 	private ModuleContainer moduleContainer;
 
 	/**
 	 * @param hospitalService
 	 */
-	public DiscoveryApplication(ModuleContainer moduleContainer)
+	public DiscoveryApplication() 
 	{
 		super();
-		this.moduleContainer = moduleContainer;
-		if(this.moduleContainer == null)
-		{
-			throw new IllegalArgumentException("moduleContainer cannot be null!");
-		}
+//		this.moduleContainer = moduleContainer;
+//		if(this.moduleContainer == null)
+//		{
+//			throw new IllegalArgumentException("moduleContainer cannot be null!");
+//		}
 	}
 
 	/**

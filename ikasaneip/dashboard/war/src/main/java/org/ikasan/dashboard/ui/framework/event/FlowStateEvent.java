@@ -38,26 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.validation;
+package org.ikasan.dashboard.ui.framework.event;
 
-import com.vaadin.data.Validator;
+import java.util.HashMap;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class IntegerValidator implements Validator
+public class FlowStateEvent
 {
+	private HashMap<String, String> flowStateMap;
 
-	/* (non-Javadoc)
-	 * @see com.vaadin.data.Validator#validate(java.lang.Object)
+	/**
+	 * @param flowStateMap
 	 */
-	@Override
-	public void validate(Object value) throws InvalidValueException
+	public FlowStateEvent(HashMap<String, String> flowStateMap)
 	{
-		// TODO Auto-generated method stub
-
+		super();
+		this.flowStateMap = flowStateMap;
 	}
 
+	/**
+	 * @return the flowStateMap
+	 */
+	public HashMap<String, String> getFlowStateMap()
+	{
+		return flowStateMap;
+	}
+
+	/**
+	 * @param flowStateMap the flowStateMap to set
+	 */
+	public void setFlowStateMap(HashMap<String, String> flowStateMap)
+	{
+		this.flowStateMap = flowStateMap;
+	}
+	
 }

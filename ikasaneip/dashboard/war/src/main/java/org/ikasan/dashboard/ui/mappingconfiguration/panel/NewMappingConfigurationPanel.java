@@ -45,8 +45,11 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.Editable;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
@@ -59,10 +62,12 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -77,6 +82,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.BaseTheme;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * @author Ikasan Development Team
@@ -115,13 +121,14 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup newMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator,
+            IkasanUINavigator uiNavigator, MenuLayout menuLayout)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "New Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, newMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper, systemEventService);
+            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout);
 
         this.registerListeners();
     }
@@ -132,7 +139,12 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     @SuppressWarnings("serial")
     protected void init()
     {
-    	this.setStyleName("dashboard");
+    	layout = new GridLayout(5, 6);
+    	layout.setSpacing(true);
+        layout.setMargin(true);
+        layout.setWidth("100%");
+        
+        this.addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
     	this.parameterQueryTextFields = new ArrayList<TextField>();
     	
@@ -146,8 +158,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     	super.typeComboBox.unselect(super.typeComboBox.getValue());
 
     	
-        super.layout = new GridLayout(4, 5);
-        logger.info("Setting editButtonPressed!");
         super.mappingConfigurationFunctionalGroup.editButtonPressed();
 
         super.mappingConfiguration = new MappingConfiguration();
@@ -160,17 +170,26 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         toolBarLayout.addComponent(spacerLabel);
         toolBarLayout.setExpandRatio(spacerLabel, 0.865f);
 
-        editButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.editButton.setIcon(VaadinIcons.EDIT);
+        this.editButton.setDescription("Edit the mapping configuration");
+        this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         toolBarLayout.addComponent(editButton);
         toolBarLayout.setExpandRatio(editButton, 0.045f);
 
-        saveButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
+        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.saveButton.setDescription("Save the mapping configuration");
+        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         toolBarLayout.addComponent(saveButton);
         toolBarLayout.setExpandRatio(saveButton, 0.045f);
 
-        this.cancelButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.cancelButton.setDescription("Cancel the current edit");
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         toolBarLayout.addComponent(this.cancelButton);
         toolBarLayout.setExpandRatio(this.cancelButton, 0.045f);
@@ -183,9 +202,13 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(contentLayout
             , createTableLayout(false));
+        vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        Button addParametersButton = new Button("Create");
-        addParametersButton.setStyleName(BaseTheme.BUTTON_LINK);
+        Button addParametersButton = new Button();
+        addParametersButton.setIcon(VaadinIcons.FORM);
+        addParametersButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        addParametersButton.setDescription("Add new key location queries. The number of fields created corresponds to the number of query parameters.");
+        addParametersButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         addParametersButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -193,17 +216,22 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             }
         });
 
-        logger.info("Trying to add create button! " + addParametersButton);
         paramQueriesLayout.removeAllComponents();
-        paramQueriesLayout.addComponent(addParametersButton);
+//        paramQueriesLayout.addComponent(addParametersButton);
+        paramQueriesLayout.setSpacing(true);
+        
+        Label configValueLabels = new Label("Source Configuration Value Queries:");
+        layout.addComponent(configValueLabels, 2, 2);
+        layout.addComponent(addParametersButton, 3, 2);        
 
-        Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
-        queryParamsPanel.setHeight(200, Unit.PIXELS);
+        Panel queryParamsPanel = new Panel();
+        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+        queryParamsPanel.setHeight(140, Unit.PIXELS);
         queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
         queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 4);
+        this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
-        vpanel.setSplitPosition(290, Unit.PIXELS);
+        vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
 
@@ -253,7 +281,22 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             public void buttonClick(ClickEvent event) {
                 setEditable(false);
                 mappingConfigurationFunctionalGroup.saveOrCancelButtonPressed();
-                UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+                
+                Navigator navigator = new Navigator(UI.getCurrent(), menuLayout.getContentContainer());
+
+        		for (IkasanUIView view : topLevelNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
+            	
+                saveRequiredMonitor.manageSaveRequired("mappingView");
+                
+                navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
+
+        		for (IkasanUIView view : mappingNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
             }
         });
     }
@@ -295,17 +338,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     public void addParamQueryFields()
     {
         paramQueriesLayout.removeAllComponents();
-
-        Button addParametersButton = new Button("Create");
-        addParametersButton.setStyleName(BaseTheme.BUTTON_LINK);
-
-        addParametersButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                addParamQueryFields();
-            }
-        });
-
-        paramQueriesLayout.addComponent(addParametersButton);
 
         Long numberOfParams = (Long)super.numberOfParametersTextField.getPropertyDataSource().getValue();
         for(int i=0; i<numberOfParams; i++)

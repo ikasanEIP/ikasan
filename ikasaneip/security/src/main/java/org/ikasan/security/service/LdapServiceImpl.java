@@ -139,11 +139,15 @@ public class LdapServiceImpl implements LdapService
 		} 
 		catch (UsernameNotFoundException e)
 		{
+			logger.warn("An exception occurred trying to search for LDAP user: " + e.getMessage());
+			e.printStackTrace();
 			return null;
 		} 
 		catch (RuntimeException e)
 		{
-			throw new LdapServiceException(e);
+			logger.warn("An exception occurred trying to search for LDAP user: " + e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
 
 		String accountType = dir.getStringAttribute(authenticationMethod.getAccountTypeAttributeName());
@@ -333,6 +337,7 @@ public class LdapServiceImpl implements LdapService
 			
 			if(user == null)
 			{
+				// todo need to sort out password stuff
 				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
 				user.setDepartment(ldapUser.department);
 				user.setFirstName(ldapUser.firstName);

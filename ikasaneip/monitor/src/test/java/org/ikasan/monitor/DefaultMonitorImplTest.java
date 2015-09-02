@@ -266,7 +266,7 @@ public class DefaultMonitorImplTest
         }
 
         @Override
-        public void invoke(String env, String name, String notification)
+        public void invoke(String env, String moduleName, String flowName, String notification)
         {
             Assert.assertTrue(expectation.equals(notification));
         }
