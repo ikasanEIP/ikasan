@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui.framework.cache;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -114,7 +115,17 @@ public class TopologyStateCache
 		stateMap = new HashMap<String, String>();
 				
 		logger.info("Synchronising topology state cache.");
-		List<Server> servers = topologyService.getAllServers();
+		
+		List<Server> servers = new ArrayList<Server>();
+		try
+		{
+			servers = topologyService.getAllServers();
+		}
+		catch(Exception e)
+		{
+			logger.warn("An exception has occurred trying to update the topology state cache", e);
+			// Ignoring this exception, as it may be the case that the database is not yet setup.
+		}
 		
 		logger.info("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
