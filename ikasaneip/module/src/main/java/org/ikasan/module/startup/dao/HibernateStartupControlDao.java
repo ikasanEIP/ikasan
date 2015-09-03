@@ -44,7 +44,11 @@ import java.util.List;
 
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.module.StartupControl;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * Hibernate implementation of <code>FlowStartupControlDao</code>
@@ -59,7 +63,11 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
      * General query for finding existing InitiatorCommands for a given
      * Initiator
      */
-    private static final String startupControlQuery = "from StartupControlImpl i where i.moduleName = ? and i.flowName = ?";
+	private static final String MODULE_NAME = "moduleName";
+    private static final String FLOW_NAME = "flowName";
+    private static final String startupControlQuery = "from StartupControlImpl i where i.moduleName =:" 
+    		+ MODULE_NAME + " and i.flowName =:" + FLOW_NAME;
+
 
     /*
      * (non-Javadoc)
@@ -67,14 +75,25 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
      * @see org.ikasan.framework.flow.initiator.dao.FlowStartupControlDao#
      * getFlowStartupControl(java.lang.String, java.lang.String)
      */
-    public StartupControl getStartupControl(String moduleName, String flowName)
+    public StartupControl getStartupControl(final String moduleName, final String flowName)
     {
-        List results = getHibernateTemplate().find(startupControlQuery, new Object[] { moduleName, flowName });
-        if (!results.isEmpty())
+    	return (StartupControl)this.getHibernateTemplate().execute(new HibernateCallback()
         {
-            return (StartupControl) results.get(0);
-        }
-        return new StartupControlImpl(moduleName, flowName);
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(startupControlQuery);
+                query.setParameter(MODULE_NAME, moduleName);
+                query.setParameter(FLOW_NAME, flowName);
+
+                List results = (List<StartupControl>)query.list();
+                
+                if (!results.isEmpty())
+                {
+                    return (StartupControl) results.get(0);
+                }
+                return new StartupControlImpl(moduleName, flowName);
+            }
+        });        
     }
 
     /*
