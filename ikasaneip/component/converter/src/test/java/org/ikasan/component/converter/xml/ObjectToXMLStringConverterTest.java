@@ -58,6 +58,7 @@ import org.ikasan.component.converter.xml.jaxb.Example;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -80,6 +81,9 @@ public class ObjectToXMLStringConverterTest
            setImposteriser(ClassImposteriser.INSTANCE);
        }
    };
+
+    /** mocked marshaller */
+    final XmlConfiguration mockedXmlConfiguration = mockery.mock(XmlConfiguration.class, "mockedXmlConfiguration");
 
     /**
      * Failed constructor test
@@ -201,22 +205,176 @@ public class ObjectToXMLStringConverterTest
         xmlConfiguration.setSchemaLocation("http://mizuho.com/domain example.xsd");
         xmlConfiguration.setSchema("example.xsd");
         xmlConfiguration.setValidate(false);
-        
+
         ExampleEventFactory eventFactory = new ExampleEventFactory();
         final String expectedXML = eventFactory.getSparseXmlEvent();
         final Example example = eventFactory.getObjectEvent();
-        
+
         /** class on test */
         List<Class> classes = new ArrayList<Class>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
-        
+
         String xml = (String)objectToXML.convert(example);
 
         // compare
         Diff diff = new Diff(expectedXML, xml);
         assertTrue(diff.toString(), diff.similar());
+    }
+
+    /**
+     * Successful marshalling from example to XML.
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     * @throws javax.xml.bind.JAXBException
+     */
+    @Test
+    public void test_configuration_no_root_override() throws SAXException, IOException, JAXBException
+    {
+        // set test expectations
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(mockedXmlConfiguration).getRootName();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getSchema();
+                will(returnValue(null));
+            }
+        });
+
+        /** class on test */
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
+        ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Successful marshalling from example to XML.
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     * @throws javax.xml.bind.JAXBException
+     */
+    @Test
+    public void test_configuration_root_override_name_and_class() throws SAXException, IOException, JAXBException
+    {
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(mockedXmlConfiguration).getRootName();
+                will(returnValue("example"));
+                exactly(2).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue("org.ikasan.component.converter.xml.jaxb.Example"));
+                exactly(1).of(mockedXmlConfiguration).getSchema();
+                will(returnValue(null));
+            }
+        });
+
+        /** class on test */
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
+        ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Successful marshalling from example to XML.
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     * @throws javax.xml.bind.JAXBException
+     */
+    @Test
+    public void test_configuration_root_override_name_and_class_found_on_search() throws SAXException, IOException, JAXBException
+    {
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(3).of(mockedXmlConfiguration).getRootName();
+                will(returnValue("Example"));
+                exactly(1).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getSchema();
+                will(returnValue(null));
+            }
+        });
+
+        /** class on test */
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
+        ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Successful marshalling from example to XML.
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     * @throws javax.xml.bind.JAXBException
+     */
+    @Test(expected = RuntimeException.class)
+    public void test_configuration_root_override_name_and_class_not_found_on_search() throws SAXException, IOException, JAXBException
+    {
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(3).of(mockedXmlConfiguration).getRootName();
+                will(returnValue("example"));
+                exactly(2).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getSchema();
+                will(returnValue(null));
+            }
+        });
+
+        /** class on test */
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
+        ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Successful marshalling from example to XML.
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     * @throws javax.xml.bind.JAXBException
+     */
+    @Test
+    public void test_configuration_root_override_class_not_name() throws SAXException, IOException, JAXBException
+    {
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockedXmlConfiguration).getRootName();
+                will(returnValue(null));
+                exactly(4).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue("org.ikasan.component.converter.xml.jaxb.Example"));
+                exactly(1).of(mockedXmlConfiguration).getSchema();
+                will(returnValue(null));
+            }
+        });
+
+        /** class on test */
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
+        ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
+
+        this.mockery.assertIsSatisfied();
     }
 
     /**
