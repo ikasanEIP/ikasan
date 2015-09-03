@@ -302,49 +302,67 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
         this.routeOnValidationException = this.xmlConfiguration.isRouteOnValidationException();
 
         // do we need to override the root name
-        if(this.xmlConfiguration.getRootClassName() != null && this.xmlConfiguration.getRootName() == null)
+        if(this.xmlConfiguration.getRootName() != null)
         {
-            try
-            {
-                rootClass = Class.forName(this.xmlConfiguration.getRootClassName());
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new RuntimeException(e);
-            }
+            rootQName = new QName(this.xmlConfiguration.getRootName());
 
-            int period = this.xmlConfiguration.getRootClassName().lastIndexOf(".");
-            if(period <= 0)
+            // do we have a rootname class
+            if(this.xmlConfiguration.getRootClassName() != null)
             {
-                rootQName = new QName( this.xmlConfiguration.getRootClassName() );
+                try
+                {
+                    rootClass = Class.forName(this.xmlConfiguration.getRootClassName());
+                }
+                catch (ClassNotFoundException e)
+                {
+                    throw new RuntimeException(e);
+                }
             }
             else
             {
-                rootQName = new QName( this.xmlConfiguration.getRootClassName().substring(period + 1) );
-            }
-        }
-
-        if(this.xmlConfiguration.getRootClassName() == null && this.xmlConfiguration.getRootName() != null)
-        {
-            rootQName= new QName(this.xmlConfiguration.getRootName());
-
-            // try guessing
-            for(Class cls:this.classes)
-            {
-                if( cls.getName().endsWith(this.xmlConfiguration.getRootName()) )
+                // try guessing
+                for(Class cls:this.classes)
                 {
-                    if(rootClass != null)
+                    if( cls.getName().endsWith(this.xmlConfiguration.getRootName()) )
                     {
-                        throw new RuntimeException("Too many matches for root class. Specifically override the rootClassName on the configuration.");
-                    }
+                        if(rootClass != null)
+                        {
+                            throw new RuntimeException("Too many matches for root class. Specifically override the rootClassName on the configuration.");
+                        }
 
-                    rootClass = cls;
+                        rootClass = cls;
+                    }
+                }
+
+                if(rootClass == null)
+                {
+                    throw new RuntimeException("rootClass is 'null'. Specifically override the rootClassName on the configuration.");
                 }
             }
-
-            if(rootClass == null)
+        }
+        else
+        {
+            // no root name, but if we have root class name then try to guess root name
+            if(this.xmlConfiguration.getRootClassName() != null)
             {
-                throw new RuntimeException("rootClass is 'null'. Specifically override the rootClassName on the configuration.");
+                try
+                {
+                    rootClass = Class.forName(this.xmlConfiguration.getRootClassName());
+                }
+                catch (ClassNotFoundException e)
+                {
+                    throw new RuntimeException(e);
+                }
+
+                int period = this.xmlConfiguration.getRootClassName().lastIndexOf(".");
+                if(period <= 0)
+                {
+                    rootQName = new QName( this.xmlConfiguration.getRootClassName() );
+                }
+                else
+                {
+                    rootQName = new QName( this.xmlConfiguration.getRootClassName().substring(period + 1) );
+                }
             }
         }
 
