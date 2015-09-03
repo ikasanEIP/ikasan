@@ -86,7 +86,13 @@
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>aceeditor</artifactId>
 		</dependency>
-				
+		
+		<!-- dependency>
+		   <groupId>org.vaadin.highcharts</groupId>
+		   <artifactId>highcharts</artifactId>
+		   <version>1.1</version>
+		</dependency -->
+		
 		<dependency>
 		   <groupId>org.vaadin.icons</groupId>
 		   <artifactId>vaadin-icons</artifactId>

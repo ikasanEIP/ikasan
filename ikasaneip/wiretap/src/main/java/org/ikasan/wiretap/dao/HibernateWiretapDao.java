@@ -70,11 +70,14 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapDao
 {
 
+	private static final String EXPIRY = "expiry";
+	private static final String EVENT_ID = "eventId";
+	
 	/** Query used for housekeeping expired wiretap events */
-    private static final String HOUSEKEEP_QUERY = "delete WiretapFlowEvent w where w.expiry <= ?";
+    private static final String HOUSEKEEP_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
 
     /** Query for finding all wiretap events with the same payloadId */
-    private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = ?";
+    private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
 
     /** Batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete WiretapFlowEvent s where s.identifier in (:event_ids)";
@@ -125,27 +128,37 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * Long)
      */
     @SuppressWarnings("unchecked")
-    public WiretapEvent findById(Long identifier)
+    public WiretapEvent findById(final Long identifier)
     {
-        // get the WiretapFlowEvent
-        WiretapFlowEvent wiretapEvent = (WiretapFlowEvent) getHibernateTemplate().get(WiretapFlowEvent.class, identifier);
-        // find any next or previous by eventId
-        List<Long> relatedIds = (List<Long>) getHibernateTemplate().find(WIRETAP_IDS_FOR_GROUPED_EVENT_ID, wiretapEvent.getEventId());
-        Collections.sort(relatedIds);
-        int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getIdentifier());
-        Long nextEvent = null;
-        Long previousEvent = null;
-        if (thisWiretapsIndex > 0)
+    	return (WiretapFlowEvent)this.getHibernateTemplate().execute(new HibernateCallback()
         {
-            previousEvent = relatedIds.get(thisWiretapsIndex - 1);
-        }
-        if (thisWiretapsIndex < relatedIds.size() - 1)
-        {
-            nextEvent = relatedIds.get(thisWiretapsIndex + 1);
-        }
-        wiretapEvent.setNextByEventId(nextEvent);
-        wiretapEvent.setPreviousByEventId(previousEvent);
-        return wiretapEvent;
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+            	WiretapFlowEvent wiretapEvent = (WiretapFlowEvent) getHibernateTemplate().get(WiretapFlowEvent.class, identifier);
+            	
+                Query query = session.createQuery(WIRETAP_IDS_FOR_GROUPED_EVENT_ID);
+                query.setParameter(EVENT_ID, wiretapEvent.getEventId());
+                
+
+                List<Long> relatedIds = (List<Long>)query.list();
+                
+                Collections.sort(relatedIds);
+                int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getIdentifier());
+                Long nextEvent = null;
+                Long previousEvent = null;
+                if (thisWiretapsIndex > 0)
+                {
+                    previousEvent = relatedIds.get(thisWiretapsIndex - 1);
+                }
+                if (thisWiretapsIndex < relatedIds.size() - 1)
+                {
+                    nextEvent = relatedIds.get(thisWiretapsIndex + 1);
+                }
+                wiretapEvent.setNextByEventId(nextEvent);
+                wiretapEvent.setPreviousByEventId(previousEvent);
+                return wiretapEvent;
+            }
+        });        
     }
 
     /**
@@ -358,9 +371,22 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     public void deleteAllExpired()
     {
-    	if (!batchHousekeepDelete){
-    		getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, System.currentTimeMillis());
-    	} else {
+    	if (!batchHousekeepDelete)
+    	{
+    		getHibernateTemplate().execute(new HibernateCallback<Object>()
+	        {
+	            public Object doInHibernate(Session session) throws HibernateException
+	            {
+	            	
+	                Query query = session.createQuery(HOUSEKEEP_QUERY);
+	                query.setParameter(EXPIRY, System.currentTimeMillis());
+	            	query.executeUpdate();
+	                return null;
+	            }
+	        });
+    	} 
+    	else 
+    	{
 			batchHousekeepDelete();
 		}
     }
