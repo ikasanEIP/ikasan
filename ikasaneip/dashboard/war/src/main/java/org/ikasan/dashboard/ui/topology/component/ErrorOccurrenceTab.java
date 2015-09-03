@@ -129,9 +129,17 @@ public class ErrorOccurrenceTab extends TopologyTab
 		this.errorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.errorOccurenceTable.addStyleName("ikasan");
 		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Module Name", .14f);
 		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
 		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
+		this.errorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
 		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
+		
+		this.errorOccurenceTable.addStyleName("wordwrap-table");
 		
 		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		    @Override
@@ -208,7 +216,7 @@ public class ErrorOccurrenceTab extends TopologyTab
             	    String timestamp = format.format(date);
             	    
             	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), timestamp}, errorOccurrence);
+            				, errorOccurrence.getFlowElementName(), errorOccurrence.getErrorMessage(), timestamp}, errorOccurrence);
             	}
             }
         });
