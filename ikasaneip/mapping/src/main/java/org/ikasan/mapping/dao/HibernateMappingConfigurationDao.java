@@ -76,7 +76,61 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 {
 	private static final Long ID = new Long(1);
 	
+	/* (non-Javadoc)
+     * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
+     */
+    @Override
+    public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final List<String> sourceSystemValues, final int numParams)
+    {
+        return (String)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(buildQueryString(sourceSystemValues));
+                query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
+                query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceSystem);
+                query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
+                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, new Long(numParams));
+                query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
 
+                int i=0;
+                for(String sourceSystemValue: sourceSystemValues)
+                {
+                    query.setParameter(MappingConfigurationDaoConstants.SOURCE_SYSTEM_VALUE + i, sourceSystemValue);
+                    i++;
+                }
+
+                List<String> results = (List<String>)query.list();
+
+                if(results.size() == 0)
+                {
+                    return null;
+                }
+                else if(results.size() > 1)
+                {
+                	StringBuffer sourceSystemValuesSB = new StringBuffer();
+
+                    sourceSystemValuesSB.append("[SourceSystemValues = ");
+                    for(String sourceSystemValue: sourceSystemValues)
+                    {
+                        sourceSystemValuesSB.append(sourceSystemValue).append(" ");
+                    }
+                    sourceSystemValuesSB.append("]");
+
+                    throw new RuntimeException("Multiple results returned from the mapping configuration service. " +
+                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
+                            "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString());
+                }
+                else
+                {
+                    return results.get(0);
+                }
+            }
+        });
+    }
+	
     /*
      * (non-Javadoc)
      * @see org.ikasan.mapping.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)

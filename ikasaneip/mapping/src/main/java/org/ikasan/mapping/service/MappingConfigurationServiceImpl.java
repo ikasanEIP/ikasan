@@ -42,6 +42,7 @@ package org.ikasan.mapping.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
@@ -58,7 +59,9 @@ import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.util.SetProducer;
 import org.springframework.dao.DataAccessException;
+
 
 
 
@@ -596,5 +599,66 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 	public PlatformConfiguration getPlatformConfigurationByName(String name)
 	{
 		return this.dao.getPlatformConfigurationByName(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
+	 */
+	public String getTargetConfigurationValueWithIgnores(String clientName,
+			String configurationTypeName, String sourceContext,
+			String targetContext, List<String> sourceSystemValues)
+	{
+		String returnValue = this.dao.getTargetConfigurationValue(clientName, configurationTypeName, sourceContext, 
+				targetContext, sourceSystemValues, sourceSystemValues.size());
+		
+		boolean resultFound = false;
+		
+		if(returnValue == null)
+		{
+			for(int i=sourceSystemValues.size() - 1; i>0; i--)
+			{
+				Set<Set<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
+				
+				String result = null;
+				
+				for(Set<String> subSet: subSets)
+				{
+					ArrayList<String> subList = new ArrayList<String>();
+					subList.addAll(subSet);
+					
+					returnValue = this.dao.getTargetConfigurationValue(clientName, configurationTypeName, sourceContext, 
+							targetContext, subList, sourceSystemValues.size());
+					
+					if(returnValue != null && resultFound)
+					{
+						StringBuffer sourceSystemValuesSB = new StringBuffer();
+
+	                    sourceSystemValuesSB.append("[SourceSystemValues = ");
+	                    for(String sourceSystemValue: sourceSystemValues)
+	                    {
+	                        sourceSystemValuesSB.append(sourceSystemValue).append(" ");
+	                    }
+	                    sourceSystemValuesSB.append("]");
+
+	                    throw new RuntimeException("Multiple sub results returned from the mapping configuration service. " +
+	                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationTypeName + "] [SourceContext = " + sourceContext + "] " +
+	                            "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString());
+					}
+					
+					if(returnValue != null)
+					{
+						resultFound = true;
+						result = returnValue;
+					}
+				}
+				
+				if(result != null)
+				{
+					return result;
+				}
+			}
+		}
+		
+		return returnValue;
 	}
 }
