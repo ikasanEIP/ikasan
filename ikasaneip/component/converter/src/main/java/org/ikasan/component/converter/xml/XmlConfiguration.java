@@ -41,7 +41,7 @@
 package org.ikasan.component.converter.xml;
 
 /**
- * Configuration for an XML converter.
+ * Configuration for an XML conversion validation.
  * 
  * @author Ikasan Development Team
  */
@@ -146,34 +146,66 @@ public class XmlConfiguration
         this.validate = validate;
     }
 
+    /**
+     * Getter for any roo name override
+     * @return
+     */
     public String getRootName() {
         return rootName;
     }
 
+    /**
+     * Allow override of the root document name
+     * @param rootName
+     */
     public void setRootName(String rootName) {
         this.rootName = rootName;
     }
 
+    /**
+     * Getter for any root class name override
+     * @return
+     */
     public String getRootClassName() {
         return rootClassName;
     }
 
+    /**
+     * Setter for root class name override
+     * @param rootClassName
+     */
     public void setRootClassName(String rootClassName) {
         this.rootClassName = rootClassName;
     }
 
+    /**
+     * If schema specified then is this a noNamespaceSchema
+     * @return
+     */
     public boolean isNoNamespaceSchema() {
         return noNamespaceSchema;
     }
 
+    /**
+     * Setter for noNamespaceSchema if schema specified
+     * @param noNamespaceSchema
+     */
     public void setNoNamespaceSchema(boolean noNamespaceSchema) {
         this.noNamespaceSchema = noNamespaceSchema;
     }
 
+    /**
+     * Getter for use namespace prefix on marshaller
+     * @return
+     */
     public boolean isUseNamespacePrefix() {
         return useNamespacePrefix;
     }
 
+    /**
+     * Setter for namespace prefix on marshaller
+     * @param useNamespacePrefix
+     */
     public void setUseNamespacePrefix(boolean useNamespacePrefix) {
         this.useNamespacePrefix = useNamespacePrefix;
     }
