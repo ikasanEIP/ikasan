@@ -90,9 +90,6 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     /** schema */
     private Schema schema;
 
-    /** whether to route or throw exception on validation failure */
-    private boolean routeOnValidationException;
-
     /** list of potential classes for this context */
     private List<Class> classes;
 
@@ -198,7 +195,7 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
         {
             String failedXml = getFailedMessageXml(object);
             e.setFailedEvent(failedXml);
-            if(this.routeOnValidationException)
+            if(this.xmlConfiguration.isRouteOnValidationException())
             {
                 logger.info("Failed XML Validation on[" + failedXml + "]", e);
                 return e;
@@ -214,7 +211,7 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
                 XmlValidationException validationException = (XmlValidationException) e.getLinkedException();
                 validationException.setFailedEvent(failedXml);
 
-                if(this.routeOnValidationException)
+                if(this.xmlConfiguration.isRouteOnValidationException())
                 {
                     logger.info("Failed XML Validation on[" + failedXml + "]", e);
                     return validationException;
@@ -299,7 +296,6 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
         this.rootClass = null;
         this.rootQName = null;
         this.xmlConfiguration = xmlConfiguration;
-        this.routeOnValidationException = this.xmlConfiguration.isRouteOnValidationException();
 
         // do we need to override the root name
         if(this.xmlConfiguration.getRootName() != null)
@@ -311,7 +307,7 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
             {
                 try
                 {
-                    rootClass = Class.forName(this.xmlConfiguration.getRootClassName());
+                    rootClass = Class.forName( this.xmlConfiguration.getRootClassName() );
                 }
                 catch (ClassNotFoundException e)
                 {
