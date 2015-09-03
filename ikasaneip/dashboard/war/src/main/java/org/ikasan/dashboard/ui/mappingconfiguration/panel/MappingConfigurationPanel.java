@@ -893,6 +893,11 @@ public class MappingConfigurationPanel extends Panel implements View
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
         
         logger.info("Attempting to populate form with mapping configuration: " + this.mappingConfiguration);
+        
+        this.clientComboBox.loadClientSelectValues();
+        this.typeComboBox.loadClientTypeValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
 
         this.clientComboBox.setValue(this.mappingConfiguration.getConfigurationServiceClient());
         this.typeComboBox.setValue(mappingConfiguration.getConfigurationType());
