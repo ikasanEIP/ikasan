@@ -62,7 +62,7 @@ public interface MappingConfigurationService
 {
 	/**
      * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
-     * based on the following parameters:
+     * based on the following parameters. It ignores non relevant source values:
      *
      * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
      * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
