@@ -53,8 +53,20 @@ public class XmlConfiguration
     /** schema location as put in the root attribute of the generated XML */
     private String schemaLocation;
 
+    /** is this a no namespace schema */
+    private boolean noNamespaceSchema;
+
     /** whether to validate the generated XML against the schema */
     private boolean validate;
+
+    /** should we use namespace prefixes */
+    private boolean useNamespacePrefix;
+
+    /** optionally set root name (QNAME) */
+    private String rootName;
+
+    /** optionally set root class name (QNAME) */
+    private String rootClassName;
 
     /** whether to route an XML validation failure to the next component (true) or throw an exception and rollback (false) */
     private boolean routeOnValidationException;
@@ -133,5 +145,36 @@ public class XmlConfiguration
     {
         this.validate = validate;
     }
-    
+
+    public String getRootName() {
+        return rootName;
+    }
+
+    public void setRootName(String rootName) {
+        this.rootName = rootName;
+    }
+
+    public String getRootClassName() {
+        return rootClassName;
+    }
+
+    public void setRootClassName(String rootClassName) {
+        this.rootClassName = rootClassName;
+    }
+
+    public boolean isNoNamespaceSchema() {
+        return noNamespaceSchema;
+    }
+
+    public void setNoNamespaceSchema(boolean noNamespaceSchema) {
+        this.noNamespaceSchema = noNamespaceSchema;
+    }
+
+    public boolean isUseNamespacePrefix() {
+        return useNamespacePrefix;
+    }
+
+    public void setUseNamespacePrefix(boolean useNamespacePrefix) {
+        this.useNamespacePrefix = useNamespacePrefix;
+    }
 }
