@@ -56,7 +56,7 @@
         <module>ikasan-jboss-6-filesystem-im</module>
         <module>ikasan-jboss-6-jms-im</module>
         <module>ikasan-jboss-6-db-im</module>
-        <module>ikasan-jboss-6-amq-im</module>
+        <!--module>ikasan-jboss-6-amq-im</module-->
         <module>ikasan-rt-conf-jboss-6</module>
     </modules>
 
