@@ -57,7 +57,7 @@
 			<module name="javax.api" export="true" />
 		</dependencies>
     </deployment>
-    <sub-deployment name="ikasan-webconsole-skinny-war-${ikasan.version}.war">
+    <sub-deployment name="ikasan-webconsole-skinny-war-${version.ikasan}.war">
         <exclusions>
             <module name="org.apache.commons.logging" />
             <module name="org.apache.log4j" />
