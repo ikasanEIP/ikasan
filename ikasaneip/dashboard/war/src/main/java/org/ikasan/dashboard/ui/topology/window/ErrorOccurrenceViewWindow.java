@@ -179,7 +179,6 @@ public class ErrorOccurrenceViewWindow extends Window
 		tabsheet.setSizeFull();
 		
 		AceEditor editor = new AceEditor();
-//		editor.setCaption("Error Details");
 		editor.setValue(this.errorOccurrence.getErrorDetail());
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
@@ -188,7 +187,6 @@ public class ErrorOccurrenceViewWindow extends Window
 		editor.setWidth("100%");
 		
 		AceEditor eventEditor = new AceEditor();
-//		eventEditor.setCaption("Event Payload");
 		
 		if(this.errorOccurrence.getEvent() != null)
 		{
@@ -207,22 +205,15 @@ public class ErrorOccurrenceViewWindow extends Window
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		
-//		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-//		vSplitPanel.setWidth("100%");
-//		vSplitPanel.setHeight(800, Unit.PIXELS);
-//		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
-		
 		HorizontalLayout h1 = new HorizontalLayout();
 		h1.setSizeFull();
 		h1.setMargin(true);
 		h1.addComponent(eventEditor);
-//		vSplitPanel.setFirstComponent(h1);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
 		h2.addComponent(editor);
-//		vSplitPanel.setSecondComponent(h2);
 		
 		tabsheet.addTab(h2, "Error Details");
 		tabsheet.addTab(h1, "Event Payload");
