@@ -164,41 +164,67 @@ public class ErrorCategorisationServiceImpl implements
 		{			
 			logger.info("Action: " + this.getAction(errorOccurrence));
 			
-			logger.info("Using key " + new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass()));
+			if(errorOccurrence.getExceptionClass() == null)
+			{
+				errorOccurrence.setExceptionClass("");
+			}
+			
+			CategorisedErrorKey key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+					, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+			
+			logger.info("Using key " + key);
 			
 			// Casacade down the configured error occurrences to get the most focused 
 			// error categorisation associated with the error occurrence.
-			ErrorCategorisation errorCategorisation = categorisedErrorMap.get
-					(new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-							, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence), errorOccurrence.getExceptionClass()));
+			ErrorCategorisation errorCategorisation = categorisedErrorMap.get(key);
 			
 			
 			logger.info("errorCategorisation: " + errorCategorisation);
 			
 			if(errorCategorisation == null)
 			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-								, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass()));
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
 			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
-								, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass()));
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
+						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
 			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass()));
+				key = new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
-			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), ""));
+			{				
+				key = new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), "");
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);	
 			}
 			
 			if(errorCategorisation != null && (errorCategory == null || errorCategory.equals(errorCategorisation.getErrorCategory())))
