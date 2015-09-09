@@ -107,7 +107,7 @@ public class DashboardNotifier implements Notifier<String>
     {
     	try
 		{
-			String url = "http://svc-ikasand:8080/ikasan-dashboard/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
+			String url = dashboardBaseUrl + "/ikasan-dashboard/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
 			
 			logger.info("Attempting to call URL: " + url);	
 		
