@@ -153,6 +153,7 @@
         <constructor-arg ref="topLevelNavigator"/>
         <constructor-arg ref="mappingNavigator"/>
         <constructor-arg ref="menuLayout"/>
+        <constructor-arg ref="configurationService"/>
     </bean>
 
     <bean id="newMappingConfigurationPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationPanel" scope="session">
@@ -178,6 +179,7 @@
         <constructor-arg ref="topLevelNavigator"/>
         <constructor-arg ref="mappingNavigator"/>
         <constructor-arg ref="menuLayout"/>
+        <constructor-arg ref="configurationService"/>
     </bean>
 
     <bean id="mappingConfigurationExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper" scope="session">
