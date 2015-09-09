@@ -61,6 +61,9 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationVal
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -122,13 +125,13 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup newMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
             mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator,
-            IkasanUINavigator uiNavigator, MenuLayout menuLayout)
+            IkasanUINavigator uiNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "New Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, newMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout);
+            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout, configurationManagement);
 
         this.registerListeners();
     }

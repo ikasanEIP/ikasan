@@ -171,6 +171,10 @@
                    <constructor-arg value="policyManagementPanel"/>
                    <constructor-arg ref="policyManagementPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="platformConfigurationView"/>
+                   <constructor-arg ref="platformConfigurationPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
@@ -247,6 +251,10 @@
 		 <constructor-arg ref="securityService"/>
 		 <constructor-arg ref="authenticationProviderFactory"/>
 		 <constructor-arg ref="ldapService"/>
+    </bean>
+    
+    <bean id="platformConfigurationPanel" class="org.ikasan.dashboard.ui.administration.panel.PlatformConfigurationPanel" scope="session">
+		 <constructor-arg ref="configurationService"/>
     </bean>
     
     <bean id="bannerImage" class="com.vaadin.ui.Image" scope="session">

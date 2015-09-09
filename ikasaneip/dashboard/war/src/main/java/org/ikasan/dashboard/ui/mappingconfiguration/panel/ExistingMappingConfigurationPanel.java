@@ -53,6 +53,9 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.navigator.View;
@@ -94,13 +97,13 @@ public class ExistingMappingConfigurationPanel extends MappingConfigurationPanel
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
             mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator
-            , IkasanUINavigator uiNavigator, MenuLayout menuLayout)
+            , IkasanUINavigator uiNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, existingMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout);
+            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout, configurationManagement);
 
         super.init();
     }
