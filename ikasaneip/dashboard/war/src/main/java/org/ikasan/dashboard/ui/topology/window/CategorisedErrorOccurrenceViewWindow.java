@@ -197,26 +197,18 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		wrapperLayout.setMargin(true);
 		wrapperLayout.setWidth("100%");
 		
-		Label errorMessageLabel = new Label("Error Message:");
-		errorMessageLabel.setSizeUndefined();		
-		layout.addComponent(errorMessageLabel, 0, 5);
-		layout.setComponentAlignment(errorMessageLabel, Alignment.TOP_RIGHT);
+//		Label errorMessageLabel = new Label("Error Message:");
+//		errorMessageLabel.setSizeUndefined();		
+//		layout.addComponent(errorMessageLabel, 0, 5);
+//		layout.setComponentAlignment(errorMessageLabel, Alignment.TOP_RIGHT);
 		
-		final TextArea errorMessageTextArea = new TextArea();
-		errorMessageTextArea.setWidth("650px");
-		errorMessageTextArea.setRows(6);
-		errorMessageTextArea.setValue(this.categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription());
-
-		layout.addComponent(errorMessageTextArea, 1, 5, 3, 5); 
-		
-		AceEditor editor = new AceEditor();
-		editor.setCaption("Error Details");
-		editor.setValue(this.categorisedErrorOccurrence.getErrorOccurrence().getErrorDetail());
-		editor.setReadOnly(true);
-		editor.setMode(AceMode.xml);
-		editor.setTheme(AceTheme.eclipse);
-		editor.setHeight(470, Unit.PIXELS);
-		editor.setWidth("100%");
+//		final TextArea errorMessageTextArea = new TextArea();
+//		errorMessageTextArea.setWidth("90%");
+//		errorMessageTextArea.setRows(6);
+//		errorMessageTextArea.setValue(this.categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
+//				+ ": " + this.categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage());
+//
+//		layout.addComponent(errorMessageTextArea, 1, 5, 3, 5); 
 		
 		label = new Label("Error Category:");
 		label.setSizeUndefined();		
@@ -253,14 +245,35 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		layout.addComponent(label, 2, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
-		Label userActionBy = new Label();
+		TextField userActionBy = new TextField();
 		userActionBy.setValue("");
 		userActionBy.setReadOnly(true);
 		userActionBy.setWidth("80%");
 		layout.addComponent(userActionBy, 3, 4);
 		
+		
+		AceEditor errorMessageEditor = new AceEditor();
+		errorMessageEditor.setValue(this.categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
+				 + this.categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage());
+		errorMessageEditor.setReadOnly(true);
+		errorMessageEditor.setMode(AceMode.xml);
+		errorMessageEditor.setTheme(AceTheme.textmate);
+		errorMessageEditor.setHeight(500, Unit.PIXELS);
+		errorMessageEditor.setWidth("100%");
+		errorMessageEditor.setWordWrap(true);
+		
+		AceEditor editor = new AceEditor();
+//		editor.setCaption("Error Details");
+		editor.setValue(this.categorisedErrorOccurrence.getErrorOccurrence().getErrorDetail());
+		editor.setReadOnly(true);
+		editor.setMode(AceMode.xml);
+		editor.setTheme(AceTheme.eclipse);
+		editor.setHeight(500, Unit.PIXELS);
+		editor.setWidth("100%");
+
+		
 		AceEditor eventEditor = new AceEditor();
-		eventEditor.setCaption("Event Payload");
+//		eventEditor.setCaption("Event Payload");
 		
 		if(this.categorisedErrorOccurrence.getErrorOccurrence().getEvent() != null)
 		{
@@ -270,20 +283,15 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
-		eventEditor.setHeight(470, Unit.PIXELS);
+		eventEditor.setHeight(500, Unit.PIXELS);
 		eventEditor.setWidth("100%");
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(300, Unit.PIXELS);
+		formLayout.setHeight(200, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
-		
-//		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-//		vSplitPanel.setWidth("100%");
-//		vSplitPanel.setHeight(800, Unit.PIXELS);
-//		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
-		
+				
 		TabSheet tabsheet = new TabSheet();
 		tabsheet.setSizeFull();
 		
@@ -291,20 +299,22 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		h1.setSizeFull();
 		h1.setMargin(true);
 		h1.addComponent(eventEditor);
-//		vSplitPanel.setFirstComponent(h1);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
 		h2.addComponent(editor);
-//		vSplitPanel.setSecondComponent(h2);
 		
+		HorizontalLayout h3 = new HorizontalLayout();
+		h3.setSizeFull();
+		h3.setMargin(true);
+		h3.addComponent(errorMessageEditor);
+		
+		tabsheet.addTab(h3, "Error Message");
 		tabsheet.addTab(h2, "Error Details");
-		tabsheet.addTab(h1, "Event Payload");
+		tabsheet.addTab(h1, "Message Data");
 		
 		wrapperLayout.addComponent(tabsheet, 0, 1);
-		
-//		wrapperLayout.addComponent(vSplitPanel, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;

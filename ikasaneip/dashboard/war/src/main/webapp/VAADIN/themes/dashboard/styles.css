@@ -13034,6 +13034,7 @@ div.v-layout.v-horizontal.v-widget {
 	white-space: normal;
 	overflow: hidden;
 	padding: 5px;
+	line-height: 15px;
 }
 
 .dashboard .v-header {
@@ -13108,44 +13109,52 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .v-table-cell-content-ikasan-green {
 	font-size: 11px;
 	background-color: rgba(0, 153, 51, 0.2);
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-red {
 	font-size: 11px;
 	background-color: rgba(255, 0, 0, 0.2);
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-orange {
 	font-size: 11px;
 	background-color: rgba(255, 153, 0, 0.2);
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-green-small {
 	font-size: 11px;
 	background-color: rgba(0, 153, 51, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-red-small {
 	font-size: 11px;
 	background-color: rgba(255, 0, 0, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-orange-small {
 	font-size: 11px;
 	background-color: rgba(255, 153, 0, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-indigo-small {
 	font-size: 11px;
 	background-color: rgba(75, 0, 130, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-small {
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-header td {

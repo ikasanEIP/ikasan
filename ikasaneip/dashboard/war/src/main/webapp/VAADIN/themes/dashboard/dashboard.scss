@@ -27,6 +27,7 @@ $v-font-weight: 400;
 	   white-space: normal;
 	   overflow: hidden;
 	   padding: 5px;
+	   line-height: 15px;
 	}
   
 	.v-header {
@@ -101,44 +102,52 @@ $v-font-weight: 400;
 	.v-table-cell-content-ikasan-green {
 		font-size: $v-font-size;
 		background-color: rgba(0, 153, 51, 0.2);
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-red {
 		font-size: $v-font-size;
 		background-color: rgba(255, 0, 0, 0.2);
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-orange {
 		font-size: $v-font-size;
 		background-color: rgba(255, 153, 0, 0.2);
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-green-small {
 		font-size: $v-font-size;
 		background-color: rgba(0, 153, 51, 0.2);
 		font-size: 9px;
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-red-small {
 		font-size: $v-font-size;
 		background-color: rgba(255, 0, 0, 0.2);
 		font-size: 9px;
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-orange-small {
 		font-size: $v-font-size;
 		background-color: rgba(255, 153, 0, 0.2);
 		font-size: 9px;
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-indigo-small {
 		font-size: 11px;
 		background-color: rgba(75, 0, 130, 0.2);
 		font-size: 9px;
+		vertical-align: top;
 	}
 	
 	.v-table-cell-content-ikasan-small {
 		font-size: 9px;
+		vertical-align: top;
 	}
 	
 	.v-table-header td {
