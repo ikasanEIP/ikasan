@@ -50,9 +50,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -79,6 +81,10 @@ import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -96,7 +102,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -150,6 +155,9 @@ public class MappingConfigurationPanel extends Panel implements View
     protected IkasanUINavigator mappingNavigator;
     protected IkasanUINavigator topLevelNavigator;
     protected MenuLayout menuLayout;
+    protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+	
+	
 
     /**
      * Constructor
@@ -179,7 +187,7 @@ public class MappingConfigurationPanel extends Panel implements View
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup mappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
             mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator
-            , IkasanUINavigator mappingNavigator, MenuLayout menuLayout)
+            , IkasanUINavigator mappingNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
     {
         super();
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
@@ -205,6 +213,7 @@ public class MappingConfigurationPanel extends Panel implements View
         this.mappingNavigator = mappingNavigator;
         this.topLevelNavigator = topLevelNavigator;
         this.menuLayout = menuLayout;
+        this.configurationManagement = configurationManagement;
     }
 
     /**
@@ -840,14 +849,31 @@ public class MappingConfigurationPanel extends Panel implements View
     private ByteArrayOutputStream getMappingConfigurationValuesExport() throws IOException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        PlatformConfiguration platformConfiguration 
-    		= this.mappingConfigurationService.getPlatformConfigurationByName("mappingValuesExportSchemaLocation");
         
-        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+        PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+        
+        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+        
+        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+        
+        if(parameters == null || parameters.size() == 0 || !(parameters.get(0) instanceof ConfigurationParameterMapImpl))
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration map containing mappingValuesExportSchemaLocation configuration!");
+        }
+        
+        ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
+        
+        String schemaLocation = parameter.getValue().get("mappingExportSchemaLocation");
+        
+        if(schemaLocation == null || schemaLocation.length() == 0)
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration mappingValuesExportSchemaLocation!");
+        }
+        
+        logger.info("Resolved schemaLocation " + schemaLocation);
 
         String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true,
-        		platformConfiguration.getValue());
+        		schemaLocation);
 
         out.write(exportXml.getBytes());
 
@@ -864,13 +890,30 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        PlatformConfiguration platformConfiguration 
-        	= this.mappingConfigurationService.getPlatformConfigurationByName("mappingExportSchemaLocation");
-
-        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+        PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+        
+        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+        
+        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+        
+        if(parameters == null || parameters.size() == 0 || !(parameters.get(0) instanceof ConfigurationParameterMapImpl))
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration map containing mappingValuesExportSchemaLocation configuration!");
+        }
+        
+        ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
+        
+        String schemaLocation = parameter.getValue().get("mappingValuesExportSchemaLocation");
+        
+        if(schemaLocation == null || schemaLocation.length() == 0)
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration mappingValuesExportSchemaLocation!");
+        }
+        
+        logger.info("Resolved schemaLocation " + schemaLocation);	
         
         String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
-            , this.keyLocationQueries, platformConfiguration.getValue());
+            , this.keyLocationQueries, schemaLocation);
 
         out.write(exportXml.getBytes());
 

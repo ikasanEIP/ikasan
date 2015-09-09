@@ -287,6 +287,23 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(authItem);
         
         this.menuComponents.put(authItem, SecurityConstants.ALL_AUTHORITY);
+        
+        final Button platformConfigItem = new Button("Platform Configuration", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	loadTopLevelNavigator();
+            	UI.getCurrent().getNavigator().navigateTo("platformConfigurationView");
+            }
+        });
+        
+        platformConfigItem.setHtmlContentAllowed(true);
+        platformConfigItem.setPrimaryStyleName("valo-menu-item");
+        platformConfigItem.setIcon(VaadinIcons.LIST);
+        menuItemsLayout.addComponent(platformConfigItem);
+        
+        this.menuComponents.put(platformConfigItem, SecurityConstants.ALL_AUTHORITY);
 
     }
 	

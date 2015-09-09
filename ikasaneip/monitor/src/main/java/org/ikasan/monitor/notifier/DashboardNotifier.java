@@ -41,6 +41,8 @@
 package org.ikasan.monitor.notifier;
 
 
+import java.util.List;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -50,6 +52,11 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Notifier;
 
 
@@ -62,14 +69,18 @@ public class DashboardNotifier implements Notifier<String>
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(DashboardNotifier.class);
-
+    
     /** only interested in state changes */
     boolean notifyStateChangesOnly = true;
 
     /** last update sent time */
     long lastUpdateDateTime;
 
+    /** the base url of the dashboard */
     private String dashboardBaseUrl;
+    
+    /** the platform configuration service */
+    protected ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
 
     @Override
     public void invoke(String environment, String moduleName, String flowName, String state)
@@ -97,17 +108,58 @@ public class DashboardNotifier implements Notifier<String>
 		this.dashboardBaseUrl = dashboardBaseUrl;
 	}
 
+	
+
     /**
+	 * @param configurationManagement the configurationManagement to set
+	 */
+	public void setConfigurationService(
+			ConfigurationManagement<ConfiguredResource, Configuration> configurationService)
+	{
+		this.configurationService = configurationService;
+	}
+
+	/**
      * Internal notify method
+     * 
      * @param environment
      * @param name
      * @param state
      */
     protected void notify(String environment, String moduleName, String flowName, String state)
     {
+    	String url = null;
+    	
     	try
 		{
-			String url = dashboardBaseUrl + "/ikasan-dashboard/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
+    		// We are trying to get the database configuration resource first
+    		if(this.configurationService != null)
+    		{
+	    		Configuration configuration = this.configurationService.getConfiguration("platform-configuration");
+	            
+	            final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+	            
+	            if(parameters != null && parameters.size() > 0 && (parameters.get(0) instanceof ConfigurationParameterMapImpl))
+	            {
+	            	ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
+	                
+	                url = parameter.getValue().get("dashboardBaseUrl");
+	            }
+    		}
+    		
+    		// If we do not have a database persisted configuration value we will try to get the one from the file system/
+    		if((url == null || url.length() == 0) && this.dashboardBaseUrl != null && this.dashboardBaseUrl.length() > 0)
+    		{
+    			url = this.dashboardBaseUrl;
+    		}
+    		
+    		// Otherwise we'll throw an exception! 
+    		if(url == null || url.length() == 0)
+    		{
+    			throw new RuntimeException("Cannot notify dashboard. The dashboard URL is null or empty string!");
+    		}
+    		
+			url = url + "/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
 			
 			logger.info("Attempting to call URL: " + url);	
 		
@@ -122,8 +174,9 @@ public class DashboardNotifier implements Notifier<String>
 		}
 		catch(Exception e)
 		{
-			logger.info("caught exception: " + e.getMessage());
-			e.printStackTrace();
+			logger.error("caught exception: " + e.getMessage());
+			
+			throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
 		}
     }
 }
