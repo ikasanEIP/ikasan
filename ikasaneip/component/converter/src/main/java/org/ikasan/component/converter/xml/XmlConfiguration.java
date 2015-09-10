@@ -47,6 +47,12 @@ package org.ikasan.component.converter.xml;
  */
 public class XmlConfiguration
 {
+    /**
+     * determines whether we let the component fail if the initial
+     * setting and loading of configuration fails.
+     */
+    private boolean fastFailOnConfigurationLoad;
+
     /** actual schema against which validation will occur */
     private String schema;
 
@@ -208,5 +214,13 @@ public class XmlConfiguration
      */
     public void setUseNamespacePrefix(boolean useNamespacePrefix) {
         this.useNamespacePrefix = useNamespacePrefix;
+    }
+
+    public boolean isFastFailOnConfigurationLoad() {
+        return fastFailOnConfigurationLoad;
+    }
+
+    public void setFastFailOnConfigurationLoad(boolean fastFailOnConfigurationLoad) {
+        this.fastFailOnConfigurationLoad = fastFailOnConfigurationLoad;
     }
 }
