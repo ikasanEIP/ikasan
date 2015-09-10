@@ -99,6 +99,9 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     /** QNAME of the root element */
     private QName rootQName;
 
+    /** determines if the configuration has changed and requires reloading */
+    private boolean requiresConfigurationReload;
+
     /**
      * Constructor
      * @param classes
@@ -152,6 +155,11 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     {
         try
         {
+            if(requiresConfigurationReload)
+            {
+                applyConfiguration();
+            }
+
             Marshaller marshaller = this.context.createMarshaller();
             StringWriter writer = new StringWriter();
 
@@ -293,9 +301,30 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     @Override
     public void setConfiguration(XmlConfiguration xmlConfiguration)
     {
+        this.xmlConfiguration = xmlConfiguration;
+
+        try
+        {
+            requiresConfigurationReload = true;
+            applyConfiguration();
+            requiresConfigurationReload = false;
+        }
+        catch(RuntimeException e)
+        {
+            if(this.xmlConfiguration.isFastFailOnConfigurationLoad())
+            {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Apply the configuration seprately from setting to avoid deployment failures if the configuration fails.
+     */
+    protected void applyConfiguration()
+    {
         this.rootClass = null;
         this.rootQName = null;
-        this.xmlConfiguration = xmlConfiguration;
 
         // do we need to override the root name
         if(this.xmlConfiguration.getRootName() != null)
