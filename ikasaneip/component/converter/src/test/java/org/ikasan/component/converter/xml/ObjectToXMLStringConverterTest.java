@@ -322,7 +322,7 @@ public class ObjectToXMLStringConverterTest
      * @throws javax.xml.bind.JAXBException
      */
     @Test(expected = RuntimeException.class)
-    public void test_configuration_root_override_name_and_class_not_found_on_search() throws SAXException, IOException, JAXBException
+    public void test_configuration_root_override_name_and_class_not_found_on_search_fast_fail() throws SAXException, IOException, JAXBException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -334,6 +334,39 @@ public class ObjectToXMLStringConverterTest
                 will(returnValue(null));
                 exactly(1).of(mockedXmlConfiguration).getSchema();
                 will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).isFastFailOnConfigurationLoad();
+                will(returnValue(true));
+            }
+        });
+
+        /** class on test */
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
+        ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Successful marshalling from example to XML.
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     * @throws javax.xml.bind.JAXBException
+     */
+    @Test
+    public void test_configuration_root_override_name_and_class_not_found_on_search_no_fast_fail() throws SAXException, IOException, JAXBException
+    {
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(3).of(mockedXmlConfiguration).getRootName();
+                will(returnValue("example"));
+                exactly(1).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).isFastFailOnConfigurationLoad();
+                will(returnValue(false));
             }
         });
 
