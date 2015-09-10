@@ -68,6 +68,12 @@
             <artifactId>ikasan-spec-configuration</artifactId>
              <scope>provided</scope>
          </dependency>
+         
+         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-configuration-service</artifactId>
+             <scope>provided</scope>
+         </dependency>
 
         <dependency>
             <groupId>javax.mail</groupId>
