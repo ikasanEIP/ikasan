@@ -152,7 +152,8 @@
 						execution(* org.ikasan.security.service.UserService.disableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.enableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.createAuthority(..)) ||
-						execution(* org.ikasan.security.service.UserService.deleteUser(..))" />
+						execution(* org.ikasan.security.service.UserService.deleteUser(..)) ||
+						execution(* org.ikasan.security.service.UserService.createUser(..))" />
 		<aop:pointcut id="systemEventServiceMethods"
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
