@@ -171,6 +171,7 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
 
     private Converter<Object, Map<String, String>> parameterExtractor;
 
+    private Converter<XsltConverterConfiguration, Map<String,String>> configurationParameterConverter;
     /**
      * Constructor
      *
@@ -285,6 +286,11 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
         transformer.setErrorListener(this.errorListener);
         // Set any other parameters on the transformer
         this.addTransformationParameters(transformer, this.transformationParameters);
+        // Set configuration paramaters
+        if (configurationParameterConverter != null) {
+            this.addTransformationParameters(transformer, configurationParameterConverter.convert(configuration));
+        }
+
         if (this.uriResolver != null)
         {
             transformer.setURIResolver(this.uriResolver);
@@ -559,5 +565,9 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
     public void setTargetCreator(TargetCreator<SOURCE, TARGET> targetCreator)
     {
         this.targetCreator = targetCreator;
+    }
+
+    public void setConfigurationParameterConverter(Converter<XsltConverterConfiguration, Map<String, String>> configurationParameterConverter) {
+        this.configurationParameterConverter = configurationParameterConverter;
     }
 }

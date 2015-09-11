@@ -54,4 +54,10 @@ public interface NotifierFactory
      * @return
      */
     public Notifier getEmailNotifier();
+    
+    /**
+    * Get an instance of a dashboard notifier
+    * @return
+    */
+    public Notifier getDashboardNotifier();
 }

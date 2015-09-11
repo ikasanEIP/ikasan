@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <util:list id="module1-config-files">
+        <!-- (Optional) Ikasan monitoring service -->
+        <value>monitor-service-conf.xml</value>
+        <value>monitor-conf.xml</value>
+
+        <!-- transaction pointcut for quartz driven flows -->
+        <value>ikasan-transaction-pointcut-quartz.xml</value>
+
+        <!-- transaction pointcut for jms driven flows -->
+        <value>ikasan-transaction-pointcut-jms.xml</value>
+
+        <!-- (optional) transaction pointcut for any resubmission -->
+        <value>ikasan-transaction-pointcut-resubmission.xml</value>
+
+        <!-- Standard Integration Module configurations -->
+        <value>logger-conf.xml</value>
+        <value>shared-conf.xml</value>
+        <value>exception-conf.xml</value>
+        <value>module-conf.xml</value>
+        <value>db-conf.xml</value>
+        <value>jms-conf.xml</value>
+        <value>scheduled-conf.xml</value>
+        <value>source-db-flow-conf.xml</value>
+        <value>target-db-flow-conf.xml</value>
+
+        <!-- (optional) if you want to have an alternate exception flow for excluded events -->
+        <value>exclusion-flow-conf.xml</value>
+
+    </util:list>
+
+</beans>

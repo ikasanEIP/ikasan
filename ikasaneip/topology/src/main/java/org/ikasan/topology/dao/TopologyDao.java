@@ -174,6 +174,13 @@ public interface TopologyDao
 	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow);
 	
 	/**
+	 * Delete a business stream 
+	 * 
+	 * @param businessStream
+	 */
+	public void deleteBusinessStream(BusinessStream businessStream);
+	
+	/**
 	 * Method to get a Module by its name. 
 	 * @param name
 	 * @return

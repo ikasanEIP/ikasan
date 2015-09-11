@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -60,8 +61,10 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
 {
+	private static final String EXPIRY = "expiry";
+	
     /** Query used for housekeeping expired filtered messages */
-    private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= ?";
+    private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= :" + EXPIRY;
 
     /** Flag for batch housekeeping option. Defaults to true */
     private boolean batchedHousekeep = true;
@@ -126,7 +129,17 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     {
         if (!this.batchedHousekeep)
         {
-            this.getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, System.currentTimeMillis());
+        	getHibernateTemplate().execute(new HibernateCallback<Object>()
+	        {
+	            public Object doInHibernate(Session session) throws HibernateException
+	            {
+	            	
+	                Query query = session.createQuery(HOUSEKEEP_QUERY);
+	                query.setParameter(EXPIRY, System.currentTimeMillis());
+	            	query.executeUpdate();
+	                return null;
+	            }
+	        });
         }
         else
         {

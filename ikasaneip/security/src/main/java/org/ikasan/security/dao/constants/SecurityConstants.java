@@ -51,4 +51,11 @@ public interface SecurityConstants
 	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
     
 	public static final Long AUTH_METHOD_ID = new Long(1);
+	
+	public static final String PRINCIPAL_ID = "principalId";
+	
+	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
+            " User as u " +
+            " where  u.id = up.userId" +
+            " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
 }

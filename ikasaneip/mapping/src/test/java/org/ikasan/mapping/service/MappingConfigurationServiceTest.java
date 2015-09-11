@@ -167,6 +167,7 @@ public class MappingConfigurationServiceTest
         Long dealerToDealerId = this.addConfigurationType("Dealer and Product to Account");
         Long salesPersonToSalesPersonId = this.addConfigurationType("Salesperson to Salesperson Mapping");
         Long productTypeToTradeBookId = this.addConfigurationType("Product Type to Tradebook Mapping");
+        Long ignoreMappingId = this.addConfigurationType("Ignore Mapping");
 
         Long contextId1 = this.addConfigurationContext("Tradeweb", "Tradeweb");
         Long contextId2 = this.addConfigurationContext("Bloomberg", "Bloomberg");
@@ -178,6 +179,11 @@ public class MappingConfigurationServiceTest
         keyLocationQueries2.add("/PTF/SPTM/SLSPRSN");
         List<String> keyLocationQueries3 = new ArrayList<String>();
         keyLocationQueries3.add("some xpath");
+        List<String> keyLocationQueries4 = new ArrayList<String>();
+        keyLocationQueries1.add("some xpath");
+        keyLocationQueries1.add("another xpath");
+        keyLocationQueries1.add("another xpath");
+        keyLocationQueries1.add("another xpath");
         
         Long mappingConfigurationId1 = this.addMappingConfiguration(contextId1, contextId2, new Long(2), 
             dealerToDealerId, configurationServiceClientId, "description context 1", keyLocationQueries1);
@@ -185,9 +191,37 @@ public class MappingConfigurationServiceTest
             salesPersonToSalesPersonId, configurationServiceClientId, "description context 2", keyLocationQueries2);
         Long mappingConfigurationId3 = this.addMappingConfiguration(contextId1, contextId2, new Long(1), 
             productTypeToTradeBookId, configurationServiceClientId, "description context 2", keyLocationQueries3);
+        Long mappingConfigurationId4 = this.addMappingConfiguration(contextId1, contextId2, new Long(4), 
+        		ignoreMappingId, configurationServiceClientId, "description", keyLocationQueries4);
+        
+        
 
         TargetConfigurationValue targetId1 = this.addTargetSystemConfiguration("BARCLON");
         TargetConfigurationValue targetId2 = this.addTargetSystemConfiguration("BNPPAR");
+        TargetConfigurationValue targetId3 = this.addTargetSystemConfiguration("ZEKRAA");
+        TargetConfigurationValue targetId4 = this.addTargetSystemConfiguration("VIDAUISA");
+        TargetConfigurationValue targetId5 = this.addTargetSystemConfiguration("BEN");
+        TargetConfigurationValue targetId6 = this.addTargetSystemConfiguration("IMONDIV");
+        
+        this.addSourceSystemConfiguration("BARX", mappingConfigurationId4, targetId1);
+        this.addSourceSystemConfiguration("TRSY", mappingConfigurationId4, targetId1);
+        this.addSourceSystemConfiguration("", mappingConfigurationId4, targetId1);
+        this.addSourceSystemConfiguration("", mappingConfigurationId4, targetId1);
+        
+        this.addSourceSystemConfiguration("Myself", mappingConfigurationId4, targetId2);
+        this.addSourceSystemConfiguration("", mappingConfigurationId4, targetId2);
+        this.addSourceSystemConfiguration("", mappingConfigurationId4, targetId2);
+        this.addSourceSystemConfiguration("", mappingConfigurationId4, targetId2);
+        
+        this.addSourceSystemConfiguration("On My Own", mappingConfigurationId4, targetId3);
+        this.addSourceSystemConfiguration("Value2", mappingConfigurationId4, targetId3);
+        this.addSourceSystemConfiguration("Value3", mappingConfigurationId4, targetId3);
+        this.addSourceSystemConfiguration("", mappingConfigurationId4, targetId3);
+        
+        this.addSourceSystemConfiguration("On My Own", mappingConfigurationId4, targetId4);
+        this.addSourceSystemConfiguration("Value2", mappingConfigurationId4, targetId4);
+        this.addSourceSystemConfiguration("Value31", mappingConfigurationId4, targetId4);
+        this.addSourceSystemConfiguration("Value4", mappingConfigurationId4, targetId4);
 
         this.addSourceSystemConfiguration("BARX", mappingConfigurationId1, targetId1);
         this.addSourceSystemConfiguration("TRSY", mappingConfigurationId1, targetId1);
@@ -199,11 +233,6 @@ public class MappingConfigurationServiceTest
         this.addSourceSystemConfiguration("AGCY", mappingConfigurationId1, targetId2);
         this.addSourceSystemConfiguration("MBS", mappingConfigurationId1, targetId2);
 
-        TargetConfigurationValue targetId3 = this.addTargetSystemConfiguration("ZEKRAA");
-        TargetConfigurationValue targetId4 = this.addTargetSystemConfiguration("VIDAUISA");
-        TargetConfigurationValue targetId5 = this.addTargetSystemConfiguration("BEN");
-        TargetConfigurationValue targetId6 = this.addTargetSystemConfiguration("IMONDIV");
-
         this.addSourceSystemConfiguration("azehra", mappingConfigurationId2, targetId3);
         this.addSourceSystemConfiguration("isabelv", mappingConfigurationId2, targetId4);
         this.addSourceSystemConfiguration("briordan2", mappingConfigurationId2, targetId5);
@@ -214,6 +243,102 @@ public class MappingConfigurationServiceTest
 
         this.addSourceSystemConfiguration("false", mappingConfigurationId3, targetId7);
         this.addSourceSystemConfiguration("true", mappingConfigurationId3, targetId8);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_4_paramater_mapping_with_ignores_2_params()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("BARX");
+        sourceSystemValues.add("TRSY");
+        sourceSystemValues.add("blah");
+        sourceSystemValues.add("blah1");
+
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValueWithIgnores("CMI2", "Ignore Mapping", "Tradeweb", 
+            "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("BARCLON", result);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_4_paramater_mapping_with_ignores_1_params()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("Myself");
+        sourceSystemValues.add("blah3");
+        sourceSystemValues.add("blah");
+        sourceSystemValues.add("blah1");
+
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValueWithIgnores("CMI2", "Ignore Mapping", "Tradeweb", 
+            "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("BNPPAR", result);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_4_paramater_mapping_with_ignores_3_params()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("On My Own");
+        sourceSystemValues.add("Value2");
+        sourceSystemValues.add("Value3");
+        sourceSystemValues.add("blah1");
+
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValueWithIgnores("CMI2", "Ignore Mapping", "Tradeweb", 
+            "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("ZEKRAA", result);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_4_paramater_mapping_with_ignores_4_params()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("On My Own");
+        sourceSystemValues.add("Value2");
+        sourceSystemValues.add("Value31");
+        sourceSystemValues.add("Value4");
+
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValueWithIgnores("CMI2", "Ignore Mapping", "Tradeweb", 
+            "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("VIDAUISA", result);
+    }
+    
+    @Test(expected = RuntimeException.class)
+    @DirtiesContext
+    public void test_success_4_paramater_mapping_with_ignores_exception()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("On My Own");
+        sourceSystemValues.add("ignore1");
+        sourceSystemValues.add("ignore2");
+        sourceSystemValues.add("ignore3");
+
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValueWithIgnores("CMI2", "Ignore Mapping", "Tradeweb", 
+            "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("VIDAUISA", result);
+    }
+    
+    @Test (expected = RuntimeException.class)
+    @DirtiesContext
+    public void test_success_4_paramater_mapping_with_ignores_exception2()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("On My Own");
+        sourceSystemValues.add("Value2");
+        sourceSystemValues.add("ignore2");
+        sourceSystemValues.add("ignore3");
+
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValueWithIgnores("CMI2", "Ignore Mapping", "Tradeweb", 
+            "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("VIDAUISA", result);
     }
 
     @Test(expected = IllegalArgumentException.class) 
@@ -343,7 +468,7 @@ public class MappingConfigurationServiceTest
     {
         List<ConfigurationType> result = this.xaMappingConfigurationService.getAllConfigurationTypes();
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(4, result.size());
     }
 
     @Test
@@ -371,8 +496,6 @@ public class MappingConfigurationServiceTest
     {
         String result = this.xaMappingConfigurationService.getTargetConfigurationValue
                 ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML_EMPTY_SALESPERSON.getBytes());
-
-        Assert.assertEquals("ZEKRAA", result);
     }
 
     @Test (expected = MappingConfigurationServiceException.class) 

@@ -55,7 +55,9 @@ public class XmlStringToObjectConfiguration
     private String[] contextPaths;
     
     private String schema;
-    
+
+    private boolean autoConvertElementToValue;
+
     public String[] getContextPaths()
     {
         return contextPaths;
@@ -96,4 +98,11 @@ public class XmlStringToObjectConfiguration
         this.schema = schema;
     }
 
+    public boolean isAutoConvertElementToValue() {
+        return autoConvertElementToValue;
+    }
+
+    public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
+        this.autoConvertElementToValue = autoConvertElementToValue;
+    }
 }

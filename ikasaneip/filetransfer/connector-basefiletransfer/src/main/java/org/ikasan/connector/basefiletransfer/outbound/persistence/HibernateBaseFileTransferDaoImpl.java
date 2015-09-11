@@ -245,7 +245,7 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
         {
             logger.debug("About to housekeep by running [" + hibernateQuery 
                 + "], where clientId [" + clientId 
-                + "], createdDateTime [" + cal.getTime()
+                + "], createdDateTime [" + cal.getTime().getTime()
                 + "] and ageOfFiles parameter is set to (should be a negative number) [" 
                 + historyInDays + "]");
         }
@@ -258,7 +258,7 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
         {
             Query query = session.createQuery(hibernateQuery.toString());
             query.setParameter(CLIENT_ID, clientId);
-            query.setParameter(CREATED_DATE_TIME, cal.getTime());
+            query.setParameter(CREATED_DATE_TIME, cal.getTime().getTime());
             query.setMaxResults(maxRows);
             fileFilters = query.list();
             if (fileFilters != null)

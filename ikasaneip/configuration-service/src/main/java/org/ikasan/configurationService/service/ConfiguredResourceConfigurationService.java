@@ -217,10 +217,10 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
         {
             for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
             {
-                String runtimeParameterValue;
+                Object runtimeParameterValue;
                 try
                 {
-                    runtimeParameterValue = BeanUtils.getProperty(runtimeConfiguration,
+                    runtimeParameterValue = PropertyUtils.getProperty(runtimeConfiguration,
                         persistedConfigurationParameter.getName());
                 }
                 catch (IllegalAccessException e)

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="example.io.model.Model" table="Model">
+
+        <id name="id" type="java.lang.String" column="Id">
+            <generator class="assigned" />
+        </id>
+
+        <property name="value"
+                  type="java.lang.String"
+                  column="Value"
+                  not-null="true" />
+
+        <property name="createDateTime"
+                  type="long"
+                  column="CreateDateTime"
+                  not-null="true" />
+
+        <property name="updateDateTime"
+                  type="long"
+                  column="UpdateDateTime"
+                  not-null="true" />
+    </class>
+
+</hibernate-mapping>

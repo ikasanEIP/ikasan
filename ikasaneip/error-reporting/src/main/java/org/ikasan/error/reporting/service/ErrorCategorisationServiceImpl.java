@@ -164,35 +164,67 @@ public class ErrorCategorisationServiceImpl implements
 		{			
 			logger.info("Action: " + this.getAction(errorOccurrence));
 			
-			logger.info("Using key " + new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence)));
+			if(errorOccurrence.getExceptionClass() == null)
+			{
+				errorOccurrence.setExceptionClass("");
+			}
+			
+			CategorisedErrorKey key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+					, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+			
+			logger.info("Using key " + key);
 			
 			// Casacade down the configured error occurrences to get the most focused 
 			// error categorisation associated with the error occurrence.
-			ErrorCategorisation errorCategorisation = categorisedErrorMap.get
-					(new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-							, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence)));
+			ErrorCategorisation errorCategorisation = categorisedErrorMap.get(key);
 			
 			
 			logger.info("errorCategorisation: " + errorCategorisation);
 			
 			if(errorCategorisation == null)
 			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-								, "", this.getAction(errorOccurrence)));
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
 			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
-								, "", this.getAction(errorOccurrence)));
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
+						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
 			{
-				errorCategorisation = categorisedErrorMap.get
-						(new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence)));
+				key = new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);
+			}
+			
+			if(errorCategorisation == null)
+			{				
+				key = new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), "");
+				
+				logger.info("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.info("errorCategorisation: " + errorCategorisation);	
 			}
 			
 			if(errorCategorisation != null && (errorCategory == null || errorCategory.equals(errorCategorisation.getErrorCategory())))
@@ -215,12 +247,12 @@ public class ErrorCategorisationServiceImpl implements
 		{
 			logger.info("Addin key " + new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
 					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
-					, errorCategorisationLink.getAction().trim()));
+					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim()));
 			logger.info("Addin value " + errorCategorisationLink.getErrorCategorisation());
 			
 			map.put(new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
 					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
-					, errorCategorisationLink.getAction().trim())
+					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim())
 					, errorCategorisationLink.getErrorCategorisation());	
 		}
 		
@@ -256,6 +288,7 @@ public class ErrorCategorisationServiceImpl implements
 		String flowName;
 		String flowElementName;
 		String action;
+		String exceptionClass;
 		
 		/**
 		 * @param moduleName
@@ -263,13 +296,14 @@ public class ErrorCategorisationServiceImpl implements
 		 * @param flowElementName
 		 */
 		public CategorisedErrorKey(String moduleName, String flowName,
-				String flowElementName, String action)
+				String flowElementName, String action, String exceptionClass)
 		{
 			super();
 			this.moduleName = moduleName;
 			this.flowName = flowName;
 			this.flowElementName = flowElementName;
 			this.action = action;
+			this.exceptionClass = exceptionClass;
 		}
 
 		/* (non-Javadoc)
@@ -283,6 +317,9 @@ public class ErrorCategorisationServiceImpl implements
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result
 					+ ((action == null) ? 0 : action.hashCode());
+			result = prime
+					* result
+					+ ((exceptionClass == null) ? 0 : exceptionClass.hashCode());
 			result = prime
 					* result
 					+ ((flowElementName == null) ? 0 : flowElementName
@@ -314,6 +351,12 @@ public class ErrorCategorisationServiceImpl implements
 				if (other.action != null)
 					return false;
 			} else if (!action.equals(other.action))
+				return false;
+			if (exceptionClass == null)
+			{
+				if (other.exceptionClass != null)
+					return false;
+			} else if (!exceptionClass.equals(other.exceptionClass))
 				return false;
 			if (flowElementName == null)
 			{
@@ -349,9 +392,9 @@ public class ErrorCategorisationServiceImpl implements
 		{
 			return "CategorisedErrorKey [moduleName=" + moduleName
 					+ ", flowName=" + flowName + ", flowElementName="
-					+ flowElementName + ", action=" + action + "]";
-		}
-	
+					+ flowElementName + ", action=" + action
+					+ ", exceptionClass=" + exceptionClass + "]";
+		}	
 	}
 
 }
