@@ -41,9 +41,14 @@
 package org.ikasan.dashboard.ui.framework.group;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 
@@ -55,23 +60,67 @@ public class VisibilityGroup
 {
     private static Logger logger = Logger.getLogger(VisibilityGroup.class);
 
-    private ArrayList<Component> components = new ArrayList<Component>();
+    private HashMap<Component, String> components = new HashMap<Component, String>();
     private ArrayList<Table> refreshableTables = new ArrayList<Table>();
 
-    private boolean isVisible = false;
 
     /**
      * Method to set if the components are visible.
      * 
      * @param visible
      */
-    public void setVisible(boolean visible)
+    public void setVisible()
     {
-        this.isVisible = visible;
-        for(Component component: components)
+    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	 
+        for(Component component: components.keySet())
         {
-            component.setVisible(this.isVisible);
-            logger.debug("Setting component visibility: " + component.getCaption() + ". Visible = " + this.isVisible);
+        	String policyName = this.components.get(component);
+        	
+        	if(authentication != null 
+        			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+        					|| authentication.hasGrantedAuthority(policyName)))
+        	{
+        		component.setVisible(true);
+        	}
+            else
+            {
+            	component.setVisible(false);
+            }
+        }
+
+        for(Table table: refreshableTables)
+        {
+            table.refreshRowCache();
+        }
+    }
+    
+    /**
+     * Method to set if the components are visible.
+     * 
+     * @param visible
+     */
+    public void setVisible(String linkedItemType, Long linkedItemId)
+    {
+    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	 
+        for(Component component: components.keySet())
+        {
+        	String policyName = this.components.get(component);
+        	
+        	if(authentication != null 
+        			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+        					|| authentication.hasGrantedAuthority(policyName))
+        					|| authentication.canAccessLinkedItem(linkedItemType, linkedItemId))
+        	{
+        		component.setVisible(true);
+        	}
+            else
+            {
+            	component.setVisible(false);
+            }
         }
 
         for(Table table: refreshableTables)
@@ -84,11 +133,9 @@ public class VisibilityGroup
      * Register a component with this group.
      * @param component
      */
-    public void registerComponent(Component component)
+    public void registerComponent(String policyName, Component component)
     {
-        logger.debug("Registering component: " + component.getCaption() + ". Visible = " + this.isVisible);
-        component.setVisible(this.isVisible);
-        this.components.add(component);
+        this.components.put(component, policyName);
     }
 
     /**
@@ -103,7 +150,7 @@ public class VisibilityGroup
     /**
      * @return the components
      */
-    public ArrayList<Component> getComponents()
+    public HashMap<Component, String> getComponents()
     {
         return components;
     }
@@ -111,7 +158,7 @@ public class VisibilityGroup
     /**
      * @param components the components to set
      */
-    public void setComponents(ArrayList<Component> components)
+    public void setComponents(HashMap<Component, String> components)
     {
         this.components = components;
     }

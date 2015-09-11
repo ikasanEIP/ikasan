@@ -98,11 +98,12 @@ public class ErrorCategorisationWindow extends Window
 	private TextField componentNameTextField = new TextField();
 	private TextField flowNameTextField = new TextField();
 	private TextField moduleNameTextField = new TextField();
+	private TextField exceptionClassTextField = new TextField();
 	
 	private BeanItem<ErrorCategorisation> errorCategorisationItem;
 	private BeanItem<ErrorCategorisationLink> errorCategorisationLinkItem;
 	
-	private GridLayout layout = new GridLayout(2, 13);
+	private GridLayout layout = new GridLayout(2, 14);
 	
 	/**
 	 * @param configurationManagement
@@ -110,8 +111,8 @@ public class ErrorCategorisationWindow extends Window
 	public ErrorCategorisationWindow(Server server, Module module, Flow flow, Component component,
 			ErrorCategorisationService errorCategorisationService)
 	{
-		super("Error Categorisation");
-		this.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
+//		super("Error Categorisation");
+//		this.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
 		
 		this.server = server;
 		this.module = module;
@@ -135,7 +136,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		this.existingCategorisedErrorsTable = new Table();
 		this.existingCategorisedErrorsTable.setWidth("100%");
-		this.existingCategorisedErrorsTable.setHeight(300, Unit.PIXELS);
+		this.existingCategorisedErrorsTable.setHeight(200, Unit.PIXELS);
 		this.existingCategorisedErrorsTable.addContainerProperty("Module Name", String.class,  null);
 		this.existingCategorisedErrorsTable.setColumnExpandRatio("Module Name", .1f);
 		this.existingCategorisedErrorsTable.addContainerProperty("Flow Name", String.class,  null);
@@ -227,6 +228,7 @@ public class ErrorCategorisationWindow extends Window
 				errorCategoryCombo.setPropertyDataSource(errorCategorisationItem.getItemProperty("errorCategory"));
 				errorMessageTextArea.setPropertyDataSource(errorCategorisationItem.getItemProperty("errorDescription"));
 				actionCombo.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("action"));
+				exceptionClassTextField.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("exceptionClass"));
 		    	
 		    	errorMessageTextArea.markAsDirty();
 		    	actionCombo.markAsDirty();
@@ -351,17 +353,28 @@ public class ErrorCategorisationWindow extends Window
 			layout.addComponent(componentNameTextField, 1, 4); 
 		}
 		
+		Label exceptionClassLabel = new Label();
+		exceptionClassLabel.setContentMode(ContentMode.HTML);
+		exceptionClassLabel.setValue("Exception Class:");
+		exceptionClassLabel.setSizeUndefined();		
+		layout.addComponent(exceptionClassLabel, 0, 5);
+		layout.setComponentAlignment(exceptionClassLabel, Alignment.MIDDLE_RIGHT);
+		
+		this.exceptionClassTextField.setWidth("80%");
+		exceptionClassTextField.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("exceptionClass"));
+		layout.addComponent(exceptionClassTextField, 1, 5); 
+		
 		Label actionLabel = new Label();
 		actionLabel.setContentMode(ContentMode.HTML);
 		actionLabel.setValue("Action:");
 		actionLabel.setSizeUndefined();		
-		layout.addComponent(actionLabel, 0, 5);
+		layout.addComponent(actionLabel, 0, 6);
 		layout.setComponentAlignment(actionLabel, Alignment.MIDDLE_RIGHT);
 
 		
 		Label errorCategoryLabel = new Label("Error Category:");
 		errorCategoryLabel.setSizeUndefined();		
-		layout.addComponent(errorCategoryLabel, 0, 6);
+		layout.addComponent(errorCategoryLabel, 0, 7);
 		layout.setComponentAlignment(errorCategoryLabel, Alignment.MIDDLE_RIGHT);
 		
 		this.setupComboBoxesAndItems();
@@ -369,7 +382,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		Label errorMessageLabel = new Label("Error Message:");
 		errorMessageLabel.setSizeUndefined();		
-		layout.addComponent(errorMessageLabel, 0, 7);
+		layout.addComponent(errorMessageLabel, 0, 8);
 		layout.setComponentAlignment(errorMessageLabel, Alignment.TOP_RIGHT);
 		
 		
@@ -381,7 +394,7 @@ public class ErrorCategorisationWindow extends Window
 		errorMessageTextArea.setWidth("650px");
 		errorMessageTextArea.setRows(8);
 		errorMessageTextArea.setRequiredError("An error message is required!");
-		layout.addComponent(errorMessageTextArea, 1, 7); 
+		layout.addComponent(errorMessageTextArea, 1, 8); 
 		
 		GridLayout buttonLayouts = new GridLayout(4, 1);
 		buttonLayouts.setSpacing(true);
@@ -478,13 +491,13 @@ public class ErrorCategorisationWindow extends Window
 		buttonLayouts.addComponent(deleteButton);
 		buttonLayouts.addComponent(cancelButton);
 		
-		layout.addComponent(buttonLayouts, 0, 8, 1, 8);
+		layout.addComponent(buttonLayouts, 0, 9, 1, 9);
 		layout.setComponentAlignment(buttonLayouts, Alignment.MIDDLE_CENTER);
 		
 		
 		Label existingCategorisationLabel = new Label("Existing Error Categorisations");
 		existingCategorisationLabel.setStyleName(ValoTheme.LABEL_HUGE);
-		layout.addComponent(existingCategorisationLabel, 0, 9, 1, 9);
+		layout.addComponent(existingCategorisationLabel, 0, 10, 1, 10);
 		
 		Label uniquenessHintLabel = new Label();
 		uniquenessHintLabel.setCaptionAsHtml(true);
@@ -493,7 +506,7 @@ public class ErrorCategorisationWindow extends Window
 				" trying to save.");
 		uniquenessHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
 		uniquenessHintLabel.addStyleName(ValoTheme.LABEL_SMALL);
-		layout.addComponent(uniquenessHintLabel, 0, 10, 1, 10);
+		layout.addComponent(uniquenessHintLabel, 0, 11, 1, 11);
 		
 		Label editHintLabel = new Label();
 		editHintLabel.setCaptionAsHtml(true);
@@ -501,18 +514,18 @@ public class ErrorCategorisationWindow extends Window
 				" You can can click on a row in the table below to edit an error categorisation.");
 		editHintLabel.addStyleName(ValoTheme.LABEL_BOLD);
 		editHintLabel.addStyleName(ValoTheme.LABEL_SMALL);
-		layout.addComponent(editHintLabel, 0, 11, 1, 11);
+		layout.addComponent(editHintLabel, 0, 12, 1, 12);
 	
-		layout.addComponent(this.existingCategorisedErrorsTable, 0, 12, 1, 12);
+		layout.addComponent(this.existingCategorisedErrorsTable, 0, 13, 1, 13);
 		layout.setComponentAlignment(this.existingCategorisedErrorsTable, Alignment.MIDDLE_CENTER);
 		
 		Panel paramPanel = new Panel();
-		paramPanel.setStyleName("dashboard");
+		paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		paramPanel.setWidth("100%");
 		paramPanel.setContent(layout);
 		
 		GridLayout wrapper = new GridLayout();
-		wrapper.setMargin(true);
+//		wrapper.setMargin(true);
 		wrapper.setSizeFull();
 		wrapper.addComponent(paramPanel);
 		
@@ -617,6 +630,7 @@ public class ErrorCategorisationWindow extends Window
 		errorMessageTextArea.setPropertyDataSource(errorCategorisationItem.getItemProperty("errorDescription"));
 		errorCategoryCombo.setPropertyDataSource(errorCategorisationItem.getItemProperty("errorCategory"));
 		actionCombo.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("action"));
+		exceptionClassTextField.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("exceptionClass"));
 		
 		errorMessageTextArea.markAsDirty();
     	actionCombo.markAsDirty();
@@ -662,8 +676,8 @@ public class ErrorCategorisationWindow extends Window
 		errorCategoryCombo.addItem(ErrorCategorisation.BLOCKER);
 		errorCategoryCombo.setItemIcon(ErrorCategorisation.BLOCKER, VaadinIcons.BAN);
 		
-		layout.addComponent(actionCombo, 1, 5);		
-		layout.addComponent(errorCategoryCombo, 1, 6); 
+		layout.addComponent(actionCombo, 1, 6);		
+		layout.addComponent(errorCategoryCombo, 1, 7); 
     }
     
 }

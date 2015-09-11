@@ -59,8 +59,10 @@ public interface CallBackMessageProvider
      * Delegates control to the CallBackMessageProvider implementation.
      *
      * @param context
+     *
+     * @return true when this provider invoked successfully
      */
-    void invoke(JobExecutionContext context);
+    boolean invoke(JobExecutionContext context);
 
     /**
      * Set the consumer to be called back on for this provider

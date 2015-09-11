@@ -60,6 +60,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.Job;
+import org.quartz.impl.JobDetailImpl;
 
 /**
  * This test class supports the <code>ScheduledConsumer</code> class.
@@ -299,10 +300,15 @@ public class ScheduledConsumerTest
                 will(returnValue(mockFlowEvent));
 
                 exactly(1).of(eventListener).invoke(mockFlowEvent);
+
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(false));
+
             }
         });
 
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -337,10 +343,15 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
+
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(false));
+
             }
         });
 
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -363,6 +374,9 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(null));
+
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(false));
 
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
@@ -426,7 +440,52 @@ public class ScheduledConsumerTest
         mockery.assertIsSatisfied();
     }
 
-    
+    @Test
+    public void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final String identifier = "testId";
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final JobDetail jobDetail = mockery.mock(JobDetail.class);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+
+                // schedule the job
+                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                will(returnValue(identifier));
+
+                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                will(returnValue(mockFlowEvent));
+
+                exactly(1).of(eventListener).invoke(mockFlowEvent);
+
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(true));
+
+                 exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(scheduler).triggerJob(jobKey);
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setJobDetail(jobDetail);
+
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
+
+
     /**
      * Extended ScheduledRecoveryManagerJobFactory for testing with replacement mocks.
      * @author Ikasan Development Team

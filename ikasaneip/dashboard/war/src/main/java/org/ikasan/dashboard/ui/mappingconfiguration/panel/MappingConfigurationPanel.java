@@ -50,8 +50,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.model.PlatformConfigurationConfiguredResource;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -74,18 +81,25 @@ import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
@@ -99,7 +113,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -138,7 +151,13 @@ public class MappingConfigurationPanel extends Panel implements View
     protected MappingConfigurationExportHelper mappingConfigurationExportHelper;
     protected MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
     protected SystemEventService systemEventService;
-    
+    protected String name;
+    protected IkasanUINavigator mappingNavigator;
+    protected IkasanUINavigator topLevelNavigator;
+    protected MenuLayout menuLayout;
+    protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+	
+	
 
     /**
      * Constructor
@@ -167,9 +186,10 @@ public class MappingConfigurationPanel extends Panel implements View
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup mappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
-            mappingConfigurationValuesExportHelper, SystemEventService systemEventService)
+            mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator
+            , IkasanUINavigator mappingNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
     {
-        super(name);
+        super();
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.clientComboBox = clientComboBox;
         this.typeComboBox = typeComboBox;
@@ -189,6 +209,11 @@ public class MappingConfigurationPanel extends Panel implements View
         this.mappingConfigurationExportHelper = mappingConfigurationExportHelper;
         this.mappingConfigurationValuesExportHelper = mappingConfigurationValuesExportHelper;
         this.systemEventService = systemEventService;
+        this.name = name;
+        this.mappingNavigator = mappingNavigator;
+        this.topLevelNavigator = topLevelNavigator;
+        this.menuLayout = menuLayout;
+        this.configurationManagement = configurationManagement;
     }
 
     /**
@@ -196,29 +221,60 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     @SuppressWarnings("serial")
     protected void init()
-    {
-    	this.setStyleName("dashboard");
-        layout = new GridLayout(4, 5);
+    {    
+    	layout = new GridLayout(5, 6);
+        layout.setSpacing(true);
+        layout.setMargin(true);
+        layout.setWidth("100%");
+        
+        this.addStyleName(ValoTheme.PANEL_BORDERLESS);
+        
         paramQueriesLayout = new VerticalLayout();
 
         toolBarLayout = new HorizontalLayout();
         toolBarLayout.setWidth("100%");
 
-        Button linkButton = new Button("Return to search results");
-        linkButton.setStyleName(BaseTheme.BUTTON_LINK);
+        Button linkButton = new Button();
+        
+        linkButton.setIcon(VaadinIcons.REPLY_ALL);
+        linkButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        linkButton.setDescription("Return to search results");
+        linkButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
-        linkButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                saveRequiredMonitor.manageSaveRequired("searchResultsPanel");
+        linkButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	Navigator navigator = new Navigator(UI.getCurrent(), menuLayout.getContentContainer());
+
+        		for (IkasanUIView view : topLevelNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
+            	
+                saveRequiredMonitor.manageSaveRequired("mappingView");
+                
+                navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
+
+        		for (IkasanUIView view : mappingNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
             }
         });
 
         toolBarLayout.addComponent(linkButton);
         toolBarLayout.setExpandRatio(linkButton, 0.865f);
 
-        this.editButton.setStyleName(BaseTheme.BUTTON_LINK);
-        this.editButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.editButton.setIcon(VaadinIcons.EDIT);
+        this.editButton.setDescription("Edit the mapping configuration");
+        this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.editButton.setVisible(false);
+        this.editButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 setEditable(true);
                 mappingConfigurationFunctionalGroup.editButtonPressed();
             }
@@ -227,10 +283,15 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.editButton);
         toolBarLayout.setExpandRatio(this.editButton, 0.045f);
 
-        this.saveButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
+        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.saveButton.setDescription("Save the mapping configuration");
+        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.saveButton.setVisible(false);
-        this.saveButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.saveButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 try
                 {
                     logger.info("Save button clicked!!");
@@ -246,7 +307,8 @@ public class MappingConfigurationPanel extends Panel implements View
                     // We can ignore this one as we have already dealt with the
                     // validation messages using the validation framework.
                 }
-                catch (Exception e) {
+                catch (Exception e) 
+                {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -260,13 +322,33 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.saveButton);
         toolBarLayout.setExpandRatio(this.saveButton, 0.045f);
 
-        this.cancelButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.cancelButton.setDescription("Cancel the current edit");
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.cancelButton.setVisible(false);
-        this.cancelButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        this.cancelButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 setEditable(false);
                 mappingConfigurationFunctionalGroup.saveOrCancelButtonPressed();
-                UI.getCurrent().getNavigator().navigateTo("searchResultsPanel");
+
+                Navigator navigator = new Navigator(UI.getCurrent(), menuLayout.getContentContainer());
+
+        		for (IkasanUIView view : topLevelNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
+            	
+                saveRequiredMonitor.manageSaveRequired("mappingView");
+                
+                navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
+
+        		for (IkasanUIView view : mappingNavigator.getIkasanViews())
+        		{
+        			navigator.addView(view.getPath(), view.getView());
+        		}
             }
         });
 
@@ -276,11 +358,15 @@ public class MappingConfigurationPanel extends Panel implements View
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
         fd.extend(exportMappingConfigurationButton);
 
-        this.exportMappingConfigurationButton.setStyleName(BaseTheme.BUTTON_LINK);
+        this.exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        this.exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.exportMappingConfigurationButton.setDescription("Export the current mapping configuration");
+        this.exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         toolBarLayout.addComponent(this.exportMappingConfigurationButton);
         toolBarLayout.setExpandRatio(this.exportMappingConfigurationButton, 0.045f);
 
-        final VerticalLayout contentLayout = new VerticalLayout();
+        final GridLayout contentLayout = new GridLayout(1, 2);
+        contentLayout.setWidth("100%");
         
         contentLayout.addComponent(toolBarLayout);
         contentLayout.addComponent(createMappingConfigurationForm());
@@ -289,13 +375,18 @@ public class MappingConfigurationPanel extends Panel implements View
             , createTableLayout(false));
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
-        queryParamsPanel.setHeight(200, Unit.PIXELS);
+        paramQueriesLayout.setSpacing(true);
+        
+        Label configValueLabels = new Label("Source Configuration Value Queries:");
+        layout.addComponent(configValueLabels, 2, 2, 3, 2);
+        Panel queryParamsPanel = new Panel();
+        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+        queryParamsPanel.setHeight(100, Unit.PIXELS);
         queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
         queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 4);
+        this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
-        vpanel.setSplitPosition(50, Unit.PERCENTAGE);
+        vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
@@ -341,13 +432,22 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     protected GridLayout createMappingConfigurationForm()
     {
-        layout.setMargin(true);
-
-        HorizontalLayout clientLabelLayout = new HorizontalLayout();
+        Label mappingConfigurationLabel = new Label(this.name);
+ 		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+ 		layout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
+    	
+    	HorizontalLayout clientLabelLayout = new HorizontalLayout();
         clientLabelLayout.setHeight(25, Unit.PIXELS);
         clientLabelLayout.setWidth(100, Unit.PIXELS);
-        clientLabelLayout.addComponent(new Label("Client"));
-        layout.addComponent(clientLabelLayout, 0, 0);
+        
+        Label clientLabel = new Label("Client:");
+        clientLabel.setSizeUndefined();
+        clientLabelLayout.addComponent(clientLabel);
+        clientLabelLayout.setComponentAlignment(clientLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(clientLabelLayout, 0, 1);
+        layout.setComponentAlignment(clientLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout clientComboBoxLayout = new HorizontalLayout();
         clientComboBoxLayout.setHeight(25, Unit.PIXELS);
         clientComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -356,13 +456,20 @@ public class MappingConfigurationPanel extends Panel implements View
         this.clientComboBox.addValidator(new NullValidator("A client must be selected!", false));
         this.clientComboBox.setValidationVisible(false);
         clientComboBoxLayout.addComponent(this.clientComboBox);
-        layout.addComponent(clientComboBoxLayout, 1, 0);
+        layout.addComponent(clientComboBoxLayout, 1, 1);
 
         HorizontalLayout typeLabelLayout = new HorizontalLayout();
         typeLabelLayout.setHeight(25, Unit.PIXELS);
         typeLabelLayout.setWidth(100, Unit.PIXELS);
-        typeLabelLayout.addComponent(new Label("Type"));
-        layout.addComponent(typeLabelLayout, 0, 1);
+        
+        Label typeLabel = new Label("Type:");
+        typeLabel.setSizeUndefined();
+        typeLabelLayout.addComponent(typeLabel);
+        typeLabelLayout.setComponentAlignment(typeLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(typeLabelLayout, 0, 2);
+        layout.setComponentAlignment(typeLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout typeComboBoxLayout = new HorizontalLayout();
         typeComboBoxLayout.setHeight(25, Unit.PIXELS);
         typeComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -371,13 +478,20 @@ public class MappingConfigurationPanel extends Panel implements View
         this.typeComboBox.addValidator(new NullValidator("A type must be selected!", false));
         this.typeComboBox.setValidationVisible(false);
         typeComboBoxLayout.addComponent(this.typeComboBox);
-        layout.addComponent(typeComboBoxLayout, 1, 1);
+        layout.addComponent(typeComboBoxLayout, 1, 2);
 
         HorizontalLayout sourceContextLabelLayout = new HorizontalLayout();
         sourceContextLabelLayout.setHeight(25, Unit.PIXELS);
         sourceContextLabelLayout.setWidth(100, Unit.PIXELS);
-        sourceContextLabelLayout.addComponent(new Label("Source Context"));
-        layout.addComponent(sourceContextLabelLayout, 0, 2);
+        
+        Label sourceContextLabel = new Label("Source Context:");
+        sourceContextLabel.setSizeUndefined();
+        sourceContextLabelLayout.addComponent(sourceContextLabel);
+        sourceContextLabelLayout.setComponentAlignment(sourceContextLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(sourceContextLabelLayout, 0, 3);
+        layout.setComponentAlignment(sourceContextLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout sourceContextComboBoxLayout = new HorizontalLayout();
         sourceContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         sourceContextComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -386,13 +500,20 @@ public class MappingConfigurationPanel extends Panel implements View
         this.sourceContextComboBox.addValidator(new NullValidator("A source context must be selected", false));
         this.sourceContextComboBox.setValidationVisible(false);
         sourceContextComboBoxLayout.addComponent(this.sourceContextComboBox);
-        layout.addComponent(sourceContextComboBoxLayout, 1, 2);
+        layout.addComponent(sourceContextComboBoxLayout, 1, 3);
 
         HorizontalLayout targetContextLabelLayout = new HorizontalLayout();
         targetContextLabelLayout.setHeight(25, Unit.PIXELS);
         targetContextLabelLayout.setWidth(100, Unit.PIXELS);
-        targetContextLabelLayout.addComponent(new Label("Target Context"));
-        layout.addComponent(targetContextLabelLayout, 0, 3);
+        
+        Label targetContextLabel = new Label("Target Context:");
+        targetContextLabel.setSizeUndefined();
+        targetContextLabelLayout.addComponent(targetContextLabel);
+        targetContextLabelLayout.setComponentAlignment(targetContextLabel, Alignment.MIDDLE_RIGHT);
+        
+        layout.addComponent(targetContextLabelLayout, 0, 4);
+        layout.setComponentAlignment(targetContextLabelLayout, Alignment.MIDDLE_RIGHT);
+        
         HorizontalLayout targetContextComboBoxLayout = new HorizontalLayout();
         targetContextComboBoxLayout.setHeight(25, Unit.PIXELS);
         targetContextComboBoxLayout.setWidth(350, Unit.PIXELS);
@@ -401,33 +522,39 @@ public class MappingConfigurationPanel extends Panel implements View
         this.targetContextComboBox.addValidator(new NullValidator("A target context must be selected",false));
         this.targetContextComboBox.setValidationVisible(false);
         targetContextComboBoxLayout.addComponent(this.targetContextComboBox);
-        layout.addComponent(this.targetContextComboBox, 1, 3);
+        layout.addComponent(this.targetContextComboBox, 1, 4);
 
         HorizontalLayout descriptionLabelLayout = new HorizontalLayout();
         descriptionLabelLayout.setHeight(25, Unit.PIXELS);
         descriptionLabelLayout.setWidth(100, Unit.PIXELS);
-        descriptionLabelLayout.addComponent(new Label("Description"));
-        layout.addComponent(descriptionLabelLayout, 0, 4);
+        
+        Label descriptionLabel = new Label("Description:");
+        descriptionLabel.setSizeUndefined();
+        descriptionLabelLayout.addComponent(descriptionLabel);
+        descriptionLabelLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
+        
+        layout.addComponent(descriptionLabelLayout, 0, 5);
+        layout.setComponentAlignment(descriptionLabelLayout, Alignment.TOP_RIGHT);
+        
         HorizontalLayout descriptionTextAreaLayout = new HorizontalLayout();
-        descriptionTextAreaLayout.setHeight(25, Unit.PIXELS);
+        descriptionTextAreaLayout.setHeight(75, Unit.PIXELS);
         descriptionTextAreaLayout.setWidth(350, Unit.PIXELS);
         this.descriptionTextArea = new TextArea();
         this.descriptionTextArea.setWidth(300, Unit.PIXELS);
-        this.descriptionTextArea.setRows(6);
+        this.descriptionTextArea.setRows(4);
         this.descriptionTextArea.addValidator(new StringLengthValidator(
             "A description must be entered.",
             1, null, true));
         this.descriptionTextArea.setValidationVisible(false);
         descriptionTextAreaLayout.addComponent(this.descriptionTextArea);
-        layout.addComponent(descriptionTextAreaLayout, 1, 4);
-
-        HorizontalLayout paramsLabelLayout = new HorizontalLayout();
-        paramsLabelLayout.setHeight(25, Unit.PIXELS);
-        paramsLabelLayout.setWidth(260, Unit.PIXELS);
-        paramsLabelLayout.addComponent(new Label("Number source of parameters"));
-        layout.addComponent(paramsLabelLayout, 2, 1);
+        layout.addComponent(descriptionTextAreaLayout, 1, 5);
+        
+        Label numParamsLabel = new Label("Number of source parameters:");
+        numParamsLabel.setWidth(175, Unit.PIXELS);
+        
+        layout.addComponent(numParamsLabel, 2, 1);
         this.numberOfParametersTextField = new TextField();
-        this.numberOfParametersTextField.setWidth(100, Unit.PIXELS);
+        this.numberOfParametersTextField.setWidth(75, Unit.PIXELS);
         this.numberOfParametersTextField.removeAllValidators();
         this.numberOfParametersTextField.addValidator(new LongValidator("Number of source parameters " +
         		"and key location queries must be defined."));
@@ -456,7 +583,10 @@ public class MappingConfigurationPanel extends Panel implements View
         HorizontalLayout controlsLayout = new HorizontalLayout();
         controlsLayout.setWidth("100%");
         
-        this.addNewRecordButton.setStyleName(ValoTheme.BUTTON_LINK);
+        this.addNewRecordButton.setIcon(VaadinIcons.PLUS);
+        this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.addNewRecordButton.setDescription("Add a mapping configuration value to the table below");
+        this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.addNewRecordButton.setVisible(buttonsVisible);
         this.addNewRecordButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -474,7 +604,11 @@ public class MappingConfigurationPanel extends Panel implements View
         });
 
         final RemoveAllItemsAction removeAllItemsAction = new RemoveAllItemsAction(this.mappingConfigurationConfigurationValuesTable);
-        this.deleteAllRecordsButton.setStyleName(ValoTheme.BUTTON_LINK);
+
+        this.deleteAllRecordsButton.setIcon(VaadinIcons.TRASH);
+        this.deleteAllRecordsButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.deleteAllRecordsButton.setDescription("Delete all values from the table below");
+        this.deleteAllRecordsButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.deleteAllRecordsButton.setVisible(buttonsVisible);
         this.deleteAllRecordsButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -486,7 +620,10 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        this.importMappingConfigurationButton.setStyleName(ValoTheme.BUTTON_LINK);
+        this.importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
+        this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.importMappingConfigurationButton.setDescription("Import mapping configuration values");
+        this.importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.importMappingConfigurationButton.setVisible(buttonsVisible);
         this.importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -497,7 +634,10 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        this.exportMappingConfigurationValuesButton.setStyleName(ValoTheme.BUTTON_LINK);
+        this.exportMappingConfigurationValuesButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        this.exportMappingConfigurationValuesButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.exportMappingConfigurationValuesButton.setDescription("Export mapping configuration values");
+        this.exportMappingConfigurationValuesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.exportMappingConfigurationValuesButton.setVisible(buttonsVisible);
 
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationValuesExportStream());
@@ -505,15 +645,15 @@ public class MappingConfigurationPanel extends Panel implements View
 
         Label spacer = new Label("&nbsp;",  ContentMode.HTML);
         controlsLayout.addComponent(spacer);
-        controlsLayout.setExpandRatio(spacer, 0.8f);
+        controlsLayout.setExpandRatio(spacer, 0.84f);
         controlsLayout.addComponent(this.addNewRecordButton);
         controlsLayout.setExpandRatio(this.addNewRecordButton, 0.04f);
         controlsLayout.addComponent(this.deleteAllRecordsButton);
-        controlsLayout.setExpandRatio(this.deleteAllRecordsButton, 0.06f);
+        controlsLayout.setExpandRatio(this.deleteAllRecordsButton, 0.04f);
         controlsLayout.addComponent(this.importMappingConfigurationButton);
-        controlsLayout.setExpandRatio(this.importMappingConfigurationButton, 0.05f);
+        controlsLayout.setExpandRatio(this.importMappingConfigurationButton, 0.04f);
         controlsLayout.addComponent(this.exportMappingConfigurationValuesButton);
-        controlsLayout.setExpandRatio(this.exportMappingConfigurationValuesButton, 0.05f);
+        controlsLayout.setExpandRatio(this.exportMappingConfigurationValuesButton, 0.04f);
 
         tableLayout.addComponent(controlsLayout);
         tableLayout.addComponent(this.mappingConfigurationConfigurationValuesTable);
@@ -709,14 +849,31 @@ public class MappingConfigurationPanel extends Panel implements View
     private ByteArrayOutputStream getMappingConfigurationValuesExport() throws IOException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        PlatformConfiguration platformConfiguration 
-    		= this.mappingConfigurationService.getPlatformConfigurationByName("mappingValuesExportSchemaLocation");
         
-        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+        PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+        
+        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+        
+        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+        
+        if(parameters == null || parameters.size() == 0 || !(parameters.get(0) instanceof ConfigurationParameterMapImpl))
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration map containing mappingValuesExportSchemaLocation configuration!");
+        }
+        
+        ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
+        
+        String schemaLocation = parameter.getValue().get("mappingExportSchemaLocation");
+        
+        if(schemaLocation == null || schemaLocation.length() == 0)
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration mappingValuesExportSchemaLocation!");
+        }
+        
+        logger.info("Resolved schemaLocation " + schemaLocation);
 
         String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true,
-        		platformConfiguration.getValue());
+        		schemaLocation);
 
         out.write(exportXml.getBytes());
 
@@ -733,13 +890,30 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        PlatformConfiguration platformConfiguration 
-        	= this.mappingConfigurationService.getPlatformConfigurationByName("mappingExportSchemaLocation");
-
-        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+        PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+        
+        Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+        
+        final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+        
+        if(parameters == null || parameters.size() == 0 || !(parameters.get(0) instanceof ConfigurationParameterMapImpl))
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration map containing mappingValuesExportSchemaLocation configuration!");
+        }
+        
+        ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
+        
+        String schemaLocation = parameter.getValue().get("mappingValuesExportSchemaLocation");
+        
+        if(schemaLocation == null || schemaLocation.length() == 0)
+        {
+        	throw new RuntimeException("Cannot resolve the platform configuration mappingValuesExportSchemaLocation!");
+        }
+        
+        logger.info("Resolved schemaLocation " + schemaLocation);	
         
         String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
-            , this.keyLocationQueries, platformConfiguration.getValue());
+            , this.keyLocationQueries, schemaLocation);
 
         out.write(exportXml.getBytes());
 
@@ -762,6 +936,11 @@ public class MappingConfigurationPanel extends Panel implements View
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
         
         logger.info("Attempting to populate form with mapping configuration: " + this.mappingConfiguration);
+        
+        this.clientComboBox.loadClientSelectValues();
+        this.typeComboBox.loadClientTypeValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
 
         this.clientComboBox.setValue(this.mappingConfiguration.getConfigurationServiceClient());
         this.typeComboBox.setValue(mappingConfiguration.getConfigurationType());
@@ -813,6 +992,18 @@ public class MappingConfigurationPanel extends Panel implements View
     	this.sourceContextComboBox.loadContextValues();
     	this.targetContextComboBox.loadContextValues();
     	this.typeComboBox.loadClientTypeValues();
+    	
+    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+ 	        	.getAttribute(DashboardSessionValueConstants.USER);
+        	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY)
+    					|| (this.mappingConfiguration != null && authentication.canAccessLinkedItem
+    						(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE, this.mappingConfiguration.getId()))))
+    	{
+    		this.mappingConfigurationFunctionalGroup.initialiseButtonState();
+    	}
     }
 
     /**

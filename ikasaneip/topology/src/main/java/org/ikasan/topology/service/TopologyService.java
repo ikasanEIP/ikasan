@@ -148,6 +148,13 @@ public interface TopologyService
 	 * @return
 	 */
 	public List<BusinessStream> getBusinessStreamsByUserId(List<Long> ids);
+	
+	/**
+	 * Delete a business stream 
+	 * 
+	 * @param businessStream
+	 */
+	public void deleteBusinessStream(BusinessStream businessStream);
 
 	/**
 	 * Method to discovery and populate Ikasan topology

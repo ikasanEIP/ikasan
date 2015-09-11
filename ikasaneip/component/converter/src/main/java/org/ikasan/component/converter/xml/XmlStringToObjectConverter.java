@@ -42,6 +42,7 @@ package org.ikasan.component.converter.xml;
 
 import java.io.StringReader;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -58,7 +59,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
  * 
  * @author edwaki
  */
-public class XmlStringToObjectConverter implements Converter<Object, Object>, ConfiguredResource<XmlStringToObjectConfiguration>
+public class XmlStringToObjectConverter<SOURCE,TARGET> implements Converter<SOURCE, TARGET>, ConfiguredResource<XmlStringToObjectConfiguration>
 {
 
     private XmlStringToObjectConfiguration configuration;
@@ -106,21 +107,36 @@ public class XmlStringToObjectConverter implements Converter<Object, Object>, Co
     }
 
     @Override
-    public Object convert(Object payload) throws TransformationException
+    public TARGET convert(SOURCE payload) throws TransformationException
     {
-        try {
-        String xml = null;
-        if (payload instanceof String){
-            xml = (String)payload;
-        } else if (payload instanceof byte[]){
-            xml = new String((byte[])payload);
-        } else {
-            throw new TransformationException("Cannot get xml string from payload " + payload.toString());
+        Object result = null;
+
+        try
+        {
+            String xml = null;
+            if (payload instanceof String){
+                xml = (String)payload;
+            } else if (payload instanceof byte[]){
+                xml = new String((byte[])payload);
+            } else {
+                throw new TransformationException("Cannot get xml string from payload " + payload.toString());
+            }
+            result = marshaller.unmarshal(new StreamSource(new StringReader(xml)));
+            if(result instanceof JAXBElement && configuration.isAutoConvertElementToValue())
+            {
+                result = ((JAXBElement)result).getDeclaredType().cast(((JAXBElement) result).getValue());
+                return (TARGET)result;
+            }
+
+            return (TARGET)result;
         }
-        Object result = marshaller.unmarshal(new StreamSource(new StringReader(xml)));
-        return result;
-        } catch (XmlMappingException e){
-             throw new TransformationException(e);
+        catch (XmlMappingException e)
+        {
+            throw new TransformationException(e);
+        }
+        catch (ClassCastException e)
+        {
+            throw new TransformationException("Expected TARGET type on your Converter doesn't match actual return type.", e);
         }
     }
     

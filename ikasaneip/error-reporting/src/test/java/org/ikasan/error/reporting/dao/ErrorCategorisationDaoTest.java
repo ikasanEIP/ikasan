@@ -132,14 +132,14 @@ public class ErrorCategorisationDaoTest
     public void test_save_and_find_categorised_error()
     {
     	ErrorOccurrence errorOccurrence = new ErrorOccurrence
-    			("moduleName", "flowName", "flowElementName", "error detail", exception.getMessage(),
+    			("moduleName", "flowName", "flowElementName", "error detail", exception.getMessage(), exception.getClass().getName(),
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
     	errorOccurrence.setAction("Retry");
 
         errorReportingServiceDao.save(errorOccurrence);
         
         errorOccurrence = new ErrorOccurrence
-    			("moduleName", "anotherFlowName", "anotherFlowElementName", "error detail", exception.getMessage(),
+    			("moduleName", "anotherFlowName", "anotherFlowElementName", "error detail", exception.getMessage(), exception.getClass().getName(),
     					ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         errorOccurrence.setAction("Retry");
         

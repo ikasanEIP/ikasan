@@ -150,6 +150,16 @@
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
     
+    <bean id="startupControlService" class="org.ikasan.module.service.StartupControlServiceImpl">
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="startupControlDao" />
+    </bean>
+    
+    <bean id="startupControlDao"
+        class="org.ikasan.module.startup.dao.HibernateStartupControlDao">
+        <property name="sessionFactory" ref="moduleStartupControlHibernateSessionFactory" />
+    </bean>
+    
     <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
         <constructor-arg ref="systemEventDao" />
         <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
@@ -190,6 +200,7 @@
 			   <value>/org/ikasan/security/model/Role.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Policy.hbm.xml</value>
 			   <value>/org/ikasan/security/model/User.hbm.xml</value>
+			   <value>/org/ikasan/security/model/UserPrincipal.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Authority.hbm.xml</value>
 			   <value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 			   <value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
@@ -209,6 +220,7 @@
 			   <value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
 			   <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
 			   <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
+			   <value>org/ikasan/module/startup/StartupControl.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

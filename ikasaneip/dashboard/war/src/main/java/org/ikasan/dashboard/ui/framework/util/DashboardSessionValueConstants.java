@@ -47,4 +47,5 @@ package org.ikasan.dashboard.ui.framework.util;
 public interface DashboardSessionValueConstants
 {
     public static final String USER = "user";
+    public static final String TOPOLOGY_STATE_CACHE = "topologyStateCache";
 }

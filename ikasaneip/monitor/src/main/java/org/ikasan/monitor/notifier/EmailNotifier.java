@@ -83,10 +83,12 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
     StringBuilder pendingContent = new StringBuilder();
 
     @Override
-    public void invoke(String environment, String name, String state)
+    public void invoke(String environment, String moduleName, String flowName, String state)
     {
         if(configuration.isActive())
         {
+        	final String name = "Module[" + moduleName + "] Flow[" + flowName + "]";
+        	
             notify(environment, name, state);
         }
     }

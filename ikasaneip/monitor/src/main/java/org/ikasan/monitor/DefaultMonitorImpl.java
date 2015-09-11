@@ -73,8 +73,11 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     /** environment label */
     private String environment;
 
-    /** monitor name */
-    private String monitorName;
+    /** module name */
+    private String moduleName;
+    
+    /** flow name */
+    private String flowName;
 
     /** has the state changed */
     private Map<String,T> states = new ConcurrentHashMap<>();
@@ -101,17 +104,6 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     }
 
     @Override
-    public String getName() {
-        return monitorName;
-    }
-
-    @Override
-    public void setName(String monitorName)
-    {
-        this.monitorName = monitorName;
-    }
-
-    @Override
     public void setEnvironment(String environment)
     {
         this.environment = environment;
@@ -133,6 +125,9 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
                 logger.warn("Cannot invoke Monitor after destroy has been called - executorService is null or shutdown");
                 return;
             }
+            
+            String monitorName = "Module[" + moduleName + "] Flow[" + flowName + "]";
+            		
             boolean stateChanged = hasStateChanged(environment + monitorName, status);
 
             for(final Notifier notifier:notifiers)
@@ -146,7 +141,7 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
                         {
                             try
                             {
-                                notifier.invoke(environment, monitorName, status);
+                                notifier.invoke(environment, moduleName, flowName, status);
                             }
                             catch(RuntimeException e)
                             {
@@ -223,4 +218,36 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     {
         this.configuredResourceId = configuredResourceId;
     }
+
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName()
+	{
+		return moduleName;
+	}
+
+	/**
+	 * @param moduleName the moduleName to set
+	 */
+	public void setModuleName(String moduleName)
+	{
+		this.moduleName = moduleName;
+	}
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName()
+	{
+		return flowName;
+	}
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(String flowName)
+	{
+		this.flowName = flowName;
+	}
 }
