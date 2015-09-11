@@ -31,7 +31,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.3</version>
 	</parent>
 
 	<artifactId>ikasan-test</artifactId>
