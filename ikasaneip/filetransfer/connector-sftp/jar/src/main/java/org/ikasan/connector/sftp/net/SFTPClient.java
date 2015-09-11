@@ -47,6 +47,7 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.BindException;
+import java.net.SocketImplFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -417,7 +418,10 @@ public class SFTPClient implements FileTransferClient
                 session.setPassword(password);
             }
 
+            this.session.setServerAliveInterval(this.connectionTimeout);
             this.session.connect(this.connectionTimeout);
+
+           // this.session.connect(this.connectionTimeout);
             if (this.localHostname != null)
             {
                 echoConfig(Level.DEBUG);
@@ -445,6 +449,7 @@ public class SFTPClient implements FileTransferClient
             msg = new String("Getting the sftp channel and connecting..."); //$NON-NLS-1$
             logger.debug(msg);
             this.channel = session.openChannel("sftp");
+
             this.channel.connect();
             this.channelSftp = (ChannelSftp) channel;
         }
