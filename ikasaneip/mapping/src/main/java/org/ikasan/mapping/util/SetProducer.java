@@ -60,14 +60,14 @@ public class SetProducer
 	 * @param setSize
 	 * @return
 	 */
-	public static Set<Set<String>> combinations(List<String> parentSet, int setSize) 
+	public static List<List<String>> combinations(List<String> parentSet, int setSize) 
 	{
 
-	    Set<Set<String>> allCombos = new HashSet<Set<String>> ();
+	    List<List<String>> allCombos = new ArrayList<List<String>> ();
 	    // base cases for recursion
 	    if (setSize == 0) {
 	        // There is only one combination of size 0, the empty team.
-	        allCombos.add(new HashSet<String>());
+	        allCombos.add(new ArrayList<String>());
 	        return allCombos;
 	    }
 	    if (setSize > parentSet.size()) {
@@ -80,9 +80,9 @@ public class SetProducer
 	    List<String> groupWithoutX = new ArrayList<String> (parentSet);
 	    String x = groupWithoutX.remove(groupWithoutX.size()-1);
 
-	    Set<Set<String>> combosWithoutX = combinations(groupWithoutX, setSize);
-	    Set<Set<String>> combosWithX = combinations(groupWithoutX, setSize-1);
-	    for (Set<String> combo : combosWithX) 
+	    List<List<String>> combosWithoutX = combinations(groupWithoutX, setSize);
+	    List<List<String>> combosWithX = combinations(groupWithoutX, setSize-1);
+	    for (List<String> combo : combosWithX) 
 	    {
 	        combo.add(x);
 	    }
