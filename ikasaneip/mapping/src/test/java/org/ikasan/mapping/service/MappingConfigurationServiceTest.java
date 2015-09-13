@@ -485,7 +485,35 @@ public class MappingConfigurationServiceTest
 						sourceSystemValues);
 
 		Assert.assertEquals("CMS", result);
+		
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("1208");
+		sourceSystemValues.add("1208");
+		sourceSystemValues.add("CMS");
+		sourceSystemValues.add("ignore");
 
+		result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("CMS", result);
+
+		
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("1208");
+		sourceSystemValues.add("1208");
+		sourceSystemValues.add("CMS");
+		sourceSystemValues.add("");
+
+		result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("CMS", result);
+
+		
 		sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("1424");
 		sourceSystemValues.add("1424");
