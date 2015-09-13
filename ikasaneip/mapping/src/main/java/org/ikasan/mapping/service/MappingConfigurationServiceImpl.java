@@ -608,7 +608,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 			String configurationTypeName, String sourceContext,
 			String targetContext, List<String> sourceSystemValues)
 	{
-		String returnValue = this.dao.getTargetConfigurationValue(clientName, configurationTypeName, sourceContext, 
+		String returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
 				targetContext, sourceSystemValues, sourceSystemValues.size());
 		
 		boolean resultFound = false;
@@ -617,16 +617,16 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 		{
 			for(int i=sourceSystemValues.size() - 1; i>0; i--)
 			{
-				Set<Set<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
+				List<List<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
 				
 				String result = null;
 				
-				for(Set<String> subSet: subSets)
+				for(List<String> subSet: subSets)
 				{
 					ArrayList<String> subList = new ArrayList<String>();
 					subList.addAll(subSet);
 					
-					returnValue = this.dao.getTargetConfigurationValue(clientName, configurationTypeName, sourceContext, 
+					returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
 							targetContext, subList, sourceSystemValues.size());
 					
 					if(returnValue != null && resultFound)
