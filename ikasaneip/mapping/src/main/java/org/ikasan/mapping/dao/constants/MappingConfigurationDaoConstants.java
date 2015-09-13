@@ -154,8 +154,7 @@ public interface MappingConfigurationDaoConstants
     public static final String CONFIRM_RESULT_NARROW_BY_SOURCE_SYSTEM =	"s.sourceSystemValue = :" + SOURCE_SYSTEM_VALUE_SIZE_CONFIRM;
  
     public static final String CONFIRM_RESULT_SIZE_PREDICATE_END =
-    		") and scv.targetConfigurationValue = s.targetConfigurationValue group by s.targetConfigurationValue)) "
-    +
+    		") and scv.targetConfigurationValue = s.targetConfigurationValue group by s.targetConfigurationValue)) " +
     		" and ( mc.numberOfParams - :" + SIZE + " =	 (select count(*) " +
     		"from SourceConfigurationValue s1 where " +
     		"mc.id = s1.mappingConfigurationId " +

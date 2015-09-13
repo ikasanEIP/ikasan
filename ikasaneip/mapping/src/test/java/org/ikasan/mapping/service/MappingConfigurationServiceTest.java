@@ -683,7 +683,7 @@ public class MappingConfigurationServiceTest
 	}
 	
 	@DirtiesContext
-	public void test_success_4_paramater_mapping_with_ignores_exception()
+	public void test_success_4_paramater_mapping_with_ignores()
 	{
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("On My Own");
@@ -700,7 +700,7 @@ public class MappingConfigurationServiceTest
 	}
 
 	@DirtiesContext
-	public void test_success_4_paramater_mapping_with_ignores_exception2()
+	public void test_success_4_paramater_mapping_with_ignores2()
 	{
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("On My Own");
