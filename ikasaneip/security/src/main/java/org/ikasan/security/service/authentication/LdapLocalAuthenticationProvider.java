@@ -41,6 +41,7 @@
 package org.ikasan.security.service.authentication;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -132,6 +133,9 @@ public class LdapLocalAuthenticationProvider implements AuthenticationProvider
 				}
 			}
 		}
+		
+//		user.setPreviousAccessTimestamp(new Date().getTime());		
+//		this.userService.updateUser(user);
 
         return new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials());
 	}

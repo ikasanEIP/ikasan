@@ -60,6 +60,7 @@
     <property name="firstName" column="FirstName" type="java.lang.String" not-null="false"/>
     <property name="department" column="Department" type="java.lang.String" not-null="false"/>
     <property name="enabled" column="Enabled" type="boolean" not-null="true"/>
+    <property name="previousAccessTimestamp" column="PreviousAccess" type="long" not-null="false"/>
     <set name="grantedAuthorities" lazy="false" table="UsersAuthorities">
         <key column="UserId"/>
         <many-to-many class="org.ikasan.security.model.Authority" column="AuthorityId"  />

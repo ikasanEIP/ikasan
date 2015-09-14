@@ -125,6 +125,7 @@ public class AuthenticationServiceImpl implements AuthenticationService
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			logger.info("Authentication failed for user " + username);
 			throw new AuthenticationServiceException("Error authenticating!");
 		}
