@@ -134,8 +134,8 @@ public class LdapLocalAuthenticationProvider implements AuthenticationProvider
 			}
 		}
 		
-//		user.setPreviousAccessTimestamp(new Date().getTime());		
-//		this.userService.updateUser(user);
+		user.setPreviousAccessTimestamp(new Date().getTime());		
+		this.userService.updateUser(user);
 
         return new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials());
 	}
