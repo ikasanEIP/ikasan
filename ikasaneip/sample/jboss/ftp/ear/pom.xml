@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-sample-ftp-parent</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-ftp-ear</artifactId>
     <packaging>ear</packaging>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <name>ikasan-sample-ftp Integration Module EAR</name>
     <description>EAR Packaging for this Integration Module</description>
 
