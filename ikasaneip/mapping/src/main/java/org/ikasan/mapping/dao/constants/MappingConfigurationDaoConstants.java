@@ -51,9 +51,11 @@ public interface MappingConfigurationDaoConstants
     public static final String SOURCE_CONTEXT = "sourceContext";
     public static final String TARGET_CONTEXT = "targetContext";
     public static final String SOURCE_SYSTEM_VALUE = "sourceSystemValue";
+    public static final String SOURCE_SYSTEM_VALUE_SIZE_CONFIRM = "sourceSystemValueSizeConfirm";
     public static final String NUMBER_OF_PARAMS = "numberOfParams";
     public static final String CONFIGURATION_SERVICE_CLIENT_NAME = "configurationServiceClientName";
     public static final String TARGET_CONFIGURATION_VALUE_ID = "targetConfigurationValueId";
+    public static final String SIZE = "size";
 
     /** The base HQL query used to access the mapping configurations. */
     public static final String MAPPING_CONFIGURATION_QUERY = "select distinct tcv.targetSystemValue from ConfigurationType as ct," +
@@ -141,5 +143,21 @@ public interface MappingConfigurationDaoConstants
     		"ConfigurationContext as cc where cc.name = :" + SOURCE_CONTEXT  + ")";
     public static final String TARGET_CONTEXT_PREDICATE = " and mc.targetContext = (select cc.id from " +
     		"ConfigurationContext as cc where cc.name = :" + TARGET_CONTEXT  + ")";
+    
+    public static final String CONFIRM_RESULT_SIZE_PREDICATE_START =
+    		" and (" +
+    		":" + SIZE + " = (select distinct count(*) " +
+    		"from SourceConfigurationValue s where " +
+    		"mc.id = s.mappingConfigurationId " +
+    		"and(";
+    		
+    public static final String CONFIRM_RESULT_NARROW_BY_SOURCE_SYSTEM =	"s.sourceSystemValue = :" + SOURCE_SYSTEM_VALUE_SIZE_CONFIRM;
+ 
+    public static final String CONFIRM_RESULT_SIZE_PREDICATE_END =
+    		") and scv.targetConfigurationValue = s.targetConfigurationValue group by s.targetConfigurationValue)) " +
+    		" and ( mc.numberOfParams - :" + SIZE + " =	 (select count(*) " +
+    		"from SourceConfigurationValue s1 where " +
+    		"mc.id = s1.mappingConfigurationId " +
+    		"and s1.sourceSystemValue = '' and scv.targetConfigurationValue = s1.targetConfigurationValue))";
 
 }
