@@ -185,23 +185,18 @@ public class WiretapPayloadViewWindow extends Window
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setWidth("100%");
-//		wrapperLayout.setMargin(true);
-//		wrapperLayout.setSizeFull();
 		
 		AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
 		editor.setValue(this.wiretapEvent.getEvent());
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
+		editor.setWordWrap(true);
 		editor.setTheme(AceTheme.eclipse);
 		editor.setWidth("100%");
 		editor.setHeight(550, Unit.PIXELS);
 		
 
-//		HorizontalLayout formLayout = new HorizontalLayout();
-//		formLayout.setWidth("100%");
-//		formLayout.setHeight(120, Unit.PIXELS);
-//		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(layout, 0, 0);
 		wrapperLayout.addComponent(editor, 0, 2);
 		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);

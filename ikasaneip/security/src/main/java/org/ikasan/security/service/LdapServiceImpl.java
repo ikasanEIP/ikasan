@@ -65,6 +65,7 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
@@ -81,14 +82,18 @@ public class LdapServiceImpl implements LdapService
 	private SecurityDao securityDao;
 	private UserDao userDao;
 	private AuthenticationMethod authenticationMethod;
-	private DefaultSpringSecurityContextSource contextSource;
+	
+	/*
+     * <code>PasswordEncoder</code> for encoding user passwords
+     */
+    private PasswordEncoder passwordEncoder;
 
 	/**
 	 * @param securityService
 	 * @param userService
 	 */
 	public LdapServiceImpl(SecurityDao securityDao,
-			UserDao userDao)
+			UserDao userDao, PasswordEncoder passwordEncoder)
 	{
 		super();
 		this.securityDao = securityDao;
@@ -101,6 +106,11 @@ public class LdapServiceImpl implements LdapService
 		if (this.userDao == null)
 		{
 			throw new IllegalArgumentException("userDao cannot be null!");
+		}
+		this.passwordEncoder = passwordEncoder;
+		if (this.userDao == null)
+		{
+			throw new IllegalArgumentException("passwordEncoder cannot be null!");
 		}
 	}
 
@@ -337,8 +347,10 @@ public class LdapServiceImpl implements LdapService
 			
 			if(user == null)
 			{
-				// todo need to sort out password stuff
-				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
+				// Setting a default password. Need to think about forcing the user to change it,
+				String encodedPassword = passwordEncoder.encodePassword("pa55word", null);
+				
+				user = new User(ldapUser.accountName, encodedPassword, ldapUser.email, true);
 				user.setDepartment(ldapUser.department);
 				user.setFirstName(ldapUser.firstName);
 				user.setSurname(ldapUser.surname);

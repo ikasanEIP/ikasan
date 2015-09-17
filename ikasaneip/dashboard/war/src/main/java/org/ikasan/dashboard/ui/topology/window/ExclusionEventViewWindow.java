@@ -430,6 +430,7 @@ public class ExclusionEventViewWindow extends Window
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
+		eventEditor.setWordWrap(true);
 		eventEditor.setWidth("100%");
 		eventEditor.setHeight(600, Unit.PIXELS);
 		
@@ -442,6 +443,7 @@ public class ExclusionEventViewWindow extends Window
 		errorEditor.setCaption("Error Details");
 		errorEditor.setValue(this.errorOccurrence.getErrorDetail());
 		errorEditor.setReadOnly(true);
+		errorEditor.setWordWrap(true);
 		errorEditor.setMode(AceMode.xml);
 		errorEditor.setTheme(AceTheme.eclipse);
 		errorEditor.setWidth("100%");

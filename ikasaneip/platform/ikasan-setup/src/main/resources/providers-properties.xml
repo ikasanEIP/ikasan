@@ -506,7 +506,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled 			BIT NOT NULL
+					Enabled 			BIT NOT NULL,
+					PreviousAccess 		NUMERIC DEFAULT 0 NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1812,7 +1813,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled 			BIT NOT NULL
+					Enabled 			BIT NOT NULL,
+					PreviousAccess 		NUMERIC DEFAULT 0 NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -3078,7 +3080,8 @@
                     [FirstName] [VARCHAR] (50) NULL,
                     [Surname] [VARCHAR] (50)   NULL,
                     [Department] [VARCHAR] (50) NULL,
-                    [Enabled]  [BIT] NOT NULL
+                    [Enabled]  [BIT] NOT NULL,
+                    PreviousAccess [NUMERIC] DEFAULT 0 NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
                     (
                     [Id] ASC
@@ -4280,7 +4283,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled BIT NOT NULL
+					Enabled BIT NOT NULL,
+					PreviousAccess NUMERIC DEFAULT 0 NOT NULL
 					);
 				</prop>
 				
