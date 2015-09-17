@@ -127,11 +127,14 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 					}
 				}
 			}
-
-			user.setPreviousAccessTimestamp(new Date().getTime());
-			this.userService.updateUser(user);
 			
-	        return new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials());
+			IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials()
+					, user.getPreviousAccessTimestamp());
+			
+			user.setPreviousAccessTimestamp(new Date().getTime());	
+			this.userService.updateUser(user);
+
+	        return ikasanAuthentication;
 		}
 		else
 		{

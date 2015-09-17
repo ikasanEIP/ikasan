@@ -67,6 +67,7 @@
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="associatedPrincipalItemClickListener"/>
+    	<constructor-arg ref="systemEventService"/>
     </bean>
     
     <bean id="associatedPrincipalItemClickListener" class="org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener" scope="session">
