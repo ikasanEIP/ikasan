@@ -12228,14 +12228,14 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .valo-menu-title {
 	line-height: 1.2;
-	background-color: #197de1;
-	background-image: -webkit-linear-gradient(top, #1b87e3 2%, #166ed5 98%);
-	background-image: linear-gradient(to bottom,#1b87e3 2%, #166ed5 98%);
+	background-color: #414B56;
+	background-image: -webkit-linear-gradient(top, #414B56 2%, #414B56 98%);
+	background-image: linear-gradient(to bottom,#414B56 2%, #414B56 98%);
 	color: white;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 	padding: 8px 13px;
-	font-size: 10px;
-	border-bottom: 1px solid #1362b1;
+	font-size: 14px;
+	border-bottom: 1px solid #414B56;
 	-webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-align: center;

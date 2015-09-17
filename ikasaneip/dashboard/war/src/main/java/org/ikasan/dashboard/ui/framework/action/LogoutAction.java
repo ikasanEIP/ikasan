@@ -40,10 +40,13 @@
  */
 package org.ikasan.dashboard.ui.framework.action;
 
+import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -70,6 +73,7 @@ public class LogoutAction implements Action
     private Label userLabel;
     private Component logOutButton;
     private NavigationPanel navigationPanel;
+    private SystemEventService systemEventService;
 
     /**
      * Constructor
@@ -81,7 +85,7 @@ public class LogoutAction implements Action
      */
     public LogoutAction(VisibilityGroup visibilityGroup,
             EditableGroup editableGroup, GridLayout layout, Button loginButton, Button setupButton, Component logOutButton,
-            Label userLabel, NavigationPanel navigationPanel)
+            Label userLabel, NavigationPanel navigationPanel, SystemEventService systemEventService)
     {
         super();
         this.visibilityGroup = visibilityGroup;
@@ -92,6 +96,7 @@ public class LogoutAction implements Action
         this.logOutButton = logOutButton;
         this.userLabel = userLabel;
         this.navigationPanel = navigationPanel;
+        this.systemEventService = systemEventService;
     }
 
     /* (non-Javadoc)
@@ -100,6 +105,9 @@ public class LogoutAction implements Action
     @Override
     public void exectuteAction()
     {
+    	IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+            	.getAttribute(DashboardSessionValueConstants.USER);
+    	
     	VaadinService.getCurrentRequest().getWrappedSession()
         	.setAttribute(DashboardSessionValueConstants.USER, null);
         this.visibilityGroup.setVisible();
@@ -120,6 +128,10 @@ public class LogoutAction implements Action
        //Invalidate HttpSession
         httpSession.invalidate();
         vSession.close();
+        
+        systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_LOGOUT_CONSTANTS, 
+        		"User logging out: " + ikasanAuthentication.getName(), ikasanAuthentication.getName());
+        
        //Redirect the user to the login/default Page
         Page.getCurrent().setLocation("/ikasan-dashboard");
     }
