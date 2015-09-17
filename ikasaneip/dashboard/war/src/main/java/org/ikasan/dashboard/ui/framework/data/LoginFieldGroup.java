@@ -47,6 +47,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.security.core.Authentication;
 
 import com.vaadin.data.Item;
@@ -130,6 +131,12 @@ public class LoginFieldGroup extends FieldGroup
         	e.printStackTrace();
             logger.info("User has supplied invalid password: " + username.getValue());
             throw new CommitException("Invalid user name or password. Please try again.");
+        }
+        catch(InvalidDataAccessResourceUsageException e)
+        {
+        	e.printStackTrace();
+        	throw new CommitException("It appears that the Ikasan database has not been setup. Please go to the" +
+        			" setup screen by clicking the link at the top right of this screen.");
         }
     }
 

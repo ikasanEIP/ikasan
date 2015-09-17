@@ -72,7 +72,7 @@ public class TopologyStateCache
 	private HashMap<String, String> stateMap;
 	
 	// TODO need to add some kind of hook to shut this down.
-	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+	private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
 	
 	
@@ -85,10 +85,9 @@ public class TopologyStateCache
 		super();
 		this.topologyService = topologyService;
 		
-		stateMap = new HashMap<String, String>();
+		stateMap = new HashMap<String, String>();	
 		
 		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
-		
 	}
 
 	public String getState(String key)
@@ -127,6 +126,7 @@ public class TopologyStateCache
 		{
 			logger.warn("An exception has occurred trying to update the topology state cache", e);
 			// Ignoring this exception, as it may be the case that the database is not yet setup.
+			return;
 		}
 		
 		logger.info("Number of servers to synch: " + servers.size());
@@ -202,5 +202,10 @@ public class TopologyStateCache
 	public HashMap<String, String> getStateMap()
 	{
 		return stateMap;
+	}
+	
+	public static void shutdown()
+	{
+		executor.shutdown();
 	}
 }
