@@ -48,9 +48,9 @@ import com.vaadin.ui.HorizontalLayout;
 
 public class MenuLayout extends HorizontalLayout {
 
-    CssLayout contentArea = new CssLayout();
+    private CssLayout contentArea = new CssLayout();
 
-    CssLayout menuArea = new CssLayout();
+    private CssLayout menuArea = new CssLayout();
 
     public MenuLayout() 
     {

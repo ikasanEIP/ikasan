@@ -23,3 +23,5 @@ ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.BAS
 ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.LOCAL.11832.xml
 ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.REMOTE.11832.xml
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/WEB-INF/deploy/org.ikasan.dashboard.ui.AppWidgetSet/rpcPolicyManifest/manifest.txt
+ikasaneip/component/endpoint/utility-endpoint/src/test/resources/data/unit/Trade.txt.cr32
+ikasaneip/out

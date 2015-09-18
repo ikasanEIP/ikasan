@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-developer</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-mvn-archetype</artifactId>
@@ -53,7 +53,10 @@
 
     <modules>
         <module>ikasan-build-parent</module>
-        <module>ikasan-jboss-6</module>
+        <module>ikasan-jboss-6-filesystem-im</module>
+        <module>ikasan-jboss-6-jms-im</module>
+        <module>ikasan-jboss-6-db-im</module>
+        <!--module>ikasan-jboss-6-amq-im</module-->
         <module>ikasan-rt-conf-jboss-6</module>
     </modules>
 

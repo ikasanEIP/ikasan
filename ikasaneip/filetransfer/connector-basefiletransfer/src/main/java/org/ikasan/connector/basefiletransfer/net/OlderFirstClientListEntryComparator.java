@@ -46,27 +46,26 @@ import java.util.Comparator;
  * <code>OlderFirstClientListEntryComparator</code> is an implementation of
  * {@link Comparator} for <code>ClientListEntry</code> that compares two such
  * objects based on their last modified dates.
- * 
- * @author Ikasan Development Team 
- * 
+ *
+ * @author Ikasan Development Team
  */
 public class OlderFirstClientListEntryComparator implements Comparator<ClientListEntry>
 {
     public int compare(ClientListEntry cle1, ClientListEntry cle2)
     {
-        boolean older = cle1.getMtime() < cle2.getMtime();
-        boolean newer = cle1.getMtime() > cle2.getMtime();
-        if (older && newer)
+        int mtimeComparison = new Long(cle1.getMtime()).compareTo(new Long(cle2.getMtime()));
+        if (mtimeComparison == 0)
         {
-            return 0;
-        }
-        else if (newer)
-        {
-            return 1;
+            if(cle1.getName()!=null&&cle2.getName()!=null)
+                return cle1.getName().compareTo(cle2.getName());
+            else{
+                return -1;
+            }
+
         }
         else
         {
-            return -1;
+            return mtimeComparison;
         }
     }
 }

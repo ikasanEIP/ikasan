@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-scheduleDrivenSrc-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
 	<artifactId>sample-scheduleDrivenSrc-ear</artifactId>
@@ -82,25 +82,18 @@
 
 	<dependencies>
 
-        <!-- dependency>
+        <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>sample-scheduleDrivenSrc-war</artifactId>
+            <artifactId>ikasan-webconsole-skinny-war</artifactId>
             <version>${project.version}</version>
 			<type>war</type>
-        </dependency -->
+        </dependency>
 		
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-scheduleDrivenSrc</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-		<dependency>
-		  <groupId>org.ikasan</groupId>
-		  <artifactId>ikasan-webconsole-skinny-war</artifactId>
-		  <version>${project.version}</version>
-		  <type>war</type>
-		</dependency>
 		
         <dependency>
 		  <groupId>org.ikasan</groupId>

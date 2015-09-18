@@ -40,19 +40,16 @@
  */
 package org.ikasan.dashboard.ui.framework.component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public final class DashboardTable extends Table {
+public abstract class DashboardTable extends Table 
+{
 
-
-    public DashboardTable() 
+	public DashboardTable(String caption) 
     {
-        setCaption("Event Exclusions");
+		setCaption(caption);
 
         addStyleName(ValoTheme.TABLE_BORDERLESS);
         addStyleName(ValoTheme.TABLE_NO_STRIPES);
@@ -60,35 +57,8 @@ public final class DashboardTable extends Table {
         addStyleName(ValoTheme.TABLE_SMALL);
        
         setSortEnabled(false);
-        setColumnAlignment("revenue", Align.RIGHT);
+
         setRowHeaderMode(RowHeaderMode.INDEX);
-//        setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
         setSizeFull();
-
-
-        addContainerProperty("Module Name", String.class,  null);
-		addContainerProperty("Flow Name", String.class,  null);
-		addContainerProperty("Component Name", String.class,  null);
-		addContainerProperty("Timestamp", String.class,  null);
-    			
-
-    	for(int i=0; i<10; i++)
-    	{
-//    		Date date = new Date(errorOccurrence.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-    	    String timestamp = format.format(new Date(System.currentTimeMillis()));
-    	    
-    	    addItem(new Object[]{"Module Name", "Flow Name"
-    				, "Component Name", timestamp}, "errorOccurrence" + i);
-    	}
-
-//        setVisibleColumns("title", "revenue");
-//        setColumnHeaders("Title", "Revenue");
-//        setColumnExpandRatio("title", 2);
-//        setColumnExpandRatio("revenue", 1);
-//
-//        setSortContainerPropertyId("revenue");
-//        setSortAscending(false);
     }
-
 }

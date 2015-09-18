@@ -530,7 +530,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         }
 
         logger.info("RecoveryManager resolving to [" + action.toString()
-                + "] for componentName[" + componentName + "] exception", throwable);
+                + "] for componentName[" + componentName + "] exception [" + throwable.getMessage() + "]", throwable);
 
         return action;
     }

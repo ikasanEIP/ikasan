@@ -69,8 +69,10 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateSystemEventDao extends HibernateDaoSupport implements SystemEventDao
 {
 
+	private static final String EXPIRY = "expiry";
+	
     /** Query used for housekeeping expired system events */
-    private static final String HOUSEKEEP_QUERY = "delete SystemEvent w where w.expiry <= ?";
+    private static final String HOUSEKEEP_QUERY = "delete SystemEvent w where w.expiry <= :" + EXPIRY;
 
     /** Batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete SystemEvent s where s.id in (:event_ids)";
@@ -214,7 +216,17 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     {
         if (!batchHousekeepDelete)
         {
-            getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
+        	getHibernateTemplate().execute(new HibernateCallback<Object>()
+	        {
+	            public Object doInHibernate(Session session) throws HibernateException
+	            {
+	            	
+	                Query query = session.createQuery(HOUSEKEEP_QUERY);
+	                query.setParameter(EXPIRY, new Date());
+	            	query.executeUpdate();
+	                return null;
+	            }
+	        });
         }
         else
         {

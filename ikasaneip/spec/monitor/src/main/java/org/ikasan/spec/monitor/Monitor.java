@@ -56,16 +56,28 @@ public interface Monitor<NOTIFICATION>
     void invoke(NOTIFICATION notification);
 
     /**
-     * Set the name of this monitor
+     * Set the module name of this monitor
      * @param monitorName
      */
-    void setName(String monitorName);
+    void setModuleName(String moduleName);
 
     /**
-     * Get the name of this monitor
+     * Get the module name of this monitor
      * @return
      */
-    String getName();
+    String getModuleName();
+    
+    /**
+     * Set the flow name of this monitor
+     * @param flowName
+     */
+    void setFlowName(String flowName);
+
+    /**
+     * Get the flow name of this monitor
+     * @return
+     */
+    String getFlowName();
 
     /**
      * Set the runtime environment name this monitor is associated with

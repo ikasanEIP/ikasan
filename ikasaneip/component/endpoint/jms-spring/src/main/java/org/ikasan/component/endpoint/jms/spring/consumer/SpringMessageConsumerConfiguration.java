@@ -80,6 +80,9 @@ public class SpringMessageConsumerConfiguration
     /** session transacted */
     private Boolean sessionTransacted;
 
+    /** do we automatically pull the payload content from the JMS message */
+    private boolean autoContentConversion = false;
+
     public String getDestinationJndiName() {
         return destinationJndiName;
     }
@@ -160,6 +163,18 @@ public class SpringMessageConsumerConfiguration
         this.connectionFactoryPassword = connectionFactoryPassword;
     }
 
+    public void setPubSubDomain(Boolean pubSubDomain) {
+        this.pubSubDomain = pubSubDomain;
+    }
+
+    public boolean isAutoContentConversion() {
+        return autoContentConversion;
+    }
+
+    public void setAutoContentConversion(boolean autoContentConversion) {
+        this.autoContentConversion = autoContentConversion;
+    }
+
     @Override
     public String toString() {
         return "SpringMessageConsumerConfiguration{" +
@@ -173,6 +188,7 @@ public class SpringMessageConsumerConfiguration
                 ", durableSubscriptionName='" + durableSubscriptionName + '\'' +
                 ", durable=" + durable +
                 ", sessionTransacted=" + sessionTransacted +
+                ", autoContentConversion=" + autoContentConversion +
                 '}';
     }
 }

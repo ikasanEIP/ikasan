@@ -71,7 +71,7 @@ import org.xml.sax.SAXException;
  *
  * @author Ikasan Development Team
  */
-public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, ValidationResult<SOURCE, TARGET>>, ManagedResource, ConfiguredResource<XMLValidatorConfiguration> {
+public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, ManagedResource, ConfiguredResource<XMLValidatorConfiguration> {
     /**
      * Logger instance
      */
@@ -101,7 +101,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Validatio
     /**
      * Source to InputStream converter
      */
-    private Converter<SOURCE,ByteArrayInputStream> sourceToByteArrayInputStreamConverter;
+    private Converter<SOURCE, ByteArrayInputStream> sourceToByteArrayInputStreamConverter;
 
 
     /**
@@ -122,13 +122,19 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Validatio
      * @param source - source to be validated
      * @throws TransformationException - Thrown if error parsing payload content
      */
-    public ValidationResult<SOURCE, TARGET> convert(SOURCE source) throws EndpointException {
+    public Object convert(SOURCE source) throws EndpointException {
 
         ValidationResult<SOURCE, TARGET> validationResult = new ValidationResult<>();
         validationResult.setSource(source);
         if (configuration.isSkipValidation()) {
-            validationResult.setResult(ValidationResult.Result.VALID);
-            return validationResult;
+
+            if (configuration.isReturnValidationResult()) {
+                validationResult.setResult(ValidationResult.Result.VALID);
+                return validationResult;
+            } else {
+                return source;
+            }
+
         }
 
         try {
@@ -139,27 +145,28 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Validatio
             InputStream sourceAsInputStream = this.createSourceAsBytes(source);
             builder.parse(sourceAsInputStream);
 
+            if (!configuration.isReturnValidationResult()) {
+                return source;
+            }
+
             validationResult.setResult(ValidationResult.Result.VALID);
 
         } catch (SAXException e) {
 
-            if (configuration.isThrowExceptionOnValidationFailure())
-            {
+            if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
                 throw new ValidationException("Transformer exception", e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
 
         } catch (IOException e) {
-            if (configuration.isThrowExceptionOnValidationFailure())
-            {
+            if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
                 throw new ValidationException("Transformer exception", e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
         } catch (ParserConfigurationException e) {
-            if (configuration.isThrowExceptionOnValidationFailure())
-            {
+            if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
                 throw new ValidationException("Transformer exception", e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
@@ -168,14 +175,10 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Validatio
         return validationResult;
     }
 
-    private ByteArrayInputStream createSourceAsBytes(SOURCE xml)
-    {
-        if (sourceToByteArrayInputStreamConverter == null && xml instanceof String)
-        {
-            return   new ByteArrayInputStream(((String) xml).getBytes());
-        }
-        else
-        {
+    private ByteArrayInputStream createSourceAsBytes(SOURCE xml) {
+        if (sourceToByteArrayInputStreamConverter == null && xml instanceof String) {
+            return new ByteArrayInputStream(((String) xml).getBytes());
+        } else {
             return sourceToByteArrayInputStreamConverter.convert(xml);
         }
     }
@@ -197,7 +200,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Validatio
 
     @Override
     public void setConfiguration(XMLValidatorConfiguration configuration) {
-        this.configuration=configuration;
+        this.configuration = configuration;
     }
 
     @Override

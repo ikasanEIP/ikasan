@@ -205,6 +205,7 @@
                     FlowElementName VARCHAR(255) NOT NULL,
 					ErrorDetail TEXT NULL,
 					ErrorMessage TEXT NULL,
+					ExceptionClass VARCHAR(512) NULL,
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
@@ -1492,6 +1493,7 @@
                     FlowElementName VARCHAR(255) NOT NULL,
 					ErrorDetail TEXT NULL,
 					ErrorMessage TEXT NULL,
+					ExceptionClass VARCHAR(512) NULL,
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
@@ -1807,8 +1809,8 @@
 					Username 			VARCHAR(50) NOT NULL UNIQUE,
 					Password			VARCHAR(50) NOT NULL,
 					Email 				VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled 			BIT NOT NULL
 					)
@@ -2825,6 +2827,7 @@
                     [FlowElementName]     	[varchar](255) NOT NULL,
 					[ErrorDetail]           [text] NULL,
 					[ErrorMessage]          [text] NULL,
+					[ExceptionClass] 		[varchar](512) NULL,
                     [EventLifeIdentifier]   [varchar](255) NULL,
                     [EventRelatedIdentifier] [varchar](255) NULL,
                     [Action]                [varchar](255) NULL,
@@ -3072,8 +3075,8 @@
                     [Username] [VARCHAR] (50) NOT NULL UNIQUE,
                     [Password] [VARCHAR] (50) NOT NULL,
                     [Email]    [VARCHAR] (255) NULL,
-                    [FirstName] [VARCHAR] (50) NOT NULL,
-                    [Surname] [VARCHAR] (50) NOT NULL,
+                    [FirstName] [VARCHAR] (50) NULL,
+                    [Surname] [VARCHAR] (50)   NULL,
                     [Department] [VARCHAR] (50) NULL,
                     [Enabled]  [BIT] NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
@@ -4021,9 +4024,10 @@
                     Uri VARCHAR(256) NOT NULL,
                     ModuleName VARCHAR(256) NOT NULL,
                     FlowName VARCHAR(256) NOT NULL,
-                    FlowComponentName VARCHAR(256) NOT NULL,
+                    FlowElementName VARCHAR(256) NOT NULL,
 					ErrorDetail TEXT NULL,
 					ErrorMessage TEXT NULL,
+					ExceptionClass VARCHAR(512) NULL,
                     EventLifeIdentifier VARCHAR(256) NULL,
                     EventRelatedIdentifier VARCHAR(256) NULL,
                     Action VARCHAR(256) NULL,
@@ -4032,7 +4036,7 @@
                     Expiry NUMERIC NOT NULL
                     );
                     CREATE UNIQUE INDEX ErrorOccurrence01u ON
-                    ErrorOccurrence(ModuleName,FlowName,FlowComponentName,Uri,Timestamp)
+                    ErrorOccurrence(ModuleName,FlowName,FlowElementName,Uri,Timestamp)
                 </prop>
 
                 <prop key="create.filter">CREATE TABLE MessageFilter
@@ -4273,8 +4277,8 @@
 					Username VARCHAR(50) NOT NULL UNIQUE,
 					Password VARCHAR(50) NOT NULL,
 					Email VARCHAR(255) NULL,
-					FirstName			VARCHAR(50) NOT NULL,
-					Surname				VARCHAR(50) NOT NULL,
+					FirstName			VARCHAR(50) NULL,
+					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
 					Enabled BIT NOT NULL
 					);

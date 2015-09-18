@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
@@ -58,6 +59,7 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.MappingConfigurationLite;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -145,13 +147,8 @@ public class MappingSearchButtonClickListener implements ClickListener
             targetContextName = ((ConfigurationContext)this.targetContextComboBox.getValue()).getName();
         }
 
-        long time1 = System.currentTimeMillis();
-
         List<MappingConfigurationLite> mappingConfigurations = this.mappingConfigurationService.getMappingConfigurationLites(clientName
             , typeName, sourceContextName, targetContextName);
-
-        long time2 = System.currentTimeMillis();
-        long queryTime = time2 - time1;
 
         this.searchResultsTable.removeAllItems();
 
@@ -160,8 +157,11 @@ public class MappingSearchButtonClickListener implements ClickListener
             final DeleteMappingConfigurationAction action = new DeleteMappingConfigurationAction( mappingConfiguration.getId()
                 , this.searchResultsTable, this.mappingConfigurationService, this.systemEventService);
 
-            final Button deleteButton = new Button("Delete");
-            deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+            final Button deleteButton = new Button();
+            deleteButton.setIcon(VaadinIcons.TRASH);
+            deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            deleteButton.setDescription("Delete this mapping configuration");
+            deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
             deleteButton.addClickListener(new Button.ClickListener() {
                 public void buttonClick(ClickEvent event) {
                     IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
@@ -172,7 +172,7 @@ public class MappingSearchButtonClickListener implements ClickListener
                 }
             });
 
-            this.visibilityGroup.registerComponent(deleteButton);
+            this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
             this.searchResultsTable.addItem(new Object[] {mappingConfiguration.getConfigurationServiceClient().getName(),
                     mappingConfiguration.getConfigurationType().getName(), mappingConfiguration.getSourceContext().getName(),
                     mappingConfiguration.getTargetContext().getName(), deleteButton}

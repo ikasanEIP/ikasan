@@ -48,6 +48,7 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
 
 
 /**
@@ -233,4 +234,11 @@ public interface SecurityDao
      * @return
      */
     public AuthenticationMethod getAuthenticationMethodByOrder(long order);
+    
+    /**
+     * 
+     * @param principalId
+     * @return
+     */
+    public List<User> getUsersAssociatedWithPrincipal(long principalId);
 }

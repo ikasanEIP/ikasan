@@ -36,7 +36,7 @@
               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-`   <!-- TODO point cuts below are commented out as these methods are called via REST and rest 
+       <!-- TODO point cuts below are commented out as these methods are called via REST and rest 
 		supplies its own security. -->
 	<global-method-security
 		access-decision-manager-ref="accessDecisionManager">
@@ -152,7 +152,8 @@
 						execution(* org.ikasan.security.service.UserService.disableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.enableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.createAuthority(..)) ||
-						execution(* org.ikasan.security.service.UserService.deleteUser(..))" />
+						execution(* org.ikasan.security.service.UserService.deleteUser(..)) ||
+						execution(* org.ikasan.security.service.UserService.createUser(..))" />
 		<aop:pointcut id="systemEventServiceMethods"
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"

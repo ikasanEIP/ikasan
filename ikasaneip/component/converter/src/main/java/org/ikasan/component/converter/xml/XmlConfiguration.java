@@ -41,20 +41,38 @@
 package org.ikasan.component.converter.xml;
 
 /**
- * Configuration for an XML converter.
+ * Configuration for an XML conversion validation.
  * 
  * @author Ikasan Development Team
  */
 public class XmlConfiguration
 {
+    /**
+     * determines whether we let the component fail if the initial
+     * setting and loading of configuration fails.
+     */
+    private boolean fastFailOnConfigurationLoad;
+
     /** actual schema against which validation will occur */
     private String schema;
 
     /** schema location as put in the root attribute of the generated XML */
     private String schemaLocation;
 
+    /** is this a no namespace schema */
+    private boolean noNamespaceSchema;
+
     /** whether to validate the generated XML against the schema */
     private boolean validate;
+
+    /** should we use namespace prefixes */
+    private boolean useNamespacePrefix;
+
+    /** optionally set root name (QNAME) */
+    private String rootName;
+
+    /** optionally set root class name (QNAME) */
+    private String rootClassName;
 
     /** whether to route an XML validation failure to the next component (true) or throw an exception and rollback (false) */
     private boolean routeOnValidationException;
@@ -133,5 +151,76 @@ public class XmlConfiguration
     {
         this.validate = validate;
     }
-    
+
+    /**
+     * Getter for any roo name override
+     * @return
+     */
+    public String getRootName() {
+        return rootName;
+    }
+
+    /**
+     * Allow override of the root document name
+     * @param rootName
+     */
+    public void setRootName(String rootName) {
+        this.rootName = rootName;
+    }
+
+    /**
+     * Getter for any root class name override
+     * @return
+     */
+    public String getRootClassName() {
+        return rootClassName;
+    }
+
+    /**
+     * Setter for root class name override
+     * @param rootClassName
+     */
+    public void setRootClassName(String rootClassName) {
+        this.rootClassName = rootClassName;
+    }
+
+    /**
+     * If schema specified then is this a noNamespaceSchema
+     * @return
+     */
+    public boolean isNoNamespaceSchema() {
+        return noNamespaceSchema;
+    }
+
+    /**
+     * Setter for noNamespaceSchema if schema specified
+     * @param noNamespaceSchema
+     */
+    public void setNoNamespaceSchema(boolean noNamespaceSchema) {
+        this.noNamespaceSchema = noNamespaceSchema;
+    }
+
+    /**
+     * Getter for use namespace prefix on marshaller
+     * @return
+     */
+    public boolean isUseNamespacePrefix() {
+        return useNamespacePrefix;
+    }
+
+    /**
+     * Setter for namespace prefix on marshaller
+     * @param useNamespacePrefix
+     */
+    public void setUseNamespacePrefix(boolean useNamespacePrefix) {
+        this.useNamespacePrefix = useNamespacePrefix;
+    }
+
+    public boolean isFastFailOnConfigurationLoad() {
+        return fastFailOnConfigurationLoad;
+    }
+
+    public void setFastFailOnConfigurationLoad(boolean fastFailOnConfigurationLoad) {
+        this.fastFailOnConfigurationLoad = fastFailOnConfigurationLoad;
+    }
 }

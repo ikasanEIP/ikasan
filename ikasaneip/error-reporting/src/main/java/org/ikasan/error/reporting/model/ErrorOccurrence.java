@@ -78,6 +78,11 @@ public class ErrorOccurrence<EVENT>
      * the error message extracted from the errorDetail
      */
     private String errorMessage;
+    
+    /**
+     * the exception class associated with the error
+     */
+    private String exceptionClass;
 
     /**
 	 * Id of the event associated with this error, if it was event/flow related
@@ -123,7 +128,7 @@ public class ErrorOccurrence<EVENT>
      * @param errorDetail
      * @param event
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, long timeToLive, EVENT event)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, EVENT event)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -148,6 +153,12 @@ public class ErrorOccurrence<EVENT>
         {
             throw new IllegalArgumentException("errorDetail cannot be 'null");
         }
+        
+        this.exceptionClass = exceptionClass;
+        if(exceptionClass == null)
+        {
+            throw new IllegalArgumentException("exceptionClass cannot be 'null");
+        }
 
         this.errorMessage = errorMessage;
         this.event = event;
@@ -163,64 +174,78 @@ public class ErrorOccurrence<EVENT>
      * @param flowElementName
      * @param errorDetail
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, long timeToLive)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive)
     {
-        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, timeToLive, null);
+        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null);
     }
 
-    public String getModuleName() {
+    public String getModuleName() 
+    {
         return moduleName;
     }
 
-    private void setModuleName(String moduleName) {
+    private void setModuleName(String moduleName) 
+    {
         this.moduleName = moduleName;
     }
 
-    public String getFlowName() {
+    public String getFlowName() 
+    {
         return flowName;
     }
 
-    private void setFlowName(String flowName) {
+    private void setFlowName(String flowName)
+    {
         this.flowName = flowName;
     }
 
-    public String getFlowElementName() {
+    public String getFlowElementName()
+    {
         return flowElementName;
     }
 
-    private void setFlowElementName(String flowElementName) {
+    private void setFlowElementName(String flowElementName) 
+    {
         this.flowElementName = flowElementName;
     }
 
-    public String getErrorDetail() {
+    public String getErrorDetail() 
+    {
         return errorDetail;
     }
 
-    private void setErrorDetail(String errorDetail) {
+    private void setErrorDetail(String errorDetail) 
+    {
         this.errorDetail = errorDetail;
     }
 
-    public String getEventLifeIdentifier() {
+    public String getEventLifeIdentifier()
+    {
         return eventLifeIdentifier;
     }
 
-    public void setEventLifeIdentifier(String eventLifeIdentifier) {
+    public void setEventLifeIdentifier(String eventLifeIdentifier) 
+    {
         this.eventLifeIdentifier = eventLifeIdentifier;
     }
 
-    public EVENT getEvent() {
+    public EVENT getEvent() 
+    {
         return event;
     }
 
-    private void setEvent(EVENT event) {
+    private void setEvent(EVENT event) 
+    {
         this.event = event;
     }
 
-    public long getTimestamp() {
+    public long getTimestamp() 
+    {
         return timestamp;
     }
 
-    private void setTimestamp(long timestamp) {
+    private void setTimestamp(long timestamp)
+    {
         this.timestamp = timestamp;
     }
 
@@ -228,15 +253,18 @@ public class ErrorOccurrence<EVENT>
         return expiry;
     }
 
-    private void setExpiry(long expiry) {
+    private void setExpiry(long expiry)
+    {
         this.expiry = expiry;
     }
 
-    public String getEventRelatedIdentifier() {
+    public String getEventRelatedIdentifier() 
+    {
         return eventRelatedIdentifier;
     }
 
-    public void setEventRelatedIdentifier(String eventRelatedIdentifier) {
+    public void setEventRelatedIdentifier(String eventRelatedIdentifier) 
+    {
         this.eventRelatedIdentifier = eventRelatedIdentifier;
     }
 
@@ -250,21 +278,41 @@ public class ErrorOccurrence<EVENT>
         this.uri = uri;
     }
 
-    public String getAction() {
+    public String getAction() 
+    {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(String action) 
+    {
         this.action = action;
     }
 
-    public String getErrorMessage() {
+    public String getErrorMessage() 
+    {
         return errorMessage;
     }
 
-    private void setErrorMessage(String errorMessage) {
+    private void setErrorMessage(String errorMessage) 
+    {
         this.errorMessage = errorMessage;
     }
+    
+    /**
+	 * @return the exceptionClass
+	 */
+	public String getExceptionClass()
+	{
+		return exceptionClass;
+	}
+
+	/**
+	 * @param exceptionClass the exceptionClass to set
+	 */
+	public void setExceptionClass(String exceptionClass)
+	{
+		this.exceptionClass = exceptionClass;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -279,6 +327,7 @@ public class ErrorOccurrence<EVENT>
         if (!flowElementName.equals(that.flowElementName)) return false;
         if (!flowName.equals(that.flowName)) return false;
         if (!moduleName.equals(that.moduleName)) return false;
+        if (!exceptionClass.equals(that.exceptionClass)) return false;
 
         return true;
     }
@@ -303,6 +352,7 @@ public class ErrorOccurrence<EVENT>
                 ", flowElementName='" + flowElementName + '\'' +
                 ", errorDetail='" + errorDetail + '\'' +
                 ", errorMessage='" + errorMessage + '\'' +
+                ", exceptionClass='" + errorMessage + '\'' +
                 ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
                 ", eventRelatedIdentifier='" + eventRelatedIdentifier + '\'' +
                 ", action='" + action + '\'' +

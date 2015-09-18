@@ -113,7 +113,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
 
         List<WiserMessage> messages = wiser.getMessages();
         Assert.assertTrue("no messages should have been published", messages.size() == 0);
@@ -129,7 +129,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
         Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 3);
@@ -142,7 +142,7 @@ public class EmailNotifierTest
             Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("name is stopped"));
+            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -157,7 +157,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
         Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 2);
@@ -170,7 +170,7 @@ public class EmailNotifierTest
             Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("name is stopped"));
+            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -185,7 +185,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
         Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 2);
@@ -198,7 +198,7 @@ public class EmailNotifierTest
             Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("name is stopped"));
+            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -214,7 +214,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
     }
 
     /**
@@ -229,7 +229,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
     }
 
     /**
@@ -244,7 +244,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
     }
 
     /**
@@ -259,7 +259,7 @@ public class EmailNotifierTest
         Notifier<String> notifier = new EmailNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
-        notifier.invoke("env", "name", "stopped");
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
     }
 
     /**
