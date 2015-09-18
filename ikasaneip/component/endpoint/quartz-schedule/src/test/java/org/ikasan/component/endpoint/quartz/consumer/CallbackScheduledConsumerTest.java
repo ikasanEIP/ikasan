@@ -136,7 +136,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setCallBackMessageProvider(mockCallBackMessageProvider);
@@ -172,7 +172,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -205,7 +205,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -237,7 +237,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.stop();
@@ -270,14 +270,14 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.stop();
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_null_not_in_recovery() throws SchedulerException
+    public void test_execute_when_messageProvider_returns_true_and_not_in_recovery() throws SchedulerException
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
@@ -288,15 +288,23 @@ public class CallbackScheduledConsumerTest
         {
             {
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(true));
+
+                // check if consumer is eager
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(false));
+
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setCallBackMessageProvider(mockCallBackMessageProvider);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+
         // test
         scheduledConsumer.execute(jobExecutionContext);
         // assert
@@ -304,7 +312,7 @@ public class CallbackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_null_when_in_recovery() throws SchedulerException
+    public void test_execute_when_messageProvider_returns_false_and_not_in_recovery() throws SchedulerException
     {
         final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
 
@@ -313,10 +321,16 @@ public class CallbackScheduledConsumerTest
         {
             {
                 exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(false));
+
+                // check if consumer is eager
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(false));
+
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -330,6 +344,50 @@ public class CallbackScheduledConsumerTest
         // assert
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void test_execute_when_messageProvider_returns_true_and_not_in_recovery_and_consumer_is_eager() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final String identifier = "testId";
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(true));
+
+                // check if consumer is eager
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(true));
+
+                // trigger now
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(scheduler).triggerJob(jobKey);
+
+            }
+        });
+
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+        scheduledConsumer.setCallBackMessageProvider(mockCallBackMessageProvider);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
+
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
+
 
     @Test
     public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
@@ -357,7 +415,7 @@ public class CallbackScheduledConsumerTest
             }
         });
 
-        CallBackScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
@@ -376,9 +434,9 @@ public class CallbackScheduledConsumerTest
      * @author Ikasan Development Team
      *
      */
-    private class StubbedScheduledConsumer extends CallBackScheduledConsumer
+    private class StubbedCallBackScheduledConsumer extends CallBackScheduledConsumer
     {
-        protected StubbedScheduledConsumer(Scheduler scheduler)
+        protected StubbedCallBackScheduledConsumer(Scheduler scheduler)
         {
             super(scheduler);
         }

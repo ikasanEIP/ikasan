@@ -23,15 +23,22 @@
     <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="prototype">
         <constructor-arg ref="navigatorMap"/>
         <constructor-arg ref="mappingViewComponentContainer"/>
-        <constructor-arg ref="userService"/>
-        <constructor-arg ref="authenticationService"/>
-        <constructor-arg ref="adminUserVisibilityGroup"/>
-        <constructor-arg ref="editableGroup"/>
-        <constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
-        <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="eventBus"/>
         <constructor-arg ref="imagePanelLayout"/>
         <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="menuLayout"/>
+        <constructor-arg ref="bannerImage"/>
+        <constructor-arg ref="menu"/>
+        <constructor-arg ref="topologyStateCache"/>
+        <constructor-arg ref="bannerLabel"/>
+        <constructor-arg ref="mainLayout"/>
+        <constructor-arg ref="menuContent"/>
+        <constructor-arg ref="showMenuButton"/>
+    </bean>
+    
+    <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
+        <constructor-arg ref="navigatorMap"/>
+        <constructor-arg ref="menuLayout"/>
     </bean>
 
 	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
@@ -52,7 +59,7 @@
       <entry key="policyManagement" value-ref="policyManagementNavigator" />
     </util:map>
 
-	<bean id="topLevelNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+	<bean id="topLevelNavigatorBean" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
 		<constructor-arg value="topLevel"/>
         <constructor-arg>
             <list>
@@ -97,6 +104,10 @@
                    <constructor-arg ref="topologyViewPanel"/>
                 </bean> 
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="monitorView"/>
+                   <constructor-arg ref="monitorViewPanel"/>
+                </bean> 
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="persistanceSetupView"/>
                    <constructor-arg ref="persistanceSetupPanel"/>
                 </bean>
@@ -125,16 +136,16 @@
                    <constructor-arg ref="existingMappingConfigurationPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newClientPanel"/>
-                   <constructor-arg ref="newClientPanel"/>
+                   <constructor-arg value="newClientWindow"/>
+                   <constructor-arg ref="newClientWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newContextPanel"/>
-                   <constructor-arg ref="newContextPanel"/>
+                   <constructor-arg value="newContextWindow"/>
+                   <constructor-arg ref="newContextWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="newConfigurationTypePanel"/>
-                   <constructor-arg ref="newConfigurationTypePanel"/>
+                   <constructor-arg value="newConfigurationTypeWindow"/>
+                   <constructor-arg ref="newConfigurationTypeWindow"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="newMappingConfigurationPanel"/>
@@ -160,9 +171,22 @@
                    <constructor-arg value="policyManagementPanel"/>
                    <constructor-arg ref="policyManagementPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="platformConfigurationView"/>
+                   <constructor-arg ref="platformConfigurationPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+    
+    <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="topLevelNavigator" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="topLevelNavigatorBean"/></property>
+        </bean>
+      </property>
     </bean>
 	
 	<!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
@@ -174,7 +198,27 @@
       </property>
     </bean>
     
-    <bean id="landingViewPanel" class=" org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session"/>
+    <bean id="menuLayout" class="org.ikasan.dashboard.ui.framework.navigation.MenuLayout" scope="session"/>
+    
+    <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
+    	<constructor-arg ref="eventExclusionsTable"/>
+    	<constructor-arg ref="flowStateTable"/>
+    	<!-- constructor-arg ref="graphCache"/ -->
+    </bean>
+    
+    <!-- bean id="graphCache" class="org.ikasan.dashboard.ui.framework.cache.GraphCache" scope="singleton">
+    	<constructor-arg ref="errorReportingService"/>
+    </bean -->
+    
+    <bean id="eventExclusionsTable" class=" org.ikasan.dashboard.ui.framework.component.EventExclusionsTable" scope="session">
+    	<constructor-arg value="Event Exclusions"/>
+    	<constructor-arg ref="exclusionManagementService"/>
+    </bean>
+    
+    <bean id="flowStateTable" class=" org.ikasan.dashboard.ui.framework.component.FlowStateTable" scope="session">
+    	<constructor-arg value="Flow States"/>
+    	<constructor-arg ref="topologyService"/>
+    </bean>
     
     <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
 		<constructor-arg ref="authenticationService"/>
@@ -203,10 +247,39 @@
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
     </bean>
 
-	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodTabPanel" scope="session">
+	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.administration.panel.UserDirectoriesPanel" scope="session">
 		 <constructor-arg ref="securityService"/>
 		 <constructor-arg ref="authenticationProviderFactory"/>
 		 <constructor-arg ref="ldapService"/>
+    </bean>
+    
+    <bean id="platformConfigurationPanel" class="org.ikasan.dashboard.ui.administration.panel.PlatformConfigurationPanel" scope="session">
+		 <constructor-arg ref="configurationService"/>
+    </bean>
+    
+    <bean id="bannerImage" class="com.vaadin.ui.Image" scope="session">
+    	<constructor-arg value=""/>
+        <constructor-arg ref="bannerImageResource"/>
+    </bean>
+    
+    <bean id="bannerImageResource" class="com.vaadin.server.ThemeResource" scope="session">
+        <constructor-arg value="images/Ikasan_Logo_Transp.png"/>
+    </bean>
+    
+    <bean id="bannerLabel" class="com.vaadin.ui.Label" scope="session">
+        <constructor-arg value="Enterprise Integration Platform"/>
+    </bean>
+    
+    <bean id="showMenuButton" class="com.vaadin.ui.Button" scope="session">
+        <constructor-arg value="Menu"/>
+    </bean>
+    
+    <bean id="menuContent" class="com.vaadin.ui.CssLayout" scope="session">
+    </bean>
+    
+    <bean id="mainLayout" class="com.vaadin.ui.GridLayout" scope="session">
+        <constructor-arg value="1"/>
+        <constructor-arg value="4"/>
     </bean>
 
 </beans>

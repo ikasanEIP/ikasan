@@ -51,6 +51,9 @@ public class ScheduledConsumerConfiguration
     /** cron based expression for this schedule */
     private String cronExpression;
 
+    /** Determines whether consumer will be eagerly executing after successful run */
+    private boolean isEager = false;
+
     public String getCronExpression()
     {
         return cronExpression;
@@ -60,5 +63,12 @@ public class ScheduledConsumerConfiguration
     {
         this.cronExpression = cronExpression;
     }
-    
+
+    public boolean isEager() {
+        return isEager;
+    }
+
+    public void setEager(boolean isEager) {
+        this.isEager = isEager;
+    }
 }

@@ -125,13 +125,21 @@ public class ErrorOccurrenceTab extends TopologyTab
 	{
 		this.errorOccurenceTable = new Table();
 		this.errorOccurenceTable.setSizeFull();
-		this.errorOccurenceTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.errorOccurenceTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.errorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.errorOccurenceTable.addStyleName("ikasan");
 		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Module Name", .14f);
 		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
 		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
+		this.errorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
 		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
+		this.errorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
+		
+		this.errorOccurenceTable.addStyleName("wordwrap-table");
 		
 		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		    @Override
@@ -208,7 +216,7 @@ public class ErrorOccurrenceTab extends TopologyTab
             	    String timestamp = format.format(date);
             	    
             	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), timestamp}, errorOccurrence);
+            				, errorOccurrence.getFlowElementName(), errorOccurrence.getErrorMessage(), timestamp}, errorOccurrence);
             	}
             }
         });
@@ -258,9 +266,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 							+ module.getName());
 					
 					Button deleteButton = new Button();
-					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added
@@ -277,8 +285,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 					for(final Flow flow: module.getFlows())
 					{
 						deleteButton = new Button();
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -294,8 +303,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 						for(final Component component: flow.getComponents())
 						{
 							deleteButton = new Button();
-							deleteButton.setIcon(deleteIcon);
-							deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+							deleteButton.setIcon(VaadinIcons.TRASH);
+							deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+							deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 							
 							// Add the delete functionality to each role that is added
 							deleteButton.addClickListener(new Button.ClickListener() 
@@ -346,9 +356,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 							+ flow.getName());
 					
 					Button deleteButton = new Button();
-					deleteButton.setCaptionAsHtml(true);
-					deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added
@@ -365,9 +375,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 					for(final Component component: flow.getComponents())
 					{
 						deleteButton = new Button();
-						deleteButton.setCaptionAsHtml(true);
-						deleteButton.setCaption(VaadinIcons.CLOSE_CIRCLE_O.getHtml());
-						deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+						deleteButton.setIcon(VaadinIcons.TRASH);
+						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 						
 						// Add the delete functionality to each role that is added
 						deleteButton.addClickListener(new Button.ClickListener() 
@@ -419,9 +429,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 							+ component.getName());
 					
 					Button deleteButton = new Button();
-					Resource deleteIcon = VaadinIcons.CLOSE_CIRCLE_O;
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(ValoTheme.BUTTON_LINK);
+					deleteButton.setIcon(VaadinIcons.TRASH);
+					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 
 					
 					// Add the delete functionality to each role that is added

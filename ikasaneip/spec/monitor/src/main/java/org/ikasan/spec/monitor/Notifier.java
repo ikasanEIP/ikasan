@@ -51,7 +51,7 @@ public interface Notifier<NOTIFICATION>
      * Invocation of the notifier for the given notification
      * @param notification
      */
-    public void invoke(String environment, String name, NOTIFICATION notification);
+    public void invoke(String environment, String moduleName, String flowName, NOTIFICATION notification);
 
     /**
      * Sets whether the notifier is only interested in state changes which are different

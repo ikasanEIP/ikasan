@@ -51,12 +51,14 @@ import org.vaadin.aceeditor.AceTheme;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -213,7 +215,8 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setTheme(AceTheme.eclipse);
-		editor.setSizeFull();
+		editor.setHeight(470, Unit.PIXELS);
+		editor.setWidth("100%");
 		
 		label = new Label("Error Category:");
 		label.setSizeUndefined();		
@@ -267,7 +270,8 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
-		eventEditor.setSizeFull();
+		eventEditor.setHeight(470, Unit.PIXELS);
+		eventEditor.setWidth("100%");
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
@@ -275,24 +279,32 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		
-		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setWidth("100%");
-		vSplitPanel.setHeight(800, Unit.PIXELS);
-		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
+//		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
+//		vSplitPanel.setWidth("100%");
+//		vSplitPanel.setHeight(800, Unit.PIXELS);
+//		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
+		
+		TabSheet tabsheet = new TabSheet();
+		tabsheet.setSizeFull();
 		
 		HorizontalLayout h1 = new HorizontalLayout();
 		h1.setSizeFull();
 		h1.setMargin(true);
 		h1.addComponent(eventEditor);
-		vSplitPanel.setFirstComponent(h1);
+//		vSplitPanel.setFirstComponent(h1);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
 		h2.addComponent(editor);
-		vSplitPanel.setSecondComponent(h2);
+//		vSplitPanel.setSecondComponent(h2);
 		
-		wrapperLayout.addComponent(vSplitPanel, 0, 1);
+		tabsheet.addTab(h2, "Error Details");
+		tabsheet.addTab(h1, "Event Payload");
+		
+		wrapperLayout.addComponent(tabsheet, 0, 1);
+		
+//		wrapperLayout.addComponent(vSplitPanel, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;

@@ -52,6 +52,8 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
@@ -103,7 +105,7 @@ public class ErrorOccurrenceViewWindow extends Window
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
 		
-		GridLayout layout = new GridLayout(2, 5);
+		GridLayout layout = new GridLayout(2, 6);
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setColumnExpandRatio(0, 0.25f);
@@ -157,20 +159,36 @@ public class ErrorOccurrenceViewWindow extends Window
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
 		
+		label = new Label("Error Message:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 5);
+		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
+		
+		TextArea tf5 = new TextArea();
+		tf5.setValue(this.errorOccurrence.getErrorMessage());
+		tf5.setReadOnly(true);
+		tf5.setWidth("80%");
+		tf5.setRows(3);
+		layout.addComponent(tf5, 1, 5);
+		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
 		wrapperLayout.setWidth("100%");
 		
+		TabSheet tabsheet = new TabSheet();
+		tabsheet.setSizeFull();
+		
 		AceEditor editor = new AceEditor();
-		editor.setCaption("Error Details");
+//		editor.setCaption("Error Details");
 		editor.setValue(this.errorOccurrence.getErrorDetail());
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setTheme(AceTheme.eclipse);
-		editor.setSizeFull();
+		editor.setHeight(470, Unit.PIXELS);
+		editor.setWidth("100%");
 		
 		AceEditor eventEditor = new AceEditor();
-		eventEditor.setCaption("Event Payload");
+//		eventEditor.setCaption("Event Payload");
 		
 		if(this.errorOccurrence.getEvent() != null)
 		{
@@ -180,32 +198,36 @@ public class ErrorOccurrenceViewWindow extends Window
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
-		eventEditor.setSizeFull();
+		eventEditor.setHeight(470, Unit.PIXELS);
+		eventEditor.setWidth("100%");
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(150, Unit.PIXELS);
+		formLayout.setHeight(230, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		
-		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setWidth("100%");
-		vSplitPanel.setHeight(800, Unit.PIXELS);
-		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
+//		VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
+//		vSplitPanel.setWidth("100%");
+//		vSplitPanel.setHeight(800, Unit.PIXELS);
+//		vSplitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
 		
 		HorizontalLayout h1 = new HorizontalLayout();
 		h1.setSizeFull();
 		h1.setMargin(true);
 		h1.addComponent(eventEditor);
-		vSplitPanel.setFirstComponent(h1);
+//		vSplitPanel.setFirstComponent(h1);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
 		h2.addComponent(editor);
-		vSplitPanel.setSecondComponent(h2);
+//		vSplitPanel.setSecondComponent(h2);
 		
-		wrapperLayout.addComponent(vSplitPanel, 0, 1);
+		tabsheet.addTab(h2, "Error Details");
+		tabsheet.addTab(h1, "Event Payload");
+		
+		wrapperLayout.addComponent(tabsheet, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;

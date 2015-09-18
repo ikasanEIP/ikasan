@@ -7,7 +7,7 @@
     <!--  Flow                                                               -->
     <!--  ================================================================== -->
     <bean id="demoExclusionScheduledConverterFlow"   class="org.ikasan.builder.FlowFactory">
-        <property name="moduleName"         value="Demo Exclusion Sample Scheduled Module" />
+        <property name="moduleName"         value="Sample Scheduled Module" />
         <property name="name"               value="Demo Exclusion Scheduled Flow" />
         <property name="description"        value="Demonstrates exclusion scheduled callbacks for a flow." />
         <property name="exceptionResolver"  ref="exceptionResolver" />

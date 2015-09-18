@@ -46,7 +46,7 @@ import com.vaadin.data.validator.AbstractValidator;
  * @author Ikasan Development Team
  *
  */
-public class LongValidator  extends AbstractValidator<Long>
+public class LongValidator extends AbstractValidator<Long>
 {
     private static final long serialVersionUID = 5233659561482627992L;
 

@@ -84,8 +84,8 @@ public class JmsMapSinglePayloadTextConverterTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(mapMessage).getString("PAYLOAD_0_CONTENT");
-                will(returnValue(payload));
+                exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
+                will(returnValue(payload.getBytes()));
             }
         });
 
@@ -106,11 +106,11 @@ public class JmsMapSinglePayloadTextConverterTest
         {
             {
                 // try i8 first
-                exactly(1).of(mapMessage).getString("PAYLOAD_0_CONTENT");
+                exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
                 will(returnValue(null));
 
                 // try i7 next
-                exactly(1).of(mapMessage).getString("payload_0_content");
+                exactly(1).of(mapMessage).getBytes("payload_0_content");
                 will(returnValue(null));
             }
         });
@@ -134,12 +134,12 @@ public class JmsMapSinglePayloadTextConverterTest
         {
             {
                 // try i8 first
-                exactly(1).of(mapMessage).getString("PAYLOAD_0_CONTENT");
+                exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
                 will(returnValue(null));
 
                 // try i7 next
-                exactly(1).of(mapMessage).getString("payload_0_content");
-                will(returnValue(payload));
+                exactly(1).of(mapMessage).getBytes("payload_0_content");
+                will(returnValue(payload.getBytes()));
             }
         });
 
@@ -159,7 +159,7 @@ public class JmsMapSinglePayloadTextConverterTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(mapMessage).getString("PAYLOAD_0_CONTENT");
+                exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
                 will(throwException(new JMSException("test")));
             }
         });

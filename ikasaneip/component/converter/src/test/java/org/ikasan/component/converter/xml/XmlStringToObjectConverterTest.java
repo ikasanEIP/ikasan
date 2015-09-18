@@ -46,6 +46,8 @@ import org.ikasan.component.converter.xml.jaxb.Example;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.junit.Test;
 
+import javax.xml.bind.JAXBElement;
+
 /**
  * Uses Jaxb2Marshaller to unmarshall xml to java object
  * 
@@ -53,68 +55,63 @@ import org.junit.Test;
  */
 public class XmlStringToObjectConverterTest 
 {
- 
+
     @Test
     public void testConvertWithContextPath(){
-        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConverter<String,Example> converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
         configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
         converter.setConfiguration(configuration);
-        Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent());
+        Example converted = converter.convert(new ExampleEventFactory().getXmlEvent());
         assertEquals(new Example("1", "2"), converted);
     }
-    
+
     @Test
     public void testConvertWithContextPathAndPayloadByteArray(){
-        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConverter<byte[],Example> converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
         configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
         converter.setConfiguration(configuration);
-        Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent().getBytes());
+        Example converted = converter.convert(new ExampleEventFactory().getXmlEvent().getBytes());
         assertEquals(new Example("1", "2"), converted);
     }
     
     @Test(expected = TransformationException.class)
     public void testConvertWithContextPathAndPayloadCantBeConvertedToString(){
-        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConverter<Object,Example> converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
         configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
         converter.setConfiguration(configuration);
-        Example converted = (Example)converter.convert(new Object());
+        Example converted = converter.convert(new Object());
     }
     
     @Test
     public void testConvertWithClass(){
-        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConverter<String,Example> converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
         configuration.setClassesToBeBound(new Class[]{org.ikasan.component.converter.xml.jaxb.Example.class});
         converter.setConfiguration(configuration);
-        Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent());
+        Example converted = converter.convert(new ExampleEventFactory().getXmlEvent());
         assertEquals(new Example("1", "2"), converted);
     }
     
     @Test
     public void testConvertWithWithContextPaths(){
-        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConverter<String,Example> converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
         configuration.setContextPaths(new String[]{"org.ikasan.component.converter.xml.jaxb"});
         converter.setConfiguration(configuration);
-        Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent());
+        Example converted = converter.convert(new ExampleEventFactory().getXmlEvent());
         assertEquals(new Example("1", "2"), converted);
     }
     
     @Test(expected = TransformationException.class)
     public void testConvertWithWithTransformationException(){
-        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConverter<String,Example> converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
         configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
         converter.setConfiguration(configuration);
-        Example converted = (Example)converter.convert("badly drawn xml");
+        Example converted = converter.convert("badly drawn xml");
     }
-
-
-  
-
-
 
 }

@@ -27,6 +27,7 @@
         			 /WEB-INF/policy-context.xml,
         			 /WEB-INF/service-context.xml,
         			 /WEB-INF/topology-context.xml, 
+        			 /WEB-INF/monitor-context.xml, 
         			 classpath:platform-service-conf.xml, 
         			 classpath:serialiser-service-conf.xml, 
         			 classpath:systemevent-service-conf.xml, 
@@ -86,8 +87,42 @@
 	      <param-name>closeIdleSessions</param-name>
 	      <param-value>true</param-value>
 	    </init-param>
-        <!-- async-supported>true</async-supported -->
+	    <!-- init-param>
+		   <param-name>org.atmosphere.useWebSocketAndServlet3</param-name>
+		   <param-value>true</param-value>
+		</init-param>
+		<init-param>
+		   <param-name>org.atmosphere.cpr.asyncSupport</param-name>
+		   <param-value>org.atmosphere.container.Servlet30CometSupport</param-value>
+		</init-param -->
+        <async-supported>true</async-supported>
     </servlet>
+    
+    <servlet>
+		<servlet-name>jersey-servlet</servlet-name>
+		<servlet-class>
+			org.glassfish.jersey.servlet.ServletContainer
+		</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>org.ikasan.dashboard.ui.monitor.rest</param-value>
+		</init-param>
+		<init-param>
+		    <param-name>jersey.config.server.provider.scanning.recursive</param-name>
+		    <param-value>false</param-value>
+		</init-param>
+        <init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+ 
+	<servlet-mapping>
+		<servlet-name>jersey-servlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>Ikasan Dashboard</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -95,7 +130,11 @@
     <servlet-mapping>
         <servlet-name>Ikasan Dashboard</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> 
+	<servlet-mapping>
+		<servlet-name>jersey-servlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
 
     <context-param>
         <description>Vaadin production mode</description>
@@ -128,7 +167,7 @@
 	</context-param>
 
     <session-config>
-        <session-timeout>60</session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
 
 </web-app>

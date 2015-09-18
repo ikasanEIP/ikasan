@@ -5,7 +5,7 @@
 	<parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 	
     <artifactId>ikasan-mapping</artifactId>
@@ -115,6 +115,12 @@
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	
 	</dependencies>

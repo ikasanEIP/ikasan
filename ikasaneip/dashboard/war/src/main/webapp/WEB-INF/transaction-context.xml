@@ -39,6 +39,8 @@
                 expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
         <aop:pointcut id="errorCategorisationServiceMethods"
                 expression="execution(* org.ikasan.error.reporting.service.ErrorCategorisationService*.*(..))"/>
+        <aop:pointcut id="startupControlServiceMethods"
+                expression="execution(* org.ikasan.module.service.StartupControlService*.*(..))"/>
 
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="errorCategorisationServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
@@ -50,6 +52,7 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="wiretapDaoMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="startupControlServiceMethods"/>
         
     </aop:config>
 
