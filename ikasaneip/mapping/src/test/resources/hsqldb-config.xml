@@ -53,11 +53,6 @@
     <!-- =================================================================== -->
     <!-- HSQL provides an in-memory database                                 -->
     <!-- =================================================================== -->
-    <!-- util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.hibernate.dialect.Sybase11Dialect" />
-        <entry key="hibernate.show_sql" value="false" />
-        <entry key="hibernate.hbm2ddl.auto" value="validate" />
-    </util:map -->
     
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
@@ -73,5 +68,6 @@
         <property name="username" value="sa" />
         <property name="password" value="sa" />
     </bean>
- 
+    
+  
 </beans>

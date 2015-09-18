@@ -73,6 +73,19 @@ public interface MappingConfigurationDao
      */
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem
             , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
+    
+    /**
+     * 
+     * @param clientName
+     * @param configurationType
+     * @param sourceSystem
+     * @param targetSystem
+     * @param sourceSystemValues
+     * @param numParams
+     * @return
+     */
+    public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
 	
 	/**
      * 
