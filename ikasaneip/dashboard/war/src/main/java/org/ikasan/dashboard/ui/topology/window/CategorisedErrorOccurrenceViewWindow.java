@@ -50,18 +50,18 @@ import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -262,18 +262,16 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		errorMessageEditor.setWidth("100%");
 		errorMessageEditor.setWordWrap(true);
 		
-		AceEditor editor = new AceEditor();
-//		editor.setCaption("Error Details");
-		editor.setValue(this.categorisedErrorOccurrence.getErrorOccurrence().getErrorDetail());
-		editor.setReadOnly(true);
-		editor.setMode(AceMode.xml);
-		editor.setTheme(AceTheme.eclipse);
-		editor.setHeight(500, Unit.PIXELS);
-		editor.setWidth("100%");
+		AceEditor errorDetailEditor = new AceEditor();
+		errorDetailEditor.setValue(this.categorisedErrorOccurrence.getErrorOccurrence().getErrorDetail());
+		errorDetailEditor.setReadOnly(true);
+		errorDetailEditor.setMode(AceMode.xml);
+		errorDetailEditor.setTheme(AceTheme.eclipse);
+		errorDetailEditor.setHeight(500, Unit.PIXELS);
+		errorDetailEditor.setWidth("100%");
 
 		
-		AceEditor eventEditor = new AceEditor();
-//		eventEditor.setCaption("Event Payload");
+		final AceEditor eventEditor = new AceEditor();
 		
 		if(this.categorisedErrorOccurrence.getErrorOccurrence().getEvent() != null)
 		{
@@ -285,6 +283,21 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		eventEditor.setTheme(AceTheme.eclipse);
 		eventEditor.setHeight(500, Unit.PIXELS);
 		eventEditor.setWidth("100%");
+		
+		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
+		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+            @Override
+            public void valueChange(ValueChangeEvent event)
+            {
+                Object value = event.getProperty().getValue();
+                boolean isCheck = (null == value) ? false : (Boolean) value;
+               
+                eventEditor.setWordWrap(isCheck);
+            }
+        });
+		
+		wrapTextCheckBox.setValue(true);
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
@@ -295,15 +308,16 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		TabSheet tabsheet = new TabSheet();
 		tabsheet.setSizeFull();
 		
-		HorizontalLayout h1 = new HorizontalLayout();
+		VerticalLayout h1 = new VerticalLayout();
 		h1.setSizeFull();
 		h1.setMargin(true);
+		h1.addComponent(wrapTextCheckBox);
 		h1.addComponent(eventEditor);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
-		h2.addComponent(editor);
+		h2.addComponent(errorDetailEditor);
 		
 		HorizontalLayout h3 = new HorizontalLayout();
 		h3.setSizeFull();
