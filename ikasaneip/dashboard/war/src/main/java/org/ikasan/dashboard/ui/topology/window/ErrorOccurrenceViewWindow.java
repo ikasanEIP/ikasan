@@ -47,7 +47,10 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -55,7 +58,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -169,6 +172,7 @@ public class ErrorOccurrenceViewWindow extends Window
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		tf5.setRows(3);
+		tf5.setNullRepresentation("");
 		layout.addComponent(tf5, 1, 5);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
@@ -186,7 +190,7 @@ public class ErrorOccurrenceViewWindow extends Window
 		editor.setHeight(470, Unit.PIXELS);
 		editor.setWidth("100%");
 		
-		AceEditor eventEditor = new AceEditor();
+		final AceEditor eventEditor = new AceEditor();
 		
 		if(this.errorOccurrence.getEvent() != null)
 		{
@@ -198,6 +202,21 @@ public class ErrorOccurrenceViewWindow extends Window
 		eventEditor.setTheme(AceTheme.eclipse);
 		eventEditor.setHeight(470, Unit.PIXELS);
 		eventEditor.setWidth("100%");
+		
+		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
+		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+            @Override
+            public void valueChange(ValueChangeEvent event)
+            {
+                Object value = event.getProperty().getValue();
+                boolean isCheck = (null == value) ? false : (Boolean) value;
+               
+                eventEditor.setWordWrap(isCheck);
+            }
+        });
+		
+		wrapTextCheckBox.setValue(true);
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
@@ -205,9 +224,10 @@ public class ErrorOccurrenceViewWindow extends Window
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		
-		HorizontalLayout h1 = new HorizontalLayout();
+		VerticalLayout h1 = new VerticalLayout();
 		h1.setSizeFull();
 		h1.setMargin(true);
+		h1.addComponent(wrapTextCheckBox);
 		h1.addComponent(eventEditor);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
