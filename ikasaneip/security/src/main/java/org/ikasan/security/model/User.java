@@ -87,6 +87,11 @@ public class User implements UserDetails, Principal
     
     /** All <code>IkasanPrincipals</code> held by the owner for the system */
     private Set<IkasanPrincipal> principals;
+    
+    /**
+	 * Last time the user accessed the system
+	 */
+	private long previousAccessTimestamp;
 
     /**
      * Constructor
@@ -377,6 +382,22 @@ public class User implements UserDetails, Principal
 	{
 		this.principals = principals;
 	}
+	
+	/**
+	 * @return the previousAccessTimestamp
+	 */
+	public long getPreviousAccessTimestamp()
+	{
+		return previousAccessTimestamp;
+	}
+
+	/**
+	 * @param previousAccessTimestamp the previousAccessTimestamp to set
+	 */
+	public void setPreviousAccessTimestamp(long previousAccessTimestamp)
+	{
+		this.previousAccessTimestamp = previousAccessTimestamp;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -486,6 +507,5 @@ public class User implements UserDetails, Principal
 	public String toString()
 	{
 		return username;
-	}
-	   
+	}	   
 }

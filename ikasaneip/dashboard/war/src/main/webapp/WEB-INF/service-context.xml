@@ -59,6 +59,7 @@
     <bean id="ldapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="securityDao" />
 		<constructor-arg ref="userDao" />
+		<constructor-arg ref="sha1PasswordEncoder"/>
 	</bean>
 
 	<bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">

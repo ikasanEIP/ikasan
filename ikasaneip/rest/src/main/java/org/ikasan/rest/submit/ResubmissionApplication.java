@@ -95,7 +95,7 @@ public class ResubmissionApplication extends IkasanRestApplication
 			@PathParam("errorUri") String errorUri, byte[] event)
 	{
 		logger.info("re-submitting event " + errorUri);
-		if(!context.isUserInRole("WebServiceAdmin"))
+		if(!context.isUserInRole("WebServiceAdmin") || !context.isUserInRole("ALL"))
 		{
 			return Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build();

@@ -167,7 +167,11 @@
 	</context-param>
 
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>100</session-timeout>
     </session-config>
+    
+    <listener>
+          <listener-class>org.ikasan.dashboard.ui.WebAppStartStopListener</listener-class>
+     </listener>
 
 </web-app>

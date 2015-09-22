@@ -125,14 +125,15 @@ public class AuthenticationServiceImpl implements AuthenticationService
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			logger.info("Authentication failed for user " + username);
-			throw new AuthenticationServiceException("Error authenticating!");
+			throw new AuthenticationServiceException("Error authenticating!" + e);
 		}
 
 		if(authentication == null)
 		{
-			logger.info("Authentication failed for user " + username);
-			throw new AuthenticationServiceException("Error authenticating!");
+			logger.info("Authentication failed for user " + username + ". Authenticaiton is null!!");
+			throw new AuthenticationServiceException("Error authenticating! Authenticaiton is null!!");
 		}
 
 		return authentication;
