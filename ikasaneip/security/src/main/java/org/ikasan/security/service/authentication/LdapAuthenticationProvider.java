@@ -139,6 +139,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         DirContextOperations authAdapter = authenticator.authenticate(auth);
 
 		User user = this.userService.loadUserByUsername(auth.getName());
+
 		Set<IkasanPrincipal> principals = user.getPrincipals();
 
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -164,9 +165,10 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 		IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user
 				, authorities, (String)auth.getCredentials(), user.getPreviousAccessTimestamp());
 		
-		user.setPreviousAccessTimestamp(new Date().getTime());	
-		this.userService.updateUser(user);
+//		user.setPreviousAccessTimestamp(new Date().getTime());	
+//		this.userService.updateUser(user);
 
+		logger.info("Returning authentication: " + ikasanAuthentication);
         return ikasanAuthentication;
     }
 
