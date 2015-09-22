@@ -40,6 +40,9 @@
  */
 package org.ikasan.configurationService.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -47,14 +50,15 @@ import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.beanutils.converters.LongConverter;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.spec.configuration.*;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.ConfigurationFactory;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of the Configuration Service based on a ConfiguredResource.
@@ -273,7 +277,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      * )
      */
     public void saveConfiguration(Configuration configuration)
-    {
+    {    	
         this.staticConfigurationDao.save(configuration);
     }
 

@@ -148,14 +148,7 @@ public class UserServiceImpl implements UserService
         {
             throw new IllegalArgumentException("user must contain a non empty email address");
         }
-//        if (firstName == null)
-//        {
-//            throw new IllegalArgumentException("user must contain a non empty firstName");
-//        }
-//        if (surname == null)
-//        {
-//            throw new IllegalArgumentException("user must contain a non empty surname");
-//        }
+
         if (userExists(username))
         {
             throw new IllegalArgumentException("userDetails must contain a unique username");

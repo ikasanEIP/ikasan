@@ -48,11 +48,13 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -185,24 +187,34 @@ public class WiretapPayloadViewWindow extends Window
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setWidth("100%");
-//		wrapperLayout.setMargin(true);
-//		wrapperLayout.setSizeFull();
 		
-		AceEditor editor = new AceEditor();
+		final AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
 		editor.setValue(this.wiretapEvent.getEvent());
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
+		editor.setWordWrap(true);
 		editor.setTheme(AceTheme.eclipse);
 		editor.setWidth("100%");
 		editor.setHeight(550, Unit.PIXELS);
 		
+		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
+		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+            @Override
+            public void valueChange(ValueChangeEvent event)
+            {
+                Object value = event.getProperty().getValue();
+                boolean isCheck = (null == value) ? false : (Boolean) value;
+               
+                editor.setWordWrap(isCheck);
+            }
+        });
+		
+		wrapTextCheckBox.setValue(true);
 
-//		HorizontalLayout formLayout = new HorizontalLayout();
-//		formLayout.setWidth("100%");
-//		formLayout.setHeight(120, Unit.PIXELS);
-//		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(layout, 0, 0);
+		wrapperLayout.addComponent(wrapTextCheckBox, 0, 1);
 		wrapperLayout.addComponent(editor, 0, 2);
 		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 

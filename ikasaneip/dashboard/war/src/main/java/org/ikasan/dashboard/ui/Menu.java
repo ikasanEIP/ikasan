@@ -40,6 +40,8 @@
  */
 package org.ikasan.dashboard.ui;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -54,12 +56,12 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 
 /**
  * 
@@ -72,6 +74,8 @@ public class Menu extends CssLayout
 	private HashMap<Component, String> menuComponents = new HashMap<Component, String>();
 	private HashMap<String, IkasanUINavigator> views;
 	private MenuLayout menuLayout;
+	private Button userItem = new Button();
+	private Label lastLoginTimeLabel = new Label();
 	
 	/**
 	 * @param menuItemsLayout
@@ -92,8 +96,15 @@ public class Menu extends CssLayout
 	protected void buildMenu() 
     {
         menuItemsLayout.setPrimaryStyleName("valo-menuitems");
-        this.addComponent(menuItemsLayout);
+        menuItemsLayout.setResponsive(true);
+        this.addComponent(menuItemsLayout);  
         
+		lastLoginTimeLabel.setPrimaryStyleName("valo-menu-item");
+		lastLoginTimeLabel.setVisible(false);
+		
+		menuItemsLayout.addComponent(lastLoginTimeLabel);
+		
+		
         Label label = null;
         
         label = new Label("General", ContentMode.HTML);
@@ -101,6 +112,23 @@ public class Menu extends CssLayout
         label.addStyleName("h4");
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
+        
+        userItem.setPrimaryStyleName("valo-menu-item");
+		userItem.setIcon(VaadinIcons.USER);
+		userItem.setVisible(false);
+		userItem.setHtmlContentAllowed(true);
+        menuItemsLayout.addComponent(userItem);
+        
+        userItem.addClickListener(new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	loadTopLevelNavigator();
+            	UI.getCurrent().getNavigator().navigateTo("profilePanel");
+            }
+        });
+        
         
         final Button dashboardMenuItem = new Button("Dashboard", new ClickListener() 
         {
@@ -111,7 +139,7 @@ public class Menu extends CssLayout
             	UI.getCurrent().getNavigator().navigateTo("landingView");
             }
         });
-        
+                
         dashboardMenuItem.setHtmlContentAllowed(true);
         dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
         dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
@@ -215,7 +243,7 @@ public class Menu extends CssLayout
         
         usersItem.setHtmlContentAllowed(true);
         usersItem.setPrimaryStyleName("valo-menu-item");
-        usersItem.setIcon(VaadinIcons.USER);
+        usersItem.setIcon(VaadinIcons.USERS);
         menuItemsLayout.addComponent(usersItem);
         
         this.menuComponents.put(usersItem, SecurityConstants.ALL_AUTHORITY);
@@ -232,7 +260,7 @@ public class Menu extends CssLayout
         
         groupsItem.setHtmlContentAllowed(true);
         groupsItem.setPrimaryStyleName("valo-menu-item");
-        groupsItem.setIcon(VaadinIcons.USERS);
+        groupsItem.setIcon(VaadinIcons.GROUP);
         menuItemsLayout.addComponent(groupsItem);
         
         this.menuComponents.put(groupsItem, SecurityConstants.ALL_AUTHORITY);
@@ -343,5 +371,25 @@ public class Menu extends CssLayout
 	public void setMenuComponents(HashMap<Component, String> menuComponents)
 	{
 		this.menuComponents = menuComponents;
+	}
+	
+	public void setLoggedIn()
+	{
+		IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+            	.getAttribute(DashboardSessionValueConstants.USER);
+		
+		if(ikasanAuthentication != null)
+        {
+			String loginName = "User: " + ikasanAuthentication.getName();
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+			String loginTime = "Last login: " + dateFormat.format(new Date(ikasanAuthentication.getPreviousLoginTimestamp()));
+			
+			this.userItem.setCaption(loginName);
+			this.userItem.setVisible(true);
+			
+			this.lastLoginTimeLabel.setCaption(loginTime);
+			this.lastLoginTimeLabel.setVisible(true);
+        }
 	}
 }

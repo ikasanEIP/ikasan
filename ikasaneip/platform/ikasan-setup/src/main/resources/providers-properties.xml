@@ -42,6 +42,7 @@
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
 				<prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+				<prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
 				<prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -425,6 +426,22 @@
 					CREATE UNIQUE INDEX ConfParamString01u ON
 					ConfParamString(Id)
 				</prop>
+				
+				<prop key="create.confParamMaskedString">
+					CREATE TABLE ConfParamMaskedString
+					(
+					Id NUMERIC NOT NULL,
+					Name VARCHAR(128) NOT NULL,
+					Value TEXT DEFAULT NULL NULL,
+					Description VARCHAR(256) DEFAULT NULL NULL
+					)
+					LOCK DATAROWS
+					WITH
+					IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX ConfParamMaskedString01u ON
+					ConfParamMaskedString(Id)
+				</prop>
 
 
 				<prop key="create.systemEvent">CREATE TABLE SystemEvent
@@ -506,7 +523,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled 			BIT NOT NULL
+					Enabled 			BIT NOT NULL,
+					PreviousAccess 		NUMERIC DEFAULT 0 NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1352,6 +1370,7 @@
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
 				<prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+				<prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
 				<prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -1731,6 +1750,22 @@
 					CREATE UNIQUE INDEX ConfParamString01u ON
 					ConfParamString(Id)
 				</prop>
+				
+				<prop key="create.confParamMaskedString">
+					CREATE TABLE ConfParamMaskedString
+					(
+					Id NUMERIC NOT NULL,
+					Name VARCHAR(128) NOT NULL,
+					Value TEXT DEFAULT NULL NULL,
+					Description VARCHAR(256) DEFAULT NULL NULL
+					)
+					LOCK DATAROWS
+					WITH
+					IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX ConfParamMaskedString01u ON
+					ConfParamMaskedString(Id)
+				</prop>
 
 
 				<prop key="create.systemEvent">CREATE TABLE SystemEvent
@@ -1812,7 +1847,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled 			BIT NOT NULL
+					Enabled 			BIT NOT NULL,
+					PreviousAccess 		NUMERIC DEFAULT 0 NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -2688,6 +2724,7 @@
                 <prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
                 <prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
                 <prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+                <prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
                 <prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
                 <prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
                 <prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -3000,6 +3037,17 @@
 
                     CREATE UNIQUE INDEX [IX_ConfParamString_Id] ON [ConfParamString](Id)
                 </prop>
+                
+                <prop key="create.confParamMaskedString">CREATE TABLE [ConfParamMaskedString]					
+                	(
+					[Id] 						[numeric](18, 0) NOT NULL,
+					[Name]                        [varchar](128) NOT NULL,
+                    [Value]                       [varchar] (max) DEFAULT NULL NULL,
+                    [Description]                 [varchar](256) DEFAULT NULL NULL,
+					)
+					
+					CREATE UNIQUE INDEX [IX_ConfParamMaskedString_Id] ON [ConfParamMaskedString](Id)
+				</prop>
 
 
                 <prop key="create.systemEvent">CREATE TABLE [SystemEvent]
@@ -3078,7 +3126,8 @@
                     [FirstName] [VARCHAR] (50) NULL,
                     [Surname] [VARCHAR] (50)   NULL,
                     [Department] [VARCHAR] (50) NULL,
-                    [Enabled]  [BIT] NOT NULL
+                    [Enabled]  [BIT] NOT NULL,
+                    PreviousAccess [NUMERIC] DEFAULT 0 NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
                     (
                     [Id] ASC
@@ -3915,6 +3964,7 @@
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
 				<prop key="drop.systemEvent">DROP TABLE SystemEvent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+				<prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
 				<prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -4198,6 +4248,18 @@
 					CREATE UNIQUE INDEX
 					ConfParamString01u ON ConfParamString(Id);
 				</prop>
+				
+				<prop key="create.confParamMaskedString">
+					CREATE TABLE ConfParamMaskedString
+					(
+					Id NUMERIC NOT NULL,
+					Name VARCHAR(128) NOT NULL,
+					Value TEXT DEFAULT NULL NULL,
+					Description VARCHAR(256) DEFAULT NULL NULL
+					);
+					CREATE UNIQUE INDEX
+					ConfParamMaskedString01u ON ConfParamMaskedString(Id);
+				</prop>
 
 				<prop key="create.systemEvent">CREATE TABLE SystemEvent
 					(
@@ -4280,7 +4342,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled BIT NOT NULL
+					Enabled BIT NOT NULL,
+					PreviousAccess NUMERIC DEFAULT 0 NOT NULL
 					);
 				</prop>
 				

@@ -45,7 +45,7 @@ public class ModuleControlApplication extends IkasanRestApplication
     public Response controlFlowState(@Context SecurityContext context, @PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, String action)
     {
-    	if(!context.isUserInRole("WebServiceAdmin"))
+    	if(!context.isUserInRole("WebServiceAdmin") || !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
