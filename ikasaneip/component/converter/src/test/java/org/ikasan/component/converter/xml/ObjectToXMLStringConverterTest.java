@@ -270,6 +270,10 @@ public class ObjectToXMLStringConverterTest
                 will(returnValue("example"));
                 exactly(2).of(mockedXmlConfiguration).getRootClassName();
                 will(returnValue("org.ikasan.component.converter.xml.jaxb.Example"));
+                exactly(1).of(mockedXmlConfiguration).getNamespaceURI();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespacePrefix();
+                will(returnValue(null));
                 exactly(1).of(mockedXmlConfiguration).getSchema();
                 will(returnValue(null));
             }
@@ -301,6 +305,10 @@ public class ObjectToXMLStringConverterTest
                 will(returnValue("Example"));
                 exactly(1).of(mockedXmlConfiguration).getRootClassName();
                 will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespaceURI();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespacePrefix();
+                will(returnValue(null));
                 exactly(1).of(mockedXmlConfiguration).getSchema();
                 will(returnValue(null));
             }
@@ -331,6 +339,10 @@ public class ObjectToXMLStringConverterTest
                 exactly(3).of(mockedXmlConfiguration).getRootName();
                 will(returnValue("example"));
                 exactly(2).of(mockedXmlConfiguration).getRootClassName();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespaceURI();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespacePrefix();
                 will(returnValue(null));
                 exactly(1).of(mockedXmlConfiguration).getSchema();
                 will(returnValue(null));
@@ -365,6 +377,10 @@ public class ObjectToXMLStringConverterTest
                 will(returnValue("example"));
                 exactly(1).of(mockedXmlConfiguration).getRootClassName();
                 will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespaceURI();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespacePrefix();
+                will(returnValue(null));
                 exactly(1).of(mockedXmlConfiguration).isFastFailOnConfigurationLoad();
                 will(returnValue(false));
             }
@@ -396,6 +412,10 @@ public class ObjectToXMLStringConverterTest
                 will(returnValue(null));
                 exactly(4).of(mockedXmlConfiguration).getRootClassName();
                 will(returnValue("org.ikasan.component.converter.xml.jaxb.Example"));
+                exactly(1).of(mockedXmlConfiguration).getNamespaceURI();
+                will(returnValue(null));
+                exactly(1).of(mockedXmlConfiguration).getNamespacePrefix();
+                will(returnValue(null));
                 exactly(1).of(mockedXmlConfiguration).getSchema();
                 will(returnValue(null));
             }
