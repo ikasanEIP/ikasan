@@ -60,7 +60,6 @@
         <module>quartz-schedule</module>
         <module>mongo-endpoint</module>
         <module>mongo-endpoint-test</module>
-        <module>email-endpoint</module>
     </modules>
 
 </project>
