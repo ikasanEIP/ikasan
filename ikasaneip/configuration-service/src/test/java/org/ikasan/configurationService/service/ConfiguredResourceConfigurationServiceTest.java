@@ -279,8 +279,10 @@ public class ConfiguredResourceConfigurationServiceTest
 
         configurationService.update(configuredResource);
         Configuration<List<ConfigurationParameter>> foundConfig = configurationServiceDao.findByConfigurationId("configuredResourceId");
-        Assert.assertEquals("Should have retrieved config from db with parameter name set", "one", foundConfig.getParameters().get(0).getName());
-        Assert.assertEquals("Should have retrieved config from db with parameter value set", "1", foundConfig.getParameters().get(0).getValue());
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "maskedString", foundConfig.getParameters().get(0).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", null, foundConfig.getParameters().get(0).getValue());
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "one", foundConfig.getParameters().get(1).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", "1", foundConfig.getParameters().get(1).getValue());
         this.mockery.assertIsSatisfied();
     }
     
@@ -320,8 +322,8 @@ public class ConfiguredResourceConfigurationServiceTest
         configurationService.update(configuredResource);
         configurationService.update(configuredResource); // update twice to ensure configuration is persisted
         Configuration<List<ConfigurationParameter>> foundConfig = configurationServiceDao.findByConfigurationId("configuredResourceId");
-        Assert.assertEquals("Should have retrieved config from db with parameter name set", "map", foundConfig.getParameters().get(1).getName());
-        Assert.assertEquals("Should have retrieved config from db with parameter value set", map, foundConfig.getParameters().get(1).getValue());
+        Assert.assertEquals("Should have retrieved config from db with parameter name set", "map", foundConfig.getParameters().get(2).getName());
+        Assert.assertEquals("Should have retrieved config from db with parameter value set", map, foundConfig.getParameters().get(2).getValue());
         this.mockery.assertIsSatisfied();
     }
 

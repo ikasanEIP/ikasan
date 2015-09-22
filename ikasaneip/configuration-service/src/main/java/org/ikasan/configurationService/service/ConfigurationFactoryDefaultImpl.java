@@ -40,15 +40,27 @@
  */
 package org.ikasan.configurationService.service;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
-import org.ikasan.configurationService.model.*;
-import org.ikasan.spec.configuration.*;
-
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.log4j.Logger;
+import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.configurationService.model.DefaultConfiguration;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.ConfigurationFactory;
+import org.ikasan.spec.configuration.ConfigurationParameter;
+import org.ikasan.spec.configuration.Masked;
 
 /**
  * Default implementation of the ConfigurationFactory for creating configuration and configuration parameter instances.
@@ -117,7 +129,19 @@ public class ConfigurationFactoryDefaultImpl
                     if(value == null)
                     {
                         Class<?> cls = PropertyUtils.getPropertyType(runtimeConfiguration, name);
-                        if(cls.isAssignableFrom(String.class))
+                        
+                        Field f = runtimeConfiguration.getClass().getDeclaredField(name);
+                        
+                        if(f.isAnnotationPresent(Masked.class))
+                        {
+                        	if(f.getType() != String.class)
+                        	{
+                        		throw new RuntimeException("The Masked annotation can only be applied to String fields.");
+                        	}
+                        	
+                        	configuration.getParameters().add( new ConfigurationParameterMaskedStringImpl(name, null) );
+                        }                        
+                        else if(cls.isAssignableFrom(String.class))
                         {
                             configuration.getParameters().add( new ConfigurationParameterStringImpl(name, null) );
                         }
@@ -148,7 +172,18 @@ public class ConfigurationFactoryDefaultImpl
                     }
                     else
                     {
-                        if (value instanceof String)
+                    	Field f = runtimeConfiguration.getClass().getDeclaredField(name);
+                        
+                        if(f.isAnnotationPresent(Masked.class))
+                        {
+                        	if(!(value instanceof String))
+                        	{
+                        		throw new RuntimeException("The Masked annotation can only be applied to String fields.");
+                        	}
+                        	
+                        	configuration.getParameters().add( new ConfigurationParameterMaskedStringImpl(name, (String)value) );
+                        } 
+                        else if (value instanceof String)
                         {
                             configuration.getParameters().add( new ConfigurationParameterStringImpl(name, (String)value) );
                         }
@@ -179,12 +214,28 @@ public class ConfigurationFactoryDefaultImpl
                     }
                 }
             }
-
-            return configuration;
         }
-        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+        catch (IllegalAccessException e)
         {
             throw new ConfigurationException(e);
-        }
+        } catch (NoSuchFieldException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return configuration;
     }
 }

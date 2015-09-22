@@ -42,15 +42,20 @@ package org.ikasan.configurationService.service;
 
 import java.util.Map;
 
+import org.ikasan.spec.configuration.Masked;
+
 /**
  * Sample configuration class for testing
  * Ikasan Development Team.
  */
 public class SampleConfiguration
 {
-    public String one;
+	private String one;
     
-    public Map<String,String>map;
+    @Masked
+    private String maskedString;
+    
+    private Map<String,String>map;
 
     public Map<String, String> getMap() {
 		return map;
@@ -69,4 +74,20 @@ public class SampleConfiguration
     {
         this.one = one;
     }
+
+	/**
+	 * @return the maskedString
+	 */
+	public String getMaskedString()
+	{
+		return maskedString;
+	}
+
+	/**
+	 * @param maskedString the maskedString to set
+	 */
+	public void setMaskedString(String maskedString)
+	{
+		this.maskedString = maskedString;
+	}
 }

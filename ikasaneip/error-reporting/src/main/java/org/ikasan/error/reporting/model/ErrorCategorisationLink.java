@@ -50,6 +50,7 @@ public class ErrorCategorisationLink
 	public static final String RETRY_ACTION = "Retry";
 	public static final String STOP_ACTION = "Stop";
 	public static final String EXCLUDE_EVENT_ACTION = "ExcludeEvent";
+	public static final String WARNING_ACTION = "Warning";
 	
 	private Long id;
 	private String moduleName;
