@@ -256,20 +256,6 @@ public class TopologyServiceImpl implements TopologyService
 			    
 			    this.topologyDao.save(module);
 			    
-//		    	List<Flow> dbFlows = topologyDao.getFlowsByServerIdAndModuleId
-//						(server.getId(), module.getId());
-//		    	
-//				for(Flow dbFlow: dbFlows)
-//				{
-//					for(Component component: dbFlow.getComponents())
-//					{
-//						this.topologyDao.delete(component);
-//					}
-//					
-//					this.topologyDao.delete(dbFlow);
-//				}
-
-			    
 			    for(JsonValue flowValue: flowResponse)
 			    { 
 		    		Flow flow;

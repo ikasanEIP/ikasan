@@ -121,7 +121,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		
 		criteria.addOrder(Order.desc("expiry"));
 
-        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria);
+        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
 	}
     
     @Override

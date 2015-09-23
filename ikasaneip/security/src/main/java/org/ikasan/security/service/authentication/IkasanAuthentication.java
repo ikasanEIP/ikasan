@@ -62,6 +62,7 @@ public class IkasanAuthentication implements Authentication
 	private List<GrantedAuthority> authorities;
 	private Principal principal;
 	private String credentials;
+	private long previousLoginTimestamp;
 	
 	/**
 	 * @param isAuthenticated
@@ -70,13 +71,14 @@ public class IkasanAuthentication implements Authentication
 	 */
 	public IkasanAuthentication(boolean isAuthenticated,
 			Principal principal, List<GrantedAuthority> authorities,
-			String credentials)
+			String credentials, long previousLoginTimestamp)
 	{
 		super();
 		this.isAuthenticated = isAuthenticated;
 		this.authorities = authorities;
 		this.principal = principal;
 		this.credentials = credentials;
+		this.previousLoginTimestamp = previousLoginTimestamp;
 	}
 	
     /* (non-Javadoc)
@@ -141,8 +143,25 @@ public class IkasanAuthentication implements Authentication
     {
     	this.isAuthenticated = isAuthenticated;
     }
-	   
+	  
+    
     /**
+	 * @return the previousLoginTimestamp
+	 */
+	public long getPreviousLoginTimestamp()
+	{
+		return previousLoginTimestamp;
+	}
+
+	/**
+	 * @param previousLoginTimestamp the previousLoginTimestamp to set
+	 */
+	public void setPreviousLoginTimestamp(long previousLoginTimestamp)
+	{
+		this.previousLoginTimestamp = previousLoginTimestamp;
+	}
+
+	/**
      * 
      * @param authorityName
      * @return

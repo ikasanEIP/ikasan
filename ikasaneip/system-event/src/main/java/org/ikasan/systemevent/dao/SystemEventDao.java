@@ -41,6 +41,7 @@
 package org.ikasan.systemevent.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.model.SystemEvent;
@@ -78,6 +79,19 @@ public interface SystemEventDao {
 	 */
 	public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,String subject, String action,
 			Date timestampFrom, Date timestampTo, String actor);
+	
+	
+	/**
+	 * This method returns a list of SystemEvents based on subjects and actor within a certain date range.
+	 * 
+	 * @param subject
+	 * @param actor
+	 * @param timestampFrom
+	 * @param timestampTo
+	 * @return
+	 */
+	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo); 
+	
 
 	/**
 	 * Deletes all expired system events

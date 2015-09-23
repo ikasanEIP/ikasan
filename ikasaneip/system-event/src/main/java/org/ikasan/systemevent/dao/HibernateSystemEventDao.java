@@ -188,6 +188,55 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
         });
 
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.systemevent.dao.SystemEventDao#listSystemEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<SystemEvent> listSystemEvents(final List<String> subjects, final String actor,
+			final Date timestampFrom, final Date timestampTo)
+	{
+		 return (List<SystemEvent>) getHibernateTemplate().execute(new HibernateCallback<Object>()
+			        {
+			            public Object doInHibernate(Session session) throws HibernateException
+			            {
+			                Criteria resultCriteria = getCriteria(session);
+			                resultCriteria.addOrder(Order.desc("id"));
+			                
+			                List<SystemEvent> systemEventResults = resultCriteria.list();
+
+			                return systemEventResults;
+			            }
+			            
+			            /**
+			             * Create a consistent criteria instance for both result and metadata
+			             * @param session
+			             * @return
+			             */
+			            private Criteria getCriteria(Session session)
+			            {
+			                Criteria criteria = session.createCriteria(SystemEvent.class, "event");
+			                if (restrictionExists(subjects))
+			                {
+			                    criteria.add(Restrictions.in("subject", subjects));
+			                }
+			                if (restrictionExists(actor))
+			                {
+			                    criteria.add(Restrictions.eq("actor", actor));
+			                }
+			                if (restrictionExists(timestampFrom))
+			                {
+			                    criteria.add(Restrictions.gt("timestamp", timestampFrom));
+			                }
+			                if (restrictionExists(timestampTo))
+			                {
+			                    criteria.add(Restrictions.lt("timestamp", timestampTo));
+			                }
+			                return criteria;
+			                
+			            }
+			        });
+	}
 
     /**
      * Check to see if the restriction exists
@@ -346,4 +395,5 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     {
         this.housekeepingBatchSize = housekeepingBatchSize;
     }
+
 }
