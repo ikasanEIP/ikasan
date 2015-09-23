@@ -80,7 +80,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <version>${version.com.google.guava}</version>
             </dependency>
 
             <dependency>
@@ -109,7 +109,7 @@
             <dependency>
                 <groupId>org.subethamail</groupId>
                 <artifactId>subethasmtp-wiser</artifactId>
-                <version>1.2</version>
+                <version>${version.org.subethamail}</version>
                 <scope>test</scope>
             </dependency>
 
