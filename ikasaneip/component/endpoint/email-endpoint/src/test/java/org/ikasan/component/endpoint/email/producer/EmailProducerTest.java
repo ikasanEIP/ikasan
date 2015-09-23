@@ -1,9 +1,50 @@
 package org.ikasan.component.endpoint.email.producer;
-
+/*
+ * $Id$
+ * $URL$
+ *
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ *
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
+ */
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.management.ManagedResource;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +64,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by xualys on 17/09/2015.
+ * Test class for JmsMessageConverter.
+ *
+ * @author Ikasan Development Team
  */
 public class EmailProducerTest {
 
@@ -71,6 +114,7 @@ public class EmailProducerTest {
 
         EmailProducer emailProducer = new EmailProducer();
         ((Configured) emailProducer).setConfiguration(emailNotifierConfiguration);
+        ((ManagedResource)emailProducer).startManagedResource();
 
         emailProducer.invoke(getEmailPayload(false));
         List<WiserMessage> messages = wiser.getMessages();
@@ -91,10 +135,12 @@ public class EmailProducerTest {
 
     @Test
     public void test_successful_email_withAttachment() throws MessagingException, IOException {
+
         EmailProducerConfiguration emailNotifierConfiguration = getConfiguration(true);
 
         EmailProducer emailProducer = new EmailProducer();
         ((Configured) emailProducer).setConfiguration(emailNotifierConfiguration);
+        ((ManagedResource)emailProducer).startManagedResource();
 
         emailProducer.invoke(getEmailPayload(true));
         List<WiserMessage> messages = wiser.getMessages();
@@ -116,6 +162,24 @@ public class EmailProducerTest {
         }
     }
 
+    @Test
+    public void testMailServerFailure()throws IOException{
+
+        wiser.stop();
+        EmailProducerConfiguration emailNotifierConfiguration = getConfiguration(true);
+
+        EmailProducer emailProducer = new EmailProducer();
+        ((Configured) emailProducer).setConfiguration(emailNotifierConfiguration);
+        ((ManagedResource)emailProducer).startManagedResource();
+
+        try {
+            emailProducer.invoke(getEmailPayload(false));
+            Assert.assertTrue("Expeccting mail server connection issue", false);
+        }catch(EndpointException e){
+            Assert.assertTrue("Expeccting mail server connection issue", e.getMessage().contains("Could not connect to SMTP host"));
+        }
+    }
+
     private EmailPayload getEmailPayload(boolean addAttachment) throws IOException {
 
         DefaultEmailPayload payload = new DefaultEmailPayload();
@@ -126,6 +190,7 @@ public class EmailProducerTest {
             InputStream resourceAsStream = getClass().getResourceAsStream("/testAttachment.csv");
             payload.addAttachment("testAttachment", "text/csv", IOUtils.toByteArray(resourceAsStream));
         }
+        System.out.println(payload.toString());
         return payload;
 
     }
