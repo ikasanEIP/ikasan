@@ -95,12 +95,7 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             message.addRecipients(Message.RecipientType.CC, recipients.get(Message.RecipientType.CC));
             message.addRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
 
-            if (configuration.getSubject() == null) {
-                message.setSubject("[" + configuration.getRuntimeEnvironment() + "]: No Subject");
-            } else {
-                String subject = "[" + configuration.getRuntimeEnvironment() + "]: " + configuration.getSubject();
-                message.setSubject(subject);
-            }
+            message.setSubject(configuration.getSubject());
             Multipart multipart = new MimeMultipart();
 
             MimeBodyPart bodyPart = new MimeBodyPart();

@@ -108,7 +108,6 @@ public class DefaultEmailPayload implements EmailPayload {
             attachmentsContent = new HashMap<String, byte[]>();
         }
         attachmentsContent.put(name, content);
-
     }
 
     @Override
