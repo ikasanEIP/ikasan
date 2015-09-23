@@ -42,7 +42,11 @@ package org.ikasan.component.converter.xml;
 
 import org.ikasan.component.converter.xml.jaxb.Example;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.junit.Assert;
 import org.junit.Test;
+
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 
 import static org.junit.Assert.assertEquals;
 
@@ -87,7 +91,7 @@ public class XmlByteArrayToObjectConverterTest
     public void testConvertWithClass(){
         XmlByteArrayToObjectConverter converter = new XmlByteArrayToObjectConverter();
         XmlToObjectConverterConfiguration configuration = new XmlToObjectConverterConfiguration();
-        configuration.setClassesToBeBound(new Class[]{Example.class});
+        configuration.setClassesToBeBound(new Class[] { Example.class });
         converter.setConfiguration(configuration);
         Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent().getBytes());
         assertEquals(new Example("1", "2"), converted);
@@ -97,7 +101,7 @@ public class XmlByteArrayToObjectConverterTest
     public void testConvertWithWithContextPaths(){
         XmlByteArrayToObjectConverter converter = new XmlByteArrayToObjectConverter();
         XmlToObjectConverterConfiguration configuration = new XmlToObjectConverterConfiguration();
-        configuration.setContextPaths(new String[]{"org.ikasan.component.converter.xml.jaxb"});
+        configuration.setContextPaths(new String[] { "org.ikasan.component.converter.xml.jaxb" });
         converter.setConfiguration(configuration);
         Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent().getBytes());
         assertEquals(new Example("1", "2"), converted);
@@ -112,6 +116,31 @@ public class XmlByteArrayToObjectConverterTest
         Example converted = (Example)converter.convert("badly drawn xml".getBytes());
     }
 
+    @Test(expected = XmlValidationException.class)
+    public void testConvertInvalidJaxbEventHandler()
+    {
+        XmlByteArrayToObjectConverter converter = new XmlByteArrayToObjectConverter();
+        XmlToObjectConverterConfiguration configuration = new XmlToObjectConverterConfiguration();
+        configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
+        configuration.setValidationEventHandler(new ValidationEventHandler(){
+            @Override
+            public boolean handleEvent(ValidationEvent event)
+            {
+                if(ValidationEvent.ERROR == event.getSeverity())
+                {
+                    throw new XmlValidationException(event);
+                }
+                else
+                {
+                    Assert.fail("Should be a ValidationEvent.ERROR (1) type event : " + event.getSeverity());
+                    return false;
+                }
+            }
+        });
+
+        converter.setConfiguration(configuration);
+        converter.convert(new ExampleEventFactory().getXmlInvalidJaxb().getBytes());
+    }
 
   
 

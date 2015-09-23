@@ -40,11 +40,6 @@
  */
 package org.ikasan.component.converter.xml;
 
-import java.io.StringReader;
-
-import javax.xml.bind.JAXBElement;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ikasan.spec.component.transformation.Converter;
@@ -53,6 +48,10 @@ import org.ikasan.spec.configuration.ConfigurationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 
 /**
  * Uses Jaxb2Marshaller to unmarshall xml to java object
@@ -84,6 +83,13 @@ public class XmlStringToObjectConverter<SOURCE,TARGET> implements Converter<SOUR
         } else if (ArrayUtils.isNotEmpty(configuration.getClassesToBeBound())){
             marshaller.setClassesToBeBound(configuration.getClassesToBeBound());
         }
+        marshaller.setUnmarshallerProperties(configuration.getUnmarshallerProperties());
+        marshaller.setMarshallerProperties(configuration.getMarshallerProperties());
+        if (configuration.getValidationEventHandler() != null)
+        {
+            marshaller.setValidationEventHandler(configuration.getValidationEventHandler());
+        }
+
         try
         {
             marshaller.afterPropertiesSet();

@@ -82,6 +82,10 @@ public class XmlByteArrayToObjectConverter implements Converter<byte[], Object>,
         }
         marshaller.setUnmarshallerProperties(configuration.getUnmarshallerProperties());
         marshaller.setMarshallerProperties(configuration.getMarshallerProperties());
+        if (configuration.getValidationEventHandler() != null)
+        {
+            marshaller.setValidationEventHandler(configuration.getValidationEventHandler());
+        }
         try
         {
             marshaller.afterPropertiesSet();
