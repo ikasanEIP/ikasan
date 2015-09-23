@@ -67,6 +67,8 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
@@ -78,7 +80,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -422,7 +426,7 @@ public class ExclusionEventViewWindow extends Window
 			ignoreButton.setVisible(false);
     	}
 		
-		AceEditor eventEditor = new AceEditor();
+		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
 		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.exclusionEvent.getEvent());
@@ -430,18 +434,33 @@ public class ExclusionEventViewWindow extends Window
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
+		eventEditor.setWordWrap(true);
 		eventEditor.setWidth("100%");
 		eventEditor.setHeight(600, Unit.PIXELS);
 		
+		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
+		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+            @Override
+            public void valueChange(ValueChangeEvent event)
+            {
+                Object value = event.getProperty().getValue();
+                boolean isCheck = (null == value) ? false : (Boolean) value;
+               
+                eventEditor.setWordWrap(isCheck);
+            }
+        });
+		wrapTextCheckBox.setValue(true);
+		
 		HorizontalLayout eventEditorLayout = new HorizontalLayout();
 		eventEditorLayout.setSizeFull();
-		eventEditorLayout.setMargin(true);
 		eventEditorLayout.addComponent(eventEditor);
 		
 		AceEditor errorEditor = new AceEditor();
 		errorEditor.setCaption("Error Details");
 		errorEditor.setValue(this.errorOccurrence.getErrorDetail());
 		errorEditor.setReadOnly(true);
+		errorEditor.setWordWrap(true);
 		errorEditor.setMode(AceMode.xml);
 		errorEditor.setTheme(AceTheme.eclipse);
 		errorEditor.setWidth("100%");
@@ -449,26 +468,21 @@ public class ExclusionEventViewWindow extends Window
 		
 		HorizontalLayout errorEditorLayout = new HorizontalLayout();
 		errorEditorLayout.setSizeFull();
-		errorEditorLayout.setMargin(true);
 		errorEditorLayout.addComponent(errorEditor);
 
+		TabSheet tabsheet = new TabSheet();
+		tabsheet.setSizeFull();
 		
-		VerticalSplitPanel splitPanel = new VerticalSplitPanel();
-		splitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
-		splitPanel.setWidth("100%");
-		splitPanel.setHeight(800, Unit.PIXELS);
-		
-		HorizontalLayout h1 = new HorizontalLayout();
+		VerticalLayout h1 = new VerticalLayout();
 		h1.setSizeFull();
 		h1.setMargin(true);
+		h1.addComponent(wrapTextCheckBox);
 		h1.addComponent(eventEditorLayout);
-		splitPanel.setFirstComponent(eventEditorLayout);
 		
 		HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
 		h2.addComponent(errorEditorLayout);
-		splitPanel.setSecondComponent(errorEditorLayout);
 		
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
@@ -479,8 +493,11 @@ public class ExclusionEventViewWindow extends Window
 		wrapperLayout.setMargin(true);
 		wrapperLayout.setWidth("100%");
 		wrapperLayout.addComponent(formLayout);
-		wrapperLayout.addComponent(splitPanel);
 
+		tabsheet.addTab(h1, "Event Payload");
+		tabsheet.addTab(h2, "Error Details");
+		
+		wrapperLayout.addComponent(tabsheet);
 		exclusionEventDetailsPanel.setContent(wrapperLayout);
 		return exclusionEventDetailsPanel;
 	}

@@ -68,7 +68,7 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	public Response createConfiguration(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
 			@PathParam("componentName") String componentName)
 	{
-		if(!context.isUserInRole("WebServiceAdmin"))
+		if(!context.isUserInRole("WebServiceAdmin") || !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());

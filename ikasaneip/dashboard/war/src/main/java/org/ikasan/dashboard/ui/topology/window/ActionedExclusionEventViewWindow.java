@@ -66,6 +66,8 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
@@ -77,6 +79,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -254,7 +257,7 @@ public class ActionedExclusionEventViewWindow extends Window
 		layout.addComponent(tf8, 3, 3);
 		
 		
-		AceEditor eventEditor = new AceEditor();
+		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 
 		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.action.getEvent());
@@ -265,9 +268,23 @@ public class ActionedExclusionEventViewWindow extends Window
 		eventEditor.setWidth("100%");
 		eventEditor.setHeight(600, Unit.PIXELS);
 		
+		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
+		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+            @Override
+            public void valueChange(ValueChangeEvent event)
+            {
+                Object value = event.getProperty().getValue();
+                boolean isCheck = (null == value) ? false : (Boolean) value;
+               
+                eventEditor.setWordWrap(isCheck);
+            }
+        });
+		
 		HorizontalLayout eventEditorLayout = new HorizontalLayout();
 		eventEditorLayout.setSizeFull();
 		eventEditorLayout.setMargin(true);
+		eventEditorLayout.addComponent(wrapTextCheckBox);
 		eventEditorLayout.addComponent(eventEditor);
 		
 		AceEditor errorEditor = new AceEditor();

@@ -68,7 +68,6 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -87,6 +86,7 @@ import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -129,16 +129,16 @@ public class CategorisedErrorTab extends TopologyTab
 	{
 		this.categorizedErrorOccurenceTable = new FilterTable();
 		this.categorizedErrorOccurenceTable.setSizeFull();
-		this.categorizedErrorOccurenceTable.addContainerProperty("", Label.class,  null);
-		this.categorizedErrorOccurenceTable.setColumnExpandRatio("", .03f);
-		this.categorizedErrorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
-		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Module Name", .15f);
-		this.categorizedErrorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
-		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
-		this.categorizedErrorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
-		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
+//		this.categorizedErrorOccurenceTable.addContainerProperty("", Label.class,  null);
+//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("", .03f);
+		this.categorizedErrorOccurenceTable.addContainerProperty("Error Location", Layout.class,  null);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Location", .25f);
+//		this.categorizedErrorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
+//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
+//		this.categorizedErrorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
+//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
-		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
+		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Message", .65f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
 		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
 		
@@ -308,9 +308,19 @@ public class CategorisedErrorTab extends TopologyTab
             	    }
             	    
             	    
-            	    categorizedErrorOccurenceTable.addItem(new Object[]{categoryLabel, errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
-            				, timestamp}, categorisedErrorOccurrence);
+            	    VerticalLayout layout = new VerticalLayout();
+            	    layout.addComponent(new Label(VaadinIcons.ARCHIVE.getHtml() + " " +  errorOccurrence.getModuleName(), ContentMode.HTML));
+            	    layout.addComponent(new Label(VaadinIcons.AUTOMATION.getHtml() + " " +  errorOccurrence.getFlowName(), ContentMode.HTML));
+            	    layout.addComponent(new Label(VaadinIcons.COG.getHtml() + " " +  errorOccurrence.getFlowElementName(), ContentMode.HTML));
+            	    layout.setSpacing(true);
+            	    
+            	    
+//            	    categorizedErrorOccurenceTable.addItem(new Object[]{categoryLabel, errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+//            				, errorOccurrence.getFlowElementName(), categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
+//            				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);
+            	    
+            	    categorizedErrorOccurenceTable.addItem(new Object[]{layout, categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
+            				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);
             	}
             }
         });

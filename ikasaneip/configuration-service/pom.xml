@@ -131,6 +131,27 @@
 			<artifactId>spring-context</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.4</version>
+			<scope>provided</scope>
+		</dependency>
+	
+		<dependency>
+		  <groupId>org.jasypt</groupId>
+		  <artifactId>jasypt</artifactId>
+		  <version>1.9.2</version>
+		  <scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-hibernate4</artifactId>
+			<version>1.9.2</version>
+			<scope>compile</scope>
+		</dependency>
 	
 		<dependency>
 			<groupId>org.springframework</groupId>

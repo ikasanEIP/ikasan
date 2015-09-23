@@ -70,7 +70,9 @@ public class TopologyStateCache
 	
 	private TopologyService topologyService;
 	private HashMap<String, String> stateMap;
-	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+	
+	// TODO need to add some kind of hook to shut this down.
+	private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
 	
 	
@@ -83,10 +85,9 @@ public class TopologyStateCache
 		super();
 		this.topologyService = topologyService;
 		
-		stateMap = new HashMap<String, String>();
+		stateMap = new HashMap<String, String>();	
 		
 		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
-		
 	}
 
 	public String getState(String key)
@@ -125,15 +126,16 @@ public class TopologyStateCache
 		{
 			logger.warn("An exception has occurred trying to update the topology state cache", e);
 			// Ignoring this exception, as it may be the case that the database is not yet setup.
+			return;
 		}
 		
 		logger.info("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
 		{
-			logger.info("Synchronising server: " + server.getName());
+			logger.debug("Synchronising server: " + server.getName());
 			for(Module module: server.getModules())
 			{
-				logger.info("Synchronising module: " + module.getName());
+				logger.debug("Synchronising module: " + module.getName());
 				
 				HashMap<String, String> results = getFlowStates(module);
 				
@@ -146,7 +148,7 @@ public class TopologyStateCache
 		
 		Broadcaster.broadcast(stateMap);
 		
-		logger.info("Finished synchronising topology state cache.");
+		logger.debug("Finished synchronising topology state cache.");
 	}
 	
 	public void update(String key, String value)
@@ -160,9 +162,11 @@ public class TopologyStateCache
 	protected HashMap<String, String> getFlowStates(Module module)
 	{
 		HashMap<String, String> results = new HashMap<String, String>();
+		String url = null;
+		
 		try
 		{
-			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+			url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
 					+ module.getContextRoot() 
 					+ "/rest/moduleControl/flowStates/"
 					+ module.getName();
@@ -174,17 +178,18 @@ public class TopologyStateCache
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
 	    	
-	    	logger.info("Calling URL: " + url);
+	    	logger.debug("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
 	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
 	    	
-	    	logger.info("results: " + results);
+	    	logger.debug("results: " + results);
 		}
 		catch(Exception e)
 		{
-			logger.info("caught exception: " + e.getMessage());
-			e.printStackTrace();
+			logger.info("Caught exception attempting to discover module with the following URL: " + url 
+	    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
+			
 			return new HashMap<String, String>();
 		}
 	    
@@ -197,5 +202,10 @@ public class TopologyStateCache
 	public HashMap<String, String> getStateMap()
 	{
 		return stateMap;
+	}
+	
+	public static void shutdown()
+	{
+		executor.shutdown();
 	}
 }

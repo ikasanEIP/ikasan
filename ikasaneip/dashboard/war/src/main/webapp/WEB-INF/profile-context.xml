@@ -27,7 +27,7 @@
         <constructor-arg ref="profileViewComponentContainer"/>
     </bean>
     
-    <bean id="profilePanel" class="org.ikasan.dashboard.ui.profile.panel.ProfilePanel" scope="session" />
+    <!-- bean id="profilePanel" class="org.ikasan.dashboard.ui.framework.panel.ProfilePanel" scope="session" / -->
 
 	<bean id="profileViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
