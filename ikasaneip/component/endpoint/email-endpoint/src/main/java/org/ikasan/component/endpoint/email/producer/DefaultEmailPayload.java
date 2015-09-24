@@ -50,33 +50,33 @@ import java.util.Map;
  */
 public class DefaultEmailPayload implements EmailPayload {
 
-    private String emailBody;
-    private String emailFormat;
     private Map<String, byte[]> attachmentsContent;
     private Map<String, String> attachmentsType;
     private List<String> attachmentNames;
+    private String emailBody;
 
+    /**
+     *
+     * @param emailBodyFromConfig
+     * @param emailFormat
+     * @return If email body is not available from payload, email body from configuration is returned.
+     * If email body is available from configuration, email body from configuration is returned.
+     */
+    @Override
+    public String formatEmailBody(String emailBodyFromConfig, String emailFormat) {
+        return getEmailBody()==null?emailBodyFromConfig:getEmailBody();
+    }
 
     @Override
     public String getEmailBody() {
         return emailBody;
     }
 
-    @Override
+
     public void setEmailBody(String emailBody) {
         this.emailBody = emailBody;
-    }
 
-    @Override
-    public String getEmailFormat() {
-        return emailFormat==null?"text/plain":emailFormat;
     }
-
-    @Override
-    public void setEmailFormat(String emailFormat) {
-        this.emailFormat = emailFormat;
-    }
-
 
     @Override
     public byte[] getAttachment(String name) {
@@ -108,15 +108,14 @@ public class DefaultEmailPayload implements EmailPayload {
             attachmentsContent = new HashMap<String, byte[]>();
         }
         attachmentsContent.put(name, content);
-
     }
 
     @Override
     public String toString() {
+
         return "DefaultEmailPayload{" +
-                "emailBody='" + emailBody + '\'' +
-                ", emailFormat='" + emailFormat + '\'' +
-                ", attachmentNames=" + attachmentNames +
+                "attachmentNames=" + attachmentNames +
+                ", payloadEmailBody='" + emailBody + '\'' +
                 '}';
     }
 }
