@@ -57,14 +57,13 @@ public class DefaultEmailPayload implements EmailPayload {
 
     /**
      *
-     * @param emailBodyFromPayload
      * @param emailBodyFromConfig
      * @param emailFormat
      * @return If email body is not available from payload, email body from configuration is returned.
      * If email body is available from configuration, email body from configuration is returned.
      */
     @Override
-    public String formatEmailBody(String emailBodyFromPayload, String emailBodyFromConfig, String emailFormat) {
+    public String formatEmailBody(String emailBodyFromConfig, String emailFormat) {
         return getEmailBody()==null?emailBodyFromConfig:getEmailBody();
     }
 
