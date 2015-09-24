@@ -49,7 +49,9 @@ import java.util.Map;
  */
 public interface EmailPayload{
 
-    public String formatEmailBody(String emailBody, String emailFormat) ;
+    public String formatEmailBody(String emailBodyFromPayload, String emailBodyFromConfig, String emailFormat) ;
+
+    public String getEmailBody();
 
     public byte[] getAttachment(String name);
 

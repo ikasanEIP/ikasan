@@ -99,7 +99,12 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             Multipart multipart = new MimeMultipart();
 
             MimeBodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setContent(payload.formatEmailBody(configuration.getEmailBody(), configuration.getEmailFormat()), configuration.getEmailFormat());
+            String bodyContent = payload.formatEmailBody(payload.getEmailBody(), configuration.getEmailBody(), configuration.getEmailFormat());
+            //mail library does not accept email body as null.
+            if(bodyContent==null){
+                bodyContent = "";
+            }
+            bodyPart.setContent(bodyContent, configuration.getEmailFormat());
             multipart.addBodyPart(bodyPart);
 
             if(configuration.hasAttachment){

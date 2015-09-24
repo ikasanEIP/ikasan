@@ -53,13 +53,31 @@ public class DefaultEmailPayload implements EmailPayload {
     private Map<String, byte[]> attachmentsContent;
     private Map<String, String> attachmentsType;
     private List<String> attachmentNames;
+    private String emailBody;
 
-
+    /**
+     *
+     * @param emailBodyFromPayload
+     * @param emailBodyFromConfig
+     * @param emailFormat
+     * @return If email body is not available from payload, email body from configuration is returned.
+     * If email body is available from configuration, email body from configuration is returned.
+     */
     @Override
-    public String formatEmailBody(String emailBody, String emailFormat) {
-        return emailBody==null?"":emailBody;
+    public String formatEmailBody(String emailBodyFromPayload, String emailBodyFromConfig, String emailFormat) {
+        return getEmailBody()==null?emailBodyFromConfig:getEmailBody();
     }
 
+    @Override
+    public String getEmailBody() {
+        return emailBody;
+    }
+
+
+    public void setEmailBody(String emailBody) {
+        this.emailBody = emailBody;
+
+    }
 
     @Override
     public byte[] getAttachment(String name) {
@@ -95,8 +113,10 @@ public class DefaultEmailPayload implements EmailPayload {
 
     @Override
     public String toString() {
+
         return "DefaultEmailPayload{" +
                 "attachmentNames=" + attachmentNames +
+                ", payloadEmailBody='" + emailBody + '\'' +
                 '}';
     }
 }
