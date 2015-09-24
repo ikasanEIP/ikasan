@@ -50,31 +50,14 @@ import java.util.Map;
  */
 public class DefaultEmailPayload implements EmailPayload {
 
-    private String emailBody;
-    private String emailFormat;
     private Map<String, byte[]> attachmentsContent;
     private Map<String, String> attachmentsType;
     private List<String> attachmentNames;
 
 
     @Override
-    public String getEmailBody() {
-        return emailBody;
-    }
-
-    @Override
-    public void setEmailBody(String emailBody) {
-        this.emailBody = emailBody;
-    }
-
-    @Override
-    public String getEmailFormat() {
-        return emailFormat==null?"text/plain":emailFormat;
-    }
-
-    @Override
-    public void setEmailFormat(String emailFormat) {
-        this.emailFormat = emailFormat;
+    public String formatEmailBody(String emailBody, String emailFormat) {
+        return emailBody==null?"":emailBody;
     }
 
 
@@ -113,9 +96,7 @@ public class DefaultEmailPayload implements EmailPayload {
     @Override
     public String toString() {
         return "DefaultEmailPayload{" +
-                "emailBody='" + emailBody + '\'' +
-                ", emailFormat='" + emailFormat + '\'' +
-                ", attachmentNames=" + attachmentNames +
+                "attachmentNames=" + attachmentNames +
                 '}';
     }
 }

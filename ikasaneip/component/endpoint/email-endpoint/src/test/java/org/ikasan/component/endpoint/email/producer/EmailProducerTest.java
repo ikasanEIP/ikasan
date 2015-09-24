@@ -110,7 +110,7 @@ public class EmailProducerTest {
 
     @Test
     public void test_successful_email_withoutAttachment() throws MessagingException, IOException {
-        EmailProducerConfiguration emailNotifierConfiguration = getConfiguration(false);
+        EmailProducerConfiguration emailNotifierConfiguration = getConfiguration(false, null);
 
         EmailProducer emailProducer = new EmailProducer();
         ((Configured) emailProducer).setConfiguration(emailNotifierConfiguration);
@@ -128,7 +128,8 @@ public class EmailProducerTest {
             Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String) bodyPart.getContent();
-            Assert.assertTrue(content.contains("This is the email body"));
+            Assert.assertTrue(content.isEmpty());
+            Assert.assertTrue("Should fild email format as \"text/plain\"", bodyPart.getContentType().contains("text/plain"));
         }
     }
 
@@ -136,10 +137,10 @@ public class EmailProducerTest {
     @Test
     public void test_successful_email_withAttachment() throws MessagingException, IOException {
 
-        EmailProducerConfiguration emailNotifierConfiguration = getConfiguration(true);
+        EmailProducerConfiguration emailProducerConfiguration = getConfiguration(true, "This is the email body");
 
         EmailProducer emailProducer = new EmailProducer();
-        ((Configured) emailProducer).setConfiguration(emailNotifierConfiguration);
+        ((Configured) emailProducer).setConfiguration(emailProducerConfiguration);
         ((ManagedResource)emailProducer).startManagedResource();
 
         emailProducer.invoke(getEmailPayload(true));
@@ -158,6 +159,7 @@ public class EmailProducerTest {
             BodyPart attachment = mimeMultipart.getBodyPart(1);
             Assert.assertEquals("Check attachment file name", "testAttachment", attachment.getFileName());
             Assert.assertTrue("Check file content", IOUtils.toString(attachment.getDataHandler().getDataSource().getInputStream()).contains("1997,Ford,E350"));
+            Assert.assertTrue("Should fild email format as \"text/plain\"", bodyPart.getContentType().contains("text/plain"));
 
         }
     }
@@ -166,10 +168,10 @@ public class EmailProducerTest {
     public void testMailServerFailure()throws IOException{
 
         wiser.stop();
-        EmailProducerConfiguration emailNotifierConfiguration = getConfiguration(true);
+        EmailProducerConfiguration emailProducerConfiguration = getConfiguration(true, null);
 
         EmailProducer emailProducer = new EmailProducer();
-        ((Configured) emailProducer).setConfiguration(emailNotifierConfiguration);
+        ((Configured) emailProducer).setConfiguration(emailProducerConfiguration);
         ((ManagedResource)emailProducer).startManagedResource();
 
         try {
@@ -183,8 +185,6 @@ public class EmailProducerTest {
     private EmailPayload getEmailPayload(boolean addAttachment) throws IOException {
 
         DefaultEmailPayload payload = new DefaultEmailPayload();
-        payload.setEmailBody("This is the email body");
-        payload.setEmailFormat("text/plain");
 
         if (addAttachment) {
             InputStream resourceAsStream = getClass().getResourceAsStream("/testAttachment.csv");
@@ -195,7 +195,7 @@ public class EmailProducerTest {
 
     }
 
-    private EmailProducerConfiguration getConfiguration(boolean hasAttachment) {
+    private EmailProducerConfiguration getConfiguration(boolean hasAttachment, String emailBody) {
 
         EmailProducerConfiguration configuration = new EmailProducerConfiguration();
 
@@ -219,6 +219,8 @@ public class EmailProducerTest {
         configuration.setExtendedMailSessionProperties(props);
 
         configuration.setMailFrom(sender);
+        configuration.setEmailFormat("text/plain");
+        configuration.setEmailBody(emailBody);
 
 
         return configuration;

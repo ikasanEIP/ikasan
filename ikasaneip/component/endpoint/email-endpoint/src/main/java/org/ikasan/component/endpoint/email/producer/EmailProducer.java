@@ -99,7 +99,7 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             Multipart multipart = new MimeMultipart();
 
             MimeBodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setContent(payload.getEmailBody(), payload.getEmailFormat());
+            bodyPart.setContent(payload.formatEmailBody(configuration.getEmailBody(), configuration.getEmailFormat()), configuration.getEmailFormat());
             multipart.addBodyPart(bodyPart);
 
             if(configuration.hasAttachment){
@@ -207,6 +207,7 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
         {
             mailProperties.put("mail.pop.user", configuration.getMailPopUser());
         }
+
 
         mailProperties.putAll(configuration.getExtendedMailSessionProperties());
 

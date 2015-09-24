@@ -104,6 +104,12 @@ public class EmailProducerConfiguration {
 
     protected String runtimeEnvironment;
 
+    /** email content */
+    protected  String emailBody;
+
+    /** email format, e.g. plain text, html */
+    protected String emailFormat;
+
     /** to recipients */
     protected List<String> toRecipients = new ArrayList<String>();
 
@@ -113,7 +119,7 @@ public class EmailProducerConfiguration {
     /** bcc recipients */
     protected List<String> bccRecipients = new ArrayList<String>();
 
-
+    /** flag for attachment */
     protected boolean hasAttachment = false;
 
 
@@ -307,4 +313,15 @@ public class EmailProducerConfiguration {
     public void setRuntimeEnvironment(String runtimeEnvironment) {
         this.runtimeEnvironment = runtimeEnvironment;
     }
+
+    public void setEmailBody(String emailBody){ this.emailBody = emailBody; }
+
+    public void setEmailFormat(String emailFormat){this.emailFormat = emailFormat;}
+
+    public String getEmailBody(){return emailBody;}
+
+    public String getEmailFormat(){return emailFormat;}
+
+
+
 }
