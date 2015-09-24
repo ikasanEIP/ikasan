@@ -166,7 +166,7 @@ public class TopologyStateCache
 		
 		try
 		{
-			url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+			url = module.getServer().getUrl() + ":" + module.getServer().getPort() 
 					+ module.getContextRoot() 
 					+ "/rest/moduleControl/flowStates/"
 					+ module.getName();

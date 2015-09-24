@@ -410,7 +410,7 @@ public class WiretapConfigurationWindow extends Window
     	
     	Server server = this.component.getFlow().getModule().getServer();
 		
-		String url = "http://" + server.getUrl() + ":" + server.getPort()
+		String url = server.getUrl() + ":" + server.getPort()
 				+ this.component.getFlow().getModule().getContextRoot() 
 				+ "/rest/wiretap/createTrigger/"
 	    		+ this.component.getFlow().getModule().getName() 
@@ -460,7 +460,7 @@ public class WiretapConfigurationWindow extends Window
     	
     	Server server = this.component.getFlow().getModule().getServer();
 		
-		String url = "http://" + server.getUrl() + ":" + server.getPort()
+		String url = server.getUrl() + ":" + server.getPort()
 				+ this.component.getFlow().getModule().getContextRoot() 
 				+ "/rest/wiretap/deleteTrigger";
 		

@@ -568,7 +568,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
     	
     	Client client = ClientBuilder.newClient(clientConfig);
 		
-    	String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
+    	String url = flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
 				+ flow.getModule().getContextRoot() 
 				+ "/rest/moduleControl/controlFlowState/"
 				+ flow.getModule().getName() 

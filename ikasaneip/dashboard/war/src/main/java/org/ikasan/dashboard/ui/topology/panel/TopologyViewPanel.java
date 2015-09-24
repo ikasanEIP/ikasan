@@ -75,7 +75,7 @@ import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
-import org.ikasan.dashboard.ui.topology.window.NewServerWindow;
+import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
@@ -175,8 +175,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action DETAILS = new Action("Details");
     private final Action WIRETAP = new Action("Wiretap");
     private final Action ERROR_CATEGORISATION = new Action("Categorise Error");
+    private final Action EDIT = new Action("Edit");
     private final Action STARTUP_CONTROL = new Action("Startup Type");
-    private final Action[] serverActions = new Action[] { DETAILS, ERROR_CATEGORISATION };
+    private final Action[] serverActions = new Action[] { DETAILS, ERROR_CATEGORISATION, EDIT };
     private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION };
     private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
@@ -719,7 +720,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
-				UI.getCurrent().addWindow(new NewServerWindow(topologyService));
+				UI.getCurrent().addWindow(new ServerWindow(topologyService));
             }
         });
 		
@@ -1057,7 +1058,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	
     	Client client = ClientBuilder.newClient(clientConfig);
 		
-    	String url = "http://" + flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
+    	String url = flow.getModule().getServer().getUrl() + ":" + flow.getModule().getServer().getPort()
 				+ flow.getModule().getContextRoot() 
 				+ "/rest/moduleControl/controlFlowState/"
 				+ flow.getModule().getName() 
@@ -1243,6 +1244,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		
         		UI.getCurrent().addWindow(new ErrorCategorisationWindow(server,
         				null, null, null, errorCategorisationService));
+        	}
+        	else if(action.equals(EDIT))
+        	{
+        		Server server = (Server)target;
+        		
+        		UI.getCurrent().addWindow(new ServerWindow(topologyService, server));
         	}
         }
 	}
