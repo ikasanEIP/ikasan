@@ -167,7 +167,7 @@ public class AdminPasswordDialog extends Window
                     if(!passwordField.getValue()
                     		.equals(passwordConfirmField.getValue()))
                     {
-                    	Notification.show("Password and confirmation must tbe the same!", Type.ERROR_MESSAGE);
+                    	Notification.show("Password and confirmation must be the same!", Type.ERROR_MESSAGE);
                     	
                     	return;
                     }
@@ -189,19 +189,7 @@ public class AdminPasswordDialog extends Window
             }
         });
         buttons.addComponent(saveButton);
-
-//        Button cancelButton = new Button("Cancel");
-//        cancelButton.setStyleName(ValoTheme.BUTTON_SMALL);
-//        cancelButton.addClickListener(new ClickListener() 
-//        {
-//            @Override
-//            public void buttonClick(ClickEvent event) 
-//            {
-//                close();
-//            }
-//        });
-//        buttons.addComponent(cancelButton);
-
+        
         form.addComponent(buttons, 0, 3, 1, 3);
         form.setComponentAlignment(buttons, Alignment.MIDDLE_CENTER);
         

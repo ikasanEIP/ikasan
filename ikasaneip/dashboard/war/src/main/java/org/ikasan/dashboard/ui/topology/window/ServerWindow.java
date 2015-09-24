@@ -68,11 +68,8 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class NewServerWindow extends Window
+public class ServerWindow extends Window
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private TextField name;
@@ -84,9 +81,11 @@ public class NewServerWindow extends Window
 	
 
 	/**
-	 * @param policy
+	 * Constructor
+	 * 
+	 * @param topologyService
 	 */
-	public NewServerWindow(TopologyService topologyService)
+	public ServerWindow(TopologyService topologyService)
 	{
 		super();
 		
@@ -100,6 +99,31 @@ public class NewServerWindow extends Window
 		
 		this.init();
 	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param topologyService
+	 * @param server
+	 */
+	public ServerWindow(TopologyService topologyService, Server server)
+	{
+		super();
+		
+		this.topologyService = topologyService;
+		if(this.topologyService == null)
+		{
+			throw new IllegalArgumentException("topology service cannot be null!");
+		}
+		
+		this.server = server;
+		if(this.server == null)
+		{
+			throw new IllegalArgumentException("server cannot be null!");
+		}
+		
+		this.init();
+	}
 
 
 	public void init()
@@ -107,7 +131,7 @@ public class NewServerWindow extends Window
 		this.setModal(true);
 		this.setResizable(false);
 		
-		GridLayout gridLayout = new GridLayout(2, 6);
+		GridLayout gridLayout = new GridLayout(2, 7);
 		gridLayout.setWidth("480px");
 		gridLayout.setColumnExpandRatio(0, .15f);
 		gridLayout.setColumnExpandRatio(1, .85f);
@@ -115,7 +139,7 @@ public class NewServerWindow extends Window
 		gridLayout.setSpacing(true);
 		gridLayout.setMargin(true);
 
-		Label newBusinessStreamLabel = new Label("New Server");
+		Label newBusinessStreamLabel = new Label("Server");
 		newBusinessStreamLabel.addStyleName(ValoTheme.LABEL_HUGE);
 		
 		gridLayout.addComponent(newBusinessStreamLabel, 0, 0, 1, 0);
@@ -132,6 +156,7 @@ public class NewServerWindow extends Window
 		gridLayout.setComponentAlignment(nameLabel, Alignment.MIDDLE_RIGHT);
 		gridLayout.addComponent(name, 1, 1);
 		
+		
 		Label urlLabel = new Label("URL:");
 		urlLabel.setSizeUndefined();
 		this.url = new TextField();
@@ -140,9 +165,9 @@ public class NewServerWindow extends Window
 	            1, null, false));
 		this.url.setWidth("90%");
 		
-		gridLayout.addComponent(urlLabel, 0, 2);
+		gridLayout.addComponent(urlLabel, 0, 3);
 		gridLayout.setComponentAlignment(urlLabel, Alignment.MIDDLE_RIGHT);
-		gridLayout.addComponent(url, 1, 2);
+		gridLayout.addComponent(url, 1, 3);
 		
 		Label portLabel = new Label("Port Number:");
 		portLabel.setSizeUndefined();
@@ -163,9 +188,9 @@ public class NewServerWindow extends Window
 		// either set for the field or in your field factory for multiple fields
 		this.port.setConverter(plainIntegerConverter);
 		
-		gridLayout.addComponent(portLabel, 0, 3);
+		gridLayout.addComponent(portLabel, 0, 4);
 		gridLayout.setComponentAlignment(portLabel, Alignment.MIDDLE_RIGHT);
-		gridLayout.addComponent(port, 1, 3);
+		gridLayout.addComponent(port, 1, 4);
 		
 		Label descriptionLabel = new Label("Description:");
 		descriptionLabel.setSizeUndefined();
@@ -181,62 +206,62 @@ public class NewServerWindow extends Window
     	this.url.setValidationVisible(false);
     	this.port.setValidationVisible(false);
 		
-		gridLayout.addComponent(descriptionLabel, 0, 4);
+		gridLayout.addComponent(descriptionLabel, 0, 5);
 		gridLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
-		gridLayout.addComponent(description, 1, 4);
+		gridLayout.addComponent(description, 1, 5);
 		
-		Button createButton = new Button("Create");
+		Button saveButton = new Button("Save");
 		Button cancelButton = new Button("Cancel");
 		
 		GridLayout buttonLayout = new GridLayout(2, 1);
 		buttonLayout.setSpacing(true);
 
-		buttonLayout.addComponent(createButton);
-		buttonLayout.setComponentAlignment(createButton, Alignment.MIDDLE_CENTER);
+		buttonLayout.addComponent(saveButton);
+		buttonLayout.setComponentAlignment(saveButton, Alignment.MIDDLE_CENTER);
 		buttonLayout.addComponent(cancelButton);
 		buttonLayout.setComponentAlignment(cancelButton, Alignment.MIDDLE_CENTER);
 		
-		gridLayout.addComponent(buttonLayout, 0, 5, 1, 5);
+		gridLayout.addComponent(buttonLayout, 0, 6, 1, 6);
 		gridLayout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 		
-		BeanItem<Server> policyItem = new BeanItem<Server>(this.server);
+		BeanItem<Server> serverItem = new BeanItem<Server>(this.server);
 
-		name.setPropertyDataSource(policyItem.getItemProperty("name"));
-		description.setPropertyDataSource(policyItem.getItemProperty("description"));
-		url.setPropertyDataSource(policyItem.getItemProperty("url"));
-		port.setPropertyDataSource(policyItem.getItemProperty("port"));
+		name.setPropertyDataSource(serverItem.getItemProperty("name"));
+		description.setPropertyDataSource(serverItem.getItemProperty("description"));
+		url.setPropertyDataSource(serverItem.getItemProperty("url"));
+		this.port.setPropertyDataSource(serverItem.getItemProperty("port"));
 		
-		createButton.addClickListener(new Button.ClickListener() 
+		saveButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
             {
             	try 
                 {
-            		NewServerWindow.this.name.validate();
-            		NewServerWindow.this.description.validate();
-            		NewServerWindow.this.url.validate();
-            		NewServerWindow.this.port.validate();
+            		ServerWindow.this.name.validate();
+            		ServerWindow.this.description.validate();
+            		ServerWindow.this.url.validate();
+            		ServerWindow.this.port.validate();
                 } 
             	catch (InvalidValueException e) 
                 {
-                	NewServerWindow.this.name.setValidationVisible(true);
-                	NewServerWindow.this.description.setValidationVisible(true);
-                	NewServerWindow.this.url.setValidationVisible(true);
-                	NewServerWindow.this.port.setValidationVisible(true);
+                	ServerWindow.this.name.setValidationVisible(true);
+                	ServerWindow.this.description.setValidationVisible(true);
+                	ServerWindow.this.url.setValidationVisible(true);
+                	ServerWindow.this.port.setValidationVisible(true);
                 	
                 	return;
                 }
             	
-            	NewServerWindow.this.name.setValidationVisible(false);
-            	NewServerWindow.this.description.setValidationVisible(false);
-            	NewServerWindow.this.url.setValidationVisible(false);
-            	NewServerWindow.this.port.setValidationVisible(false);
+            	ServerWindow.this.name.setValidationVisible(false);
+            	ServerWindow.this.description.setValidationVisible(false);
+            	ServerWindow.this.url.setValidationVisible(false);
+            	ServerWindow.this.port.setValidationVisible(false);
 
             	topologyService.save(server);
             	
             	Notification.show("New Server Created!");
             	
-            	UI.getCurrent().removeWindow(NewServerWindow.this);
+            	UI.getCurrent().removeWindow(ServerWindow.this);
             }
         });
 		
@@ -244,7 +269,7 @@ public class NewServerWindow extends Window
     	{
             public void buttonClick(ClickEvent event) 
             {
-                UI.getCurrent().removeWindow(NewServerWindow.this);
+                UI.getCurrent().removeWindow(ServerWindow.this);
             }
         });
 		
