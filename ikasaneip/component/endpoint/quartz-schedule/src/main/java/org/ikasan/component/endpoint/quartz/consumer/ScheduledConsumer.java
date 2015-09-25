@@ -277,10 +277,10 @@ public class ScheduledConsumer<T>
             }
 
             // only start this consumer if its not currently running or purposefully paused.
-//            if(!this.isRunning() && !this.isPaused())
-//            {
-//                this.start();
-//            }
+            if(!this.isRunning() && !this.isPaused())
+            {
+                this.start();
+            }
         }
     }
 
