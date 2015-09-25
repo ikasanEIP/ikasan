@@ -450,7 +450,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         try
         {
-            consumer.start();
+            if(!consumer.isRunning())
+            {
+                consumer.start();
+            }
         }
         catch(RuntimeException e)
         {
@@ -592,6 +595,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
+
+                    // start the consumer if not already running
+                    startConsumer();
                 }
                 
             }
@@ -622,6 +628,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             if(this.recoveryManager.isRecovering())
             {
                 this.recoveryManager.cancel();
+
+                // start the consumer if not already running
+                startConsumer();
             }
                 
         }

@@ -532,18 +532,17 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
-     * Cancel an in progress recovery and restore any scheduled consumers.
-     * This is a workaround to scheduled consumers being a bit of an odd ball in the consumer world.
+     * Cancel an in progress recovery.
      */
     public void cancel()
     {
         this.cancelRecovery();
 
-        // for scheduled based consumers we need start them on their normal flow of execution
-        if(this.consumer instanceof Job)
-        {
-            this.consumer.start();
-        }
+//        // for scheduled based consumers we need start them on their normal flow of execution
+//        if(this.consumer instanceof Job)
+//        {
+//            this.consumer.start();
+//        }
     }
     
     public void initialise()
