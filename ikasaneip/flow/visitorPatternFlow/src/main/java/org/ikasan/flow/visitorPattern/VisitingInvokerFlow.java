@@ -419,7 +419,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
     }
 
-    protected boolean isRunning()
+    /**
+     * Is this flow in a running / recovering state
+     * @return
+     */
+    public boolean isRunning()
     {
         String currentState = this.getState();
         if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
@@ -429,7 +433,17 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         return false;
     }
-    
+
+    /**
+     * Is this flow in a paused state
+     * @return
+     */
+    public boolean isPaused()
+    {
+        String currentState = this.getState();
+        return currentState.equals(PAUSED);
+    }
+
     /**
      * Start the consumer component.
      */
@@ -450,10 +464,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         try
         {
-            if(!consumer.isRunning())
-            {
-                consumer.start();
-            }
+            consumer.start();
         }
         catch(RuntimeException e)
         {
@@ -595,11 +606,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
-
-                    // start the consumer if not already running
-                    startConsumer();
                 }
-                
             }
         }
         catch(Throwable throwable)
@@ -628,11 +635,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             if(this.recoveryManager.isRecovering())
             {
                 this.recoveryManager.cancel();
-
-                // start the consumer if not already running
-                startConsumer();
             }
-                
         }
         catch(Throwable throwable)
         {
