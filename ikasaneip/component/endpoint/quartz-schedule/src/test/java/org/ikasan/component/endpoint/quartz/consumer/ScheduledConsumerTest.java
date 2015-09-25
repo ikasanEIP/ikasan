@@ -291,6 +291,8 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // schedule the job
                 exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
@@ -311,6 +313,7 @@ public class ScheduledConsumerTest
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         // test
         scheduledConsumer.execute(jobExecutionContext);
@@ -378,7 +381,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
-                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                exactly(2).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
 
                 // cancel recovery
@@ -452,6 +455,8 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // schedule the job
                 exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
@@ -477,6 +482,7 @@ public class ScheduledConsumerTest
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setJobDetail(jobDetail);
 
         // test
