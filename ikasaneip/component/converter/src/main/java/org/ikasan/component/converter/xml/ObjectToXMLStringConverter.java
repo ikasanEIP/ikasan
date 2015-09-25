@@ -42,7 +42,6 @@ package org.ikasan.component.converter.xml;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -319,7 +318,29 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
     }
 
     /**
-     * Apply the configuration seprately from setting to avoid deployment failures if the configuration fails.
+     * Generate QName based on the incoming parameter population.
+     * @param name
+     * @param namespaceURI
+     * @param prefix
+     * @return
+     */
+    protected QName getQName(String name, String namespaceURI, String prefix)
+    {
+        if(namespaceURI == null)
+        {
+            return new QName(name);
+        }
+
+        if(prefix == null)
+        {
+            return new QName(namespaceURI, name);
+        }
+
+        return new QName(namespaceURI, name, prefix);
+    }
+
+    /**
+     * Apply the configuration separately from setting to avoid deployment failures if the configuration fails.
      */
     protected void applyConfiguration()
     {
@@ -329,7 +350,7 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
         // do we need to override the root name
         if(this.xmlConfiguration.getRootName() != null)
         {
-            rootQName = new QName(this.xmlConfiguration.getRootName());
+            rootQName = getQName(this.xmlConfiguration.getRootName(), this.xmlConfiguration.getNamespaceURI(), this.xmlConfiguration.getNamespacePrefix());
 
             // do we have a rootname class
             if(this.xmlConfiguration.getRootClassName() != null)
@@ -382,11 +403,11 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
                 int period = this.xmlConfiguration.getRootClassName().lastIndexOf(".");
                 if(period <= 0)
                 {
-                    rootQName = new QName( this.xmlConfiguration.getRootClassName() );
+                    rootQName = getQName(this.xmlConfiguration.getRootClassName(), this.xmlConfiguration.getNamespaceURI(), this.xmlConfiguration.getNamespacePrefix());
                 }
                 else
                 {
-                    rootQName = new QName( this.xmlConfiguration.getRootClassName().substring(period + 1) );
+                    rootQName = getQName(this.xmlConfiguration.getRootClassName().substring(period + 1), this.xmlConfiguration.getNamespaceURI(), this.xmlConfiguration.getNamespacePrefix());
                 }
             }
         }
