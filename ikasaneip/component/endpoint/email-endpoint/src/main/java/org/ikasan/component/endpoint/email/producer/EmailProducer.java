@@ -95,16 +95,16 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
             message.addRecipients(Message.RecipientType.CC, recipients.get(Message.RecipientType.CC));
             message.addRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
 
-            if (configuration.getSubject() == null) {
-                message.setSubject("[" + configuration.getRuntimeEnvironment() + "]: No Subject");
-            } else {
-                String subject = "[" + configuration.getRuntimeEnvironment() + "]: " + configuration.getSubject();
-                message.setSubject(subject);
-            }
+            message.setSubject(configuration.getSubject());
             Multipart multipart = new MimeMultipart();
 
             MimeBodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setContent(payload.getEmailBody(), payload.getEmailFormat());
+            String bodyContent = payload.formatEmailBody(configuration.getEmailBody(), configuration.getEmailFormat());
+            //mail library does not accept email body as null.
+            if(bodyContent==null){
+                bodyContent = "";
+            }
+            bodyPart.setContent(bodyContent, configuration.getEmailFormat());
             multipart.addBodyPart(bodyPart);
 
             if(configuration.hasAttachment){
@@ -212,6 +212,7 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
         {
             mailProperties.put("mail.pop.user", configuration.getMailPopUser());
         }
+
 
         mailProperties.putAll(configuration.getExtendedMailSessionProperties());
 
