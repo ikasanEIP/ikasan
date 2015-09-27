@@ -56,6 +56,7 @@ import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
@@ -251,6 +252,8 @@ public class ScheduledConsumer<T>
      */
     public void invoke(T message)
     {
+        boolean isRecovering = managedResourceRecoveryManager.isRecovering();
+
         if (message != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(message);
@@ -262,22 +265,49 @@ public class ScheduledConsumer<T>
             {
                 logger.debug("'null' returned from MessageProvider. Flow not invoked");
             }
+        }
 
+        if(isRecovering)
+        {
+            // cancel the recovery schedule if still active
+            // could be the flow has already cancelled this, so check
             if(managedResourceRecoveryManager.isRecovering())
             {
-                // cancel the recovery schedule
                 managedResourceRecoveryManager.cancel();
+            }
+
+            // only start this consumer if its not currently running or purposefully paused.
+            if(!this.isRunning() && !this.isPaused())
+            {
+                this.start();
             }
         }
     }
-    
+
+    /**
+     * Quick workaround to determine if this consumer has been stopped as part of a pause
+     * rather than stopped as part of a complete flow stop.
+     * @return
+     */
+    protected boolean isPaused()
+    {
+        if(eventListener instanceof Flow)
+        {
+            return ((Flow)eventListener).isPaused();
+        }
+
+        return false;
+    }
+
     /* (non-Javadoc)
 	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
 	 */
 	@Override
 	public void submit(T event)
 	{
-		if (event != null)
+        boolean isRecovering = managedResourceRecoveryManager.isRecovering();
+
+        if (event != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(event);
 
@@ -291,11 +321,21 @@ public class ScheduledConsumer<T>
             {
                 logger.debug("'null' returned from MessageProvider. Flow not invoked");
             }
+        }
 
+        if(isRecovering)
+        {
+            // cancel the recovery schedule if still active
+            // could be the flow has already cancelled this, so check
             if(managedResourceRecoveryManager.isRecovering())
             {
-                // cancel the recovery schedule
                 managedResourceRecoveryManager.cancel();
+            }
+
+            // only start this consumer if its not currently running or purposefully paused.
+            if(!this.isRunning() && !this.isPaused())
+            {
+                this.start();
             }
         }
 	}

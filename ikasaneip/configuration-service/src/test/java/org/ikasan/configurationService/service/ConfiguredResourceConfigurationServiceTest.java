@@ -46,6 +46,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.company.mypackage.name.ExtendedSampleConfiguration;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
@@ -142,6 +143,47 @@ public class ConfiguredResourceConfigurationServiceTest
     public void test_configurationService_setting_of_a_static_configuration_with_configuration()
     {
         final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
+        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
+
+        // add a string parameter
+        persistedConfiguration.getParameters().add( new ConfigurationParameterStringImpl("one", "1", "Number One") );
+
+        // save it
+        this.configurationServiceDao.save(persistedConfiguration);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // once to try to locate a dao based on this id
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+
+                // once to try to locate a dao based on this id
+                one(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+
+                // set the dao on the resource
+                one(configuredResource).setConfiguration(runtimeConfiguration);
+            }
+        });
+
+        configurationService.configure(configuredResource);
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test the setting of a static dao on a configuredResource at runtime
+     * where a persisted dao exists.
+     * This is typically invoked on the start of a flow where the flow identifies
+     * all configuredResources and ensures the latest dao is applied
+     * prior to starting the moving components.
+     */
+    @Test
+    @DirtiesContext
+    public void test_configurationService_setting_of_a_static_configuration_with_configuration_extendedClass()
+    {
+        final ExtendedSampleConfiguration runtimeConfiguration = new ExtendedSampleConfiguration();
         final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
 
         // add a string parameter
