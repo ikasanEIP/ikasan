@@ -241,6 +241,7 @@
 	        </list>
 	    </constructor-arg>
 	    <constructor-arg ref="systemEventService"/>
+	    <constructor-arg ref="userService"/>
 	</bean>
 
     <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">

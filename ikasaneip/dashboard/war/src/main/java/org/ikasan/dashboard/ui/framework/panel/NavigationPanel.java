@@ -55,8 +55,8 @@ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -104,6 +104,7 @@ public class NavigationPanel extends Panel implements ViewContext
 	private Component toggleButton = new Button();
 	private Menu menu;
 	private SystemEventService systemEventService;
+	private UserService userService; 
 
 	/**
 	 * 
@@ -123,7 +124,7 @@ public class NavigationPanel extends Panel implements ViewContext
 			VerticalLayout imagePanelLayout,
 			HashMap<String, IkasanUINavigator> views,
 			List<RefreshGroup> refreshGroups,
-			SystemEventService systemEventService)
+			SystemEventService systemEventService, UserService userService)
 	{
 		this.authenticationService = authenticationService;
 		this.visibilityGroup = visibilityGroup;
@@ -134,6 +135,7 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.views = views;
 		this.refreshGroups = refreshGroups;
 		this.systemEventService = systemEventService;
+		this.userService = userService;
 		init();
 	}
 
@@ -160,7 +162,7 @@ public class NavigationPanel extends Panel implements ViewContext
 
 
 		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
-				this);
+				this, userService);
 
 		this.loginButton = new Button("Login");
 		this.loginButton.setPrimaryStyleName("valo-menu-item");

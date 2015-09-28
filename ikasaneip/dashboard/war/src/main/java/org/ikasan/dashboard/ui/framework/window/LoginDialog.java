@@ -45,6 +45,7 @@ import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.UserService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -52,12 +53,10 @@ import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -88,11 +87,11 @@ public class LoginDialog extends Window
      * @param commitHandler
      */
     public LoginDialog(AuthenticationService authenticationService,
-            VisibilityGroup visibilityGroup,
-            NavigationPanel commitHandler)
+            VisibilityGroup visibilityGroup, NavigationPanel commitHandler,
+            UserService userService)
     {
         super();
-        init(authenticationService, visibilityGroup, commitHandler);
+        init(authenticationService, visibilityGroup, commitHandler, userService);
     }
 
     /**
@@ -105,7 +104,7 @@ public class LoginDialog extends Window
      * @param commitHandler
      */
     protected void init(AuthenticationService authenticationService,
-            VisibilityGroup visibilityGroup, final NavigationPanel commitHandler)
+            VisibilityGroup visibilityGroup, final NavigationPanel commitHandler, UserService userService)
     {
         super.setModal(true);
         super.setResizable(false);
@@ -155,7 +154,7 @@ public class LoginDialog extends Window
         form.addComponent(passwordField, 1, 2);
 
         final LoginFieldGroup binder = new LoginFieldGroup(item, visibilityGroup
-            , authenticationService);
+            , authenticationService, userService);
         binder.bind(userNameField, LoginFieldGroup.USERNAME);
         binder.bind(passwordField, LoginFieldGroup.PASSWORD);
 

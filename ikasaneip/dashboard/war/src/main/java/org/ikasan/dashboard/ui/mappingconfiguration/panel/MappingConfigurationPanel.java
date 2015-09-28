@@ -863,7 +863,7 @@ public class MappingConfigurationPanel extends Panel implements View
         
         ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
         
-        String schemaLocation = parameter.getValue().get("mappingExportSchemaLocation");
+        String schemaLocation = parameter.getValue().get("mappingValuesExportSchemaLocation");
         
         if(schemaLocation == null || schemaLocation.length() == 0)
         {
@@ -903,7 +903,7 @@ public class MappingConfigurationPanel extends Panel implements View
         
         ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
         
-        String schemaLocation = parameter.getValue().get("mappingValuesExportSchemaLocation");
+        String schemaLocation = parameter.getValue().get("mappingExportSchemaLocation");
         
         if(schemaLocation == null || schemaLocation.length() == 0)
         {
