@@ -38,42 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+package com.company.mypackage.name;
 
-import org.ikasan.component.converter.xml.jaxb.Example;
+import org.ikasan.configurationService.service.SampleConfiguration;
 
-public class ExampleEventFactory
+/**
+ * Extended Sample configuration class for testing
+ * Ikasan Development Team.
+ */
+public class ExtendedSampleConfiguration extends SampleConfiguration
 {
-    final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>1</one><two>2</two></example>";
+	private String extendedField;
 
-    final String sparseXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></example>";
+	private boolean primitiveBool;
 
-    final String xmlOutOfOrder = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><two>2</two><one>1</one></example>";
+	public String getExtendedField() {
+		return extendedField;
+	}
 
-    final String xmlInvalidJaxb = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>1</one><two>2</two><three>3</three></example>";
+	public void setExtendedField(String extendedField) {
+		this.extendedField = extendedField;
+	}
 
-    public String getXmlEvent()
-    {
-        return this.xml;
-    }
+	public boolean isPrimitiveBool() {
+		return primitiveBool;
+	}
 
-    public String getXmlEventOutOfOrder()
-    {
-        return this.xmlOutOfOrder;
-    }
-    
-    public String getSparseXmlEvent()
-    {
-        return this.sparseXml;
-    }
-    
-    public Example getObjectEvent()
-    {
-        return new Example();
-    }
-
-    public String getXmlInvalidJaxb()
-    {
-        return xmlInvalidJaxb;
-    }
+	public void setPrimitiveBool(boolean primitiveBool) {
+		this.primitiveBool = primitiveBool;
+	}
 }

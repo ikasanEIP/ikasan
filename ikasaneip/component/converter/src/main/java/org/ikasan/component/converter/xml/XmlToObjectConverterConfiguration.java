@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.converter.xml;
 
+import javax.xml.bind.ValidationEventHandler;
 import java.util.Map;
 
 /**
@@ -58,6 +59,9 @@ public class XmlToObjectConverterConfiguration
     private Map<String, Object> unmarshallerProperties;
 
     private Map<String, Object> marshallerProperties;
+
+    private ValidationEventHandler validationEventHandler;
+
 
     public String[] getContextPaths()
     {
@@ -117,5 +121,15 @@ public class XmlToObjectConverterConfiguration
     public void setMarshallerProperties(Map<String, Object> marshallerProperties)
     {
         this.marshallerProperties = marshallerProperties;
+    }
+
+    public ValidationEventHandler getValidationEventHandler()
+    {
+        return validationEventHandler;
+    }
+
+    public void setValidationEventHandler(ValidationEventHandler validationEventHandler)
+    {
+        this.validationEventHandler = validationEventHandler;
     }
 }

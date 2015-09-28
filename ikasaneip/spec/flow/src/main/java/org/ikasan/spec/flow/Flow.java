@@ -142,4 +142,16 @@ public interface Flow
      * @return
      */
     public SerialiserFactory getSerialiserFactory();
+
+    /**
+     * Is this flow in a running state
+     * @return
+     */
+    public boolean isRunning();
+
+    /**
+     * Is this flow in a paused state
+     * @return
+     */
+    public boolean isPaused();
 }
