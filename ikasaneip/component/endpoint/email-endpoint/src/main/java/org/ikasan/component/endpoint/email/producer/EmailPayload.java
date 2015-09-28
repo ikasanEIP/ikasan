@@ -1,3 +1,4 @@
+package org.ikasan.component.endpoint.email.producer;
 /*
  * $Id$
  * $URL$
@@ -38,42 +39,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.converter.xml;
+import java.io.ByteArrayInputStream;
+import java.util.List;
+import java.util.Map;
 
-import org.ikasan.component.converter.xml.jaxb.Example;
+/**
+ * This interface defines email payload
+ * @author Ikasan Development Team
+ */
+public interface EmailPayload{
 
-public class ExampleEventFactory
-{
-    final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>1</one><two>2</two></example>";
+    public String formatEmailBody(String emailBody, String emailFormat) ;
 
-    final String sparseXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></example>";
+    public String getEmailBody();
 
-    final String xmlOutOfOrder = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><two>2</two><one>1</one></example>";
+    public byte[] getAttachment(String name);
 
-    final String xmlInvalidJaxb = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>1</one><two>2</two><three>3</three></example>";
+    public List<String> getAttachmentNames();
 
-    public String getXmlEvent()
-    {
-        return this.xml;
-    }
+    public String getAttachmentType(String name);
 
-    public String getXmlEventOutOfOrder()
-    {
-        return this.xmlOutOfOrder;
-    }
-    
-    public String getSparseXmlEvent()
-    {
-        return this.sparseXml;
-    }
-    
-    public Example getObjectEvent()
-    {
-        return new Example();
-    }
-
-    public String getXmlInvalidJaxb()
-    {
-        return xmlInvalidJaxb;
-    }
 }

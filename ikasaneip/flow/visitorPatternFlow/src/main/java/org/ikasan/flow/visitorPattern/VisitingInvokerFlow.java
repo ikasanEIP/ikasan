@@ -419,7 +419,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
     }
 
-    protected boolean isRunning()
+    /**
+     * Is this flow in a running / recovering state
+     * @return
+     */
+    public boolean isRunning()
     {
         String currentState = this.getState();
         if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
@@ -429,7 +433,17 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         return false;
     }
-    
+
+    /**
+     * Is this flow in a paused state
+     * @return
+     */
+    public boolean isPaused()
+    {
+        String currentState = this.getState();
+        return currentState.equals(PAUSED);
+    }
+
     /**
      * Start the consumer component.
      */
@@ -593,7 +607,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 {
                     this.recoveryManager.cancel();
                 }
-                
             }
         }
         catch(Throwable throwable)
@@ -623,7 +636,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 this.recoveryManager.cancel();
             }
-                
         }
         catch(Throwable throwable)
         {

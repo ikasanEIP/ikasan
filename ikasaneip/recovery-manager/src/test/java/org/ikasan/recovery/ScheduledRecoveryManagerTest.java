@@ -418,10 +418,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -476,174 +472,6 @@ public class ScheduledRecoveryManagerTest
     }
 
     /**
-     * Test successful retry action on recovery where consumer is already been stopped
-     * most likely due to client pausing or stopping the flow from another thread.
-     * In this case the retry should not re-instate the consumer, but leave it as is.
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_successful_recover_to_retryAction_where_consumer_is_already_stopped_no_recovery_in_progress() throws SchedulerException
-    {
-        final Exception exception = new Exception();
-        final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
-        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName", "moduleName");
-        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
-
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(false));
-
-                // for this test we are not already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(false));
-            }
-        });
-
-        recoveryManager.setResolver(exceptionResolver);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry ignored on a paused/stopped consumer", e.getMessage());
-        }
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
-
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test successful retry action on recovery where consumer is already been stopped
-     * most likely due to client pausing or stopping the flow from another thread.
-     * In this case the retry should not re-instate the consumer, but leave it as is.
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_successful_recover_to_retryAction_where_consumer_is_already_stopped_with_recovery_in_progress() throws SchedulerException
-    {
-        final Exception exception = new Exception();
-        final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
-        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName", "moduleName");
-        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
-        final long delay = 2000;
-        final int maxRetries = 2;
-        final List managedResources = new ArrayList();
-        managedResources.add(flowElement);
-
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                //
-                // first time retry action is invoked
-                //
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
-
-                // for this test we are already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(true));
-
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
-                will(returnValue(jobDetail));
-
-                // create the recovery job and associated trigger
-                exactly(2).of(retryAction).getMaxRetries();
-                will(returnValue(maxRetries));
-                exactly(1).of(retryAction).getDelay();
-                will(returnValue(delay));
-
-                // schedule the recovery job with its trigger
-                exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
-
-                //
-                // second invocation
-
-                // resolve the component name and exception to an action
-                exactly(1).of(exceptionResolver).resolve("componentName", exception);
-                will(returnValue(retryAction));
-
-                // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
-                will(returnValue("errorUri"));
-
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(false));
-
-                // for this test we are not already in a recovery
-                exactly(1).of(scheduler).isStarted();
-                will(returnValue(true));
-
-                // cancel the recovery
-                exactly(1).of(scheduler).deleteJob(jobKey);
-                exactly(1).of(scheduler).checkExists(consumerJobKey);
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(scheduler).deleteJob(consumerJobKey);
-
-            }
-        });
-
-        recoveryManager.setResolver(exceptionResolver);
-        recoveryManager.setManagedResources(managedResources);
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry", e.getMessage());
-        }
-
-        try
-        {
-            recoveryManager.recover("componentName", exception);
-        }
-        catch(RuntimeException e)
-        {
-            Assert.assertEquals("Retry ignored on a paused/stopped consumer", e.getMessage());
-        }
-
-        // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
-
-        mockery.assertIsSatisfied();
-    }
-
-    /**
      * Test successful retry action on recovery.
      * @throws SchedulerException 
      */
@@ -663,10 +491,6 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
 
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
@@ -753,10 +577,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -788,10 +608,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -814,10 +630,6 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
 
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
@@ -920,10 +732,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -960,10 +768,6 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
 
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
-
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
@@ -991,10 +795,6 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-
-                // is consumer already stopped?
-                exactly(1).of(consumer).isRunning();
-                will(returnValue(true));
 
                 // report error
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());

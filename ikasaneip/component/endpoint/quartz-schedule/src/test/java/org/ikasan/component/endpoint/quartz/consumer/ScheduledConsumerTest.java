@@ -160,8 +160,7 @@ public class ScheduledConsumerTest
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         
         // expectations
-        mockery.checking(new Expectations()
-        {
+        mockery.checking(new Expectations() {
             {
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
@@ -170,7 +169,7 @@ public class ScheduledConsumerTest
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
-                
+
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(throwException(new SchedulerException()));
@@ -259,8 +258,7 @@ public class ScheduledConsumerTest
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         
         // expectations
-        mockery.checking(new Expectations()
-        {
+        mockery.checking(new Expectations() {
             {
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
@@ -291,6 +289,8 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // schedule the job
                 exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
@@ -311,6 +311,7 @@ public class ScheduledConsumerTest
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         // test
         scheduledConsumer.execute(jobExecutionContext);
@@ -336,7 +337,7 @@ public class ScheduledConsumerTest
                 exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
                 will(returnValue(identifier));
 
-                exactly(0).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                exactly(0).of(flowEventFactory).newEvent(identifier, jobExecutionContext);
                 will(returnValue(mockFlowEvent));
 
                 exactly(0).of(eventListener).invoke(mockFlowEvent);
@@ -364,9 +365,10 @@ public class ScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_null_when_in_recovery() throws SchedulerException
+    public void test_execute_when_messageProvider_message_is_null_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
     {
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
+        final JobKey jobKey = new JobKey("");
 
         // expectations
         mockery.checking(new Expectations()
@@ -378,11 +380,30 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
-                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                exactly(2).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
 
                 // cancel recovery
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
+
+                // nope, consumer is not running
+                exactly(1).of(scheduler).isShutdown();
+                will(returnValue(false));
+                exactly(1).of(scheduler).isInStandbyMode();
+                will(returnValue(false));
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(false));
+
+                // start consumer
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+                exactly(1).of(consumerConfiguration).getCronExpression();
+                will(returnValue("*"));
+                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                will(returnValue(new Date()));
+
             }
         });
 
@@ -452,6 +473,8 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // schedule the job
                 exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
@@ -477,6 +500,7 @@ public class ScheduledConsumerTest
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setJobDetail(jobDetail);
 
         // test
