@@ -55,7 +55,6 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -1002,16 +1001,5 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
             }
         });
     }
-    
-    /* (non-Javadoc)
-	 * @see org.ikasan.mapping.dao.MappingConfigurationDao#getPlatformConfigurationByName(java.lang.String)
-	 */
-	@Override
-	public PlatformConfiguration getPlatformConfigurationByName(String name)
-	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(PlatformConfiguration.class);
-        criteria.add(Restrictions.eq("name", name));
-        return (PlatformConfiguration) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
-	}
 
 }

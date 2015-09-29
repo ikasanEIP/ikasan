@@ -83,11 +83,6 @@ public class DiscoveryApplication extends IkasanRestApplication
 	public DiscoveryApplication() 
 	{
 		super();
-//		this.moduleContainer = moduleContainer;
-//		if(this.moduleContainer == null)
-//		{
-//			throw new IllegalArgumentException("moduleContainer cannot be null!");
-//		}
 	}
 
 	/**

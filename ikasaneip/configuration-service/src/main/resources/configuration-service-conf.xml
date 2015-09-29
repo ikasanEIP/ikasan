@@ -4,6 +4,11 @@
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
+	<bean id="platformConfigurationService"
+		class="org.ikasan.configurationService.service.PlatformConfigurationServiceImpl">
+		<constructor-arg ref="configurationService"/>
+	</bean>
+	
 	<bean id="configurationService"
 		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
 		<constructor-arg ref="configurationServiceDao"/>
