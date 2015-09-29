@@ -40,30 +40,44 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.dashboard.ui.framework.model.PlatformConfiguration;
-import org.ikasan.dashboard.ui.framework.model.PlatformConfigurationConfiguredResource;
+import org.ikasan.configurationService.model.PlatformConfiguration;
+import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Validator;
 import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.converter.StringToIntegerConverter;
+import com.vaadin.data.util.converter.StringToLongConverter;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
@@ -83,7 +97,13 @@ public class PlatformConfigurationPanel extends Panel implements View
 	private PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource;
 	private Configuration platformConfiguration;
 	
+	private ConfigurationParameter userParam;
+	private ConfigurationParameter passwordParam;
+	
 	private HashMap<String, TextFieldKeyValuePair> mapTextFields = new HashMap<String, TextFieldKeyValuePair>();
+	
+	private TextField usernameField;
+	private PasswordField passwordField;
 
 	/**
 	 * Constructor
@@ -98,7 +118,8 @@ public class PlatformConfigurationPanel extends Panel implements View
 		{
 			throw new IllegalArgumentException("configurationService cannot be null!");
 		}
-
+		
+		
 		init();
 	}
 
@@ -108,10 +129,10 @@ public class PlatformConfigurationPanel extends Panel implements View
 		
 	}
 	
-	protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
+	protected Panel createPasswordFieldPanel(ConfigurationParameter parameter, Validator validator)
     {
     	Panel paramPanel = new Panel();
-		paramPanel.setStyleName("dashboard");
+    	paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		paramPanel.setWidth("100%");
 
 		GridLayout paramLayout = new GridLayout(2, 3);
@@ -121,11 +142,170 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.setColumnExpandRatio(0, .25f);
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
-		Label label = new Label("Platform Configuration");
-		label.addStyleName(ValoTheme.LABEL_HUGE);
+		Label label = new Label(parameter.getName());
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
-		paramLayout.addComponent(label, 0 , 0, 1, 0);
+		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+		
+		logger.info(parameter.getName() + " " + parameter.getValue());
+		Label valueLabel = new Label("Value:");
+		valueLabel.setSizeUndefined();
+		passwordField = new PasswordField();
+		passwordField.addValidator(validator);
+		passwordField.setNullSettingAllowed(true);
+		passwordField.setNullRepresentation("");
+		passwordField.setValidationVisible(false);
+		passwordField.setWidth("80%");
+		passwordField.setId(parameter.getName());
+		
+		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		{
+			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
+			{
+			    protected java.text.NumberFormat getFormat(Locale locale) 
+			    {
+			        NumberFormat format = super.getFormat(locale);
+			        format.setGroupingUsed(false);
+			        return format;
+			    };
+			};
+			
+			// either set for the field or in your field factory for multiple fields
+			passwordField.setConverter(plainIntegerConverter);
+		}
+		else if (parameter instanceof ConfigurationParameterLongImpl)
+		{
+			StringToLongConverter plainLongConverter = new StringToLongConverter() 
+			{
+			    protected java.text.NumberFormat getFormat(Locale locale) 
+			    {
+			        NumberFormat format = super.getFormat(locale);
+			        format.setGroupingUsed(false);
+			        return format;
+			    };
+			};
+			
+			// either set for the field or in your field factory for multiple fields
+			passwordField.setConverter(plainLongConverter);
+		}
+
+		BeanItem<ConfigurationParameter> parameterItem = new BeanItem<ConfigurationParameter>(parameter);
+
+		if(parameter.getValue() != null)
+		{
+			passwordField.setPropertyDataSource(parameterItem.getItemProperty("value"));
+		}
+		
+		paramLayout.addComponent(valueLabel, 0, 1);
+		paramLayout.addComponent(passwordField, 1, 1);
+		paramLayout.setComponentAlignment(valueLabel, Alignment.TOP_RIGHT);
+		
+		paramPanel.setContent(paramLayout);
+		
+		return paramPanel;
+    }
+	
+	protected Panel createTextFieldPanel(ConfigurationParameter parameter, Validator validator)
+    {		
+    	Panel paramPanel = new Panel();
+		paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(3, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+		
+		Label configLabel = new Label("Platform Configuration");
+		configLabel.addStyleName(ValoTheme.LABEL_HUGE);
+		configLabel.setSizeUndefined();
+		paramLayout.addComponent(configLabel, 0 , 0, 1, 0);
+		paramLayout.setComponentAlignment(configLabel, Alignment.TOP_LEFT);
+		
+		Label label = new Label(parameter.getName());
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
+		label.setSizeUndefined();
+		paramLayout.addComponent(label, 0, 1, 1, 1);
+		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+		
+		logger.info(parameter.getName() + " " + parameter.getValue());
+		Label valueLabel = new Label("Value:");
+		valueLabel.setSizeUndefined();
+		usernameField = new TextField();
+		usernameField.addValidator(validator);
+		usernameField.setNullSettingAllowed(true);
+		usernameField.setNullRepresentation("");
+		usernameField.setValidationVisible(false);
+		usernameField.setWidth("80%");
+		usernameField.setId(parameter.getName());
+		
+		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		{
+			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter() 
+			{
+			    protected java.text.NumberFormat getFormat(Locale locale) 
+			    {
+			        NumberFormat format = super.getFormat(locale);
+			        format.setGroupingUsed(false);
+			        return format;
+			    };
+			};
+			
+			// either set for the field or in your field factory for multiple fields
+			usernameField.setConverter(plainIntegerConverter);
+		}
+		else if (parameter instanceof ConfigurationParameterLongImpl)
+		{
+			StringToLongConverter plainLongConverter = new StringToLongConverter() 
+			{
+			    protected java.text.NumberFormat getFormat(Locale locale) 
+			    {
+			        NumberFormat format = super.getFormat(locale);
+			        format.setGroupingUsed(false);
+			        return format;
+			    };
+			};
+			
+			// either set for the field or in your field factory for multiple fields
+			usernameField.setConverter(plainLongConverter);
+		}
+
+		BeanItem<ConfigurationParameter> parameterItem = new BeanItem<ConfigurationParameter>(parameter);
+
+		if(parameter.getValue() != null)
+		{
+			usernameField.setPropertyDataSource(parameterItem.getItemProperty("value"));
+		}
+		
+		paramLayout.addComponent(valueLabel, 0, 2);
+		paramLayout.addComponent(usernameField, 1, 2);
+		paramLayout.setComponentAlignment(valueLabel, Alignment.TOP_RIGHT);
+		
+		paramPanel.setContent(paramLayout);
+		
+		return paramPanel;
+    }
+
+	
+	protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
+    {
+    	Panel paramPanel = new Panel();
+    	paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(2, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
 				
 		final Map<String, String> valueMap = parameter.getValue();
 		
@@ -277,6 +457,9 @@ public class PlatformConfigurationPanel extends Panel implements View
                 		textField.key.validate();
                 		textField.value.validate();
                 	}
+            		
+            		usernameField.validate();
+            		passwordField.validate();
                 } 
                 catch (InvalidValueException e) 
                 {
@@ -284,6 +467,8 @@ public class PlatformConfigurationPanel extends Panel implements View
                 	{
                 		textField.key.setValidationVisible(true);
                 		textField.value.setValidationVisible(true);
+                		usernameField.setValidationVisible(true);
+                		passwordField.setValidationVisible(true);
                 	}
                 	
                 	Notification.show("Validation errors have occurred!", Type.ERROR_MESSAGE);
@@ -311,7 +496,9 @@ public class PlatformConfigurationPanel extends Panel implements View
     				}
     			}
     			
-    			parameter.setValue(map);
+    			parameter.setValue(map);    			
+    			userParam.setValue(usernameField.getValue());
+    			passwordParam.setValue(passwordField.getValue());
             	
             	PlatformConfigurationPanel.this.configurationManagement
             		.saveConfiguration(platformConfiguration);      
@@ -325,10 +512,30 @@ public class PlatformConfigurationPanel extends Panel implements View
             }
     	});
     	
+    	Button deleteButton = new Button("Re-create");   
+    	deleteButton.addStyleName(ValoTheme.BUTTON_SMALL);
+    	deleteButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	configurationManagement.deleteConfiguration(platformConfiguration);
+            	
+            	refresh();
+            }
+    	});
+    	
+    	HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setHeight("100%");
+		buttonLayout.setSpacing(true);
+		buttonLayout.setWidth(200, Unit.PIXELS);
+		buttonLayout.setMargin(true);
+		buttonLayout.addComponent(saveButton);
+		buttonLayout.addComponent(deleteButton);
+    	
     	paramLayout.addComponent(mapPanel, 0, 1, 1, 1);
 		paramLayout.setComponentAlignment(mapPanel, Alignment.TOP_CENTER);
-		paramLayout.addComponent(saveButton, 0, 2, 1, 2);
-		paramLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER);
+		paramLayout.addComponent(buttonLayout, 0, 2, 1, 2);
+		paramLayout.setComponentAlignment(buttonLayout, Alignment.TOP_CENTER);
 		paramPanel.setContent(paramLayout);
 		
 		return paramPanel;
@@ -344,9 +551,14 @@ public class PlatformConfigurationPanel extends Panel implements View
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
+		refresh();
+	}
+	
+	private void refresh()
+	{
 		this.platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
 		
-		platformConfiguration = this.configurationManagement.getConfiguration(this.platformConfigurationConfiguredResource);
+		this.platformConfiguration = this.configurationManagement.getConfiguration(this.platformConfigurationConfiguredResource);
 		
 		// create the configuration if it does not already exist!
 		if(platformConfiguration == null)
@@ -355,11 +567,41 @@ public class PlatformConfigurationPanel extends Panel implements View
 			platformConfiguration = this.configurationManagement.createConfiguration(platformConfigurationConfiguredResource);
 		}
 		
-		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)platformConfiguration.getParameters();
-		
-		//There will only be one map parameter!		
-		this.setContent(this.createMapPanel
-				((ConfigurationParameterMapImpl)parameters.get(0)));
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)platformConfiguration.getParameters();      
+        
+        GridLayout layout = new GridLayout();
+        layout.setWidth("100%");
+        layout.setSpacing(true);
+        
+        Panel userPanel = null;
+        Panel passwordPanel = null;
+        Panel mapPanel = null;
+        
+        for(ConfigurationParameter parameter: parameters)
+        {
+        	if(parameter.getName().equals("webServiceUserAccount"))
+        	{
+        		userParam = parameter;
+        		userPanel = this.createTextFieldPanel(parameter, 
+        				new NonZeroLengthStringValidator("The web service user account must be entered!"));
+        	}
+        	else if(parameter.getName().equals("webServiceUserPassword"))
+        	{
+        		passwordParam = parameter;
+        		passwordPanel = this.createPasswordFieldPanel(parameter, 
+        				new NonZeroLengthStringValidator("The web service user password must be entered!"));
+        	}
+        	if(parameter.getName().equals("configurationMap"))
+        	{
+        		mapPanel = this.createMapPanel((ConfigurationParameterMapImpl)parameter);
+        	}
+        }
+        
+        layout.addComponent(userPanel);
+        layout.addComponent(passwordPanel);
+        layout.addComponent(mapPanel);
+        	
+		this.setContent(layout);
 	}
 	
 	private class TextFieldKeyValuePair

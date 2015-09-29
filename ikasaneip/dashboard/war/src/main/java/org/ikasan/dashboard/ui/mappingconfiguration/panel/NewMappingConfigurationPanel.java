@@ -64,6 +64,7 @@ import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -84,7 +85,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -125,13 +125,15 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup newMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
             mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator,
-            IkasanUINavigator uiNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+            IkasanUINavigator uiNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+            PlatformConfigurationService platformConfigurationService)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "New Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, newMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout, configurationManagement);
+            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout, configurationManagement,
+            platformConfigurationService);
 
         this.registerListeners();
     }

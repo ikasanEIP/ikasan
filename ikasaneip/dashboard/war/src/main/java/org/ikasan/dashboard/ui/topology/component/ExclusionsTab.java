@@ -172,56 +172,7 @@ public class ExclusionsTab extends TopologyTab
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
-            	exclusionsTable.removeAllItems();
-
-            	ArrayList<String> modulesNames = null;
-            	
-            	if(exclusionModules.getItemIds().size() > 0)
-            	{
-	            	modulesNames = new ArrayList<String>();
-	            	for(Object module: exclusionModules.getItemIds())
-	            	{
-	            		modulesNames.add(((Module)module).getName());
-	            	}
-            	}
-            	
-            	ArrayList<String> flowNames = null;
-            	
-            	if(exclusionFlows.getItemIds().size() > 0)
-            	{
-            		flowNames = new ArrayList<String>();
-            		for(Object flow: exclusionFlows.getItemIds())
-                	{
-                		flowNames.add(((Flow)flow).getName());
-                	}
-            	}
-            	
-            	
-            	if(modulesNames == null && flowNames == null
-            			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-            		
-            		modulesNames = new ArrayList<String>();
-            		
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}
-            	
-            	List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
-            			flowNames, fromDate.getValue(),  toDate.getValue(), null);
-
-            	for(ExclusionEvent exclusionEvent: exclusionEvents)
-            	{
-            		Date date = new Date(exclusionEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            	    String timestamp = format.format(date);
-            	    
-            	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
-            				timestamp}, exclusionEvent);
-            	}
+            	refreshExcludedEventsTable();
             }
         });
 		
@@ -489,8 +440,45 @@ public class ExclusionsTab extends TopologyTab
 	public void refreshExcludedEventsTable()
 	{
 		exclusionsTable.removeAllItems();
+
+    	ArrayList<String> modulesNames = null;
     	
-    	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
+    	if(exclusionModules.getItemIds().size() > 0)
+    	{
+        	modulesNames = new ArrayList<String>();
+        	for(Object module: exclusionModules.getItemIds())
+        	{
+        		modulesNames.add(((Module)module).getName());
+        	}
+    	}
+    	
+    	ArrayList<String> flowNames = null;
+    	
+    	if(exclusionFlows.getItemIds().size() > 0)
+    	{
+    		flowNames = new ArrayList<String>();
+    		for(Object flow: exclusionFlows.getItemIds())
+        	{
+        		flowNames.add(((Flow)flow).getName());
+        	}
+    	}
+    	
+    	
+    	if(modulesNames == null && flowNames == null
+    			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
+    	{
+    		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
+    		
+    		modulesNames = new ArrayList<String>();
+    		
+    		for(BusinessStreamFlow flow: businessStream.getFlows())
+    		{
+    			modulesNames.add(flow.getFlow().getModule().getName());
+    		}
+    	}
+    	
+    	List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
+    			flowNames, fromDate.getValue(),  toDate.getValue(), null);
 
     	for(ExclusionEvent exclusionEvent: exclusionEvents)
     	{

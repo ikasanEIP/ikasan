@@ -10,6 +10,11 @@
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+	<bean id="platformConfigurationService"
+		class="org.ikasan.configurationService.service.PlatformConfigurationServiceImpl">
+		<constructor-arg ref="configurationService"/>
+	</bean>
+	
 	<bean id="triggerManagementService"
 		class="org.ikasan.wiretap.service.TriggerManagementServiceImpl">
 		<constructor-arg ref="triggerDao"/>
@@ -196,7 +201,6 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/PlatformConfiguration.hbm.xml</value>
                <value>/org/ikasan/security/model/Principal.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Role.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Policy.hbm.xml</value>

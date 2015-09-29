@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
- /*
+/*
  * $Id$
  * $URL$
  *
@@ -40,40 +38,56 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
--->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
+package org.ikasan.configurationService.service;
 
-    <class
-        name="org.ikasan.mapping.model.PlatformConfiguration"
-        table="PlatformConfiguration">
+import java.util.Map;
 
-        <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-        </id>
+import org.ikasan.spec.configuration.Masked;
 
-        <property name="name" 
-                  type="java.lang.String" 
-                  column="Name" />
-                  
-        <property name="value" 
-                  type="java.lang.String" 
-                  column="Value" />
+/**
+ * Sample configuration class for testing
+ * Ikasan Development Team.
+ */
+public class SampleConfigurationMaskFieldNotString
+{
+	private String one;
+    
+    private String maskedString;
+    
+    @Masked
+    private Map<String,String>map;
 
-        <property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
+    public Map<String, String> getMap() {
+		return map;
+	}
 
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
-    </class>
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
 
-</hibernate-mapping>
+	public String getOne()
+    {
+        return one;
+    }
+
+    public void setOne(String one)
+    {
+        this.one = one;
+    }
+
+	/**
+	 * @return the maskedString
+	 */
+	public String getMaskedString()
+	{
+		return maskedString;
+	}
+
+	/**
+	 * @param maskedString the maskedString to set
+	 */
+	public void setMaskedString(String maskedString)
+	{
+		this.maskedString = maskedString;
+	}
+}

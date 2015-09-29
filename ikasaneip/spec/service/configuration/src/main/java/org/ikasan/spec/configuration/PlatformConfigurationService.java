@@ -38,57 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.model;
-
-import org.ikasan.spec.configuration.ConfiguredResource;
+package org.ikasan.spec.configuration;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class PlatformConfigurationConfiguredResource implements
-		ConfiguredResource<PlatformConfiguration>
+public interface PlatformConfigurationService
 {
+	/**
+	 * Method to get a platform configuration value from the configuration service.
+	 * 
+	 * @param paramName
+	 * @return
+	 */
+	public String getConfigurationValue(String paramName);
 
-	private String configuredResourceId = "platform-configuration";
-	private PlatformConfiguration platformConfiguration;
+	/**
+	 * The the username for the account that is used to validate web service calls.
+	 * 
+	 * @return
+	 */
+	public String getWebServiceUsername();
 	
-	
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
+	/**
+	  * The the password for the account that is used to validate web service calls.
+	 * @return
 	 */
-	@Override
-	public PlatformConfiguration getConfiguration()
-	{
-		return platformConfiguration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.Configured#setConfiguration(java.lang.Object)
-	 */
-	@Override
-	public void setConfiguration(PlatformConfiguration configuration)
-	{
-		this.platformConfiguration = configuration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguredResourceId()
-	 */
-	@Override
-	public String getConfiguredResourceId()
-	{
-		return configuredResourceId;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
-	 */
-	@Override
-	public void setConfiguredResourceId(String id)
-	{
-		configuredResourceId = id;
-	}
-
+	public String getWebServicePassword();
 }

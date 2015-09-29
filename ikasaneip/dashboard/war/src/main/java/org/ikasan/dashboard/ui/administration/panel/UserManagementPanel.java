@@ -467,7 +467,7 @@ public class UserManagementPanel extends Panel implements View
 
 		userDropTable.addContainerProperty("Members", String.class, null);
 		userDropTable.addContainerProperty("", Button.class, null);
-		userDropTable.setHeight("715px");
+		userDropTable.setHeight("685px");
 		userDropTable.setWidth("300px");
 
 		userDropTable.setDragMode(TableDragMode.ROW);

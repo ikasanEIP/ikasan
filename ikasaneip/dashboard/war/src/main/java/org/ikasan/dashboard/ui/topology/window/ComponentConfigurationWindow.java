@@ -156,7 +156,7 @@ public class ComponentConfigurationWindow extends Window
     	{
     		Server server = component.getFlow().getModule().getServer();
     		
-    		String url = "http://" + server.getUrl() + ":" + server.getPort()
+    		String url = server.getUrl() + ":" + server.getPort()
     				+ component.getFlow().getModule().getContextRoot()
     				+ "/rest/configuration/createConfiguration/"
     	    		+ component.getFlow().getModule().getName() 
