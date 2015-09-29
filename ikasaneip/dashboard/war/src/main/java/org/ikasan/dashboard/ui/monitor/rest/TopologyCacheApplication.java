@@ -92,45 +92,4 @@ public class TopologyCacheApplication
         return Response.ok("State cache successfully updated!").build();
     }
     
-    @GET
-	@Path("/test")
-	public Response savePayment() {
-
-		String result = "test";
-
-		return Response.status(200).entity(result).build();
-
-	}
-    
-    public static final void main(String[] arge)
-    {
-    	try
-		{
-			String url = "http://svc-ikasand:8080/ikasan-dashboard/rest/topologyCache/updateCache/murex-equityTrade/Equity Allocation Flow";
-		
-	    	
-			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
-	    	
-	    	ClientConfig clientConfig = new ClientConfig();
-	    	clientConfig.register(feature) ;
-	    	
-	    	
-	    	Client client = ClientBuilder.newClient(clientConfig);
-	    	
-	    	logger.info("Calling URL: " + url);
-	    	WebTarget webTarget = client.target(url);
-		    
-	    	Response response = webTarget.request().put(Entity.entity("stopped", MediaType.APPLICATION_JSON));
-
-	    	System.out.println(response);
-	    	
-	    	System.out.println(response.getStatusInfo().getReasonPhrase());
-		}
-		catch(Exception e)
-		{
-			logger.info("caught exception: " + e.getMessage());
-			e.printStackTrace();
-		}
-    }
-
 }

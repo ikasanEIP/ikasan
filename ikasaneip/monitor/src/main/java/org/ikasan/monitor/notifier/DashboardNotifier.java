@@ -41,8 +41,6 @@
 package org.ikasan.monitor.notifier;
 
 
-import java.util.List;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -52,11 +50,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.monitor.Notifier;
 
 
@@ -80,7 +74,7 @@ public class DashboardNotifier implements Notifier<String>
     private String dashboardBaseUrl;
     
     /** the platform configuration service */
-    protected ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
+    protected PlatformConfigurationService platformConfigurationService;
 
     @Override
     public void invoke(String environment, String moduleName, String flowName, String state)
@@ -109,14 +103,30 @@ public class DashboardNotifier implements Notifier<String>
 	}
 
 	
-
     /**
-	 * @param configurationManagement the configurationManagement to set
-	 */
-	public void setConfigurationService(
-			ConfigurationManagement<ConfiguredResource, Configuration> configurationService)
+     * 
+     * @param platformConfigurationService
+     */
+	public void setPlatformConfigurationService(
+			PlatformConfigurationService platformConfigurationService)
 	{
-		this.configurationService = configurationService;
+		this.platformConfigurationService = platformConfigurationService;
+	}
+	
+	/**
+	 * @return the dashboardBaseUrl
+	 */
+	public String getDashboardBaseUrl()
+	{
+		return dashboardBaseUrl;
+	}
+
+	/**
+	 * @return the platformConfigurationService
+	 */
+	public PlatformConfigurationService getPlatformConfigurationService()
+	{
+		return platformConfigurationService;
 	}
 
 	/**
@@ -132,20 +142,15 @@ public class DashboardNotifier implements Notifier<String>
     	
     	try
 		{
+    		logger.info("this.platformConfigurationService: " + this.platformConfigurationService);	
+    		
     		// We are trying to get the database configuration resource first
-    		if(this.configurationService != null)
-    		{
-	    		Configuration configuration = this.configurationService.getConfiguration("platform-configuration");
-	            
-	            final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-	            
-	            if(parameters != null && parameters.size() > 0 && (parameters.get(0) instanceof ConfigurationParameterMapImpl))
-	            {
-	            	ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
-	                
-	                url = parameter.getValue().get("dashboardBaseUrl");
-	            }
+    		if(this.platformConfigurationService != null)
+    		{	            
+	            url = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
     		}
+    		
+    		logger.info("url: " + url);	
     		
     		// If we do not have a database persisted configuration value we will try to get the one from the file system/
     		if((url == null || url.length() == 0) && this.dashboardBaseUrl != null && this.dashboardBaseUrl.length() > 0)
@@ -162,8 +167,7 @@ public class DashboardNotifier implements Notifier<String>
 			url = url + "/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
 			
 			logger.info("Attempting to call URL: " + url);	
-		
-	    	
+		  	
 	    	ClientConfig clientConfig = new ClientConfig();
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
@@ -173,9 +177,7 @@ public class DashboardNotifier implements Notifier<String>
 	    	Response response = webTarget.request().put(Entity.entity(state, MediaType.APPLICATION_JSON));
 		}
 		catch(Exception e)
-		{
-			logger.error("caught exception: " + e.getMessage());
-			
+		{			
 			throw new RuntimeException("An exception occurred trying to notify the dashboard!", e);
 		}
     }

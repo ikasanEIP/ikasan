@@ -53,6 +53,7 @@
     
     <bean id="topologyStateCache" class="org.ikasan.dashboard.ui.framework.cache.TopologyStateCache" scope="singleton">
         <constructor-arg ref="topologyService" />
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
     

@@ -44,9 +44,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
+import org.ikasan.dashboard.ui.framework.window.AdminPasswordDialog;
+import org.ikasan.security.service.UserService;
 import org.ikasan.setup.persistence.service.PersistenceService;
 import org.ikasan.setup.persistence.service.PersistenceServiceFactory;
 
@@ -61,7 +60,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window.CloseEvent;
+import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -76,16 +78,19 @@ public class PersistanceSetupPanel extends Panel implements View
     private PersistenceServiceFactory<String> persistenceServiceFactory;
     private ComboBox persistanceStoreTypeCombo = new ComboBox("Select database type");
     private boolean userTablesAlreadyExist;
+    private UserService userService;
 
     /**
      * Constructor
      * 
      * @param ikasanModuleService
      */
-    public PersistanceSetupPanel(PersistenceServiceFactory<String> persistenceServiceFactory)
+    public PersistanceSetupPanel(PersistenceServiceFactory<String> persistenceServiceFactory,
+    		UserService userService)
     {
         super();
         this.persistenceServiceFactory = persistenceServiceFactory;
+        this.userService = userService;
         init();
     }
 
@@ -163,34 +168,52 @@ public class PersistanceSetupPanel extends Panel implements View
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) 
             {
-            	String persistenceProvider = (String)PersistanceSetupPanel
-            			.this.persistanceStoreTypeCombo.getValue();
+            	final AdminPasswordDialog adminPasswordDialog 
+            		= new AdminPasswordDialog();
             	
-            	if(persistenceProvider == null)
+            	UI.getCurrent().addWindow(adminPasswordDialog);
+            	
+            	
+            	
+            	adminPasswordDialog.addCloseListener(new CloseListener() 
             	{
-            		 Notification.show("Please select a database type!");
-            		 return;
-            	}
-
-            	PersistenceService persistanceService 
-            		= persistenceServiceFactory.getPersistenceService(persistenceProvider);
-
-            	try
-            	{
-            		persistanceService.createPersistence();
-            		persistanceService.createAdminAccount();
-            	}
-            	catch(RuntimeException e)
-            	{
-            		StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-
-                    Notification.show("Error trying to create Ikasan database!", sw.toString()
-                        , Notification.Type.ERROR_MESSAGE);
-            	}
-
-                Notification.show("Database successfully created!");
+                    // inline close-listener
+                    public void windowClose(CloseEvent e) 
+                    {
+                    	String password = adminPasswordDialog.getPassword();
+                    	
+                    	String persistenceProvider = (String)PersistanceSetupPanel
+                    			.this.persistanceStoreTypeCombo.getValue();
+                    	
+                    	if(persistenceProvider == null)
+                    	{
+                    		 Notification.show("Please select a database type!");
+                    		 return;
+                    	}
+        
+                    	PersistenceService persistanceService 
+                    		= persistenceServiceFactory.getPersistenceService(persistenceProvider);
+        
+                    	try
+                    	{
+                    		persistanceService.createPersistence();
+                    		persistanceService.createAdminAccount();
+                    		
+                    		userService.changeUsersPassword("admin", password, password);
+                    	}
+                    	catch(RuntimeException ex)
+                    	{
+                    		StringWriter sw = new StringWriter();
+                            PrintWriter pw = new PrintWriter(sw);
+                            ex.printStackTrace(pw);
+        
+                            Notification.show("Error trying to create Ikasan database!", sw.toString()
+                                , Notification.Type.ERROR_MESSAGE);
+                    	}
+        
+                        Notification.show("Database successfully created!");
+                    }
+                });
             }
         });
 
@@ -219,8 +242,6 @@ public class PersistanceSetupPanel extends Panel implements View
 
         verticalLayout.addComponent(ikasanWelcomeLabel1);
         verticalLayout.addComponent(ikasanWelcomeLabel2);
-        
-//        verticalLayout.addComponent(persistanceStoreTypeCombo);
         
         this.setContent(verticalLayout);
     }
