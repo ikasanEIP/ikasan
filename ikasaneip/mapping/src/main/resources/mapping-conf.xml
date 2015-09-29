@@ -84,7 +84,6 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/PlatformConfiguration.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -113,7 +112,6 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/PlatformConfiguration.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

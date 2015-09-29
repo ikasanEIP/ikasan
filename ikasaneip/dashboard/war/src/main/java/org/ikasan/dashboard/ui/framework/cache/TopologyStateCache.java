@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.Broadcaster;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
@@ -71,19 +72,30 @@ public class TopologyStateCache
 	private TopologyService topologyService;
 	private HashMap<String, String> stateMap;
 	
-	// TODO need to add some kind of hook to shut this down.
 	private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
+	protected PlatformConfigurationService platformConfigurationService;
 	
 	
 	
 	/**
 	 * @param topologyService
 	 */
-	public TopologyStateCache(TopologyService topologyService)
+	public TopologyStateCache(TopologyService topologyService,
+			PlatformConfigurationService platformConfigurationService)
 	{
 		super();
 		this.topologyService = topologyService;
+		if (this.topologyService == null)
+		{
+			throw new IllegalArgumentException("topologyService cannot be null!");
+		}
+		
+		this.platformConfigurationService = platformConfigurationService;
+		if (this.platformConfigurationService == null)
+		{
+			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
 		
 		stateMap = new HashMap<String, String>();	
 		
@@ -129,6 +141,9 @@ public class TopologyStateCache
 			return;
 		}
 		
+		String username = this.platformConfigurationService.getWebServiceUsername();
+		String password = this.platformConfigurationService.getWebServicePassword();
+		
 		logger.info("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
 		{
@@ -137,7 +152,7 @@ public class TopologyStateCache
 			{
 				logger.debug("Synchronising module: " + module.getName());
 				
-				HashMap<String, String> results = getFlowStates(module);
+				HashMap<String, String> results = getFlowStates(module, username, password);
 				
 				for(String key: results.keySet())
 				{
@@ -159,19 +174,20 @@ public class TopologyStateCache
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected HashMap<String, String> getFlowStates(Module module)
+	protected HashMap<String, String> getFlowStates(Module module, String username,
+			String password)
 	{
 		HashMap<String, String> results = new HashMap<String, String>();
 		String url = null;
 		
 		try
 		{
-			url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+			url = module.getServer().getUrl() + ":" + module.getServer().getPort() 
 					+ module.getContextRoot() 
 					+ "/rest/moduleControl/flowStates/"
 					+ module.getName();
 			
-	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
+	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
 	    	
 	    	ClientConfig clientConfig = new ClientConfig();
 	    	clientConfig.register(feature) ;

@@ -56,6 +56,7 @@ import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.navigator.View;
@@ -97,13 +98,15 @@ public class ExistingMappingConfigurationPanel extends MappingConfigurationPanel
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             MappingConfigurationExportHelper mappingConfigurationExportHelper, MappingConfigurationValuesExportHelper 
             mappingConfigurationValuesExportHelper, SystemEventService systemEventService, IkasanUINavigator topLevelNavigator
-            , IkasanUINavigator uiNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+            , IkasanUINavigator uiNavigator, MenuLayout menuLayout, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+            PlatformConfigurationService platformConfigurationService)
     {
         super(mappingConfigurationConfigurationValuesTable, clientComboBox, typeComboBox, sourceContextComboBox,
             targetContextComboBox, "Mapping Configuration", mappingConfigurationService, saveRequiredMonitor, editButton,
             saveButton, addNewRecordButton, deleteAllRecordsButton, importMappingConfigurationButton, exportMappingConfigurationValuesButton,
             exportMappingConfigurationButton, cancelButton, existingMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
-            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout, configurationManagement);
+            mappingConfigurationValuesExportHelper, systemEventService, topLevelNavigator, uiNavigator, menuLayout, configurationManagement,
+            platformConfigurationService);
 
         super.init();
     }

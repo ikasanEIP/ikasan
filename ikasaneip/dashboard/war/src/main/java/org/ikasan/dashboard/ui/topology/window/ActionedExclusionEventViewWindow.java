@@ -42,25 +42,11 @@ package org.ikasan.dashboard.ui.topology.window;
 
 import java.util.Date;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
@@ -68,23 +54,19 @@ import org.vaadin.aceeditor.AceTheme;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.Sizeable.Unit;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -281,11 +263,7 @@ public class ActionedExclusionEventViewWindow extends Window
             }
         });
 		
-		HorizontalLayout eventEditorLayout = new HorizontalLayout();
-		eventEditorLayout.setSizeFull();
-		eventEditorLayout.setMargin(true);
-		eventEditorLayout.addComponent(wrapTextCheckBox);
-		eventEditorLayout.addComponent(eventEditor);
+
 		
 		AceEditor errorEditor = new AceEditor();
 		errorEditor.setCaption("Error Details");
@@ -296,29 +274,36 @@ public class ActionedExclusionEventViewWindow extends Window
 		errorEditor.setWidth("100%");
 		errorEditor.setHeight(600, Unit.PIXELS);
 		
-		HorizontalLayout errorEditorLayout = new HorizontalLayout();
-		errorEditorLayout.setSizeFull();
-		errorEditorLayout.setMargin(true);
-		errorEditorLayout.addComponent(errorEditor);
-
 		
-		VerticalSplitPanel splitPanel = new VerticalSplitPanel();
-		splitPanel.addStyleName(ValoTheme.SPLITPANEL_LARGE);
-		splitPanel.setWidth("100%");
-		splitPanel.setHeight(800, Unit.PIXELS);
-		splitPanel.setFirstComponent(eventEditorLayout);
-		splitPanel.setSecondComponent(errorEditorLayout);
+		TabSheet tabsheet = new TabSheet();
+		tabsheet.setSizeFull();
+		
+		VerticalLayout h1 = new VerticalLayout();
+		h1.setSizeFull();
+		h1.setMargin(true);
+		h1.addComponent(wrapTextCheckBox);
+		h1.addComponent(eventEditor);
+		
+		HorizontalLayout h2 = new HorizontalLayout();
+		h2.setSizeFull();
+		h2.setMargin(true);
+		h2.addComponent(errorEditor);
 		
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(220, Unit.PIXELS);
+		formLayout.setHeight(240, Unit.PIXELS);
 		formLayout.addComponent(layout);
+		
+
+		tabsheet.addTab(h1, "Event Payload");
+		tabsheet.addTab(h2, "Error Details");
+		
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
 		wrapperLayout.setWidth("100%");
 		wrapperLayout.addComponent(formLayout);
-		wrapperLayout.addComponent(splitPanel);
+		wrapperLayout.addComponent(tabsheet);
 
 		exclusionEventDetailsPanel.setContent(wrapperLayout);
 		return exclusionEventDetailsPanel;
