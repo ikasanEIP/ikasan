@@ -80,14 +80,23 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         
         final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
         
-        if(parameters == null || parameters.size() == 0 || !(parameters.get(0) instanceof ConfigurationParameterMapImpl))
+        ConfigurationParameterMapImpl parameterMap = null;
+        
+        for(ConfigurationParameter parameter: parameters)
+        {
+        	if(parameter instanceof ConfigurationParameterMapImpl)
+        	{
+        		parameterMap = (ConfigurationParameterMapImpl)parameter;
+        	}
+        }
+        
+        if(parameterMap == null)
         {
         	throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
         }
         
-        ConfigurationParameterMapImpl parameter = (ConfigurationParameterMapImpl)parameters.get(0);
         
-        return parameter.getValue().get(paramName);
+        return parameterMap.getValue().get(paramName);
 	}
 
 	/* (non-Javadoc)
