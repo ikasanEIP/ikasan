@@ -48,7 +48,6 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 
@@ -460,13 +459,4 @@ public interface MappingConfigurationService
      */
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
 
-    /**
-     * TODO the method needs a new home!
-     * 
-     * This method returns the platform configuration by name.
-     * 
-     * @param name
-     * @return
-     */
-    public PlatformConfiguration getPlatformConfigurationByName(String name);
 }
