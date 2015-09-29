@@ -1151,9 +1151,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public void handleAction(Action action, Object sender, Object target)
-	{	        
-        Tree senderTree = ((Tree)sender);
-        
+	{	                
         if(target != null && target instanceof Component)
         {
         	if(action.equals(CONFIGURE))
@@ -1219,7 +1217,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	        }
 	        else if(action.equals(ERROR_CATEGORISATION))
         	{
-        		Flow component = (Flow)target;
         		
         		UI.getCurrent().addWindow(new ErrorCategorisationWindow(flow.getModule().getServer(),
         				flow.getModule(), flow, null, errorCategorisationService));

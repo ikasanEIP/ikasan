@@ -318,7 +318,6 @@ public class MonitorPanel extends Panel implements View, Action.Handler
         toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
 
         card1.addComponents(toolbar, small);
-//        card2.addComponents(toolbar, large);
         slot.addComponent(card1);
         return slot;
     }
@@ -352,7 +351,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 				
 				if (propertyId == null) 
 				{
-				// Styling for row			
+			
 					if(state != null && state.equals(RUNNING))
 	    			{
 						return "ikasan-green-small";

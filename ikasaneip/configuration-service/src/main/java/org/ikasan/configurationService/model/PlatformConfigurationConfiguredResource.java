@@ -38,32 +38,57 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.model;
+package org.ikasan.configurationService.model;
 
-import java.util.HashMap;
+import org.ikasan.spec.configuration.ConfiguredResource;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class PlatformConfiguration
+public class PlatformConfigurationConfiguredResource implements
+		ConfiguredResource<PlatformConfiguration>
 {
-	private HashMap<String, String> configurationMap = new HashMap<String, String>();
 
-	/**
-	 * @return the configurationMap
+	private String configuredResourceId = "platform-configuration";
+	private PlatformConfiguration platformConfiguration;
+	
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
 	 */
-	public HashMap<String, String> getConfigurationMap()
+	@Override
+	public PlatformConfiguration getConfiguration()
 	{
-		return configurationMap;
+		return platformConfiguration;
 	}
 
-	/**
-	 * @param configurationMap the configurationMap to set
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.Configured#setConfiguration(java.lang.Object)
 	 */
-	public void setConfigurationMap(HashMap<String, String> configurationMap)
+	@Override
+	public void setConfiguration(PlatformConfiguration configuration)
 	{
-		this.configurationMap = configurationMap;
+		this.platformConfiguration = configuration;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguredResourceId()
+	 */
+	@Override
+	public String getConfiguredResourceId()
+	{
+		return configuredResourceId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
+	 */
+	@Override
+	public void setConfiguredResourceId(String id)
+	{
+		configuredResourceId = id;
+	}
+
 }

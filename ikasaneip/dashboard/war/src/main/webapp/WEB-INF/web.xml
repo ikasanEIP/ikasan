@@ -86,6 +86,10 @@
 		<init-param>
 	      <param-name>closeIdleSessions</param-name>
 	      <param-value>true</param-value>
+	    </init-param> 
+	    <init-param>
+	      <param-name>legacyPropertyToStringMode</param-name>
+	      <param-value>true</param-value>
 	    </init-param>
 	    <!-- init-param>
 		   <param-name>org.atmosphere.useWebSocketAndServlet3</param-name>

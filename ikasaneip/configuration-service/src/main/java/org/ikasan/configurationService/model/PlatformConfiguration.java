@@ -38,44 +38,71 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
+package org.ikasan.configurationService.model;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
+import java.util.HashMap;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.spec.configuration.Masked;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class Test
+public class PlatformConfiguration
 {
+	private HashMap<String, String> configurationMap = new HashMap<String, String>();
+	
+	private String webServiceUserAccount;
+	
+	@Masked
+	private String webServiceUserPassword;
 
 	/**
-	 * @param args
+	 * @return the configurationMap
 	 */
-	public static void main(String[] args)
+	public HashMap<String, String> getConfigurationMap()
 	{
-		String url = "http://svc-eai01d:8080/murex-repoTrade/rest/moduleControl/flowStates/murex-repoTrade";
-		
-    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-    	
-    	WebTarget webTarget = client.target(url);
-	    
-    	Response results = webTarget.request().get();
-    	
-    	System.out.println(results);
+		return configurationMap;
 	}
 
+	/**
+	 * @param configurationMap the configurationMap to set
+	 */
+	public void setConfigurationMap(HashMap<String, String> configurationMap)
+	{
+		this.configurationMap = configurationMap;
+	}
+
+	/**
+	 * @return the webServiceUserAccount
+	 */
+	public String getWebServiceUserAccount()
+	{
+		return webServiceUserAccount;
+	}
+
+	/**
+	 * @param webServiceUserAccount the webServiceUserAccount to set
+	 */
+	public void setWebServiceUserAccount(String webServiceUserAccount)
+	{
+		this.webServiceUserAccount = webServiceUserAccount;
+	}
+
+	/**
+	 * @return the webServiceUserPassword
+	 */
+	public String getWebServiceUserPassword()
+	{
+		return webServiceUserPassword;
+	}
+
+	/**
+	 * @param webServiceUserPassword the webServiceUserPassword to set
+	 */
+	public void setWebServiceUserPassword(String webServiceUserPassword)
+	{
+		this.webServiceUserPassword = webServiceUserPassword;
+	}
 }
