@@ -98,7 +98,7 @@ public class DiscoveryApplication extends IkasanRestApplication
 	@Produces(MediaType.APPLICATION_JSON)	
 	public List<org.ikasan.topology.model.Flow> getFlows(@Context SecurityContext context, @PathParam("moduleName") String moduleName)
 	{
-		if(!context.isUserInRole("WebServiceAdmin"))
+		if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
@@ -172,7 +172,7 @@ public class DiscoveryApplication extends IkasanRestApplication
 	public List<org.ikasan.topology.model.Component> getComponents(@Context SecurityContext context, @PathParam("moduleName") String moduleName,
 			 @PathParam("flowName") String flowName)
 	{
-		if(!context.isUserInRole("WebServiceAdmin") || !context.isUserInRole("ALL"))
+		if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
