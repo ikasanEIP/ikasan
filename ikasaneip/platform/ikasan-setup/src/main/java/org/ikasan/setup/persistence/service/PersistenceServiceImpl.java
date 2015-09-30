@@ -72,6 +72,7 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String CONF_PARAM_MAP = "confParamMap";
     private static String CONF_PARAM_MAP_STRING = "confParamMapString";
     private static String CONF_PARAM_STRING = "confParamString";
+    private static String CONF_PARAM_MASKED_STRING = "confParamMaskedString";
 
     private static String SYSTEM_EVENT = "systemEvent";
     private static String MODULE_STARTUP = "moduleStartup";
@@ -215,6 +216,7 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(CONF_PARAM_MAP);
         this.providerDAO.create(CONF_PARAM_MAP_STRING);
         this.providerDAO.create(CONF_PARAM_STRING);
+        this.providerDAO.create(CONF_PARAM_MASKED_STRING);
         this.providerDAO.create(SYSTEM_EVENT);
         this.providerDAO.create(MODULE_STARTUP);
         this.providerDAO.create(CONSOLE_MODULE);

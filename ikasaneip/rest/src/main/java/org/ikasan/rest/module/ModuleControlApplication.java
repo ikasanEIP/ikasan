@@ -45,7 +45,7 @@ public class ModuleControlApplication extends IkasanRestApplication
     public Response controlFlowState(@Context SecurityContext context, @PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, String action)
     {
-    	if(!context.isUserInRole("WebServiceAdmin"))
+    	if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
@@ -99,7 +99,7 @@ public class ModuleControlApplication extends IkasanRestApplication
     public void controlFlowStartupMode(@Context SecurityContext context, @PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, @PathParam("startupType") String startupType, String startupComment)
     {
-    	if(!context.isUserInRole("WebServiceAdmin"))
+    	if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
@@ -135,7 +135,7 @@ public class ModuleControlApplication extends IkasanRestApplication
 	@Produces(MediaType.APPLICATION_JSON)	
 	public String getFlowState(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName)
 	{
-		if(!context.isUserInRole("WebServiceAdmin"))
+		if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
@@ -153,7 +153,7 @@ public class ModuleControlApplication extends IkasanRestApplication
 	@Produces(MediaType.APPLICATION_JSON)	
 	public Map<String, String> getFlowStates(@Context SecurityContext context, @PathParam("moduleName") String moduleName)
 	{		
-    	if(!context.isUserInRole("WebServiceAdmin"))
+    	if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());

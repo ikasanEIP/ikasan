@@ -71,6 +71,12 @@ public class XmlConfiguration
     /** optionally set root name (QNAME) */
     private String rootName;
 
+    /** optionally set namespace URI (for QNAME) */
+    private String namespaceURI;
+
+    /** optionally set namespace prefix (for QNAME) */
+    private String namespacePrefix;
+
     /** optionally set root class name (QNAME) */
     private String rootClassName;
 
@@ -222,5 +228,21 @@ public class XmlConfiguration
 
     public void setFastFailOnConfigurationLoad(boolean fastFailOnConfigurationLoad) {
         this.fastFailOnConfigurationLoad = fastFailOnConfigurationLoad;
+    }
+
+    public String getNamespacePrefix() {
+        return namespacePrefix;
+    }
+
+    public void setNamespacePrefix(String namespacePrefix) {
+        this.namespacePrefix = namespacePrefix;
+    }
+
+    public String getNamespaceURI() {
+        return namespaceURI;
+    }
+
+    public void setNamespaceURI(String namespaceURI) {
+        this.namespaceURI = namespaceURI;
     }
 }

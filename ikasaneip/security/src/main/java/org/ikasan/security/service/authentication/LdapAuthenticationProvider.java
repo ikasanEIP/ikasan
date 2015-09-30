@@ -41,6 +41,7 @@
 package org.ikasan.security.service.authentication;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -138,6 +139,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         DirContextOperations authAdapter = authenticator.authenticate(auth);
 
 		User user = this.userService.loadUserByUsername(auth.getName());
+
 		Set<IkasanPrincipal> principals = user.getPrincipals();
 
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -159,8 +161,12 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 				}
 			}
 		}
+		
+		IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user
+				, authorities, (String)auth.getCredentials(), user.getPreviousAccessTimestamp());
 
-        return new IkasanAuthentication(true, user, authorities, (String)auth.getCredentials());
+		logger.info("Returning authentication: " + ikasanAuthentication);
+        return ikasanAuthentication;
     }
 
 

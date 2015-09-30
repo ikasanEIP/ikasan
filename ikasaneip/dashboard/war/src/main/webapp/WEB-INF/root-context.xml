@@ -34,6 +34,7 @@
         <constructor-arg ref="mainLayout"/>
         <constructor-arg ref="menuContent"/>
         <constructor-arg ref="showMenuButton"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
     
     <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
@@ -156,6 +157,10 @@
                    <constructor-arg ref="userPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="profilePanel"/>
+                   <constructor-arg ref="profilePanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="principalManagementPanel"/>
                    <constructor-arg ref="principalManagementPanel"/>
                 </bean>
@@ -235,6 +240,8 @@
 	            <ref bean="contextComboBoxRefreshGroup" />
 	        </list>
 	    </constructor-arg>
+	    <constructor-arg ref="systemEventService"/>
+	    <constructor-arg ref="userService"/>
 	</bean>
 
     <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">
@@ -280,6 +287,13 @@
     <bean id="mainLayout" class="com.vaadin.ui.GridLayout" scope="session">
         <constructor-arg value="1"/>
         <constructor-arg value="4"/>
+    </bean>
+    
+    <bean id="profilePanel" class="org.ikasan.dashboard.ui.framework.panel.ProfilePanel" scope="session">
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
+    	<constructor-arg ref="associatedPrincipalItemClickListener"/>
+    	<constructor-arg ref="systemEventService"/>
     </bean>
 
 </beans>

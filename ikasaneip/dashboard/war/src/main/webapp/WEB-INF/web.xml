@@ -86,6 +86,10 @@
 		<init-param>
 	      <param-name>closeIdleSessions</param-name>
 	      <param-value>true</param-value>
+	    </init-param> 
+	    <init-param>
+	      <param-name>legacyPropertyToStringMode</param-name>
+	      <param-value>true</param-value>
 	    </init-param>
 	    <!-- init-param>
 		   <param-name>org.atmosphere.useWebSocketAndServlet3</param-name>
@@ -167,7 +171,11 @@
 	</context-param>
 
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>100</session-timeout>
     </session-config>
+    
+    <listener>
+          <listener-class>org.ikasan.dashboard.ui.WebAppStartStopListener</listener-class>
+     </listener>
 
 </web-app>

@@ -42,7 +42,6 @@ package org.ikasan.mapping.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
@@ -55,7 +54,6 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -591,15 +589,6 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     {
         return this.dao.getTargetConfigurationContextByClientNameTypeAndSourceContext(clientName, type, sourceContext); 
     }
-    
-    /* (non-Javadoc)
-	 * @see org.ikasan.mapping.service.MappingConfigurationService#getPlatformConfigurationByName(java.lang.String)
-	 */
-	@Override
-	public PlatformConfiguration getPlatformConfigurationByName(String name)
-	{
-		return this.dao.getPlatformConfigurationByName(name);
-	}
 	
 	/* (non-Javadoc)
 	 * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
@@ -608,7 +597,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 			String configurationTypeName, String sourceContext,
 			String targetContext, List<String> sourceSystemValues)
 	{
-		String returnValue = this.dao.getTargetConfigurationValue(clientName, configurationTypeName, sourceContext, 
+		String returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
 				targetContext, sourceSystemValues, sourceSystemValues.size());
 		
 		boolean resultFound = false;
@@ -617,16 +606,16 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 		{
 			for(int i=sourceSystemValues.size() - 1; i>0; i--)
 			{
-				Set<Set<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
+				List<List<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
 				
 				String result = null;
 				
-				for(Set<String> subSet: subSets)
+				for(List<String> subSet: subSets)
 				{
 					ArrayList<String> subList = new ArrayList<String>();
 					subList.addAll(subSet);
 					
-					returnValue = this.dao.getTargetConfigurationValue(clientName, configurationTypeName, sourceContext, 
+					returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
 							targetContext, subList, sourceSystemValues.size());
 					
 					if(returnValue != null && resultFound)

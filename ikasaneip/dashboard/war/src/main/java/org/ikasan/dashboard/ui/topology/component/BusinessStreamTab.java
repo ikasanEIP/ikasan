@@ -172,7 +172,7 @@ public class BusinessStreamTab extends TopologyTab
     			            	topologyService.deleteBusinessStreamFlow(businessStreamFlow);
     			            	topologyService.saveBusinessStream(businessStream);
     			            	
-    			            	businessStreamTable.removeItem(businessStreamFlow.getFlow());
+    			            	businessStreamTable.removeItem(businessStreamFlow);
     			            }
     			        });
 						
@@ -221,7 +221,7 @@ public class BusinessStreamTab extends TopologyTab
 	    			            	topologyService.deleteBusinessStreamFlow(businessStreamFlow);
 	    			            	topologyService.saveBusinessStream(businessStream);
 	    			            	
-	    			            	businessStreamTable.removeItem(businessStreamFlow.getFlow());
+	    			            	businessStreamTable.removeItem(businessStreamFlow);
 	    			            }
 	    			        });
 							
@@ -348,7 +348,7 @@ public class BusinessStreamTab extends TopologyTab
     			            	topologyService.deleteBusinessStreamFlow(businessStreamFlow);
     			            	topologyService.saveBusinessStream(businessStream);
     			            	
-    			            	businessStreamTable.removeItem(businessStreamFlow.getFlow());
+    			            	businessStreamTable.removeItem(businessStreamFlow);
     			            }
     			        });
     					
@@ -402,7 +402,9 @@ public class BusinessStreamTab extends TopologyTab
             	
             	businessStreamCombo.removeItem(businessStream);
             	
+            	descriptionTextArea.setReadOnly(false);
             	descriptionTextArea.setValue("");
+            	descriptionTextArea.setReadOnly(true);
             }
         });
     	

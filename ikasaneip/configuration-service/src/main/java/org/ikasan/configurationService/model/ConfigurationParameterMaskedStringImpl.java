@@ -1,7 +1,7 @@
-/*
- * $Id$  
+/* 
+ * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,44 +38,52 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
+package org.ikasan.configurationService.model;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import java.io.Serializable;
 
 /**
+ * String based configuration parameter.
  * 
  * @author Ikasan Development Team
  *
  */
-public class Test
+@SuppressWarnings("serial")
+public class ConfigurationParameterMaskedStringImpl extends AbstractComponentParameter<String> implements Serializable
 {
+    /**
+     * Constructor
+     * @param name
+     * @param value
+     */
+    public ConfigurationParameterMaskedStringImpl(String name, String value)
+    {
+        this(name, value, null);
+    }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		String url = "http://svc-eai01d:8080/murex-repoTrade/rest/moduleControl/flowStates/murex-repoTrade";
-		
-    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-    	
-    	WebTarget webTarget = client.target(url);
-	    
-    	Response results = webTarget.request().get();
-    	
-    	System.out.println(results);
-	}
+    /**
+     * Constructor
+     * @param name
+     * @param value
+     * @param description
+     */
+    public ConfigurationParameterMaskedStringImpl(String name, String value, String description)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
 
+        this.value = value; 
+        this.description = description;
+    }
+
+    /**
+     * Constructor
+     */
+    protected ConfigurationParameterMaskedStringImpl()
+    {
+        // required by ORM
+    }
 }

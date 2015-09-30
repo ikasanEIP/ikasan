@@ -52,6 +52,7 @@
 	<bean id="xaLdapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="xaSecurityDao" />
 		<constructor-arg ref="xaUserDao" />
+		<constructor-arg ref="sha1PasswordEncoder"/>
 	</bean>
 	
 	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
@@ -109,6 +110,7 @@
 	<bean id="localTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
 		<constructor-arg ref="localTxSecurityDao" />
 		<constructor-arg ref="localTxUserDao" />
+		<constructor-arg ref="sha1PasswordEncoder"/>
 	</bean>
 
 	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">

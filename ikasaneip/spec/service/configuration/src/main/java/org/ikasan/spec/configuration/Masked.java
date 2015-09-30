@@ -38,57 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.model;
+package org.ikasan.spec.configuration;
 
-import org.ikasan.spec.configuration.ConfiguredResource;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class PlatformConfigurationConfiguredResource implements
-		ConfiguredResource<PlatformConfiguration>
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Masked
 {
-
-	private String configuredResourceId = "platform-configuration";
-	private PlatformConfiguration platformConfiguration;
-	
-	
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
-	 */
-	@Override
-	public PlatformConfiguration getConfiguration()
-	{
-		return platformConfiguration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.Configured#setConfiguration(java.lang.Object)
-	 */
-	@Override
-	public void setConfiguration(PlatformConfiguration configuration)
-	{
-		this.platformConfiguration = configuration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguredResourceId()
-	 */
-	@Override
-	public String getConfiguredResourceId()
-	{
-		return configuredResourceId;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
-	 */
-	@Override
-	public void setConfiguredResourceId(String id)
-	{
-		configuredResourceId = id;
-	}
-
+	Class<String> expected() default String.class;
 }

@@ -307,7 +307,7 @@ public class PolicyManagementPanel extends Panel implements View
 		this.roleTable = new Table();
 		this.roleTable.addContainerProperty("Role", String.class, null);
 		this.roleTable.addContainerProperty("", Button.class, null);
-		this.roleTable.setHeight("635px");
+		this.roleTable.setHeight("580px");
 		this.roleTable.setWidth("100%");
 		
 		VerticalLayout layout = new VerticalLayout();

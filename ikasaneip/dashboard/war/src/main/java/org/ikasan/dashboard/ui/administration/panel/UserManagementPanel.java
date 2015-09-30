@@ -44,11 +44,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
+import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
@@ -61,6 +65,7 @@ import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -101,6 +106,7 @@ public class UserManagementPanel extends Panel implements View
 	private Table associatedPrincipalsTable = new Table();
 	private User user;
 	private AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener;
+	private SystemEventService systemEventService;
 
 	/**
 	 * Constructor
@@ -108,7 +114,8 @@ public class UserManagementPanel extends Panel implements View
 	 * @param ikasanModuleService
 	 */
 	public UserManagementPanel(UserService userService, SecurityService securityService,
-			AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener)
+			AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener,
+			SystemEventService systemEventService)
 	{
 		super();
 		this.userService = userService;
@@ -127,6 +134,12 @@ public class UserManagementPanel extends Panel implements View
 		{
 			throw new IllegalArgumentException(
 					"associatedPrincipalItemClickListener cannot be null!");
+		}
+		this.systemEventService = systemEventService;
+		if (this.systemEventService == null)
+		{
+			throw new IllegalArgumentException(
+					"systemEventService cannot be null!");
 		}
 
 		init();
@@ -454,7 +467,7 @@ public class UserManagementPanel extends Panel implements View
 
 		userDropTable.addContainerProperty("Members", String.class, null);
 		userDropTable.addContainerProperty("", Button.class, null);
-		userDropTable.setHeight("715px");
+		userDropTable.setHeight("685px");
 		userDropTable.setWidth("300px");
 
 		userDropTable.setDragMode(TableDragMode.ROW);
@@ -505,6 +518,13 @@ public class UserManagementPanel extends Panel implements View
 		            	{
 		            		roleTable.removeItem(roleToRemove);
 		            	}
+		            	
+		            	IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		                    	.getAttribute(DashboardSessionValueConstants.USER);
+		            	
+		            	String action = "Role " + roleToRemove.getName() + " removed by " + ikasanAuthentication.getName();
+		            	
+		            	systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, usernameField.getText());
 		            }
 		        });
 				
@@ -514,6 +534,13 @@ public class UserManagementPanel extends Panel implements View
 				principal.getRoles().add((Role)rolesCombo.getValue());
 				
 				securityService.savePrincipal(principal);
+				
+				IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                    	.getAttribute(DashboardSessionValueConstants.USER);
+            	
+            	String action = "Role " + ((Role)rolesCombo.getValue()).getName() + " added by " + ikasanAuthentication.getName();
+            	
+            	systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, usernameField.getText());
 
 				roleTable.removeAllItems();
 				
@@ -535,6 +562,13 @@ public class UserManagementPanel extends Panel implements View
 			            	securityService.savePrincipal(principal);
 			            	
 			            	userDropTable.removeItem(principal.getName());
+			            	
+			            	IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+			                    	.getAttribute(DashboardSessionValueConstants.USER);
+			            	
+			            	String action = "Role " + role.getName() + " removed by " + ikasanAuthentication.getName();
+			            	
+			            	systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, usernameField.getText());
 			            }
 			        }); 
 					
@@ -567,7 +601,7 @@ public class UserManagementPanel extends Panel implements View
 		        
 		        if(role != null)
 		        {		        
-			        logger.info("Value changed got Role: " + role);
+			        logger.debug("Value changed got Role: " + role);
 			        
 			        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
 					
@@ -595,6 +629,13 @@ public class UserManagementPanel extends Panel implements View
 				            	{
 				            		roleTable.removeItem(role);
 				            	}
+				            	
+				            	IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				                    	.getAttribute(DashboardSessionValueConstants.USER);
+				            	
+				            	String action = "Role " + role.getName() + " removed by " + ikasanAuthentication.getName();
+				            	
+				            	systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, usernameField.getText());
 				            }
 				        });
 						

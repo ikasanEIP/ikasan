@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.Broadcaster;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
@@ -70,23 +71,35 @@ public class TopologyStateCache
 	
 	private TopologyService topologyService;
 	private HashMap<String, String> stateMap;
-	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+	
+	private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
+	protected PlatformConfigurationService platformConfigurationService;
 	
 	
 	
 	/**
 	 * @param topologyService
 	 */
-	public TopologyStateCache(TopologyService topologyService)
+	public TopologyStateCache(TopologyService topologyService,
+			PlatformConfigurationService platformConfigurationService)
 	{
 		super();
 		this.topologyService = topologyService;
+		if (this.topologyService == null)
+		{
+			throw new IllegalArgumentException("topologyService cannot be null!");
+		}
 		
-		stateMap = new HashMap<String, String>();
+		this.platformConfigurationService = platformConfigurationService;
+		if (this.platformConfigurationService == null)
+		{
+			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
+		
+		stateMap = new HashMap<String, String>();	
 		
 		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
-		
 	}
 
 	public String getState(String key)
@@ -125,17 +138,21 @@ public class TopologyStateCache
 		{
 			logger.warn("An exception has occurred trying to update the topology state cache", e);
 			// Ignoring this exception, as it may be the case that the database is not yet setup.
+			return;
 		}
+		
+		String username = this.platformConfigurationService.getWebServiceUsername();
+		String password = this.platformConfigurationService.getWebServicePassword();
 		
 		logger.info("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
 		{
-			logger.info("Synchronising server: " + server.getName());
+			logger.debug("Synchronising server: " + server.getName());
 			for(Module module: server.getModules())
 			{
-				logger.info("Synchronising module: " + module.getName());
+				logger.debug("Synchronising module: " + module.getName());
 				
-				HashMap<String, String> results = getFlowStates(module);
+				HashMap<String, String> results = getFlowStates(module, username, password);
 				
 				for(String key: results.keySet())
 				{
@@ -146,7 +163,7 @@ public class TopologyStateCache
 		
 		Broadcaster.broadcast(stateMap);
 		
-		logger.info("Finished synchronising topology state cache.");
+		logger.debug("Finished synchronising topology state cache.");
 	}
 	
 	public void update(String key, String value)
@@ -157,34 +174,38 @@ public class TopologyStateCache
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected HashMap<String, String> getFlowStates(Module module)
+	protected HashMap<String, String> getFlowStates(Module module, String username,
+			String password)
 	{
 		HashMap<String, String> results = new HashMap<String, String>();
+		String url = null;
+		
 		try
 		{
-			String url = "http://" + module.getServer().getUrl() + ":" + module.getServer().getPort() 
+			url = module.getServer().getUrl() + ":" + module.getServer().getPort() 
 					+ module.getContextRoot() 
 					+ "/rest/moduleControl/flowStates/"
 					+ module.getName();
 			
-	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
+	    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
 	    	
 	    	ClientConfig clientConfig = new ClientConfig();
 	    	clientConfig.register(feature) ;
 	    	
 	    	Client client = ClientBuilder.newClient(clientConfig);
 	    	
-	    	logger.info("Calling URL: " + url);
+	    	logger.debug("Calling URL: " + url);
 	    	WebTarget webTarget = client.target(url);
 		    
 	    	results = (HashMap<String, String>)webTarget.request().get(HashMap.class);
 	    	
-	    	logger.info("results: " + results);
+	    	logger.debug("results: " + results);
 		}
 		catch(Exception e)
 		{
-			logger.info("caught exception: " + e.getMessage());
-			e.printStackTrace();
+			logger.info("Caught exception attempting to discover module with the following URL: " + url 
+	    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
+			
 			return new HashMap<String, String>();
 		}
 	    
@@ -197,5 +218,10 @@ public class TopologyStateCache
 	public HashMap<String, String> getStateMap()
 	{
 		return stateMap;
+	}
+	
+	public static void shutdown()
+	{
+		executor.shutdown();
 	}
 }

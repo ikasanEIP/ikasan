@@ -42,6 +42,7 @@
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
 				<prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+				<prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
 				<prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -425,6 +426,22 @@
 					CREATE UNIQUE INDEX ConfParamString01u ON
 					ConfParamString(Id)
 				</prop>
+				
+				<prop key="create.confParamMaskedString">
+					CREATE TABLE ConfParamMaskedString
+					(
+					Id NUMERIC NOT NULL,
+					Name VARCHAR(128) NOT NULL,
+					Value TEXT DEFAULT NULL NULL,
+					Description VARCHAR(256) DEFAULT NULL NULL
+					)
+					LOCK DATAROWS
+					WITH
+					IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX ConfParamMaskedString01u ON
+					ConfParamMaskedString(Id)
+				</prop>
 
 
 				<prop key="create.systemEvent">CREATE TABLE SystemEvent
@@ -506,7 +523,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled 			BIT NOT NULL
+					Enabled 			BIT NOT NULL,
+					PreviousAccess 		NUMERIC DEFAULT 0 NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1352,6 +1370,7 @@
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
 				<prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+				<prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
 				<prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -1731,6 +1750,22 @@
 					CREATE UNIQUE INDEX ConfParamString01u ON
 					ConfParamString(Id)
 				</prop>
+				
+				<prop key="create.confParamMaskedString">
+					CREATE TABLE ConfParamMaskedString
+					(
+					Id NUMERIC NOT NULL,
+					Name VARCHAR(128) NOT NULL,
+					Value TEXT DEFAULT NULL NULL,
+					Description VARCHAR(256) DEFAULT NULL NULL
+					)
+					LOCK DATAROWS
+					WITH
+					IDENTITY_GAP=1
+
+					CREATE UNIQUE INDEX ConfParamMaskedString01u ON
+					ConfParamMaskedString(Id)
+				</prop>
 
 
 				<prop key="create.systemEvent">CREATE TABLE SystemEvent
@@ -1812,7 +1847,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled 			BIT NOT NULL
+					Enabled 			BIT NOT NULL,
+					PreviousAccess 		NUMERIC DEFAULT 0 NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -2688,6 +2724,7 @@
                 <prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
                 <prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
                 <prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+                <prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
                 <prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
                 <prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
                 <prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -3000,6 +3037,17 @@
 
                     CREATE UNIQUE INDEX [IX_ConfParamString_Id] ON [ConfParamString](Id)
                 </prop>
+                
+                <prop key="create.confParamMaskedString">CREATE TABLE [ConfParamMaskedString]					
+                	(
+					[Id] 						[numeric](18, 0) NOT NULL,
+					[Name]                        [varchar](128) NOT NULL,
+                    [Value]                       [varchar] (max) DEFAULT NULL NULL,
+                    [Description]                 [varchar](256) DEFAULT NULL NULL,
+					)
+					
+					CREATE UNIQUE INDEX [IX_ConfParamMaskedString_Id] ON [ConfParamMaskedString](Id)
+				</prop>
 
 
                 <prop key="create.systemEvent">CREATE TABLE [SystemEvent]
@@ -3078,7 +3126,8 @@
                     [FirstName] [VARCHAR] (50) NULL,
                     [Surname] [VARCHAR] (50)   NULL,
                     [Department] [VARCHAR] (50) NULL,
-                    [Enabled]  [BIT] NOT NULL
+                    [Enabled]  [BIT] NOT NULL,
+                    PreviousAccess [NUMERIC] DEFAULT 0 NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
                     (
                     [Id] ASC
@@ -3588,10 +3637,10 @@
                 <prop key="create.server">CREATE TABLE Server
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      		[varchar](256) 		UNIQUE NOT NULL,
+					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
 					   [Description]	      		[varchar](1024) 	NOT NULL,
-					   [Url]		      		[varchar](256) 		NOT NULL,
-					   [Port]				[numeric](18) 		NOT NULL,
+					   [Url]		      			[varchar](256) 		NOT NULL,
+					   [Port]						[numeric](18) 		NOT NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Server_Id] PRIMARY KEY CLUSTERED
@@ -3605,15 +3654,15 @@
                 <prop key="create.ikasanModule">CREATE TABLE IkasanModule
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      		[varchar](256) 		UNIQUE NOT NULL,
+					   [Name]		      			[varchar](256) 		UNIQUE NOT NULL,
 					   [ContextRoot]     			[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
 					   [DiagramUrl]      			[varchar](256) 		NULL,
-					   [Version]      			[varchar](256) 		NULL,
-					   [ServerId]				[numeric](18) 		NULL,
+					   [Version]      				[varchar](256) 		NULL,
+					   [ServerId]					[numeric](18) 		NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
-					   CONSTRAINT            [PK_IkasanModule_Id] PRIMARY KEY CLUSTERED
+					   CONSTRAINT            		[PK_IkasanModule_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
 						)
@@ -3624,9 +3673,9 @@
                 <prop key="create.flow">CREATE TABLE Flow
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      		[varchar](256) 		NOT NULL,
+					   [Name]		      			[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [ModuleId]				[numeric](18) 		NOT NULL,
+					   [ModuleId]					[numeric](18) 		NULL,
 					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Flow_Id] PRIMARY KEY CLUSTERED
@@ -3639,14 +3688,14 @@
                 <prop key="create.component">CREATE TABLE Component
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      		[varchar](256) 		NOT NULL,
+					   [Name]		      			[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [IsConfigurable]			[bit] 			DEFAULT 0,
-					   [FlowId]				[numeric](18) 		NOT NULL,
+					   [IsConfigurable]				[bit] 				DEFAULT 0,
+					   [FlowId]						[numeric](18) 		NULL,
 					   [ConfigurationId]			[varchar](256) 		NULL,
-					   [ComponentOrder]			[numeric](18) 		NULL,
-					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [ComponentOrder]				[numeric](18) 		NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Component_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3657,11 +3706,11 @@
                 <prop key="create.businessStream">CREATE TABLE BusinessStream
 					(
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
-					   [Name]		      		[varchar](256) 		UNIQUE NOT NULL,
+					   [Name]		      		[varchar](256) 			UNIQUE NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
-					   CONSTRAINT            [PK_BusinessStream_Id] PRIMARY KEY CLUSTERED
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   CONSTRAINT            [PK_BusinessStream_Id] 	PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
 						)
@@ -3670,9 +3719,9 @@
                 
                 <prop key="create.businessStreamFlow">CREATE TABLE BusinessStreamFlow
 					(
-					   [BusinessStreamId]			[numeric](18) 	NOT NULL,
-					   [FlowId]						[numeric](18) 	NOT NULL,
-					   [FlowOrder]					[numeric](18) 	NOT NULL,
+					   [BusinessStreamId]			[numeric](18) 		NOT NULL,
+					   [FlowId]						[numeric](18) 		NOT NULL,
+					   [FlowOrder]					[numeric](18) 		NOT NULL,
 					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT PK_BusinessStreamFlow PRIMARY KEY CLUSTERED 
@@ -3685,10 +3734,10 @@
                 
                 <prop key="create.userBusinessStream">CREATE TABLE UserBusinessStream
 					(
-					   [UserId]				[numeric](18) 	NOT NULL,
-					   [BusinessStreamId]			[numeric](18) 	NOT NULL,
-					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [UserId]						[numeric](18) 			NOT NULL,
+					   [BusinessStreamId]			[numeric](18) 			NOT NULL,
+					   [CreatedDateTime]      		[datetime] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 				default getdate() NOT NULL,
 					   CONSTRAINT PK_UserBusinessStream PRIMARY KEY CLUSTERED 
 					   (
 							 [UserId], [BusinessStreamId]
@@ -3915,6 +3964,7 @@
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
 				<prop key="drop.systemEvent">DROP TABLE SystemEvent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
+				<prop key="drop.confParamMaskedString">DROP TABLE ConfParamMaskedString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
 				<prop key="drop.confParamLong">DROP TABLE ConfParamLong;</prop>
@@ -4198,6 +4248,18 @@
 					CREATE UNIQUE INDEX
 					ConfParamString01u ON ConfParamString(Id);
 				</prop>
+				
+				<prop key="create.confParamMaskedString">
+					CREATE TABLE ConfParamMaskedString
+					(
+					Id NUMERIC NOT NULL,
+					Name VARCHAR(128) NOT NULL,
+					Value TEXT DEFAULT NULL NULL,
+					Description VARCHAR(256) DEFAULT NULL NULL
+					);
+					CREATE UNIQUE INDEX
+					ConfParamMaskedString01u ON ConfParamMaskedString(Id);
+				</prop>
 
 				<prop key="create.systemEvent">CREATE TABLE SystemEvent
 					(
@@ -4280,7 +4342,8 @@
 					FirstName			VARCHAR(50) NULL,
 					Surname				VARCHAR(50) NULL,
 					Department			VARCHAR(50) NULL,
-					Enabled BIT NOT NULL
+					Enabled BIT NOT NULL,
+					PreviousAccess NUMERIC DEFAULT 0 NOT NULL
 					);
 				</prop>
 				

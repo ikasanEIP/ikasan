@@ -40,6 +40,9 @@
  */
 package org.ikasan.component.converter.xml;
 
+import javax.xml.bind.ValidationEventHandler;
+import java.util.Map;
+
 /**
  * Configuration for an XML to Object JAXB converter.
  * 
@@ -57,6 +60,13 @@ public class XmlStringToObjectConfiguration
     private String schema;
 
     private boolean autoConvertElementToValue;
+
+    private Map<String, Object> unmarshallerProperties;
+
+    private Map<String, Object> marshallerProperties;
+
+    private ValidationEventHandler validationEventHandler;
+
 
     public String[] getContextPaths()
     {
@@ -104,5 +114,35 @@ public class XmlStringToObjectConfiguration
 
     public void setAutoConvertElementToValue(boolean autoConvertElementToValue) {
         this.autoConvertElementToValue = autoConvertElementToValue;
+    }
+
+    public Map<String, Object> getUnmarshallerProperties()
+    {
+        return unmarshallerProperties;
+    }
+
+    public void setUnmarshallerProperties(Map<String, Object> unmarshallerProperties)
+    {
+        this.unmarshallerProperties = unmarshallerProperties;
+    }
+
+    public Map<String, Object> getMarshallerProperties()
+    {
+        return marshallerProperties;
+    }
+
+    public void setMarshallerProperties(Map<String, Object> marshallerProperties)
+    {
+        this.marshallerProperties = marshallerProperties;
+    }
+
+    public ValidationEventHandler getValidationEventHandler()
+    {
+        return validationEventHandler;
+    }
+
+    public void setValidationEventHandler(ValidationEventHandler validationEventHandler)
+    {
+        this.validationEventHandler = validationEventHandler;
     }
 }

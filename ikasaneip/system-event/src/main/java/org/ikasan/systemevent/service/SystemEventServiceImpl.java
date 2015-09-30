@@ -41,6 +41,7 @@
 package org.ikasan.systemevent.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -152,4 +153,14 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
     {
         this.systemEventServiceConfiguration = systemEventServiceConfiguration;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.systemevent.service.SystemEventService#listSystemEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor,
+			Date timestampFrom, Date timestampTo)
+	{
+		return this.systemEventDao.listSystemEvents(subjects, actor, timestampFrom, timestampTo);
+	}
 }

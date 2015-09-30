@@ -46,7 +46,6 @@ import java.util.Set;
 
 import javax.json.JsonArray;
 import javax.json.JsonValue;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -231,7 +230,7 @@ public class TopologyServiceImpl implements TopologyService
 			
 			for(Module module: modules)
 			{
-				String url = "http://" + server.getUrl() + ":" + server.getPort() 
+				String url = server.getUrl() + ":" + server.getPort() 
 						+ module.getContextRoot() 
 						+ "/rest/discovery/flows/"
 						+ module.getName();
@@ -255,20 +254,6 @@ public class TopologyServiceImpl implements TopologyService
 			    module.setServer(server);
 			    
 			    this.topologyDao.save(module);
-			    
-//		    	List<Flow> dbFlows = topologyDao.getFlowsByServerIdAndModuleId
-//						(server.getId(), module.getId());
-//		    	
-//				for(Flow dbFlow: dbFlows)
-//				{
-//					for(Component component: dbFlow.getComponents())
-//					{
-//						this.topologyDao.delete(component);
-//					}
-//					
-//					this.topologyDao.delete(dbFlow);
-//				}
-
 			    
 			    for(JsonValue flowValue: flowResponse)
 			    { 
