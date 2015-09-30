@@ -35,4 +35,14 @@
 	<bean id="persistanceSetupComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
+    
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+	      <property name="dataSource" ref="ikasan.ds" />
+	      <property name="changeLog" value="classpath:db-changelog.xml" />
+	
+	      <!--
+	      contexts specifies the runtime contexts to use.
+	      -->
+	      <!-- property name="contexts" value="test, production" / -->
+	 </bean>
 </beans>

@@ -99,7 +99,7 @@
       <!--
       contexts specifies the runtime contexts to use.
       -->
-      <property name="contexts" value="test, production" />
+      <!-- property name="contexts" value="test, production" / -->
  </bean>
 
 </beans>
