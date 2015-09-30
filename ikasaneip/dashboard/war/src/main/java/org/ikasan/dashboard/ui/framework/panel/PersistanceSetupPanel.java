@@ -145,7 +145,7 @@ public class PersistanceSetupPanel extends Panel implements View
         ikasanWelcomeLabel1.setWidth("100%");
         
         Label ikasanWelcomeLabel2 = new Label("Welcome to Ikasan setup. If you are accessing Ikasan for the" +
-        		" first time we need to create some database tables. Please select you database type below and" +
+        		" first time we need to create some database tables. Please select your database type below and" +
         		" press the create button.");
         
         ikasanWelcomeLabel2.setStyleName("large");
