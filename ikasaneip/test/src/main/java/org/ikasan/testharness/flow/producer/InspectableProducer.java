@@ -58,7 +58,7 @@ import java.util.List;
  * Useful for Unittest by providing a Spring config that will override the original producer with this implementation,
  * so that you can check the persisted messages by calling the {@link #getEvents()} and {@link #getEventCount()} methods.
  *
- * @author Ikasan Development Team 
+ * @author Ikasan Development Team
  */
 public class InspectableProducer<T> extends JmsTemplateProducer<T> {
 
