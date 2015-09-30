@@ -91,6 +91,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-jms-spring</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
