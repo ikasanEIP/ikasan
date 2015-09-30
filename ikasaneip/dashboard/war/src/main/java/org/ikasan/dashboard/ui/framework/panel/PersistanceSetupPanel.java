@@ -143,7 +143,6 @@ public class PersistanceSetupPanel extends Panel implements View
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
         ikasanWelcomeLabel1.setWidth("100%");
-//        ikasanWelcomeLabel1.setHeight("30px");
         
         Label ikasanWelcomeLabel2 = new Label("Welcome to Ikasan setup. If you are accessing Ikasan for the" +
         		" first time we need to create some database tables. Please select you database type below and" +
@@ -230,7 +229,6 @@ public class PersistanceSetupPanel extends Panel implements View
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
         ikasanWelcomeLabel1.setWidth("100%");
-//        ikasanWelcomeLabel1.setHeight("30px");
         
         Label ikasanWelcomeLabel2 = new Label("It appears as though the Ikasan database has already been created. " +
         		"If you believe that this is not the case there may be an issue. " +
