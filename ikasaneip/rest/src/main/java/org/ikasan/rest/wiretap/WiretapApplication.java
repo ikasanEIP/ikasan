@@ -71,11 +71,6 @@ public class WiretapApplication extends IkasanRestApplication
     
     public WiretapApplication()
     {
-//    	this.jobAwareFlowEventListener = jobAwareFlowEventListener;
-//    	if(this.jobAwareFlowEventListener == null)
-//    	{
-//    		throw new IllegalArgumentException("jobAwareFlowEventListener cannot be null!");
-//    	}
     }
 
     @PUT
@@ -85,7 +80,7 @@ public class WiretapApplication extends IkasanRestApplication
     		@PathParam("flowName") String flowName, @PathParam("flowElementName") String flowElementName, @PathParam("relationship") String relationship, 
     		@PathParam("jobType") String jobType, String timeToLive)
     {
-    	if(!context.isUserInRole("WebServiceAdmin") || !context.isUserInRole("ALL"))
+    	if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
@@ -118,7 +113,7 @@ public class WiretapApplication extends IkasanRestApplication
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteTrigger(@Context SecurityContext context, Long triggerId)
     {
-    	if(!context.isUserInRole("WebServiceAdmin"))
+    	if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());
