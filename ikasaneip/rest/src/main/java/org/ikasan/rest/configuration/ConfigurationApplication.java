@@ -42,16 +42,6 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	public ConfigurationApplication()
 	{
 		super();
-//		this.configurationManagement = configurationManagement;
-//		if(this.configurationManagement == null)
-//		{
-//			throw new IllegalArgumentException("configurationManagement cannot be null!");
-//		}
-//		this.moduleContainer = moduleContainer;
-//		if(this.moduleContainer == null)
-//		{
-//			throw new IllegalArgumentException("moduleContainer cannot be null!");
-//		}
 	}
 
 	/**
@@ -68,7 +58,7 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 	public Response createConfiguration(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
 			@PathParam("componentName") String componentName)
 	{
-		if(!context.isUserInRole("WebServiceAdmin"))
+		if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
 		{
 			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build());

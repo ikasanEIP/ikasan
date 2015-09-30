@@ -1,5 +1,5 @@
 /*
- * $Id$  
+ * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -38,32 +38,59 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.model;
+package org.ikasan.testharness.flow.producer;
 
-import java.util.HashMap;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.springframework.jms.core.IkasanJmsTemplate;
 
 /**
- * 
+ * Tests for the <code>InspectableProducer</code> class.
+ *
  * @author Ikasan Development Team
  *
  */
-public class PlatformConfiguration
+public class InspectableProducerTest
 {
-	private HashMap<String, String> configurationMap = new HashMap<String, String>();
+    private final String DUMMY_MESSAGE1 = "message1";
+    private final String DUMMY_MESSAGE2 = "message2";
+    private final String DUMMY_MESSAGE3 = "message3";
 
-	/**
-	 * @return the configurationMap
-	 */
-	public HashMap<String, String> getConfigurationMap()
-	{
-		return configurationMap;
-	}
+    @Test
+    public void testInspectableProducerSimple()
+    {
+        InspectableProducer<String> inspectableProducer = new InspectableProducer<>();
+        Assert.assertEquals("useJms property should be false", false, inspectableProducer.isUseJms());
 
-	/**
-	 * @param configurationMap the configurationMap to set
-	 */
-	public void setConfigurationMap(HashMap<String, String> configurationMap)
-	{
-		this.configurationMap = configurationMap;
-	}
+        inspectableProducer.invoke(DUMMY_MESSAGE1);
+        Assert.assertEquals("message count", 1, inspectableProducer.getEventCount());
+
+        inspectableProducer.invoke(DUMMY_MESSAGE2);
+        Assert.assertEquals("message count", 2, inspectableProducer.getEventCount());
+
+        inspectableProducer.getEvents().clear();
+        inspectableProducer.invoke(DUMMY_MESSAGE3);
+        Assert.assertEquals("message count", 1, inspectableProducer.getEventCount());
+    }
+
+    @Test
+    public void testInspectableProducerJms()
+    {
+        InspectableProducer<String> inspectableProducer = new InspectableProducer<>(new IkasanJmsTemplate());
+        Assert.assertEquals("useJms property should be true", true, inspectableProducer.isUseJms());
+        inspectableProducer.setUseJms(false);
+
+        inspectableProducer.invoke(DUMMY_MESSAGE1);
+        Assert.assertEquals("message count", 1, inspectableProducer.getEventCount());
+
+        inspectableProducer.invoke(DUMMY_MESSAGE2);
+        Assert.assertEquals("message count", 2, inspectableProducer.getEventCount());
+
+        inspectableProducer.getEvents().clear();
+        inspectableProducer.invoke(DUMMY_MESSAGE3);
+        Assert.assertEquals("message count", 1, inspectableProducer.getEventCount());
+    }
 }
+
+
+

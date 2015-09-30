@@ -41,6 +41,7 @@
 package org.ikasan.systemevent.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.model.SystemEvent;
@@ -81,6 +82,16 @@ public interface SystemEventService
 	 */
 	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
 
+	/**
+	 * This method returns a list of SystemEvents based on subjects and actor within a certain date range.
+	 * 
+	 * @param subject
+	 * @param actor
+	 * @param timestampFrom
+	 * @param timestampTo
+	 * @return
+	 */
+	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo); 
 	
 	/**
 	 * Cleanup all expired system events

@@ -38,116 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.mapping.model;
+package org.ikasan.dashboard.ui;
 
-import java.util.Date;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 
 /**
+ * 
  * 
  * @author Ikasan Development Team
  *
  */
-public class PlatformConfiguration
+public class WebAppStartStopListener implements ServletContextListener
 {
-	private Long id;
-	private String name;
-	private String value;
-	
-    /** The data time stamp when an instance was first created */
-    private Date createdDateTime;
-
-    /** The data time stamp when an instance was last updated */
-    private Date updatedDateTime;
-
-    /**
-     * Default constructor
-     */
-    public PlatformConfiguration()
+    // Our web app (Vaadin app) is starting up.
+    public void contextInitialized ( ServletContextEvent servletContextEvent )
     {
-        long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
-        this.updatedDateTime = new Date(now);
+        // In this example, we do not need the ServletContex. But FYI, you may find it useful.
+        ServletContext ctx = servletContextEvent.getServletContext();
+        System.out.println( "Web app context initialized." );   // INFO logging.
+        System.out.println( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
+        System.out.println( "TRACE Server Info : " + ctx.getServerInfo() );
+
     }
 
-	/**
-	 * @return the id
-	 */
-	public Long getId()
-	{
-		return id;
-	}
+    // Our web app (Vaadin app) is shutting down.
+    public void contextDestroyed ( ServletContextEvent servletContextEvent )
+    {
 
-	/**
-	 * @param id the id to set
-	 */
-	@SuppressWarnings("unused")
-	private void setId(Long id)
-	{
-		this.id = id;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	/**
-	 * @return the value
-	 */
-	public String getValue()
-	{
-		return value;
-	}
-
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value)
-	{
-		this.value = value;
-	}
-
-	/**
-	 * @return the createdDateTime
-	 */
-	public Date getCreatedDateTime()
-	{
-		return createdDateTime;
-	}
-
-	/**
-	 * @param createdDateTime the createdDateTime to set
-	 */
-	public void setCreatedDateTime(Date createdDateTime)
-	{
-		this.createdDateTime = createdDateTime;
-	}
-
-	/**
-	 * @return the updatedDateTime
-	 */
-	public Date getUpdatedDateTime()
-	{
-		return updatedDateTime;
-	}
-
-	/**
-	 * @param updatedDateTime the updatedDateTime to set
-	 */
-	public void setUpdatedDateTime(Date updatedDateTime)
-	{
-		this.updatedDateTime = updatedDateTime;
-	}
+        System.out.println( "Web app context destroyed." );  // INFO logging.
+        TopologyStateCache.shutdown();
+    }
 
 }

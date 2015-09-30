@@ -40,24 +40,28 @@
  */
 package org.ikasan.dashboard.ui.framework.panel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.Menu;
 import org.ikasan.dashboard.ui.framework.action.LogoutAction;
+import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.security.service.AuthenticationService;
-import org.vaadin.teemu.VaadinIcons;
+import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -65,8 +69,6 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -100,6 +102,9 @@ public class NavigationPanel extends Panel implements ViewContext
 	private String currentView;
 	private List<RefreshGroup> refreshGroups;
 	private Component toggleButton = new Button();
+	private Menu menu;
+	private SystemEventService systemEventService;
+	private UserService userService; 
 
 	/**
 	 * 
@@ -118,7 +123,8 @@ public class NavigationPanel extends Panel implements ViewContext
 			FunctionalGroup existingMappingConfigurationFunctionalGroup,
 			VerticalLayout imagePanelLayout,
 			HashMap<String, IkasanUINavigator> views,
-			List<RefreshGroup> refreshGroups)
+			List<RefreshGroup> refreshGroups,
+			SystemEventService systemEventService, UserService userService)
 	{
 		this.authenticationService = authenticationService;
 		this.visibilityGroup = visibilityGroup;
@@ -128,6 +134,8 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.imagePanelLayout = imagePanelLayout;
 		this.views = views;
 		this.refreshGroups = refreshGroups;
+		this.systemEventService = systemEventService;
+		this.userService = userService;
 		init();
 	}
 
@@ -145,8 +153,8 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.layout.setWidth(97, Unit.PERCENTAGE);
 		this.layout.setHeight(100, Unit.PERCENTAGE);
 		
-		this.layout.setColumnExpandRatio(0, .45f);
-		this.layout.setColumnExpandRatio(1, .505f);
+		this.layout.setColumnExpandRatio(0, .05f);
+		this.layout.setColumnExpandRatio(1, .905f);
 		this.layout.setColumnExpandRatio(2, .015f);
 		this.layout.setColumnExpandRatio(3, .015f);
 		this.layout.setColumnExpandRatio(4, .015f);
@@ -154,7 +162,7 @@ public class NavigationPanel extends Panel implements ViewContext
 
 
 		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
-				this);
+				this, userService);
 
 		this.loginButton = new Button("Login");
 		this.loginButton.setPrimaryStyleName("valo-menu-item");
@@ -246,7 +254,7 @@ public class NavigationPanel extends Panel implements ViewContext
 	{
 		LogoutAction action = new LogoutAction(this.visibilityGroup,
 				this.editableGroup, this.layout, this.loginButton, 
-				this.setupButton, this.logoutButton, this.loggedInUserLabel, this);
+				this.setupButton, this.logoutButton, this.loggedInUserLabel, this, this.systemEventService);
 
 		IkasanMessageDialog dialog = new IkasanMessageDialog("Logout",
 				"You are about to log out. Any unsaved data will be lost. "
@@ -264,10 +272,15 @@ public class NavigationPanel extends Panel implements ViewContext
 	{
 		this.layout.removeComponent(this.loginButton);
 		this.layout.removeComponent(this.setupButton);
+		IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+        	.getAttribute(DashboardSessionValueConstants.USER);
+		
+		
 		loggedInUserLabel = new Label("");
 		loggedInUserLabel.setStyleName("ikasan-white");
-		loggedInUserLabel.setVisible(false);
+		loggedInUserLabel.setVisible(true);
 		this.layout.addComponent(loggedInUserLabel, 1, 0);
+		this.layout.setComponentAlignment(loggedInUserLabel, Alignment.MIDDLE_LEFT);
 		this.layout.setComponentAlignment(loggedInUserLabel,
 				Alignment.MIDDLE_RIGHT);
 		this.layout.addComponent(this.logoutButton, 2, 0);
@@ -277,11 +290,24 @@ public class NavigationPanel extends Panel implements ViewContext
 		this.existingMappingConfigurationFunctionalGroup
 				.initialiseButtonState();
 		
-//		this.createUtilityMenuItems();
+		if(this.menu != null)
+		{
+			this.menu.setLoggedIn();
+		}
+		
+		systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS, 
+        		"User logging in: " + ikasanAuthentication.getName(), ikasanAuthentication.getName());
 
 		UI.getCurrent().getNavigator().navigateTo("landingView");
 	}
 
+	/**
+	 * @param menu the menu to set
+	 */
+	public void setMenu(Menu menu)
+	{
+		this.menu = menu;
+	}
 	
 	protected void refresh()
 	{

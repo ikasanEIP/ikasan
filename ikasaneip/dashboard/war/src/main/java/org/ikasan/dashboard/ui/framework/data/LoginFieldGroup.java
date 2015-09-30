@@ -40,13 +40,16 @@
  */
 package org.ikasan.dashboard.ui.framework.data;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.security.model.User;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.security.service.UserService;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.security.core.Authentication;
 
 import com.vaadin.data.Item;
@@ -71,7 +74,8 @@ public class LoginFieldGroup extends FieldGroup
 
     private AuthenticationService authenticationService;
     private VisibilityGroup visibilityGroup;
-
+    private UserService userService;
+ 
     /**
      * Constructor
      * 
@@ -80,11 +84,13 @@ public class LoginFieldGroup extends FieldGroup
      * @param authProvider
      */
     public LoginFieldGroup(VisibilityGroup visibilityGroup,
-    		AuthenticationService authenticationService)
+    		AuthenticationService authenticationService,
+    		UserService userService)
     {
         super();
         this.visibilityGroup = visibilityGroup;
         this.authenticationService = authenticationService;
+        this.userService = userService;
     }
 
    /**
@@ -96,11 +102,12 @@ public class LoginFieldGroup extends FieldGroup
     * @param authProvider
     */
     public LoginFieldGroup(Item itemDataSource, VisibilityGroup visibilityGroup,
-    		AuthenticationService authenticationService)
+    		AuthenticationService authenticationService, UserService userService)
     {
         super(itemDataSource);
         this.visibilityGroup = visibilityGroup;
         this.authenticationService = authenticationService;
+        this.userService = userService;
     }
 
     /* (non-Javadoc)
@@ -123,6 +130,10 @@ public class LoginFieldGroup extends FieldGroup
             VaadinService.getCurrentRequest().getWrappedSession()
                 .setAttribute(DashboardSessionValueConstants.USER, authentication);
             
+            User user = (User)authentication.getPrincipal();
+			user.setPreviousAccessTimestamp(new Date().getTime());	
+			this.userService.updateUser(user);
+            
             this.visibilityGroup.setVisible();
         }
         catch (AuthenticationServiceException e)
@@ -130,6 +141,12 @@ public class LoginFieldGroup extends FieldGroup
         	e.printStackTrace();
             logger.info("User has supplied invalid password: " + username.getValue());
             throw new CommitException("Invalid user name or password. Please try again.");
+        }
+        catch(InvalidDataAccessResourceUsageException e)
+        {
+        	e.printStackTrace();
+        	throw new CommitException("It appears that the Ikasan database has not been setup. Please go to the" +
+        			" setup screen by clicking the link at the top right of this screen.");
         }
     }
 

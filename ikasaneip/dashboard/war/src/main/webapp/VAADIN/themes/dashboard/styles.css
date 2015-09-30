@@ -12228,14 +12228,14 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .valo-menu-title {
 	line-height: 1.2;
-	background-color: #197de1;
-	background-image: -webkit-linear-gradient(top, #1b87e3 2%, #166ed5 98%);
-	background-image: linear-gradient(to bottom,#1b87e3 2%, #166ed5 98%);
+	background-color: #414B56;
+	background-image: -webkit-linear-gradient(top, #414B56 2%, #414B56 98%);
+	background-image: linear-gradient(to bottom,#414B56 2%, #414B56 98%);
 	color: white;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 	padding: 8px 13px;
-	font-size: 10px;
-	border-bottom: 1px solid #1362b1;
+	font-size: 14px;
+	border-bottom: 1px solid #414B56;
 	-webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-align: center;
@@ -13034,6 +13034,7 @@ div.v-layout.v-horizontal.v-widget {
 	white-space: normal;
 	overflow: hidden;
 	padding: 5px;
+	line-height: 15px;
 }
 
 .dashboard .v-header {
@@ -13108,44 +13109,52 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .v-table-cell-content-ikasan-green {
 	font-size: 11px;
 	background-color: rgba(0, 153, 51, 0.2);
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-red {
 	font-size: 11px;
 	background-color: rgba(255, 0, 0, 0.2);
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-orange {
 	font-size: 11px;
 	background-color: rgba(255, 153, 0, 0.2);
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-green-small {
 	font-size: 11px;
 	background-color: rgba(0, 153, 51, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-red-small {
 	font-size: 11px;
 	background-color: rgba(255, 0, 0, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-orange-small {
 	font-size: 11px;
 	background-color: rgba(255, 153, 0, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-indigo-small {
 	font-size: 11px;
 	background-color: rgba(75, 0, 130, 0.2);
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-cell-content-ikasan-small {
 	font-size: 9px;
+	vertical-align: top;
 }
 
 .dashboard .v-table-header td {

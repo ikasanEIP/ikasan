@@ -229,7 +229,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         {
             if(isRecovering())
             {
-                this.cancel();
+                this.cancelRecovery();
             }
             
             this.consumer.stop();
@@ -245,6 +245,23 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         else if(action instanceof RetryAction)
         {
             RetryAction retryAction = (RetryAction)action;
+
+//            if(!this.consumer.isRunning())
+//            {
+//                // consumer has been paused or previously stopped for a reason,
+//                // so do not allow the retry to reactivate the consumer.
+//                // Just want to ensure any changes get rolled back.
+//                if(this.isRecovering())
+//                {
+//                    this.cancelRecovery();
+//                }
+//
+//                this.previousComponentName = componentName;
+//                this.previousExceptionAction = retryAction;
+//
+//                throw new ForceTransactionRollbackException(action.toString() + " ignored on a paused/stopped consumer", throwable);
+//            }
+
             this.consumer.stop();
             stopManagedResources();
                 
@@ -263,7 +280,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                     }
                     else
                     {
-                        cancel();
+                        cancelRecovery();
                         startRecovery(retryAction);
                     }
                 }
@@ -283,6 +300,23 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         else if(action instanceof ScheduledRetryAction)
         {
             ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)action;
+
+//            if(!this.consumer.isRunning())
+//            {
+//                // consumer has been paused or previously stopped for a reason,
+//                // so do not allow the retry to reactivate the consumer.
+//                // Just want to ensure any changes get rolled back.
+//                if(this.isRecovering())
+//                {
+//                    this.cancelRecovery();
+//                }
+//
+//                this.previousComponentName = componentName;
+//                this.previousExceptionAction = scheduledRetryAction;
+//
+//                throw new ForceTransactionRollbackException(action.toString() + " ignoring retry on a paused/stopped consumer.", throwable);
+//            }
+
             this.consumer.stop();
             stopManagedResources();
 
@@ -301,7 +335,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                     }
                     else
                     {
-                        cancel();
+                        cancelRecovery();
                         startRecovery(scheduledRetryAction);
                     }
                 }
@@ -424,7 +458,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
         if(retryAction.getMaxRetries() != RetryAction.RETRY_INFINITE && recoveryAttempts > retryAction.getMaxRetries())
         {
-            this.cancel();
+            this.cancelRecovery();
             this.isUnrecoverable = true;
 
             // TODO - define a better exception!?!
@@ -465,7 +499,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
         if(scheduledRetryAction.getMaxRetries() != RetryAction.RETRY_INFINITE && recoveryAttempts > scheduledRetryAction.getMaxRetries())
         {
-            this.cancel();
+            this.cancelRecovery();
             this.isUnrecoverable = true;
 
             // TODO - define a better exception!?!
@@ -479,27 +513,30 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /**
      * Cancel an in progress recovery.
      */
-    public void cancel()
+    private void cancelRecovery()
     {
         recoveryAttempts = 0;
-        
+
         try
         {
             cancelScheduledJob();
             this.previousComponentName = null;
             this.previousExceptionAction = null;
             logger.info("Recovery cancelled for flow [" + flowName + "] module [" + moduleName + "]");
-
-            // for scheduled based consumers we need start them on their normal flow of execution
-            if(this.consumer instanceof Job)
-            {
-                this.consumer.start();
-            }
         }
         catch(SchedulerException e)
         {
             throw new RuntimeException(e);
         }
+
+    }
+
+    /**
+     * Cancel an in progress recovery.
+     */
+    public void cancel()
+    {
+        this.cancelRecovery();
     }
     
     public void initialise()

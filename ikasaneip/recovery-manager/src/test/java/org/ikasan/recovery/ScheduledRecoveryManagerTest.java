@@ -346,8 +346,7 @@ public class ScheduledRecoveryManagerTest
         final Exception exception = new Exception();
         
         // expectations
-        mockery.checking(new Expectations()
-        {
+        mockery.checking(new Expectations() {
             {
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -467,7 +466,7 @@ public class ScheduledRecoveryManagerTest
         Assert.assertTrue(recoveryManager.isRecovering());
         
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+        Assert.assertTrue(((StubbedScheduledRecoveryManager) recoveryManager).getRetryAttempts() == 1);
 
         mockery.assertIsSatisfied();
     }

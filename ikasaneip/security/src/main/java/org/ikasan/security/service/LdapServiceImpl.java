@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
@@ -53,7 +54,6 @@ import javax.naming.directory.SearchControls;
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
@@ -65,6 +65,7 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
@@ -81,14 +82,18 @@ public class LdapServiceImpl implements LdapService
 	private SecurityDao securityDao;
 	private UserDao userDao;
 	private AuthenticationMethod authenticationMethod;
-	private DefaultSpringSecurityContextSource contextSource;
+	
+	/*
+     * <code>PasswordEncoder</code> for encoding user passwords
+     */
+    private PasswordEncoder passwordEncoder;
 
 	/**
 	 * @param securityService
 	 * @param userService
 	 */
 	public LdapServiceImpl(SecurityDao securityDao,
-			UserDao userDao)
+			UserDao userDao, PasswordEncoder passwordEncoder)
 	{
 		super();
 		this.securityDao = securityDao;
@@ -102,26 +107,16 @@ public class LdapServiceImpl implements LdapService
 		{
 			throw new IllegalArgumentException("userDao cannot be null!");
 		}
-	}
-
-	
-	@SuppressWarnings("unchecked")
-	protected List<String> getAllLdapUsers() throws LdapServiceException
-	{
-		AuthenticationMethod authenticationMethod = this
-				.getAuthenticationMethod();
-
-		DefaultSpringSecurityContextSource contextSource = this.getContextSource();
-
-		LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-
-		return ldapTemplate
-				.list(authenticationMethod.getLdapUserSearchBaseDn());
+		this.passwordEncoder = passwordEncoder;
+		if (this.userDao == null)
+		{
+			throw new IllegalArgumentException("passwordEncoder cannot be null!");
+		}
 	}
 
 	
 	protected LdapUser getLdapUser(String userName) throws LdapServiceException
-	{
+	{		
 		AuthenticationMethod authenticationMethod = this
 				.getAuthenticationMethod();
 
@@ -190,6 +185,58 @@ public class LdapServiceImpl implements LdapService
 		user.memberOf = dir.getStringAttributes(authenticationMethod.getMemberofAttributeName());
 
 		return user;
+	}
+	
+	public List<String> getAllLdapUsers() throws LdapServiceException
+	{
+		 AuthenticationMethod authenticationMethod = this.getAuthenticationMethod();
+
+		 DefaultSpringSecurityContextSource contextSource = this.getContextSource();
+		 contextSource.setBase(authenticationMethod.getLdapUserSearchBaseDn());
+
+		try
+		{
+			contextSource.afterPropertiesSet();
+		} 
+		catch (Exception e)
+		{
+			throw new LdapServiceException();
+		}
+
+		LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+
+		// Get all groups in many paged results (needed for large numbers of
+		// groups)
+		PagedResultsCookie cookie = null;
+		PagedResult result;
+
+		List<String> results = new ArrayList<String>();
+
+		do
+		{
+			result = getAllUsers(cookie, ldapTemplate);
+			results.addAll(result.getResultList());
+			cookie = result.getCookie();
+		} 
+		while (cookie.getCookie() != null);
+
+		logger.info("Returning users: " + results.size());
+		return results;
+	}
+
+	protected PagedResult getAllUsers(PagedResultsCookie cookie,
+			LdapTemplate ldapTemplate)
+	{
+		PagedResultsDirContextProcessor contextProcessor = new PagedResultsDirContextProcessor(
+				200, cookie);
+		SearchControls searchControls = new SearchControls();
+		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+		List<?> groups = ldapTemplate.search("",
+				"(objectclass=user)", searchControls, new ApplicationUserAttributeMapper(),
+				contextProcessor);
+
+		return new PagedResult(groups, contextProcessor.getCookie());
 	}
 
 	public List<String> getAllApplicationSecurity() throws LdapServiceException
@@ -325,7 +372,7 @@ public class LdapServiceImpl implements LdapService
 
 		for (String username : users)
 		{
-			LdapUser ldapUser = getLdapUser(username.substring(3, username.length()));
+			LdapUser ldapUser = getLdapUser(username);
 			
 			if (ldapUser == null)
 			{
@@ -337,8 +384,10 @@ public class LdapServiceImpl implements LdapService
 			
 			if(user == null)
 			{
-				// todo need to sort out password stuff
-				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
+				// Setting a default password. Need to think about forcing the user to change it,
+				String encodedPassword = passwordEncoder.encodePassword("pa55word", null);
+				
+				user = new User(ldapUser.accountName, encodedPassword, ldapUser.email, true);
 				user.setDepartment(ldapUser.department);
 				user.setFirstName(ldapUser.firstName);
 				user.setSurname(ldapUser.surname);
@@ -426,17 +475,17 @@ public class LdapServiceImpl implements LdapService
 	{
 		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(
 					authenticationMethod.getLdapServerUrl());
-			contextSource.setUserDn(authenticationMethod.getLdapBindUserDn());
-			contextSource.setPassword(authenticationMethod.getLdapBindUserPassword());
-			
-			try
-			{
-				contextSource.afterPropertiesSet();
-			} 
-			catch (Exception e)
-			{
-				throw new LdapServiceException();
-			}
+		contextSource.setUserDn(authenticationMethod.getLdapBindUserDn());
+		contextSource.setPassword(authenticationMethod.getLdapBindUserPassword());
+		
+		try
+		{
+			contextSource.afterPropertiesSet();
+		} 
+		catch (Exception e)
+		{
+			throw new LdapServiceException();
+		}
 
 		return contextSource;
 	}
@@ -448,6 +497,16 @@ public class LdapServiceImpl implements LdapService
 				throws NamingException
 		{
 			return attributes.get(authenticationMethod.getApplicationSecurityGroupAttributeName()).get();
+		}
+	}
+	
+	protected class ApplicationUserAttributeMapper implements AttributesMapper
+	{
+		@Override
+		public Object mapFromAttributes(Attributes attributes)
+				throws NamingException
+		{			
+			return attributes.get("name").get();
 		}
 	}
 

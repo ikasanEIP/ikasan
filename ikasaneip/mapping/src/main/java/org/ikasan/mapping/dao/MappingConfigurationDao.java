@@ -48,7 +48,6 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -72,6 +71,19 @@ public interface MappingConfigurationDao
      * @return
      */
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
+    
+    /**
+     * 
+     * @param clientName
+     * @param configurationType
+     * @param sourceSystem
+     * @param targetSystem
+     * @param sourceSystemValues
+     * @param numParams
+     * @return
+     */
+    public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationType, final String sourceSystem
             , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
 	
 	/**
@@ -382,11 +394,4 @@ public interface MappingConfigurationDao
      */
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
 
-
-    /**
-     * 
-     * @param name
-     * @return
-     */
-    public PlatformConfiguration getPlatformConfigurationByName(String name);
 }
