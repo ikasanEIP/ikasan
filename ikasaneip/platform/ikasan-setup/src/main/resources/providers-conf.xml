@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -93,5 +91,15 @@
         <property name="dataSource" ref="ikasan.ds" />
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
+    
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+      <property name="dataSource" ref="ikasan.ds" />
+      <property name="changeLog" value="classpath:db-changelog.xml" />
+
+      <!--
+      contexts specifies the runtime contexts to use.
+      -->
+      <property name="contexts" value="test, production" />
+ </bean>
 
 </beans>

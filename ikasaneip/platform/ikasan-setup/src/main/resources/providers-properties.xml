@@ -4144,8 +4144,7 @@
 
 				<prop key="create.configurationParameter">CREATE TABLE ConfigurationParameter
 					(
-					Id IDENTITY NOT
-					NULL,
+					Id IDENTITY NOT NULL,
 					ConfigurationIdentifier VARCHAR(256) NOT NULL,
 					PositionRef
 					NUMERIC NOT NULL
