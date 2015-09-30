@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.4</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
