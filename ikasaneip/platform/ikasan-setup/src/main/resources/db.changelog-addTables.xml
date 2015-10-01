@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet id="1" author="stewmi">
+        <createTable tableName="TEST_TABLE">
+            <column name="ID" type="bigint(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="DESCRIPTION" type="varchar(200)"/>
+            <column name="VALUE" type="varchar(200)"/>
+        </createTable>	
+        <addUniqueConstraint columnNames="CODE,DESCRIPTION"
+                             constraintName="CODE_UK"
+                             tableName="TEST_TABLE"/>
+        <createTable tableName="ANOTHER_TEST_TABLE">
+            <column name="ID" type="bigint(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="TEST_CODE" type="bigint(20)">
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="TEST_CODE"
+                                 baseTableName="ANOTHER_TEST_TABLE"
+                                 constraintName="TEST_OTHER_FK"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="TEST_TABLE"/>
+    </changeSet>
+</databaseChangeLog>
