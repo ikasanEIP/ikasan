@@ -38,11 +38,6 @@
     
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
 	      <property name="dataSource" ref="ikasan.ds" />
-	      <property name="changeLog" value="classpath:db-changelog.xml" />
-	
-	      <!--
-	      contexts specifies the runtime contexts to use.
-	      -->
-	      <!-- property name="contexts" value="test, production" / -->
+	      <property name="changeLog" value="classpath:db.changelog-master.xml" />
 	 </bean>
 </beans>

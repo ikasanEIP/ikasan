@@ -3,10 +3,11 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-    <changeSet id="2" author="pascalalma">
-    <loadData file="./mydata.csv"
-              schemaName="MyDB"
-              quotchar="'"
-              tableName="TEST_TABLE"/>
-    </changeSet>
+    
+    <changeSet author="stewmi" id="addColumn">
+	    <addColumn tableName="TEST_TABLE_2">
+	        <column name="address" type="varchar(255)"/>
+	    </addColumn>
+	</changeSet>
+
 </databaseChangeLog>
