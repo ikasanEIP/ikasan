@@ -35,4 +35,12 @@
 	<bean id="persistanceSetupComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
+<<<<<<< HEAD
+=======
+    
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+	      <property name="dataSource" ref="ikasan.ds" />
+	      <property name="changeLog" value="classpath:db.changelog-master.xml" />
+	 </bean>
+>>>>>>> 649d897... IKASAN-971 Liquibase POC
 </beans>
