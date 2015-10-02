@@ -2,10 +2,10 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-    <changeSet id="3" author="syewmi">
-        <createTable tableName="TEST_TABLE_2">
-            <column name="ID" type="bigint(20)" autoIncrement="true">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet id="1" author="stewmi">
+        <createTable tableName="TEST_TABLE">
+            <column name="ID" type="numeric(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CODE" type="varchar(20)">
@@ -15,22 +15,24 @@
             <column name="VALUE" type="varchar(200)"/>
         </createTable>	
         <addUniqueConstraint columnNames="CODE,DESCRIPTION"
-                             constraintName="CODE_UK_2"
-                             tableName="TEST_TABLE_2"/>
-        <createTable tableName="ANOTHER_TEST_TABLE_2">
-            <column name="ID" type="bigint(20)" autoIncrement="true">
+                             constraintName="CODE_UK"
+                             tableName="TEST_TABLE"/>
+        <createTable tableName="ANOTHER_TEST_TABLE">
+            <column name="ID" type="numeric(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CODE" type="varchar(20)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="TEST_CODE" type="bigint(20)">
+            <column name="TEST_CODE" type="numeric(20)">
             </column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="TEST_CODE"
-                                 baseTableName="ANOTHER_TEST_TABLE_2"
-                                 constraintName="TEST_OTHER_FK_2"
+                                 baseTableName="ANOTHER_TEST_TABLE"
+                                 constraintName="TEST_OTHER_FK"
                                  referencedColumnNames="ID"
-                                 referencedTableName="TEST_TABLE_2"/>
+                                 referencedTableName="TEST_TABLE"/>
+                                 
+        <sql dbms="sybase">sp_chgattribute 'ANOTHER_TEST_TABLE', 'identity_gap&quot', 1</sql>
     </changeSet>
 </databaseChangeLog>
