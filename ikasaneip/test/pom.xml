@@ -31,7 +31,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>1.0.4-SNAPSHOT</version>
+		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ikasan-test</artifactId>
@@ -87,6 +87,12 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-component</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-jms-spring</artifactId>
 			<scope>provided</scope>
 		</dependency>
 

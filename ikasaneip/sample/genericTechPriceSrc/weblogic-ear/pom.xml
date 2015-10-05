@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-sample-genericTechPriceSrc-parent</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.5-SNAPSHOT</version>
     </parent>
 
 	<artifactId>sample-wls-genericTechPriceSrc-ear</artifactId>

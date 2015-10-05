@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-sample-sftp-parent</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.5-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-sftp</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <name>ikasan-sample-sftp Integration Module</name>
 
     <dependencies>
