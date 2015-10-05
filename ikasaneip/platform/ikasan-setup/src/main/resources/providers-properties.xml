@@ -3556,7 +3556,7 @@
                     [Content]           [image]  NOT NULL,
                     [Ordinal]           [numeric](18) NOT NULL,
                     [Md5Hash]  		    [varchar](32) NULL,
-                    [FileChunkHeaderId] [numeric](18)) NOT NULL,
+                    [FileChunkHeaderId] [numeric](18) NOT NULL,
                     CONSTRAINT          [PK_FTFileChunk_Id] PRIMARY KEY CLUSTERED
                     (
                         [Id] ASC
@@ -3606,7 +3606,7 @@
                     [State]                    [varchar](255)  NOT NULL,
                     [GlobalTransactionId]      [varchar](255)  NOT NULL,
                     [BranchQualifier]          [varchar] (255) NOT NULL,
-                    [FormatId]                 [numeric](18    NOT NULL,
+                    [FormatId]                 [numeric](18)    NOT NULL,
                     [ClientId]                 [varchar](255)  NOT NULL,
                     [CreatedDateTime]          [numeric](18)   NOT NULL,
                     [LastUpdatedDateTime]      [numeric](18)   NOT NULL,
