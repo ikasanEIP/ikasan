@@ -46,24 +46,37 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-        
-    <changeSet author="ikasan dev" id="createConfParamLong">
+
+    <changeSet author="ikasan dev" id="createErrorCategorisationLink">
     
-        <createTable tableName="ConfParamLong">
+        <createTable tableName="ErrorCategorisationLink">
         
-            <column name="Id" type="numeric(18)">
+            <column autoIncrement="true" name="Id" type="numeric(18)">
+                <constraints primaryKey="true" primaryKeyName="ErrorCateg_8403870322"/>
+            </column>
+            <column name="ErrorCategorisationId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Name" type="VARCHAR(128)">
+            <column name="ModuleName" type="VARCHAR(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Value" type="numeric(18)"/>
-            <column name="Description" type="VARCHAR(256)"/>
-            
+            <column name="FlowName" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FlowElementName" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Action" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ExceptionClass" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ConfParamLong', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'ErrorCategorisationLink', 'identity_gap', 1</sql>
+        
     </changeSet>
-            
 </databaseChangeLog>
