@@ -141,14 +141,12 @@ public class PersistanceSetupPanel extends Panel implements View
         verticalLayout.setMargin(true);
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
-        ikasanWelcomeLabel1.setStyleName("xlarge");
+        ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
         ikasanWelcomeLabel1.setWidth("100%");
-        ikasanWelcomeLabel1.setHeight("30px");
         
-        Label ikasanWelcomeLabel2 = new Label("It appears that you are setting up Ikasan for the" +
-        		" first time and we need to create some database tables. If this is not the first time accessing the " +
-        		"Ikasan Console, it appears that there is an issue with the Ikasan database. If this is the case please " +
-        		"contact your local database administrator.");
+        Label ikasanWelcomeLabel2 = new Label("Welcome to Ikasan setup. If you are accessing Ikasan for the" +
+        		" first time we need to create some database tables. Please select your database type below and" +
+        		" press the create button.");
         
         ikasanWelcomeLabel2.setStyleName("large");
         ikasanWelcomeLabel2.setWidth("60%");
@@ -229,11 +227,11 @@ public class PersistanceSetupPanel extends Panel implements View
         verticalLayout.setMargin(true);
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
-        ikasanWelcomeLabel1.setStyleName("xlarge");
+        ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
         ikasanWelcomeLabel1.setWidth("100%");
-        ikasanWelcomeLabel1.setHeight("30px");
         
-        Label ikasanWelcomeLabel2 = new Label("It appears as thoug the Ikasan database has already been created. If you believe that this is not the case there may be an issue. " +
+        Label ikasanWelcomeLabel2 = new Label("It appears as though the Ikasan database has already been created. " +
+        		"If you believe that this is not the case there may be an issue. " +
         		"Please contact your local database administrator or Ikasan/Middleware support.");
         
         ikasanWelcomeLabel2.setStyleName("large");
