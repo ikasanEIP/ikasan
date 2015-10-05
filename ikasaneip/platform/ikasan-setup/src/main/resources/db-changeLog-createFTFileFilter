@@ -46,24 +46,38 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-        
-    <changeSet author="ikasan dev" id="createConfParamLong">
+
+    <changeSet author="ikasan dev" id="createFTFileFilter">
     
-        <createTable tableName="ConfParamLong">
+        <createTable tableName="FTFileFilter">
         
-            <column name="Id" type="numeric(18)">
+            <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Name" type="VARCHAR(128)">
+            <column name="ClientId" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Value" type="numeric(18)"/>
-            <column name="Description" type="VARCHAR(256)"/>
+            <column name="Criteria" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LastModified" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LastAccessed" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Size" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CreatedDateTime" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
             
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ConfParamLong', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'FTFileFilter', 'identity_gap', 1</sql>
+
     </changeSet>
-            
+
 </databaseChangeLog>

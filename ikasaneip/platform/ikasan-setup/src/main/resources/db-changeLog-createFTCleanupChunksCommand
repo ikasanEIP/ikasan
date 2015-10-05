@@ -46,24 +46,21 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-        
-    <changeSet author="ikasan dev" id="createConfParamLong">
+ 
+    <changeSet author="ikasan dev" id="createFTCleanupChunksCommand">
     
-        <createTable tableName="ConfParamLong">
+        <createTable tableName="FTCleanupChunksCommand">
         
             <column name="Id" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Name" type="VARCHAR(128)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="Value" type="numeric(18)"/>
-            <column name="Description" type="VARCHAR(256)"/>
+            <column name="FileChunkHeaderId" type="numeric(18)"/>
             
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ConfParamLong', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'FTCleanupChunksCommand', 'identity_gap', 1</sql>
+        
     </changeSet>
-            
+
 </databaseChangeLog>

@@ -46,24 +46,41 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-        
-    <changeSet author="ikasan dev" id="createConfParamLong">
+
+    <changeSet author="ikasan dev" id="createExclusionEventAction">
     
-        <createTable tableName="ConfParamLong">
+        <createTable tableName="ExclusionEventAction">
         
-            <column name="Id" type="numeric(18)">
+            <column autoIncrement="true" name="Id" type="numeric(18)">
+                <constraints primaryKey="true" primaryKeyName="ExclusionE_19193428713"/>
+            </column>
+            <column name="ErrorUri" type="VARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Name" type="VARCHAR(128)">
+            <column name="ModuleName" type="VARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Value" type="numeric(18)"/>
-            <column name="Description" type="VARCHAR(256)"/>
+            <column name="FlowName" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ActionedBy" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Action" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Event" type="IMAGE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Timestamp" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
             
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ConfParamLong', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'ExclusionEventAction', 'identity_gap', 1</sql>
+
     </changeSet>
-            
+
 </databaseChangeLog>
