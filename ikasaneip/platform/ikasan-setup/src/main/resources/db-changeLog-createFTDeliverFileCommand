@@ -46,24 +46,26 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-        
-    <changeSet author="ikasan dev" id="createConfParamLong">
     
-        <createTable tableName="ConfParamLong">
-        
+    <changeSet author="ikasan dev" id="createFTDeliverFileCommand">
+        <createTable tableName="FTDeliverFileCommand">
             <column name="Id" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Name" type="VARCHAR(128)">
+            <column name="FileName" type="VARCHAR(255)"/>
+            <column name="TempFileName" type="VARCHAR(255)"/>
+            <column name="OutputDirectory" type="VARCHAR(255)"/>
+            <column name="OverwriteExisting" type="BIT">
                 <constraints nullable="false"/>
             </column>
-            <column name="Value" type="numeric(18)"/>
-            <column name="Description" type="VARCHAR(256)"/>
-            
+            <column name="PutAttempted" type="BIT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ConfParamLong', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'FTDeliverFileCommand', 'identity_gap', 1</sql>
+
     </changeSet>
-            
+
 </databaseChangeLog>
