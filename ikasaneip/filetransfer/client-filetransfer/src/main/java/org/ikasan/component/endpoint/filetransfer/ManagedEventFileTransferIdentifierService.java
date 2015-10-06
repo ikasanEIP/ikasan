@@ -53,6 +53,25 @@ public class ManagedEventFileTransferIdentifierService implements ManagedEventId
     private static String FILE_NAME_ATTRIBUTE = "fileName";
     private static String ID_ATTRIBUTE = "id";
 
+    String modulePrefix;
+
+    /**
+     * Optional constructor for passing module prefix
+     * @param modulePrefix
+     */
+    public ManagedEventFileTransferIdentifierService(String modulePrefix)
+    {
+        this.modulePrefix = modulePrefix;
+    }
+
+    /**
+     * Default constructor
+     */
+    public ManagedEventFileTransferIdentifierService()
+    {
+        // nothing to do here
+    }
+
     @Override
     public void setEventIdentifier(String identifier, Payload payload) throws ManagedEventIdentifierException
     {
@@ -63,7 +82,11 @@ public class ManagedEventFileTransferIdentifierService implements ManagedEventId
     public String getEventIdentifier(Payload payload) throws ManagedEventIdentifierException
     {
         String eventId = payload.getAttribute(FILE_NAME_ATTRIBUTE);
-        return eventId;
+        if(modulePrefix != null)
+        {
+            return modulePrefix + eventId;
+        }
 
+        return eventId;
     }
 }
