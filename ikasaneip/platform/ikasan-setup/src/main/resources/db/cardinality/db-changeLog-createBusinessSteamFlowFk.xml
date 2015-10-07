@@ -32,12 +32,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<changeSet author="ikasan dev" id="createBusinessStreamFlowFk">
+	<changeSet author="ikasan dev" id="createBusinessStreamFlowFk" context="baseline">
 
 		<addForeignKeyConstraint baseColumnNames="BusinessStreamId"
-			baseTableName="BusinessStreamFlow" constraintName="BusinessSt_360385322"
-			deferrable="false" initiallyDeferred="false" onDelete="RESTRICT"
-			onUpdate="RESTRICT" referencedColumnNames="Id" referencedTableName="BusinessStream" />
+			baseTableName="BusinessStreamFlow" constraintName="BusinessStreamFK"
+			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 
+			referencedTableName="BusinessStream" />
 
 	</changeSet>
 

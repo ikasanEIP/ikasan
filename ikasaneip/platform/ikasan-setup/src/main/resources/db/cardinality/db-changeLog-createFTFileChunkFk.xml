@@ -28,12 +28,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<changeSet author="ikasan dev" id="createFTFileChunkFk">
+	<changeSet author="ikasan dev" id="createFTFileChunkFk" context="baseline">
 
 		<addForeignKeyConstraint baseColumnNames="FileChunkHeaderId"
-			baseTableName="FTFileChunk" constraintName="FTFileChun_FileCh_1458817228"
-			deferrable="false" initiallyDeferred="false" onDelete="RESTRICT"
-			onUpdate="RESTRICT" referencedColumnNames="Id" referencedTableName="FTFileChunkHeader" />
+			baseTableName="FTFileChunk" constraintName="FTFileChun_FileCh_FK"
+			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 
+			referencedTableName="FTFileChunkHeader" />
 
 	</changeSet>
 
