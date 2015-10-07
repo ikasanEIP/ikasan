@@ -168,8 +168,6 @@ public class ComponentConfigurationWindow extends Window
 
     		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
     	        	.getAttribute(DashboardSessionValueConstants.USER);
-        	
-    		logger.info("Configuration Url: " + url + "  " + authentication.getName() + " " + (String)authentication.getCredentials());
     		
         	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
         	
