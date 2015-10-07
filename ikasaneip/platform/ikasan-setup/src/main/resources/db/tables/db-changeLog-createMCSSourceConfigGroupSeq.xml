@@ -47,13 +47,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
         
-    <changeSet author="ikasan dev" id="createMCSSourceConfigGroupSeq">
+    <changeSet author="ikasan dev" id="createMCSSourceConfigGroupSeq" context="baseline">
     
         <createTable tableName="MCSSourceConfigGroupSeq">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints primaryKey="true" primaryKeyName="MCSSourceC_6942905022"/>
-            </column>
+            <column name="Id" type="numeric(18)"/>
             <column name="SequenceNumber" type="numeric(20)"/>
             
         </createTable>

@@ -48,14 +48,14 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     
-    <changeSet author="stewmi (generated)" id="createSecurityPolicy">
+    <changeSet author="ikasan dev" id="createSecurityPrincipal" dbms="sybase" context="baseline">
     
         <createTable tableName="SecurityPrincipal">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints primaryKey="true" primaryKeyName="SecurityPr_9593394513"/>
             </column>
-            <column name="Name" type="UNIVARCHAR(256)">
+            <column name="Name" type="UNVARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
             <column name="PrincipalType" type="VARCHAR(256)">
@@ -75,6 +75,41 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'SecurityPolicy', 'identity_gap', 1</sql>
+        
+        <createIndex indexName="Principal_Type" tableName="SecurityPrincipal">
+            <column name="PrincipalType"/>
+        </createIndex>
+
+		<createIndex indexName="SecurityPr_Name_9593394512" tableName="SecurityPrincipal" unique="true">
+            <column name="Name"/>
+        </createIndex>
+
+    </changeSet>
+    
+    <changeSet author="ikasan dev" id="createSecurityPrincipal" dbms="h2, mysql, mssql" context="baseline">
+    
+        <createTable tableName="SecurityPrincipal">
+        
+            <column autoIncrement="true" name="Id" type="numeric(18)">
+                <constraints primaryKey="true" primaryKeyName="SecurityPr_9593394513"/>
+            </column>
+            <column name="Name" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PrincipalType" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Description" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            
+        </createTable>
         
         <createIndex indexName="Principal_Type" tableName="SecurityPrincipal">
             <column name="PrincipalType"/>

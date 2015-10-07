@@ -48,36 +48,32 @@ package org.ikasan.setup.persistence.service;
 public interface PersistenceService
 {
     /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
+     * Create the core engine underlying persistence
      */
-    public String getVersion();
-
+    public void createBaselinePersistence();
+    
     /**
      * Create the core engine underlying persistence
      */
-    public void createPersistence();
+    public void createPostBaselinePersistence();
 
     /**
      * Create the fileTransfer related persistence used by ftp and sftp.
      */
     public void createFileTransferPersistence();
 
+    
     /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
+     * Return the status of the underlying persistence. 
+     * 
+     * @return
      */
-    public boolean adminAccountExists();
-
+    public String getBaselineStatus();
+    
     /**
-     * Create the default administration account and associated dependencies
+     * Return the status of the underlying persistence. 
+     * 
+     * @return
      */
-    public void createAdminAccount();
-
-    /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
-     */
-    public boolean userTablesExist();
+    public String getPostBaselineStatus();
 }
