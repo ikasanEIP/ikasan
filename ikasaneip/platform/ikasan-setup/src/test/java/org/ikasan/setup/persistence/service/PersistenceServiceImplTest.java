@@ -44,7 +44,6 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
@@ -61,7 +60,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml"})
+@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml", "/providers-conf.xml"})
 public class PersistenceServiceImplTest
 {
     /**
@@ -74,9 +73,6 @@ public class PersistenceServiceImplTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
-  
-    @Resource 
-    PersistenceDAOHibernateImpl persistenceDAOHibernateImpl;
 
     @Resource
     PersistenceService persistenceService;
@@ -84,7 +80,7 @@ public class PersistenceServiceImplTest
     /**
      * Test
      */
-    @Before
+    @Test
     public void setup()
     {
         persistenceService.createPersistence();
@@ -94,41 +90,8 @@ public class PersistenceServiceImplTest
     
     @After
     public void dropAll(){
-        persistenceDAOHibernateImpl.delete("usersAuthorities");
-        persistenceDAOHibernateImpl.delete("authorities");
-        persistenceDAOHibernateImpl.delete("users");
-        persistenceDAOHibernateImpl.delete("consolePointToPointFlow");
-        persistenceDAOHibernateImpl.delete("consolePointToPointFlowProfile");
-        persistenceDAOHibernateImpl.delete("consoleModule");
-        persistenceDAOHibernateImpl.delete("moduleStartup");
-        persistenceDAOHibernateImpl.delete("systemEvent");
-        persistenceDAOHibernateImpl.delete("confParamString");
-        persistenceDAOHibernateImpl.delete("confParamMapString");
-        persistenceDAOHibernateImpl.delete("confParamMap");
-        persistenceDAOHibernateImpl.delete("confParamLong");
-        persistenceDAOHibernateImpl.delete("confParamListString");
-        persistenceDAOHibernateImpl.delete("confParamList");
-        persistenceDAOHibernateImpl.delete("confParamInteger");
-        persistenceDAOHibernateImpl.delete("confParamBoolean");
-        persistenceDAOHibernateImpl.delete("configurationParameter");
-        persistenceDAOHibernateImpl.delete("configuration");
-        persistenceDAOHibernateImpl.delete("flowEventTriggerParameters");
-        persistenceDAOHibernateImpl.delete("flowEVentTrigger");
-        persistenceDAOHibernateImpl.delete("version");
-        persistenceDAOHibernateImpl.delete("exclusionEvent");
-        persistenceDAOHibernateImpl.delete("filter");
-        persistenceDAOHibernateImpl.delete("wiretap");
+        
     }
 
-    /**
-     * Test
-     */
-    @Test
-    @DirtiesContext
-    public void test_persistenceService_getVersion()
-    {
-        String version = persistenceService.getVersion();
-        Assert.assertEquals("1.0.0", version);
-    }
 
 }

@@ -47,7 +47,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
         
-	<changeSet author="ikasan dev" id="createUserBusinessStream">
+	<changeSet author="ikasan dev" id="createUserBusinessStream" context="baseline">
 
         <createTable tableName="UserBusinessStream">
         

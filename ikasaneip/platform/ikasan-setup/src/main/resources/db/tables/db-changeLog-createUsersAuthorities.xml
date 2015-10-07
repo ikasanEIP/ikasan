@@ -47,32 +47,19 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="createUsers">
+    <changeSet author="ikasan dev" id="createUsersAuthorities" context="baseline">
     
-        <createTable tableName="Users">
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints primaryKey="true" primaryKeyName="Users_Id_10080035912"/>
-            </column>
-            <column name="Username" type="VARCHAR(50)">
+        <createTable tableName="UsersAuthorities">
+            <column name="UserId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Password" type="VARCHAR(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="Email" type="VARCHAR(255)"/>
-            <column name="Enabled" type="BIT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FirstName" type="VARCHAR(50)"/>
-            <column name="Surname" type="VARCHAR(50)"/>
-            <column name="Department" type="VARCHAR(50)"/>
-            <column defaultValueNumeric="0" name="PreviousAccess" type="numeric(18)">
+            <column name="AuthorityId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'Users', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'UsersAuthorities', 'identity_gap', 1</sql>
         
         <addPrimaryKey columnNames="UserId, AuthorityId" constraintName="UsersAutho_11360040472" tableName="UsersAuthorities"/>
 
