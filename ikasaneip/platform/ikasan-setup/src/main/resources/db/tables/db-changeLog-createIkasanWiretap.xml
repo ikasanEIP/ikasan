@@ -47,9 +47,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
     
-     <changeSet author="ikasan dev" id="createIkasanWiretap">
+     <changeSet author="ikasan dev" id="createIkasanWiretap" dbms="sybase" context="baseline"> 
      
-        <createTable tableName="IkasanWiretap">
+        <createTable tableName="IkasanWiretap" >
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints nullable="false"/>
@@ -70,7 +70,7 @@
             <column defaultValueNumeric="0" name="EventTimestamp" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PayloadContent" type="UNITEXT(2147483647)">
+            <column name="PayloadContent" type="UNITEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="CreatedDateTime" type="numeric(18)">
@@ -84,6 +84,88 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'IkasanWiretap', 'identity_gap', 1</sql>
+        
+        <createIndex indexName="IkasanWiretap01u" tableName="IkasanWiretap" unique="true">
+            <column name="Id"/>
+        </createIndex>
+        
+    </changeSet>
+    
+    <changeSet author="ikasan dev" id="createIkasanWiretap" dbms="h2, mysql" context="baseline"> 
+     
+        <createTable tableName="IkasanWiretap" >
+        
+            <column autoIncrement="true" name="Id" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ModuleName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FlowName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ComponentName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EventId" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RelatedEventId" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="EventTimestamp" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PayloadContent" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CreatedDateTime" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Expiry" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            
+        </createTable>
+        
+        <createIndex indexName="IkasanWiretap01u" tableName="IkasanWiretap" unique="true">
+            <column name="Id"/>
+        </createIndex>
+        
+    </changeSet>
+    
+    <changeSet author="ikasan dev" id="createIkasanWiretap" dbms="mssql" context="baseline"> 
+     
+        <createTable tableName="IkasanWiretap" >
+        
+            <column autoIncrement="true" name="Id" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ModuleName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FlowName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ComponentName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EventId" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RelatedEventId" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="EventTimestamp" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PayloadContent" type="varchar(max)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CreatedDateTime" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Expiry" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            
+        </createTable>
         
         <createIndex indexName="IkasanWiretap01u" tableName="IkasanWiretap" unique="true">
             <column name="Id"/>

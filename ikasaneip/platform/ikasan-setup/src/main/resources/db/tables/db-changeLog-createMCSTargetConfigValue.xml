@@ -47,21 +47,20 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="createMCSTargetConfigValue">
+    <changeSet author="ikasan dev" id="createMCSTargetConfigValue" context="baseline">
     
-        <createTable tableName="MessageFilter">
+        <createTable tableName="MCSTargetConfigValue">
         
-            <column defaultValueNumeric="0" name="Criteria" type="numeric(18)">
+            <column autoIncrement="true" name="Id" type="numeric(18)">
+                <constraints primaryKey="true" primaryKeyName="MCSTargetC_4062894762"/>
+            </column>
+            <column name="TargetSystemValue" type="VARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ClientId" type="VARCHAR(256)">
+            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column name="CriteriaDescription" type="VARCHAR(512)"/>
-            <column name="CreatedDateTime" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="Expiry" type="numeric(18)">
+            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
             
