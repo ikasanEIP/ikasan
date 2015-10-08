@@ -29,6 +29,10 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet author="ikasan dev" id="createMCSKeyLocationQueryFk" context="baseline">
+		
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="MCSKeyLoca_FK" /></not>
+		</preConditions>
 
 		<addForeignKeyConstraint baseColumnNames="MappingConfigurationId"
 			baseTableName="MCSKeyLocationQuery" constraintName="MCSKeyLoca_FK"

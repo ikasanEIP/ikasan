@@ -35,6 +35,11 @@
 
 	<changeSet author="ikasan dev" id="insertAdminUser" context="baseline">
 	
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from Users</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from UsersAuthorities</sqlCheck>
+        </preConditions>
+	
 		<insert tableName="Users">
 			<column name="Username" value="admin" />
 			<column name="Password" value="d033e22ae348aeb5660fc2140aec35850c4da997" />

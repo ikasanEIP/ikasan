@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createPointToPointFlowProfile" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="PointToPointFlowProfile" /></not>
+		</preConditions>
+
         <createTable tableName="PointToPointFlowProfile">
             <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints primaryKey="true" primaryKeyName="PointToPoi_Id_7840027932"/>

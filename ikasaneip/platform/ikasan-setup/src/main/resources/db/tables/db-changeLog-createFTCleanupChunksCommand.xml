@@ -49,6 +49,10 @@
  
     <changeSet author="ikasan dev" id="createFTCleanupChunksCommand" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTCleanupChunksCommand" /></not>
+		</preConditions>
+
         <createTable tableName="FTCleanupChunksCommand">
         
             <column name="Id" type="numeric(18)">

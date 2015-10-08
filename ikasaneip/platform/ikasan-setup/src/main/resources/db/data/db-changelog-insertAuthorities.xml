@@ -35,6 +35,11 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet author="ikasan dev" id="insertAuthorities" context="baseline">
+		
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from Authorities</sqlCheck>
+        </preConditions>
+        
 	    <insert tableName="Authorities">
 	        <column name="Authority" value="ROLE_USER"/>
 	        <column name="Description" value="Users who may log into the system"/>
@@ -43,6 +48,7 @@
 	        <column name="Authority" value="ROLE_ADMIN"/>
 	        <column name="Description" value="Users who may perform administration functions on the system"/>
 	    </insert>
+	    
 	</changeSet>
 	
 </databaseChangeLog>

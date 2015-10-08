@@ -41,9 +41,11 @@
 package org.ikasan.setup.persistence.service;
 
 import java.io.StringWriter;
+import java.util.List;
 
 import liquibase.Contexts;
 import liquibase.Liquibase;
+import liquibase.changelog.ChangeSetStatus;
 import liquibase.exception.LiquibaseException;
 
 /**
@@ -82,7 +84,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	 * @see org.ikasan.setup.persistence.service.PersistenceService#createPersistence()
 	 */
 	@Override
-	public void createBaselinePersistence()
+	public void createBaselinePersistence() throws PersistenceServiceException
 	{
 		try
 		{
@@ -93,8 +95,8 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceServiceException("An exception has occurred creating the Ikasan baseline " +
+					"persistence layer!", e);
 		}
 	}
 
@@ -102,9 +104,20 @@ public class PersistenceServiceImpl implements PersistenceService
 	 * @see org.ikasan.setup.persistence.service.PersistenceService#createFileTransferPersistence()
 	 */
 	@Override
-	public void createFileTransferPersistence()
+	public void createFileTransferPersistence() throws PersistenceServiceException
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			Contexts contexts 
+				= new Contexts(BASELINE, POST_BASELINE);
+			
+			this.fileTransferLiquibase.update(contexts);
+		} 
+		catch (LiquibaseException e)
+		{
+			throw new PersistenceServiceException("An exception has occurred creating the Ikasan file transfer " +
+					"persistence layer!", e);
+		}
 
 	}
 	
@@ -112,7 +125,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	 * @see org.ikasan.setup.persistence.service.PersistenceService#createPostBaselinePersistence()
 	 */
 	@Override
-	public void createPostBaselinePersistence()
+	public void createPostBaselinePersistence() throws PersistenceServiceException
 	{
 		try
 		{
@@ -123,8 +136,8 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceServiceException("An exception has occurred creating the Ikasan post baseline " +
+					"persistence layer!", e);
 		}
 	}
 
@@ -132,7 +145,7 @@ public class PersistenceServiceImpl implements PersistenceService
 	 * @see org.ikasan.setup.persistence.service.PersistenceService#getStatus()
 	 */
 	@Override
-	public String getBaselineStatus()
+	public String getBaselineStatus() throws PersistenceServiceException
 	{
 		StringWriter out = new StringWriter();
 		
@@ -144,8 +157,8 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceServiceException("An exception has occurred retrieving the Ikasan baseline " +
+					"persistence layer status!", e);
 		}
 		
 		return out.toString();
@@ -155,7 +168,123 @@ public class PersistenceServiceImpl implements PersistenceService
 	 * @see org.ikasan.setup.persistence.service.PersistenceService#getPostBaselineStatus()
 	 */
 	@Override
-	public String getPostBaselineStatus()
+	public String getPostBaselineStatus() throws PersistenceServiceException
+	{
+		StringWriter out = new StringWriter();
+		
+		Contexts contexts 
+			= new Contexts(POST_BASELINE);
+		try
+		{
+			this.generalLiquibase.reportStatus(true, contexts, out);
+		} 
+		catch (LiquibaseException e)
+		{
+			throw new PersistenceServiceException("An exception has occurred retrieving the Ikasan post baseline " +
+					"persistence layer status!", e);
+		}
+		
+		return out.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#baselinePersistenceChangesRequired()
+	 */
+	@Override
+	public boolean baselinePersistenceChangesRequired()
+			throws PersistenceServiceException
+	{
+		try
+		{
+			Contexts contexts 
+				= new Contexts(BASELINE, POST_BASELINE);
+			
+			List<ChangeSetStatus> statuses = this.generalLiquibase.getChangeSetStatuses(contexts, null);
+			
+			for(ChangeSetStatus status: statuses)
+			{
+				if(status.getWillRun() == true)
+				{
+					return true;
+				}
+			}
+		} 
+		catch (LiquibaseException e)
+		{
+			throw new PersistenceServiceException("An exception has occured attempting to detect if " +
+					"baseline changes are required!", e);
+		}
+		
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#postBaselinePersistenceChangesRequired()
+	 */
+	@Override
+	public boolean postBaselinePersistenceChangesRequired()
+			throws PersistenceServiceException
+	{
+		try
+		{
+			Contexts contexts 
+				= new Contexts(POST_BASELINE);
+			
+			List<ChangeSetStatus> statuses = this.generalLiquibase.getChangeSetStatuses(contexts, null);
+			
+			for(ChangeSetStatus status: statuses)
+			{
+				if(status.getWillRun() == true)
+				{
+					return true;
+				}
+			}
+		} 
+		catch (LiquibaseException e)
+		{
+			throw new PersistenceServiceException("An exception has occured attempting to detect if " +
+					"baseline changes are required!", e);
+		}
+		
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#fileTransferPersistenceChangesRequired()
+	 */
+	@Override
+	public boolean fileTransferPersistenceChangesRequired()
+			throws PersistenceServiceException
+	{
+		try
+		{
+			Contexts contexts 
+				= new Contexts(BASELINE, POST_BASELINE);
+			
+			List<ChangeSetStatus> statuses = this.fileTransferLiquibase.getChangeSetStatuses(contexts, null);
+			
+			for(ChangeSetStatus status: statuses)
+			{
+				if(status.getWillRun() == true)
+				{
+					return true;
+				}
+			}
+		} 
+		catch (LiquibaseException e)
+		{
+			throw new PersistenceServiceException("An exception has occured attempting to detect if " +
+					"baseline changes are required!", e);
+		}
+		
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.setup.persistence.service.PersistenceService#getFileTransferStatus()
+	 */
+	@Override
+	public String getFileTransferStatus() throws PersistenceServiceException
 	{
 		StringWriter out = new StringWriter();
 		
@@ -163,12 +292,12 @@ public class PersistenceServiceImpl implements PersistenceService
 			= new Contexts(BASELINE, POST_BASELINE);
 		try
 		{
-			this.generalLiquibase.reportStatus(true, contexts, out);
+			this.fileTransferLiquibase.reportStatus(true, contexts, out);
 		} 
 		catch (LiquibaseException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceServiceException("An exception has occurred retrieving the Ikasan file transfer " +
+					"persistence layer status!", e);
 		}
 		
 		return out.toString();

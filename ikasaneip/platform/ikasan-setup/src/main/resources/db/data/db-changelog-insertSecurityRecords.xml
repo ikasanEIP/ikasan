@@ -35,6 +35,16 @@
 
 	<changeSet author="ikasan dev" id="insertSecurityRecords" context="baseline">
 	
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from SecurityPrincipal</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from SecurityRole</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from SecurityPolicy</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from PolicyLinkType</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from UserPrincipal</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from PrincipalRole</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from RolePolicy</sqlCheck>
+        </preConditions>
+
 		<insert tableName="SecurityPrincipal">
 			<column name="Name" value="admin" />
 			<column name="PrincipalType" value="user" />

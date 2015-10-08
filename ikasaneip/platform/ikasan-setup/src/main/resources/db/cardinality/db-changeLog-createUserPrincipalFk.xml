@@ -28,16 +28,25 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<changeSet author="ikasan dev" id="UsersAuthoritiesFk" context="baseline">
+	<changeSet author="ikasan dev" id="UserPrincipalFk"
+		context="baseline">
 
-		<addForeignKeyConstraint baseColumnNames="AuthorityId"
-			baseTableName="UsersAuthorities" constraintName="USER_AUTH_AUTH_FK"
-			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Authorities" />
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="UserPrinci_1343340819" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="UserPrinci_1359340876" /></not>
+		</preConditions>
+
+		<addForeignKeyConstraint baseColumnNames="PrincipalId"
+			baseTableName="UserPrincipal" constraintName="UserPrinci_1343340819"
+			deferrable="false" initiallyDeferred="false" 
+			referencedColumnNames="Id" referencedTableName="SecurityPrincipal" />
 
 		<addForeignKeyConstraint baseColumnNames="UserId"
-			baseTableName="UsersAuthorities" constraintName="USER_AUTH_USER_FK"
-			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Users" />
+			baseTableName="UserPrincipal" constraintName="UserPrinci_1359340876"
+			deferrable="false" initiallyDeferred="false" 
+			referencedColumnNames="Id" referencedTableName="Users" />
 
 	</changeSet>
+
 
 </databaseChangeLog>

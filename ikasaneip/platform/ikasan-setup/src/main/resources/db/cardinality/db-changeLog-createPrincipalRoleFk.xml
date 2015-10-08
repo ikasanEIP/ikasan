@@ -30,6 +30,11 @@
 
 	<changeSet author="ikasan dev" id="PolicyLinkFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="PrincipalR_1439341161" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="PrincipalR_1455341218" /></not>
+		</preConditions>
+		
 		<addForeignKeyConstraint baseColumnNames="PrincipalId"
 			baseTableName="PrincipalRole" constraintName="PrincipalR_1439341161"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="SecurityPrincipal" />

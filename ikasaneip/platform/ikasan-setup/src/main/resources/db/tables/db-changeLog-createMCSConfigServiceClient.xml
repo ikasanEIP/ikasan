@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createMCSConfigServiceClient" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="MCSConfigServiceClient" /></not>
+		</preConditions>
+
         <createTable tableName="MCSConfigServiceClient">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

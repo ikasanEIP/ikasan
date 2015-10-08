@@ -48,7 +48,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
         
     <changeSet author="ikasan dev" id="createConfParamBoolean" context="baseline">
-    
+    	
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ConfParamBoolean" /></not>
+		</preConditions>
+    	
         <createTable tableName="ConfParamBoolean">
             <column name="Id" type="numeric(18)">
                 <constraints nullable="false"/>

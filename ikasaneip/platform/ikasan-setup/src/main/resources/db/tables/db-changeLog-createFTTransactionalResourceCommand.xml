@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createFTTransactionalResourceCommand" context="baseline">
         
+        <preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTTransactionalResourceCommand" /></not>
+		</preConditions>
+
         <createTable tableName="FTTransactionalResourceCommand">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

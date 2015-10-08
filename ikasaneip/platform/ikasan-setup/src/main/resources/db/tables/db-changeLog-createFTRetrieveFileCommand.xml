@@ -49,6 +49,10 @@
     	
     <changeSet author="ikasan dev" id="createFTRetrieveFileCommand" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTRetrieveFileCommand" /></not>
+		</preConditions>
+
         <createTable tableName="FTRetrieveFileCommand">
         
             <column name="Id" type="numeric(18)">

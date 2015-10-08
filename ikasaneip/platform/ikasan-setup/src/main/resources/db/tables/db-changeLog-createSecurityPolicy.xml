@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createSecurityPolicy" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="SecurityPolicy" /></not>
+		</preConditions>
+
         <createTable tableName="SecurityPolicy">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
