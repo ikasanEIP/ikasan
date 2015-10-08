@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createConfParamList" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ConfParamList" /></not>
+		</preConditions>
+
         <createTable tableName="ConfParamList">
             <column name="Id" type="numeric(18)">
                 <constraints nullable="false"/>

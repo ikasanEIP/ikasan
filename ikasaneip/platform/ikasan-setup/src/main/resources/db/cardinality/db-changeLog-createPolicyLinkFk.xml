@@ -29,7 +29,11 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet author="ikasan dev" id="PolicyLinkFk" context="baseline">
-
+		
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="PolicyLink_1449769191" /></not>
+		</preConditions>
+		
 		<addForeignKeyConstraint baseColumnNames="PolicyLinkTypeId"
 			baseTableName="PolicyLink" constraintName="PolicyLink_1449769191"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="PolicyLinkType" />

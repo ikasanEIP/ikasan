@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createServer" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="Server" /></not>
+		</preConditions>
+
         <createTable tableName="Server">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

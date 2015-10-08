@@ -29,6 +29,11 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet author="ikasan dev" id="UserBusinessStreamFk" context="baseline">
+	
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="UserBusine_440385607" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="UserBusine_456385664" /></not>
+		</preConditions>
 
 		<addForeignKeyConstraint baseColumnNames="UserId"
 			baseTableName="UserBusinessStream" constraintName="UserBusine_440385607"

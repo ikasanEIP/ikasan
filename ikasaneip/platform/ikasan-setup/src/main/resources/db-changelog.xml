@@ -62,8 +62,6 @@
 	<include file="db/cardinality/db-changeLog-createBusinessSteamFlowFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createErrorCategorisationLinkFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createFlowEventTriggerParametersFk.xml" relativeToChangelogFile="true" />
-	<include file="db/cardinality/db-changeLog-createFTFileChunkFk.xml" relativeToChangelogFile="true" />
-	<include file="db/cardinality/db-changeLog-createFTTransactionalResourceCommandFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createMCSKeyLocationQueryFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createMCSSourceConfigValueFk.xml" relativeToChangelogFile="true" />
@@ -81,5 +79,8 @@
 	<include file="db/data/db-changelog-insertAdminUser.xml" relativeToChangelogFile="true" />
 	<include file="db/data/db-changelog-insertMCSSourceConfigGroupSeq.xml" relativeToChangelogFile="true" />
 	<include file="db/data/db-changelog-insertSecurityRecords.xml" relativeToChangelogFile="true" />
+	
+	<!-- Post baseline table creation -->    
+	<include file="db/tables/db.changelog-addTables.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

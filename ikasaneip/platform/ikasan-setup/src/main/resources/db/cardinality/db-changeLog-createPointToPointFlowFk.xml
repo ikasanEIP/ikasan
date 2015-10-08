@@ -30,6 +30,10 @@
 
 	<changeSet author="ikasan dev" id="PointToPointFlowFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="PTPP_ID_FK" /></not>
+		</preConditions>
+		
 		<addForeignKeyConstraint baseColumnNames="PointToPointFlowProfileId"
 			baseTableName="PointToPointFlow" constraintName="PTPP_ID_FK"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="PointToPointFlowProfile" />

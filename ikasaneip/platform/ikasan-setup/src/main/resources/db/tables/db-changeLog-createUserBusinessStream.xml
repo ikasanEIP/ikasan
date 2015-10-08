@@ -49,6 +49,10 @@
         
 	<changeSet author="ikasan dev" id="createUserBusinessStream" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="UserBusinessStream" /></not>
+		</preConditions>
+
         <createTable tableName="UserBusinessStream">
         
             <column name="UserId" type="numeric(18)">

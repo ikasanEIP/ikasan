@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createFTXid" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTXid" /></not>
+		</preConditions>
+
         <createTable tableName="FTXid">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

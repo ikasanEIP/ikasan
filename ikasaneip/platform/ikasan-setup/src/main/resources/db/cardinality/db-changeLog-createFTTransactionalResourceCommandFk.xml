@@ -30,6 +30,10 @@
 
 	<changeSet author="ikasan dev" id="createFTTransactionalResourceCommandFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="FTTransact_Xid_Id_FK" /></not>
+		</preConditions>
+
 		<addForeignKeyConstraint baseColumnNames="Xid_Id"
 			baseTableName="FTTransactionalResourceCommand" constraintName="FTTransact_Xid_Id_FK"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="FTXid" />

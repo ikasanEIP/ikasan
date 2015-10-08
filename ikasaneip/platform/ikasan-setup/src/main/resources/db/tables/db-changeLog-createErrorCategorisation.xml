@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createErrorCategorisation" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ErrorCategorisation" /></not>
+		</preConditions>
+
         <createTable tableName="ErrorCategorisation">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

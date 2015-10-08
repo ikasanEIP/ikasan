@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createSystemEvent" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="SystemEvent" /></not>
+		</preConditions>
+		
         <createTable tableName="SystemEvent">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

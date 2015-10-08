@@ -49,6 +49,10 @@
     
      <changeSet author="ikasan dev" id="createIkasanWiretap" dbms="sybase" context="baseline"> 
      
+     	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="IkasanWiretap" /></not>
+		</preConditions>
+
         <createTable tableName="IkasanWiretap" >
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

@@ -48,19 +48,44 @@ package org.ikasan.setup.persistence.service;
 public interface PersistenceService
 {
     /**
-     * Create the core engine underlying persistence
+     * 
+     * @throws PersistenceServiceException
      */
-    public void createBaselinePersistence();
+    public void createBaselinePersistence() throws PersistenceServiceException;
+    
     
     /**
-     * Create the core engine underlying persistence
+     * 
+     * @return
+     * @throws PersistenceServiceException
      */
-    public void createPostBaselinePersistence();
+    public boolean baselinePersistenceChangesRequired() throws PersistenceServiceException;
+    
+    
+    /**
+     * 
+     * @throws PersistenceServiceException
+     */
+    public void createPostBaselinePersistence() throws PersistenceServiceException;
+    
+    /**
+     * 
+     * @return
+     * @throws PersistenceServiceException
+     */
+    public boolean postBaselinePersistenceChangesRequired() throws PersistenceServiceException;
 
     /**
      * Create the fileTransfer related persistence used by ftp and sftp.
      */
-    public void createFileTransferPersistence();
+    public void createFileTransferPersistence() throws PersistenceServiceException;
+    
+    /**
+     * 
+     * @return
+     * @throws PersistenceServiceException
+     */
+    public boolean fileTransferPersistenceChangesRequired() throws PersistenceServiceException;
 
     
     /**
@@ -68,12 +93,19 @@ public interface PersistenceService
      * 
      * @return
      */
-    public String getBaselineStatus();
+    public String getBaselineStatus() throws PersistenceServiceException;
     
     /**
      * Return the status of the underlying persistence. 
      * 
      * @return
      */
-    public String getPostBaselineStatus();
+    public String getPostBaselineStatus() throws PersistenceServiceException;
+    
+    /**
+     * Return the status of the underlying persistence. 
+     * 
+     * @return
+     */
+    public String getFileTransferStatus() throws PersistenceServiceException;
 }

@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createFTFileChunk" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTFileChunk" /></not>
+		</preConditions>
+
         <createTable tableName="FTFileChunk">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

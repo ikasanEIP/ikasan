@@ -59,12 +59,11 @@
  	</bean>
  	
  	<bean id="fileTransferLiquibase" class="liquibase.Liquibase">
-    	<constructor-arg value="db-fileTrasnferPersistence-changelog.xml"/>
+    	<constructor-arg value="db-fileTransferPersistence-changelog.xml"/>
     	<constructor-arg ref="classLoaderResourceAccessor"/>
     	<constructor-arg ref="database"/>
  	</bean>
- 	
- 	
+ 		
  	<bean id="databaseFactoryInstance" class="liquibase.database.DatabaseFactory" factory-method="getInstance" lazy-init="false">
  	</bean>
  	

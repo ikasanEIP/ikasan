@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createRolePolicy" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="RolePolicy" /></not>
+		</preConditions>
+
         <createTable tableName="RolePolicy">
         
             <column name="RoleId" type="numeric(18)">

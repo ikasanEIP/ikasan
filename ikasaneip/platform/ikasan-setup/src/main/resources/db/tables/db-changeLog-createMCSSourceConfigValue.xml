@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createMCSSourceConfigValue" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="MCSSourceConfigValue" /></not>
+		</preConditions>
+
         <createTable tableName="MCSSourceConfigValue">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
