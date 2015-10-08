@@ -49,6 +49,10 @@
         
     <changeSet author="ikasan dev" id="createConfParamLong" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ConfParamLong" /></not>
+		</preConditions>
+
         <createTable tableName="ConfParamLong">
         
             <column name="Id" type="numeric(18)">

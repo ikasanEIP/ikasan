@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createMCSMappingConfiguration" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="MCSMappingConfiguration" /></not>
+		</preConditions>
+
         <createTable tableName="MCSMappingConfiguration">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

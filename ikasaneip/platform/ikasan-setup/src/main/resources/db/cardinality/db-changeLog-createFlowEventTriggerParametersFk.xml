@@ -30,6 +30,10 @@
 
 	<changeSet author="ikasan dev" id="createFlowEventTriggerFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="FlowEventTriggerParam_Id_FK" /></not>
+		</preConditions>
+
 		<addForeignKeyConstraint baseColumnNames="TriggerId"
 			baseTableName="FlowEventTriggerParameters" constraintName="FlowEventTriggerParam_Id_FK"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 

@@ -30,6 +30,11 @@
 
 	<changeSet author="ikasan dev" id="UsersAuthoritiesFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_AUTH_FK1" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="USER_AUTH_USER_FK2	" /></not>
+		</preConditions>
+		
 		<addForeignKeyConstraint baseColumnNames="AuthorityId"
 			baseTableName="UsersAuthorities" constraintName="USER_AUTH_AUTH_FK1"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="Authorities" />

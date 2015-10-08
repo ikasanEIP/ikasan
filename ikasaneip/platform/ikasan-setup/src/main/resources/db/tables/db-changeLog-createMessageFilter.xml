@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createMessageFilter" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="MessageFilter" /></not>
+		</preConditions>
+
         <createTable tableName="MessageFilter">
         
             <column defaultValueNumeric="0" name="Criteria" type="numeric(18)">

@@ -48,6 +48,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
         
     <changeSet author="ikasan dev" id="createComponent" context="baseline">
+    
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="Component" /></not>
+		</preConditions>
+
         <createTable tableName="Component">
             <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints primaryKey="true" primaryKeyName="Component_1363845242"/>

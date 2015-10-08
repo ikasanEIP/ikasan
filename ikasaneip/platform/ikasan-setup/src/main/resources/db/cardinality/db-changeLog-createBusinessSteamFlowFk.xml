@@ -34,6 +34,10 @@
 
 	<changeSet author="ikasan dev" id="createBusinessStreamFlowFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="BusinessStreamFK" /></not>
+		</preConditions>
+		
 		<addForeignKeyConstraint baseColumnNames="BusinessStreamId"
 			baseTableName="BusinessStreamFlow" constraintName="BusinessStreamFK"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 

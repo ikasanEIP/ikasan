@@ -30,6 +30,13 @@
 
 	<changeSet author="ikasan dev" id="createMCSMappingConfigurationFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="MCSMapping_310289134" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="MCSMapping_326289191" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="MCSMapping_342289248" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="MCSMapping_358289305" /></not>
+		</preConditions>
+		
 		<addForeignKeyConstraint baseColumnNames="ConfigurationTypeId"
 			baseTableName="MCSMappingConfiguration" constraintName="MCSMapping_310289134"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" referencedTableName="MCSConfigurationType" />

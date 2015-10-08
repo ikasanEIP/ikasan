@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createFTFileChunkHeader" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTFileChunkHeader" /></not>
+		</preConditions>
+
         <createTable tableName="FTFileChunkHeader">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

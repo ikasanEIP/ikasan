@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createMCSConfigurationContext" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="MCSConfigurationContext" /></not>
+		</preConditions>
+
         <createTable tableName="MCSConfigurationContext">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

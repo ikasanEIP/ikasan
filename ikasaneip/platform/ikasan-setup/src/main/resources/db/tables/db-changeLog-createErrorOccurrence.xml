@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createErrorOccurrence" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ErrorOccurrence" /></not>
+		</preConditions>
+		
         <createTable tableName="ErrorOccurrence">
         
             <column name="Uri" type="VARCHAR(255)">

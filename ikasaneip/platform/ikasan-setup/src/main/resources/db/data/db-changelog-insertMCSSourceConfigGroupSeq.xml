@@ -35,6 +35,10 @@
 
 	<changeSet author="ikasan dev" id="insertMCSSourceConfigGroupSeq" context="baseline">
 	
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from MCSSourceConfigGroupSeq</sqlCheck>
+        </preConditions>
+
 		<insert tableName="MCSSourceConfigGroupSeq">
 			<column name="Id" valueNumeric="1" />
 			<column name="SequenceNumber" valueNumeric="100" />

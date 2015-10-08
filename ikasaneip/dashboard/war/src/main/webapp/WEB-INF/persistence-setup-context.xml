@@ -28,7 +28,7 @@
     </bean>
     
     <bean id="persistanceSetupPanel" class="org.ikasan.dashboard.ui.framework.panel.PersistanceSetupPanel" scope="session">
-    	<constructor-arg ref="persistenceServiceFactory"/>
+    	<constructor-arg ref="persistenceService"/>
     	<constructor-arg ref="userService"/>
     </bean> 
 
@@ -36,8 +36,4 @@
 		<constructor-arg value="false"/>
     </bean>
     
-    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
-	      <property name="dataSource" ref="ikasan.ds" />
-	      <property name="changeLog" value="classpath:db.changelog-master.xml" />
-	 </bean>
 </beans>

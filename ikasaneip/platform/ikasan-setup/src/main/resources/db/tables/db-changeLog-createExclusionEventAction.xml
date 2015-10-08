@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createExclusionEventAction" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ExclusionEventAction" /></not>
+		</preConditions>
+
         <createTable tableName="ExclusionEventAction">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

@@ -49,6 +49,10 @@
     
     <changeSet author="ikasan dev" id="createFlowEventTrigger" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FlowEventTrigger" /></not>
+		</preConditions>
+
         <createTable tableName="FlowEventTrigger">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

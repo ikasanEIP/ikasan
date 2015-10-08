@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createUserPrincipal" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="UserPrincipal" /></not>
+		</preConditions>
+    
         <createTable tableName="UserPrincipal">
         
             <column name="UserId" type="numeric(18)">

@@ -50,12 +50,16 @@
     
     <changeSet author="ikasan dev" id="createSecurityPrincipal" dbms="sybase" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="SecurityPrincipal" /></not>
+		</preConditions>
+    
         <createTable tableName="SecurityPrincipal">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints primaryKey="true" primaryKeyName="SecurityPr_9593394513"/>
             </column>
-            <column name="Name" type="UNVARCHAR(256)">
+            <column name="Name" type="UNIVARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
             <column name="PrincipalType" type="VARCHAR(256)">
@@ -74,7 +78,7 @@
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'SecurityPolicy', 'identity_gap', 1</sql>
+        <sql dbms="sybase">sp_chgattribute 'SecurityPrincipal', 'identity_gap', 1</sql>
         
         <createIndex indexName="Principal_Type" tableName="SecurityPrincipal">
             <column name="PrincipalType"/>
@@ -87,6 +91,10 @@
     </changeSet>
     
     <changeSet author="ikasan dev" id="createSecurityPrincipal" dbms="h2, mysql, mssql" context="baseline">
+    
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="SecurityPrincipal" /></not>
+		</preConditions>
     
         <createTable tableName="SecurityPrincipal">
         

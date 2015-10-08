@@ -49,6 +49,10 @@
 	
 	<changeSet author="ikasan dev" id="createFTChecksumCommand" context="baseline">
 	
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTChecksumCommand" /></not>
+		</preConditions>
+
         <createTable tableName="FTChecksumCommand">
         
             <column name="Id" type="numeric(18)">

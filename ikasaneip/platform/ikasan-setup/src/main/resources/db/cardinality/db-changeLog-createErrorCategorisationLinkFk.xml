@@ -30,6 +30,10 @@
 
 	<changeSet author="ikasan dev" id="createErrorCategorisationLinkFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="ErrorCategegoryFK" /></not>
+		</preConditions>
+
 		<addForeignKeyConstraint baseColumnNames="ErrorCategorisationId"
 			baseTableName="ErrorCategorisationLink" constraintName="ErrorCategegoryFK"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 

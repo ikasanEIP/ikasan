@@ -45,23 +45,21 @@ import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.window.AdminPasswordDialog;
+import org.ikasan.dashboard.ui.framework.window.PersistenceStatusWindow;
 import org.ikasan.security.service.UserService;
 import org.ikasan.setup.persistence.service.PersistenceService;
-import org.ikasan.setup.persistence.service.PersistenceServiceFactory;
 
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
@@ -75,8 +73,8 @@ public class PersistanceSetupPanel extends Panel implements View
     private static final long serialVersionUID = 6005593259860222561L;
 
     private Logger logger = Logger.getLogger(PersistanceSetupPanel.class);
-    private PersistenceServiceFactory<String> persistenceServiceFactory;
-    private ComboBox persistanceStoreTypeCombo = new ComboBox("Select database type");
+    private PersistenceService persistenceService;
+    private ComboBox persistanceStoreTypeCombo = new ComboBox("Select action");
     private boolean userTablesAlreadyExist;
     private UserService userService;
 
@@ -85,11 +83,11 @@ public class PersistanceSetupPanel extends Panel implements View
      * 
      * @param ikasanModuleService
      */
-    public PersistanceSetupPanel(PersistenceServiceFactory<String> persistenceServiceFactory,
+    public PersistanceSetupPanel(PersistenceService persistenceService,
     		UserService userService)
     {
         super();
-        this.persistenceServiceFactory = persistenceServiceFactory;
+        this.persistenceService = persistenceService;
         this.userService = userService;
         init();
     }
@@ -97,162 +95,312 @@ public class PersistanceSetupPanel extends Panel implements View
     protected void init()
     {       
     	initPersistanceStoreTypeCombo();
-    	
-        this.persistanceStoreTypeCombo.addValueChangeListener(new ValueChangeListener() 
-        {
-            public void valueChange(ValueChangeEvent event) 
-            {
-           	
-            	try
-            	{
-            		String persistenceProvider = (String)PersistanceSetupPanel
-                			.this.persistanceStoreTypeCombo.getValue();
 
-                	PersistenceService persistanceService 
-                		= persistenceServiceFactory.getPersistenceService(persistenceProvider);
-                	
-            		userTablesAlreadyExist = persistanceService.userTablesExist();
-            	}
-            	catch (Exception e)
-            	{
-            		Notification.show("An error has occurred detecting database: " 
-            				+ e.getMessage(), Type.ERROR_MESSAGE);
-            	}
-            	
-            	if(userTablesAlreadyExist == true)
-            	{
-            		createAlreadyCreatedView();
-            	}
-            	else
-            	{
-            		createNotCreatedView();
-            	}
-            }
-        });
-
-        this.createNotCreatedView();
+        this.createOptionsView();
     }
     
-    protected void createNotCreatedView()
+    protected void createOptionsView()
     {
-    	VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setWidth("100%");
-        verticalLayout.setHeight("100%");
-        verticalLayout.setMargin(true);
+    	GridLayout layout = new GridLayout(2, 8);
+        layout.setWidth("100%");
+        layout.setHeight("100%");
+        layout.setMargin(true);
+        layout.setSpacing(true);
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
         ikasanWelcomeLabel1.setWidth("100%");
         
-        Label ikasanWelcomeLabel2 = new Label("Welcome to Ikasan setup. If you are accessing Ikasan for the" +
-        		" first time we need to create some database tables. Please select your database type below and" +
-        		" press the create button.");
+        Label ikasanWelcomeLabel2 = new Label("Welcome to Ikasan setup. There are a number of options available to you.");
         
         ikasanWelcomeLabel2.setStyleName("large");
         ikasanWelcomeLabel2.setWidth("60%");
-        ikasanWelcomeLabel2.setHeight("70px");
+        ikasanWelcomeLabel2.setHeight("50px");
+        
+        Label ikasanWelcomeLabel3 = new Label("1. You are installing Ikasan for the first time. " +
+        		"If this is the case please select the full install option.");
+        
+        ikasanWelcomeLabel3.setWidth("90%");
+
+        
+        Button fullInstallStatusButton = new Button("status");
+        fullInstallStatusButton.addStyleName(ValoTheme.BUTTON_LINK);
+        
+        fullInstallStatusButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		String status = persistenceService.getBaselineStatus();
+            		
+            		PersistenceStatusWindow persistenceStatusWindow = new PersistenceStatusWindow(status);
+            		
+            		UI.getCurrent().addWindow(persistenceStatusWindow);
+            	}
+            	catch(Exception ex)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    ex.printStackTrace(pw);
+
+                    Notification.show("Error trying to determine if changes are required to the Ikasan database!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            		
+            }
+        });
+        
+        Label ikasanWelcomeLabel4 = new Label("2. You are upgrading from a previous version of Ikasan. " +
+        		"If this is the case please select the upgrade option.");
+        
+        ikasanWelcomeLabel4.setWidth("90%");
+        
+        Button upgradeInstallStatusButton = new Button("status");
+        upgradeInstallStatusButton.addStyleName(ValoTheme.BUTTON_LINK);
+        
+        upgradeInstallStatusButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		String status = persistenceService.getPostBaselineStatus();
+            		
+            		PersistenceStatusWindow persistenceStatusWindow = new PersistenceStatusWindow(status);
+            		
+            		UI.getCurrent().addWindow(persistenceStatusWindow);
+            	}
+            	catch(Exception ex)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    ex.printStackTrace(pw);
+
+                    Notification.show("Error trying to determine if changes are required to the Ikasan database!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            		
+            }
+        });
+        
+        Label ikasanWelcomeLabel5 = new Label("3. You wish to provision Ikasan to provide file transfer funtionality. " +
+        		"If this is the case please select the install file transfer option.");
+        
+        ikasanWelcomeLabel5.setWidth("90%");
+        
+        Button fileTransferStatusButton = new Button("status");
+        fileTransferStatusButton.addStyleName(ValoTheme.BUTTON_LINK);
+        
+        fileTransferStatusButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		String status = persistenceService.getFileTransferStatus();
+            		
+            		PersistenceStatusWindow persistenceStatusWindow = new PersistenceStatusWindow(status);
+            		
+            		UI.getCurrent().addWindow(persistenceStatusWindow);
+            	}
+            	catch(Exception ex)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    ex.printStackTrace(pw);
+
+                    Notification.show("Error trying to determine if changes are required to the Ikasan database!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            		
+            }
+        });
        
 
-        verticalLayout.addComponent(ikasanWelcomeLabel1);
-        verticalLayout.addComponent(ikasanWelcomeLabel2);
+        layout.addComponent(ikasanWelcomeLabel1, 0, 0, 1, 0);
+        layout.addComponent(ikasanWelcomeLabel2, 0, 1, 1, 1);
+        layout.addComponent(ikasanWelcomeLabel3, 0, 2);
+        layout.addComponent(fullInstallStatusButton, 1, 2);
+        layout.addComponent(ikasanWelcomeLabel4, 0, 3);
+        layout.addComponent(upgradeInstallStatusButton, 1, 3);
+        layout.addComponent(ikasanWelcomeLabel5, 0, 4);
+        layout.addComponent(fileTransferStatusButton, 1, 4);
         
-        verticalLayout.addComponent(persistanceStoreTypeCombo);
+        layout.addComponent(persistanceStoreTypeCombo);
         persistanceStoreTypeCombo.setHeight("30px");
         
         Button button = new Button("Create");
         button.setStyleName(ValoTheme.BUTTON_SMALL);
         button.setHeight("30px");
 
-        button.addClickListener(new Button.ClickListener() {
+        button.addClickListener(new Button.ClickListener() 
+        {
             public void buttonClick(ClickEvent event) 
             {
-            	final AdminPasswordDialog adminPasswordDialog 
-            		= new AdminPasswordDialog();
-            	
-            	UI.getCurrent().addWindow(adminPasswordDialog);
-            	
-            	
-            	
-            	adminPasswordDialog.addCloseListener(new CloseListener() 
+            	if(persistanceStoreTypeCombo.getValue().equals("Full Install"))
             	{
-                    // inline close-listener
-                    public void windowClose(CloseEvent e) 
-                    {
-                    	String password = adminPasswordDialog.getPassword();
-                    	
-                    	String persistenceProvider = (String)PersistanceSetupPanel
-                    			.this.persistanceStoreTypeCombo.getValue();
-                    	
-                    	if(persistenceProvider == null)
-                    	{
-                    		 Notification.show("Please select a database type!");
-                    		 return;
-                    	}
-        
-                    	PersistenceService persistanceService 
-                    		= persistenceServiceFactory.getPersistenceService(persistenceProvider);
-        
-                    	try
-                    	{
-                    		persistanceService.createPersistence();
-                    		persistanceService.createAdminAccount();
-                    		
-                    		userService.changeUsersPassword("admin", password, password);
-                    	}
-                    	catch(RuntimeException ex)
-                    	{
-                    		StringWriter sw = new StringWriter();
-                            PrintWriter pw = new PrintWriter(sw);
-                            ex.printStackTrace(pw);
-        
-                            Notification.show("Error trying to create Ikasan database!", sw.toString()
-                                , Notification.Type.ERROR_MESSAGE);
-                    	}
-        
-                        Notification.show("Database successfully created!");
-                    }
-                });
+            		createFull();
+            	}
+            	else if(persistanceStoreTypeCombo.getValue().equals("Upgrade"))
+            	{
+            		upgrade();
+            	}
+            	else if(persistanceStoreTypeCombo.getValue().equals("Provision File Transfer"))
+            	{
+            		installFileTransfer();
+            	}
+            		
             }
         });
 
-        verticalLayout.addComponent(button);
-        this.setContent(verticalLayout);
+        layout.addComponent(button, 0, 6, 1, 6);
+        layout.setComponentAlignment(button, Alignment.MIDDLE_CENTER);
+
+        this.setContent(layout);
     }
-
-    protected void createAlreadyCreatedView()
+    
+    protected void createFull()
     {
-    	VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setWidth("100%");
-        verticalLayout.setHeight("100%");
-        verticalLayout.setMargin(true);
+    	try
+    	{
+    		if(!persistenceService.baselinePersistenceChangesRequired())
+    		{
+    			 Notification.show("Your database is already upgraded to the latest version! No changes required."
+    		                , Notification.Type.ERROR_MESSAGE);
+    		            
+    		     return;
+    		}
+    	}
+    	catch(Exception ex)
+    	{
+    		StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
 
-        Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
-        ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
-        ikasanWelcomeLabel1.setWidth("100%");
-        
-        Label ikasanWelcomeLabel2 = new Label("It appears as though the Ikasan database has already been created. " +
-        		"If you believe that this is not the case there may be an issue. " +
-        		"Please contact your local database administrator or Ikasan/Middleware support.");
-        
-        ikasanWelcomeLabel2.setStyleName("large");
-        ikasanWelcomeLabel2.setWidth("60%");
-        ikasanWelcomeLabel2.setHeight("60px");       
+            Notification.show("Error trying to determine if changes are required to the Ikasan database!", sw.toString()
+                , Notification.Type.ERROR_MESSAGE);
+            
+            return;
+    	}
+    	
+    	final AdminPasswordDialog adminPasswordDialog 
+			= new AdminPasswordDialog();
+	
+    	UI.getCurrent().addWindow(adminPasswordDialog);
+	
+	
+	
+		adminPasswordDialog.addCloseListener(new CloseListener() 
+		{
+	        // inline close-listener
+	        public void windowClose(CloseEvent e) 
+	        {
+	        	String password = adminPasswordDialog.getPassword();
+	        	
+	        	String persistenceProvider = (String)PersistanceSetupPanel
+	        			.this.persistanceStoreTypeCombo.getValue();
+	        	
+	        	if(persistenceProvider == null)
+	        	{
+	        		 Notification.show("Please select a database type!");
+	        		 return;
+	        	}
+	
+	        	try
+	        	{
+	        		persistenceService.createBaselinePersistence();
+	        		
+	        		userService.changeUsersPassword("admin", password, password);
+	        	}
+	        	catch(Exception ex)
+	        	{
+	        		StringWriter sw = new StringWriter();
+	                PrintWriter pw = new PrintWriter(sw);
+	                ex.printStackTrace(pw);
+	
+	                Notification.show("Error trying to create Ikasan database!", sw.toString()
+	                    , Notification.Type.ERROR_MESSAGE);
+	                
+	                return;
+	        	}
+	
+	            Notification.show("Database successfully created!");
+	        }
+	    });
+    }
+    
+    protected void upgrade()
+    {	
+    	try
+    	{
+    		if(!persistenceService.postBaselinePersistenceChangesRequired())
+    		{
+    			 Notification.show("Your database is already upgraded to the latest version! No changes required."
+    		                , Notification.Type.ERROR_MESSAGE);
+    		            
+    		     return;
+    		}
+    		
+    		persistenceService.createPostBaselinePersistence();
+    	}
+    	catch(Exception ex)
+    	{
+    		StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
 
-        verticalLayout.addComponent(ikasanWelcomeLabel1);
-        verticalLayout.addComponent(ikasanWelcomeLabel2);
-        
-        this.setContent(verticalLayout);
+            Notification.show("Error trying to upgrade the Ikasan database!", sw.toString()
+                , Notification.Type.ERROR_MESSAGE);
+            
+            return;
+    	}
+		
+    	Notification.show("Database successfully upgraded!");
+    }
+    
+    protected void installFileTransfer()
+    {
+    	try
+    	{
+    		if(!persistenceService.fileTransferPersistenceChangesRequired())
+    		{
+    			 Notification.show("Your database is already provisioned to support file transfer! No changes required."
+    		                , Notification.Type.ERROR_MESSAGE);
+    		            
+    		     return;
+    		}
+    		
+    		persistenceService.createFileTransferPersistence();
+    	}
+    	catch(Exception ex)
+    	{
+    		StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+
+            Notification.show("Error trying to provision the file transfer tables in the Ikasan database!", sw.toString()
+                , Notification.Type.ERROR_MESSAGE);
+            
+            return;
+    	}
+    			
+    	Notification.show("Database successfully provisioned to support transactional file transfer!");
     }
     
     protected void initPersistanceStoreTypeCombo()
     {
     	persistanceStoreTypeCombo.removeAllItems();
     	
-    	persistanceStoreTypeCombo.addItem("Sybase12");
-    	persistanceStoreTypeCombo.addItem("Sybase15");
-    	persistanceStoreTypeCombo.addItem("MySQL");
-    	persistanceStoreTypeCombo.addItem("SQLServer2008");
-    	persistanceStoreTypeCombo.addItem("H2");
+    	persistanceStoreTypeCombo.addItem("Full Install");
+    	persistanceStoreTypeCombo.addItem("Upgrade");
+    	persistanceStoreTypeCombo.addItem("Provision File Transfer");
     }
 
     /* (non-Javadoc)
