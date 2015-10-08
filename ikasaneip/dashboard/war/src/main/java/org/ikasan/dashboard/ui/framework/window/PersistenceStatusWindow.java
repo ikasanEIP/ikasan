@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,66 +38,63 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup.persistence.service;
+package org.ikasan.dashboard.ui.framework.window;
 
-import javax.annotation.Resource;
+import org.apache.log4j.Logger;
+import org.vaadin.aceeditor.AceEditor;
+import org.vaadin.aceeditor.AceMode;
+import org.vaadin.aceeditor.AceTheme;
 
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Window;
 
 /**
- * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
  * @author Ikasan Development Team
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml", "/providers-conf.xml"})
-public class PersistenceServiceImplTest
+public class PersistenceStatusWindow extends Window
 {
-    /**
-     * The context that the tests run in, allows for mocking actual concrete
-     * classes
-     */
-    private Mockery context = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
+	private static final long serialVersionUID = -3265893258014286092L;
+	
+	private Logger logger = Logger.getLogger(PersistenceStatusWindow.class);
+	
 
-    @Resource
-    PersistenceService persistenceService;
+	/**
+	 * @param configurationManagement
+	 */
+	public PersistenceStatusWindow(String content)
+	{		
+		init(content);
+	}
 
-    /**
-     * Test
-     * @throws PersistenceServiceException 
+	/**
+     * Helper method to initialise this object.
+     * 
+     * @param message
      */
-    @Test
-    public void setup() throws PersistenceServiceException
+    protected void init(String content)
     {
-    	boolean status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
-    	Assert.assertTrue(status);
-        persistenceService.createBaselinePersistence();
-        
-        status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
-    	Assert.assertFalse(status);
-    	
-    	System.out.println(this.persistenceService.getFileTransferStatus());
-    	System.out.println(this.persistenceService.getBaselineStatus());
+    	setModal(true);
+		setHeight("90%");
+		setWidth("90%");
+		
+		AceEditor errorEditor = new AceEditor();
+		errorEditor.setCaption("Persistence Status");
+		errorEditor.setValue(content);
+		errorEditor.setReadOnly(true);
+		errorEditor.setWordWrap(true);
+		errorEditor.setMode(AceMode.text);
+		errorEditor.setTheme(AceTheme.eclipse);
+		errorEditor.setWidth("100%");
+		errorEditor.setHeight("100%");
+		
+		HorizontalLayout layout = new HorizontalLayout();
+		layout.setSizeFull();
+		layout.addComponent(errorEditor);
+		
+		this.setContent(layout);
     }
+
     
-    @After
-    public void dropAll(){
-        
-    }
-
-
 }

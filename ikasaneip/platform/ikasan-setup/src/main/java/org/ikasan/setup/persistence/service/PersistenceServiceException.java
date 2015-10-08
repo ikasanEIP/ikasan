@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -40,64 +40,60 @@
  */
 package org.ikasan.setup.persistence.service;
 
-import javax.annotation.Resource;
-
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 /**
- * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
  * @author Ikasan Development Team
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml", "/providers-conf.xml"})
-public class PersistenceServiceImplTest
+public class PersistenceServiceException extends Exception
 {
-    /**
-     * The context that the tests run in, allows for mocking actual concrete
-     * classes
-     */
-    private Mockery context = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
+	private static final long serialVersionUID = 6136929351590744604L;
 
-    @Resource
-    PersistenceService persistenceService;
+	/**
+	 * 
+	 */
+	public PersistenceServiceException()
+	{
+		super();
+	}
 
-    /**
-     * Test
-     * @throws PersistenceServiceException 
-     */
-    @Test
-    public void setup() throws PersistenceServiceException
-    {
-    	boolean status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
-    	Assert.assertTrue(status);
-        persistenceService.createBaselinePersistence();
-        
-        status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
-    	Assert.assertFalse(status);
-    	
-    	System.out.println(this.persistenceService.getFileTransferStatus());
-    	System.out.println(this.persistenceService.getBaselineStatus());
-    }
-    
-    @After
-    public void dropAll(){
-        
-    }
+	/**
+	 * @param message
+	 */
+	public PersistenceServiceException(String message)
+	{
+		super(message);
 
+	}
+
+	/**
+	 * @param cause
+	 */
+	public PersistenceServiceException(Throwable cause)
+	{
+		super(cause);
+
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public PersistenceServiceException(String message, Throwable cause)
+	{
+		super(message, cause);
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 * @param enableSuppression
+	 * @param writableStackTrace
+	 */
+	public PersistenceServiceException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace)
+	{
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
 
 }

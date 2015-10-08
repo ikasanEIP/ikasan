@@ -29,6 +29,11 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet author="ikasan dev" id="createMCSSourceConfigValueFk" context="baseline">
+	
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="MCSSourceC_534289932" /></not>
+			<not><foreignKeyConstraintExists foreignKeyName="MCSSourceC_550289989" /></not>
+		</preConditions>
 
 		<addForeignKeyConstraint baseColumnNames="MappingConfigurationId"
 			baseTableName="MCSSourceConfigValue" constraintName="MCSSourceC_534289932"

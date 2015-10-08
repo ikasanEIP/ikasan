@@ -30,6 +30,10 @@
 
 	<changeSet author="ikasan dev" id="createFTFileChunkFk" context="baseline">
 
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="FTFileChun_FileCh_FK" /></not>
+		</preConditions>
+
 		<addForeignKeyConstraint baseColumnNames="FileChunkHeaderId"
 			baseTableName="FTFileChunk" constraintName="FTFileChun_FileCh_FK"
 			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 

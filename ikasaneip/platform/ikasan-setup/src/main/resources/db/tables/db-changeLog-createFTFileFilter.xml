@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createFTFileFilter" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="FTFileFilter" /></not>
+		</preConditions>
+
         <createTable tableName="FTFileFilter">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

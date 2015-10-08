@@ -49,6 +49,10 @@
 
     <changeSet author="ikasan dev" id="createPolicyLink" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="PolicyLink" /></not>
+		</preConditions>
+
         <createTable tableName="PolicyLink">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">

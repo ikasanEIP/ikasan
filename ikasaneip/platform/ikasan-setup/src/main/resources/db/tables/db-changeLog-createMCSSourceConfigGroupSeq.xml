@@ -49,6 +49,10 @@
         
     <changeSet author="ikasan dev" id="createMCSSourceConfigGroupSeq" context="baseline">
     
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="MCSSourceConfigGroupSeq" /></not>
+		</preConditions>
+
         <createTable tableName="MCSSourceConfigGroupSeq">
         
             <column name="Id" type="numeric(18)"/>

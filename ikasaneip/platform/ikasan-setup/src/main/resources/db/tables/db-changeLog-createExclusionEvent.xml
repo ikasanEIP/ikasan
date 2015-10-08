@@ -48,7 +48,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
     
     <changeSet author="ikasan dev" id="createExclusionEvent" context="baseline">
-    
+    	
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ExclusionEvent" /></not>
+		</preConditions>
+
         <createTable tableName="ExclusionEvent">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
