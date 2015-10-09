@@ -86,16 +86,18 @@
             <column name="AppSecDescAttributeName" type="VARCHAR(256)"/>
             <column name="LdapUserDescAttributeName" type="VARCHAR(256)"/>
             <column name="MemberofAttributeName" type="VARCHAR(256)"/>
-            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'AuthenticationMethod', 'identity_gap', 1</sql>
+
     </changeSet>
+    
     
 </databaseChangeLog>

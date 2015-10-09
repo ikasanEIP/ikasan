@@ -61,10 +61,10 @@
             <column name="PolicyId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
             

@@ -68,10 +68,10 @@
             <column name="Description" type="UNIVARCHAR(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
             
@@ -90,7 +90,7 @@
 
     </changeSet>
     
-    <changeSet author="ikasan dev" id="createSecurityPrincipal" dbms="h2, mysql, mssql" context="baseline">
+    <changeSet author="ikasan dev" id="createSecurityPrincipal" dbms="mysql, mssql, h2" context="baseline">
     
     	<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="SecurityPrincipal" /></not>
@@ -110,10 +110,10 @@
             <column name="Description" type="VARCHAR(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
             

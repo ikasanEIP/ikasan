@@ -69,10 +69,10 @@
             <column name="FlowId" type="numeric(18)"/>
             <column name="ComponentOrder" type="numeric(18)"/>
             <column name="ConfigurationId" type="VARCHAR(256)"/>
-            <column defaultValueComputed="getdate()" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="getdate()" name="UpdatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
                 <constraints nullable="false"/>
             </column>
         </createTable>
