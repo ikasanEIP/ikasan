@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,66 +38,16 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup.persistence.service;
+package org.ikasan.dashboard.ui.framework.util;
 
-import javax.annotation.Resource;
-
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 
 /**
- * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
  * @author Ikasan Development Team
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/hsqldb-datasource-conf.xml", "/providers-conf.xml"})
-public class PersistenceServiceImplTest
+public interface CommitHandler
 {
-    /**
-     * The context that the tests run in, allows for mocking actual concrete
-     * classes
-     */
-    private Mockery context = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
-
-    @Resource
-    PersistenceService persistenceService;
-
-    /**
-     * Test
-     * @throws PersistenceServiceException 
-     */
-    @Test
-    public void setup() throws PersistenceServiceException
-    {
-    	boolean status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
-    	Assert.assertTrue(status);
-        persistenceService.createBaselinePersistence();
-        
-        status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
-    	Assert.assertFalse(status);
-    	
-    	System.out.println(this.persistenceService.getFileTransferStatus());
-    	System.out.println(this.persistenceService.getBaselineStatus());
-    }
-    
-    @After
-    public void dropAll(){
-        
-    }
-
-
+	public void postCommit() throws CommitException;
 }
