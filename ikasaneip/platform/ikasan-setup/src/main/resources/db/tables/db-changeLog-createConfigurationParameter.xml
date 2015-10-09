@@ -55,7 +55,7 @@
 
         <createTable tableName="ConfigurationParameter">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints nullable="false"/>
             </column>
             <column name="ConfigurationIdentifier" type="VARCHAR(256)">
