@@ -30,6 +30,7 @@
                 <constructor-arg>
                     <bean class="org.ikasan.filetransfer.factory.PayloadFactoryImpl"/>
                 </constructor-arg>
+                <constructor-arg value="testOuput.txt"/>
             </bean>
         </property>
         <property name="transition" ref="${targetFlowName}ProducerFlowElement"/>
