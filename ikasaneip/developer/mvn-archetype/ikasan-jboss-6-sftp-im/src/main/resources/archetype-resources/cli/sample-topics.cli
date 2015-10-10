@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#Usage
+#bash $CLI_FILE eai-default $JBOSS_HOME/../conf/jboss-as.conf
+
+PROFILE=$1
+JBOSS_EAP_CONF=$2
+
+source ${JBOSS_EAP_CONF}
+
+$JBOSS_HOME/bin/jboss-cli.sh --connect <<EOF
+# Deploy resource
+if (outcome != success) of /profile=$PROFILE/subsystem=messaging/hornetq-server=default/jms-topic=sample.test.sftp:read-resource
+  jms-topic --profile=$PROFILE add --topic-address=sample.test.sftp --entries=java:jboss/exported/jms/topic/sample.test.sftp
+end-if
+
+# Rollback resource
+# jms-topic --profile=$PROFILE remove --topic-address=sample.test.sftp
+
+exit
+
+
