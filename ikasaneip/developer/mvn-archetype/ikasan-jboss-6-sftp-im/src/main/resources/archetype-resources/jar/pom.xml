@@ -37,26 +37,22 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-sftp-endpoint</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-filetransfer</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filetransfer-common</artifactId>
-            <version>${version.ikasan}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
         </dependency>
 
         <!-- commons IO for file IO -->
