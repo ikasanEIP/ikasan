@@ -22,6 +22,7 @@ import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -97,6 +98,7 @@ public class TargetFilesystemFlowTest extends IkasanEIPTest
     @SuppressWarnings("unchecked")
     @Test
     @DirtiesContext
+    @Ignore
     public void test_successful_sampleFlow_invocation() throws IOException
     {
         flowTest_setup();
