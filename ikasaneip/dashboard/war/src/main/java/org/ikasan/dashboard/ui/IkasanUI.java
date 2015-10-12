@@ -52,8 +52,6 @@ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.google.common.eventbus.EventBus;
@@ -64,13 +62,10 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.communication.PushMode;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -80,11 +75,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.ConnectorTracker;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -230,52 +222,10 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
 
-//        menuContent.addComponent(this.buildTitle());
         menuContent.addComponent(this.menu);
 
         return menuContent;
-    }
-    
-    private Component buildTitle() 
-    {
-        Label logo = new Label("<strong>Ikasan Dashboard</strong>",
-                ContentMode.HTML);
-        logo.setSizeUndefined();
-        HorizontalLayout logoWrapper = new HorizontalLayout(logo);
-        logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
-        logoWrapper.addStyleName("valo-menu-title");
-        return logoWrapper;
-    }
-    
-    private Component buildUserMenu() {
-        final MenuBar settings = new MenuBar();
-        settings.addStyleName("user-menu");
-//        final User user = getCurrentUser();
-        settingsItem = settings.addItem("", new ThemeResource(
-                "img/profile-pic-300px.jpg"), null);
-        
-        settingsItem.addItem("Edit Profile", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-               
-            }
-        });
-        settingsItem.addItem("Preferences", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                
-            }
-        });
-        settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-               
-            }
-        });
-        return settings;
-    }
-    
+    }    
     
     private Component buildToggleButton() 
     {
@@ -324,7 +274,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             @Override
             public void run() 
             {
-            	logger.info("Broadcasting new FlowStateEvent");
+            	logger.debug("Broadcasting new FlowStateEvent");
             	eventBus.post(new FlowStateEvent((HashMap<String, String>)message));
             }
         });	
