@@ -129,14 +129,8 @@ public class CategorisedErrorTab extends TopologyTab
 	{
 		this.categorizedErrorOccurenceTable = new FilterTable();
 		this.categorizedErrorOccurenceTable.setSizeFull();
-//		this.categorizedErrorOccurenceTable.addContainerProperty("", Label.class,  null);
-//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("", .03f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Error Location", Layout.class,  null);
 		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Location", .25f);
-//		this.categorizedErrorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
-//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
-//		this.categorizedErrorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
-//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
 		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Message", .65f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
@@ -144,8 +138,6 @@ public class CategorisedErrorTab extends TopologyTab
 		
 		this.categorizedErrorOccurenceTable.addStyleName("wordwrap-table");
 		this.categorizedErrorOccurenceTable.addStyleName(ValoTheme.TABLE_NO_STRIPES);
-		
-//		this.categorizedErrorOccurenceTable.setFilterBarVisible(true);
 		
 		this.categorizedErrorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		    @Override
@@ -313,11 +305,6 @@ public class CategorisedErrorTab extends TopologyTab
             	    layout.addComponent(new Label(VaadinIcons.AUTOMATION.getHtml() + " " +  errorOccurrence.getFlowName(), ContentMode.HTML));
             	    layout.addComponent(new Label(VaadinIcons.COG.getHtml() + " " +  errorOccurrence.getFlowElementName(), ContentMode.HTML));
             	    layout.setSpacing(true);
-            	    
-            	    
-//            	    categorizedErrorOccurenceTable.addItem(new Object[]{categoryLabel, errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-//            				, errorOccurrence.getFlowElementName(), categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
-//            				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);
             	    
             	    categorizedErrorOccurenceTable.addItem(new Object[]{layout, categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
             				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);

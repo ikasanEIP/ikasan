@@ -48,36 +48,64 @@ package org.ikasan.setup.persistence.service;
 public interface PersistenceService
 {
     /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
+     * 
+     * @throws PersistenceServiceException
      */
-    public String getVersion();
-
+    public void createBaselinePersistence() throws PersistenceServiceException;
+    
+    
     /**
-     * Create the core engine underlying persistence
+     * 
+     * @return
+     * @throws PersistenceServiceException
      */
-    public void createPersistence();
+    public boolean baselinePersistenceChangesRequired() throws PersistenceServiceException;
+    
+    
+    /**
+     * 
+     * @throws PersistenceServiceException
+     */
+    public void createPostBaselinePersistence() throws PersistenceServiceException;
+    
+    /**
+     * 
+     * @return
+     * @throws PersistenceServiceException
+     */
+    public boolean postBaselinePersistenceChangesRequired() throws PersistenceServiceException;
 
     /**
      * Create the fileTransfer related persistence used by ftp and sftp.
      */
-    public void createFileTransferPersistence();
-
+    public void createFileTransferPersistence() throws PersistenceServiceException;
+    
     /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
+     * 
+     * @return
+     * @throws PersistenceServiceException
      */
-    public boolean adminAccountExists();
+    public boolean fileTransferPersistenceChangesRequired() throws PersistenceServiceException;
 
+    
     /**
-     * Create the default administration account and associated dependencies
+     * Return the status of the underlying persistence. 
+     * 
+     * @return
      */
-    public void createAdminAccount();
-
+    public String getBaselineStatus() throws PersistenceServiceException;
+    
     /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
+     * Return the status of the underlying persistence. 
+     * 
+     * @return
      */
-    public boolean userTablesExist();
+    public String getPostBaselineStatus() throws PersistenceServiceException;
+    
+    /**
+     * Return the status of the underlying persistence. 
+     * 
+     * @return
+     */
+    public String getFileTransferStatus() throws PersistenceServiceException;
 }

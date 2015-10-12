@@ -52,6 +52,7 @@ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.util.CommitHandler;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
@@ -77,7 +78,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Ikasan Development Team
  * 
  */
-public class NavigationPanel extends Panel implements ViewContext
+public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 {
 
 	private static final long serialVersionUID = 5649279357596506519L;
