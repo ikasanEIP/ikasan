@@ -82,7 +82,7 @@ public class TopologyCacheApplication
     public Response updateCache(@PathParam("moduleName") String moduleName, 
     		@PathParam("flowName") String flowName, String state)
     {
-        logger.info("Updating topology state cache: ModuleName: " 
+        logger.debug("Updating topology state cache: ModuleName: " 
         		+ moduleName + ", FlowName: " + flowName + ", State: " + state);
         
         String key = moduleName + "-" + flowName;

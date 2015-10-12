@@ -144,7 +144,7 @@ public class NavigationPanel extends Panel implements ViewContext
 	 */
 	protected void init()
 	{
-		logger.info("Initialising navigation panel.");
+		logger.debug("Initialising navigation panel.");
 
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setHeight(30, Unit.PIXELS);
