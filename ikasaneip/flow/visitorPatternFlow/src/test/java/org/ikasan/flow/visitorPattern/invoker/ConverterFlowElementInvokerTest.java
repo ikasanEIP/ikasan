@@ -71,7 +71,7 @@ public class ConverterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker()
+    public void test_converter_flowElementInvoker_with_flowEvent()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -84,6 +84,47 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
+
+                // try flowEvent
+                exactly(1).of(converter).convert(flowEvent);
+                will(returnValue(flowEvent));
+
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_converter_flowElementInvoker_with_payload()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(converter));
+
+                // try flowEvent
+                exactly(1).of(converter).convert(flowEvent);
+                will(throwException(new ClassCastException()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(converter).convert(payload);
@@ -117,6 +158,11 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
+
+                // try flowEvent
+                exactly(1).of(converter).convert(flowEvent);
+                will(throwException(new ClassCastException()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(converter).convert(payload);
