@@ -41,43 +41,14 @@
 package org.ikasan.setup.persistence.service;
 
 /**
- * Contract for persistence creation.
+ * Unsupported persistence provider exception.
  *
- * Ikasan Development Team
+ * @author Ikasan Development Team
  */
-public interface PersistenceService
+public class UnsupportedProviderException extends RuntimeException
 {
-    /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
-     */
-    public String getVersion();
-
-    /**
-     * Create the core engine underlying persistence
-     */
-    public void createPersistence();
-
-    /**
-     * Create the fileTransfer related persistence used by ftp and sftp.
-     */
-    public void createFileTransferPersistence();
-
-    /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
-     */
-    public boolean adminAccountExists();
-
-    /**
-     * Create the default administration account and associated dependencies
-     */
-    public void createAdminAccount();
-
-    /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
-     */
-    public boolean userTablesExist();
+    public UnsupportedProviderException(String message)
+    {
+        super(message);
+    }
 }
