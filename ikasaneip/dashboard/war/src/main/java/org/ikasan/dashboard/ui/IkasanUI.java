@@ -342,7 +342,11 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         this.navigationPanel.reset();
         
        //Invalidate HttpSession
-        httpSession.invalidate();
+        if(httpSession != null)
+        {
+        	 httpSession.invalidate();
+        }
+       
         vSession.close();
         
        //Redirect the user to the login/default Page

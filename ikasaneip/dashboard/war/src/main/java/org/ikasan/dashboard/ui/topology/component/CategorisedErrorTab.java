@@ -345,18 +345,13 @@ public class CategorisedErrorTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+			final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
 				if(t.getItemId() instanceof Module)
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -435,18 +430,13 @@ public class CategorisedErrorTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+			final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
 				if(t.getItemId() instanceof Flow)
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -508,18 +498,13 @@ public class CategorisedErrorTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
 				if(t.getItemId() instanceof Component)
 				{
 					final Component component = (Component) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
+							.getItemId();;
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);

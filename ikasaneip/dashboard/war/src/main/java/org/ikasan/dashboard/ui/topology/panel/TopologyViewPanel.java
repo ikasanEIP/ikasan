@@ -492,7 +492,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 {
                 	businessStream  = (BusinessStream)event.getProperty().getValue();
                 	
-                	logger.info("Value changed to business stream: " + businessStream.getName());
+                	logger.debug("Value changed to business stream: " + businessStream.getName());
                 
                 	moduleTree.removeAllItems();
                 	
@@ -687,6 +687,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				}
             	catch (DiscoveryException e)
 				{
+            		logger.error("An error occurred trying to auto discover modules!", e); 
+            		
 					Notification.show("An error occurred trying to auto discover modules: " 
 							+ e.getMessage(), Type.ERROR_MESSAGE);
 				}
@@ -1085,9 +1087,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public Action[] getActions(Object target, Object sender)
-	{     
-		logger.debug("Getting action: " + target + " " + sender);
-		
+	{     		
 		if(target instanceof Server)
         {
             return serverActions;

@@ -297,7 +297,7 @@ public class ExclusionEventViewWindow extends Window
         	    		+ "/"
         	    		+ exclusionEvent.getErrorUri();
         		
-        		logger.info("Resubmission Url: " + url);
+        		logger.debug("Resubmission Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
         	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
@@ -307,6 +307,9 @@ public class ExclusionEventViewWindow extends Window
         	    	response.bufferEntity();
         	        
         	        String responseMessage = response.readEntity(String.class);
+        	        
+        	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
+        	        
         	    	Notification.show("An error was received trying to resubmit event: " 
         	    			+ responseMessage, Type.ERROR_MESSAGE);
         	    }
@@ -349,6 +352,8 @@ public class ExclusionEventViewWindow extends Window
             	
             	if(module == null)
             	{
+            		logger.error("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName()); 
+            		
             		Notification.show("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName() 
             				, Type.ERROR_MESSAGE);
             		
@@ -366,7 +371,7 @@ public class ExclusionEventViewWindow extends Window
         	    		+ "/"
         	    		+ exclusionEvent.getErrorUri();
         		
-        		logger.info("Ignore Url: " + url);
+        		logger.debug("Ignore Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
         	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
@@ -376,6 +381,10 @@ public class ExclusionEventViewWindow extends Window
         	    	response.bufferEntity();
         	        
         	        String responseMessage = response.readEntity(String.class);
+        	        
+        	        logger.error("An error was received trying to resubmit event: " 
+        	    			+ responseMessage);
+        	        
         	    	Notification.show("An error was received trying to resubmit event: " 
         	    			+ responseMessage, Type.ERROR_MESSAGE);
         	    }
@@ -426,7 +435,7 @@ public class ExclusionEventViewWindow extends Window
 		
 		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
-		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
+		logger.debug("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
 		
 		if(this.exclusionEvent.getEvent() != null)
 		{
