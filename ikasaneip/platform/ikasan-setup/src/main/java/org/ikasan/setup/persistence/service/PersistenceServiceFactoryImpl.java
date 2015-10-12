@@ -40,44 +40,59 @@
  */
 package org.ikasan.setup.persistence.service;
 
+import org.ikasan.setup.persistence.dao.ProviderDAO;
+
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Contract for persistence creation.
+ * PersistenceServiceFactory implementation
  *
- * Ikasan Development Team
+ * @auther Ikasan Development Team
  */
-public interface PersistenceService
+public class PersistenceServiceFactoryImpl implements PersistenceServiceFactory<String>
 {
     /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
+     * Providers and their associated DAO
      */
-    public String getVersion();
+    private Map<String,ProviderDAO> providerDAOs;
 
     /**
-     * Create the core engine underlying persistence
+     * Constructor
+     * @param providerDAOs
      */
-    public void createPersistence();
+    public PersistenceServiceFactoryImpl(Map<String, ProviderDAO> providerDAOs)
+    {
+        this.providerDAOs = providerDAOs;
+        if(providerDAOs == null)
+        {
+            throw new IllegalArgumentException("providerDAOs cannot be 'null");
+        }
+    }
 
     /**
-     * Create the fileTransfer related persistence used by ftp and sftp.
+     * Return a set of current providers.
+     * @return
      */
-    public void createFileTransferPersistence();
+    public Set<String> getProviders()
+    {
+        return providerDAOs.keySet();
+    }
 
     /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
+     * Create a persiwtence service instance base don the given provider
+     * @param provider
+     * @return
+     * @throws UnsupportedProviderException
      */
-    public boolean adminAccountExists();
+    public PersistenceService getPersistenceService(String provider) throws UnsupportedProviderException
+    {
+        ProviderDAO providerDAO = providerDAOs.get(provider);
+        if(providerDAO == null)
+        {
+            throw new UnsupportedProviderException(provider + " is not currently supported!");
+        }
 
-    /**
-     * Create the default administration account and associated dependencies
-     */
-    public void createAdminAccount();
-
-    /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
-     */
-    public boolean userTablesExist();
+        return new PersistenceServiceImpl(providerDAO);
+    }
 }

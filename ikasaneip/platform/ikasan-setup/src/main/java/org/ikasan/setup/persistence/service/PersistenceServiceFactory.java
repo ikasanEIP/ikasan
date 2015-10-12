@@ -40,44 +40,25 @@
  */
 package org.ikasan.setup.persistence.service;
 
+import java.util.Set;
+
 /**
- * Contract for persistence creation.
+ * PersistenceServiceFactory contract.
  *
- * Ikasan Development Team
+ * @author Ikasan Development Team
  */
-public interface PersistenceService
+public interface PersistenceServiceFactory<PROVIDER>
 {
     /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
+     * Get the underlying persistence service providers
+     * @return
      */
-    public String getVersion();
+    public Set<PROVIDER> getProviders();
 
     /**
-     * Create the core engine underlying persistence
+     * Create an instance of the persistenceService based on the given provider
+     * @param provider
+     * @return
      */
-    public void createPersistence();
-
-    /**
-     * Create the fileTransfer related persistence used by ftp and sftp.
-     */
-    public void createFileTransferPersistence();
-
-    /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
-     */
-    public boolean adminAccountExists();
-
-    /**
-     * Create the default administration account and associated dependencies
-     */
-    public void createAdminAccount();
-
-    /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
-     */
-    public boolean userTablesExist();
+    public PersistenceService getPersistenceService(PROVIDER provider) throws UnsupportedProviderException;
 }

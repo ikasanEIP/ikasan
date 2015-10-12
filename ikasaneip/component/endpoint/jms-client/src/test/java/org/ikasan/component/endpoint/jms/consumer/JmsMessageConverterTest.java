@@ -155,35 +155,12 @@ public class JmsMessageConverterTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(bytesMessage).getBodyLength();
-                will(returnValue(100L));
-                exactly(1).of(bytesMessage).readBytes(with(any(byte[].class)));
+                // nothing
             }
         });
 
         Object result = JmsMessageConverter.extractContent(bytesMessage);
-        Assert.assertTrue(result instanceof byte[]);
-        Assert.assertTrue(((byte[])result).length == 100);
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test BytesMessage converter no content
-     */
-    @Test
-    public void test_convert_bytesMessage_no_content() throws JMSException
-    {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(bytesMessage).getBodyLength();
-                will(returnValue(0L));
-            }
-        });
-
-        Object result = JmsMessageConverter.extractContent(bytesMessage);
-        Assert.assertNull(result);
+        Assert.assertTrue(result instanceof BytesMessage);
         mockery.assertIsSatisfied();
     }
 

@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui.framework.window;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.framework.util.CommitHandler;
+import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 
@@ -87,7 +87,7 @@ public class LoginDialog extends Window
      * @param commitHandler
      */
     public LoginDialog(AuthenticationService authenticationService,
-            VisibilityGroup visibilityGroup, CommitHandler commitHandler,
+            VisibilityGroup visibilityGroup, NavigationPanel commitHandler,
             UserService userService)
     {
         super();
@@ -104,7 +104,7 @@ public class LoginDialog extends Window
      * @param commitHandler
      */
     protected void init(AuthenticationService authenticationService,
-            VisibilityGroup visibilityGroup, final CommitHandler commitHandler, UserService userService)
+            VisibilityGroup visibilityGroup, final NavigationPanel commitHandler, UserService userService)
     {
         super.setModal(true);
         super.setResizable(false);

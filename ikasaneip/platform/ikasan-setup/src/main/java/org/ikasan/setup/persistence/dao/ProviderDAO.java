@@ -38,46 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup.persistence.service;
+package org.ikasan.setup.persistence.dao;
+
+import java.util.List;
 
 /**
- * Contract for persistence creation.
- *
- * Ikasan Development Team
+ * Provider DAO contract for underlying provider persistence.
+ * @author Ikasan Development Team
  */
-public interface PersistenceService
+public interface ProviderDAO
 {
     /**
-     * Get the runtime version of the Ikasan Core Engine
-     * @return String
+     * Get the current runtime version of the core ikasan engine.
+     * @return
      */
-    public String getVersion();
+    public String getRuntimeVersion();
 
     /**
-     * Create the core engine underlying persistence
+     * Create the persistence resource
+     * @param resourceName
      */
-    public void createPersistence();
+    public void create(String resourceName);
 
     /**
-     * Create the fileTransfer related persistence used by ftp and sftp.
+     * Delete the persistence resource
+     * @param resourceName
      */
-    public void createFileTransferPersistence();
+    public void delete(String resourceName);
 
     /**
-     * Does an administration account exist in the current persistence
-     * @return boolean
+     * Find the persistence resource
+     * @param resourceName
+     * @return
      */
-    public boolean adminAccountExists();
-
-    /**
-     * Create the default administration account and associated dependencies
-     */
-    public void createAdminAccount();
-
-    /**
-     * Method to confirm that the Users, Authorities and UsersAuthorities tables
-     * exist in the underlying data store.
-     * @return boolean
-     */
-    public boolean userTablesExist();
+    public List find(String resourceName);
 }

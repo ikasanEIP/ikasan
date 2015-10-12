@@ -4,6 +4,27 @@
 
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="persistenceService" class="org.ikasan.setup.persistence.service.PersistenceServiceImpl">
+        <constructor-arg ref="providerDao"/>
+    </bean>
+
+    <bean id="providerDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl">
+        <constructor-arg ref="H2"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+                <property name="dataSource" ref="ikasan.xads" />
+
+                <property name="hibernateProperties" ref="platformHibernateProperties"/>
+            </bean>
+        </property>
+    </bean>
+
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+    </util:map>
     
     <bean id="dataSource" name="ikasan.xads ikasan.ds"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">

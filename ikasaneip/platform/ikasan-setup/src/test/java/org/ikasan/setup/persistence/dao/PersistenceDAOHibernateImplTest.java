@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,70 +38,61 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.jms.consumer;
+package org.ikasan.setup.persistence.dao;
 
-import javax.jms.*;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
- * Utility converter for JMS Messages where we simply want to extract the payload content.
- *
+ * JUnit based test class for testing PersistenceDAOHibernateImpl
+ * 
  * @author Ikasan Development Team
  */
-public class JmsMessageConverter
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml"})
+public class PersistenceDAOHibernateImplTest
 {
     /**
-     * For the given Message try to extract the actual payload content and return as that content type.
-     * This supports the following JMS Message conversions,
-     *
-     * TextMessage -> String
-     * MapMessage -> Map
-     * ObjectMessage -> Object
-     *
-     * All other types are simply returned as their native JMS message.
-     *
-     * @param message
-     * @return
-     * @throws JMSException
+     * The context that the tests run in, allows for mocking actual concrete
+     * classes
      */
-    public static Object extractContent(Message message) throws JMSException
+    private Mockery context = new Mockery()
     {
-        if(message instanceof TextMessage)
         {
-            return ((TextMessage)message).getText();
+            setImposteriser(ClassImposteriser.INSTANCE);
         }
-        else if(message instanceof MapMessage)
-        {
-            Map<String,Object> content = new HashMap<String,Object>();
-            Enumeration<String> mapNames = ((MapMessage)message).getMapNames();
+    };
+    
 
-            while(mapNames.hasMoreElements())
-            {
-                String mapName = mapNames.nextElement();
-                content.put(mapName, ((MapMessage)message).getObject(mapName));
-            }
 
-            return content;
-        }
-        else if(message instanceof ObjectMessage)
-        {
-            return ((ObjectMessage)message).getObject();
-        }
-        else if(message instanceof BytesMessage)
-        {
-            // don't try and interpret the bytes just return it as is
-            return message;
-        }
-        else if(message instanceof StreamMessage)
-        {
-            // don't try and interpret the stream just return it as is
-            return message;
-        }
-        else
-        {
-            return message;
-        }
+    @Resource
+    PersistenceDAOHibernateImpl persistenceDAOHibernateImpl;
+
+    /**
+     * Test create
+     */
+    @Test
+    public void test_create()
+    {
+        persistenceDAOHibernateImpl.create("wiretap");
+        persistenceDAOHibernateImpl.delete("wiretap");
+    }
+
+    /**
+     * Test find all point to point profiles
+     */
+    @Ignore@Test
+    public void test_getRuntimeVersion()
+    {
+        persistenceDAOHibernateImpl.getRuntimeVersion();
     }
 }

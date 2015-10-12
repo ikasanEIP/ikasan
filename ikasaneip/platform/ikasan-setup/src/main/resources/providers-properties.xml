@@ -598,8 +598,8 @@
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
 					   Description			VARCHAR(1024)		    NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -613,8 +613,8 @@
 					   Id               	NUMERIC(18, 0) 		       IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
 					   Description	     	VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -628,8 +628,8 @@
 					   PolicyLinkId               		NUMERIC(18, 0) NULL,
 					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
 					   Description	     				VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      			DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      			DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
 					) 
@@ -642,8 +642,8 @@
 					(
 					   UserId         				NUMERIC(18, 0) NOT NULL,
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (UserId) REFERENCES Users(Id)
@@ -655,8 +655,8 @@
 					(
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
 					   RoleId         				NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (PrincipalId, RoleId), -- clustered index on Id
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
@@ -669,8 +669,8 @@
 					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
 					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -682,8 +682,8 @@
 					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
 					   TargetId         			NUMERIC(18, 0) NOT NULL,
 					   Name				      		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
 					) 
@@ -694,8 +694,8 @@
 					(
 					   RoleId               	    NUMERIC(18, 0) NOT NULL,
 					   PolicyId               	    NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (RoleId, PolicyId), -- clustered index on Id
 					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
@@ -728,8 +728,8 @@
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
 					   LdapUserDescAttributeName	VARCHAR(256) NULL,
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -741,8 +741,8 @@
 					(
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -754,8 +754,8 @@
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   Description	      	VARCHAR(1024)		   NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -767,8 +767,8 @@
 					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name		      			VARCHAR(256) UNIQUE NOT NULL,
 					   KeyLocationQueryProcessorType		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      			DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      			DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -786,8 +786,8 @@
 					   Description         			VARCHAR(1024) NOT NULL,
 					   ConfigurationTypeId  		NUMERIC(18, 0) NOT NULL,
 					   ConfigurationServiceClientId  	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
 					   FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id),
@@ -806,8 +806,8 @@
 					(
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   TargetSystemValue    		VARCHAR(256) NOT NULL,   
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -821,8 +821,8 @@
 					   MappingConfigurationId		NUMERIC(18, 0) NOT NULL,
 					   TargetConfigurationValueId   NUMERIC(18, 0) NOT NULL,
 					   SourceConfigGroupId          NUMERIC(18, 0) NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
 					   FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
@@ -839,8 +839,8 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Value			    		VARCHAR(256) NOT NULL,
 					   MappingConfigurationId    		NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
 					) 
@@ -875,8 +875,8 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name			    			VARCHAR(256) NOT NULL,
 					   Value			    		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id,
 					) 
 					LOCK DATAROWS
@@ -1059,8 +1059,8 @@
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   Url		      				VARCHAR(256) 		NOT NULL,
 					   Port							NUMERIC(18, 0) 		NOT NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -1076,8 +1076,8 @@
 					   DiagramUrl      				VARCHAR(256) 		NULL,
 					   Version      				VARCHAR(256) 		NULL,
 					   ServerId						NUMERIC(18, 0) 		NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					)
 					LOCK DATAROWS
@@ -1090,8 +1090,8 @@
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   ModuleId						NUMERIC(18, 0) 		NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -1107,8 +1107,8 @@
 					   FlowId						NUMERIC(18, 0) 		NULL,
 					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -1120,8 +1120,8 @@
 					   Id             				NUMERIC(18, 0) 	IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) 	UNIQUE NOT NULL,
 					   Description		      		VARCHAR(1024) 	NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -1133,8 +1133,8 @@
 					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
 					   FlowId						NUMERIC(18, 0) 	NOT NULL,
 					   FlowOrder					NUMERIC(18, 0) 	NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (BusinessStreamId, FlowId),
 					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
 					) 
@@ -1146,8 +1146,8 @@
 					(
 					   UserId						NUMERIC(18, 0) 	NOT NULL,
 					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (UserId, BusinessStreamId),
 					   FOREIGN KEY (UserId) REFERENCES Users(Id),
 					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
@@ -1921,8 +1921,8 @@
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
 					   Description			VARCHAR(1024)		    NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -1936,8 +1936,8 @@
 					   Id               	NUMERIC(18, 0) 		       IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
 					   Description	     	VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -1951,8 +1951,8 @@
 					   PolicyLinkId               		NUMERIC(18, 0) NULL,
 					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
 					   Description	     				VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      			DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      			DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
 					) 
@@ -1965,8 +1965,8 @@
 					(
 					   UserId         				NUMERIC(18, 0) NOT NULL,
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (UserId) REFERENCES Users(Id)
@@ -1978,8 +1978,8 @@
 					(
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
 					   RoleId         				NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (PrincipalId, RoleId), -- clustered index on Id
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
@@ -1991,8 +1991,8 @@
 					(
 					   RoleId               	    NUMERIC(18, 0) NOT NULL,
 					   PolicyId               	    NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (RoleId, PolicyId), -- clustered index on Id
 					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
@@ -2005,8 +2005,8 @@
 					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
 					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -2018,8 +2018,8 @@
 					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
 					   TargetId         			NUMERIC(18, 0) NOT NULL,
 					   Name				      		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
 					) 
@@ -2050,8 +2050,8 @@
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
 					   LdapUserDescAttributeName	VARCHAR(256) NULL,
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -2066,8 +2066,8 @@
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   Url		      				VARCHAR(256) 		NOT NULL,
 					   Port							NUMERIC(18, 0) 		NOT NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -2083,8 +2083,8 @@
 					   DiagramUrl      				VARCHAR(256) 		NULL,
 					   Version      				VARCHAR(256) 		NULL,
 					   ServerId						NUMERIC(18, 0) 		NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					)
 					LOCK DATAROWS
@@ -2097,8 +2097,8 @@
 					   Name		      				VARCHAR(256) 	    NOT NULL,
 					   Description		      		VARCHAR(1024) 		NOT NULL,
 					   ModuleId						NUMERIC(18, 0) 		NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -2114,8 +2114,8 @@
 					   FlowId						NUMERIC(18, 0) 		NULL,
 					   ComponentOrder				NUMERIC(18, 0) 		NULL,
 					   ConfigurationId				VARCHAR(256) 		NULL,
-					   CreatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME 			default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME 			default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME 			default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -2127,8 +2127,8 @@
 					   Id             				NUMERIC(18, 0) 	IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) 	UNIQUE NOT NULL,
 					   Description		      		VARCHAR(1024) 	NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
 					) 
 					LOCK DATAROWS
@@ -2140,8 +2140,8 @@
 					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
 					   FlowId						NUMERIC(18, 0) 	NOT NULL,
 					   FlowOrder					NUMERIC(18, 0) 	NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (BusinessStreamId, FlowId),
 					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
 					) 
@@ -2153,8 +2153,8 @@
 					(
 					   UserId						NUMERIC(18, 0) 	NOT NULL,
 					   BusinessStreamId				NUMERIC(18, 0) 	NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (UserId, BusinessStreamId),
 					   FOREIGN KEY (UserId) REFERENCES Users(Id),
 					   FOREIGN KEY (BusinessStreamId) REFERENCES BusinessStream(Id)
@@ -2366,8 +2366,8 @@
 					(
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -2378,8 +2378,8 @@
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   Description	      	VARCHAR(1024)		   NOT NULL,
-					   CreatedDateTime      DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -2390,8 +2390,8 @@
 					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name		      			VARCHAR(256) UNIQUE NOT NULL,
 					   KeyLocationQueryProcessorType		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      			DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      			DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -2408,8 +2408,8 @@
 					   Description         			VARCHAR(1024) NOT NULL,
 					   ConfigurationTypeId  		NUMERIC(18, 0) NOT NULL,
 					   ConfigurationServiceClientId  	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
 					   FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id),
@@ -2427,8 +2427,8 @@
 					(
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   TargetSystemValue    		VARCHAR(256) NOT NULL,   
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
 					) 
 					LOCK DATAROWS
@@ -2441,8 +2441,8 @@
 					   MappingConfigurationId		NUMERIC(18, 0) NOT NULL,
 					   TargetConfigurationValueId   NUMERIC(18, 0) NOT NULL,
 					   SourceConfigGroupId          NUMERIC(18, 0) NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
 					   FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
@@ -2458,8 +2458,8 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Value			    		VARCHAR(256) NOT NULL,
 					   MappingConfigurationId    		NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
 					) 
@@ -2661,8 +2661,8 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name			    			VARCHAR(256) NOT NULL,
 					   Value			    		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      		DATETIME default ${getDate} NOT NULL,
-					   UpdatedDateTime      		DATETIME default ${getDate} NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id,
 					) 
 					LOCK DATAROWS
@@ -3190,8 +3190,8 @@
 					   [Name]		      	[VARCHAR](256)		   		UNIQUE NOT NULL,
 					   [PrincipalType]		[VARCHAR](256)		    	NOT NULL,
 					   [Description]		[VARCHAR](1024)		    	NOT NULL,
-					   [CreatedDateTime]    [DATETIME] 					default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    [DATETIME] 					default ${getDate} NOT NULL,
+					   [CreatedDateTime]    [DATETIME] 					default getdate() NOT NULL,
+					   [UpdatedDateTime]    [DATETIME] 					default getdate() NOT NULL,
 					   CONSTRAINT [PK_SecurityPrincipal_Id] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3206,8 +3206,8 @@
 					   [Id]               	  [NUMERIC](18) 		    IDENTITY NOT NULL,
 					   [Name]		      	  [VARCHAR](256)		    UNIQUE NOT NULL,
 					   [Description]	      [VARCHAR](1024)			NOT NULL,
-					   [CreatedDateTime]      [DATETIME] 				default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      [DATETIME] 				default ${getDate} NOT NULL,
+					   [CreatedDateTime]      [DATETIME] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]      [DATETIME] 				default getdate() NOT NULL,
 					   CONSTRAINT [PK_SecurityRole_Id] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3222,8 +3222,8 @@
 					   [PolicyLinkId]         [NUMERIC](18) 		NULL,
 					   [Name]		      	  [VARCHAR](256) 		UNIQUE NOT NULL,
 					   [Description]	      [VARCHAR](1024)		NOT NULL,
-					   [CreatedDateTime]      [DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      [DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]      [DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      [DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_SecurityPolicy_Id] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3236,8 +3236,8 @@
 					(
 					   [UserId]         		[NUMERIC](18) 	NOT NULL,
 					   [PrincipalId]            [NUMERIC](18) 	NOT NULL,
-					   [CreatedDateTime]      	[DATETIME] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      	[DATETIME] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
 					   CONSTRAINT [PK_UserPrincipal] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[UserId], [PrincipalId] ASC
@@ -3250,8 +3250,8 @@
 					(
 					   [PrincipalId]            [NUMERIC](18) 	NOT NULL,
 					   [RoleId]         		[NUMERIC](18) 	NOT NULL,
-					   [CreatedDateTime]      	[DATETIME] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      	[DATETIME] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
 					   CONSTRAINT [PK_PrincipalRole] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[PrincipalId], [RoleId] ASC
@@ -3264,8 +3264,8 @@
 					(
 					   [RoleId]               	    [NUMERIC](18) 	NOT NULL,
 					   [PolicyId]               	[NUMERIC](18) 	NOT NULL,
-					   [CreatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
 					   CONSTRAINT [PK_RolePolicy] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[RoleId], [PolicyId] ASC
@@ -3279,8 +3279,8 @@
 					   [Id]             			[NUMERIC](18) 	IDENTITY NOT NULL,
 					   [Name]		      			[VARCHAR](256) 	UNIQUE NOT NULL,
 					   [TableName]		      		[VARCHAR](256) 	UNIQUE NOT NULL,
-					   [CreatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
 					   CONSTRAINT [PK_PolicyLinkType] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3293,8 +3293,8 @@
 					   [PolicyLinkTypeId]     		[NUMERIC](18) 	NOT NULL,
 					   [TargetId]         			[NUMERIC](18) 	NOT NULL,
 					   [Name]				      	[VARCHAR](256) 	NOT NULL,
-					   [CreatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
 					   CONSTRAINT [PK_PolicyLink] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3327,8 +3327,8 @@
 					   [AppSecDescAttributeName]	[VARCHAR](64) 	NULL,
 					   [LdapUserDescAttributeName]	[VARCHAR](64) 	NULL,
 					   [MemberofAttributeName]		[VARCHAR](64) 	NULL,
-					   [CreatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[DATETIME] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
 					   CONSTRAINT [PK_AuthenticationMethod] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3341,8 +3341,8 @@
 					(
 					   [Id]               	[NUMERIC](18) 		   	IDENTITY NOT NULL,
 					   [Name]		      	[VARCHAR](256)		   	UNIQUE NOT NULL,
-					   [CreatedDateTime]    [DATETIME] 				default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    [DATETIME] 				default ${getDate} NOT NULL,
+					   [CreatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSConfigurationType] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3355,8 +3355,8 @@
 					   [Id]               	[NUMERIC](18) 		   	IDENTITY NOT NULL,
 					   [Name]		      	[VARCHAR](256)		   	UNIQUE NOT NULL,
 					   [Description]      	[VARCHAR](1024)		   	NOT NULL,
-					   [CreatedDateTime]    [DATETIME] 				default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    [DATETIME] 				default ${getDate} NOT NULL,
+					   [CreatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSConfigurationContext] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3369,8 +3369,8 @@
 					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
 					   [Name]		      					[VARCHAR](256)		UNIQUE NOT NULL,
 					   [KeyLocationQueryProcessorType]		[VARCHAR](256) 		NOT NULL,
-					   [CreatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSConfigServiceClient] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3388,8 +3388,8 @@
 					   [Description]         				[VARCHAR](1024) 	NOT NULL,
 					   [ConfigurationTypeId]  				[NUMERIC](18) 		NOT NULL,
 					   [ConfigurationServiceClientId]  		[NUMERIC](18) 		NOT NULL,
-					   [CreatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSMappingConfiguration] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3405,8 +3405,8 @@
 					(
 					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
 					   [TargetSystemValue]    				[VARCHAR](256) 		NOT NULL,   
-					   [CreatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSTargetConfigValue] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3421,8 +3421,8 @@
 					   [MappingConfigurationId]				[NUMERIC](18) 		NOT NULL,
 					   [TargetConfigurationValueId]  		[NUMERIC](18) 		NOT NULL,
 					   [SourceConfigGroupId]          		[NUMERIC](18) 		NULL,
-					   [CreatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSSourceConfigValue] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3439,8 +3439,8 @@
 					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
 					   [Value]			    				[VARCHAR](256) 		NOT NULL,
 					   [MappingConfigurationId]    			[NUMERIC](18) 		NOT NULL,
-					   [CreatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_MCSKeyLocationQuery] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3474,8 +3474,8 @@
 					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
 					   [Name]			    				[VARCHAR] 			NOT NULL,
 					   [Value]			    				[VARCHAR] 			NOT NULL,
-					   [CreatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]    				[DATETIME] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
 					   CONSTRAINT [PK_PlatformConfiguration] PRIMARY KEY CLUSTERED
 	                   (
 	                    	[Id] ASC
@@ -3484,7 +3484,7 @@
 				</prop>
                 <prop key="create.checksumCommand">CREATE TABLE [FTChecksumCommand]
                     (
-                    [Id]                    [numeric](18) NOT NULL,
+                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
                     [Destructive]           [bit]         NOT NULL,
                     [ChecksumFilePath]      [varchar](255) NULL,
                     CONSTRAINT              [PK_FTChecksumCommand_Id] PRIMARY KEY CLUSTERED
@@ -3496,7 +3496,7 @@
 
                 <prop key="create.cleanupChunksCommand">CREATE TABLE [FTCleanupChunksCommand]
                     (
-                    [Id]                    [numeric](18)  NOT NULL,
+                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
                     [FileChunkHeaderId]     [numeric](18)  NULL,
                     CONSTRAINT              [PK_FTCleanupChunksCommand_Id] PRIMARY KEY CLUSTERED
                     (
@@ -3506,11 +3506,11 @@
                 </prop>
 
                 <prop key="create.deliverBatchCommand">CREATE TABLE [FTDeliverBatchCommand]
-					(
-					[Id]                     [numeric](18)  NOT NULL,
-					[OutputDirectory]        [varchar](255) NULL,
-					[TempDirectory]          [varchar](255) NULL,
-					[BatchFolder]            [varchar](255) NULL,
+                    (
+                    [Id]                     [numeric](18)  IDENTITY NOT NULL,
+                    [OutputDirectory]        [varchar](255) NULL,
+                    [TempDirectory]          [varchar](255) NULL,
+                    [BatchFolder]            [varchar](255) NULL,
                     [PutAttempted]           [bit] NOT NULL,
                     CONSTRAINT              [PK_FTDeliverBatchCommand_Id] PRIMARY KEY CLUSTERED
                     (
@@ -3521,7 +3521,7 @@
 
                 <prop key="create.deliverFileCommand">CREATE TABLE [FTDeliverFileCommand]
                     (
-                    [Id]                     [numeric](18)  NOT NULL,
+                    [Id]                     [numeric](18)  IDENTITY NOT NULL,
                     [FileName]               [varchar](255) NULL,
                     [TempFileName]           [varchar](255) NULL,
                     [OutputDirectory]        [varchar](255) NULL,
@@ -3586,7 +3586,7 @@
 
                 <prop key="create.retrieveFileCommand">CREATE TABLE [FTRetrieveFileCommand]
                     (
-                    [Id]                   [numeric](18)  NOT NULL,
+                    [Id]                   [numeric](18)  IDENTITY NOT NULL,
                     [Destructive]          [bit]          NOT NULL,
                     [RenameOnSuccess]      [bit]          NOT NULL,
                     [RenameExtension]      [varchar](255) NULL,
@@ -3641,8 +3641,8 @@
 					   [Description]	      		[varchar](1024) 	NOT NULL,
 					   [Url]		      			[varchar](256) 		NOT NULL,
 					   [Port]						[numeric](18) 		NOT NULL,
-					   [CreatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Server_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3660,8 +3660,8 @@
 					   [DiagramUrl]      			[varchar](256) 		NULL,
 					   [Version]      				[varchar](256) 		NULL,
 					   [ServerId]					[numeric](18) 		NULL,
-					   [CreatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            		[PK_IkasanModule_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3676,8 +3676,8 @@
 					   [Name]		      			[varchar](256) 		NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
 					   [ModuleId]					[numeric](18) 		NULL,
-					   [CreatedDateTime]      		[datetime] 		default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 		default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 		default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Flow_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3694,8 +3694,8 @@
 					   [FlowId]						[numeric](18) 		NULL,
 					   [ConfigurationId]			[varchar](256) 		NULL,
 					   [ComponentOrder]				[numeric](18) 		NULL,
-					   [CreatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_Component_Id] PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3708,8 +3708,8 @@
 					   [Id]             			[numeric](18) 		IDENTITY NOT NULL,
 					   [Name]		      		[varchar](256) 			UNIQUE NOT NULL,
 					   [Description]		      	[varchar](1024) 	NOT NULL,
-					   [CreatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT            [PK_BusinessStream_Id] 	PRIMARY KEY CLUSTERED
 						(
 							[Id] ASC
@@ -3722,8 +3722,8 @@
 					   [BusinessStreamId]			[numeric](18) 		NOT NULL,
 					   [FlowId]						[numeric](18) 		NOT NULL,
 					   [FlowOrder]					[numeric](18) 		NOT NULL,
-					   [CreatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 			default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 			default getdate() NOT NULL,
 					   CONSTRAINT PK_BusinessStreamFlow PRIMARY KEY CLUSTERED 
 					   (
 							[BusinessStreamId], [FlowId]
@@ -3736,8 +3736,8 @@
 					(
 					   [UserId]						[numeric](18) 			NOT NULL,
 					   [BusinessStreamId]			[numeric](18) 			NOT NULL,
-					   [CreatedDateTime]      		[datetime] 				default ${getDate} NOT NULL,
-					   [UpdatedDateTime]      		[datetime] 				default ${getDate} NOT NULL,
+					   [CreatedDateTime]      		[datetime] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[datetime] 				default getdate() NOT NULL,
 					   CONSTRAINT PK_UserBusinessStream PRIMARY KEY CLUSTERED 
 					   (
 							 [UserId], [BusinessStreamId]
@@ -4144,7 +4144,8 @@
 
 				<prop key="create.configurationParameter">CREATE TABLE ConfigurationParameter
 					(
-					Id IDENTITY NOT NULL,
+					Id IDENTITY NOT
+					NULL,
 					ConfigurationIdentifier VARCHAR(256) NOT NULL,
 					PositionRef
 					NUMERIC NOT NULL

@@ -48,7 +48,6 @@
         <version.com.h2database>1.4.178</version.com.h2database>
         <version.activemq.core>5.7.0</version.activemq.core>
         <version.commons-io>2.4</version.commons-io>
-        <version.dom4j>1.6.1</version.dom4j>
     </properties>
 
     <dependencyManagement>
@@ -74,33 +73,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-client-sftp-endpoint</artifactId>
-                <version>${version.ikasan}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-client-filetransfer</artifactId>
-                <version>${version.ikasan}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-filetransfer-common</artifactId>
-                <version>${version.ikasan}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${version.commons-io}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>dom4j</groupId>
-                <artifactId>dom4j</artifactId>
-                <version>${version.dom4j}</version>
             </dependency>
 
             <dependency>
