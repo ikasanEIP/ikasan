@@ -78,6 +78,8 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.ProgressBar;
@@ -206,15 +208,18 @@ public class WiretapTab extends TopologyTab
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
             	}
-            	
-            	String errorCategory = null;
-            	
+            	           	
          
             	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
             	// results with Vaadin.
             	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
             			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
+            	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
+            	{
+            		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
+            	}
+            	
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
             		Date date = new Date(wiretapEvent.getTimestamp());
