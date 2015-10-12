@@ -78,18 +78,15 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private CategorisedErrorOccurrence categorisedErrorOccurrence;
-	private SerialiserFactory serialiserFactory;
 	
 
 	/**
 	 * @param policy
 	 */
-	public CategorisedErrorOccurrenceViewWindow(CategorisedErrorOccurrence errorOccurrence,
-			SerialiserFactory serialiserFactory)
+	public CategorisedErrorOccurrenceViewWindow(CategorisedErrorOccurrence errorOccurrence)
 	{
 		super();
 		this.categorisedErrorOccurrence = errorOccurrence;
-		this.serialiserFactory = serialiserFactory;
 		
 		this.init();
 	}
@@ -196,19 +193,6 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
 		wrapperLayout.setWidth("100%");
-		
-//		Label errorMessageLabel = new Label("Error Message:");
-//		errorMessageLabel.setSizeUndefined();		
-//		layout.addComponent(errorMessageLabel, 0, 5);
-//		layout.setComponentAlignment(errorMessageLabel, Alignment.TOP_RIGHT);
-		
-//		final TextArea errorMessageTextArea = new TextArea();
-//		errorMessageTextArea.setWidth("90%");
-//		errorMessageTextArea.setRows(6);
-//		errorMessageTextArea.setValue(this.categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
-//				+ ": " + this.categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage());
-//
-//		layout.addComponent(errorMessageTextArea, 1, 5, 3, 5); 
 		
 		label = new Label("Error Category:");
 		label.setSizeUndefined();		

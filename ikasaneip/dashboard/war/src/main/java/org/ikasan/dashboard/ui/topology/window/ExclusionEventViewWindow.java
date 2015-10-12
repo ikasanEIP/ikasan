@@ -106,7 +106,6 @@ public class ExclusionEventViewWindow extends Window
 	private TextField roleDescription;
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
-	private SerialiserFactory serialiserFactory;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
@@ -114,13 +113,12 @@ public class ExclusionEventViewWindow extends Window
 	/**
 	 * @param policy
 	 */
-	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
+	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
 		this.errorOccurrence = errorOccurrence;
-		this.serialiserFactory = serialiserFactory;
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
@@ -429,8 +427,12 @@ public class ExclusionEventViewWindow extends Window
 		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
-		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.exclusionEvent.getEvent());
-		eventEditor.setValue(event.toString());
+		
+		if(this.exclusionEvent.getEvent() != null)
+		{
+			eventEditor.setValue(new String((byte[])this.exclusionEvent.getEvent()));
+		}
+		
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
