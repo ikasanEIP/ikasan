@@ -91,8 +91,16 @@ public class JmsMessageConverter
         }
         else if(message instanceof BytesMessage)
         {
-            // don't try and interpret the bytes just return it as is
-            return message;
+            BytesMessage bytesMessage = (BytesMessage) message;
+            long bytesLength = bytesMessage.getBodyLength();
+            if(bytesLength > 0)
+            {
+                byte[] bytes = new byte[(int)bytesLength];
+                bytesMessage.readBytes(bytes);
+                return bytes;
+            }
+
+            return null;
         }
         else if(message instanceof StreamMessage)
         {

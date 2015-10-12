@@ -479,7 +479,7 @@ public class PlatformConfigurationPanel extends Panel implements View
     			
     			HashMap<String, String> map = new HashMap<String, String>();
     			
-    			logger.info("Saving map: " + mapTextFields.size());
+    			logger.debug("Saving map: " + mapTextFields.size());
     			
     			for(String key: mapTextFields.keySet())
     			{
@@ -487,7 +487,7 @@ public class PlatformConfigurationPanel extends Panel implements View
     				{
     					TextFieldKeyValuePair pair = mapTextFields.get(key);
     					
-    					logger.info("Saving for key: " + key);
+    					logger.debug("Saving for key: " + key);
     					
     					if(pair.key.getValue() != "")
     					{
