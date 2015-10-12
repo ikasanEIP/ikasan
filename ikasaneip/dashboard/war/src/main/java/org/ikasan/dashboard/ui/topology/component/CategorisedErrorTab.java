@@ -115,28 +115,20 @@ public class CategorisedErrorTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ErrorCategorisationService errorCategorisationService;
-	private SerialiserFactory serialiserFactory;
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
-			ComboBox businessStreamCombo, SerialiserFactory serialiserFactory)
+			ComboBox businessStreamCombo)
 	{
 		this.errorCategorisationService = errorCategorisationService;
 		this.businessStreamCombo = businessStreamCombo;
-		this.serialiserFactory = serialiserFactory;
 	}
 	
 	public Layout createCategorisedErrorLayout()
 	{
 		this.categorizedErrorOccurenceTable = new FilterTable();
 		this.categorizedErrorOccurenceTable.setSizeFull();
-//		this.categorizedErrorOccurenceTable.addContainerProperty("", Label.class,  null);
-//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("", .03f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Error Location", Layout.class,  null);
 		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Location", .25f);
-//		this.categorizedErrorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
-//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
-//		this.categorizedErrorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
-//		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
 		this.categorizedErrorOccurenceTable.setColumnExpandRatio("Error Message", .65f);
 		this.categorizedErrorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
@@ -145,14 +137,11 @@ public class CategorisedErrorTab extends TopologyTab
 		this.categorizedErrorOccurenceTable.addStyleName("wordwrap-table");
 		this.categorizedErrorOccurenceTable.addStyleName(ValoTheme.TABLE_NO_STRIPES);
 		
-//		this.categorizedErrorOccurenceTable.setFilterBarVisible(true);
-		
 		this.categorizedErrorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) {
 		    	CategorisedErrorOccurrence errorOccurrence = (CategorisedErrorOccurrence)itemClickEvent.getItemId();
-		    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow = new CategorisedErrorOccurrenceViewWindow(errorOccurrence,
-		    			serialiserFactory);
+		    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow = new CategorisedErrorOccurrenceViewWindow(errorOccurrence);
 		    
 		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    }

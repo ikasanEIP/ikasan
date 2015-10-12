@@ -210,7 +210,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private StartupControlService startupControlService;
 	private ErrorReportingService errorReportingService;
 	
-	private SerialiserFactory serialiserFactory;
 	
 	private BusinessStream businessStream;
 	
@@ -226,7 +225,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
+			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService)
 	{
@@ -249,11 +248,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.exclusionManagementService == null)
 		{
 			throw new IllegalArgumentException("exclusionManagementService cannot be null!");
-		}
-		this.serialiserFactory = serialiserFactory;
-		if(this.serialiserFactory == null)
-		{
-			throw new IllegalArgumentException("serialiserFactory cannot be null!");
 		}
 		this.hospitalManagementService = hospitalManagementService;
 		if(this.hospitalManagementService == null)
@@ -385,7 +379,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tab4.setSizeFull();
     		final ExclusionsTab actionedExclusionsTab = new ExclusionsTab(this.errorReportingService, 
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
-    				this.serialiserFactory, this.treeViewBusinessStreamCombo);
+    				this.treeViewBusinessStreamCombo);
     		
     		tab4.addComponent(actionedExclusionsTab.createLayout());
     		tabsheet.addTab(tab4, "Exclusions");
@@ -399,8 +393,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			tab5.setSizeFull();
 			ActionedExclusionTab actionedExclusionTab = new ActionedExclusionTab
 					(this.exclusionManagementService, this.hospitalManagementService,
-							this.errorReportingService, this.topologyService, this.serialiserFactory,
-							this.treeViewBusinessStreamCombo);
+							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo);
 			tab5.addComponent(actionedExclusionTab.createLayout());
 			tabsheet.addTab(tab5, "Actioned Exclusions");
     	}
@@ -422,7 +415,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			final VerticalLayout tab8 = new VerticalLayout();
 			tab8.setSizeFull();
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.serialiserFactory);
+					(this.errorCategorisationService, this.treeViewBusinessStreamCombo);
 			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
 			tabsheet.addTab(tab8, "Categorised Errors");
     	}

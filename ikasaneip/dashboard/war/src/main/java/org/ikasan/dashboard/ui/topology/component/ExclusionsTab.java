@@ -118,17 +118,14 @@ public class ExclusionsTab extends TopologyTab
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
 	
-	private SerialiserFactory serialiserFactory;
 	
 	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService, SerialiserFactory serialiserFactory, 
-			ComboBox businessStreamCombo)
+			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
 	{
 		this.errorReportingService = errorReportingService;
 		this.exclusionManagementService = exclusionManagementService;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
-		this.serialiserFactory = serialiserFactory;
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
@@ -149,7 +146,7 @@ public class ExclusionsTab extends TopologyTab
 		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
 		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
+		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
 		    			, action, hospitalManagementService, topologyService);
 		    	
 		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
