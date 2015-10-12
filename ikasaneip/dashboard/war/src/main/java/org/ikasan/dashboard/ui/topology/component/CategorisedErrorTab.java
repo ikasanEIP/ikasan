@@ -81,9 +81,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -268,6 +270,11 @@ public class CategorisedErrorTab extends TopologyTab
             	List<CategorisedErrorOccurrence> categorisedErrorOccurences = errorCategorisationService
             			.findCategorisedErrorOccurences(modulesNames, flowNames, componentNames, "", "", errorCategory,
             					errorFromDate.getValue(), errorToDate.getValue());
+            	
+            	if(categorisedErrorOccurences == null || categorisedErrorOccurences.size() == 0)
+            	{
+            		Notification.show("The categorised error search returned no results!", Type.ERROR_MESSAGE);
+            	}
 
             	for(CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurences)
             	{
@@ -302,12 +309,7 @@ public class CategorisedErrorTab extends TopologyTab
             	    layout.addComponent(new Label(VaadinIcons.AUTOMATION.getHtml() + " " +  errorOccurrence.getFlowName(), ContentMode.HTML));
             	    layout.addComponent(new Label(VaadinIcons.COG.getHtml() + " " +  errorOccurrence.getFlowElementName(), ContentMode.HTML));
             	    layout.setSpacing(true);
-            	    
-            	    
-//            	    categorizedErrorOccurenceTable.addItem(new Object[]{categoryLabel, errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-//            				, errorOccurrence.getFlowElementName(), categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
-//            				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);
-            	    
+            	                	    
             	    categorizedErrorOccurenceTable.addItem(new Object[]{layout, categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
             				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);
             	}

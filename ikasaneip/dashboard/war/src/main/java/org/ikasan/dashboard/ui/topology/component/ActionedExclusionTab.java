@@ -83,9 +83,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -216,6 +218,11 @@ public class ActionedExclusionTab extends TopologyTab
             	List<ExclusionEventAction> exclusionEventActions = hospitalManagementService.getActionedExclusions
             			(modulesNames, flowNames, fromDate.getValue(), toDate.getValue());
 
+            	if(exclusionEventActions == null || exclusionEventActions.size() == 0)
+            	{
+            		Notification.show("The actioned exclusions search returned no results!", Type.ERROR_MESSAGE);
+            	}
+            	
             	for(ExclusionEventAction exclusionEventAction: exclusionEventActions)
             	{
             		Date date = new Date(exclusionEventAction.getTimestamp());

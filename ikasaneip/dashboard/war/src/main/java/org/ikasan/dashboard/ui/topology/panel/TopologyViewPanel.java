@@ -87,7 +87,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.model.BusinessStream;
@@ -784,6 +783,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	
             	PagedSearchResult<SystemEvent> systemEvents = systemEventService.listSystemEvents(0, 10000, "timestamp", true, null, null, systemEventFromDate.getValue()
             			, systemEventToDate.getValue(), null);
+            	
+            	if(systemEvents.getPagedResults() == null || systemEvents.getPagedResults().size() == 0)
+            	{
+            		Notification.show("The system events search returned no results!", Type.ERROR_MESSAGE);
+            	}
             	
             	for(SystemEvent systemEvent: systemEvents.getPagedResults())
             	{

@@ -81,9 +81,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -208,6 +210,11 @@ public class ErrorOccurrenceTab extends TopologyTab
          
             	List<ErrorOccurrence> errorOccurences = errorReportingService
             			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+            	
+            	if(errorOccurences == null || errorOccurences.size() == 0)
+            	{
+            		Notification.show("The error search returned no results!", Type.ERROR_MESSAGE);
+            	}
 
             	for(ErrorOccurrence errorOccurrence: errorOccurences)
             	{
