@@ -69,6 +69,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
             {
                 // try with flowEvent and if successful mark this producer
                 // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
+                converter.getClass().getMethod("convert", FlowEvent.class);
                 Object o = converter.convert(flowEvent);
                 if (o instanceof FlowEvent)
                 {
@@ -82,7 +83,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
 
                 requiresFullEventForInvocation = Boolean.TRUE;
             }
-            catch(java.lang.ClassCastException e)
+            catch(java.lang.NoSuchMethodException e)
             {
                 flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
                 requiresFullEventForInvocation = Boolean.FALSE;
