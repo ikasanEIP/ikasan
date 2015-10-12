@@ -79,7 +79,7 @@ public class PersistenceServiceImplTest
      * @throws PersistenceServiceException 
      */
     @Test
-    public void setup() throws PersistenceServiceException
+    public void test_baseline_install_and_status() throws PersistenceServiceException
     {
     	boolean status = this.persistenceService.baselinePersistenceChangesRequired();
     	
@@ -87,17 +87,35 @@ public class PersistenceServiceImplTest
         persistenceService.createBaselinePersistence();
         
         status = this.persistenceService.baselinePersistenceChangesRequired();
-    	
     	Assert.assertFalse(status);
-    	
-    	System.out.println(this.persistenceService.getFileTransferStatus());
-    	System.out.println(this.persistenceService.getBaselineStatus());
     }
     
-    @After
-    public void dropAll(){
-        
+    /**
+     * Test
+     * @throws PersistenceServiceException 
+     */
+    @Test
+    public void test_post_baseline_install_and_status() throws PersistenceServiceException
+    {
+    	// Please not this test will need to change after post baseline changes are made.
+    	boolean status = this.persistenceService.postBaselinePersistenceChangesRequired();
+    	
+    	Assert.assertFalse(status);
     }
-
-
+    
+    /**
+     * Test
+     * @throws PersistenceServiceException 
+     */
+    @Test
+    public void test_file_transfer_persistence_install_and_status() throws PersistenceServiceException
+    {
+    	boolean status = this.persistenceService.fileTransferPersistenceChangesRequired();
+    	
+    	Assert.assertTrue(status);
+        persistenceService.createFileTransferPersistence();
+        
+        status = this.persistenceService.fileTransferPersistenceChangesRequired();
+    	Assert.assertFalse(status);
+    }
 }
