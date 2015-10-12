@@ -1,5 +1,5 @@
 /*
- * $Id$  
+ * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -38,16 +38,61 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.framework.util;
+package org.ikasan.setup.persistence.dao;
 
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
+ * JUnit based test class for testing PersistenceDAOHibernateImpl
  * 
  * @author Ikasan Development Team
- *
  */
-public interface CommitHandler
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml"})
+public class PersistenceDAOHibernateImplTest
 {
-	public void postCommit() throws CommitException;
+    /**
+     * The context that the tests run in, allows for mocking actual concrete
+     * classes
+     */
+    private Mockery context = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+    
+
+
+    @Resource
+    PersistenceDAOHibernateImpl persistenceDAOHibernateImpl;
+
+    /**
+     * Test create
+     */
+    @Test
+    public void test_create()
+    {
+        persistenceDAOHibernateImpl.create("wiretap");
+        persistenceDAOHibernateImpl.delete("wiretap");
+    }
+
+    /**
+     * Test find all point to point profiles
+     */
+    @Ignore@Test
+    public void test_getRuntimeVersion()
+    {
+        persistenceDAOHibernateImpl.getRuntimeVersion();
+    }
 }

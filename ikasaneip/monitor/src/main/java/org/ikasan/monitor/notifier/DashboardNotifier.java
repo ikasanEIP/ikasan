@@ -46,6 +46,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
@@ -54,7 +55,7 @@ import org.ikasan.spec.monitor.Notifier;
 
 
 /**
- * Ikasan default dashboard notifier implementation.
+ * Ikasan default email notifier implementation.
  *
  * @author Ikasan Development Team
  */
@@ -173,7 +174,7 @@ public class DashboardNotifier implements Notifier<String>
 	    	
 	    	WebTarget webTarget = client.target(url);
 		    
-	    	webTarget.request().put(Entity.entity(state, MediaType.APPLICATION_JSON));
+	    	Response response = webTarget.request().put(Entity.entity(state, MediaType.APPLICATION_JSON));
 		}
 		catch(Exception e)
 		{			
