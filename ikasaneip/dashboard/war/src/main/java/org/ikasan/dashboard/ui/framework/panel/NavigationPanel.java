@@ -61,6 +61,8 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -330,6 +332,11 @@ public class NavigationPanel extends Panel implements ViewContext
 	public void setVisible(boolean visible)
 	{
 		this.layout.setVisible(visible);
+		
+		if(this.visibilityGroup != null)
+		{
+			this.visibilityGroup.setVisible();
+		}
 	}
 
 	public void setCurrentView(String currentView)
@@ -353,6 +360,12 @@ public class NavigationPanel extends Panel implements ViewContext
 	public void setMenuComponents(HashMap<Component, String> menuComponents)
 	{
 		this.visibilityGroup.getComponents().putAll(menuComponents);
+	}
+
+
+	public void enter()
+	{
+		this.visibilityGroup.setVisible();
 	}
 
 }
