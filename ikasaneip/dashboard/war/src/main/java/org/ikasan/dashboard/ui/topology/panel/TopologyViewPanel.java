@@ -61,6 +61,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -752,22 +753,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-//		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
-//		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-//		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-//		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
-//		    			, action, hospitalManagementService, topologyService);
-//		    	
-//		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
-//		    	{
-//		            // inline close-listener
-//		            public void windowClose(CloseEvent e) 
-//		            {
-//		            	refreshExcludedEventsTable();
-//		            }
-//		        });
-//		    
-//		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
+		    	// Not implemented at the moment but left as a place holder.
 		    }
 		});
 		
@@ -791,7 +777,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	
             	for(SystemEvent systemEvent: systemEvents.getPagedResults())
             	{
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(systemEvent.getTimestamp());
             	    
             		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
@@ -810,10 +796,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.systemEventFromDate = new PopupDateField("From date");
 		this.systemEventFromDate.setResolution(Resolution.MINUTE);
 		this.systemEventFromDate.setValue(this.getMidnightToday());
+		this.systemEventFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.systemEventFromDate, 0, 0);
 		this.systemEventToDate = new PopupDateField("To date");
 		this.systemEventToDate.setResolution(Resolution.MINUTE);
 		this.systemEventToDate.setValue(this.getTwentyThreeFixtyNineToday());
+		this.systemEventToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.systemEventToDate, 1, 0);
 		
 		dateSelectLayout.addComponent(searchButton, 0, 1, 1, 1);
