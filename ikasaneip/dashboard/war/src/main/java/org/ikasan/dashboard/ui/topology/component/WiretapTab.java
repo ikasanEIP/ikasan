@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.window.ProgressBarWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -223,7 +224,7 @@ public class WiretapTab extends TopologyTab
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
             		Date date = new Date(wiretapEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
             		wiretapTable.addItem(new Object[]{wiretapEvent.getModuleName(), wiretapEvent.getFlowName()
@@ -468,10 +469,12 @@ public class WiretapTab extends TopologyTab
 		this.fromDate = new PopupDateField("From date");
 		this.fromDate.setResolution(Resolution.MINUTE);
 		this.fromDate.setValue(this.getMidnightToday());
+		this.fromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.fromDate, 0, 0);
 		this.toDate = new PopupDateField("To date");
 		this.toDate.setResolution(Resolution.MINUTE);
 		this.toDate.setValue(this.getTwentyThreeFixtyNineToday());
+		this.toDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.toDate, 0, 1);
 		
 		this.eventId = new TextField("Event Id");

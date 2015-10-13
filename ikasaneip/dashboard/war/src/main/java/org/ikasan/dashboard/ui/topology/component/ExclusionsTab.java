@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -312,10 +313,12 @@ public class ExclusionsTab extends TopologyTab
 		fromDate = new PopupDateField("From date");
 		fromDate.setResolution(Resolution.MINUTE);
 		fromDate.setValue(this.getMidnightToday());
+		fromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(fromDate, 0, 0);
 		toDate = new PopupDateField("To date");
 		toDate.setResolution(Resolution.MINUTE);
 		toDate.setValue(this.getTwentyThreeFixtyNineToday());
+		toDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(toDate, 1, 0);
 				
 		
@@ -474,7 +477,7 @@ public class ExclusionsTab extends TopologyTab
     	for(ExclusionEvent exclusionEvent: exclusionEvents)
     	{
     		Date date = new Date(exclusionEvent.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
     	    String timestamp = format.format(date);
     	    
     	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
