@@ -500,8 +500,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	        	.getAttribute(DashboardSessionValueConstants.USER);
             		
             		if(authentication != null 
-                			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-                			&& businessStream.getName().equals("All"))
+                			&& ((authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY))
+                			&& businessStream.getName().equals("All")))
                 	{
                 		List<Server> servers = TopologyViewPanel.this.topologyService.getAllServers();
                 		
@@ -664,6 +664,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	                	}
                 	}        	
                 }
+                
+                for (Iterator<?> it = moduleTree.rootItemIds().iterator(); it.hasNext();) 
+        		{
+        			moduleTree.expandItemsRecursively(it.next());
+        		}
+        		
+        		for (Iterator<?> it = moduleTree.getItemIds().iterator(); it.hasNext();) 
+        		{
+        			Object nextItem = it.next();
+        			if(nextItem instanceof Module)
+        			{
+        				moduleTree.collapseItemsRecursively(nextItem);
+        			}
+        		}
+        		
             }
         });
 
@@ -850,10 +865,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
+		logger.debug("authentication = " + authentication);
+		
+		if(authentication != null)
+		{
+			logger.debug("authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
+			logger.debug("authentication has topology authority " + authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY));
+		}
+		
 		if(authentication != null 
-    			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+    					authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY)))
     	{
 			List<Server> servers = this.topologyService.getAllServers();
+			
+			logger.debug("trying to load tree for " + servers.size());
 			
 			for(Server server: servers)
 			{	
@@ -1079,7 +1105,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public Action[] getActions(Object target, Object sender)
-	{     		
+	{    
+		IkasanAuthentication authentication = null;
+		
+		if(VaadinService.getCurrentRequest() != null
+				&& VaadinService.getCurrentRequest().getWrappedSession() != null)
+		{
+			authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+		}
+		
+		logger.debug("authentication fom session = " + authentication);
+		
+		if(authentication != null)
+		{
+			logger.debug("authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
+		}
+
 		if(target instanceof Server)
         {
             return serverActions;
@@ -1090,6 +1132,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         }
 		else if(target instanceof Flow)
         {
+			if(authentication != null 
+	    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
+			{
+				return this.flowActions;
+			}
+
 			Flow flow = ((Flow)target);
 			
 			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
@@ -1116,6 +1164,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         }
 		else if(target instanceof Component)
         {
+			if(authentication != null 
+	    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
+			{
+				return this.componentActions;
+			}
+	
 			if(((Component)target).isConfigurable())
 			{
 				return componentActionsConfigurable;
@@ -1135,7 +1189,22 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public void handleAction(Action action, Object sender, Object target)
-	{	                
+	{	
+		IkasanAuthentication authentication = null;
+		
+		if(VaadinService.getCurrentRequest() != null
+				&& VaadinService.getCurrentRequest().getWrappedSession() != null)
+		{
+			authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+		}
+		
+		if(authentication == null 
+    			|| (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
+		{
+			return;
+		}
+		
         if(target != null && target instanceof Component)
         {
         	if(action.equals(CONFIGURE))
