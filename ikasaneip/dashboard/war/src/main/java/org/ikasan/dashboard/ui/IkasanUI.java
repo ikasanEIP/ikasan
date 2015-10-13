@@ -211,6 +211,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         UI.getCurrent().getNavigator().navigateTo("landingView");  
         this.navigationPanel.setVisible(true);
         this.navigationPanel.setMenu(menu);
+        
     }
     
     private Component buildContent() 

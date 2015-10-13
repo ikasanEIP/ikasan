@@ -150,17 +150,17 @@ public class Menu extends CssLayout
         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
  	        	.getAttribute(DashboardSessionValueConstants.USER);
         	
-    	if(authentication != null 
-    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_MAPPING_AUTHORITY)))
-    	{
-    		label = new Label("Services", ContentMode.HTML);
-            label.setPrimaryStyleName("valo-menu-subtitle");
-            label.addStyleName("h4");
-            label.setSizeUndefined();
-            menuItemsLayout.addComponent(label);
-    	}
+//    	if(authentication != null 
+//    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+//    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY)
+//    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_MAPPING_AUTHORITY)))
+//    	{
+//    		label = new Label("Services", ContentMode.HTML);
+//            label.setPrimaryStyleName("valo-menu-subtitle");
+//            label.addStyleName("h4");
+//            label.setSizeUndefined();
+//            menuItemsLayout.addComponent(label);
+//    	}
     	
         label = new Label("Services", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
