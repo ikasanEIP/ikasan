@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.security.service.AuthenticationService;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -104,12 +105,12 @@ public class AdminPasswordDialog extends Window
         super.setModal(true);
         super.setResizable(false);
         super.center();
-        this.setWidth(300, Unit.PIXELS);
+        this.setWidth(450, Unit.PIXELS);
     	this.setHeight(220, Unit.PIXELS);
     	
     	super.setClosable(false);
        
-        GridLayout form = new GridLayout(2, 4);
+        GridLayout form = new GridLayout(2, 5);
         form.setColumnExpandRatio(0, .15f);
         form.setColumnExpandRatio(1, .85f);
         form.setWidth(100, Unit.PERCENTAGE);
@@ -119,10 +120,19 @@ public class AdminPasswordDialog extends Window
         Label newTypeLabel =new Label("Initial Administration Password");
         newTypeLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		form.addComponent(newTypeLabel, 0, 0, 1, 0);
+		
+		Label adminPasswordHint = new Label();
+		adminPasswordHint.setCaptionAsHtml(true);
+		adminPasswordHint.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
+				" The initial admin password will be used to log into the application as the 'admin' user.");
+		adminPasswordHint.addStyleName(ValoTheme.LABEL_TINY);
+		adminPasswordHint.addStyleName(ValoTheme.LABEL_LIGHT);
+		
+		form.addComponent(adminPasswordHint, 0, 1, 1, 1);
         
 		Label passwordLabel = new Label("Password:");
 		passwordLabel.setSizeUndefined();
-		form.addComponent(passwordLabel, 0, 1);
+		form.addComponent(passwordLabel, 0, 2);
 		form.setComponentAlignment(passwordLabel, Alignment.MIDDLE_RIGHT);
 		
         final PasswordField passwordField = new PasswordField();
@@ -131,11 +141,11 @@ public class AdminPasswordDialog extends Window
             1, null, true));
         passwordField.setValidationVisible(false);
         passwordField.setStyleName("ikasan");
-        form.addComponent(passwordField, 1, 1);
+        form.addComponent(passwordField, 1, 2);
 
         Label passwordConfirmLabel = new Label("Confirm Password:");
         passwordConfirmLabel.setSizeUndefined();
-		form.addComponent(passwordConfirmLabel, 0, 2);
+		form.addComponent(passwordConfirmLabel, 0, 3);
 		form.setComponentAlignment(passwordConfirmLabel, Alignment.MIDDLE_RIGHT);
 		
         final PasswordField passwordConfirmField = new PasswordField();
@@ -144,7 +154,7 @@ public class AdminPasswordDialog extends Window
             "The password must not be empty",
             1, null, true));
         passwordConfirmField.setValidationVisible(false);
-        form.addComponent(passwordConfirmField, 1, 2);
+        form.addComponent(passwordConfirmField, 1, 3);
 
 
         HorizontalLayout buttons = new HorizontalLayout();
@@ -190,7 +200,7 @@ public class AdminPasswordDialog extends Window
         });
         buttons.addComponent(saveButton);
         
-        form.addComponent(buttons, 0, 3, 1, 3);
+        form.addComponent(buttons, 0, 4, 1, 4);
         form.setComponentAlignment(buttons, Alignment.MIDDLE_CENTER);
         
         this.setContent(form);

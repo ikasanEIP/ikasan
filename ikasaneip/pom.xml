@@ -56,7 +56,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
@@ -835,7 +835,8 @@
         <module>management</module>
         <module>hospital</module>
         <module>webconsole</module>
-        <module>console</module>
+		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+        <!-- module>console</module -->
 		<module>topology</module>
         <module>dashboard</module>
         <module>developer</module>
@@ -886,7 +887,8 @@
         <module>mapping</module>
         <module>management</module>
         <module>platform</module>
-        <module>console</module>
+		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. --> 
+        <!-- module>console</module -->
         <module>hospital</module>
         <module>webconsole</module>
         <module>topology</module>
@@ -1209,7 +1211,8 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <dependency>
+			<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+            <!-- dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>console-jar</artifactId>
                 <version>${project.version}</version>
@@ -1220,7 +1223,7 @@
                 <artifactId>console</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
-            </dependency>
+            </dependency -->
 
             <dependency>
                 <groupId>org.ikasan</groupId>
