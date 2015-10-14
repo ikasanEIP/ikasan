@@ -106,7 +106,6 @@ public class ExclusionEventViewWindow extends Window
 	private TextField roleDescription;
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
-	private SerialiserFactory serialiserFactory;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
@@ -114,13 +113,12 @@ public class ExclusionEventViewWindow extends Window
 	/**
 	 * @param policy
 	 */
-	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
+	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
 		this.errorOccurrence = errorOccurrence;
-		this.serialiserFactory = serialiserFactory;
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
@@ -299,7 +297,7 @@ public class ExclusionEventViewWindow extends Window
         	    		+ "/"
         	    		+ exclusionEvent.getErrorUri();
         		
-        		logger.info("Resubmission Url: " + url);
+        		logger.debug("Resubmission Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
         	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
@@ -309,6 +307,9 @@ public class ExclusionEventViewWindow extends Window
         	    	response.bufferEntity();
         	        
         	        String responseMessage = response.readEntity(String.class);
+        	        
+        	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
+        	        
         	    	Notification.show("An error was received trying to resubmit event: " 
         	    			+ responseMessage, Type.ERROR_MESSAGE);
         	    }
@@ -351,6 +352,8 @@ public class ExclusionEventViewWindow extends Window
             	
             	if(module == null)
             	{
+            		logger.error("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName()); 
+            		
             		Notification.show("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName() 
             				, Type.ERROR_MESSAGE);
             		
@@ -368,7 +371,7 @@ public class ExclusionEventViewWindow extends Window
         	    		+ "/"
         	    		+ exclusionEvent.getErrorUri();
         		
-        		logger.info("Ignore Url: " + url);
+        		logger.debug("Ignore Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
         	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
@@ -378,6 +381,10 @@ public class ExclusionEventViewWindow extends Window
         	    	response.bufferEntity();
         	        
         	        String responseMessage = response.readEntity(String.class);
+        	        
+        	        logger.error("An error was received trying to resubmit event: " 
+        	    			+ responseMessage);
+        	        
         	    	Notification.show("An error was received trying to resubmit event: " 
         	    			+ responseMessage, Type.ERROR_MESSAGE);
         	    }
@@ -428,9 +435,13 @@ public class ExclusionEventViewWindow extends Window
 		
 		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
-		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
-		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.exclusionEvent.getEvent());
-		eventEditor.setValue(event.toString());
+		logger.debug("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
+		
+		if(this.exclusionEvent.getEvent() != null)
+		{
+			eventEditor.setValue(new String((byte[])this.exclusionEvent.getEvent()));
+		}
+		
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);

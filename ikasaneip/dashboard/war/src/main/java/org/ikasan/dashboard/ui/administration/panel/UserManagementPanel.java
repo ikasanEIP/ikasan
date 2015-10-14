@@ -479,19 +479,19 @@ public class UserManagementPanel extends Panel implements View
 				if(rolesCombo.getValue() == null)
 				{
 					// Do nothing if there is no role selected
-					logger.info("Ignoring drop: " + dropEvent);
+					logger.debug("Ignoring drop: " + dropEvent);
 					return;
 				}
 
 				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
+				logger.debug("Trying to drop: " + dropEvent);
 
 				final WrapperTransferable t = (WrapperTransferable) dropEvent
 						.getTransferable();
 
 				final AutocompleteField sourceContainer = (AutocompleteField) t
 						.getDraggedComponent();
-				logger.info("sourceContainer.getText(): "
+				logger.debug("sourceContainer.getText(): "
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();

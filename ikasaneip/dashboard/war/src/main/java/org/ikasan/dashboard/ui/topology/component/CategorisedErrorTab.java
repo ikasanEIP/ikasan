@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
@@ -81,9 +82,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -115,14 +118,12 @@ public class CategorisedErrorTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ErrorCategorisationService errorCategorisationService;
-	private SerialiserFactory serialiserFactory;
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
-			ComboBox businessStreamCombo, SerialiserFactory serialiserFactory)
+			ComboBox businessStreamCombo)
 	{
 		this.errorCategorisationService = errorCategorisationService;
 		this.businessStreamCombo = businessStreamCombo;
-		this.serialiserFactory = serialiserFactory;
 	}
 	
 	public Layout createCategorisedErrorLayout()
@@ -143,8 +144,7 @@ public class CategorisedErrorTab extends TopologyTab
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) {
 		    	CategorisedErrorOccurrence errorOccurrence = (CategorisedErrorOccurrence)itemClickEvent.getItemId();
-		    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow = new CategorisedErrorOccurrenceViewWindow(errorOccurrence,
-		    			serialiserFactory);
+		    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow = new CategorisedErrorOccurrenceViewWindow(errorOccurrence);
 		    
 		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    }
@@ -271,13 +271,18 @@ public class CategorisedErrorTab extends TopologyTab
             	List<CategorisedErrorOccurrence> categorisedErrorOccurences = errorCategorisationService
             			.findCategorisedErrorOccurences(modulesNames, flowNames, componentNames, "", "", errorCategory,
             					errorFromDate.getValue(), errorToDate.getValue());
+            	
+            	if(categorisedErrorOccurences == null || categorisedErrorOccurences.size() == 0)
+            	{
+            		Notification.show("The categorised error search returned no results!", Type.ERROR_MESSAGE);
+            	}
 
             	for(CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurences)
             	{
             		ErrorOccurrence errorOccurrence = categorisedErrorOccurrence.getErrorOccurrence();
             		
             		Date date = new Date(errorOccurrence.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
             	    Label categoryLabel = new Label();
@@ -305,7 +310,7 @@ public class CategorisedErrorTab extends TopologyTab
             	    layout.addComponent(new Label(VaadinIcons.AUTOMATION.getHtml() + " " +  errorOccurrence.getFlowName(), ContentMode.HTML));
             	    layout.addComponent(new Label(VaadinIcons.COG.getHtml() + " " +  errorOccurrence.getFlowElementName(), ContentMode.HTML));
             	    layout.setSpacing(true);
-            	    
+            	                	    
             	    categorizedErrorOccurenceTable.addItem(new Object[]{layout, categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription() 
             				+ " " + errorOccurrence.getErrorMessage(), timestamp}, categorisedErrorOccurrence);
             	}
@@ -343,18 +348,13 @@ public class CategorisedErrorTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+			final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
 				if(t.getItemId() instanceof Module)
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -433,18 +433,13 @@ public class CategorisedErrorTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+			final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
 				if(t.getItemId() instanceof Flow)
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -506,18 +501,13 @@ public class CategorisedErrorTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
 				if(t.getItemId() instanceof Component)
 				{
 					final Component component = (Component) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
+							.getItemId();;
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -565,10 +555,12 @@ public class CategorisedErrorTab extends TopologyTab
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
 		errorFromDate.setValue(this.getMidnightToday());
+		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
 		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
+		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		
