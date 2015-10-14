@@ -53,8 +53,6 @@
         <constructor-arg ref="generalLiquibase"/>
         <constructor-arg ref="fileTransferLiquibase"/>
     </bean>
-<<<<<<< HEAD
-=======
     
     <bean id="generalLiquibase" class="liquibase.Liquibase">
     	<constructor-arg value="db-changelog.xml"/>
@@ -85,7 +83,6 @@
 	   <property name="targetMethod" value="findCorrectDatabaseImplementation"/>
 	   <property name="arguments" ref="jdbcConnection"/>
 	</bean>
->>>>>>> 7c3712b... IKASAN-971 general development check in
 
 	<bean id="classLoaderResourceAccessor" class="liquibase.resource.ClassLoaderResourceAccessor">
  	</bean>
