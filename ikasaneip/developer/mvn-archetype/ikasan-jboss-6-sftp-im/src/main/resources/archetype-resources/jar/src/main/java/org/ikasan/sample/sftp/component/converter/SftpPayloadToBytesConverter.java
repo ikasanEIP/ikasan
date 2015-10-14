@@ -38,55 +38,22 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.filetransfer;
+package org.ikasan.sample.sftp.component.converter;
 
 import org.ikasan.filetransfer.Payload;
-import org.ikasan.spec.event.ManagedEventIdentifierException;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.component.transformation.Converter;
 
 /**
- * Manages the event identifier setting/getting for Payload content
- * Ikasan Developmnet Team.
+ * Sample SFTP Payload converter
+ * @author Ikasasn Development Team
  */
-public class ManagedEventFileTransferIdentifierService implements ManagedEventIdentifierService<String, Payload>
+public class SftpPayloadToBytesConverter implements Converter<Payload,byte[]>
 {
-    private static String FILE_NAME_ATTRIBUTE = "fileName";
-    private static String ID_ATTRIBUTE = "id";
-
-    String modulePrefix;
-
-    /**
-     * Optional constructor for passing module prefix
-     * @param modulePrefix
-     */
-    public ManagedEventFileTransferIdentifierService(String modulePrefix)
-    {
-        this.modulePrefix = modulePrefix;
-    }
-
-    /**
-     * Default constructor
-     */
-    public ManagedEventFileTransferIdentifierService()
-    {
-        // nothing to do here
-    }
 
     @Override
-    public void setEventIdentifier(String identifier, Payload payload) throws ManagedEventIdentifierException
+    public byte[] convert(Payload payload)
     {
-        payload.setAttribute(ID_ATTRIBUTE,identifier);
-    }
-
-    @Override
-    public String getEventIdentifier(Payload payload) throws ManagedEventIdentifierException
-    {
-        String eventId = payload.getAttribute(FILE_NAME_ATTRIBUTE);
-        if(modulePrefix != null)
-        {
-            return modulePrefix + eventId;
-        }
-
-        return eventId;
+        return payload.getContent();
     }
 }
+

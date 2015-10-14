@@ -38,55 +38,52 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.filetransfer;
+package org.ikasan.sample.sftp.component.converter;
 
 import org.ikasan.filetransfer.Payload;
-import org.ikasan.spec.event.ManagedEventIdentifierException;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.filetransfer.factory.PayloadFactory;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
- * Manages the event identifier setting/getting for Payload content
- * Ikasan Developmnet Team.
+ * Sample SFTP Payload converter
+ * @author Ikasasn Development Team
  */
-public class ManagedEventFileTransferIdentifierService implements ManagedEventIdentifierService<String, Payload>
+public class FlowEventToPayloadConverter implements Converter<FlowEvent<String,byte[]>,Payload>
 {
-    private static String FILE_NAME_ATTRIBUTE = "fileName";
-    private static String ID_ATTRIBUTE = "id";
+    /** handle to the payload factory */
+    PayloadFactory payloadFactory;
 
-    String modulePrefix;
-
-    /**
-     * Optional constructor for passing module prefix
-     * @param modulePrefix
-     */
-    public ManagedEventFileTransferIdentifierService(String modulePrefix)
-    {
-        this.modulePrefix = modulePrefix;
-    }
+    /** filename */
+    String filename;
 
     /**
-     * Default constructor
+     * Constructor
+     * @param payloadFactory
+     * @param filename
      */
-    public ManagedEventFileTransferIdentifierService()
+    public FlowEventToPayloadConverter(PayloadFactory payloadFactory, String filename)
     {
-        // nothing to do here
-    }
-
-    @Override
-    public void setEventIdentifier(String identifier, Payload payload) throws ManagedEventIdentifierException
-    {
-        payload.setAttribute(ID_ATTRIBUTE,identifier);
-    }
-
-    @Override
-    public String getEventIdentifier(Payload payload) throws ManagedEventIdentifierException
-    {
-        String eventId = payload.getAttribute(FILE_NAME_ATTRIBUTE);
-        if(modulePrefix != null)
+        this.payloadFactory = payloadFactory;
+        if(payloadFactory == null)
         {
-            return modulePrefix + eventId;
+            throw new IllegalArgumentException("payloadFactory cannot be 'null'");
         }
 
-        return eventId;
+        this.filename = filename;
+        if(filename == null)
+        {
+            throw new IllegalArgumentException("filename cannot be 'null'");
+        }
+    }
+
+    @Override
+    public Payload convert(FlowEvent<String,byte[]> flowEvent) throws TransformationException
+    {
+        Payload payload = this.payloadFactory.newPayload(flowEvent.getIdentifier(), flowEvent.getPayload());
+        payload.setAttribute("fileName", filename);
+        return payload;
     }
 }
+
