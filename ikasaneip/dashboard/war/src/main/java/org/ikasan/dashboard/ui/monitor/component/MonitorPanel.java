@@ -491,9 +491,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public Action[] getActions(Object target, Object sender)
-	{     
-		logger.info("Getting action: " + target + " " + sender);
-		
+	{     		
 		if(target instanceof Flow)
         {
 			Flow flow = ((Flow)target);

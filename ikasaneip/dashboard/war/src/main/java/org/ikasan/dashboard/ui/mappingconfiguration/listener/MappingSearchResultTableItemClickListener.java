@@ -106,7 +106,7 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
 
 		for (IkasanUIView view : mapingNavigator.getIkasanViews())
 		{
-			logger.info("Adding view:" + view.getPath());
+			logger.debug("Adding view:" + view.getPath());
 			navigator.addView(view.getPath(), view.getView());
 		}
 

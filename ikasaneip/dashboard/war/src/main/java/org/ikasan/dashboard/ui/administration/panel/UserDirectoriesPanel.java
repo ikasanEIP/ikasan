@@ -252,6 +252,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred testing an LDAP connection", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -263,6 +265,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(Exception e)
             	{
+            		logger.error("An error occurred testing an LDAP connection", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -309,6 +313,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred saving an authentication method", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -358,6 +364,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred deleting an authentication method", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -426,6 +434,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred synchronising an LDAP repository", e); 
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -437,6 +447,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(Exception e)
             	{
+            		logger.error("An error occurred synchronising an LDAP repository", e); 
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);

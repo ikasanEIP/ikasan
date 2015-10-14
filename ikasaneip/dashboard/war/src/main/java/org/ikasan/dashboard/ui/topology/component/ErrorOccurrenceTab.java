@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
@@ -81,9 +82,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -208,11 +211,16 @@ public class ErrorOccurrenceTab extends TopologyTab
          
             	List<ErrorOccurrence> errorOccurences = errorReportingService
             			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+            	
+            	if(errorOccurences == null || errorOccurences.size() == 0)
+            	{
+            		Notification.show("The error search returned no results!", Type.ERROR_MESSAGE);
+            	}
 
             	for(ErrorOccurrence errorOccurrence: errorOccurences)
             	{
             		Date date = new Date(errorOccurrence.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
             	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
@@ -252,9 +260,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -262,8 +267,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -342,9 +345,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -352,8 +352,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -415,9 +413,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -425,8 +420,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 				{
 					final Component component = (Component) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -463,10 +456,12 @@ public class ErrorOccurrenceTab extends TopologyTab
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
 		errorFromDate.setValue(this.getMidnightToday());
+		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
 		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
+		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		

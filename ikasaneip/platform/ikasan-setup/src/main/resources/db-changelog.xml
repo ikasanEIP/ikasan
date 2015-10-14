@@ -16,5 +16,9 @@
     
     <!-- Baseline change log -->    
 	<include file="db-changelog-baseline.xml" relativeToChangelogFile="true" />
+	
+	<!-- 1.1.0 change log -->
+	<include file="db-changelog-1.1.0.xml" relativeToChangelogFile="true" />
+	
 
 </databaseChangeLog>
