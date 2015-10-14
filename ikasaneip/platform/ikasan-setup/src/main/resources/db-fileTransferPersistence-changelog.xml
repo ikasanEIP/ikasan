@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
+    
+    <!-- File transfer table creation -->    
+	<include file="db/tables/db-changeLog-createFTChecksumCommand.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTCleanupChunksCommand.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTDeliverBatchCommand.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTDeliverFileCommand.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTFileChunkHeader.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTFileChunk.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTFileFilter.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTRetrieveFileCommand.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTTransactionalResourceCommand.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFTXid.xml" relativeToChangelogFile="true" />
+
+	<!-- File transfer cardinality creation -->   
+	<include file="db/cardinality/db-changeLog-createFTFileChunkFk.xml" relativeToChangelogFile="true" />
+	<include file="db/cardinality/db-changeLog-createFTTransactionalResourceCommandFk.xml" relativeToChangelogFile="true" />
+</databaseChangeLog>
