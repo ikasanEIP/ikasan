@@ -121,7 +121,7 @@ public class LoginFieldGroup extends FieldGroup
 
         try
         {
-            logger.info("Attempting to validate user: " + username.getValue());
+            logger.debug("Attempting to validate user: " + username.getValue());
 
             Authentication authentication = authenticationService.login(username.getValue(), password.getValue());
 
@@ -138,15 +138,14 @@ public class LoginFieldGroup extends FieldGroup
         }
         catch (AuthenticationServiceException e)
         {
-        	e.printStackTrace();
-            logger.info("User has supplied invalid password: " + username.getValue());
+            logger.error("User has supplied invalid password: " + username.getValue());
             throw new CommitException("Invalid user name or password. Please try again.");
         }
         catch(InvalidDataAccessResourceUsageException e)
         {
-        	e.printStackTrace();
+        	logger.error(e.getMessage(), e);
         	throw new CommitException("It appears that the Ikasan database has not been setup. Please go to the" +
-        			" setup screen by clicking the link at the top right of this screen.");
+        			" setup screen by clicking the link at the top right of this screen.", e);
         }
     }
 

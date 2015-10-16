@@ -80,7 +80,8 @@ public class VisibilityGroup
         	
         	if(authentication != null 
         			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-        					|| authentication.hasGrantedAuthority(policyName)))
+        					|| authentication.hasGrantedAuthority(policyName)
+        					|| policyName.equals(SecurityConstants.ANY_AUTHORITY)))
         	{
         		component.setVisible(true);
         	}

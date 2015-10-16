@@ -110,7 +110,6 @@ public class WiretapConfigurationWindow extends Window
 		
 		this.component = component;
 		this.triggerManagementService = triggerManagementService;
-		this.triggerTable = triggerTable;
 		
 		init();
 	}
@@ -423,7 +422,7 @@ public class WiretapConfigurationWindow extends Window
 	    		+ "/"
 	    		+ jobType;
 		
-		logger.info("Resubmission Url: " + url);
+		logger.debug("Resubmission Url: " + url);
 		
 	    WebTarget webTarget = client.target(url);
 	    Response response = webTarget.request().put(Entity.entity(timeToLive, MediaType.APPLICATION_OCTET_STREAM));
@@ -433,6 +432,9 @@ public class WiretapConfigurationWindow extends Window
 	    	response.bufferEntity();
 	        
 	        String responseMessage = response.readEntity(String.class);
+	        
+	        logger.error("An error occurred trying to create a wiretap: " 
+	    			+ responseMessage);
 	        
 	        logger.error("An error occurred trying to create a wiretap: " + responseMessage);
 	    	Notification.show("An error was received trying to create a wiretap: " 
@@ -464,7 +466,7 @@ public class WiretapConfigurationWindow extends Window
 				+ this.component.getFlow().getModule().getContextRoot() 
 				+ "/rest/wiretap/deleteTrigger";
 		
-		logger.info("Resubmission Url: " + url);
+		logger.debug("Resubmission Url: " + url);
 		
 	    WebTarget webTarget = client.target(url);
 	    Response response = webTarget.request().put(Entity.entity(triggerId, MediaType.APPLICATION_JSON));

@@ -38,7 +38,6 @@
         <constructor-arg ref="componentConfigurationWindow" />
         <constructor-arg ref="wiretapDao" />
         <constructor-arg ref="exclusionManagementService" />
-        <constructor-arg ref="ikasanSerialiserFactory" />
         <constructor-arg ref="hospitalManagementService" />
         <constructor-arg ref="systemEventService"/>
         <constructor-arg ref="errorCategorisationService"/>
