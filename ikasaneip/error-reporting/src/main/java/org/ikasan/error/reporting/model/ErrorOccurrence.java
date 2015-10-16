@@ -40,7 +40,6 @@
  */
 package org.ikasan.error.reporting.model;
 
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 

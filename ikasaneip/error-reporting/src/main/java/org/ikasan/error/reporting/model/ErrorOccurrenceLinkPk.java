@@ -1,6 +1,6 @@
 /*
- * $Id: FileSystemMessageDao.java 2728 2009-12-11 20:40:52Z magicduncan $
- * $URL: https://open.jira.com/svn/IKASAN/trunk/tools/TextMessagePublisher/core/src/main/java/org/ikasan/tools/messaging/dao/FileSystemMessageDao.java $
+ * $Id$  
+ * $URL$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,49 +38,106 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.repository;
+package org.ikasan.error.reporting.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.io.Serializable;
 
-import org.ikasan.tools.messaging.model.MessageWrapper;
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class ErrorOccurrenceLinkPk implements Serializable
+{
+	/**
+	 * @param errorUri
+	 * @param linkId
+	 */
+	public ErrorOccurrenceLinkPk(String errorUri, Long linkId)
+	{
+		super();
+		this.errorUri = errorUri;
+		this.linkId = linkId;
+	}
 
-public class BoundedMemoryMessageRepository extends BaseRepository implements MessageRepository {
+	private static final long serialVersionUID = -1724759502309436272L;
 
-
-
-	private int maximumMessages = 10;
+	String errorUri;
+	Long linkId;
 	
-	private BlockingQueue<MessageWrapper> receivedMessages = new LinkedBlockingQueue<MessageWrapper>(maximumMessages);
-
-	public BoundedMemoryMessageRepository(String name) {
-		super(name);
+	/**
+	 * @return the errorUri
+	 */
+	public String getErrorUri()
+	{
+		return errorUri;
 	}
 	
-	public MessageWrapper getMessage(String messageId) {
-		for (MessageWrapper messageWrapper : receivedMessages){
-			if (messageWrapper.getMessageId().equals(messageId)){
-				return messageWrapper;
-			}
-		}
-		return null;
+	/**
+	 * @param errorUri the errorUri to set
+	 */
+	public void setErrorUri(String errorUri)
+	{
+		this.errorUri = errorUri;
 	}
-
-	public List<String> getMessages() {
-		List<String> messageIds = new ArrayList<String>();
-		for (MessageWrapper messageWrapper : receivedMessages){
-			messageIds.add(messageWrapper.getMessageId());
-		}
-		return messageIds;
+	
+	/**
+	 * @return the linkId
+	 */
+	public Long getLinkId()
+	{
+		return linkId;
 	}
-
-	public void save(MessageWrapper message) {
-		if (receivedMessages.remainingCapacity()==0){
-			receivedMessages.remove();
-		}
-		receivedMessages.add(message);
+	
+	/**
+	 * @param linkId the linkId to set
+	 */
+	public void setLinkId(Long linkId)
+	{
+		this.linkId = linkId;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((errorUri == null) ? 0 : errorUri.hashCode());
+		result = prime * result + ((linkId == null) ? 0 : linkId.hashCode());
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ErrorOccurrenceLinkPk other = (ErrorOccurrenceLinkPk) obj;
+		if (errorUri == null)
+		{
+			if (other.errorUri != null)
+				return false;
+		} else if (!errorUri.equals(other.errorUri))
+			return false;
+		if (linkId == null)
+		{
+			if (other.linkId != null)
+				return false;
+		} else if (!linkId.equals(other.linkId))
+			return false;
+		return true;
+	}
+	
+	
 }

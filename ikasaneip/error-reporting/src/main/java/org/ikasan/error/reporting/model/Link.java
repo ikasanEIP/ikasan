@@ -1,6 +1,6 @@
 /*
- * $Id: FileSystemMessageDao.java 2728 2009-12-11 20:40:52Z magicduncan $
- * $URL: https://open.jira.com/svn/IKASAN/trunk/tools/TextMessagePublisher/core/src/main/java/org/ikasan/tools/messaging/dao/FileSystemMessageDao.java $
+ * $Id$  
+ * $URL$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,49 +38,97 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.repository;
+package org.ikasan.error.reporting.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.ikasan.tools.messaging.model.MessageWrapper;
-
-public class BoundedMemoryMessageRepository extends BaseRepository implements MessageRepository {
-
-
-
-	private int maximumMessages = 10;
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class Link
+{
+	private Long Id;
+	private String link;
+	private String user;
+	private long timestamp;
 	
-	private BlockingQueue<MessageWrapper> receivedMessages = new LinkedBlockingQueue<MessageWrapper>(maximumMessages);
+	/**
+     * Constructor
+     */
+    private Link()
+    {
+        // required by the ORM
+    }
+	
+	/**
+	 * @param id
+	 * @param note
+	 * @param userId
+	 */
+	public Link(String link, String user)
+	{
+		super();
+		this.link = link;
+		this.user = user;
+		this.timestamp = System.currentTimeMillis();
+	}
 
-	public BoundedMemoryMessageRepository(String name) {
-		super(name);
+	/**
+	 * @return the id
+	 */
+	public Long getId()
+	{
+		return Id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id)
+	{
+		Id = id;
+	}
+	/**
+	 * @return the note
+	 */
+	public String getLink()
+	{
+		return link;
+	}
+	/**
+	 * @param note the note to set
+	 */
+	public void setLink(String link)
+	{
+		this.link = link;
+	}
+	/**
+	 * @return the userId
+	 */
+	public String getUser()
+	{
+		return user;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUser(String userId)
+	{
+		this.user = userId;
+	}
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp()
+	{
+		return timestamp;
+	}
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp)
+	{
+		this.timestamp = timestamp;
 	}
 	
-	public MessageWrapper getMessage(String messageId) {
-		for (MessageWrapper messageWrapper : receivedMessages){
-			if (messageWrapper.getMessageId().equals(messageId)){
-				return messageWrapper;
-			}
-		}
-		return null;
-	}
-
-	public List<String> getMessages() {
-		List<String> messageIds = new ArrayList<String>();
-		for (MessageWrapper messageWrapper : receivedMessages){
-			messageIds.add(messageWrapper.getMessageId());
-		}
-		return messageIds;
-	}
-
-	public void save(MessageWrapper message) {
-		if (receivedMessages.remainingCapacity()==0){
-			receivedMessages.remove();
-		}
-		receivedMessages.add(message);
-	}
-
+	
 }

@@ -50,32 +50,31 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
@@ -83,10 +82,10 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -101,7 +100,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 {
 	private Logger logger = Logger.getLogger(ErrorOccurrenceTab.class);
 	
-	private Table errorOccurenceTable;
+	private FilterTable errorOccurenceTable;
 	
 	private Table errorOccurenceModules = new Table("Modules");
 	private Table errorOccurenceFlows = new Table("Flows");
@@ -124,29 +123,48 @@ public class ErrorOccurrenceTab extends TopologyTab
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
+	protected Container buildContainer() {
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Module Name", String.class,  null);
+		cont.addContainerProperty("Flow Name", String.class,  null);
+		cont.addContainerProperty("Component Name", String.class,  null);
+		cont.addContainerProperty("Error Message", String.class,  null);
+		cont.addContainerProperty("Timestamp", String.class,  null);
+		cont.addContainerProperty("", CheckBox.class,  null);
+
+        return cont;
+    }
+	
 	public Layout createCategorisedErrorLayout()
 	{
-		this.errorOccurenceTable = new Table();
+		final Container cont = buildContainer();
+		this.errorOccurenceTable = new FilterTable();
+		this.errorOccurenceTable.setFilterBarVisible(true);
 		this.errorOccurenceTable.setSizeFull();
 		this.errorOccurenceTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.errorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.errorOccurenceTable.addStyleName("ikasan");
-		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
+		this.errorOccurenceTable.setContainerDataSource(cont);
+//		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Module Name", .14f);
-		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
+//		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
-		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
+//		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
-		this.errorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
+//		this.errorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
-		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
+//		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
+		this.errorOccurenceTable.setColumnExpandRatio("", .05f);
 		
 		this.errorOccurenceTable.addStyleName("wordwrap-table");
 		
-		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+		{
 		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) {
+		    public void itemClick(ItemClickEvent itemClickEvent) 
+		    {
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
 		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
 		    
@@ -223,8 +241,17 @@ public class ErrorOccurrenceTab extends TopologyTab
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
-            	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), errorOccurrence.getErrorMessage(), timestamp}, errorOccurrence);
+            	    Item item = cont.addItem(errorOccurrence);			            	    
+            	    
+            	    item.getItemProperty("Module Name").setValue(errorOccurrence.getModuleName());
+					item.getItemProperty("Flow Name").setValue(errorOccurrence.getFlowName());
+					item.getItemProperty("Component Name").setValue(errorOccurrence.getFlowElementName());
+					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
+					item.getItemProperty("Timestamp").setValue(timestamp);
+					item.getItemProperty("").setValue(new CheckBox());
+            	    
+//            	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+//            				, errorOccurrence.getFlowElementName(), errorOccurrence.getErrorMessage(), timestamp}, errorOccurrence);
             	}
             }
         });
