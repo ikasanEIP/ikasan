@@ -1,6 +1,6 @@
 /*
- * $Id: FileSystemMessageDao.java 2728 2009-12-11 20:40:52Z magicduncan $
- * $URL: https://open.jira.com/svn/IKASAN/trunk/tools/TextMessagePublisher/core/src/main/java/org/ikasan/tools/messaging/dao/FileSystemMessageDao.java $
+ * $Id$  
+ * $URL$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,49 +38,48 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.repository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.ikasan.tools.messaging.model.MessageWrapper;
-
-public class BoundedMemoryMessageRepository extends BaseRepository implements MessageRepository {
+package org.ikasan.error.reporting.model;
 
 
-
-	private int maximumMessages = 10;
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class ErrorOccurrenceNote 
+{
+	private static final long serialVersionUID = -1724759502309436272L;
 	
-	private BlockingQueue<MessageWrapper> receivedMessages = new LinkedBlockingQueue<MessageWrapper>(maximumMessages);
+	private ErrorOccurrenceNotePk id;
 
-	public BoundedMemoryMessageRepository(String name) {
-		super(name);
+	/**
+	 * @param errorUri
+	 * @param linkId
+	 */
+	public ErrorOccurrenceNote(String errorUri, Long noteId)
+	{
+		super();
+		
+		this.id = new ErrorOccurrenceNotePk(errorUri, noteId);
 	}
 	
-	public MessageWrapper getMessage(String messageId) {
-		for (MessageWrapper messageWrapper : receivedMessages){
-			if (messageWrapper.getMessageId().equals(messageId)){
-				return messageWrapper;
-			}
-		}
-		return null;
+	private ErrorOccurrenceNote(){}
+	
+	/**
+	 * @return the id
+	 */
+	public ErrorOccurrenceNotePk getId()
+	{
+		return id;
 	}
 
-	public List<String> getMessages() {
-		List<String> messageIds = new ArrayList<String>();
-		for (MessageWrapper messageWrapper : receivedMessages){
-			messageIds.add(messageWrapper.getMessageId());
-		}
-		return messageIds;
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(ErrorOccurrenceNotePk id)
+	{
+		this.id = id;
 	}
-
-	public void save(MessageWrapper message) {
-		if (receivedMessages.remainingCapacity()==0){
-			receivedMessages.remove();
-		}
-		receivedMessages.add(message);
-	}
-
+	
+	
 }

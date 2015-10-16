@@ -19,6 +19,10 @@
         <property name="sessionFactory" ref="errorReportingSessionFactory"/>
     </bean>
     
+    <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">
+        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+    </bean>
+    
     <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
         <property name="sessionFactory" ref="errorReportingSessionFactory"/>
     </bean>
@@ -30,6 +34,11 @@
                 <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
                 <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
                 <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrenceAction.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/Link.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

@@ -1,6 +1,6 @@
 /*
- * $Id: FileSystemMessageDao.java 2728 2009-12-11 20:40:52Z magicduncan $
- * $URL: https://open.jira.com/svn/IKASAN/trunk/tools/TextMessagePublisher/core/src/main/java/org/ikasan/tools/messaging/dao/FileSystemMessageDao.java $
+ * $Id$  
+ * $URL$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,49 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.repository;
+package org.ikasan.error.reporting.dao.constants;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.ikasan.tools.messaging.model.MessageWrapper;
-
-public class BoundedMemoryMessageRepository extends BaseRepository implements MessageRepository {
-
-
-
-	private int maximumMessages = 10;
+/**
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class ErrorManagementDaoConstants
+{
+	public static final String ERROR_URI = "errorUri";
+	public static final String LINK_ID = "linkId";
+	public static final String NOTE_ID = "noteId";
 	
-	private BlockingQueue<MessageWrapper> receivedMessages = new LinkedBlockingQueue<MessageWrapper>(maximumMessages);
-
-	public BoundedMemoryMessageRepository(String name) {
-		super(name);
-	}
+	public static final String GET_LINK_BY_ERROR_URI = "select l from ErrorOccurrenceLink ecl," +
+            " Link l " +
+            " where  ecl.id.linkId = l.id" +
+            " and ecl.id.errorUri = :" + ERROR_URI;
 	
-	public MessageWrapper getMessage(String messageId) {
-		for (MessageWrapper messageWrapper : receivedMessages){
-			if (messageWrapper.getMessageId().equals(messageId)){
-				return messageWrapper;
-			}
-		}
-		return null;
-	}
-
-	public List<String> getMessages() {
-		List<String> messageIds = new ArrayList<String>();
-		for (MessageWrapper messageWrapper : receivedMessages){
-			messageIds.add(messageWrapper.getMessageId());
-		}
-		return messageIds;
-	}
-
-	public void save(MessageWrapper message) {
-		if (receivedMessages.remainingCapacity()==0){
-			receivedMessages.remove();
-		}
-		receivedMessages.add(message);
-	}
-
+	public static final String GET_NOTE_BY_ERROR_URI = "select n from ErrorOccurrenceNote ecn," +
+            " Note n " +
+            " where  ecn.id.noteId = n.id" +
+            " and ecn.id.errorUri = :" + ERROR_URI;
+	
+	public static final String DELETE_LINK = "delete from ErrorOccurrenceLink where linkId = :" + LINK_ID; 
+	
+	public static final String DELETE_NOTE = "delete from ErrorOccurrenceNote where noteId = :" + NOTE_ID; 
 }
