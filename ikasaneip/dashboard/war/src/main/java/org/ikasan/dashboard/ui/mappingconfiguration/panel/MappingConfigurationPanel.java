@@ -294,7 +294,7 @@ public class MappingConfigurationPanel extends Panel implements View
             {
                 try
                 {
-                    logger.info("Save button clicked!!");
+                    logger.debug("Save button clicked!!");
                     save();
                     setEditable(false);
                     Notification.show("Changes Saved!",
@@ -309,6 +309,8 @@ public class MappingConfigurationPanel extends Panel implements View
                 }
                 catch (Exception e) 
                 {
+                	logger.error("An error occurred trying to save a mapping configuration!", e); 
+                	
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -598,7 +600,7 @@ public class MappingConfigurationPanel extends Panel implements View
                 }
                 catch (MappingConfigurationServiceException e)
                 {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
         });
@@ -679,7 +681,7 @@ public class MappingConfigurationPanel extends Panel implements View
                     }
                     catch (IOException e)
                     {
-                        e.printStackTrace();
+                    	logger.error(e.getMessage(), e);
                     }
                     InputStream input = new ByteArrayInputStream(stream.toByteArray());
                       return input;
@@ -708,7 +710,7 @@ public class MappingConfigurationPanel extends Panel implements View
                     }
                     catch (IOException e)
                     {
-                        e.printStackTrace();
+                    	logger.error(e.getMessage(), e);
                     }
                     InputStream input = new ByteArrayInputStream(stream.toByteArray());
                       return input;
@@ -762,22 +764,22 @@ public class MappingConfigurationPanel extends Panel implements View
                 throw e;
             }
 
-            logger.info("this.parameterQueryTextFields.size() = " + this.parameterQueryTextFields.size());
-            logger.info("this.mappingConfiguration.getNumberOfParams() = " + this.mappingConfiguration.getNumberOfParams());
+            logger.debug("this.parameterQueryTextFields.size() = " + this.parameterQueryTextFields.size());
+            logger.debug("this.mappingConfiguration.getNumberOfParams() = " + this.mappingConfiguration.getNumberOfParams());
             
             if(this.parameterQueryTextFields.size() != this.mappingConfiguration.getNumberOfParams())
             {
                 throw new Exception("You must define the key location queries!");
             }
 
-            logger.info("Attempting to save mapping configuration.");
+            logger.debug("Attempting to save mapping configuration.");
             this.mappingConfiguration.setConfigurationServiceClient
                 ((ConfigurationServiceClient)this.clientComboBox.getValue());
     
             this.mappingConfiguration.setConfigurationType
                 ((ConfigurationType)this.typeComboBox.getValue());
     
-            logger.info("Source context = ." + ((ConfigurationContext)
+            logger.debug("Source context = ." + ((ConfigurationContext)
                     this.sourceContextComboBox.getValue()).getName());
     
             this.mappingConfiguration.setSourceContext
@@ -789,7 +791,7 @@ public class MappingConfigurationPanel extends Panel implements View
             try
             {
                
-                logger.info("User: " + principal.getName() + " saving Mapping Configuration: " +
+                logger.debug("User: " + principal.getName() + " saving Mapping Configuration: " +
                 		this.mappingConfiguration);
                 this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
                 
@@ -804,7 +806,6 @@ public class MappingConfigurationPanel extends Panel implements View
             }
             catch(MappingConfigurationServiceException e)
             {
-                e.printStackTrace();
                 throw new Exception("Unable to save Mapping Configuration. Client, " +
                         "Type, Source and Target Context must be unique!");
             }
@@ -813,7 +814,7 @@ public class MappingConfigurationPanel extends Panel implements View
             {
                 query.setMappingConfigurationId(this.mappingConfiguration.getId());
 
-                logger.info("User: " + principal.getName() + " saving Key Location Query: " +
+                logger.debug("User: " + principal.getName() + " saving Key Location Query: " +
                         query);
                 this.mappingConfigurationService.saveKeyLocationQuery(query);
                 
@@ -857,7 +858,7 @@ public class MappingConfigurationPanel extends Panel implements View
         	throw new RuntimeException("Cannot resolve the platform configuration mappingValuesExportSchemaLocation!");
         }
         
-        logger.info("Resolved schemaLocation " + schemaLocation);
+        logger.debug("Resolved schemaLocation " + schemaLocation);
 
         String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true,
         		schemaLocation);
@@ -884,7 +885,7 @@ public class MappingConfigurationPanel extends Panel implements View
         	throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
         }
         
-        logger.info("Resolved schemaLocation " + schemaLocation);	
+        logger.debug("Resolved schemaLocation " + schemaLocation);	
         
         String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
             , this.keyLocationQueries, schemaLocation);
@@ -909,7 +910,7 @@ public class MappingConfigurationPanel extends Panel implements View
 
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
         
-        logger.info("Attempting to populate form with mapping configuration: " + this.mappingConfiguration);
+        logger.debug("Attempting to populate form with mapping configuration: " + this.mappingConfiguration);
         
         this.clientComboBox.loadClientSelectValues();
         this.typeComboBox.loadClientTypeValues();

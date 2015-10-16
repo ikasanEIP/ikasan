@@ -111,6 +111,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         }
         catch(DataAccessException e)
         {
+        	logger.error("An error has occurred trying to save a mapping configuration", e);
             throw new MappingConfigurationServiceException(e);
         }
 
@@ -211,13 +212,18 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
                 }
                 sourceSystemValuesSB.append("]");
 
-                throw new MappingConfigurationServiceException("The Mapping Configuration Service has been unable to resolve a target configuration value. " +
+                String errorMessage = "The Mapping Configuration Service has been unable to resolve a target configuration value. " +
                         "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceContext + "] " +
-                        "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString());
+                        "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
+                
+                logger.error(errorMessage);
+                
+                throw new MappingConfigurationServiceException(errorMessage);
             }
         }
         catch (KeyLocationQueryProcessorException e)
         {
+        	logger.error("An error has occurred trying to get a target configuration value", e);
             throw new MappingConfigurationServiceException(e);
         }
 
@@ -629,9 +635,13 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 	                    }
 	                    sourceSystemValuesSB.append("]");
 
-	                    throw new RuntimeException("Multiple sub results returned from the mapping configuration service. " +
+	                    String errorMessage = "Multiple sub results returned from the mapping configuration service. " +
 	                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationTypeName + "] [SourceContext = " + sourceContext + "] " +
-	                            "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString());
+	                            "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
+	                    
+	                    logger.error(errorMessage);
+	                    
+	                    throw new RuntimeException(errorMessage);
 					}
 					
 					if(returnValue != null)

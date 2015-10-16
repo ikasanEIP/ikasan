@@ -114,7 +114,7 @@ public class DeleteRowAction implements Action
         			.getTargetSystemValue() + "]");
         }
         
-        logger.info("User: " + authentication.getName() 
+        logger.debug("User: " + authentication.getName() 
                 +" attempting to delete: " + this.sourceConfigurationValues.size() + " configuration values.");
 
         this.mappingConfiguration.getSourceConfigurationValues().removeAll(this.sourceConfigurationValues);
@@ -127,16 +127,19 @@ public class DeleteRowAction implements Action
             systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
             		sb.toString(), authentication.getName());
 
-            logger.info("User: " + authentication.getName() 
+            logger.debug("User: " + authentication.getName() 
                 + " successfully deleted the following configuration values: " 
                     + this.sourceConfigurationValues);
         }
-        catch (Exception e) {
+        catch (Exception e) 
+        {
+        	logger.error("An error occurred trying to delete a mapping configuration value!", e); 
+        	
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
 
-            Notification.show("Cauget exception trying to remove a Mapping Configuration value!", sw.toString()
+            Notification.show("An error occurred trying to delete a mapping configuration value!", sw.toString()
                 , Notification.Type.ERROR_MESSAGE);
             return;
         }

@@ -220,7 +220,7 @@ public class LdapServiceImpl implements LdapService
 		} 
 		while (cookie.getCookie() != null);
 
-		logger.info("Returning users: " + results.size());
+		logger.debug("Returning users: " + results.size());
 		return results;
 	}
 
