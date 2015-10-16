@@ -28,11 +28,14 @@
     </bean>
     
     <bean id="persistanceSetupPanel" class="org.ikasan.dashboard.ui.framework.panel.PersistanceSetupPanel" scope="session">
-    	<constructor-arg ref="persistenceServiceFactory"/>
+    	<constructor-arg ref="persistenceService"/>
     	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="authenticationService"/>
+		<constructor-arg ref="configurationService"/>
     </bean> 
 
 	<bean id="persistanceSetupComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
+
 </beans>

@@ -43,6 +43,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -66,13 +67,14 @@ public class ConverterFlowElementInvokerTest
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
-    private Converter converter = mockery.mock(Converter.class, "converter");
     private Object payload = mockery.mock(Object.class, "payload");
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker()
+    public void test_converter_flowElementInvoker_with_flowEvent()
     {
+        final Converter converter = new ConverterForFlowEvent();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -84,9 +86,40 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
+
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_converter_flowElementInvoker_with_payload()
+    {
+        final Converter converter = new ConverterForAnyObject();
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(converter));
+
                 exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(converter).convert(payload);
                 will(returnValue(payload));
                 exactly(1).of(flowEvent).setPayload(payload);
 
@@ -106,6 +139,8 @@ public class ConverterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_converter_flowElementInvoker_invalid_transition()
     {
+        final Converter converter = new ConverterForAnyObject();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -117,9 +152,8 @@ public class ConverterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(converter));
+
                 exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(converter).convert(payload);
                 will(returnValue(payload));
                 exactly(1).of(flowEvent).setPayload(payload);
 
@@ -136,4 +170,32 @@ public class ConverterFlowElementInvokerTest
 
         mockery.assertIsSatisfied();
     }
+
+    /**
+     * Test converter class for testing with FlowEvent instance
+     */
+    class ConverterForFlowEvent implements Converter<FlowEvent,Object>
+    {
+
+        @Override
+        public Object convert(FlowEvent flowEvent) throws TransformationException
+        {
+            return payload;
+        }
+    }
+
+    /**
+     * Test converter class for testing with anything other than FlowEvent instance
+     */
+    class ConverterForAnyObject implements Converter<Object,Object>
+    {
+
+        @Override
+        public Object convert(Object object) throws TransformationException
+        {
+            return payload;
+        }
+    }
 }
+
+

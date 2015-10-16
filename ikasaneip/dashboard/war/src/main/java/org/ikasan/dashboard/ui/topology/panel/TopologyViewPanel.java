@@ -452,7 +452,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					
 					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
 	            	
-					logger.info("State = " + state);
+					logger.debug(flow.getModule().getName() + "-" + flow.getName() + " State = " + state);
 					
 	    			if(state != null && state.equals(RUNNING))
 	    			{
@@ -882,7 +882,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	            this.moduleTree.setItemCaption(server, icon.getHtml() + " " + server.getName());
 	            this.moduleTree.setChildrenAllowed(server, true);
 	        	
-//	        	this.moduleTree.setItemIcon(server, icon);
 	
 		        for(Module module: modules)
 		        {	        	
@@ -1094,7 +1093,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	@Override
 	public Action[] getActions(Object target, Object sender)
 	{     
-		logger.info("Getting action: " + target + " " + sender);
+		logger.debug("Getting action: " + target + " " + sender);
 		
 		if(target instanceof Server)
         {
