@@ -84,6 +84,7 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.module.StartupControlService;
@@ -209,7 +210,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private StartupControlService startupControlService;
 	private ErrorReportingService errorReportingService;
-	
+	private ErrorReportingManagementService errorReportingManagementService;
 	
 	private BusinessStream businessStream;
 	
@@ -227,7 +228,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
-			 StartupControlService startupControlService, ErrorReportingService errorReportingService)
+			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -284,7 +285,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("errorReportingService cannot be null!");
 		}
-
+		this.errorReportingManagementService = errorReportingManagementService;
+		if(this.errorReportingManagementService == null)
+		{
+			throw new IllegalArgumentException("errorReportingManagementService cannot be null!");
+		}
+		
 		init();
 	}
 
@@ -365,7 +371,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tab3.setSizeFull();
     		
     		ErrorOccurrenceTab errorOccurrenceTab = new ErrorOccurrenceTab
-					(this.errorReportingService, this.treeViewBusinessStreamCombo);
+					(this.errorReportingService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
 			tab3.addComponent(errorOccurrenceTab.createCategorisedErrorLayout());
 			
     		tabsheet.addTab(tab3, "Errors");

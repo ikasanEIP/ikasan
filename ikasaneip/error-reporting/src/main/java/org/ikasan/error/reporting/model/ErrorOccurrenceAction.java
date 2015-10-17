@@ -119,17 +119,17 @@ public class ErrorOccurrenceAction<EVENT>
      */
     private ErrorOccurrenceAction()
     {
-        // required by the ORM
+        // required by the ORM	
     }
 
-    /**
-     * Constructor
-     * @param moduleName
-     * @param flowName
-     * @param flowElementName
-     * @param errorDetail
-     * @param event
-     */
+   /**
+    * Constructor
+    * 
+    * @param errorOccurrence
+    * @param userAction
+    * @param actionedBy
+    * @param timeToLive
+    */
     public ErrorOccurrenceAction(ErrorOccurrence<EVENT> errorOccurrence, String userAction, String actionedBy,
     		long timeToLive)
     {
@@ -155,24 +155,6 @@ public class ErrorOccurrenceAction<EVENT>
         {
             throw new IllegalArgumentException("flowElementName cannot be 'null");
         }
-
-        this.errorDetail = errorOccurrence.getErrorDetail();
-        if(errorDetail == null)
-        {
-            throw new IllegalArgumentException("errorDetail cannot be 'null");
-        }
-        
-        this.exceptionClass = errorOccurrence.getExceptionClass();
-        if(exceptionClass == null)
-        {
-            throw new IllegalArgumentException("exceptionClass cannot be 'null");
-        }
-        
-        this.action = errorOccurrence.getAction();
-        if(this.action == null)
-        {
-            throw new IllegalArgumentException("action cannot be 'null");
-        }
         
         this.actionedBy = actionedBy;
         if(this.actionedBy == null)
@@ -186,11 +168,15 @@ public class ErrorOccurrenceAction<EVENT>
             throw new IllegalArgumentException("actiouserActionnedBy cannot be 'null");
         }
 
+
+        this.errorDetail = errorOccurrence.getErrorDetail();
+        this.exceptionClass = errorOccurrence.getExceptionClass();        
+        this.action = errorOccurrence.getAction();        
         this.errorMessage = errorOccurrence.getErrorMessage();
         this.event = errorOccurrence.getEvent();
         this.timestamp = errorOccurrence.getTimestamp();
         this.userActionTimestamp = System.currentTimeMillis();
-        this.uri = String.valueOf(this.hashCode());
+        this.uri = errorOccurrence.getUri();
         this.expiry = System.currentTimeMillis() + timeToLive;
     }
 

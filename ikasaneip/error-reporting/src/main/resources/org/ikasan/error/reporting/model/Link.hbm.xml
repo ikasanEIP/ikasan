@@ -63,7 +63,7 @@
 
         <property name="user"
                   type="java.lang.String"
-                  column="User"
+                  column="Username"
                   not-null="true" />
                   
         <property name="timestamp"

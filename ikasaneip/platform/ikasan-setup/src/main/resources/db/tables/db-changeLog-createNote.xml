@@ -61,7 +61,7 @@
             <column name="Note" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="UserId" type="numeric(18)">
+            <column name="Username" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="Timestamp" type="numeric(18)">

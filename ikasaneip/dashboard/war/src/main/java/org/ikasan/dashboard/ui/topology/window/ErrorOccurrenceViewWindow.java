@@ -114,7 +114,7 @@ public class ErrorOccurrenceViewWindow extends Window
 		layout.setColumnExpandRatio(0, 0.25f);
 		layout.setColumnExpandRatio(1, 0.75f);
 		
-		Label errorOccurrenceDetailsLabel = new Label("Error Occurence Details");
+		Label errorOccurrenceDetailsLabel = new Label("Error Details");
 		errorOccurrenceDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		layout.addComponent(errorOccurrenceDetailsLabel);
 		

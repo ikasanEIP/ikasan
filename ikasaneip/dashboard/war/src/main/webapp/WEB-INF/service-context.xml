@@ -186,6 +186,14 @@
 	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
+    
+    <bean id="errorReportingManagementService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
+        <constructor-arg ref="errorManagementDao"/>
+    </bean>
+    
+    <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -226,6 +234,11 @@
 			   <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
 			   <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
 			   <value>org/ikasan/module/startup/StartupControl.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorOccurrenceAction.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/Link.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
+               <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

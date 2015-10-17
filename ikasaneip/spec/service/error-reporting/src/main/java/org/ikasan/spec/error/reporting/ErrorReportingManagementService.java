@@ -50,7 +50,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorReportingManagermentService<ACTIONED_EVENT, NOTE, LINK>
+public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK>
 {
     /** one year default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
@@ -115,6 +115,20 @@ public interface ErrorReportingManagermentService<ACTIONED_EVENT, NOTE, LINK>
      */
     public List<ACTIONED_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
     		Date startDate, Date endDate);
+    
+    /**
+	 * Method to return all error uris that have a link.
+	 * 
+	 * @return
+	 */
+	public List<String> getAllErrorUrisWithLink();
+	
+	/**
+	 * Method to return all error uris that have a note.
+	 * 
+	 * @return
+	 */
+	public List<String> getAllErrorUrisWithNote();
 
 
     /**

@@ -119,7 +119,7 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		layout.setColumnExpandRatio(2, .05f);
 		layout.setColumnExpandRatio(3, .30f);
 		
-		Label errorOccurrenceDetailsLabel = new Label(" Categorised Error Occurence Details", ContentMode.HTML);
+		Label errorOccurrenceDetailsLabel = new Label(" Categorised Error Details", ContentMode.HTML);
 		Label errorCategoryLabel = new Label();
 		
 		if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.BLOCKER))

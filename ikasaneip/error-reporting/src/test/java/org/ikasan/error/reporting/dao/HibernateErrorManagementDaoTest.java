@@ -176,6 +176,10 @@ public class HibernateErrorManagementDaoTest
     	notes = this.errorManagementDao.getNotesByErrorUri("uri");
     	
     	Assert.assertTrue(notes.size() == 2);
+    	
+    	List<String> uris = this.errorManagementDao.getAllErrorUrisWithNote();
+    	
+    	Assert.assertTrue(uris.size() == 2);
     }
     
     /**
