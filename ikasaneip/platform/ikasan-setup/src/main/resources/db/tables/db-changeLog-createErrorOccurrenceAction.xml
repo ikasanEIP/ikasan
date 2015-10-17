@@ -55,9 +55,6 @@
 
         <createTable tableName="ErrorOccurrenceAction">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints primaryKey="true" primaryKeyName="ErrorOccurenceActionPK"/>
-            </column>
             <column name="ErrorUri" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>

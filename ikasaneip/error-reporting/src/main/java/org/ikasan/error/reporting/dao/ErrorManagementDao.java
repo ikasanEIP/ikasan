@@ -128,6 +128,18 @@ public interface ErrorManagementDao
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public List<String> getAllErrorUrisWithLink();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<String> getAllErrorUrisWithNote();
+	
+	/**
+	 * 
 	 * @param moduleName
 	 * @param flowName
 	 * @param flowElementname

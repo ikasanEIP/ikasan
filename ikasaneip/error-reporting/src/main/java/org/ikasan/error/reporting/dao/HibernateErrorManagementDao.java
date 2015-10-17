@@ -287,4 +287,44 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getAllErrorUrisWithLink()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getAllErrorUrisWithLink()
+	{
+		return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+   
+                Query query = session.createQuery("select ecn.id.errorUri from ErrorOccurrenceLink ecn");
+                
+                return (List<String>)query.list();
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getAllErrorUrisWithNote()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getAllErrorUrisWithNote()
+	{
+		return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+   
+                Query query = session.createQuery("select ecn.id.errorUri from ErrorOccurrenceNote ecn");
+
+                return (List<String>)query.list();
+            }
+        });
+	}
+
 }

@@ -50,14 +50,14 @@ import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Link;
 import org.ikasan.error.reporting.model.Note;
-import org.ikasan.spec.error.reporting.ErrorReportingManagermentService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagermentService<ErrorOccurrenceAction, Note, Link>
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrenceAction, Note, Link>
 {
 	public static final String CLOSE = "close";
 
@@ -104,14 +104,14 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 			{
 				ErrorOccurrenceLink errorOccurrenceLink = new ErrorOccurrenceLink(uri, link.getId());
 				
-				this.errorManagementDao.saveLink(link);
+				this.errorManagementDao.saveErrorOccurrenceLink(errorOccurrenceLink);
 			}
 			
 			if(note != null)
 			{
 				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note.getId());
 				
-				this.errorManagementDao.saveNote(note);
+				this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
 			}
 		}
 	}
@@ -141,26 +141,28 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 		}
 		
 
-		for(ErrorOccurrence errorOccurence: errorOccurrences)
+		for(ErrorOccurrence errorOccurrence: errorOccurrences)
 		{
 			ErrorOccurrenceAction errorOccurrenceAction = new ErrorOccurrenceAction
-					(errorOccurence, CLOSE, user, DEFAULT_TIME_TO_LIVE);
+					(errorOccurrence, CLOSE, user, DEFAULT_TIME_TO_LIVE);
 			
 			this.errorManagementDao.saveErrorOccurrenceAction(errorOccurrenceAction);
 			
 			if(link != null)
 			{
-				ErrorOccurrenceLink errorOccurrenceLink = new ErrorOccurrenceLink(errorOccurence.getUri(), link.getId());
+				ErrorOccurrenceLink errorOccurrenceLink = new ErrorOccurrenceLink(errorOccurrence.getUri(), link.getId());
 				
-				this.errorManagementDao.saveLink(link);
+				this.errorManagementDao.saveErrorOccurrenceLink(errorOccurrenceLink);
 			}
 			
 			if(note != null)
 			{
-				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(errorOccurence.getUri(), note.getId());
+				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(errorOccurrence.getUri(), note.getId());
 
-				this.errorManagementDao.saveNote(note);
+				this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
 			}
+			
+			this.errorManagementDao.deleteErrorOccurence(errorOccurrence);
 		}
 	}
 
@@ -229,6 +231,24 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	public void updateLink(Link link)
 	{
 		this.errorManagementDao.saveLink(link);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getAllErrorUrisWithLink()
+	 */
+	@Override
+	public List<String> getAllErrorUrisWithLink()
+	{
+		return this.errorManagementDao.getAllErrorUrisWithLink();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getAllErrorUrisWithNote()
+	 */
+	@Override
+	public List<String> getAllErrorUrisWithNote()
+	{
+		return this.errorManagementDao.getAllErrorUrisWithNote();
 	}
 
 }

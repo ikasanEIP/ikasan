@@ -52,7 +52,7 @@
 
     <class name="org.ikasan.error.reporting.model.ErrorOccurrenceAction" table="ErrorOccurrenceAction">
 
-        <id name="uri" type="java.lang.String" column="Uri">
+        <id name="uri" type="java.lang.String" column="ErrorUri">
             <generator class="assigned" />
         </id>
 
