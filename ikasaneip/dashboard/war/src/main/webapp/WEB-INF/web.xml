@@ -88,7 +88,7 @@
 	      <param-value>true</param-value>
 	    </init-param> 
 	    <init-param>
-	      <param-name>legacyPropertyToStringMode</param-name>
+	      <param-name>legacyPropertyToString</param-name>
 	      <param-value>true</param-value>
 	    </init-param>
 	    <!-- init-param>
