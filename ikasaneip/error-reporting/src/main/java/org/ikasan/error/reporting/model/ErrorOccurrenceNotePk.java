@@ -51,6 +51,10 @@ public class ErrorOccurrenceNotePk implements Serializable
 {
 	private static final long serialVersionUID = -1724759502309436272L;
 	
+	private String errorUri;
+	private Long noteId;
+	
+	
 	/**
 	 * @param errorUri
 	 * @param noteId
@@ -62,8 +66,9 @@ public class ErrorOccurrenceNotePk implements Serializable
 		this.noteId = noteId;
 	}
 	
-	private String errorUri;
-	private Long noteId;
+	private ErrorOccurrenceNotePk()
+	{
+	}
 	
 	/**
 	 * @return the errorUri

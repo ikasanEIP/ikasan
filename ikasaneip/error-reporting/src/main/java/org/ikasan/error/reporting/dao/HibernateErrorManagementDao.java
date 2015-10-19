@@ -327,4 +327,27 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
         });
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getErrorOccurrenceNotesByErrorUri(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(
+			final String errorUri)
+	{
+		return (List<ErrorOccurrenceNote>)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+   
+                Query query = session.createQuery(ErrorManagementDaoConstants.GET_ERROR_OCCURRENCE_NOTE_BY_ERROR_URI);
+                
+                query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
+
+                return (List<ErrorOccurrenceNote>)query.list();
+            }
+        });
+	}
+
 }

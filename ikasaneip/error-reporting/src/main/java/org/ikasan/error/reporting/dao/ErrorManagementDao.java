@@ -112,6 +112,14 @@ public interface ErrorManagementDao
 	 */
 	public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris);
 	
+	
+	/**
+	 * 
+	 * @param errorUri
+	 * @return
+	 */
+	public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(String errorUri);
+	
 	/**
 	 * 
 	 * @param errorUri

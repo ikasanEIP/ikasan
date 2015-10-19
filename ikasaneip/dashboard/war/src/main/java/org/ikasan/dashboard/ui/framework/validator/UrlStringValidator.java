@@ -38,82 +38,52 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.model;
+package org.ikasan.dashboard.ui.framework.validator;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
+import com.vaadin.data.validator.AbstractValidator;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceNote 
+public class UrlStringValidator extends AbstractValidator<String>
 {
-	private static final long serialVersionUID = -1724759502309436272L;
-	
-	private ErrorOccurrenceNotePk id;
-	private Link link;
-	private Note note;
 
 	/**
-	 * @param errorUri
-	 * @param linkId
+     * @param errorMessage
+     */
+    public UrlStringValidator(String errorMessage)
+    {
+        super(errorMessage);
+    }
+    
+	/* (non-Javadoc)
+	 * @see com.vaadin.data.validator.AbstractValidator#isValidValue(java.lang.Object)
 	 */
-	public ErrorOccurrenceNote(String errorUri, Long noteId)
+	@Override
+	protected boolean isValidValue(String value)
 	{
-		super();
+		String[] schemes = {"http","https"};
+		UrlValidator urlValidator = new UrlValidator(schemes);
 		
-		this.id = new ErrorOccurrenceNotePk(errorUri, noteId);
-	}
-	
-	private ErrorOccurrenceNote(){}
-	
-	/**
-	 * @return the id
-	 */
-	public ErrorOccurrenceNotePk getId()
-	{
-		return id;
+		if(value == null || value.length() == 0)
+		{
+			return true;
+		}
+		
+		return urlValidator.isValid(value);
 	}
 
-	/**
-	 * @param id the id to set
+	/* (non-Javadoc)
+	 * @see com.vaadin.data.validator.AbstractValidator#getType()
 	 */
-	public void setId(ErrorOccurrenceNotePk id)
+	@Override
+	public Class<String> getType()
 	{
-		this.id = id;
+		return String.class;
 	}
 
-	/**
-	 * @return the errorOccurrenceLink
-	 */
-	public Link getLink()
-	{
-		return link;
-	}
-
-	/**
-	 * @param errorOccurrenceLink the errorOccurrenceLink to set
-	 */
-	public void setLink(Link link)
-	{
-		this.link = link;
-	}
-
-	/**
-	 * @return the note
-	 */
-	public Note getNote()
-	{
-		return note;
-	}
-
-	/**
-	 * @param note the note to set
-	 */
-	public void setNote(Note note)
-	{
-		this.note = note;
-	}
-	
-	
 }

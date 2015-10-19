@@ -54,5 +54,13 @@
 	    <key-property name="errorUri" column="ErrorUri"/>
 	    <key-property name="noteId" column="NoteId"/>
 	</composite-id>
+	
+	<many-to-one name="link" class="org.ikasan.error.reporting.model.Link"
+            column="LinkId" not-null="false" cascade="all" lazy="false"/>
+            
+    <many-to-one name="note" class="org.ikasan.error.reporting.model.Note"
+            column="NoteId" not-null="false" cascade="all" lazy="false"
+            insert="false" update="false"/>
+
   </class>
 </hibernate-mapping>

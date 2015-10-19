@@ -50,7 +50,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK>
+public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERROR_OCCURRENCE_NOTE>
 {
     /** one year default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
@@ -143,5 +143,26 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK>
      * Housekeep expired exclusionEvents.
      */
     public void housekeep();
+    
+    /**
+	 * 
+	 * @param errorUri
+	 * @return
+	 */
+	public List<NOTE> getNotesByErrorUri(String errorUri);
+	
+	/**
+	 * 
+	 * @param errorUri
+	 * @return
+	 */
+	public List<LINK> getLinksByErrorUri(String errorUri);
+	
+	/**
+	 * 
+	 * @param errorUri
+	 * @return
+	 */
+	public List<ERROR_OCCURRENCE_NOTE> getErrorOccurrenceNotesByErrorUri(String errorUri);
 
 }

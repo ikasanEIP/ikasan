@@ -52,13 +52,6 @@ public class Link
 	private String user;
 	private long timestamp;
 	
-	/**
-     * Constructor
-     */
-    private Link()
-    {
-        // required by the ORM
-    }
 	
 	/**
 	 * @param id
@@ -72,6 +65,14 @@ public class Link
 		this.user = user;
 		this.timestamp = System.currentTimeMillis();
 	}
+	
+	/**
+     * Constructor
+     */
+    public Link()
+    {
+        // required by the ORM
+    }
 
 	/**
 	 * @return the id
