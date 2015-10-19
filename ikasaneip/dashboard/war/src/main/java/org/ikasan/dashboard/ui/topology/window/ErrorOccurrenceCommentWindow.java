@@ -48,6 +48,7 @@ import java.util.Date;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
+import org.ikasan.dashboard.ui.framework.validator.UrlStringValidator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -79,9 +80,9 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ErrorOccurrenceCommentWindow extends Window
 {
-	/**
-	 * 
-	 */
+	public static final String COMMENT = "comment";
+	public static final String CANCEL = "cancel";
+	
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private Collection<ErrorOccurrence> errorOccurrences;
@@ -89,6 +90,8 @@ public class ErrorOccurrenceCommentWindow extends Window
 	private Table errorOccurenceTable;
 	
 	private ErrorReportingManagementService errorReportingManagementService;
+	
+	private String action = CANCEL;
 	
 
 	/**
@@ -204,6 +207,8 @@ public class ErrorOccurrenceCommentWindow extends Window
 		tf2.setReadOnly(false);
 		tf2.setWidth("80%");
 		layout.addComponent(tf2, 1, 3);
+		tf2.addValidator(new UrlStringValidator("Link must be a valid URL!"));
+		tf2.setValidationVisible(false);
 		
 		final Button closeButton = new Button("Comment");
 		closeButton.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -217,10 +222,12 @@ public class ErrorOccurrenceCommentWindow extends Window
             	try
             	{
             		tf1.validate();
+            		tf2.validate();
             	}
             	catch (InvalidValueException e)
             	{
             		tf1.setValidationVisible(true);
+            		tf2.setValidationVisible(true);
             		return;
             	}
             	
@@ -237,6 +244,7 @@ public class ErrorOccurrenceCommentWindow extends Window
             	}
             	
             	errorReportingManagementService.update(uris, tf1.getValue(), tf2.getValue(), authentication.getName());
+            	action = COMMENT;
             	close();
             }
         });
@@ -250,6 +258,7 @@ public class ErrorOccurrenceCommentWindow extends Window
         {
             public void buttonClick(ClickEvent event) 
             {	
+            	action = CANCEL;
             	close();
             }
         });
@@ -280,5 +289,14 @@ public class ErrorOccurrenceCommentWindow extends Window
 
 		errorOccurrenceDetailsPanel.setContent(layout);
 		return errorOccurrenceDetailsPanel;
+	}
+
+
+	/**
+	 * @return the action
+	 */
+	public String getAction()
+	{
+		return action;
 	}
 }

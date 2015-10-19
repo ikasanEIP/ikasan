@@ -49,6 +49,11 @@ import java.io.Serializable;
  */
 public class ErrorOccurrenceLinkPk implements Serializable
 {
+	private static final long serialVersionUID = -1724759502309436272L;
+
+	private String errorUri;
+	private Long linkId;
+	
 	/**
 	 * @param errorUri
 	 * @param linkId
@@ -59,11 +64,10 @@ public class ErrorOccurrenceLinkPk implements Serializable
 		this.errorUri = errorUri;
 		this.linkId = linkId;
 	}
-
-	private static final long serialVersionUID = -1724759502309436272L;
-
-	String errorUri;
-	Long linkId;
+	
+	private ErrorOccurrenceLinkPk()
+	{
+	}
 	
 	/**
 	 * @return the errorUri

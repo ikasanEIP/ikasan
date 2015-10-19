@@ -136,16 +136,21 @@ public class HibernateErrorManagementDaoTest
     public void test_save_find_and_delete_note()
     {
     	Note note = new Note("some notes", "user");
+    	Link link = new Link("www.somelink.com", "user");
     	
     	this.errorManagementDao.saveNote(note);
     	
     	ErrorOccurrenceNote eoNote = new ErrorOccurrenceNote("uri", note.getId());
+    	eoNote.setLink(link);
 
     	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
     	
-    	List<Note> notes = this.errorManagementDao.getNotesByErrorUri("uri");
+    	List<ErrorOccurrenceNote> eonotes = this.errorManagementDao.getErrorOccurrenceNotesByErrorUri("uri");
     	
-    	Assert.assertTrue(notes.size() == 1);
+    	Assert.assertTrue(eonotes.size() == 1);
+    	
+    	Assert.assertTrue(eonotes.get(0).getLink().getLink().equals("www.somelink.com"));
+    	Assert.assertTrue(eonotes.get(0).getNote().getNote().equals("some notes"));
     	
     	note = new Note("some notes", "user");
     	
@@ -155,7 +160,7 @@ public class HibernateErrorManagementDaoTest
 
     	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
     	
-    	notes = this.errorManagementDao.getNotesByErrorUri("uri");
+    	List<Note> notes = this.errorManagementDao.getNotesByErrorUri("uri");
     	
     	Assert.assertTrue(notes.size() == 2);
     	

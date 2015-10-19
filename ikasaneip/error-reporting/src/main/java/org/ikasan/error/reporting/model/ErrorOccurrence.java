@@ -314,7 +314,8 @@ public class ErrorOccurrence<EVENT>
 	}
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) 
+    {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -326,13 +327,14 @@ public class ErrorOccurrence<EVENT>
         if (!flowElementName.equals(that.flowElementName)) return false;
         if (!flowName.equals(that.flowName)) return false;
         if (!moduleName.equals(that.moduleName)) return false;
-        if (!exceptionClass.equals(that.exceptionClass)) return false;
+        if (!uri.equals(that.uri)) return false;
 
         return true;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() 
+    {
         int result = moduleName.hashCode();
         result = 31 * result + flowName.hashCode();
         result = 31 * result + flowElementName.hashCode();
@@ -343,7 +345,8 @@ public class ErrorOccurrence<EVENT>
     }
 
     @Override
-    public String toString() {
+    public String toString() 
+    {
         return "ErrorOccurrence{" +
                 "uri='" + uri + '\'' +
                 ", moduleName='" + moduleName + '\'' +

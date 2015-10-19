@@ -53,14 +53,6 @@ public class Note
 	private long timestamp;
 	
 	/**
-     * Constructor
-     */
-    private Note()
-    {
-        // required by the ORM
-    }
-	
-	/**
 	 * @param id
 	 * @param note
 	 * @param userId
@@ -73,6 +65,14 @@ public class Note
 		this.timestamp = System.currentTimeMillis();
 	}
 
+	/**
+     * Constructor
+     */
+    public Note()
+    {
+        // required by the ORM
+    }
+    
 	/**
 	 * @return the id
 	 */

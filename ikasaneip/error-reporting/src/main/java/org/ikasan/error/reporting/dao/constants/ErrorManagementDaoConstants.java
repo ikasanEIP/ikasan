@@ -54,12 +54,20 @@ public class ErrorManagementDaoConstants
 	public static final String GET_LINK_BY_ERROR_URI = "select l from ErrorOccurrenceLink ecl," +
             " Link l " +
             " where  ecl.id.linkId = l.id" +
-            " and ecl.id.errorUri = :" + ERROR_URI;
+            " and ecl.id.errorUri = :" + ERROR_URI +
+            " order by l.timestamp desc";;
 	
 	public static final String GET_NOTE_BY_ERROR_URI = "select n from ErrorOccurrenceNote ecn," +
             " Note n " +
             " where  ecn.id.noteId = n.id" +
-            " and ecn.id.errorUri = :" + ERROR_URI;
+            " and ecn.id.errorUri = :" + ERROR_URI +
+            " order by n.timestamp desc";
+	
+	public static final String GET_ERROR_OCCURRENCE_NOTE_BY_ERROR_URI = "select ecn from ErrorOccurrenceNote ecn," +
+            " Note n " +
+            " where  ecn.id.noteId = n.id" +
+            " and ecn.id.errorUri = :" + ERROR_URI +
+            " order by n.timestamp desc";
 	
 	public static final String DELETE_LINK = "delete from ErrorOccurrenceLink where linkId = :" + LINK_ID; 
 	

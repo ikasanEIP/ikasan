@@ -196,7 +196,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
+		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
 		    	
 		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    }
@@ -667,14 +667,17 @@ public class ErrorOccurrenceTab extends TopologyTab
             	}
             	else
             	{
-	            	ErrorOccurrenceCommentWindow window = new ErrorOccurrenceCommentWindow(errorReportingManagementService, 
+	            	final ErrorOccurrenceCommentWindow window = new ErrorOccurrenceCommentWindow(errorReportingManagementService, 
 	            			myItems);
 	            	
 	            	window.addCloseListener(new Window.CloseListener() 
 	            	{
 	                    public void windowClose(CloseEvent e) 
 	                    {
-	                    	refreshTable(false, myItems);
+	                    	if(window.getAction().equals(ErrorOccurrenceCommentWindow.COMMENT))
+	                    	{
+	                    		updateComments(myItems);
+	                    	}
 	                    }
 	                });
 			    	
@@ -838,4 +841,36 @@ public class ErrorOccurrenceTab extends TopologyTab
     	}
 	}
 
+	protected void updateComments(Collection<ErrorOccurrence> myItems)
+	{
+		List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
+    	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
+    	
+		for(ErrorOccurrence eo: myItems)
+		{
+			Item item = container.getItem(eo);
+		 
+		 	HorizontalLayout layout = new HorizontalLayout();
+    	    layout.setSpacing(true);
+    	    
+    	    Label label = new Label(VaadinIcons.COMMENT.getHtml(), ContentMode.HTML);			
+			label.addStyleName(ValoTheme.LABEL_TINY);
+			
+			if(noteUris.contains(eo.getUri()))
+			{
+				layout.addComponent(label);
+			}
+			
+			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
+			label.addStyleName(ValoTheme.LABEL_TINY);
+			
+			if(linkUris.contains(eo.getUri()))
+			{
+				layout.addComponent(label);
+			}
+			
+			
+			item.getItemProperty("N/L").setValue(layout);
+		}
+	}
 }

@@ -41,19 +41,24 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
@@ -75,15 +80,18 @@ public class ErrorOccurrenceViewWindow extends Window
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ErrorOccurrence errorOccurrence;
+	private ErrorReportingManagementService errorReportingManagementService;
 	
 
 	/**
 	 * @param policy
 	 */
-	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence)
+	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
+			ErrorReportingManagementService errorReportingManagementService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;
+		this.errorReportingManagementService = errorReportingManagementService;
 		
 		this.init();
 	}
@@ -237,10 +245,42 @@ public class ErrorOccurrenceViewWindow extends Window
 		
 		tabsheet.addTab(h2, "Error Details");
 		tabsheet.addTab(h1, "Event Payload");
+		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
 		
 		wrapperLayout.addComponent(tabsheet, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;
+	}
+	
+	protected Layout createCommentsTabsheet()
+	{
+		List<ErrorOccurrenceNote> notes = errorReportingManagementService.getErrorOccurrenceNotesByErrorUri(this.errorOccurrence.getUri());
+		
+		GridLayout layout = new GridLayout();
+		layout.setWidth("100%");
+		
+		for(ErrorOccurrenceNote note: notes)
+		{
+			TextArea ta = new TextArea();
+			ta.setWidth("100%");
+			ta.setRows(4);
+			ta.setValue(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: " + note.getNote().getNote());
+			ta.setReadOnly(true);
+			
+			layout.addComponent(ta);
+			
+			if(note.getLink() != null)
+			{
+				// Textual link
+				com.vaadin.ui.Link httpLink = new com.vaadin.ui.Link(note.getLink().getLink(), new ExternalResource(note.getLink().getLink()));
+				httpLink.setTargetName("_blank");
+			
+				layout.addComponent(httpLink);
+			}
+		}
+		
+		
+		return layout;
 	}
 }
