@@ -68,6 +68,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
+import org.ikasan.dashboard.ui.topology.component.ActionedErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
 import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
@@ -375,6 +376,20 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			tab3.addComponent(errorOccurrenceTab.createCategorisedErrorLayout());
 			
     		tabsheet.addTab(tab3, "Errors");
+    	}
+    	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ERRORS_AUTHORITY)))
+    	{
+    		VerticalLayout tab3 = new VerticalLayout();
+    		tab3.setSizeFull();
+    		
+    		ActionedErrorOccurrenceTab actionedErrorOccurrenceTab = new ActionedErrorOccurrenceTab
+					(this.errorReportingService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
+			tab3.addComponent(actionedErrorOccurrenceTab.createCategorisedErrorLayout());
+			
+    		tabsheet.addTab(tab3, "Actioned Errors");
     	}
     	
     	if(authentication != null 

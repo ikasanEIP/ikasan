@@ -80,9 +80,9 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ErrorOccurrenceCloseWindow extends Window
 {
-	/**
-	 * 
-	 */
+	public static final String CLOSE = "close";
+	public static final String CANCEL = "cancel";
+	
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private Collection<ErrorOccurrence> errorOccurrences;
@@ -90,6 +90,8 @@ public class ErrorOccurrenceCloseWindow extends Window
 	private Table errorOccurenceTable;
 	
 	private ErrorReportingManagementService errorReportingManagementService;
+	
+	private String action;
 	
 
 	/**
@@ -242,6 +244,7 @@ public class ErrorOccurrenceCloseWindow extends Window
             	}
             	
             	errorReportingManagementService.close(uris, tf1.getValue(), tf2.getValue(), authentication.getName());
+            	action = CLOSE;
             	close();
             }
         });
@@ -255,6 +258,7 @@ public class ErrorOccurrenceCloseWindow extends Window
         {
             public void buttonClick(ClickEvent event) 
             {	
+            	action = CANCEL;
             	close();
             }
         });
@@ -285,5 +289,14 @@ public class ErrorOccurrenceCloseWindow extends Window
 
 		errorOccurrenceDetailsPanel.setContent(layout);
 		return errorOccurrenceDetailsPanel;
+	}
+
+
+	/**
+	 * @return the action
+	 */
+	public String getAction()
+	{
+		return action;
 	}
 }

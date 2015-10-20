@@ -52,10 +52,9 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
+import org.ikasan.dashboard.ui.topology.window.ActionedErrorOccurrenceViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -76,7 +75,6 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -98,8 +96,6 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -107,9 +103,9 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceTab extends TopologyTab
+public class ActionedErrorOccurrenceTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ErrorOccurrenceTab.class);
+	private Logger logger = Logger.getLogger(ActionedErrorOccurrenceTab.class);
 	
 	private FilterTable errorOccurenceTable;
 	
@@ -130,11 +126,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 	private ErrorReportingService errorReportingService;
 	private ErrorReportingManagementService errorReportingManagementService;
 	
-	private Label resultsLabel = new Label();
-	
-	HorizontalLayout h2 = new HorizontalLayout();
-	
-	public ErrorOccurrenceTab(ErrorReportingService errorReportingService,
+	public ActionedErrorOccurrenceTab(ErrorReportingService errorReportingService,
 			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService)
 	{
 		this.errorReportingService = errorReportingService;
@@ -190,7 +182,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 		this.errorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
 		this.errorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
 		this.errorOccurenceTable.setColumnExpandRatio("N/L", .05f);
-		this.errorOccurenceTable.setColumnExpandRatio("", .05f);
 		
 		this.errorOccurenceTable.addStyleName("wordwrap-table");
 		
@@ -199,8 +190,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
+		    	ErrorOccurrenceAction errorOccurrence = (ErrorOccurrenceAction)itemClickEvent.getItemId();
+		    	ActionedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
+		    		= new ActionedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
 		    	
 		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    }
@@ -545,171 +537,10 @@ public class ErrorOccurrenceTab extends TopologyTab
 		GridLayout buttons = new GridLayout(3, 1);
 		buttons.setWidth("80px");
 		
-		final Button selectAllButton = new Button();
-		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
-		selectAllButton.setImmediate(true);
-		selectAllButton.setDescription("Select / deselect all records below.");
-		
-		selectAllButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
-            	
-            	Resource r = selectAllButton.getIcon();
-            	
-            	if(r.equals(VaadinIcons.CHECK_SQUARE_O))
-            	{
-            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
-            		
-            		for(ErrorOccurrence eo: items)
-                	{
-                		Item item = container.getItem(eo);
-                		
-                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-                		
-                		cb.setValue(true);
-                	}
-            	}
-            	else
-            	{
-            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
-            		
-            		for(ErrorOccurrence eo: items)
-                	{
-                		Item item = container.getItem(eo);
-                		
-                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-                		
-                		cb.setValue(false);
-                	}
-            	}
-            }
-        });
-		
-		Button closeSelectedButton = new Button();
-		closeSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		closeSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		closeSelectedButton.setIcon(VaadinIcons.CLOSE);
-		closeSelectedButton.setImmediate(true);
-		closeSelectedButton.setDescription("Close all selected errors below.");
-		
-		closeSelectedButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {	            	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
-            	
-            	final Collection<ErrorOccurrence> myItems = new ArrayList<ErrorOccurrence>(items);
-            	
-            	for(ErrorOccurrence eo: items)
-            	{
-            		Item item = container.getItem(eo);
-            		
-            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-            		
-            		if(cb.getValue() == false)
-            		{
-            			myItems.remove(eo);
-            		}
-            	}
-            	
-            	if(myItems.size() == 0)
-            	{
-            		Notification.show("You need to select some errors to close.", Type.ERROR_MESSAGE);
-            	}
-            	else
-            	{
-	            	final ErrorOccurrenceCloseWindow window = new ErrorOccurrenceCloseWindow(errorReportingManagementService, 
-	            			myItems);
-	            	
-	            	window.addCloseListener(new Window.CloseListener() 
-	            	{
-	                    public void windowClose(CloseEvent e) 
-	                    {
-	                    	if(window.getAction().equals(ErrorOccurrenceCloseWindow.CLOSE))
-	                    	{
-	                    		updateCancel((Collection<ErrorOccurrence>) myItems);
-	                    	}
-	                    }
-	                });
-			    	
-	            	UI.getCurrent().addWindow(window);
-            	}
-            }
-        });
-		
-		Button commentSelectedButton = new Button();
-		commentSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		commentSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		commentSelectedButton.setIcon(VaadinIcons.COMMENT);
-		commentSelectedButton.setImmediate(true);
-		commentSelectedButton.setDescription("Comment on selected errors below.");
-		
-		commentSelectedButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
-            	
-            	final Collection<ErrorOccurrence> myItems = new ArrayList<ErrorOccurrence>(items);
-            	
-            	for(ErrorOccurrence eo: items)
-            	{
-            		Item item = container.getItem(eo);
-            		
-            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-            		
-            		if(cb.getValue() == false)
-            		{
-            			myItems.remove(eo);
-            		}
-            	}
-            	
-            	if(myItems.size() == 0)
-            	{
-            		Notification.show("You need to select some errors to comment on!", Type.ERROR_MESSAGE);
-            	}
-            	else
-            	{
-	            	final ErrorOccurrenceCommentWindow window = new ErrorOccurrenceCommentWindow(errorReportingManagementService, 
-	            			myItems);
-	            	
-	            	window.addCloseListener(new Window.CloseListener() 
-	            	{
-	                    public void windowClose(CloseEvent e) 
-	                    {
-	                    	if(window.getAction().equals(ErrorOccurrenceCommentWindow.COMMENT))
-	                    	{
-	                    		updateComments(myItems);
-	                    	}
-	                    }
-	                });
-			    	
-	            	UI.getCurrent().addWindow(window);
-            	}
-            }
-        });
-		
-		buttons.addComponent(selectAllButton);
-		buttons.addComponent(closeSelectedButton);
-		buttons.addComponent(commentSelectedButton);
-		
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
 		hl.addComponent(buttons);
 		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
-		
-		h2.setWidth("100%");
-		h2.addComponent(this.resultsLabel);
-		h2.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
-		
-		GridLayout gl = new GridLayout(2, 1);
-		gl.setWidth("100%");
-		
-		gl.addComponent(h2);
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
@@ -717,10 +548,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
 				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
 		{	
-			gl.addComponent(hl);
+			hErrorTable.addComponent(hl);
 		}
 		
-		hErrorTable.addComponent(gl);
 		hErrorTable.addComponent(this.errorOccurenceTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
@@ -787,22 +617,18 @@ public class ErrorOccurrenceTab extends TopologyTab
     		}
     	}
     	
-		List<ErrorOccurrence> errorOccurences = errorReportingService
+		List<ErrorOccurrenceAction> errorOccurrences = errorReportingManagementService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
-    	if((errorOccurences == null || errorOccurences.size() == 0) && showError)
+    	if((errorOccurrences == null || errorOccurrences.size() == 0) && showError)
     	{
     		Notification.show("The error search returned no results!", Type.ERROR_MESSAGE);
     	}
     	
     	List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
-    	
-    	h2.removeAllComponents();
-    	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size());
-    	h2.addComponent(this.resultsLabel);
 
-    	for(ErrorOccurrence errorOccurrence: errorOccurences)
+    	for(ErrorOccurrenceAction errorOccurrence: errorOccurrences)
     	{
     		Date date = new Date(errorOccurrence.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
@@ -837,69 +663,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 			
 			
 			item.getItemProperty("N/L").setValue(layout);
-			
-			
-			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-		        	.getAttribute(DashboardSessionValueConstants.USER);
-			
-			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
-			{	
-				CheckBox cb = new CheckBox();
-			
-				if(myItems != null && myItems.contains(errorOccurrence))
-				{
-					cb.setValue(true);
-					item.getItemProperty("").setValue(cb);
-				}
-				else
-				{
-					cb.setValue(false);
-					item.getItemProperty("").setValue(cb);
-				}
-			}
     	    
     	}
 	}
 
-	protected void updateComments(Collection<ErrorOccurrence> myItems)
-	{
-		List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
-    	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
-    	
-		for(ErrorOccurrence eo: myItems)
-		{
-			Item item = container.getItem(eo);
-		 
-		 	HorizontalLayout layout = new HorizontalLayout();
-    	    layout.setSpacing(true);
-    	    
-    	    Label label = new Label(VaadinIcons.COMMENT.getHtml(), ContentMode.HTML);			
-			label.addStyleName(ValoTheme.LABEL_TINY);
-			
-			if(noteUris.contains(eo.getUri()))
-			{
-				layout.addComponent(label);
-			}
-			
-			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
-			label.addStyleName(ValoTheme.LABEL_TINY);
-			
-			if(linkUris.contains(eo.getUri()))
-			{
-				layout.addComponent(label);
-			}
-			
-			
-			item.getItemProperty("N/L").setValue(layout);
-		}
-	}
-	
-	protected void updateCancel(Collection<ErrorOccurrence> myItems)
-	{    	
-		for(ErrorOccurrence eo: myItems)
-		{
-			container.removeItem(eo);
-		}
-	}
 }

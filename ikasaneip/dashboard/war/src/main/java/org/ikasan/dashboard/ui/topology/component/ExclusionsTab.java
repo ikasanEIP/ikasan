@@ -149,14 +149,15 @@ public class ExclusionsTab extends TopologyTab
 		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
 		    			, action, hospitalManagementService, topologyService);
 		    	
-		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
-		    	{
-		            // inline close-listener
-		            public void windowClose(CloseEvent e) 
-		            {
-		            	refreshExcludedEventsTable();
-		            }
-		        });
+		    	// removing this for the moment as it is causing a performance problem
+//		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
+//		    	{
+//		            // inline close-listener
+//		            public void windowClose(CloseEvent e) 
+//		            {
+//		            	refreshExcludedEventsTable();
+//		            }
+//		        });
 		    
 		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    }

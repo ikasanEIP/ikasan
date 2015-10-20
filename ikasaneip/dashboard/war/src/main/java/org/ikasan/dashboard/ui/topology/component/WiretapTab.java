@@ -40,9 +40,16 @@
  */
 package org.ikasan.dashboard.ui.topology.component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
@@ -59,22 +66,28 @@ import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -83,7 +96,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextField;
@@ -100,7 +112,7 @@ public class WiretapTab extends TopologyTab
 {
 	private Logger logger = Logger.getLogger(WiretapTab.class);
 	
-	private Table wiretapTable;
+	private FilterTable wiretapTable;
 	
 	private WiretapDao wiretapDao;
 	
@@ -119,24 +131,45 @@ public class WiretapTab extends TopologyTab
 	private float splitPosition;
 	private Unit splitUnit;
 	
+	private Container cont = this.buildContainer();
+	
 	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo)
 	{
 		this.wiretapDao = wiretapDao;
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
+	protected Container buildContainer() 
+	{
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Module Name", String.class,  null);
+		cont.addContainerProperty("Flow Name", String.class,  null);
+		cont.addContainerProperty("Component Name", String.class,  null);
+		cont.addContainerProperty("Event Id / Payload Id", String.class,  null);
+		cont.addContainerProperty("Timestamp", String.class,  null);
+		cont.addContainerProperty("", CheckBox.class,  null);
+
+        return cont;
+    }
+	
 	public Layout createWiretapLayout()
-	{		
-		this.wiretapTable = new Table();
+	{	
+		this.wiretapTable = new FilterTable();
+		this.wiretapTable.setFilterBarVisible(true);
 		this.wiretapTable.setSizeFull();
 		this.wiretapTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.wiretapTable.addStyleName("ikasan");
 		
-		this.wiretapTable.addContainerProperty("Module Name", String.class,  null);
-		this.wiretapTable.addContainerProperty("Flow Name", String.class,  null);
-		this.wiretapTable.addContainerProperty("Component Name", String.class,  null);
-		this.wiretapTable.addContainerProperty("Event Id / Payload Id", String.class,  null);
-		this.wiretapTable.addContainerProperty("Timestamp", String.class,  null);
+		this.wiretapTable.setColumnExpandRatio("Module Name", .14f);
+		this.wiretapTable.setColumnExpandRatio("Flow Name", .18f);
+		this.wiretapTable.setColumnExpandRatio("Component Name", .2f);
+		this.wiretapTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
+		this.wiretapTable.setColumnExpandRatio("Timestamp", .1f);
+		this.wiretapTable.setColumnExpandRatio("", .05f);
+		this.wiretapTable.setContainerDataSource(cont);
+		
+		this.wiretapTable.addStyleName("wordwrap-table");
 		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		
 		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
@@ -227,8 +260,18 @@ public class WiretapTab extends TopologyTab
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
-            		wiretapTable.addItem(new Object[]{wiretapEvent.getModuleName(), wiretapEvent.getFlowName()
-            				, wiretapEvent.getComponentName(), ((WiretapFlowEvent)wiretapEvent).getEventId(), timestamp}, wiretapEvent);
+            	    Item item = cont.addItem(wiretapEvent);			            	    
+            	    
+            	    item.getItemProperty("Module Name").setValue(wiretapEvent.getModuleName());
+        			item.getItemProperty("Flow Name").setValue(wiretapEvent.getFlowName());
+        			item.getItemProperty("Component Name").setValue(wiretapEvent.getComponentName());
+        			item.getItemProperty("Event Id / Payload Id").setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
+        			item.getItemProperty("Timestamp").setValue(timestamp);
+        			
+        			CheckBox cb = new CheckBox();
+        			cb.setImmediate(true);
+        			
+        			item.getItemProperty("").setValue(cb);
             	}
             	
             	pbWindow.close();
@@ -575,8 +618,74 @@ public class WiretapTab extends TopologyTab
 		
 		vSplitPanel.setFirstComponent(filterPanel);
 		
-		CssLayout hErrorTable = new CssLayout();
-		hErrorTable.setSizeFull();
+		GridLayout hErrorTable = new GridLayout();
+		hErrorTable.setWidth("100%");
+		
+		GridLayout buttons = new GridLayout(3, 1);
+		buttons.setWidth("80px");
+		
+		final Button selectAllButton = new Button();
+		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+		selectAllButton.setImmediate(true);
+		selectAllButton.setDescription("Select / deselect all records below.");
+		
+		selectAllButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)cont.getItemIds();
+            	
+            	Resource r = selectAllButton.getIcon();
+            	
+            	if(r.equals(VaadinIcons.CHECK_SQUARE_O))
+            	{
+            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
+            		
+            		for(WiretapEvent<String> eo: items)
+                	{
+                		Item item = cont.getItem(eo);
+                		
+                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+                		
+                		cb.setValue(true);
+                	}
+            	}
+            	else
+            	{
+            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+            		
+            		for(WiretapEvent<String> eo: items)
+                	{
+                		Item item = cont.getItem(eo);
+                		
+                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+                		
+                		cb.setValue(false);
+                	}
+            	}
+            }
+        });
+		
+		Button downloadButton = new Button();
+			FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
+	        fd.extend(downloadButton);
+
+        downloadButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        downloadButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        downloadButton.setDescription("Download the payloads");
+        downloadButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setWidth("100%");
+		hl.addComponent(buttons);
+		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
+		
+		buttons.addComponent(selectAllButton);
+		buttons.addComponent(downloadButton);
+		
+		hErrorTable.addComponent(hl);
 		hErrorTable.addComponent(this.wiretapTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
@@ -592,5 +701,76 @@ public class WiretapTab extends TopologyTab
 		
 		return wrapper;
 	}
+	
+    
+    /**
+     * Helper method to get the stream associated with the export of the file.
+     * 
+     * @return the StreamResource associated with the export.
+     */
+    private StreamResource getPayloadDownloadStream() 
+    {
+		StreamResource.StreamSource source = new StreamResource.StreamSource() 
+		{
+		    public InputStream getStream() 
+		    {
+		    	ByteArrayOutputStream stream = null;
+		    	
+		        try
+		        {
+		            stream = getPayloadStream();
+		        }
+		        catch (IOException e)
+		        {
+		        	logger.error(e.getMessage(), e);
+		        }
+		        
+		        InputStream input = new ByteArrayInputStream(stream.toByteArray());
+		        return input;
+		    }
+		};
+            
+	    StreamResource resource = new StreamResource ( source,"payload.zip");
+	    return resource;
+    }
+    
+    /**
+     * Helper method to get the ByteArrayOutputStream associated with the export.
+     * 
+     * @return
+     * @throws IOException
+     */
+    private ByteArrayOutputStream getPayloadStream() throws IOException
+    {
+    	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+    	// out put file 
+        ZipOutputStream zip = new ZipOutputStream(out);
+
+        Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)cont.getItemIds();
+        
+        int i = 1;
+        for(WiretapEvent<String> wiretapEvent: items)
+        {
+        	Item item = cont.getItem(wiretapEvent);
+		    
+        	CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+        	
+        	if(cb.getValue() == true)
+        	{
+        		// name the file inside the zip  file 
+                zip.putNextEntry(new ZipEntry( wiretapEvent.getModuleName() + "_"
+                		+ wiretapEvent.getFlowName() + "_" + wiretapEvent.getComponentName()
+                		+ "_" + wiretapEvent.getIdentifier() + ".txt")); 
+                
+        		zip.write(wiretapEvent.getEvent().getBytes());
+        	}
+        	
+        	zip.closeEntry();
+        }
+        
+        zip.close();
+        
+        return out;
+    }
 
 }
