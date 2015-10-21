@@ -41,9 +41,12 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
@@ -52,14 +55,17 @@ import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -79,14 +85,18 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 	
 	private CategorisedErrorOccurrence categorisedErrorOccurrence;
 	
+	private ErrorReportingManagementService errorReportingManagementService;
+	
 
 	/**
 	 * @param policy
 	 */
-	public CategorisedErrorOccurrenceViewWindow(CategorisedErrorOccurrence errorOccurrence)
+	public CategorisedErrorOccurrenceViewWindow(CategorisedErrorOccurrence errorOccurrence,
+			ErrorReportingManagementService errorReportingManagementService)
 	{
 		super();
 		this.categorisedErrorOccurrence = errorOccurrence;
+		this.errorReportingManagementService = errorReportingManagementService;
 		
 		this.init();
 	}
@@ -311,10 +321,43 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		tabsheet.addTab(h3, "Error Message");
 		tabsheet.addTab(h2, "Error Details");
 		tabsheet.addTab(h1, "Message Data");
+		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
 		
 		wrapperLayout.addComponent(tabsheet, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;
+	}
+	
+	protected Layout createCommentsTabsheet()
+	{
+		List<ErrorOccurrenceNote> notes = errorReportingManagementService
+				.getErrorOccurrenceNotesByErrorUri(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
+		
+		GridLayout layout = new GridLayout();
+		layout.setWidth("100%");
+		
+		for(ErrorOccurrenceNote note: notes)
+		{
+			TextArea ta = new TextArea();
+			ta.setWidth("100%");
+			ta.setRows(4);
+			ta.setValue(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: " + note.getNote().getNote());
+			ta.setReadOnly(true);
+			
+			layout.addComponent(ta);
+			
+			if(note.getLink() != null)
+			{
+				// Textual link
+				com.vaadin.ui.Link httpLink = new com.vaadin.ui.Link(note.getLink().getLink(), new ExternalResource(note.getLink().getLink()));
+				httpLink.setTargetName("_blank");
+			
+				layout.addComponent(httpLink);
+			}
+		}
+		
+		
+		return layout;
 	}
 }

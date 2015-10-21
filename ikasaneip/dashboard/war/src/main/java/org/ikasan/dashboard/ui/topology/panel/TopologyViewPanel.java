@@ -436,7 +436,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			final VerticalLayout tab8 = new VerticalLayout();
 			tab8.setSizeFull();
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo);
+					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
 			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
 			tabsheet.addTab(tab8, "Categorised Errors");
     	}

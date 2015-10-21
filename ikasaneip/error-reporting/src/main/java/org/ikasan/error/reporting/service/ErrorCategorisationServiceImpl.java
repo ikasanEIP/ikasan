@@ -182,7 +182,31 @@ public class ErrorCategorisationServiceImpl implements
 			if(errorCategorisation == null)
 			{
 				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+						, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence), "");
+				
+				logger.debug("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.debug("errorCategorisation: " + errorCategorisation);
+			}
+			
+			if(errorCategorisation == null)
+			{
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
 						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
+				
+				logger.debug("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.debug("errorCategorisation: " + errorCategorisation);
+			}
+			
+			if(errorCategorisation == null)
+			{
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+						, "", this.getAction(errorOccurrence), "");
 				
 				logger.debug("Using key " + key);
 				
@@ -196,11 +220,23 @@ public class ErrorCategorisationServiceImpl implements
 				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
 						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
 				
-				logger.info("Using key " + key);
+				logger.debug("Using key " + key);
 				
 				errorCategorisation = categorisedErrorMap.get(key);
 				
-				logger.info("errorCategorisation: " + errorCategorisation);
+				logger.debug("errorCategorisation: " + errorCategorisation);
+			}
+			
+			if(errorCategorisation == null)
+			{
+				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
+						, "", this.getAction(errorOccurrence), "");
+				
+				logger.debug("Using key " + key);
+				
+				errorCategorisation = categorisedErrorMap.get(key);
+				
+				logger.debug("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
