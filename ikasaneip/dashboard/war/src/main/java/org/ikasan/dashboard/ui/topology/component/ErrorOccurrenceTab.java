@@ -132,7 +132,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 	
 	private Label resultsLabel = new Label();
 	
-	HorizontalLayout h2 = new HorizontalLayout();
+	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
 	public ErrorOccurrenceTab(ErrorReportingService errorReportingService,
 			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService)
@@ -702,14 +702,14 @@ public class ErrorOccurrenceTab extends TopologyTab
 		hl.addComponent(buttons);
 		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
 		
-		h2.setWidth("100%");
-		h2.addComponent(this.resultsLabel);
-		h2.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
+		searchResultsSizeLayout.setWidth("100%");
+		searchResultsSizeLayout.addComponent(this.resultsLabel);
+		searchResultsSizeLayout.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
 		
 		GridLayout gl = new GridLayout(2, 1);
 		gl.setWidth("100%");
 		
-		gl.addComponent(h2);
+		gl.addComponent(searchResultsSizeLayout);
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
@@ -798,9 +798,9 @@ public class ErrorOccurrenceTab extends TopologyTab
     	List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
-    	h2.removeAllComponents();
+    	searchResultsSizeLayout.removeAllComponents();
     	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size());
-    	h2.addComponent(this.resultsLabel);
+    	searchResultsSizeLayout.addComponent(this.resultsLabel);
 
     	for(ErrorOccurrence errorOccurrence: errorOccurences)
     	{

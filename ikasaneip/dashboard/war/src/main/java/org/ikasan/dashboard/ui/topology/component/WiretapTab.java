@@ -131,12 +131,18 @@ public class WiretapTab extends TopologyTab
 	private float splitPosition;
 	private Unit splitUnit;
 	
-	private Container cont = this.buildContainer();
+	private Container tableContainer;
+	
+	private Label resultsLabel = new Label();
+	
+	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
 	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo)
 	{
 		this.wiretapDao = wiretapDao;
 		this.businessStreamCombo = businessStreamCombo;
+		
+		tableContainer = this.buildContainer();
 	}
 	
 	protected Container buildContainer() 
@@ -167,7 +173,7 @@ public class WiretapTab extends TopologyTab
 		this.wiretapTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
 		this.wiretapTable.setColumnExpandRatio("Timestamp", .1f);
 		this.wiretapTable.setColumnExpandRatio("", .05f);
-		this.wiretapTable.setContainerDataSource(cont);
+		this.wiretapTable.setContainerDataSource(tableContainer);
 		
 		this.wiretapTable.addStyleName("wordwrap-table");
 		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
@@ -188,11 +194,7 @@ public class WiretapTab extends TopologyTab
     	{
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
-            {
-            	ProgressBarWindow pbWindow = new ProgressBarWindow();
-            	
-            	UI.getCurrent().addWindow(pbWindow);
-            	
+            {           	
             	wiretapTable.removeAllItems();
 
             	HashSet<String> modulesNames = null;
@@ -252,7 +254,13 @@ public class WiretapTab extends TopologyTab
             	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
             	{
             		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
+            		
+            		return;
             	}
+            	
+            	searchResultsSizeLayout.removeAllComponents();
+            	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size());
+            	searchResultsSizeLayout.addComponent(resultsLabel);
             	
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
@@ -260,7 +268,7 @@ public class WiretapTab extends TopologyTab
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
-            	    Item item = cont.addItem(wiretapEvent);			            	    
+            	    Item item = tableContainer.addItem(wiretapEvent);			            	    
             	    
             	    item.getItemProperty("Module Name").setValue(wiretapEvent.getModuleName());
         			item.getItemProperty("Flow Name").setValue(wiretapEvent.getFlowName());
@@ -273,8 +281,6 @@ public class WiretapTab extends TopologyTab
         			
         			item.getItemProperty("").setValue(cb);
             	}
-            	
-            	pbWindow.close();
             }
         });
 		
@@ -635,7 +641,7 @@ public class WiretapTab extends TopologyTab
         {
             public void buttonClick(ClickEvent event) 
             {	
-            	Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)cont.getItemIds();
+            	Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)tableContainer.getItemIds();
             	
             	Resource r = selectAllButton.getIcon();
             	
@@ -645,7 +651,7 @@ public class WiretapTab extends TopologyTab
             		
             		for(WiretapEvent<String> eo: items)
                 	{
-                		Item item = cont.getItem(eo);
+                		Item item = tableContainer.getItem(eo);
                 		
                 		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
                 		
@@ -658,7 +664,7 @@ public class WiretapTab extends TopologyTab
             		
             		for(WiretapEvent<String> eo: items)
                 	{
-                		Item item = cont.getItem(eo);
+                		Item item = tableContainer.getItem(eo);
                 		
                 		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
                 		
@@ -685,7 +691,17 @@ public class WiretapTab extends TopologyTab
 		buttons.addComponent(selectAllButton);
 		buttons.addComponent(downloadButton);
 		
-		hErrorTable.addComponent(hl);
+		GridLayout gl = new GridLayout(2, 1);
+		gl.setWidth("100%");
+		
+		searchResultsSizeLayout.setWidth("100%");
+		searchResultsSizeLayout.addComponent(this.resultsLabel);
+		searchResultsSizeLayout.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
+		
+		gl.addComponent(searchResultsSizeLayout);
+		gl.addComponent(hl);
+		
+		hErrorTable.addComponent(gl);
 		hErrorTable.addComponent(this.wiretapTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
@@ -746,21 +762,21 @@ public class WiretapTab extends TopologyTab
     	// out put file 
         ZipOutputStream zip = new ZipOutputStream(out);
 
-        Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)cont.getItemIds();
+        Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)tableContainer.getItemIds();
         
         int i = 1;
         for(WiretapEvent<String> wiretapEvent: items)
         {
-        	Item item = cont.getItem(wiretapEvent);
+        	Item item = tableContainer.getItem(wiretapEvent);
 		    
         	CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
         	
         	if(cb.getValue() == true)
         	{
         		// name the file inside the zip  file 
-                zip.putNextEntry(new ZipEntry( wiretapEvent.getModuleName() + "_"
+                zip.putNextEntry(new ZipEntry( wiretapEvent.getIdentifier() + "_" +  wiretapEvent.getModuleName() + "_"
                 		+ wiretapEvent.getFlowName() + "_" + wiretapEvent.getComponentName()
-                		+ "_" + wiretapEvent.getIdentifier() + ".txt")); 
+                		+   ".txt")); 
                 
         		zip.write(wiretapEvent.getEvent().getBytes());
         	}
