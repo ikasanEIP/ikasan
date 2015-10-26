@@ -40,9 +40,11 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.window;
 
+import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewContextFieldGroup;
+import org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationPanel;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -76,7 +78,9 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class NewMappingConfigurationContextWindow extends Window implements View
 {
-    private static final long serialVersionUID = 715001890931201998L;
+	private Logger logger = Logger.getLogger(NewMappingConfigurationContextWindow.class);
+	
+	private static final long serialVersionUID = 715001890931201998L;
 
     private MappingConfigurationService mappingConfigurationService;
     private RefreshGroup refreshGroup;
@@ -194,6 +198,8 @@ public class NewMappingConfigurationContextWindow extends Window implements View
                     close();
                 } catch (CommitException e) 
                 {
+                	logger.error("An error occurred trying to save mapping configuration context!", e); 
+                	
                     Notification.show("An error occurred saving a new context! " + e.getMessage(), Type.ERROR_MESSAGE);
                 }
             }
