@@ -126,7 +126,7 @@ public class NewConfigurationTypeFieldGroup extends FieldGroup
             systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
             		"Created new mapping configuration type: " + type.getName(), authentication.getName());
 
-            logger.info("User: " + authentication.getName() 
+            logger.debug("User: " + authentication.getName() 
                 + " added a new Mapping Configuration Type:  " 
                     + type);
         }

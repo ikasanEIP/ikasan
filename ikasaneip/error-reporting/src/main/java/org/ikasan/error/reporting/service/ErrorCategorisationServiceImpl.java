@@ -153,16 +153,14 @@ public class ErrorCategorisationServiceImpl implements
 	{
 		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate);
 		
-		// TODO Auto-generated method stub
 		Map<CategorisedErrorKey, ErrorCategorisation> categorisedErrorMap = this.getErrorCategorisationMap();
 		
 		ArrayList<CategorisedErrorOccurrence> categorisedErrorOccurrences = new ArrayList<CategorisedErrorOccurrence>();
 		
-//		logger.info("query results: " + errorOccurrences.size());
 		
 		for(ErrorOccurrence errorOccurrence: errorOccurrences)
 		{			
-			logger.info("Action: " + this.getAction(errorOccurrence));
+			logger.debug("Action: " + this.getAction(errorOccurrence));
 			
 			if(errorOccurrence.getExceptionClass() == null)
 			{
@@ -172,25 +170,25 @@ public class ErrorCategorisationServiceImpl implements
 			CategorisedErrorKey key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
 					, errorOccurrence.getFlowElementName(), this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
 			
-//			logger.info("Using key " + key);
+			logger.debug("Using key " + key);
 			
 			// Casacade down the configured error occurrences to get the most focused 
 			// error categorisation associated with the error occurrence.
 			ErrorCategorisation errorCategorisation = categorisedErrorMap.get(key);
 			
 			
-//			logger.info("errorCategorisation: " + errorCategorisation);
+			logger.debug("errorCategorisation: " + errorCategorisation);
 			
 			if(errorCategorisation == null)
 			{
 				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
 						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
 				
-//				logger.info("Using key " + key);
+				logger.debug("Using key " + key);
 				
 				errorCategorisation = categorisedErrorMap.get(key);
 				
-//				logger.info("errorCategorisation: " + errorCategorisation);
+				logger.debug("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
@@ -198,33 +196,33 @@ public class ErrorCategorisationServiceImpl implements
 				key = new CategorisedErrorKey(errorOccurrence.getModuleName(), ""
 						, "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
 				
-//				logger.info("Using key " + key);
+				logger.info("Using key " + key);
 				
 				errorCategorisation = categorisedErrorMap.get(key);
 				
-//				logger.info("errorCategorisation: " + errorCategorisation);
+				logger.info("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
 			{
 				key = new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), errorOccurrence.getExceptionClass().trim());
 				
-//				logger.info("Using key " + key);
+				logger.debug("Using key " + key);
 				
 				errorCategorisation = categorisedErrorMap.get(key);
 				
-//				logger.info("errorCategorisation: " + errorCategorisation);
+				logger.debug("errorCategorisation: " + errorCategorisation);
 			}
 			
 			if(errorCategorisation == null)
 			{				
 				key = new CategorisedErrorKey("", "" , "", this.getAction(errorOccurrence), "");
 				
-//				logger.info("Using key " + key);
+				logger.debug("Using key " + key);
 				
 				errorCategorisation = categorisedErrorMap.get(key);
 				
-//				logger.info("errorCategorisation: " + errorCategorisation);	
+				logger.debug("errorCategorisation: " + errorCategorisation);	
 			}
 			
 			if(errorCategorisation != null && (errorCategory == null || errorCategory.equals(errorCategorisation.getErrorCategory())))
@@ -233,7 +231,7 @@ public class ErrorCategorisationServiceImpl implements
 			}
 		}
 		
-//		logger.info("returning: " + categorisedErrorOccurrences.size());
+		logger.debug("returning: " + categorisedErrorOccurrences.size());
 		return categorisedErrorOccurrences;
 	}
 	
@@ -245,10 +243,10 @@ public class ErrorCategorisationServiceImpl implements
 		
 		for(ErrorCategorisationLink errorCategorisationLink: errorCategorisations)
 		{
-//			logger.info("Addin key " + new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
-//					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
-//					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim()));
-//			logger.info("Addin value " + errorCategorisationLink.getErrorCategorisation());
+			logger.debug("Adding key " + new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
+					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
+					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim()));
+			logger.debug("Adding value " + errorCategorisationLink.getErrorCategorisation());
 			
 			map.put(new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
 					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()

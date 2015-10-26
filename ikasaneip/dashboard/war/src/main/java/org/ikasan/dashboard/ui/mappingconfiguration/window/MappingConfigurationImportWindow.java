@@ -283,7 +283,7 @@ public class MappingConfigurationImportWindow extends Window
         }
 
         public void uploadSucceeded(SucceededEvent event) {
-            logger.info("File = " + new String(file.toByteArray()));
+            logger.debug("File = " + new String(file.toByteArray()));
         }
     };
 
@@ -407,7 +407,7 @@ public class MappingConfigurationImportWindow extends Window
 
                 for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
                 {
-                    logger.info("Source value: " + value);
+                    logger.debug("Source value: " + value);
                     value.setMappingConfigurationId(id);
                     value.setSourceConfigGroupId(sourceConfigurationGroupId);
                 }
@@ -451,7 +451,7 @@ public class MappingConfigurationImportWindow extends Window
 
         for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
         {
-            logger.info("Source value: " + sourceConfigurationValue.getSourceSystemValue());
+            logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
             sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
             sourceConfigurationValue.setMappingConfigurationId(this.mappingConfiguration.getId());
         }
@@ -477,7 +477,7 @@ public class MappingConfigurationImportWindow extends Window
 
         for(int i=0; i<sourceConfigurationValues.getLength(); i++)
         {
-            logger.info("Source value: " + sourceConfigurationValues.item(i).getTextContent());
+            logger.debug("Source value: " + sourceConfigurationValues.item(i).getTextContent());
             SourceConfigurationValue value = new SourceConfigurationValue();
             value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
             value.setSourceConfigGroupId(sourceConfigurationGroupId);
@@ -495,7 +495,7 @@ public class MappingConfigurationImportWindow extends Window
      */
     protected TargetConfigurationValue getTargetConfigurationValue(Node targetConfigurationValue)
     {
-        logger.info("Target value: " + targetConfigurationValue.getTextContent());
+        logger.debug("Target value: " + targetConfigurationValue.getTextContent());
         TargetConfigurationValue value = new TargetConfigurationValue();
         value.setTargetSystemValue(targetConfigurationValue.getTextContent());
         return value;

@@ -225,7 +225,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                         .getAttribute(DashboardSessionValueConstants.USER);
 
-                logger.info("User: " + authentication.getName() + " saving Target Configuration Value: " +
+                logger.debug("User: " + authentication.getName() + " saving Target Configuration Value: " +
                         value);
                 this.mappingConfigurationService.saveTargetConfigurationValue(value.getTargetConfigurationValue());
                 
@@ -292,8 +292,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         deleteButton.setDescription("Delete this record");
         deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-        deleteButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        deleteButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 IkasanMessageDialog dialog = new IkasanMessageDialog("Delete record", 
                     "This mapping configuration record will be permanently removed. " +
                     "Are you sure you wish to proceed?.", action);
@@ -334,7 +336,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(DashboardSessionValueConstants.USER);
 
-        logger.info("User: " + principal.getName() 
+        logger.debug("User: " + principal.getName() 
             + " added new mapping configuration value for Mapping Configuration " 
                 + this.mappingConfiguration);
         
@@ -477,7 +479,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(DashboardSessionValueConstants.USER);
 
-        logger.info("User: " + principal.getName()
+        logger.debug("User: " + principal.getName()
             + " deleted all records for Mapping Configuration " + this.mappingConfiguration);
         
         String message = "[Client=" + mappingConfiguration.getConfigurationServiceClient().getName()

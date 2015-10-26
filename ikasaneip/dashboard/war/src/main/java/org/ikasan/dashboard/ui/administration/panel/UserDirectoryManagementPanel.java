@@ -462,7 +462,7 @@ public class UserDirectoryManagementPanel extends Panel
             {
             	try
             	{
-            		logger.info("saving auth method: " + authenticationMethod);
+            		logger.debug("saving auth method: " + authenticationMethod);
             		authenticationMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
             		
             		if(authenticationMethod.getOrder() == null)
@@ -474,6 +474,8 @@ public class UserDirectoryManagementPanel extends Panel
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred saving an authentication method", e); 
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);

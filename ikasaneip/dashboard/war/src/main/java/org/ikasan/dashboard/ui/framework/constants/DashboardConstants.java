@@ -38,58 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.monitor.rest;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
-import org.springframework.beans.factory.annotation.Autowired;
+package org.ikasan.dashboard.ui.framework.constants;
 
 /**
- * Module application implementing the REST contract
+ * 
+ * @author Ikasan Development Team
+ *
  */
-@Path("/topologyCache")
-public class TopologyCacheApplication
+public class DashboardConstants
 {
-	private static Logger logger = Logger.getLogger(TopologyCacheApplication.class);
-    
-	@Autowired
-	private TopologyStateCache topologyStateCache;
-	
-    /**
-     * Registers the applications we implement and the Spring-Jersey glue
-     */
-    public TopologyCacheApplication()
-    {
-    }
-
-    @PUT
-	@Path("/updateCache/{moduleName}/{flowName}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCache(@PathParam("moduleName") String moduleName, 
-    		@PathParam("flowName") String flowName, String state)
-    {
-        logger.debug("Updating topology state cache: ModuleName: " 
-        		+ moduleName + ", FlowName: " + flowName + ", State: " + state);
-        
-        String key = moduleName + "-" + flowName;
-        
-        this.topologyStateCache.update(key, state);
-
-        return Response.ok("State cache successfully updated!").build();
-    }
-    
+	public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 }

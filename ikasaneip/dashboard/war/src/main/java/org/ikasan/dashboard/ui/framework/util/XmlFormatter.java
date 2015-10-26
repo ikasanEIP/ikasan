@@ -66,9 +66,11 @@ public class XmlFormatter
     /** Logger instance */
     private static Logger logger = Logger.getLogger(XmlFormatter.class);
 
-    public static String format(String unformattedXml) {
-        try {
-            logger.info("Attempting to format: " + unformattedXml);
+    public static String format(String unformattedXml) 
+    {
+        try 
+        {
+            logger.debug("Attempting to format: " + unformattedXml);
             final Document document = parseXmlFile(unformattedXml);
 
             OutputFormat format = new OutputFormat(document);
@@ -80,22 +82,30 @@ public class XmlFormatter
             serializer.serialize(document);
 
             return out.toString();
-        } catch (IOException e) {
+        } 
+        catch (IOException e) 
+        {
             throw new RuntimeException(e);
         }
     }
 
-    private static Document parseXmlFile(String in) {
-        try {
+    private static Document parseXmlFile(String in) 
+    {
+        try 
+        {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(in));
             return db.parse(is);
-        } catch (ParserConfigurationException e) {
+        } 
+        catch (ParserConfigurationException e) 
+        {
             throw new RuntimeException(e);
-        } catch (SAXException e) {
+        } catch (SAXException e)
+        {
             throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (IOException e) 
+        {
             throw new RuntimeException(e);
         }
     }

@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.window.ProgressBarWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -78,6 +79,8 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.ProgressBar;
@@ -206,19 +209,22 @@ public class WiretapTab extends TopologyTab
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
             	}
-            	
-            	String errorCategory = null;
-            	
+            	           	
          
             	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
             	// results with Vaadin.
             	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
             			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
+            	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
+            	{
+            		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
+            	}
+            	
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
             		Date date = new Date(wiretapEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(date);
             	    
             		wiretapTable.addItem(new Object[]{wiretapEvent.getModuleName(), wiretapEvent.getFlowName()
@@ -261,7 +267,7 @@ public class WiretapTab extends TopologyTab
 			public void drop(final DragAndDropEvent dropEvent)
 			{
 				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
+				logger.debug("Trying to drop: " + dropEvent);
 
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
@@ -350,9 +356,6 @@ public class WiretapTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -360,8 +363,6 @@ public class WiretapTab extends TopologyTab
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -423,9 +424,6 @@ public class WiretapTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -433,8 +431,6 @@ public class WiretapTab extends TopologyTab
 				{
 					final Component component = (Component) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -473,10 +469,12 @@ public class WiretapTab extends TopologyTab
 		this.fromDate = new PopupDateField("From date");
 		this.fromDate.setResolution(Resolution.MINUTE);
 		this.fromDate.setValue(this.getMidnightToday());
+		this.fromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.fromDate, 0, 0);
 		this.toDate = new PopupDateField("To date");
 		this.toDate.setResolution(Resolution.MINUTE);
 		this.toDate.setValue(this.getTwentyThreeFixtyNineToday());
+		this.toDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.toDate, 0, 1);
 		
 		this.eventId = new TextField("Event Id");
