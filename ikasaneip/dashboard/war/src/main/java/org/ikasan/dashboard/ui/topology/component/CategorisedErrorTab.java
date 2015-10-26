@@ -330,8 +330,7 @@ public class CategorisedErrorTab extends TopologyTab
             		
             		return;
             	}
-
-            	List<String> linkUris =  errorReportingManagementService.getAllErrorUrisWithLink();
+            	
             	List<String> noteUris =  errorReportingManagementService.getAllErrorUrisWithNote();
             	
             	searchResultsSizeLayout.removeAllComponents();
@@ -391,11 +390,6 @@ public class CategorisedErrorTab extends TopologyTab
         			
         			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
         			label.addStyleName(ValoTheme.LABEL_TINY);
-        			
-        			if(linkUris.contains(errorOccurrence.getUri()))
-        			{
-        				commentLayout.addComponent(label);
-        			}
         			
         			
         			item.getItemProperty("N/L").setValue(commentLayout);
@@ -947,7 +941,6 @@ public class CategorisedErrorTab extends TopologyTab
 
 	protected void updateComments(Collection<CategorisedErrorOccurrence> myItems)
 	{
-		List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
 		for(CategorisedErrorOccurrence eo: myItems)
@@ -967,13 +960,7 @@ public class CategorisedErrorTab extends TopologyTab
 			
 			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
 			label.addStyleName(ValoTheme.LABEL_TINY);
-			
-			if(linkUris.contains(eo.getErrorOccurrence().getUri()))
-			{
-				layout.addComponent(label);
-			}
-			
-			
+
 			item.getItemProperty("N/L").setValue(layout);
 		}
 	}

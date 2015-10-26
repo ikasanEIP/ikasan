@@ -189,6 +189,7 @@
     
     <bean id="errorReportingManagementService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
         <constructor-arg ref="errorManagementDao"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
     </bean>
     
     <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">

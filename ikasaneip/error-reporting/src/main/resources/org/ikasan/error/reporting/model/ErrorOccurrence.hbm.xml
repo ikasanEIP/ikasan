@@ -115,6 +115,22 @@
                   type="long"
                   column="Expiry"
                   not-null="true" />
+                  
+        <property name="userAction"
+                  type="java.lang.String"
+                  column="UserAction"
+                  not-null="false" />
+        
+        <property name="actionedBy"
+                  type="java.lang.String"
+                  column="ActionedBy"
+                  not-null="false" />
+        
+        <property name="userActionTimestamp"
+                  type="long"
+                  column="UserActionTimestamp"
+                  not-null="false" />
+                  
     </class>
 
 </hibernate-mapping>

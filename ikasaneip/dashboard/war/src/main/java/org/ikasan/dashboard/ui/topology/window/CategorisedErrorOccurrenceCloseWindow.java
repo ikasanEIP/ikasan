@@ -244,7 +244,7 @@ public class CategorisedErrorOccurrenceCloseWindow extends Window
             		uris.add(eo.getErrorOccurrence().getUri());
             	}
             	
-            	errorReportingManagementService.close(uris, tf1.getValue(), tf2.getValue(), authentication.getName());
+            	errorReportingManagementService.close(uris, tf1.getValue(),authentication.getName());
             	action = CLOSE;
             	close();
             }

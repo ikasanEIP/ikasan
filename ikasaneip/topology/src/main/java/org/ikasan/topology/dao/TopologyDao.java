@@ -104,7 +104,21 @@ public interface TopologyDao
 	 * 
 	 * @return
 	 */
-	public Flow getFlowsByServerIdModuleIdAndFlowname(Long serverId, Long moduleId, String flowName);
+	public Flow getFlowByServerIdModuleIdAndFlowname(Long serverId, Long moduleId, String flowName);
+	
+	/**
+	 * Get a components by server id, module id and flow name and component name not in.
+	 * 
+	 * @return
+	 */
+	public List<Component> getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(Long serverId, Long moduleId, String flowName, List<String> componentNames);
+	
+	/**
+	 * Get a orphaned flow by server id, module id and flow names.
+	 * 
+	 * @return
+	 */
+	public List<Flow> getFlowsByServerIdModuleIdAndNotInFlownames(Long serverId, Long moduleId, List<String> flowName);
 
 	
 	/**

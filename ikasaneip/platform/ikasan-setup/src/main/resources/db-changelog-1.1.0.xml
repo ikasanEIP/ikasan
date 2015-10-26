@@ -4,16 +4,22 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
     
+    <!-- 1.1.0 table alterations -->    
+	<include file="db/alter/db-changeLog-alterErrorOccurrence.xml" relativeToChangelogFile="true" />
+	
     <!-- 1.1.0 table creation -->    
-	<include file="db/tables/db-changeLog-createErrorOccurrenceAction.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createNote.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createErrorOccurrenceNote.xml" relativeToChangelogFile="true" />
-	<include file="db/tables/db-changeLog-createLink.xml" relativeToChangelogFile="true" />
-	<include file="db/tables/db-changeLog-createErrorOccurrenceLink.xml" relativeToChangelogFile="true" />
+	
+	<!-- TODO remove permanently as link is no longer required. -->
+	<!-- include file="db/tables/db-changeLog-createLink.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createErrorOccurrenceLink.xml" relativeToChangelogFile="true" / -->
 	
 	<!-- 1.1.0 cardinality creation -->
 	<include file="db/cardinality/db-changeLog-createErrorOccurrenceNoteFk.xml" relativeToChangelogFile="true" />
-	<include file="db/cardinality/db-changeLog-createErrorOccurrenceLinkFk.xml" relativeToChangelogFile="true" />
+	
+	<!-- TODO remove permanently as link is no longer required. -->
+	<!--  include file="db/cardinality/db-changeLog-createErrorOccurrenceLinkFk.xml" relativeToChangelogFile="true" / -->
 	
 	<!-- 1.1.0 data creation -->
 	<include file="db/data/db-changelog-insertSecurityRecords-1.1.0.xml" relativeToChangelogFile="true" />

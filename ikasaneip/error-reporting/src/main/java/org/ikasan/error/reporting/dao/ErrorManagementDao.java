@@ -75,17 +75,6 @@ public interface ErrorManagementDao
 	 */
 	public void deleteNote(Note note);
 	
-	/**
-	 * 
-	 * @param link
-	 */
-	public void saveLink(Link link);
-	
-	/**
-	 * 
-	 * @param link
-	 */
-	public void deleteLink(Link link);
 	
 	/**
 	 * 
@@ -127,24 +116,19 @@ public interface ErrorManagementDao
 	 */
 	public List<Note> getNotesByErrorUri(String errorUri);
 	
-	/**
-	 * 
-	 * @param errorUri
-	 * @return
-	 */
-	public List<Link> getLinksByErrorUri(String errorUri);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public List<String> getAllErrorUrisWithLink();
 	
 	/**
 	 * 
 	 * @return
 	 */
 	public List<String> getAllErrorUrisWithNote();
+	
+	/**
+	 * 
+	 * @param uris
+	 * @param user
+	 */
+	public void close(final List<String> uris, final String user);
 	
 	/**
 	 * 
@@ -155,7 +139,7 @@ public interface ErrorManagementDao
 	 * @param endDate
 	 * @return
 	 */
-    public List<ErrorOccurrenceAction> findErrorOccurrenceActions(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+    public List<ErrorOccurrence> findActionErrorOccurrences(List<String> moduleName, List<String> flowName, List<String> flowElementname,
 			Date startDate, Date endDate);
     
     /**

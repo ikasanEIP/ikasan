@@ -223,7 +223,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	 * @see org.ikasan.topology.dao.TopologyDao#getFlowsByServerIdModuleIdAndFlowname(java.lang.Long, java.lang.Long, java.lang.String)
 	 */
 	@Override
-	public Flow getFlowsByServerIdModuleIdAndFlowname(Long serverId,
+	public Flow getFlowByServerIdModuleIdAndFlowname(Long serverId,
 			Long moduleId, String flowName)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
@@ -286,6 +286,58 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	public void deleteBusinessStream(BusinessStream businessStream)
 	{
 		this.getHibernateTemplate().delete(businessStream);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getFlowsByServerIdModuleIdAndNotInFlownames(java.lang.Long, java.lang.Long, java.util.List)
+	 */
+	@Override
+	public List<Flow> getFlowsByServerIdModuleIdAndNotInFlownames(
+			Long serverId, Long moduleId, List<String> flowName)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		if(serverId != null && moduleId != null)
+		{
+			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId))
+				.createCriteria("server").add(Restrictions.eq("id", serverId));
+		}
+		else if(moduleId != null)
+		{
+			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId));
+		}
+		else if(serverId != null)
+		{
+			criteria.createCriteria("module").createCriteria("server"
+					).add(Restrictions.eq("id", serverId));
+		}
+			
+		if(flowName != null)
+		{
+			criteria.add(Restrictions.not(Restrictions.in("name", flowName)));
+		}
+
+		return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(java.lang.Long, java.lang.Long, java.lang.String)
+	 */
+	@Override
+	public List<Component> getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(
+			Long serverId, Long moduleId, String flowName, List<String> componentNames)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Component.class);
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		criteria.createCriteria("flow").add(Restrictions.eq("name", flowName))
+			.createCriteria("module").add(Restrictions.eq("id", moduleId))
+				.createCriteria("server").add(Restrictions.eq("id", serverId));
+
+		criteria.add(Restrictions.not(Restrictions.in("name", componentNames)));
+
+		return (List<Component>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
     

@@ -40,12 +40,14 @@
  */
 package org.ikasan.error.reporting.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
+import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Link;
 import org.ikasan.error.reporting.model.Note;
@@ -56,11 +58,17 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrenceAction, Note, Link, ErrorOccurrenceNote>
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote>
 {
+	private static Logger logger = Logger.getLogger(ErrorReportingManagementServiceImpl.class);
+	
 	public static final String CLOSE = "close";
 
 	private ErrorManagementDao errorManagementDao;
+	
+	private ErrorReportingServiceDao errorReportingServiceDao;
+	
+	private int batchSize = 100;
 	
 	
 	/**
@@ -68,18 +76,27 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * 
 	 * @param errorManagementDao
 	 */
-	public ErrorReportingManagementServiceImpl(
-			ErrorManagementDao errorManagementDao)
+	public ErrorReportingManagementServiceImpl(ErrorManagementDao errorManagementDao,
+			ErrorReportingServiceDao errorReportingServiceDao)
 	{
 		super();
 		this.errorManagementDao = errorManagementDao;
+		if(this.errorManagementDao == null)
+		{
+			throw new IllegalArgumentException("errorManagementDao cannot be null!");
+		}
+		this.errorReportingServiceDao = errorReportingServiceDao;
+		if(this.errorReportingServiceDao == null)
+		{
+			throw new IllegalArgumentException("errorManagementDao cannot be null!");
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#update(java.util.List, java.lang.String)
 	 */
 	@Override
-	public void update(List<String> uris, String noteString, String linkString, String user)
+	public void update(List<String> uris, String noteString, String user)
 	{
 		Note note = null;
 		
@@ -89,20 +106,11 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 			this.errorManagementDao.saveNote(note);
 		}
 		
-		Link link = null;
-		
-		if(linkString != null && linkString.length() > 0)
-		{
-			link = new Link(linkString, user);
-			this.errorManagementDao.saveLink(link);
-		}
-		
 		for(String uri: uris)
 		{			
 			if(note != null)
 			{
-				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note.getId());
-				errorOccurrenceNote.setLink(link);
+				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note);
 				
 				this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
 			}
@@ -113,10 +121,8 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#close(java.util.List, java.lang.String)
 	 */
 	@Override
-	public void close(List<String> uris, String noteString, String linkString, String user)
+	public void close(List<String> uris, String noteString, String user)
 	{
-		List<ErrorOccurrence> errorOccurrences = this.errorManagementDao.findErrorOccurrences(uris);
-		
 		Note note = null;
 		
 		if(noteString != null && noteString.length() > 0)
@@ -124,32 +130,41 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 			note = new Note(noteString, user);
 			this.errorManagementDao.saveNote(note);
 		}
+			
 		
-		Link link = null;
-		
-		if(linkString != null && linkString.length() > 0)
-		{
-			link = new Link(linkString, user);
-			this.errorManagementDao.saveLink(link);
+		for(String uri: uris)
+		{			
+			ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(uri, note);
+			
+			this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
 		}
-		
-
-		for(ErrorOccurrence errorOccurrence: errorOccurrences)
-		{
-			ErrorOccurrenceAction<ErrorOccurrence> errorOccurrenceAction = new ErrorOccurrenceAction<ErrorOccurrence>
-					(errorOccurrence, CLOSE, user, DEFAULT_TIME_TO_LIVE);
-			
-			this.errorManagementDao.saveErrorOccurrenceAction(errorOccurrenceAction);
-			
-			if(note != null)
-			{
-				ErrorOccurrenceNote errorOccurrenceNote = new ErrorOccurrenceNote(errorOccurrence.getUri(), note.getId());
-				errorOccurrenceNote.setLink(link);
 				
-				this.errorManagementDao.saveErrorOccurrenceNote(errorOccurrenceNote);
+		for(int i=0; i<uris.size();)
+		{
+			List<String> batchUris = new ArrayList<String>();
+			int endMarker = 0;
+			
+			if(i + batchSize < uris.size())
+			{
+				endMarker = i + batchSize;
+			}
+			else
+			{
+				endMarker = uris.size();
 			}
 			
-			this.errorManagementDao.deleteErrorOccurence(errorOccurrence);
+			batchUris.addAll(uris.subList(i, endMarker));
+			
+			this.errorManagementDao.close(batchUris, user);
+			
+			if(i + batchSize < uris.size())
+			{
+				i= i + batchSize;
+			}
+			else
+			{
+				i = uris.size();
+			}
 		}
 	}
 
@@ -157,11 +172,11 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ErrorOccurrenceAction> find(List<String> moduleName,
+	public List<ErrorOccurrence> find(List<String> moduleName,
 			List<String> flowName, List<String> flowElementname,
 			Date startDate, Date endDate)
 	{
-		return this.errorManagementDao.findErrorOccurrenceActions(moduleName, flowName, flowElementname, startDate, endDate);
+		return this.errorManagementDao.findActionErrorOccurrences(moduleName, flowName, flowElementname, startDate, endDate);
 	}
 
 	/* (non-Javadoc)
@@ -202,32 +217,6 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 		this.errorManagementDao.saveNote(note);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#deleteLink(java.lang.Object)
-	 */
-	@Override
-	public void deleteLink(Link link)
-	{
-		this.errorManagementDao.deleteLink(link);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#updateLink(java.lang.Object)
-	 */
-	@Override
-	public void updateLink(Link link)
-	{
-		this.errorManagementDao.saveLink(link);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getAllErrorUrisWithLink()
-	 */
-	@Override
-	public List<String> getAllErrorUrisWithLink()
-	{
-		return this.errorManagementDao.getAllErrorUrisWithLink();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getAllErrorUrisWithNote()
@@ -248,15 +237,6 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getLinksByErrorUri(java.lang.String)
-	 */
-	@Override
-	public List<Link> getLinksByErrorUri(String errorUri)
-	{
-		return this.errorManagementDao.getLinksByErrorUri(errorUri);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getErrorOccurrenceNotesByErrorUri(java.lang.String)
 	 */
 	@Override
@@ -264,6 +244,22 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 			String errorUri)
 	{
 		return this.errorManagementDao.getErrorOccurrenceNotesByErrorUri(errorUri);
+	}
+
+	/**
+	 * @return the batchSize
+	 */
+	public int getBatchSize()
+	{
+		return batchSize;
+	}
+
+	/**
+	 * @param batchSize the batchSize to set
+	 */
+	public void setBatchSize(int batchSize)
+	{
+		this.batchSize = batchSize;
 	}
 
 }

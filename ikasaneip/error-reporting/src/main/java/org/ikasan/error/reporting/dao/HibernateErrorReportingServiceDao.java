@@ -119,6 +119,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
 		
+		criteria.add(Restrictions.isNull("userAction"));
 		criteria.addOrder(Order.desc("expiry"));
 
         return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);

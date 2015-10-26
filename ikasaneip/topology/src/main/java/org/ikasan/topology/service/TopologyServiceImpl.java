@@ -19,7 +19,7 @@
  *    this list of conditions and the following disclaimer.
  *
  *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *    this list of conditions and the following disclaimer in the documentation 		
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
@@ -40,6 +40,8 @@
  */
 package org.ikasan.topology.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -226,10 +228,12 @@ public class TopologyServiceImpl implements TopologyService
     	
 		for(Server server: servers)
 		{
-			List<Module> modules = this.topologyDao.getAllModules();
+			List<Module> modules = this.topologyDao.getAllModules();			
 			
 			for(Module module: modules)
-			{
+			{	
+				List<String> discoveredFlowNames = new ArrayList<String>();
+				
 				String url = server.getUrl() + ":" + server.getPort() 
 						+ module.getContextRoot() 
 						+ "/rest/discovery/flows/"
@@ -257,12 +261,21 @@ public class TopologyServiceImpl implements TopologyService
 			    
 			    for(JsonValue flowValue: flowResponse)
 			    { 
+			    	List<String> discoveredComponentNames = new ArrayList<String>();
+			    	
 		    		Flow flow;
 		    		
 					try
 					{
 						flow = mapper.readValue(
 								 flowValue.toString(), Flow.class);
+						
+						discoveredFlowNames.add(flow.getName());
+						
+						for(Component component: flow.getComponents())
+						{
+							discoveredComponentNames.add(component.getName());
+						}
 					} 
 					catch (Exception e)
 					{
@@ -271,7 +284,7 @@ public class TopologyServiceImpl implements TopologyService
 					
 					Set<Component> components = flow.getComponents();
 					
-					Flow dbFlow = this.topologyDao.getFlowsByServerIdModuleIdAndFlowname
+					Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
 						(server.getId(), module.getId(), flow.getName());
 					
 					if(dbFlow != null)
@@ -291,9 +304,140 @@ public class TopologyServiceImpl implements TopologyService
 						logger.debug("Saving component: " + component.getName());
 
 						this.topologyDao.save(component);
-					}								    	
+					}	
+					
+//					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
 			    }
+			    
+//			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
 			}
+		}
+		
+		this.cleanup(authentication);
+	}
+	
+
+	protected void cleanup(IkasanAuthentication authentication) throws DiscoveryException
+	{
+		List<Server> servers =  this.topologyDao.getAllServers();
+		
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+    	
+    	ObjectMapper mapper = new ObjectMapper();
+    	
+		for(Server server: servers)
+		{
+			List<Module> modules = this.topologyDao.getAllModules();			
+			
+			for(Module module: modules)
+			{	
+				List<String> discoveredFlowNames = new ArrayList<String>();
+				
+				String url = server.getUrl() + ":" + server.getPort() 
+						+ module.getContextRoot() 
+						+ "/rest/discovery/flows/"
+						+ module.getName();
+				
+			    WebTarget webTarget = client.target(url);
+			    
+			    JsonArray flowResponse = null;
+			    
+			    try
+			    {
+			    	flowResponse = webTarget.request().get(JsonArray.class);
+			    }
+			    catch(Exception e)
+			    {
+			    	// We may not find the module on the server so just move on to the next module.
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
+			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
+			    	continue;
+			    }
+			    
+			    module.setServer(server);
+			    
+			    this.topologyDao.save(module);
+			    
+			    for(JsonValue flowValue: flowResponse)
+			    { 
+			    	List<String> discoveredComponentNames = new ArrayList<String>();
+			    	
+		    		Flow flow;
+		    		
+					try
+					{
+						flow = mapper.readValue(
+								 flowValue.toString(), Flow.class);
+						
+						discoveredFlowNames.add(flow.getName());
+						
+						for(Component component: flow.getComponents())
+						{
+							discoveredComponentNames.add(component.getName());
+						}
+					} 
+					catch (Exception e)
+					{
+						throw new DiscoveryException(e);
+					}
+					
+					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
+			    }
+			    
+			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
+			}
+		}
+	}
+	
+	protected void cleanUpFlows(Module module, Long serverId, Long moduleId, List<String> discoveredFlowNames)
+	{
+		List<Flow> dbFlows = this.topologyDao.getFlowsByServerIdAndModuleId(serverId, moduleId);
+				
+		for(Flow flow: dbFlows)
+		{
+			if(!discoveredFlowNames.contains(flow.getName()))
+			{
+				Set<Component> copyComponents =  new HashSet<Component>();
+		
+				for(Component component: flow.getComponents())
+				{
+					copyComponents.add(component);
+				}
+				
+				for(Component component: copyComponents)
+				{	
+					flow.getComponents().remove(component);
+			
+					this.topologyDao.delete(component);
+				}
+				
+				module.getFlows().remove(flow);
+				
+				this.topologyDao.delete(flow);
+			}
+		}
+	}
+	
+	protected void cleanUpComponents(Long serverId, Long moduleId, String flowName, List<String> discoveredComponentNames)
+	{
+		List<Component> components = this.topologyDao.getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn
+				(serverId, moduleId, flowName, discoveredComponentNames);
+				
+		Set<Component> copyComponents =  new HashSet<Component>();
+		
+		for(Component component: components)
+		{
+			copyComponents.add(component);
+		}
+		
+		for(Component component: copyComponents)
+		{
+			this.topologyDao.delete(component);
 		}
 	}
 	

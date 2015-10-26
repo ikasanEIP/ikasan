@@ -47,57 +47,31 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="createErrorOccurrenceAction" context="postBaseline">
+    <changeSet author="ikasan dev" id="alterErrorOccurrence" context="postBaseline">
     
     	<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="ErrorOccurrenceAction" /></not>
+			<not><columnExists tableName="ErrorOccurrence" columnName="UserAction"/></not>
+			<not><columnExists tableName="ErrorOccurrence" columnName="ActionedBy"/></not>
+			<not><columnExists tableName="ErrorOccurrence" columnName="UserActionTimestamp"/></not>
 		</preConditions>
-
-        <createTable tableName="ErrorOccurrenceAction">
-        
-            <column name="ErrorUri" type="VARCHAR(255)">
+		
+		<addColumn tableName="ErrorOccurrence">
+	        <column name="UserAction" type="VARCHAR(32)">
+                <constraints nullable="true"/>
+            </column>
+	    </addColumn>
+	    
+	    <addColumn tableName="ErrorOccurrence">
+	        <column name="ActionedBy" type="VARCHAR(32)">
+                <constraints nullable="true"/>
+            </column>
+	    </addColumn>
+	    
+	    <addColumn tableName="ErrorOccurrence">
+	        <column name="UserActionTimestamp" type="numeric(18)" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="ModuleName" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FlowName" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FlowElementName" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ErrorDetail" type="TEXT"/>
-            <column name="EventLifeIdentifier" type="VARCHAR(255)"/>
-            <column name="EventRelatedIdentifier" type="VARCHAR(255)"/>
-            <column name="Action" type="VARCHAR(255)"/>
-            <column name="Event" type="IMAGE"/>
-            <column name="Expiry" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ErrorMessage" type="TEXT"/>
-            <column name="ExceptionClass" type="VARCHAR(512)"/>
-            <column name="UserAction" type="VARCHAR(32)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ActionedBy" type="VARCHAR(32)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="Timestamp" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="UserActionTimestamp" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-            
-        </createTable>
-        
-        <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ErrorOccurrenceAction', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="ErrorOccurenceAction_ErrorUri" tableName="ErrorOccurrenceAction">
-            <column name="ErrorUri"/>
-        </createIndex>
+	    </addColumn>
 
     </changeSet>
 

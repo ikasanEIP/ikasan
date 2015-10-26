@@ -108,10 +108,19 @@ public class ErrorOccurrenceAction<EVENT>
      */
     private long expiry;
     
+    /**
+     * Action performed by the user
+     */
     private String userAction;
     
+    /**
+     * Who performed the action
+     */
     private String actionedBy;
     
+    /**
+     * When the action was performed
+     */
     private long userActionTimestamp;
 
     /**

@@ -43,6 +43,7 @@ package org.ikasan.error.reporting.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -56,6 +57,7 @@ import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Link;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -66,6 +68,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateErrorManagementDao  extends HibernateDaoSupport implements ErrorManagementDao
 {
+	private static Logger logger = Logger.getLogger(HibernateErrorManagementDao.class);
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.model.ErrorOccurrenceAction)
@@ -110,42 +113,6 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
         });
 		
 		this.getHibernateTemplate().delete(note);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveLink(org.ikasan.error.reporting.model.Link)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void saveLink(Link link)
-	{        
-		this.getHibernateTemplate().saveOrUpdate(link);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteLink(org.ikasan.error.reporting.model.Link)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void deleteLink(final Link link)
-	{
-		this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-   
-                Query query = session.createQuery(ErrorManagementDaoConstants.DELETE_LINK);
-                
-                query.setParameter(ErrorManagementDaoConstants.LINK_ID, link.getId());
-
-                query.executeUpdate();
-                
-                return null;
-            }
-        });
-		
-		this.getHibernateTemplate().delete(link);
 	}
 
 	/* (non-Javadoc)
@@ -216,36 +183,14 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getLinksByErrorUri(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Link> getLinksByErrorUri(final String errorUri)
-	{
-		return (List<Link>)this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-   
-                Query query = session.createQuery(ErrorManagementDaoConstants.GET_LINK_BY_ERROR_URI);
-                
-                query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
-
-                return (List<Link>)query.list();
-            }
-        });
-	}
-
-	/* (non-Javadoc)
 	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrenceActions(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ErrorOccurrenceAction> findErrorOccurrenceActions(
+	public List<ErrorOccurrence> findActionErrorOccurrences(
 			List<String> moduleName, List<String> flowName,
 			List<String> flowElementname, Date startDate, Date endDate)
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrenceAction.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
 		
 		if(moduleName != null && moduleName.size() > 0)
 		{
@@ -264,17 +209,18 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 		
 		if(startDate != null)
 		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+			criteria.add(Restrictions.gt("userActionTimestamp", startDate.getTime()));
 		}
 		
 		if(endDate != null)
 		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+			criteria.add(Restrictions.lt("userActionTimestamp", endDate.getTime()));
 		}
 		
-		criteria.addOrder(Order.desc("timestamp"));
+		criteria.add(Restrictions.isNotNull("userAction"));
+		criteria.addOrder(Order.desc("userActionTimestamp"));
 
-        return (List<ErrorOccurrenceAction>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+        return (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
 	}
 
 	/* (non-Javadoc)
@@ -285,26 +231,6 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	{
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getAllErrorUrisWithLink()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<String> getAllErrorUrisWithLink()
-	{
-		return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-   
-                Query query = session.createQuery("select ecn.id.errorUri from ErrorOccurrenceLink ecn");
-                
-                return (List<String>)query.list();
-            }
-        });
 	}
 
 	/* (non-Javadoc)
@@ -346,6 +272,34 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
                 query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
 
                 return (List<ErrorOccurrenceNote>)query.list();
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#close(java.util.List)
+	 */
+	@Override
+	public void close(final List<String> uris, final String user)
+	{
+		this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+   
+                Query query = session.createQuery(ErrorManagementDaoConstants.CLOSE_ERROR_OCCURRENCE);
+                
+                query.setParameterList(ErrorManagementDaoConstants.ERROR_URIS, uris);
+                query.setParameter(ErrorManagementDaoConstants.USER, user);
+                query.setParameter(ErrorManagementDaoConstants.TIMESTAMP, System.currentTimeMillis());
+                
+                logger.info("Query: " + query);
+                System.out.println("Query: " + query);
+                
+                query.executeUpdate();
+                
+                return null;
             }
         });
 	}

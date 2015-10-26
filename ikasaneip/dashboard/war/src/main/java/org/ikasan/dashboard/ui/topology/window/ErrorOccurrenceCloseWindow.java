@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
@@ -80,6 +81,8 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ErrorOccurrenceCloseWindow extends Window
 {
+	private static Logger logger = Logger.getLogger(ErrorOccurrenceCloseWindow.class);
+	
 	public static final String CLOSE = "close";
 	public static final String CANCEL = "cancel";
 	
@@ -190,13 +193,13 @@ public class ErrorOccurrenceCloseWindow extends Window
 		layout.addComponent(label, 0, 2);
 		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
 		
-		final TextArea tf1 = new TextArea();
-		tf1.addValidator(new NonZeroLengthStringValidator("You must enter a comment!"));
-		tf1.setRows(5);
-		tf1.setReadOnly(false);
-		tf1.setWidth("80%");
-		tf1.setValidationVisible(false);
-		layout.addComponent(tf1, 1, 2);
+		final TextArea commentTextArea = new TextArea();
+		commentTextArea.addValidator(new NonZeroLengthStringValidator("You must enter a comment!"));
+		commentTextArea.setRows(5);
+		commentTextArea.setReadOnly(false);
+		commentTextArea.setWidth("80%");
+		commentTextArea.setValidationVisible(false);
+		layout.addComponent(commentTextArea, 1, 2);
 		
 		label = new Label("Link:");
 		label.setSizeUndefined();		
@@ -221,12 +224,12 @@ public class ErrorOccurrenceCloseWindow extends Window
             {	
             	try
             	{
-            		tf1.validate();
+            		commentTextArea.validate();
             		tf2.validate();
             	}
             	catch (InvalidValueException e)
             	{
-            		tf1.setValidationVisible(true);
+            		commentTextArea.setValidationVisible(true);
             		tf2.setValidationVisible(true);
             		return;
             	}
@@ -243,7 +246,9 @@ public class ErrorOccurrenceCloseWindow extends Window
             		uris.add(eo.getUri());
             	}
             	
-            	errorReportingManagementService.close(uris, tf1.getValue(), tf2.getValue(), authentication.getName());
+            	logger.debug("Trying to close errors. Count: " + uris.size());
+            	
+            	errorReportingManagementService.close(uris, commentTextArea.getValue(), authentication.getName());
             	action = CLOSE;
             	close();
             }

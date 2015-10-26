@@ -40,25 +40,34 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
 
-import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
+import org.xwiki.component.embed.EmbeddableComponentManager;
+import org.xwiki.rendering.converter.Converter;
+import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
+import org.xwiki.rendering.renderer.printer.WikiPrinter;
+import org.xwiki.rendering.syntax.Syntax;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.ExternalResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
@@ -79,14 +88,14 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrenceAction errorOccurrence;
+	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
 	
 
 	/**
 	 * @param policy
 	 */
-	public ActionedErrorOccurrenceViewWindow(ErrorOccurrenceAction errorOccurrence,
+	public ActionedErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService)
 	{
 		super();
@@ -116,15 +125,17 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
 		
-		GridLayout layout = new GridLayout(2, 6);
+		GridLayout layout = new GridLayout(4, 6);
 		layout.setSizeFull();
 		layout.setSpacing(true);
-		layout.setColumnExpandRatio(0, 0.25f);
-		layout.setColumnExpandRatio(1, 0.75f);
+		layout.setColumnExpandRatio(0, 0.05f);
+		layout.setColumnExpandRatio(1, 0.45f);
+		layout.setColumnExpandRatio(2, 0.05f);
+		layout.setColumnExpandRatio(3, 0.45f);
 		
 		Label errorOccurrenceDetailsLabel = new Label("Actioned Error Details");
 		errorOccurrenceDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
-		layout.addComponent(errorOccurrenceDetailsLabel);
+		layout.addComponent(errorOccurrenceDetailsLabel, 0, 0, 3, 0);
 		
 		Label label = new Label("Module Name:");
 		label.setSizeUndefined();		
@@ -134,7 +145,7 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		TextField tf1 = new TextField();
 		tf1.setValue(this.errorOccurrence.getModuleName());
 		tf1.setReadOnly(true);
-		tf1.setWidth("80%");
+		tf1.setWidth("100%");
 		layout.addComponent(tf1, 1, 1);
 		
 		label = new Label("Flow Name:");
@@ -145,7 +156,7 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		TextField tf2 = new TextField();
 		tf2.setValue(this.errorOccurrence.getFlowName());
 		tf2.setReadOnly(true);
-		tf2.setWidth("80%");
+		tf2.setWidth("100%");
 		layout.addComponent(tf2, 1, 2);
 		
 		label = new Label("Component Name:");
@@ -156,7 +167,7 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		TextField tf3 = new TextField();
 		tf3.setValue(this.errorOccurrence.getFlowElementName());
 		tf3.setReadOnly(true);
-		tf3.setWidth("80%");
+		tf3.setWidth("100%");
 		layout.addComponent(tf3, 1, 3);
 		
 		label = new Label("Date/Time:");
@@ -167,7 +178,7 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		TextField tf4 = new TextField();
 		tf4.setValue(new Date(this.errorOccurrence.getTimestamp()).toString());
 		tf4.setReadOnly(true);
-		tf4.setWidth("80%");
+		tf4.setWidth("100%");
 		layout.addComponent(tf4, 1, 4);
 		
 		label = new Label("Error Message:");
@@ -178,10 +189,43 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		TextArea tf5 = new TextArea();
 		tf5.setValue(this.errorOccurrence.getErrorMessage());
 		tf5.setReadOnly(true);
-		tf5.setWidth("80%");
-		tf5.setRows(3);
+		tf5.setWidth("100%");
+		tf5.setRows(4);
 		tf5.setNullRepresentation("");
-		layout.addComponent(tf5, 1, 5);
+		layout.addComponent(tf5, 1, 5, 3, 5);
+		
+		label = new Label("Action:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 2, 1);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+		
+		TextField actionTf = new TextField();
+		actionTf.setValue(this.errorOccurrence.getUserAction());
+		actionTf.setReadOnly(true);
+		actionTf.setWidth("100%");
+		layout.addComponent(actionTf, 3, 1);
+		
+		label = new Label("Action Date/Time:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 2, 2);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+		
+		TextField actionTimeTf = new TextField();
+		actionTimeTf.setValue(new Date(this.errorOccurrence.getUserActionTimestamp()).toString());
+		actionTimeTf.setReadOnly(true);
+		actionTimeTf.setWidth("100%");
+		layout.addComponent(actionTimeTf, 3, 2);
+		
+		label = new Label("Action By:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 2, 3);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+		
+		TextField actionByTf = new TextField();
+		actionByTf.setValue(this.errorOccurrence.getActionedBy());
+		actionByTf.setReadOnly(true);
+		actionByTf.setWidth("100%");
+		layout.addComponent(actionByTf, 3, 3);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
@@ -228,7 +272,7 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(230, Unit.PIXELS);
+		formLayout.setHeight(300, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		
@@ -262,22 +306,35 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		
 		for(ErrorOccurrenceNote note: notes)
 		{
-			TextArea ta = new TextArea();
-			ta.setWidth("100%");
-			ta.setRows(4);
-			ta.setValue(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: " + note.getNote().getNote());
-			ta.setReadOnly(true);
+			Label whoLabel = new Label(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: ");
+			whoLabel.setWidth("100%");
+			whoLabel.setValue(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: ");
 			
-			layout.addComponent(ta);
+			layout.addComponent(whoLabel);
 			
-			if(note.getLink() != null)
+			// Initialize Rendering components and allow getting instances
+			EmbeddableComponentManager componentManager = new EmbeddableComponentManager();
+			componentManager.initialize(this.getClass().getClassLoader());
+			
+			Converter converter;
+			try
 			{
-				// Textual link
-				com.vaadin.ui.Link httpLink = new com.vaadin.ui.Link(note.getLink().getLink(), new ExternalResource(note.getLink().getLink()));
-				httpLink.setTargetName("_blank");
-			
-				layout.addComponent(httpLink);
+				converter = componentManager.getInstance(Converter.class);
+				
+				// Convert input in XWiki Syntax 2.1 into XHTML. The result is stored in the printer.
+				WikiPrinter printer = new DefaultWikiPrinter();
+				converter.convert(new StringReader(note.getNote().getNote()), Syntax.XWIKI_2_1, Syntax.XHTML_1_0, printer);
+				
+				Label l = new Label(printer.toString(), ContentMode.HTML);
+				
+				layout.addComponent(l);
+			} 
+			catch (Exception e)
+			{
+				Notification.show("An error has occurred trying to render wiki test content: " + e.getMessage(), Type.ERROR_MESSAGE);
 			}
+			
+			layout.addComponent(new Label("<hr />",ContentMode.HTML));
 		}
 		
 		

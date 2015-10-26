@@ -244,7 +244,7 @@ public class CategorisedErrorOccurrenceCommentWindow extends Window
             		uris.add(eo.getErrorOccurrence().getUri());
             	}
             	
-            	errorReportingManagementService.update(uris, tf1.getValue(), tf2.getValue(), authentication.getName());
+            	errorReportingManagementService.update(uris, tf1.getValue(), authentication.getName());
             	action = COMMENT;
             	close();
             }
