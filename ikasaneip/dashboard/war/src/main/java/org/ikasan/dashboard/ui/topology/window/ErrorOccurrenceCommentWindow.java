@@ -198,18 +198,6 @@ public class ErrorOccurrenceCommentWindow extends Window
 		tf1.setValidationVisible(false);
 		layout.addComponent(tf1, 1, 2);
 		
-		label = new Label("Link:");
-		label.setSizeUndefined();		
-		layout.addComponent(label, 0, 3);
-		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
-		
-		final TextField tf2 = new TextField();
-		tf2.setReadOnly(false);
-		tf2.setWidth("80%");
-		layout.addComponent(tf2, 1, 3);
-		tf2.addValidator(new UrlStringValidator("Link must be a valid URL!"));
-		tf2.setValidationVisible(false);
-		
 		final Button closeButton = new Button("Comment");
 		closeButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		closeButton.setImmediate(true);
@@ -222,12 +210,10 @@ public class ErrorOccurrenceCommentWindow extends Window
             	try
             	{
             		tf1.validate();
-            		tf2.validate();
             	}
             	catch (InvalidValueException e)
             	{
             		tf1.setValidationVisible(true);
-            		tf2.setValidationVisible(true);
             		return;
             	}
             	
@@ -243,7 +229,7 @@ public class ErrorOccurrenceCommentWindow extends Window
             		uris.add(eo.getUri());
             	}
             	
-            	errorReportingManagementService.update(uris, tf1.getValue(), tf2.getValue(), authentication.getName());
+            	errorReportingManagementService.update(uris, tf1.getValue(), authentication.getName());
             	action = COMMENT;
             	close();
             }

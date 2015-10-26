@@ -151,7 +151,8 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		cont.addContainerProperty("Flow Name", String.class,  null);
 		cont.addContainerProperty("Component Name", String.class,  null);
 		cont.addContainerProperty("Error Message", String.class,  null);
-		cont.addContainerProperty("Timestamp", String.class,  null);
+		cont.addContainerProperty("Action Time", String.class,  null);
+		cont.addContainerProperty("Action By", String.class,  null);
 		cont.addContainerProperty("N/L", Layout.class,  null);
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -180,7 +181,8 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		this.errorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
 		this.errorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
 		this.errorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
-		this.errorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
+		this.errorOccurenceTable.setColumnExpandRatio("Action Time", .15f);
+		this.errorOccurenceTable.setColumnExpandRatio("Action By", .1f);
 		this.errorOccurenceTable.setColumnExpandRatio("N/L", .05f);
 		
 		this.errorOccurenceTable.addStyleName("wordwrap-table");
@@ -190,7 +192,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	ErrorOccurrenceAction errorOccurrence = (ErrorOccurrenceAction)itemClickEvent.getItemId();
+		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
 		    	ActionedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
 		    		= new ActionedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
 		    	
@@ -617,7 +619,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     		}
     	}
     	
-		List<ErrorOccurrenceAction> errorOccurrences = errorReportingManagementService
+		List<ErrorOccurrence> errorOccurrences = errorReportingManagementService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	if((errorOccurrences == null || errorOccurrences.size() == 0) && showError)
@@ -625,12 +627,11 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     		Notification.show("The error search returned no results!", Type.ERROR_MESSAGE);
     	}
     	
-    	List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
 
-    	for(ErrorOccurrenceAction errorOccurrence: errorOccurrences)
+    	for(ErrorOccurrence errorOccurrence: errorOccurrences)
     	{
-    		Date date = new Date(errorOccurrence.getTimestamp());
+    		Date date = new Date(errorOccurrence.getUserActionTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
     	    String timestamp = format.format(date);
     	    
@@ -640,7 +641,8 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 			item.getItemProperty("Flow Name").setValue(errorOccurrence.getFlowName());
 			item.getItemProperty("Component Name").setValue(errorOccurrence.getFlowElementName());
 			item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
-			item.getItemProperty("Timestamp").setValue(timestamp);
+			item.getItemProperty("Action Time").setValue(timestamp);
+			item.getItemProperty("Action By").setValue(errorOccurrence.getActionedBy());
 						
 			HorizontalLayout layout = new HorizontalLayout();
     	    layout.setSpacing(true);
@@ -654,13 +656,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 			}
 			
 			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
-			label.addStyleName(ValoTheme.LABEL_TINY);
-			
-			if(linkUris.contains(errorOccurrence.getUri()))
-			{
-				layout.addComponent(label);
-			}
-			
+			label.addStyleName(ValoTheme.LABEL_TINY);			
 			
 			item.getItemProperty("N/L").setValue(layout);
     	    

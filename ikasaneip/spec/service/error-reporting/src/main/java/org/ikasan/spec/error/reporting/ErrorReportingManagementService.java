@@ -50,7 +50,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERROR_OCCURRENCE_NOTE>
+public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCCURRENCE_NOTE>
 {
     /** one year default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
@@ -62,7 +62,7 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERR
      * @param note
      * @param link
      */
-    public void update(List<String> uris, String note, String link, String user);
+    public void update(List<String> uris, String note, String user);
     
     /**
      * This method will close errors and associate a note and link with them.
@@ -72,7 +72,7 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERR
      * @param link
      * @param user
      */
-    public void close(List<String> uris, String note, String link, String user);
+    public void close(List<String> uris, String note, String user);
 
     /**
      * Delete a note
@@ -89,20 +89,6 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERR
     public void updateNote(NOTE note);
     
     /**
-     * Delete a link
-     * 
-     * @param link
-     */
-    public void deleteLink(LINK link);
-    
-    /**
-     * Update a link
-     * 
-     * @param link
-     */
-    public void updateLink(LINK link);
-    
-    /**
      * Find an actioned error reporting events based on a list of moduleName, flowName and flowElementName
      * as well as a date range.
      * 
@@ -116,13 +102,6 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERR
     public List<ACTIONED_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
     		Date startDate, Date endDate);
     
-    /**
-	 * Method to return all error uris that have a link.
-	 * 
-	 * @return
-	 */
-	public List<String> getAllErrorUrisWithLink();
-	
 	/**
 	 * Method to return all error uris that have a note.
 	 * 
@@ -151,12 +130,6 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, LINK, ERR
 	 */
 	public List<NOTE> getNotesByErrorUri(String errorUri);
 	
-	/**
-	 * 
-	 * @param errorUri
-	 * @return
-	 */
-	public List<LINK> getLinksByErrorUri(String errorUri);
 	
 	/**
 	 * 

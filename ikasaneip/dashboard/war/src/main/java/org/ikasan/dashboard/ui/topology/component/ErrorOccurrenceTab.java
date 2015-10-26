@@ -795,7 +795,6 @@ public class ErrorOccurrenceTab extends TopologyTab
     		Notification.show("The error search returned no results!", Type.ERROR_MESSAGE);
     	}
     	
-    	List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
     	searchResultsSizeLayout.removeAllComponents();
@@ -829,13 +828,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 			
 			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
 			label.addStyleName(ValoTheme.LABEL_TINY);
-			
-			if(linkUris.contains(errorOccurrence.getUri()))
-			{
-				layout.addComponent(label);
-			}
-			
-			
+						
 			item.getItemProperty("N/L").setValue(layout);
 			
 			
@@ -864,7 +857,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 
 	protected void updateComments(Collection<ErrorOccurrence> myItems)
 	{
-		List<String> linkUris =  this.errorReportingManagementService.getAllErrorUrisWithLink();
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
 		for(ErrorOccurrence eo: myItems)
@@ -884,12 +876,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			
 			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
 			label.addStyleName(ValoTheme.LABEL_TINY);
-			
-			if(linkUris.contains(eo.getUri()))
-			{
-				layout.addComponent(label);
-			}
-			
 			
 			item.getItemProperty("N/L").setValue(layout);
 		}

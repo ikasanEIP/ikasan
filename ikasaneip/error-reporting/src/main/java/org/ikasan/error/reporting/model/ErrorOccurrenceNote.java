@@ -51,18 +51,18 @@ public class ErrorOccurrenceNote
 	private static final long serialVersionUID = -1724759502309436272L;
 	
 	private ErrorOccurrenceNotePk id;
-	private Link link;
 	private Note note;
 
 	/**
 	 * @param errorUri
 	 * @param linkId
 	 */
-	public ErrorOccurrenceNote(String errorUri, Long noteId)
+	public ErrorOccurrenceNote(String errorUri, Note note)
 	{
 		super();
 		
-		this.id = new ErrorOccurrenceNotePk(errorUri, noteId);
+		this.id = new ErrorOccurrenceNotePk(errorUri, note.getId());
+		this.note = note;
 	}
 	
 	private ErrorOccurrenceNote(){}
@@ -81,22 +81,6 @@ public class ErrorOccurrenceNote
 	public void setId(ErrorOccurrenceNotePk id)
 	{
 		this.id = id;
-	}
-
-	/**
-	 * @return the errorOccurrenceLink
-	 */
-	public Link getLink()
-	{
-		return link;
-	}
-
-	/**
-	 * @param errorOccurrenceLink the errorOccurrenceLink to set
-	 */
-	public void setLink(Link link)
-	{
-		this.link = link;
 	}
 
 	/**

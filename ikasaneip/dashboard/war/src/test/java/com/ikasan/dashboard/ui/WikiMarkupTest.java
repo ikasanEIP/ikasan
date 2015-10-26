@@ -38,38 +38,45 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.dao.constants;
+package com.ikasan.dashboard.ui;
+
+import java.io.StringReader;
+
+import org.junit.Ignore;
+import org.xwiki.component.embed.EmbeddableComponentManager;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.rendering.converter.ConversionException;
+import org.xwiki.rendering.converter.Converter;
+import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
+import org.xwiki.rendering.renderer.printer.WikiPrinter;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorManagementDaoConstants
+@Ignore
+public class WikiMarkupTest
 {
-	public static final String ERROR_URI = "errorUri";
-	public static final String LINK_ID = "linkId";
-	public static final String NOTE_ID = "noteId";
-	public static final String USER = "user";
-	public static final String TIMESTAMP = "timestamp";
-	public static final String ERROR_URIS = "errorUris";
+	public static final void main(String[] args) throws ComponentLookupException, ConversionException
+	{
+		WikiMarkupTest t = new WikiMarkupTest();
+		t.test();
+	}
 	
-	
-	public static final String GET_NOTE_BY_ERROR_URI = "select n from ErrorOccurrenceNote ecn," +
-            " Note n " +
-            " where  ecn.id.noteId = n.id" +
-            " and ecn.id.errorUri = :" + ERROR_URI +
-            " order by n.timestamp desc";
-	
-	public static final String GET_ERROR_OCCURRENCE_NOTE_BY_ERROR_URI = "select ecn from ErrorOccurrenceNote ecn," +
-            " Note n " +
-            " where  ecn.id.noteId = n.id" +
-            " and ecn.id.errorUri = :" + ERROR_URI +
-            " order by n.timestamp desc";
-	
-	
-	public static final String DELETE_NOTE = "delete from ErrorOccurrenceNote where noteId = :" + NOTE_ID; 
+	public void test() throws ComponentLookupException, ConversionException
+	{
+		// Initialize Rendering components and allow getting instances
+		EmbeddableComponentManager componentManager = new EmbeddableComponentManager();
+		componentManager.initialize(this.getClass().getClassLoader());
+		
+		Converter converter = componentManager.getInstance(Converter.class);
 
-	public static final String CLOSE_ERROR_OCCURRENCE = "update ErrorOccurrence set userAction = 'close'" +
-			", actionedBy = :" + USER + ", userActionTimestamp = :" + TIMESTAMP + " where uri in :" + ERROR_URIS;  
+		// Convert input in XWiki Syntax 2.1 into XHTML. The result is stored in the printer.
+		WikiPrinter printer = new DefaultWikiPrinter();
+		converter.convert(new StringReader("This is [[www.bold.com]]"), Syntax.XWIKI_2_1, Syntax.XHTML_1_0, printer);
+
+		System.out.println(printer.toString());
+	}
 }

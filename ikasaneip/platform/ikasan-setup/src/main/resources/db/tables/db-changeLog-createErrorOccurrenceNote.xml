@@ -61,10 +61,7 @@
             <column name="NoteId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-			
-			<column name="LinkId" type="numeric(18)">
-                <constraints nullable="true"/>
-            </column>
+
         </createTable>
         
         

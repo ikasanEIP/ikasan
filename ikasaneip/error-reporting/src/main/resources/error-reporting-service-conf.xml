@@ -17,6 +17,7 @@
     
     <bean id="errorReportingManagementService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
         <constructor-arg ref="errorManagementDao"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
     </bean>
 
 	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">

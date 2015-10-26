@@ -71,7 +71,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
         })
-
 public class HibernateErrorManagementDaoTest
 {    
     @Resource
@@ -82,52 +81,7 @@ public class HibernateErrorManagementDaoTest
 
     Exception exception = new Exception("error message");
 
-    /**
-     * Test save of errorOccurrence
-     */
-    @DirtiesContext
-    @Test
-    public void test_save_find_and_delete_Link()
-    {
-    	Link link = new Link("www.somelink.com", "user");
-    	
-    	this.errorManagementDao.saveLink(link);
-    	
-    	ErrorOccurrenceLink eoLink = new ErrorOccurrenceLink("uri", link.getId());
-
-    	this.errorManagementDao.saveErrorOccurrenceLink(eoLink);
-    	
-    	List<Link> links = this.errorManagementDao.getLinksByErrorUri("uri");
-    	
-    	Assert.assertTrue(links.size() == 1);
-    	
-    	link = new Link("www.somelink.com", "user");
-    	
-    	this.errorManagementDao.saveLink(link);
-    	
-    	eoLink = new ErrorOccurrenceLink("uri", link.getId());
-
-    	this.errorManagementDao.saveErrorOccurrenceLink(eoLink);
-    	
-    	link = new Link("www.somelink.com", "user");
-    	
-    	this.errorManagementDao.saveLink(link);
-    	
-    	eoLink = new ErrorOccurrenceLink("uri", link.getId());
-
-    	this.errorManagementDao.saveErrorOccurrenceLink(eoLink);
-    	
-    	links = this.errorManagementDao.getLinksByErrorUri("uri");
-    	
-    	Assert.assertTrue(links.size() == 3);
-    	
-    	this.errorManagementDao.deleteLink(link);
-    	
-    	links = this.errorManagementDao.getLinksByErrorUri("uri");
-    	
-    	Assert.assertTrue(links.size() == 2);
-    }
-    
+   
     /**
      * Test save of errorOccurrence
      */
@@ -136,12 +90,10 @@ public class HibernateErrorManagementDaoTest
     public void test_save_find_and_delete_note()
     {
     	Note note = new Note("some notes", "user");
-    	Link link = new Link("www.somelink.com", "user");
     	
     	this.errorManagementDao.saveNote(note);
     	
-    	ErrorOccurrenceNote eoNote = new ErrorOccurrenceNote("uri", note.getId());
-    	eoNote.setLink(link);
+    	ErrorOccurrenceNote eoNote = new ErrorOccurrenceNote("uri", note);
 
     	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
     	
@@ -149,14 +101,13 @@ public class HibernateErrorManagementDaoTest
     	
     	Assert.assertTrue(eonotes.size() == 1);
     	
-    	Assert.assertTrue(eonotes.get(0).getLink().getLink().equals("www.somelink.com"));
     	Assert.assertTrue(eonotes.get(0).getNote().getNote().equals("some notes"));
     	
     	note = new Note("some notes", "user");
     	
     	this.errorManagementDao.saveNote(note);
     	
-    	eoNote = new ErrorOccurrenceNote("uri", note.getId());
+    	eoNote = new ErrorOccurrenceNote("uri", note);
 
     	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
     	
@@ -168,7 +119,7 @@ public class HibernateErrorManagementDaoTest
     	
     	this.errorManagementDao.saveNote(note);
     	
-    	eoNote = new ErrorOccurrenceNote("uri", note.getId());
+    	eoNote = new ErrorOccurrenceNote("uri", note);
 
     	this.errorManagementDao.saveErrorOccurrenceNote(eoNote);
     	
