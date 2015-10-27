@@ -813,7 +813,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	
             	for(SystemEvent systemEvent: systemEvents.getPagedResults())
             	{
-            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(systemEvent.getTimestamp());
             	    
             		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
@@ -832,12 +832,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.systemEventFromDate = new PopupDateField("From date");
 		this.systemEventFromDate.setResolution(Resolution.MINUTE);
 		this.systemEventFromDate.setValue(this.getMidnightToday());
-		this.systemEventFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		this.systemEventFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(this.systemEventFromDate, 0, 0);
 		this.systemEventToDate = new PopupDateField("To date");
 		this.systemEventToDate.setResolution(Resolution.MINUTE);
 		this.systemEventToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		this.systemEventToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		this.systemEventToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(this.systemEventToDate, 1, 0);
 		
 		dateSelectLayout.addComponent(searchButton, 0, 1, 1, 1);

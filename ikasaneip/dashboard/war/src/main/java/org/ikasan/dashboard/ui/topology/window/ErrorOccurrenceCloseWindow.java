@@ -278,7 +278,7 @@ public class ErrorOccurrenceCloseWindow extends Window
 		for(ErrorOccurrence errorOccurrence: errorOccurrences)
     	{
     		Date date = new Date(errorOccurrence.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
     	    Item item = cont.addItem(errorOccurrence);			            	    

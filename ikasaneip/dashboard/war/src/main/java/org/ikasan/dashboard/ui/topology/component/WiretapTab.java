@@ -265,7 +265,7 @@ public class WiretapTab extends TopologyTab
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
             		Date date = new Date(wiretapEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(date);
             	    
             	    Item item = tableContainer.addItem(wiretapEvent);			            	    
@@ -518,12 +518,12 @@ public class WiretapTab extends TopologyTab
 		this.fromDate = new PopupDateField("From date");
 		this.fromDate.setResolution(Resolution.MINUTE);
 		this.fromDate.setValue(this.getMidnightToday());
-		this.fromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		this.fromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(this.fromDate, 0, 0);
 		this.toDate = new PopupDateField("To date");
 		this.toDate.setResolution(Resolution.MINUTE);
 		this.toDate.setValue(this.getTwentyThreeFixtyNineToday());
-		this.toDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		this.toDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(this.toDate, 0, 1);
 		
 		this.eventId = new TextField("Event Id");

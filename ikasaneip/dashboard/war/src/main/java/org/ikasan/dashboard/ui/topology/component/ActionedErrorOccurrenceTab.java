@@ -438,12 +438,12 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
 		errorFromDate.setValue(this.getMidnightToday());
-		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
 		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		
@@ -632,7 +632,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     	for(ErrorOccurrence errorOccurrence: errorOccurrences)
     	{
     		Date date = new Date(errorOccurrence.getUserActionTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
     	    Item item = container.addItem(errorOccurrence);			            	    
