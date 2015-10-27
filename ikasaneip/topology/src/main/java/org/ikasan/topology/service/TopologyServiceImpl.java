@@ -306,86 +306,6 @@ public class TopologyServiceImpl implements TopologyService
 						this.topologyDao.save(component);
 					}	
 					
-//					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
-			    }
-			    
-//			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
-			}
-		}
-		
-		this.cleanup(authentication);
-	}
-	
-
-	protected void cleanup(IkasanAuthentication authentication) throws DiscoveryException
-	{
-		List<Server> servers =  this.topologyDao.getAllServers();
-		
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-    	ObjectMapper mapper = new ObjectMapper();
-    	
-		for(Server server: servers)
-		{
-			List<Module> modules = this.topologyDao.getAllModules();			
-			
-			for(Module module: modules)
-			{	
-				List<String> discoveredFlowNames = new ArrayList<String>();
-				
-				String url = server.getUrl() + ":" + server.getPort() 
-						+ module.getContextRoot() 
-						+ "/rest/discovery/flows/"
-						+ module.getName();
-				
-			    WebTarget webTarget = client.target(url);
-			    
-			    JsonArray flowResponse = null;
-			    
-			    try
-			    {
-			    	flowResponse = webTarget.request().get(JsonArray.class);
-			    }
-			    catch(Exception e)
-			    {
-			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
-			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
-			    	continue;
-			    }
-			    
-			    module.setServer(server);
-			    
-			    this.topologyDao.save(module);
-			    
-			    for(JsonValue flowValue: flowResponse)
-			    { 
-			    	List<String> discoveredComponentNames = new ArrayList<String>();
-			    	
-		    		Flow flow;
-		    		
-					try
-					{
-						flow = mapper.readValue(
-								 flowValue.toString(), Flow.class);
-						
-						discoveredFlowNames.add(flow.getName());
-						
-						for(Component component: flow.getComponents())
-						{
-							discoveredComponentNames.add(component.getName());
-						}
-					} 
-					catch (Exception e)
-					{
-						throw new DiscoveryException(e);
-					}
-					
 					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
 			    }
 			    
@@ -393,6 +313,7 @@ public class TopologyServiceImpl implements TopologyService
 			}
 		}
 	}
+	
 	
 	protected void cleanUpFlows(Module module, Long serverId, Long moduleId, List<String> discoveredFlowNames)
 	{
@@ -413,11 +334,13 @@ public class TopologyServiceImpl implements TopologyService
 				{	
 					flow.getComponents().remove(component);
 			
+					component.setFlow(null);
 					this.topologyDao.delete(component);
 				}
 				
 				module.getFlows().remove(flow);
-				
+				flow.getModule().getFlows().remove(flow);
+				flow.setModule(null);
 				this.topologyDao.delete(flow);
 			}
 		}
@@ -425,6 +348,13 @@ public class TopologyServiceImpl implements TopologyService
 	
 	protected void cleanUpComponents(Long serverId, Long moduleId, String flowName, List<String> discoveredComponentNames)
 	{
+		logger.debug("Getting components to delete:" + serverId + " " + moduleId + " " + flowName );
+		
+		for (String s : discoveredComponentNames)
+		{
+			logger.debug(s);
+		}
+		
 		List<Component> components = this.topologyDao.getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn
 				(serverId, moduleId, flowName, discoveredComponentNames);
 				
@@ -437,6 +367,10 @@ public class TopologyServiceImpl implements TopologyService
 		
 		for(Component component: copyComponents)
 		{
+			logger.debug("Cleaning up component:" + component);
+			
+			component.getFlow().getComponents().remove(component);
+			component.setFlow(null);
 			this.topologyDao.delete(component);
 		}
 	}

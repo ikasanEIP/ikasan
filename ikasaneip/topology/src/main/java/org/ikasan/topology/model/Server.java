@@ -232,4 +232,18 @@ public class Server
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Server [id=" + id + ", name=" + name + ", description="
+				+ description + ", url=" + url + ", port=" + port
+				+ ", modules=" + modules + ", createdDateTime="
+				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
+				+ "]";
+	}
+
+
 }
