@@ -314,12 +314,12 @@ public class ExclusionsTab extends TopologyTab
 		fromDate = new PopupDateField("From date");
 		fromDate.setResolution(Resolution.MINUTE);
 		fromDate.setValue(this.getMidnightToday());
-		fromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		fromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(fromDate, 0, 0);
 		toDate = new PopupDateField("To date");
 		toDate.setResolution(Resolution.MINUTE);
 		toDate.setValue(this.getTwentyThreeFixtyNineToday());
-		toDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		toDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(toDate, 1, 0);
 				
 		
@@ -478,7 +478,7 @@ public class ExclusionsTab extends TopologyTab
     	for(ExclusionEvent exclusionEvent: exclusionEvents)
     	{
     		Date date = new Date(exclusionEvent.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
     	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),

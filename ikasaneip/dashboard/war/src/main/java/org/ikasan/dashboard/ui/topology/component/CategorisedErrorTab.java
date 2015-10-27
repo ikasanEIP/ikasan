@@ -342,7 +342,7 @@ public class CategorisedErrorTab extends TopologyTab
             		ErrorOccurrence errorOccurrence = categorisedErrorOccurrence.getErrorOccurrence();
             		
             		Date date = new Date(errorOccurrence.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(date);
             	    
             	    Label categoryLabel = new Label();
@@ -646,12 +646,12 @@ public class CategorisedErrorTab extends TopologyTab
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
 		errorFromDate.setValue(this.getMidnightToday());
-		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
 		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		
