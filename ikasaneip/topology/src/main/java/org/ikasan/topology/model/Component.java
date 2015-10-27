@@ -216,4 +216,41 @@ public class Component
 		this.order = order;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Component [id=" + id + ", name=" + name + ", description="
+				+ description + ", configurable=" + configurable
+				+ ", configurationId=" + configurationId + ", flow=" + flow.getName()
+				+ ", module=" + flow.getModule().getName()
+				+ ", server=" + flow.getModule().getServer().getName()
+				+ ", order=" + order + ", createdDateTime=" + createdDateTime
+				+ ", updatedDateTime=" + updatedDateTime + "]";
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Component other = (Component) obj;
+		if (id == null)
+		{
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 }
