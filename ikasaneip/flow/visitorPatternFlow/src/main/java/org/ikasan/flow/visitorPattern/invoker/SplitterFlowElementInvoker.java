@@ -40,12 +40,15 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
+import com.google.common.util.concurrent.*;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.splitting.SplitterException;
 import org.ikasan.spec.flow.*;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 /**
  * A default implementation of the FlowElementInvoker for a splitter
@@ -55,8 +58,15 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>
 {
+    // executor service for thread dispatching
+    private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+
     /** does this component require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
+
+    int count;
+    Throwable callbackException;
+
 
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
@@ -118,13 +128,67 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
             notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
             FlowElement nextFlowElementInRoute = nextFlowElement;
-            while (nextFlowElementInRoute != null)
+
+            Callable<FlowInvocationContext> asyncTask = new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
+            ListenableFuture<FlowInvocationContext> listenableFuture = executorService.submit(asyncTask);
+            Futures.addCallback(listenableFuture, new FutureCallback<FlowInvocationContext>() {
+                public void onSuccess(FlowInvocationContext _flowInvocationContext)
+                {
+                    count++;
+                }
+
+                public void onFailure(Throwable thrown) {
+                    callbackException = thrown;
+                }
+            });
+
+        }
+
+        while(count < payloads.size() && callbackException == null)
+        {
+            // sleep ?
+        }
+
+        if(callbackException != null)
+        {
+            throw new SplitterException(callbackException);
+        }
+
+        // TODO flowInvocationContext will need to be created per execution
+
+        return null;
+    }
+
+    private class SplitFlowElement implements Callable<FlowInvocationContext>
+    {
+        FlowElement flowElement;
+        FlowEventListener flowEventListener;
+        String moduleName;
+        String flowName;
+        FlowInvocationContext flowInvocationContext;
+        FlowEvent flowEvent;
+
+        public SplitFlowElement(FlowElement flowElement, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+        {
+            this.flowElement = flowElement;
+            if(flowElement == null)
             {
-                nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                throw new IllegalArgumentException("flowElement cannot be 'null'");
             }
         }
 
-        return null;
+
+        @Override
+        public FlowInvocationContext call()
+        {
+            while (flowElement != null)
+            {
+                flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+            }
+
+            return flowInvocationContext;
+        }
+
     }
 
 }
