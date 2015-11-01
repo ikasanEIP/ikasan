@@ -102,9 +102,4 @@ public interface Monitor<NOTIFICATION>
      * @return
      */
     List<Notifier> getNotifiers();
-
-    /**
-     * Destroys the monitor internal, rendering this Monitor defunct.
-     */
-    void destroy();
 }

@@ -38,100 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
-
-import org.ikasan.spec.management.ManagedService;
-import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.Notifier;
-
-import java.util.List;
+package org.ikasan.spec.management;
 
 /**
- * Sample monitor implementation for testing.
+ * Interface provisioning callbacks for managed services
+ * which are module wide.
+ *
  * @author Ikasan Development Team
- * 
  */
-public class SampleMonitor implements Monitor, ManagedService
+public interface ManagedService
 {
-
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.monitor.Monitor#notifyMonitor(java.lang.Object)
+    /**
+     * Shutdown and destroy this service.
      */
-    public void invoke(Object arg0)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+    public void destroy();
 
-    @Override
-    public void setEnvironment(String environmentName) 
-    {
-
-    }
-
-    @Override
-    public String getEnvironment() 
-    {
-        return null;
-    }
-
-    @Override
-    public List<Notifier> getNotifiers() 
-    {
-        return null;
-    }
-
-    @Override
-    public void setNotifiers(List list) 
-    {
-
-    }
-
-    @Override
-    public void destroy()
-    {
-    }
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.monitor.Monitor#setModuleName(java.lang.String)
-	 */
-	@Override
-	public void setModuleName(String moduleName)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.monitor.Monitor#getModuleName()
-	 */
-	@Override
-	public String getModuleName()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.monitor.Monitor#setFlowName(java.lang.String)
-	 */
-	@Override
-	public void setFlowName(String flowName)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.monitor.Monitor#getFlowName()
-	 */
-	@Override
-	public String getFlowName()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

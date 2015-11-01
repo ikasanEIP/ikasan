@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.service.UserService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
@@ -221,13 +222,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
         // TODO - find a more generic way of managing this for platform resources
         shutdownSchedulers(platformContext);
-        shutdownMonitors(platformContext);
+        shutdownManagedServices(platformContext);
         // close our inner loaded contexts
         for (AbstractApplicationContext context : innerContexts)
         {
             logger.debug("closing and destroying inner context: " + context.getDisplayName());
             shutdownSchedulers(context);
-            shutdownMonitors(context);
+            shutdownManagedServices(context);
             context.close();
         }
         innerContexts.clear();
@@ -253,14 +254,14 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
     }
 
-    private void shutdownMonitors(ApplicationContext context)
+    private void shutdownManagedServices(ApplicationContext context)
     {
-        Map<String, Monitor> monitors = context.getBeansOfType(Monitor.class);
-        if (monitors != null)
+        Map<String, ManagedService> managedServices = context.getBeansOfType(ManagedService.class);
+        if (managedServices != null)
         {
-            for (Map.Entry<String, Monitor> entry : monitors.entrySet())
+            for (Map.Entry<String, ManagedService> entry : managedServices.entrySet())
             {
-                logger.info("Shutting down Monitor with bean name: " + entry.getKey());
+                logger.info("Shutting down ManagedService with bean name: " + entry.getKey());
                 entry.getValue().destroy();
             }
         }

@@ -41,6 +41,7 @@
 package org.ikasan.monitor;
 
 import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
@@ -124,7 +125,7 @@ public class DefaultMonitorImplTest
         Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
-        monitor.destroy();
+        ((ManagedService)monitor).destroy();
 
         monitor.invoke("stopped");
         mockery.assertIsSatisfied();
