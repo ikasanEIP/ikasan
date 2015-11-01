@@ -43,6 +43,7 @@ package org.ikasan.monitor;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.monitor.Notifier;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @author Ikasan Development Team
  */
-public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<MonitorConfiguration>
+public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<MonitorConfiguration>, ManagedService
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(DefaultMonitorImpl.class);

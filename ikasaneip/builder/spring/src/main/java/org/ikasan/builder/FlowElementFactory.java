@@ -41,6 +41,8 @@
 package org.ikasan.builder;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.DefaultReplicationFactory;
@@ -93,6 +95,30 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
     /** allow FE's to have their invoker behaviour configured */
     Object flowElementInvokerConfiguration;
+
+    /** allow concurrency to be specified */
+    int concurrentThreads = 0;
+
+    /** allow override of executor service */
+    ExecutorService executorService;
+
+    /**
+     * Setter for executor service override
+     * @param executorService
+     */
+    public void setExecutorService(ExecutorService executorService)
+    {
+        this.executorService = executorService;
+    }
+
+    /**
+     * Setter for concurrent threads
+     * @param concurrentThreads
+     */
+    public void setConcurrentThreads(int concurrentThreads)
+    {
+        this.concurrentThreads = concurrentThreads;
+    }
 
     /**
      * Setter for name
@@ -281,6 +307,16 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         }
         else if(component instanceof Splitter)
         {
+            if(executorService != null)
+            {
+                return new ConcurrentSplitterFlowElementInvoker(executorService);
+            }
+
+            if(concurrentThreads > 0)
+            {
+                return new ConcurrentSplitterFlowElementInvoker( Executors.newFixedThreadPool(this.concurrentThreads) );
+            }
+
             return new SplitterFlowElementInvoker();
         }
         else if(component instanceof Filter)
