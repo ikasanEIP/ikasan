@@ -42,19 +42,9 @@
  */
 package org.ikasan.component.validator.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-
 import org.apache.log4j.Logger;
 import org.ikasan.component.validator.ValidationException;
 import org.ikasan.component.validator.ValidationResult;
-import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
@@ -63,6 +53,13 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * XML Validator uses an injected XML parser to validate each incoming payload content.
@@ -154,20 +151,20 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         } catch (SAXException e) {
 
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException("Transformer exception", e);
+                throw new ValidationException(e.getMessage(), e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
 
         } catch (IOException e) {
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException("Transformer exception", e);
+                throw new ValidationException(e.getMessage(), e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
         } catch (ParserConfigurationException e) {
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException("Transformer exception", e);
+                throw new ValidationException(e.getMessage(), e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
