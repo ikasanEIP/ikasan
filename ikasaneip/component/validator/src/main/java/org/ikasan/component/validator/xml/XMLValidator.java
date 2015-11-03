@@ -151,20 +151,20 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         } catch (SAXException e) {
 
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException(e.getMessage(), e);
+                throw new ValidationException(e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
 
         } catch (IOException e) {
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException(e.getMessage(), e);
+                throw new ValidationException(e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
         } catch (ParserConfigurationException e) {
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException(e.getMessage(), e);
+                throw new ValidationException(e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
