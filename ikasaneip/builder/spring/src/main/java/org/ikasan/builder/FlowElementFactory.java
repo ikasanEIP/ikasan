@@ -97,7 +97,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     Object flowElementInvokerConfiguration;
 
     /** allow concurrency to be specified */
-    int concurrentThreads = 0;
+    int concurrentThreads;
 
     /** allow override of executor service */
     ExecutorService executorService;

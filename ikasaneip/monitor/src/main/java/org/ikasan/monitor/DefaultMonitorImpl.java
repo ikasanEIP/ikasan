@@ -57,7 +57,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @author Ikasan Development Team
  */
-public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<MonitorConfiguration>, ManagedService
+public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<MonitorConfiguration>
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(DefaultMonitorImpl.class);

@@ -51,6 +51,9 @@ public class ScheduledConsumerConfiguration
     /** cron based expression for this schedule */
     private String cronExpression;
 
+    /** whether to ignore a misfire - default true */
+    private boolean ignoreMisfire = true;
+
     /** Determines whether consumer will be eagerly executing after successful run */
     private boolean isEager = false;
 
@@ -70,5 +73,15 @@ public class ScheduledConsumerConfiguration
 
     public void setEager(boolean isEager) {
         this.isEager = isEager;
+    }
+
+    public void setIgnoreMisfire(boolean ignoreMisfire)
+    {
+        this.ignoreMisfire = ignoreMisfire;
+    }
+
+    public boolean isIgnoreMisfire()
+    {
+        return this.ignoreMisfire;
     }
 }
