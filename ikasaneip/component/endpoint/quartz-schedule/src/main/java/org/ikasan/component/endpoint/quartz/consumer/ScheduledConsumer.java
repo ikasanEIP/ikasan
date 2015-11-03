@@ -436,6 +436,12 @@ public class ScheduledConsumer<T>
      */
     protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
     {
+        if(this.consumerConfiguration.isIgnoreMisfire())
+        {
+            return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing())
+                    .build();
+        }
+
         return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression))
                 .build();
     }

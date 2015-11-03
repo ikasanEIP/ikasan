@@ -1,40 +1,40 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.service.UserService;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
@@ -68,7 +67,7 @@ import java.util.Map;
 
 /**
  * Module Initialisation Service default implementation
- * 
+ *
  * @author Ikasan Development Team
  */
 public class ModuleInitialisationServiceImpl implements ModuleInitialisationService, ApplicationContextAware,
@@ -79,7 +78,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
     /** Runtime container for holding modules */
     private ModuleContainer moduleContainer;
-    
+
     /** module activation mechanism */
     private ModuleActivator moduleActivator;
 
@@ -107,7 +106,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * @param userService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-            UserService userService, TopologyService topologyService)
+                                           UserService userService, TopologyService topologyService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -138,7 +137,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @seeorg.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.
      * ApplicationContext)
      */
@@ -151,10 +150,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         this.loaderConfiguration = loaderConfiguration;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     @SuppressWarnings("unchecked")
@@ -171,7 +170,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
             AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
             innerContexts.add(applicationContext);
-    
+
             // check for moduleActivator overrides and use the first one found
             try
             {
@@ -190,7 +189,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             {
                 // nothing of issue here, move on
             }
-            
+
             // load all modules in this context
             // TODO - should multiple modules share the same application context ?
             Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
@@ -222,13 +221,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
         // TODO - find a more generic way of managing this for platform resources
         shutdownSchedulers(platformContext);
-        shutdownManagedServices(platformContext);
+        shutdownMonitors(platformContext);
         // close our inner loaded contexts
         for (AbstractApplicationContext context : innerContexts)
         {
             logger.debug("closing and destroying inner context: " + context.getDisplayName());
             shutdownSchedulers(context);
-            shutdownManagedServices(context);
+            shutdownMonitors(context);
             context.close();
         }
         innerContexts.clear();
@@ -254,14 +253,14 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
     }
 
-    private void shutdownManagedServices(ApplicationContext context)
+    private void shutdownMonitors(ApplicationContext context)
     {
-        Map<String, ManagedService> managedServices = context.getBeansOfType(ManagedService.class);
-        if (managedServices != null)
+        Map<String, Monitor> monitors = context.getBeansOfType(Monitor.class);
+        if (monitors != null)
         {
-            for (Map.Entry<String, ManagedService> entry : managedServices.entrySet())
+            for (Map.Entry<String, Monitor> entry : monitors.entrySet())
             {
-                logger.info("Shutting down ManagedService with bean name: " + entry.getKey());
+                logger.info("Shutting down Monitor with bean name: " + entry.getKey());
                 entry.getValue().destroy();
             }
         }
@@ -269,7 +268,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
     /**
      * Creates the authorities for the module if they do not already exist
-     * 
+     *
      * @param module - The module to secure
      */
     private void initialiseModuleSecurity(Module module)
@@ -283,8 +282,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             this.userService.createAuthority(moduleUserAuthority);
         }
         Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
-            "Allows administrator access to the " + module.getName()
-                    + " module. This is typically assigned to business administrators");
+                "Allows administrator access to the " + module.getName()
+                        + " module. This is typically assigned to business administrators");
         if (!existingAuthorities.contains(moduleAdminAuthority))
         {
             logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");

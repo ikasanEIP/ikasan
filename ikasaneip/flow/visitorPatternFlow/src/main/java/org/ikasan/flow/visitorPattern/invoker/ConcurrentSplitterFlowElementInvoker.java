@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * A default implementation of the FlowElementInvoker for a splitter
@@ -66,16 +65,16 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
     /** logger instance */
     private static Logger logger = Logger.getLogger(ConcurrentSplitterFlowElementInvoker.class);
 
-    // executor service for thread dispatching - default fixed pool of 10
+    /** executor service for thread dispatching - default fixed pool of 10 */
     private ListeningExecutorService executorService;
 
     /** does this component require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
 
-    /** count for number of tasked threads */
+    /** count for number of submitted future tasks */
     int count;
 
-    /** handle to any exceptions called back from the threads */
+    /** handle to any exceptions called back from the future task */
     Throwable callbackException;
 
     /**
@@ -138,6 +137,7 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
                     + "Splitters must return at least one payload.");
         }
 
+        // initialise futures task stats
         count = 0;
         callbackException = null;
 
@@ -156,7 +156,7 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
 
             FlowElement nextFlowElementInRoute = nextFlowElement;
             // TODO flowInvocationContext will need to be created per execution
-            Callable<FlowInvocationContext> asyncTask = new SplitFlowElement(flowElement, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
+            Callable<FlowInvocationContext> asyncTask = new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
             final ListenableFuture<FlowInvocationContext> listenableFuture = executorService.submit(asyncTask);
             futures.add(listenableFuture);
             Futures.addCallback(listenableFuture, new FutureCallback<FlowInvocationContext>()
@@ -226,58 +226,58 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
      */
     class SplitFlowElement implements Callable<FlowInvocationContext>
     {
-        FlowElement flowElement;
-        FlowEventListener flowEventListener;
-        String moduleName;
-        String flowName;
-        FlowInvocationContext flowInvocationContext;
-        FlowEvent flowEvent;
+        FlowElement _nextFlowElementInRoute;
+        FlowEventListener _flowEventListener;
+        String _moduleName;
+        String _flowName;
+        FlowInvocationContext _flowInvocationContext;
+        FlowEvent _flowEvent;
 
-        public SplitFlowElement(FlowElement flowElement, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+        public SplitFlowElement(FlowElement _nextFlowElementInRoute, FlowEventListener _flowEventListener, String _moduleName, String _flowName, FlowInvocationContext _flowInvocationContext, FlowEvent _flowEvent)
         {
-            this.flowElement = flowElement;
-            if(flowElement == null)
+            this._nextFlowElementInRoute = _nextFlowElementInRoute;
+            if(_nextFlowElementInRoute == null)
             {
-                throw new IllegalArgumentException("flowElement cannot be 'null'");
+                throw new IllegalArgumentException("_nextFlowElementInRoute cannot be 'null'");
             }
 
-            this.flowEventListener = flowEventListener;
-            if(flowEventListener == null)
+            this._flowEventListener = _flowEventListener;
+            if(_flowEventListener == null)
             {
-                throw new IllegalArgumentException("flowEventListener cannot be 'null'");
+                throw new IllegalArgumentException("_flowEventListener cannot be 'null'");
             }
 
-            this.moduleName = moduleName;
-            if(moduleName == null)
+            this._moduleName = _moduleName;
+            if(_moduleName == null)
             {
-                throw new IllegalArgumentException("moduleName cannot be 'null'");
+                throw new IllegalArgumentException("_moduleName cannot be 'null'");
             }
 
-            this.flowName = flowName;
-            if(flowName == null)
+            this._flowName = _flowName;
+            if(_flowName == null)
             {
-                throw new IllegalArgumentException("flowName cannot be 'null'");
+                throw new IllegalArgumentException("_flowName cannot be 'null'");
             }
 
-            this.flowInvocationContext = flowInvocationContext;
-            if(flowInvocationContext == null)
+            this._flowInvocationContext = _flowInvocationContext;
+            if(_flowInvocationContext == null)
             {
-                throw new IllegalArgumentException("flowInvocationContext cannot be 'null'");
+                throw new IllegalArgumentException("_flowInvocationContext cannot be 'null'");
             }
 
-            this.flowEvent = flowEvent;
-            if(flowEvent == null)
+            this._flowEvent = _flowEvent;
+            if(_flowEvent == null)
             {
-                throw new IllegalArgumentException("flowEvent cannot be 'null'");
+                throw new IllegalArgumentException("_flowEvent cannot be 'null'");
             }
         }
 
         @Override
         public FlowInvocationContext call()
         {
-            while (flowElement != null)
+            while (_nextFlowElementInRoute != null)
             {
-                flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                _nextFlowElementInRoute = _nextFlowElementInRoute.getFlowElementInvoker().invoke(_flowEventListener, _moduleName, _flowName, _flowInvocationContext, _flowEvent, _nextFlowElementInRoute);
                 if (Thread.currentThread().isInterrupted()) {
                     return null;
                 }
