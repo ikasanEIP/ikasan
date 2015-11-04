@@ -41,9 +41,11 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -175,8 +177,12 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(errorOccurrence.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.errorOccurrence.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("100%");
 		layout.addComponent(tf4, 1, 4);
@@ -210,8 +216,11 @@ public class ActionedErrorOccurrenceViewWindow extends Window
 		layout.addComponent(label, 2, 2);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		date = new Date(errorOccurrence.getUserActionTimestamp());
+		timestamp = format.format(date);
+	    
 		TextField actionTimeTf = new TextField();
-		actionTimeTf.setValue(new Date(this.errorOccurrence.getUserActionTimestamp()).toString());
+		actionTimeTf.setValue(timestamp);
 		actionTimeTf.setReadOnly(true);
 		actionTimeTf.setWidth("100%");
 		layout.addComponent(actionTimeTf, 3, 2);

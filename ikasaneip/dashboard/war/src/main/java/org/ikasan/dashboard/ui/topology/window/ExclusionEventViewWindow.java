@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.ws.rs.client.Client;
@@ -52,6 +53,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -199,8 +201,12 @@ public class ExclusionEventViewWindow extends Window
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(this.exclusionEvent.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.exclusionEvent.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
@@ -252,7 +258,9 @@ public class ExclusionEventViewWindow extends Window
 		final TextField tf8 = new TextField();
 		if(this.action != null)
 		{   	    
-			tf8.setValue(new Date(action.getTimestamp()).toString());
+			date = new Date(action.getTimestamp());
+			timestamp = format.format(date);
+			tf8.setValue(timestamp);
 		}
 		tf8.setReadOnly(true);
 		tf8.setWidth("80%");

@@ -201,18 +201,6 @@ public class ErrorOccurrenceCloseWindow extends Window
 		commentTextArea.setValidationVisible(false);
 		layout.addComponent(commentTextArea, 1, 2);
 		
-		label = new Label("Link:");
-		label.setSizeUndefined();		
-		layout.addComponent(label, 0, 3);
-		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
-		
-		final TextField tf2 = new TextField();
-		tf2.setReadOnly(false);
-		tf2.setWidth("80%");
-		tf2.addValidator(new UrlStringValidator("Link must be a valid URL!"));
-		tf2.setValidationVisible(false);
-		layout.addComponent(tf2, 1, 3);
-		
 		final Button closeButton = new Button("Close");
 		closeButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		closeButton.setImmediate(true);
@@ -225,12 +213,10 @@ public class ErrorOccurrenceCloseWindow extends Window
             	try
             	{
             		commentTextArea.validate();
-            		tf2.validate();
             	}
             	catch (InvalidValueException e)
             	{
             		commentTextArea.setValidationVisible(true);
-            		tf2.setValidationVisible(true);
             		return;
             	}
             	

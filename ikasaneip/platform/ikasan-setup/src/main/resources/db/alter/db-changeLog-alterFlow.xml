@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -44,55 +42,23 @@
  Author:  Ikasan Development Team
  
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-    <class
-        name="org.ikasan.topology.model.Flow"
-        table="Flow">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-        <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-        </id>
+    <changeSet author="ikasan dev" id="alterFlow" context="postBaseline">
+    
+    	<preConditions onFail="MARK_RAN">
+			<not><columnExists tableName="Flow" columnName="FlowOrder"/></not>
+		</preConditions>
+	    
+	    <addColumn tableName="Flow">
+	        <column name="FlowOrder" type="numeric(18)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+	    </addColumn>
 
-        <property name="name"
-                  type="java.lang.String"
-                  column="Name"
-                  not-null="true"
-                  unique="false"/>
+    </changeSet>
 
-        <property name="description"
-                  type="java.lang.String"
-                  column="Description"
-                  not-null="true" 
-                  unique="false"/>
-                  
-         <property name="order"
-                  type="int"
-                  column="FlowOrder"
-                  not-null="true" 
-                  unique="false"/>
-        
-        <many-to-one name="module" column="ModuleId" 
-       		class="org.ikasan.topology.model.Module" not-null="true"/>
-       	
-       	<set name="components" cascade="all" order-by="ComponentOrder asc" lazy="false">
-         	<key column="FlowId"/>
-         	<one-to-many class="org.ikasan.topology.model.Component" />
-      	</set>
-
-        <property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
-
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
-    </class>
-</hibernate-mapping>
+</databaseChangeLog>

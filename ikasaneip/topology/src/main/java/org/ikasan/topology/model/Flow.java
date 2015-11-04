@@ -56,6 +56,7 @@ public class Flow implements Principal
     private String state;
     private Module module;
     private Set<Component> components;
+    private int order;
 
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -212,6 +213,22 @@ public class Flow implements Principal
 	{
 		this.state = state;
 	}
+	
+	/**
+	 * @return the order
+	 */
+	public int getOrder()
+	{
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(int order)
+	{
+		this.order = order;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -233,5 +250,18 @@ public class Flow implements Principal
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Flow [id=" + id + ", name=" + name + ", description="
+				+ description + ", state=" + state + ", module=" + module
+				+ ", components=" + components + ", order=" + order
+				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+				+ updatedDateTime + "]";
 	}
 }

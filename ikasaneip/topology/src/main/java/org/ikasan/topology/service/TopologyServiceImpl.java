@@ -289,11 +289,13 @@ public class TopologyServiceImpl implements TopologyService
 					
 					if(dbFlow != null)
 					{
+						dbFlow.setOrder(flow.getOrder());
 						flow = dbFlow;
 					}
 					
 					flow.setModule(module);
 					
+					logger.debug("Saving flow: " + flow);
 					this.topologyDao.save(flow);
 											
 					for(Component component: components)

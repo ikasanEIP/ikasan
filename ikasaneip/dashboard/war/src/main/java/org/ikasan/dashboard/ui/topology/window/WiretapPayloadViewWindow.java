@@ -44,9 +44,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.vaadin.aceeditor.AceEditor;
@@ -176,8 +178,12 @@ public class WiretapPayloadViewWindow extends Window
 		layout.addComponent(dateTimeLabel, 0, 4);
 		layout.setComponentAlignment(dateTimeLabel, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(this.wiretapEvent.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.wiretapEvent.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
