@@ -41,10 +41,12 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
@@ -210,8 +212,12 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(this.categorisedErrorOccurrence.getErrorOccurrence().getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+		
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.categorisedErrorOccurrence.getErrorOccurrence().getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);

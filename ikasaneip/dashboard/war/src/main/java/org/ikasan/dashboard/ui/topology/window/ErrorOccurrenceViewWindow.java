@@ -41,11 +41,13 @@
 package org.ikasan.dashboard.ui.topology.window;
 
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -55,6 +57,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
+import org.vaadin.teemu.VaadinIcons;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.rendering.converter.ConversionException;
@@ -184,8 +187,12 @@ public class ErrorOccurrenceViewWindow extends Window
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(errorOccurrence.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.errorOccurrence.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
@@ -284,13 +291,12 @@ public class ErrorOccurrenceViewWindow extends Window
 		final Button commentButton = new Button("Comment");
 		commentButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		commentButton.setImmediate(true);
-		commentButton.setDescription("Comment on the below errors.");
+		commentButton.setDescription("Comment on the error.");
 		
-		HorizontalLayout commentButtonLayout = new HorizontalLayout();
+		final HorizontalLayout commentButtonLayout = new HorizontalLayout();
 		commentButtonLayout.setSpacing(true);
+		commentButtonLayout.setMargin(true);
 		commentButtonLayout.addComponent(commentButton);
-		
-		layout.addComponent(commentButtonLayout);
 		
 		commentButton.addClickListener(new Button.ClickListener() 
         {
@@ -303,7 +309,6 @@ public class ErrorOccurrenceViewWindow extends Window
         		tf1.setWidth("100%");
         		tf1.setValidationVisible(false);
         		layout.removeAllComponents();
-        		layout.addComponent(tf1);
             	
         		final Button saveButton = new Button("Save");
         		saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -333,10 +338,9 @@ public class ErrorOccurrenceViewWindow extends Window
         
                     	errorReportingManagementService.update(uris, tf1.getValue(), authentication.getName());
                     	
-                    	layout.removeAllComponents();                    	
-                    	layout.addComponent(commentButton);
-                    	
+                    	layout.removeAllComponents();                                        	
                     	updateNotes(layout);
+                    	layout.addComponent(commentButton);
                     }
                 });
         		
@@ -348,10 +352,11 @@ public class ErrorOccurrenceViewWindow extends Window
                 {
                     public void buttonClick(ClickEvent event) 
                     {
-                    	layout.removeAllComponents();
-                    	layout.addComponent(commentButton);
+                    	layout.removeAllComponents();            
                     	
                     	updateNotes(layout);
+                    	layout.addComponent(commentButtonLayout);
+                    	layout.addComponent(commentButton);
                     }
                 });
         		
@@ -361,13 +366,15 @@ public class ErrorOccurrenceViewWindow extends Window
         		buttonLayout.addComponent(saveButton);
         		buttonLayout.addComponent(cancelButton);
         		
-        		layout.addComponent(buttonLayout);
-        		
         		updateNotes(layout);
+        		
+        		layout.addComponent(tf1);
+        		layout.addComponent(buttonLayout);
             }
         });
 		
-		this.updateNotes(layout);		
+		this.updateNotes(layout);
+		layout.addComponent(commentButtonLayout);
 		
 		return layout;
 	}

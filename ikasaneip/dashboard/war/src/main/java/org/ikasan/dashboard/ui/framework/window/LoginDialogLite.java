@@ -181,7 +181,7 @@ public class LoginDialogLite extends Window
                 try 
                 {
                     binder.commit();
-                    ikasanAuthentication = (IkasanAuthentication)authenticationService.login
+                    ikasanAuthentication = (IkasanAuthentication)authenticationService.authenticateLocal
                     		(userNameField.getValue(), passwordField.getValue());
                     userNameField.setValue("");
                     passwordField.setValue("");

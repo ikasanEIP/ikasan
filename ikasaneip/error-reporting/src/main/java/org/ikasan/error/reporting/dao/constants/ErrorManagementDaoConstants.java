@@ -59,13 +59,13 @@ public class ErrorManagementDaoConstants
             " Note n " +
             " where  ecn.id.noteId = n.id" +
             " and ecn.id.errorUri = :" + ERROR_URI +
-            " order by n.timestamp desc";
+            " order by n.timestamp asc";
 	
 	public static final String GET_ERROR_OCCURRENCE_NOTE_BY_ERROR_URI = "select ecn from ErrorOccurrenceNote ecn," +
             " Note n " +
             " where  ecn.id.noteId = n.id" +
             " and ecn.id.errorUri = :" + ERROR_URI +
-            " order by n.timestamp desc";
+            " order by n.timestamp asc";
 	
 	
 	public static final String DELETE_NOTE = "delete from ErrorOccurrenceNote where noteId = :" + NOTE_ID; 
