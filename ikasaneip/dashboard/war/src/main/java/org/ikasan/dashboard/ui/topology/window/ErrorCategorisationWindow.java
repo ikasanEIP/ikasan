@@ -214,7 +214,7 @@ public class ErrorCategorisationWindow extends Window
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	logger.info("table item slected: " + (ErrorCategorisationLink)itemClickEvent.getItemId());
+		    	logger.debug("table item selected: " + (ErrorCategorisationLink)itemClickEvent.getItemId());
 		    	
 		    	errorCategorisationLink = (ErrorCategorisationLink)itemClickEvent.getItemId();
 		    	errorCategorisation = errorCategorisationLink.getErrorCategorisation();

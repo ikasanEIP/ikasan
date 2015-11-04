@@ -150,7 +150,6 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
-		logger.info(parameter.getName() + " " + parameter.getValue());
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		passwordField = new PasswordField();
@@ -235,7 +234,6 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.addComponent(label, 0, 1, 1, 1);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
-		logger.info(parameter.getName() + " " + parameter.getValue());
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		usernameField = new TextField();
@@ -479,7 +477,7 @@ public class PlatformConfigurationPanel extends Panel implements View
     			
     			HashMap<String, String> map = new HashMap<String, String>();
     			
-    			logger.info("Saving map: " + mapTextFields.size());
+    			logger.debug("Saving map: " + mapTextFields.size());
     			
     			for(String key: mapTextFields.keySet())
     			{
@@ -487,7 +485,7 @@ public class PlatformConfigurationPanel extends Panel implements View
     				{
     					TextFieldKeyValuePair pair = mapTextFields.get(key);
     					
-    					logger.info("Saving for key: " + key);
+    					logger.debug("Saving for key: " + key);
     					
     					if(pair.key.getValue() != "")
     					{

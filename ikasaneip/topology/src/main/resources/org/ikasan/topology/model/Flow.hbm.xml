@@ -70,6 +70,12 @@
                   column="Description"
                   not-null="true" 
                   unique="false"/>
+                  
+         <property name="order"
+                  type="int"
+                  column="FlowOrder"
+                  not-null="true" 
+                  unique="false"/>
         
         <many-to-one name="module" column="ModuleId" 
        		class="org.ikasan.topology.model.Module" not-null="true"/>

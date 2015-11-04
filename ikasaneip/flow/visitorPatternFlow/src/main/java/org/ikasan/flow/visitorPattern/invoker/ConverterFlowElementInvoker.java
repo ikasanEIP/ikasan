@@ -52,6 +52,9 @@ import org.ikasan.spec.flow.*;
 @SuppressWarnings("unchecked")
 public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Converter>
 {
+    /** does this broker require the full flowEvent or just the payload */
+    Boolean requiresFullEventForInvocation;
+
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Converter> flowElement)
     {
@@ -59,7 +62,55 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
         Converter converter = flowElement.getFlowComponent();
-        flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+
+        if(requiresFullEventForInvocation == null)
+        {
+            try
+            {
+                // try with flowEvent and if successful mark this producer
+                // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
+                converter.getClass().getMethod("convert", FlowEvent.class);
+                Object o = converter.convert(flowEvent);
+                if (o instanceof FlowEvent)
+                {
+                    FlowEvent converterFlowEvent = (FlowEvent)o;
+                    flowEvent.setPayload(converterFlowEvent.getPayload());
+                }
+                else
+                {
+                    flowEvent.setPayload(o);
+                }
+
+                requiresFullEventForInvocation = Boolean.TRUE;
+            }
+            catch(java.lang.NoSuchMethodException e)
+            {
+                flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+                requiresFullEventForInvocation = Boolean.FALSE;
+            }
+        }
+        else
+        {
+            if(requiresFullEventForInvocation.booleanValue())
+            {
+                // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                Object o = converter.convert(flowEvent);
+                if (o instanceof FlowEvent)
+                {
+                    FlowEvent converterFlowEvent = (FlowEvent)o;
+                    flowEvent.setPayload(converterFlowEvent.getPayload());
+                }
+                else
+                {
+                    flowEvent.setPayload(o);
+                }
+            }
+            else
+            {
+                flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+            }
+        }
+
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

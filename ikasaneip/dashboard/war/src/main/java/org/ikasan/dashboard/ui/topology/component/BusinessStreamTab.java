@@ -331,7 +331,7 @@ public class BusinessStreamTab extends TopologyTab
 
                 	for(final BusinessStreamFlow businessStreamFlow: businessStream.getFlows())
                 	{
-                		logger.info("Adding flow: " + businessStreamFlow);
+                		logger.debug("Adding flow: " + businessStreamFlow);
                 		Button deleteButton = new Button();
                     	deleteButton.setIcon(VaadinIcons.TRASH);
                     	deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);   

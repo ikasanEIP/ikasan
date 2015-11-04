@@ -203,7 +203,7 @@ public class FlowStateTable extends DashboardTable
 	@Subscribe
 	public void receiveAlertEvent(final FlowStateEvent event)
 	{
-		logger.info("received event: " + event);
+		logger.debug("received event: " + event);
 		UI.getCurrent().access(new Runnable() 
 		{
             @Override

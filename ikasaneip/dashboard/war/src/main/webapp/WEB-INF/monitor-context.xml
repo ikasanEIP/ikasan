@@ -12,6 +12,7 @@
 
 	<bean id="monitorViewPanel" class="org.ikasan.dashboard.ui.monitor.panel.MonitorViewPanel" scope="session">
         <constructor-arg ref="topologyService" />
+        <constructor-arg ref="startupControlService" />
     </bean>
 
 </beans>

@@ -33,8 +33,7 @@
         			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
         			 classpath:hospital-conf.xml,
-        			 classpath:module-service-conf.xml,
-        			 classpath:providers-properties.xml
+        			 classpath:module-service-conf.xml
         </param-value>
     </context-param>
 
@@ -88,7 +87,7 @@
 	      <param-value>true</param-value>
 	    </init-param> 
 	    <init-param>
-	      <param-name>legacyPropertyToStringMode</param-name>
+	      <param-name>legacyPropertyToString</param-name>
 	      <param-value>true</param-value>
 	    </init-param>
 	    <!-- init-param>

@@ -130,7 +130,7 @@ public class NewClientFieldGroup extends FieldGroup
             systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
             		"Created new mapping configuration client: " + client.getName(), authentication.getName());
 
-            logger.info("User: " + authentication.getName() 
+            logger.debug("User: " + authentication.getName() 
                 + " added a new Mapping Configuration Client:  " 
                     + client);
         }

@@ -52,6 +52,7 @@ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.util.CommitHandler;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
@@ -61,6 +62,8 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -77,7 +80,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Ikasan Development Team
  * 
  */
-public class NavigationPanel extends Panel implements ViewContext
+public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 {
 
 	private static final long serialVersionUID = 5649279357596506519L;
@@ -144,7 +147,7 @@ public class NavigationPanel extends Panel implements ViewContext
 	 */
 	protected void init()
 	{
-		logger.info("Initialising navigation panel.");
+		logger.debug("Initialising navigation panel.");
 
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setHeight(30, Unit.PIXELS);
@@ -330,6 +333,11 @@ public class NavigationPanel extends Panel implements ViewContext
 	public void setVisible(boolean visible)
 	{
 		this.layout.setVisible(visible);
+		
+		if(this.visibilityGroup != null)
+		{
+			this.visibilityGroup.setVisible();
+		}
 	}
 
 	public void setCurrentView(String currentView)
@@ -353,6 +361,12 @@ public class NavigationPanel extends Panel implements ViewContext
 	public void setMenuComponents(HashMap<Component, String> menuComponents)
 	{
 		this.visibilityGroup.getComponents().putAll(menuComponents);
+	}
+
+
+	public void enter()
+	{
+		this.visibilityGroup.setVisible();
 	}
 
 }

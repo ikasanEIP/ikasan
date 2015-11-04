@@ -247,15 +247,19 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
      */
     protected void registerListeners()
     {
-        super.editButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        super.editButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 setEditable(true);
                 mappingConfigurationFunctionalGroup.editButtonPressed();
             }
         });
 
-        super.saveButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        super.saveButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 try
                 {
                     save();
@@ -271,7 +275,10 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
                     // We can ignore this one as we have already dealt with the
                     // validation messages using the validation framework.
                 }
-                catch (Exception e) {
+                catch (Exception e) 
+                {
+                	logger.error("An error occurred trying to save a mapping configuration!", e); 
+                	
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -282,8 +289,10 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             }
         });
 
-        super.cancelButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        super.cancelButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 setEditable(false);
                 mappingConfigurationFunctionalGroup.saveOrCancelButtonPressed();
                 
