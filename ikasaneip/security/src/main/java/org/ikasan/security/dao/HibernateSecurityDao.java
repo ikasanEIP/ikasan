@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -76,6 +77,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     @Override
     public void saveOrUpdateRole(Role role)
     {
+    	role.setUpdatedDateTime(new Date());
     	this.getHibernateTemplate().saveOrUpdate(role);
     }
 
@@ -86,6 +88,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     @Override
     public void saveOrUpdatePolicy(Policy policy)
     {
+    	policy.setUpdatedDateTime(new Date());
     	this.getHibernateTemplate().saveOrUpdate(policy);
     }
 
@@ -96,6 +99,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     @Override
     public void saveOrUpdatePrincipal(IkasanPrincipal principal)
     {
+    	principal.setUpdatedDateTime(new Date());
     	this.getHibernateTemplate().saveOrUpdate(principal);
     }
 
@@ -219,7 +223,6 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	@Override
 	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
 	{
-		
 		this.getHibernateTemplate().saveOrUpdate(authenticationMethod);
 	}
 

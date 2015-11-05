@@ -40,21 +40,31 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
+import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -68,6 +78,8 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class WiretapPayloadViewWindow extends Window
 {
+	private Logger logger = Logger.getLogger(WiretapPayloadViewWindow.class);
+	
 	/**
 	 * 
 	 */
@@ -166,8 +178,12 @@ public class WiretapPayloadViewWindow extends Window
 		layout.addComponent(dateTimeLabel, 0, 4);
 		layout.setComponentAlignment(dateTimeLabel, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(this.wiretapEvent.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.wiretapEvent.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
@@ -185,7 +201,7 @@ public class WiretapPayloadViewWindow extends Window
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
 		
-		GridLayout wrapperLayout = new GridLayout(1, 4);
+		GridLayout wrapperLayout = new GridLayout(2, 4);
 		wrapperLayout.setWidth("100%");
 		
 		final AceEditor editor = new AceEditor();
@@ -211,14 +227,69 @@ public class WiretapPayloadViewWindow extends Window
             }
         });
 		
+		Button downloadButton = new Button();
+		FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
+        fd.extend(downloadButton);
+
+        downloadButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+        downloadButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        downloadButton.setDescription("Download the payload");
+        downloadButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		
 		wrapTextCheckBox.setValue(true);
 
-		wrapperLayout.addComponent(layout, 0, 0);
+		wrapperLayout.addComponent(layout, 0, 0, 1, 0);
 		wrapperLayout.addComponent(wrapTextCheckBox, 0, 1);
-		wrapperLayout.addComponent(editor, 0, 2);
+		wrapperLayout.addComponent(downloadButton, 1, 1);
+		wrapperLayout.setComponentAlignment(downloadButton, Alignment.MIDDLE_RIGHT);
+		wrapperLayout.addComponent(editor, 0, 2, 1, 2);
 		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;
 	}
+	
+	/**
+     * Helper method to get the stream associated with the export of the file.
+     * 
+     * @return the StreamResource associated with the export.
+     */
+    private StreamResource getPayloadDownloadStream() 
+    {
+		StreamResource.StreamSource source = new StreamResource.StreamSource() 
+		{
+		    public InputStream getStream() {
+		        ByteArrayOutputStream stream = null;
+		        try
+		        {
+		            stream = getPayloadStream();
+		        }
+		        catch (IOException e)
+		        {
+		        	logger.error(e.getMessage(), e);
+		        }
+		        InputStream input = new ByteArrayInputStream(stream.toByteArray());
+		        return input;
+		
+		    }
+		};
+            
+	    StreamResource resource = new StreamResource ( source,"payload.txt");
+	    return resource;
+    }
+    
+    /**
+     * Helper method to get the ByteArrayOutputStream associated with the export.
+     * 
+     * @return
+     * @throws IOException
+     */
+    private ByteArrayOutputStream getPayloadStream() throws IOException
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        out.write(wiretapEvent.getEvent().getBytes());
+
+        return out;
+    }
 }

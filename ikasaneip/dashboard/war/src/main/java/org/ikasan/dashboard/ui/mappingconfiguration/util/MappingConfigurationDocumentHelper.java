@@ -279,17 +279,17 @@ public class MappingConfigurationDocumentHelper
         List<SAXParseException> fatal = new ArrayList<SAXParseException>();
         
         public void warning(SAXParseException e) throws SAXException {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             warnings.add(e);
         }
 
         public void error(SAXParseException e) throws SAXException {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             errors.add(e);
         }
 
         public void fatalError(SAXParseException e) throws SAXException {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             fatal.add(e);
         }
     }

@@ -64,19 +64,22 @@ public class SchemaValidationErrorHandler implements ErrorHandler
     private List<SAXParseException> errors = new ArrayList<SAXParseException>();
     private List<SAXParseException> fatal = new ArrayList<SAXParseException>();
     
-    public void warning(SAXParseException e) throws SAXException {
-        logger.info(e.getMessage());
+    public void warning(SAXParseException e) throws SAXException 
+    {
+        logger.debug(e.getMessage());
         warnings.add(e);
     }
 
-    public void error(SAXParseException e) throws SAXException {
-        logger.info(e.getMessage());
+    public void error(SAXParseException e) throws SAXException 
+    {
+        logger.debug(e.getMessage());
         errors.add(e);
         inError = true;
     }
 
-    public void fatalError(SAXParseException e) throws SAXException {
-        logger.info(e.getMessage());
+    public void fatalError(SAXParseException e) throws SAXException 
+    {
+        logger.debug(e.getMessage());
         fatal.add(e);
         inError = true;
     }

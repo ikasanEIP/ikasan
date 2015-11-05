@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
@@ -83,9 +84,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -119,17 +122,15 @@ public class ActionedExclusionTab extends TopologyTab
 	private ErrorReportingService errorReportingService;
 	private TopologyService topologyService;
 	
-	private SerialiserFactory serialiserFactory;
 	
 	public ActionedExclusionTab(ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			HospitalManagementService<ExclusionEventAction> hospitalManagementService,ErrorReportingService errorReportingService,
-			TopologyService topologyService, SerialiserFactory serialiserFactory, ComboBox businessStreamCombo)
+			TopologyService topologyService, ComboBox businessStreamCombo)
 	{
 		this.exclusionManagementService = exclusionManagementService;
 		this.hospitalManagementService = hospitalManagementService;
 		this.errorReportingService = errorReportingService;
 		this.topologyService = topologyService;
-		this.serialiserFactory = serialiserFactory;
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
@@ -152,8 +153,8 @@ public class ActionedExclusionTab extends TopologyTab
 		    	
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
 		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
-		    	ActionedExclusionEventViewWindow actionExclusionEventViewWindow = new ActionedExclusionEventViewWindow(errorOccurrence, serialiserFactory
-		    			, action, hospitalManagementService, topologyService);
+		    	ActionedExclusionEventViewWindow actionExclusionEventViewWindow = new ActionedExclusionEventViewWindow(errorOccurrence, 
+		    			action, hospitalManagementService, topologyService);
 		    
 		    	UI.getCurrent().addWindow(actionExclusionEventViewWindow);
 		    }
@@ -218,10 +219,15 @@ public class ActionedExclusionTab extends TopologyTab
             	List<ExclusionEventAction> exclusionEventActions = hospitalManagementService.getActionedExclusions
             			(modulesNames, flowNames, fromDate.getValue(), toDate.getValue());
 
+            	if(exclusionEventActions == null || exclusionEventActions.size() == 0)
+            	{
+            		Notification.show("The actioned exclusions search returned no results!", Type.ERROR_MESSAGE);
+            	}
+            	
             	for(ExclusionEventAction exclusionEventAction: exclusionEventActions)
             	{
             		Date date = new Date(exclusionEventAction.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(date);
             	    
             	    actionedExclusionsTable.addItem(new Object[]{exclusionEventAction.getModuleName(), exclusionEventAction.getFlowName()
@@ -261,9 +267,6 @@ public class ActionedExclusionTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -271,8 +274,6 @@ public class ActionedExclusionTab extends TopologyTab
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -351,9 +352,6 @@ public class ActionedExclusionTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -361,8 +359,6 @@ public class ActionedExclusionTab extends TopologyTab
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -424,9 +420,6 @@ public class ActionedExclusionTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -434,8 +427,6 @@ public class ActionedExclusionTab extends TopologyTab
 				{
 					final Component component = (Component) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -472,10 +463,12 @@ public class ActionedExclusionTab extends TopologyTab
 		fromDate = new PopupDateField("From date");
 		fromDate.setResolution(Resolution.MINUTE);
 		fromDate.setValue(this.getMidnightToday());
+		fromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(fromDate, 0, 0);
 		toDate = new PopupDateField("To date");
 		toDate.setResolution(Resolution.MINUTE);
 		toDate.setValue(this.getTwentyThreeFixtyNineToday());
+		toDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(toDate, 1, 0);
 				
 		

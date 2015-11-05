@@ -42,26 +42,34 @@ package org.ikasan.dashboard.ui.topology.component;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.dd.DragAndDropEvent;
@@ -70,23 +78,28 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -98,7 +111,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 {
 	private Logger logger = Logger.getLogger(ErrorOccurrenceTab.class);
 	
-	private Table errorOccurenceTable;
+	private FilterTable errorOccurenceTable;
 	
 	private Table errorOccurenceModules = new Table("Modules");
 	private Table errorOccurenceFlows = new Table("Flows");
@@ -112,41 +125,83 @@ public class ErrorOccurrenceTab extends TopologyTab
 	private float splitPosition;
 	private Unit splitUnit;
 	
+	private Container container = null;
+	
 	private ErrorReportingService errorReportingService;
+	private ErrorReportingManagementService errorReportingManagementService;
+	
+	private Label resultsLabel = new Label();
+	
+	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
 	public ErrorOccurrenceTab(ErrorReportingService errorReportingService,
-			ComboBox businessStreamCombo)
+			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService)
 	{
 		this.errorReportingService = errorReportingService;
+		if(this.errorReportingService == null)
+		{
+			throw new IllegalArgumentException("errorReportingService cannot be null!");
+		}
+		this.errorReportingManagementService = errorReportingManagementService;
+		if(this.errorReportingManagementService == null)
+		{
+			throw new IllegalArgumentException("errorReportingManagementService cannot be null!");
+		}
+		
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
+	protected Container buildContainer() 
+	{
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Module Name", String.class,  null);
+		cont.addContainerProperty("Flow Name", String.class,  null);
+		cont.addContainerProperty("Component Name", String.class,  null);
+		cont.addContainerProperty("Error Message", String.class,  null);
+		cont.addContainerProperty("Timestamp", String.class,  null);
+		cont.addContainerProperty("N/L", Layout.class,  null);
+		
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+		
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		{	
+			cont.addContainerProperty("", CheckBox.class,  null);
+		}
+
+        return cont;
+    }
+	
 	public Layout createCategorisedErrorLayout()
 	{
-		this.errorOccurenceTable = new Table();
+		container = buildContainer();
+		this.errorOccurenceTable = new FilterTable();
+		this.errorOccurenceTable.setFilterBarVisible(true);
 		this.errorOccurenceTable.setSizeFull();
 		this.errorOccurenceTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		this.errorOccurenceTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.errorOccurenceTable.addStyleName("ikasan");
-		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
+		this.errorOccurenceTable.setContainerDataSource(container);
 		this.errorOccurenceTable.setColumnExpandRatio("Module Name", .14f);
-		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Flow Name", .18f);
-		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Component Name", .2f);
-		this.errorOccurenceTable.addContainerProperty("Error Message", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Error Message", .33f);
-		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
 		this.errorOccurenceTable.setColumnExpandRatio("Timestamp", .1f);
+		this.errorOccurenceTable.setColumnExpandRatio("N/L", .05f);
+		this.errorOccurenceTable.setColumnExpandRatio("", .05f);
 		
 		this.errorOccurenceTable.addStyleName("wordwrap-table");
 		
-		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+		{
 		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) {
+		    public void itemClick(ItemClickEvent itemClickEvent) 
+		    {
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
-		    
+		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
+		    	
 		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    }
 		});
@@ -158,66 +213,7 @@ public class ErrorOccurrenceTab extends TopologyTab
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
-            	errorOccurenceTable.removeAllItems();
-
-            	ArrayList<String> modulesNames = null;
-            	
-            	if(errorOccurenceModules.getItemIds().size() > 0)
-            	{
-	            	modulesNames = new ArrayList<String>();
-	            	for(Object module: errorOccurenceModules.getItemIds())
-	            	{
-	            		modulesNames.add(((Module)module).getName());
-	            	}
-            	}
-            	
-            	ArrayList<String> flowNames = null;
-            	
-            	if(errorOccurenceFlows.getItemIds().size() > 0)
-            	{
-            		flowNames = new ArrayList<String>();
-            		for(Object flow: errorOccurenceFlows.getItemIds())
-                	{
-                		flowNames.add(((Flow)flow).getName());
-                	}
-            	}
-            	
-            	ArrayList<String> componentNames = null;
-            	
-            	if(errorOccurenceComponents.getItemIds().size() > 0)
-            	{
-            		componentNames = new ArrayList<String>();
-	            	for(Object component: errorOccurenceComponents.getItemIds())
-	            	{
-	            		componentNames.add(((Component)component).getName());
-	            	}
-            	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
-            			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-            		
-            		modulesNames = new ArrayList<String>();
-            		
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}
-         
-            	List<ErrorOccurrence> errorOccurences = errorReportingService
-            			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
-
-            	for(ErrorOccurrence errorOccurrence: errorOccurences)
-            	{
-            		Date date = new Date(errorOccurrence.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            	    String timestamp = format.format(date);
-            	    
-            	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
-            				, errorOccurrence.getFlowElementName(), errorOccurrence.getErrorMessage(), timestamp}, errorOccurrence);
-            	}
+            	refreshTable(true, null);
             }
         });
 		
@@ -252,9 +248,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -262,8 +255,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -342,9 +333,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -352,8 +340,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -415,9 +401,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -425,8 +408,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 				{
 					final Component component = (Component) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ component.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -463,10 +444,12 @@ public class ErrorOccurrenceTab extends TopologyTab
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
 		errorFromDate.setValue(this.getMidnightToday());
+		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
 		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
+		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		
@@ -556,8 +539,188 @@ public class ErrorOccurrenceTab extends TopologyTab
 		
 		vSplitPanel.setFirstComponent(filterPanel);
 		
-		CssLayout hErrorTable = new CssLayout();
-		hErrorTable.setSizeFull();
+		GridLayout hErrorTable = new GridLayout();
+		hErrorTable.setWidth("100%");
+		
+		GridLayout buttons = new GridLayout(3, 1);
+		buttons.setWidth("80px");
+		
+		final Button selectAllButton = new Button();
+		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+		selectAllButton.setImmediate(true);
+		selectAllButton.setDescription("Select / deselect all records below.");
+		
+		selectAllButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
+            	
+            	Resource r = selectAllButton.getIcon();
+            	
+            	if(r.equals(VaadinIcons.CHECK_SQUARE_O))
+            	{
+            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
+            		
+            		for(ErrorOccurrence eo: items)
+                	{
+                		Item item = container.getItem(eo);
+                		
+                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+                		
+                		cb.setValue(true);
+                	}
+            	}
+            	else
+            	{
+            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+            		
+            		for(ErrorOccurrence eo: items)
+                	{
+                		Item item = container.getItem(eo);
+                		
+                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+                		
+                		cb.setValue(false);
+                	}
+            	}
+            }
+        });
+		
+		Button closeSelectedButton = new Button();
+		closeSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		closeSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		closeSelectedButton.setIcon(VaadinIcons.CLOSE);
+		closeSelectedButton.setImmediate(true);
+		closeSelectedButton.setDescription("Close all selected errors below.");
+		
+		closeSelectedButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	            	
+            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
+            	
+            	final Collection<ErrorOccurrence> myItems = new ArrayList<ErrorOccurrence>(items);
+            	
+            	for(ErrorOccurrence eo: items)
+            	{
+            		Item item = container.getItem(eo);
+            		
+            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+            		
+            		if(cb.getValue() == false)
+            		{
+            			myItems.remove(eo);
+            		}
+            	}
+            	
+            	if(myItems.size() == 0)
+            	{
+            		Notification.show("You need to select some errors to close.", Type.ERROR_MESSAGE);
+            	}
+            	else
+            	{
+	            	final ErrorOccurrenceCloseWindow window = new ErrorOccurrenceCloseWindow(errorReportingManagementService, 
+	            			myItems);
+	            	
+	            	window.addCloseListener(new Window.CloseListener() 
+	            	{
+	                    public void windowClose(CloseEvent e) 
+	                    {
+	                    	if(window.getAction().equals(ErrorOccurrenceCloseWindow.CLOSE))
+	                    	{
+	                    		updateCancel((Collection<ErrorOccurrence>) myItems);
+	                    	}
+	                    }
+	                });
+			    	
+	            	UI.getCurrent().addWindow(window);
+            	}
+            }
+        });
+		
+		Button commentSelectedButton = new Button();
+		commentSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		commentSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		commentSelectedButton.setIcon(VaadinIcons.COMMENT);
+		commentSelectedButton.setImmediate(true);
+		commentSelectedButton.setDescription("Comment on selected errors below.");
+		
+		commentSelectedButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
+            	
+            	final Collection<ErrorOccurrence> myItems = new ArrayList<ErrorOccurrence>(items);
+            	
+            	for(ErrorOccurrence eo: items)
+            	{
+            		Item item = container.getItem(eo);
+            		
+            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+            		
+            		if(cb.getValue() == false)
+            		{
+            			myItems.remove(eo);
+            		}
+            	}
+            	
+            	if(myItems.size() == 0)
+            	{
+            		Notification.show("You need to select some errors to comment on!", Type.ERROR_MESSAGE);
+            	}
+            	else
+            	{
+	            	final ErrorOccurrenceCommentWindow window = new ErrorOccurrenceCommentWindow(errorReportingManagementService, 
+	            			myItems);
+	            	
+	            	window.addCloseListener(new Window.CloseListener() 
+	            	{
+	                    public void windowClose(CloseEvent e) 
+	                    {
+	                    	if(window.getAction().equals(ErrorOccurrenceCommentWindow.COMMENT))
+	                    	{
+	                    		updateComments(myItems);
+	                    	}
+	                    }
+	                });
+			    	
+	            	UI.getCurrent().addWindow(window);
+            	}
+            }
+        });
+		
+		buttons.addComponent(selectAllButton);
+		buttons.addComponent(closeSelectedButton);
+		buttons.addComponent(commentSelectedButton);
+		
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setWidth("100%");
+		hl.addComponent(buttons);
+		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
+		
+		searchResultsSizeLayout.setWidth("100%");
+		searchResultsSizeLayout.addComponent(this.resultsLabel);
+		searchResultsSizeLayout.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
+		
+		GridLayout gl = new GridLayout(2, 1);
+		gl.setWidth("100%");
+		
+		gl.addComponent(searchResultsSizeLayout);
+		
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+		
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		{	
+			gl.addComponent(hl);
+		}
+		
+		hErrorTable.addComponent(gl);
 		hErrorTable.addComponent(this.errorOccurenceTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
@@ -573,5 +736,156 @@ public class ErrorOccurrenceTab extends TopologyTab
 		
 		return wrapper;
 	}
+	
+	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
+	{
+		errorOccurenceTable.removeAllItems();
 
+    	ArrayList<String> modulesNames = null;
+    	
+    	if(errorOccurenceModules.getItemIds().size() > 0)
+    	{
+        	modulesNames = new ArrayList<String>();
+        	for(Object module: errorOccurenceModules.getItemIds())
+        	{
+        		modulesNames.add(((Module)module).getName());
+        	}
+    	}
+    	
+    	ArrayList<String> flowNames = null;
+    	
+    	if(errorOccurenceFlows.getItemIds().size() > 0)
+    	{
+    		flowNames = new ArrayList<String>();
+    		for(Object flow: errorOccurenceFlows.getItemIds())
+        	{
+        		flowNames.add(((Flow)flow).getName());
+        	}
+    	}
+    	
+    	ArrayList<String> componentNames = null;
+    	
+    	if(errorOccurenceComponents.getItemIds().size() > 0)
+    	{
+    		componentNames = new ArrayList<String>();
+        	for(Object component: errorOccurenceComponents.getItemIds())
+        	{
+        		componentNames.add(((Component)component).getName());
+        	}
+    	}
+    	
+    	if(modulesNames == null && flowNames == null && componentNames == null
+    			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
+    	{
+    		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
+    		
+    		modulesNames = new ArrayList<String>();
+    		
+    		for(BusinessStreamFlow flow: businessStream.getFlows())
+    		{
+    			modulesNames.add(flow.getFlow().getModule().getName());
+    		}
+    	}
+    	
+		List<ErrorOccurrence> errorOccurences = errorReportingService
+    			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+    	
+    	if((errorOccurences == null || errorOccurences.size() == 0) && showError)
+    	{
+    		Notification.show("The error search returned no results!", Type.ERROR_MESSAGE);
+    	}
+    	
+    	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
+    	
+    	searchResultsSizeLayout.removeAllComponents();
+    	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size());
+    	searchResultsSizeLayout.addComponent(this.resultsLabel);
+
+    	for(ErrorOccurrence errorOccurrence: errorOccurences)
+    	{
+    		Date date = new Date(errorOccurrence.getTimestamp());
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+    	    String timestamp = format.format(date);
+    	    
+    	    Item item = container.addItem(errorOccurrence);			            	    
+    	    
+    	    item.getItemProperty("Module Name").setValue(errorOccurrence.getModuleName());
+			item.getItemProperty("Flow Name").setValue(errorOccurrence.getFlowName());
+			item.getItemProperty("Component Name").setValue(errorOccurrence.getFlowElementName());
+			item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
+			item.getItemProperty("Timestamp").setValue(timestamp);
+						
+			HorizontalLayout layout = new HorizontalLayout();
+    	    layout.setSpacing(true);
+    	    
+    	    Label label = new Label(VaadinIcons.COMMENT.getHtml(), ContentMode.HTML);			
+			label.addStyleName(ValoTheme.LABEL_TINY);
+			
+			if(noteUris.contains(errorOccurrence.getUri()))
+			{
+				layout.addComponent(label);
+			}
+			
+			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
+			label.addStyleName(ValoTheme.LABEL_TINY);
+						
+			item.getItemProperty("N/L").setValue(layout);
+			
+			
+			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+			
+			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+			{	
+				CheckBox cb = new CheckBox();
+			
+				if(myItems != null && myItems.contains(errorOccurrence))
+				{
+					cb.setValue(true);
+					item.getItemProperty("").setValue(cb);
+				}
+				else
+				{
+					cb.setValue(false);
+					item.getItemProperty("").setValue(cb);
+				}
+			}
+    	    
+    	}
+	}
+
+	protected void updateComments(Collection<ErrorOccurrence> myItems)
+	{
+    	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
+    	
+		for(ErrorOccurrence eo: myItems)
+		{
+			Item item = container.getItem(eo);
+		 
+		 	HorizontalLayout layout = new HorizontalLayout();
+    	    layout.setSpacing(true);
+    	    
+    	    Label label = new Label(VaadinIcons.COMMENT.getHtml(), ContentMode.HTML);			
+			label.addStyleName(ValoTheme.LABEL_TINY);
+			
+			if(noteUris.contains(eo.getUri()))
+			{
+				layout.addComponent(label);
+			}
+			
+			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
+			label.addStyleName(ValoTheme.LABEL_TINY);
+			
+			item.getItemProperty("N/L").setValue(layout);
+		}
+	}
+	
+	protected void updateCancel(Collection<ErrorOccurrence> myItems)
+	{    	
+		for(ErrorOccurrence eo: myItems)
+		{
+			container.removeItem(eo);
+		}
+	}
 }

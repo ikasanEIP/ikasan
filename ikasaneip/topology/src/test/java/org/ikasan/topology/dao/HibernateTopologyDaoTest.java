@@ -182,7 +182,7 @@ public class HibernateTopologyDaoTest
 		Module module = this.xaTopologyDao.getModuleByName("Module 1");
 		
 		
-		Flow flow =  this.xaTopologyDao.getFlowsByServerIdModuleIdAndFlowname(servers.get(0).getId(), module.getId(), "Flow 1");
+		Flow flow =  this.xaTopologyDao.getFlowByServerIdModuleIdAndFlowname(servers.get(0).getId(), module.getId(), "Flow 1");
 		
 		Assert.assertTrue(flow != null);
 	}

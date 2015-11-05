@@ -150,7 +150,6 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
-		logger.info(parameter.getName() + " " + parameter.getValue());
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		passwordField = new PasswordField();
@@ -235,7 +234,6 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.addComponent(label, 0, 1, 1, 1);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
-		logger.info(parameter.getName() + " " + parameter.getValue());
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		usernameField = new TextField();

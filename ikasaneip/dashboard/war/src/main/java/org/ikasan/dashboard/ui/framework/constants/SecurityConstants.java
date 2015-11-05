@@ -47,6 +47,7 @@ package org.ikasan.dashboard.ui.framework.constants;
  */
 public class SecurityConstants
 {
+	public static String ANY_AUTHORITY = "ANY";
 	public static String ALL_AUTHORITY = "ALL";
 	public static String VIEW_BUSINESS_STREAM_AUTHORITY = "ViewBusinessStream";
 	public static String VIEW_WIRETAP_AUTHORITY = "ViewWiretap";
@@ -58,6 +59,7 @@ public class SecurityConstants
 	public static String CREATE_BUSINESS_STREAM_AUTHORITY = "CreateBusinessStream";
 	public static String MODIFY_BUSINESS_STREAM_AUTHORITY = "ModifyBusinessStream";
 	public static String DELETE_BUSINESS_STREAM_AUTHORITY = "DeleteBusinessStream";
+	public static String ACTION_ERRORS_AUTHORITY = "ActionErrors";
 	
 	public static String VIEW_TOPOLOGY_AUTHORITY = "ViewTopology";
 	public static String VIEW_MAPPING_AUTHORITY = "ViewMapping";

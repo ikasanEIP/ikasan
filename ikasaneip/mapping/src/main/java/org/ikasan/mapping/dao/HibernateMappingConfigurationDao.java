@@ -118,9 +118,13 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                     }
                     sourceSystemValuesSB.append("]");
 
-                    throw new RuntimeException("Multiple results returned from the mapping configuration service. " +
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
-                            "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString());
+                            "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString();
+                    
+                    logger.error(errorMessage);
+                    
+                    throw new RuntimeException(errorMessage);
                 }
                 else
                 {
@@ -186,9 +190,13 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                     }
                     sourceSystemValuesSB.append("]");
 
-                    throw new RuntimeException("Multiple results returned from the mapping configuration service. " +
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
-                            "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString());
+                            "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString();
+                    
+                    logger.error(errorMessage);
+                    
+                    throw new RuntimeException(errorMessage);
                 }
                 else
                 {
