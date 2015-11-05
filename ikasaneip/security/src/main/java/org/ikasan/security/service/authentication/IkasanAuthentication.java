@@ -44,7 +44,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.directory.api.ldap.aci.UserClass.ThisEntry;
+import org.apache.log4j.Logger;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.springframework.security.core.Authentication;
@@ -58,6 +58,8 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class IkasanAuthentication implements Authentication
 {
+	private Logger logger = Logger.getLogger(IkasanAuthentication.class);
+	 
 	private boolean isAuthenticated;
 	private List<GrantedAuthority> authorities;
 	private Principal principal;
@@ -189,11 +191,11 @@ public class IkasanAuthentication implements Authentication
     {
     	for(GrantedAuthority grantedAuthority: this.getAuthorities())
     	{
-    		System.out.println("Policy: " + (Policy)grantedAuthority);
+    		logger.debug("Policy: " + (Policy)grantedAuthority);
     		
     		PolicyLink policyLink = ((Policy)grantedAuthority).getPolicyLink();
     		
-    		System.out.println("PolicyLink: " + policyLink);
+    		logger.debug("PolicyLink: " + policyLink);
     		if(policyLink != null)
     		{
     			if(policyLink.getPolicyLinkType().getName().equals(linkedItemType)

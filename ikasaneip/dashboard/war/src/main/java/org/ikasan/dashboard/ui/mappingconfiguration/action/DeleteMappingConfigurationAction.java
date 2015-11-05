@@ -111,16 +111,19 @@ public class DeleteMappingConfigurationAction implements Action
             		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
             		+ "]", authentication.getName());
 
-            logger.info("User: " + authentication.getName() 
+            logger.debug("User: " + authentication.getName() 
                 + " successfully deleted the following Mapping Configuration: " 
                     + mappingConfiguration);
         }
-        catch (Exception e) {
+        catch (Exception e) 
+        {
+        	logger.error("An error occurred trying to delete a mapping configuration!", e); 
+        	
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
 
-            Notification.show("Cauget exception trying to remove a Mapping Configuration!", sw.toString()
+            Notification.show("An error occurred trying to delete a mapping configuration!", sw.toString()
                 , Notification.Type.ERROR_MESSAGE);
             return;
         }

@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
     
     <property name="getDate" value="current_date()" dbms="h2"/>
-    <property name="getDate" value="${getDate}" dbms="mysql, mssql, sybase"/>
+    <property name="getDate" value="getdate()" dbms="mysql, mssql, sybase"/>
     
     <property name="identity" value="IDENTITY" dbms="h2"/>
     <property name="identity" value="numeric(18)" dbms="mysql, mssql, sybase"/>
@@ -16,5 +16,9 @@
     
     <!-- Baseline change log -->    
 	<include file="db-changelog-baseline.xml" relativeToChangelogFile="true" />
+	
+	<!-- 1.1.0 change log -->
+	<include file="db-changelog-1.1.0.xml" relativeToChangelogFile="true" />
+	
 
 </databaseChangeLog>

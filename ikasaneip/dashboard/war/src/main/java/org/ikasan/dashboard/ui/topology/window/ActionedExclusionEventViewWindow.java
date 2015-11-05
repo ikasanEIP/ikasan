@@ -40,9 +40,11 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
@@ -85,7 +87,6 @@ public class ActionedExclusionEventViewWindow extends Window
 	private TextField roleName;
 	private TextField roleDescription;
 	private ErrorOccurrence errorOccurrence;
-	private SerialiserFactory serialiserFactory;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
@@ -93,12 +94,11 @@ public class ActionedExclusionEventViewWindow extends Window
 	/**
 	 * @param policy
 	 */
-	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
+	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;
-		this.serialiserFactory = serialiserFactory;
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
@@ -179,8 +179,12 @@ public class ActionedExclusionEventViewWindow extends Window
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(this.action.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.action.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
@@ -231,8 +235,10 @@ public class ActionedExclusionEventViewWindow extends Window
 		
 		final TextField tf8 = new TextField();
 		if(this.action != null)
-		{   	    
-			tf8.setValue(new Date(action.getTimestamp()).toString());
+		{   	
+			date = new Date(action.getTimestamp());
+			timestamp = format.format(date);
+			tf8.setValue(timestamp);
 		}
 		tf8.setReadOnly(true);
 		tf8.setWidth("80%");
@@ -242,8 +248,11 @@ public class ActionedExclusionEventViewWindow extends Window
 		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 
-		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.action.getEvent());
-		eventEditor.setValue(event.toString());
+		if(this.action.getEvent() != null)
+		{
+			eventEditor.setValue(new String((byte[])this.action.getEvent()));
+		}
+		
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);

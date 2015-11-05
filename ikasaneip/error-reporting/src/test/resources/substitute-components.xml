@@ -77,10 +77,12 @@
 
     <aop:config>
 		<aop:pointcut id="ecDaoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorCategorisationDao.*(..))"/>
+		<aop:pointcut id="emDaoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorManagementDao.*(..))"/>
         <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
         <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
 
 		<aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="ecDaoMethods"/>
+		<aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="emDaoMethods"/>
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="daoMethods"/>
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>

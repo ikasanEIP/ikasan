@@ -40,26 +40,54 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
+import org.vaadin.teemu.VaadinIcons;
+import org.xwiki.component.embed.EmbeddableComponentManager;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.rendering.converter.ConversionException;
+import org.xwiki.rendering.converter.Converter;
+import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
+import org.xwiki.rendering.renderer.printer.WikiPrinter;
+import org.xwiki.rendering.syntax.Syntax;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.server.VaadinService;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -75,15 +103,18 @@ public class ErrorOccurrenceViewWindow extends Window
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ErrorOccurrence errorOccurrence;
+	private ErrorReportingManagementService errorReportingManagementService;
 	
 
 	/**
 	 * @param policy
 	 */
-	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence)
+	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
+			ErrorReportingManagementService errorReportingManagementService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;
+		this.errorReportingManagementService = errorReportingManagementService;
 		
 		this.init();
 	}
@@ -114,7 +145,7 @@ public class ErrorOccurrenceViewWindow extends Window
 		layout.setColumnExpandRatio(0, 0.25f);
 		layout.setColumnExpandRatio(1, 0.75f);
 		
-		Label errorOccurrenceDetailsLabel = new Label("Error Occurence Details");
+		Label errorOccurrenceDetailsLabel = new Label("Error Details");
 		errorOccurrenceDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		layout.addComponent(errorOccurrenceDetailsLabel);
 		
@@ -156,8 +187,12 @@ public class ErrorOccurrenceViewWindow extends Window
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
+		Date date = new Date(errorOccurrence.getTimestamp());
+		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+	    String timestamp = format.format(date);
+	    
 		TextField tf4 = new TextField();
-		tf4.setValue(new Date(this.errorOccurrence.getTimestamp()).toString());
+		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
@@ -237,10 +272,152 @@ public class ErrorOccurrenceViewWindow extends Window
 		
 		tabsheet.addTab(h2, "Error Details");
 		tabsheet.addTab(h1, "Event Payload");
+		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
 		
 		wrapperLayout.addComponent(tabsheet, 0, 1);
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;
+	}
+	
+	protected Layout createCommentsTabsheet()
+	{
+		List<ErrorOccurrenceNote> notes = errorReportingManagementService.getErrorOccurrenceNotesByErrorUri(this.errorOccurrence.getUri());
+		
+		final GridLayout layout = new GridLayout();
+		layout.setSpacing(true);
+		layout.setWidth("100%");
+		
+		final Button commentButton = new Button("Comment");
+		commentButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		commentButton.setImmediate(true);
+		commentButton.setDescription("Comment on the error.");
+		
+		final HorizontalLayout commentButtonLayout = new HorizontalLayout();
+		commentButtonLayout.setSpacing(true);
+		commentButtonLayout.setMargin(true);
+		commentButtonLayout.addComponent(commentButton);
+		
+		commentButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	final TextArea tf1 = new TextArea();
+        		tf1.addValidator(new NonZeroLengthStringValidator("You must enter a comment!"));
+        		tf1.setRows(5);
+        		tf1.setReadOnly(false);
+        		tf1.setWidth("100%");
+        		tf1.setValidationVisible(false);
+        		layout.removeAllComponents();
+            	
+        		final Button saveButton = new Button("Save");
+        		saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        		saveButton.setImmediate(true);
+        		saveButton.setDescription("Save the comment");
+        		
+        		saveButton.addClickListener(new Button.ClickListener() 
+                {
+                    public void buttonClick(ClickEvent event) 
+                    {
+                    	try
+                    	{
+                    		tf1.validate();
+                    	}
+                    	catch (InvalidValueException e)
+                    	{
+                    		tf1.setValidationVisible(true);
+                    		return;
+                    	}
+                    	
+                    	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+        			        	.getAttribute(DashboardSessionValueConstants.USER);
+                    	
+                    	ArrayList<String> uris = new ArrayList<String>();
+        
+                    	uris.add(errorOccurrence.getUri());
+        
+                    	errorReportingManagementService.update(uris, tf1.getValue(), authentication.getName());
+                    	
+                    	layout.removeAllComponents();                                        	
+                    	updateNotes(layout);
+                    	layout.addComponent(commentButton);
+                    }
+                });
+        		
+        		final Button cancelButton = new Button("Cancel");
+        		cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        		cancelButton.setImmediate(true);
+        		
+        		cancelButton.addClickListener(new Button.ClickListener() 
+                {
+                    public void buttonClick(ClickEvent event) 
+                    {
+                    	layout.removeAllComponents();            
+                    	
+                    	updateNotes(layout);
+                    	layout.addComponent(commentButtonLayout);
+                    	layout.addComponent(commentButton);
+                    }
+                });
+        		
+        		HorizontalLayout buttonLayout = new HorizontalLayout();
+        		buttonLayout.setSpacing(true);
+        		
+        		buttonLayout.addComponent(saveButton);
+        		buttonLayout.addComponent(cancelButton);
+        		
+        		updateNotes(layout);
+        		
+        		layout.addComponent(tf1);
+        		layout.addComponent(buttonLayout);
+            }
+        });
+		
+		this.updateNotes(layout);
+		layout.addComponent(commentButtonLayout);
+		
+		return layout;
+	}
+	
+	protected Layout updateNotes(Layout layout)
+	{
+		List<ErrorOccurrenceNote> notes = errorReportingManagementService.getErrorOccurrenceNotesByErrorUri(this.errorOccurrence.getUri());		
+		
+		for(ErrorOccurrenceNote note: notes)
+		{
+			Label whoLabel = new Label(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: ");
+			whoLabel.setWidth("100%");
+			whoLabel.setValue(new Date(note.getNote().getTimestamp()) + ": " + note.getNote().getUser() + " wrote: ");
+			
+			layout.addComponent(whoLabel);
+			
+			// Initialize Rendering components and allow getting instances
+			EmbeddableComponentManager componentManager = new EmbeddableComponentManager();
+			componentManager.initialize(this.getClass().getClassLoader());
+			
+			Converter converter;
+			try
+			{
+				converter = componentManager.getInstance(Converter.class);
+				
+				// Convert input in XWiki Syntax 2.1 into XHTML. The result is stored in the printer.
+				WikiPrinter printer = new DefaultWikiPrinter();
+				converter.convert(new StringReader(note.getNote().getNote()), Syntax.XWIKI_2_1, Syntax.XHTML_1_0, printer);
+				
+				Label l = new Label(printer.toString(), ContentMode.HTML);
+				l.setWidth("100%");
+				
+				layout.addComponent(l);
+			} 
+			catch (Exception e)
+			{
+				Notification.show("An error has occurred trying to render wiki test content: " + e.getMessage(), Type.ERROR_MESSAGE);
+			} 
+			
+			layout.addComponent(new Label("<hr />",ContentMode.HTML));
+		}
+		
+		
+		return layout;
 	}
 }

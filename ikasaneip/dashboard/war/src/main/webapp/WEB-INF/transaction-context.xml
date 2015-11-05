@@ -38,7 +38,7 @@
         <aop:pointcut id="systemEventServiceMethods"
                 expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
         <aop:pointcut id="errorCategorisationServiceMethods"
-                expression="execution(* org.ikasan.error.reporting.service.ErrorCategorisationService*.*(..))"/>
+                expression="execution(* org.ikasan.error.reporting.service.*.*(..))"/>
         <aop:pointcut id="startupControlServiceMethods"
                 expression="execution(* org.ikasan.module.service.StartupControlService*.*(..))"/>
 
