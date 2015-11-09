@@ -65,6 +65,8 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.Page.UriFragmentChangedEvent;
+import com.vaadin.server.Page.UriFragmentChangedListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -146,7 +148,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	 * Helper method to initialise the object.
 	 */
 	protected void init()
-	{
+	{		 
 		logger.debug("Initialising navigation panel.");
 
 		this.setWidth(100, Unit.PERCENTAGE);
