@@ -62,6 +62,8 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
+import com.vaadin.server.Page.UriFragmentChangedEvent;
+import com.vaadin.server.Page.UriFragmentChangedListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WrappedSession;
@@ -211,7 +213,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         UI.getCurrent().getNavigator().navigateTo("landingView");  
         this.navigationPanel.setVisible(true);
         this.navigationPanel.setMenu(menu);
-        
+
     }
     
     private Component buildContent() 

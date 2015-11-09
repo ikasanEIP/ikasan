@@ -13,6 +13,24 @@
     padding: 5px;
 }
 
+@font-face {
+    font-family: 'Atlassian-icons';
+    src: url('fonts/Atlassian-icons.eot');
+    src: url('fonts/Atlassian-icons.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Atlassian-icons.woff') format('woff'),
+         url('fonts/Atlassian-icons.ttf') format('truetype'),
+         url('fonts/Atlassian-icons.svg?#Atlassian-icons') format('svg');
+	font-weight:normal;
+	font-style:normal;
+}
+
+
+.Atlassian-icons {
+    font-family: 'Atlassian-icons';
+    font-size: 14px;
+    padding: 5px;
+}
+
 
 /**
  * Checks if a list contains a certain value.

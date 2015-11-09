@@ -47,8 +47,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ErrorOccurrenceDeepLinkUI;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -76,6 +78,7 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
@@ -170,6 +173,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
+		
+		
+		cont.addContainerProperty(" ", Button.class,  null);
 
         return cont;
     }
@@ -199,10 +205,13 @@ public class ErrorOccurrenceTab extends TopologyTab
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
-		    	
-		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	if (itemClickEvent.isDoubleClick())
+		    	{
+			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
+			    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
+			    	
+			    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	}
 		    }
 		});
 				
@@ -592,7 +601,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		Button closeSelectedButton = new Button();
 		closeSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		closeSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		closeSelectedButton.setIcon(VaadinIcons.CLOSE);
+		closeSelectedButton.setIcon(AtlassianIcons.JIRA);
+//		closeSelectedButton.setIcon(VaadinIcons.CLOSE);
 		closeSelectedButton.setImmediate(true);
 		closeSelectedButton.setDescription("Close all selected errors below.");
 		
@@ -851,6 +861,22 @@ public class ErrorOccurrenceTab extends TopologyTab
 					item.getItemProperty("").setValue(cb);
 				}
 			}
+			
+			Button popupButton = new Button();
+			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			popupButton.setDescription("Open in new tab");
+			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+			popupButton.setIcon(VaadinIcons.MODAL);
+
+	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ErrorOccurrenceDeepLinkUI.class);
+	        popupOpener.extend(popupButton);
+	        
+	        VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportService", this.errorReportingService);
+	        VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportManagementService", this.errorReportingManagementService);
+	        // Add a parameter for the error uri.
+	        popupOpener.setParameter("errorUri", errorOccurrence.getUri());
+	        
+	        item.getItemProperty(" ").setValue(popupButton);
     	    
     	}
 	}

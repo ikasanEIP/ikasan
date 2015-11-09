@@ -96,7 +96,13 @@
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>graph-explorer</artifactId>
 		   <version>0.7.0</version>
-		</dependency>	
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>contextmenu</artifactId>
+		   <version>4.5</version>
+		</dependency>
 		
 		<dependency>
 		   <groupId>org.vaadin.addons</groupId>

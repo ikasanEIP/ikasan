@@ -52,8 +52,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.WiretapDeepLinkUI;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.window.ProgressBarWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
@@ -67,6 +67,12 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.tepi.filtertable.FilterTable;
+import org.vaadin.peter.contextmenu.ContextMenu;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableFooterEvent;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableHeaderEvent;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableRowEvent;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Container;
@@ -78,14 +84,17 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.StreamResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
@@ -155,7 +164,8 @@ public class WiretapTab extends TopologyTab
 		cont.addContainerProperty("Event Id / Payload Id", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
 		cont.addContainerProperty("", CheckBox.class,  null);
-
+		cont.addContainerProperty(" ", Button.class,  null);
+		
         return cont;
     }
 	
@@ -178,16 +188,60 @@ public class WiretapTab extends TopologyTab
 		this.wiretapTable.addStyleName("wordwrap-table");
 		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		
-		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+		{
 		    @Override
-		    public void itemClick(ItemClickEvent itemClickEvent) {
-		    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
-		    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
-		    
-		    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+		    public void itemClick(ItemClickEvent itemClickEvent) 
+		    {
+		    	if(itemClickEvent.isDoubleClick())
+		    	{
+			    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
+			    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
+			    
+			    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+		    	}
 		    }
 		});
-				
+		
+//		final Action open = new Action("Open", VaadinIcons.OPEN_BOOK);
+//		final Action openInNewTab = new Action("Open in new Tab", VaadinIcons.MODAL);
+//	    final Action download = new Action("Download", VaadinIcons.DOWNLOAD);
+//	    this.wiretapTable.addActionHandler(new Action.Handler() 
+//	    {
+//
+//	        @Override
+//	        public Action[] getActions(Object target, Object sender)
+//	        {
+//	        	return new Action[] {open, openInNewTab, download};
+//	        }
+//
+//			@Override
+//			public void handleAction(Action action, Object sender, Object target)
+//			{
+//				WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)target;
+//				
+//				if(action.equals(open))
+//				{
+//					WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
+//				    
+//			    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+//				}
+//				if(action.equals(openInNewTab))
+//				{
+//					BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapDeepLinkUI.class);
+//					VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);					 
+//        	        popupOpener.extend(wiretapTable);
+//        	        
+//				}
+//				if(action.equals(download))
+//				{
+//					FileDownloader fd = new FileDownloader(getPayloadDownloadStream());
+//			        fd.extend(wiretapTable);
+//				}
+//				
+//			}
+//	    });
+	   				
 		final Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		searchButton.addClickListener(new Button.ClickListener() 
@@ -262,7 +316,7 @@ public class WiretapTab extends TopologyTab
             	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size());
             	searchResultsSizeLayout.addComponent(resultsLabel);
             	
-            	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
+            	for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
             		Date date = new Date(wiretapEvent.getTimestamp());
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
@@ -278,8 +332,28 @@ public class WiretapTab extends TopologyTab
         			
         			CheckBox cb = new CheckBox();
         			cb.setImmediate(true);
+        			cb.setDescription("Select in order to add to bulk download.");
         			
         			item.getItemProperty("").setValue(cb);
+        			
+        			Button popupButton = new Button();
+        			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        			popupButton.setDescription("Open in new tab");
+        			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        			popupButton.setIcon(VaadinIcons.MODAL);
+        			
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapDeepLinkUI.class);
+        	        popupOpener.extend(popupButton);
+        	        
+        	        popupButton.addClickListener(new Button.ClickListener() 
+        	    	{
+        	            public void buttonClick(ClickEvent event) 
+        	            {
+        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
+        	            }
+        	        });
+        	        
+        	        item.getItemProperty(" ").setValue(popupButton);
             	}
             }
         });
@@ -675,8 +749,8 @@ public class WiretapTab extends TopologyTab
         });
 		
 		Button downloadButton = new Button();
-			FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
-	        fd.extend(downloadButton);
+		FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
+        fd.extend(downloadButton);
 
         downloadButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
         downloadButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);

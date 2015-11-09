@@ -82,13 +82,18 @@ public class IkasanMessageDialog extends Window
      */
     protected void init(String message)
     {
+    	super.setWidth("50%");
         super.setModal(true);
         super.setResizable(false);
         super.center();
         
         FormLayout layout = new FormLayout();
         layout.setMargin(true);
-        layout.addComponent(new Label(message));
+        layout.setWidth("100%");
+        
+        Label messageLabel = new Label(message);
+        layout.addComponent(messageLabel);
+        layout.setComponentAlignment(messageLabel, Alignment.MIDDLE_CENTER);
         
         Button okButton = new Button("OK");
         okButton.setStyleName(ValoTheme.BUTTON_SMALL);
