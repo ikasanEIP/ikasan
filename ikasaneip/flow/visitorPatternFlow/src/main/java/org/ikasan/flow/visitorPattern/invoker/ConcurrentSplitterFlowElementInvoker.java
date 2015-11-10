@@ -42,6 +42,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import com.google.common.util.concurrent.*;
 import org.apache.log4j.Logger;
+import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.splitting.SplitterException;
@@ -60,7 +61,7 @@ import java.util.concurrent.ExecutorService;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInvoker implements FlowElementInvoker<Splitter>, ManagedService
+public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>, ManagedService
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(ConcurrentSplitterFlowElementInvoker.class);
@@ -77,6 +78,9 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
     /** handle to any exceptions called back from the future task */
     Throwable callbackException;
 
+    /** handle to the failed tasks flow invocation context */
+    FlowInvocationContext failedTaskFlowInvocationContext;
+
     /**
      * Constructor
      * @param executorService
@@ -91,7 +95,7 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, final FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
@@ -141,7 +145,7 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
         count = 0;
         callbackException = null;
 
-        final List<ListenableFuture<FlowInvocationContext>> futures = new ArrayList<ListenableFuture<FlowInvocationContext>>();
+        List<ListenableFuture<FlowInvocationContext>> futures = new ArrayList<ListenableFuture<FlowInvocationContext>>(payloads.size());
         for (Object payload : payloads)
         {
             if(payload instanceof FlowEvent)
@@ -155,20 +159,27 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
             notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
             FlowElement nextFlowElementInRoute = nextFlowElement;
-            // TODO flowInvocationContext will need to be created per execution
-            Callable<FlowInvocationContext> asyncTask = new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
+
+            // TODO - replace new DefaultFlowInvocationContext with a factory method
+            Callable<FlowInvocationContext> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListener, moduleName, flowName, new DefaultFlowInvocationContext(), flowEvent);
             final ListenableFuture<FlowInvocationContext> listenableFuture = executorService.submit(asyncTask);
             futures.add(listenableFuture);
-            Futures.addCallback(listenableFuture, new FutureCallback<FlowInvocationContext>()
-            {
-                public void onSuccess(FlowInvocationContext result)
-                {
+            Futures.addCallback(listenableFuture, new FutureCallback<FlowInvocationContext>() {
+                public void onSuccess(FlowInvocationContext taskFlowInvocationContext) {
+                    flowInvocationContext.combine(taskFlowInvocationContext);
                     count++;
                 }
 
-                public void onFailure(Throwable thrown)
-                {
-                    callbackException = thrown;
+                public void onFailure(Throwable thrown) {
+                    if (thrown instanceof SplitFlowElementException) {
+                        SplitFlowElementException splitFlowElementException = (SplitFlowElementException) thrown;
+                        if (callbackException == null) {
+                            callbackException = splitFlowElementException.getThrown();
+                            failedTaskFlowInvocationContext = splitFlowElementException.getFlowInvocationContext();
+                        }
+                    } else {
+                        callbackException = thrown;
+                    }
                 }
             });
 
@@ -178,7 +189,7 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
             }
         }
 
-        while(count < payloads.size() && callbackException == null)
+        while( pendingCallback(payloads) )
         {
             try
             {
@@ -207,7 +218,7 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
                 }
             }
 
-            futures.clear();
+            flowInvocationContext.combine(failedTaskFlowInvocationContext);
             if(callbackException instanceof RuntimeException)
             {
                 throw (RuntimeException)callbackException;
@@ -216,8 +227,33 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
             throw new SplitterException(callbackException);
         }
 
-        futures.clear();
         return null;
+    }
+
+    /**
+     * Allows for easier testing
+     * @param payloads
+     * @return
+     */
+    protected boolean pendingCallback(List payloads)
+    {
+        return count < payloads.size() && callbackException == null;
+    }
+
+    /**
+     * Factory method to aid testing.
+     *
+     * @param nextFlowElementInRoute
+     * @param flowEventListener
+     * @param moduleName
+     * @param flowName
+     * @param flowInvocationContext
+     * @param flowEvent
+     * @return
+     */
+    protected Callable newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+    {
+        return new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, new DefaultFlowInvocationContext(), flowEvent);
     }
 
     /**
@@ -275,15 +311,46 @@ public class ConcurrentSplitterFlowElementInvoker extends SplitterFlowElementInv
         @Override
         public FlowInvocationContext call()
         {
-            while (_nextFlowElementInRoute != null)
+            try
             {
-                _nextFlowElementInRoute = _nextFlowElementInRoute.getFlowElementInvoker().invoke(_flowEventListener, _moduleName, _flowName, _flowInvocationContext, _flowEvent, _nextFlowElementInRoute);
-                if (Thread.currentThread().isInterrupted()) {
-                    return null;
+                while (_nextFlowElementInRoute != null)
+                {
+                    _nextFlowElementInRoute = _nextFlowElementInRoute.getFlowElementInvoker().invoke(_flowEventListener, _moduleName, _flowName, _flowInvocationContext, _flowEvent, _nextFlowElementInRoute);
+                    if (Thread.currentThread().isInterrupted()) {
+                        return null;
+                    }
                 }
-            }
 
-            return null;
+                return null;
+            }
+            catch(Throwable t)
+            {
+                throw new SplitFlowElementException(t, _flowInvocationContext);
+            }
+        }
+    }
+
+    /**
+     * Exception
+     *
+     */
+    class SplitFlowElementException extends RuntimeException
+    {
+        FlowInvocationContext flowInvocationContext;
+        Throwable thrown;
+
+        public SplitFlowElementException(Throwable thrown, FlowInvocationContext flowInvocationContext)
+        {
+            this.thrown = thrown;
+            this.flowInvocationContext = flowInvocationContext;
+        }
+
+        public FlowInvocationContext getFlowInvocationContext() {
+            return flowInvocationContext;
+        }
+
+        public Throwable getThrown() {
+            return thrown;
         }
     }
 

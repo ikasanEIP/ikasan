@@ -67,4 +67,10 @@ public interface FlowInvocationContext
 	 * @return List componentNames
 	 */
 	public List<String> getInvokedComponents();
+
+	/**
+	 * Combine the incoming flowInvocationContext into this instance
+	 * @param flowInvocationContext
+	 */
+	public void combine(FlowInvocationContext flowInvocationContext);
 }
