@@ -1,0 +1,354 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building ikasan-setup 1.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ikasan-setup ---
+[INFO] Deleting /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ ikasan-setup ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (regex-property) @ ikasan-setup ---
+[INFO] Setting property 'dashed.project.version' to '1-1-0-SNAPSHOT'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ ikasan-setup ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 100 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ ikasan-setup ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 3 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ ikasan-setup ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 11 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ ikasan-setup ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ ikasan-setup ---
+[INFO] Surefire report directory: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.ikasan.setup.persistence.service.PersistenceServiceImplTest
+INFO 10/11/15 07:33: liquibase: Creating database history table with name: PUBLIC.DATABASECHANGELOG
+INFO 10/11/15 07:33: liquibase: Reading from PUBLIC.DATABASECHANGELOG
+INFO 10/11/15 07:33: liquibase: Successfully acquired change log lock
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createAuthenticationMethod.xml::createAuthenticationMethod::ikasan dev: Table AuthenticationMethod created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createAuthenticationMethod.xml::createAuthenticationMethod::ikasan dev: ChangeSet db/tables/db-changeLog-createAuthenticationMethod.xml::createAuthenticationMethod::ikasan dev ran successfully in 29ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createAuthorities.xml::createAuthorities::ikasan dev: Table Authorities created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createAuthorities.xml::createAuthorities::ikasan dev: Index Authoritie_Author_10720038193 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createAuthorities.xml::createAuthorities::ikasan dev: ChangeSet db/tables/db-changeLog-createAuthorities.xml::createAuthorities::ikasan dev ran successfully in 19ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createBusinessSteamFlow.xml::createBusinessStreamFlow::ikasan dev: Table BusinessStreamFlow created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createBusinessSteamFlow.xml::createBusinessStreamFlow::ikasan dev: Primary key added to BusinessStreamFlow (BusinessStreamId, FlowId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createBusinessSteamFlow.xml::createBusinessStreamFlow::ikasan dev: ChangeSet db/tables/db-changeLog-createBusinessSteamFlow.xml::createBusinessStreamFlow::ikasan dev ran successfully in 19ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createBusinessSteam.xml::createBusinessStream::ikasan dev: Table BusinessStream created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createBusinessSteam.xml::createBusinessStream::ikasan dev: Index BusinessSt_Name_2163848092 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createBusinessSteam.xml::createBusinessStream::ikasan dev: ChangeSet db/tables/db-changeLog-createBusinessSteam.xml::createBusinessStream::ikasan dev ran successfully in 21ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createComponent.xml::createComponent::ikasan dev: Table Component created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createComponent.xml::createComponent::ikasan dev: ChangeSet db/tables/db-changeLog-createComponent.xml::createComponent::ikasan dev ran successfully in 24ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfigurationParameter.xml::createConfigurationParameter::ikasan dev: Table ConfigurationParameter created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfigurationParameter.xml::createConfigurationParameter::ikasan dev: Index ConfigurationParameter01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfigurationParameter.xml::createConfigurationParameter::ikasan dev: ChangeSet db/tables/db-changeLog-createConfigurationParameter.xml::createConfigurationParameter::ikasan dev ran successfully in 28ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfiguration.xml::createConfiguration::ikasan dev: Table Configuration created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfiguration.xml::createConfiguration::ikasan dev: Index Configuration01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfiguration.xml::createConfiguration::ikasan dev: ChangeSet db/tables/db-changeLog-createConfiguration.xml::createConfiguration::ikasan dev ran successfully in 28ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamBoolean.xml::createConfParamBoolean::ikasan dev: Table ConfParamBoolean created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamBoolean.xml::createConfParamBoolean::ikasan dev: Index ConfParamBoolean01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamBoolean.xml::createConfParamBoolean::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamBoolean.xml::createConfParamBoolean::ikasan dev ran successfully in 30ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamInteger.xml::createConfParamInteger::ikasan dev: Table ConfParamInteger created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamInteger.xml::createConfParamInteger::ikasan dev: Index ConfParamInteger01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamInteger.xml::createConfParamInteger::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamInteger.xml::createConfParamInteger::ikasan dev ran successfully in 31ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamListString.xml::createConfParamListString::ikasan dev: Table ConfParamListString created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamListString.xml::createConfParamListString::ikasan dev: Index ConfParamListString01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamListString.xml::createConfParamListString::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamListString.xml::createConfParamListString::ikasan dev ran successfully in 31ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamList.xml::createConfParamList::ikasan dev: Table ConfParamList created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamList.xml::createConfParamList::ikasan dev: Index ConfParamList01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamList.xml::createConfParamList::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamList.xml::createConfParamList::ikasan dev ran successfully in 31ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamLong.xml::createConfParamLong::ikasan dev: Table ConfParamLong created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamLong.xml::createConfParamLong::ikasan dev: Index ConfParamLong01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamLong.xml::createConfParamLong::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamLong.xml::createConfParamLong::ikasan dev ran successfully in 31ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMapString.xml::createConfParamMapString::ikasan dev: Table ConfParamMapString created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMapString.xml::createConfParamMapString::ikasan dev: Index ConfParamMapString01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMapString.xml::createConfParamMapString::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamMapString.xml::createConfParamMapString::ikasan dev ran successfully in 26ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMap.xml::createConfParamMap::ikasan dev: Table ConfParamMap created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMap.xml::createConfParamMap::ikasan dev: Index ConfParamMap01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMap.xml::createConfParamMap::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamMap.xml::createConfParamMap::ikasan dev ran successfully in 21ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMaskedString.xml::createConfParamMapString::ikasan dev: Table ConfParamMaskedString created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMaskedString.xml::createConfParamMapString::ikasan dev: Index ConfParamMaskedString01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamMaskedString.xml::createConfParamMapString::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamMaskedString.xml::createConfParamMapString::ikasan dev ran successfully in 21ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamString.xml::createConfParamString::ikasan dev: Table ConfParamString created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamString.xml::createConfParamString::ikasan dev: Index ConfParamString01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createConfParamString.xml::createConfParamString::ikasan dev: ChangeSet db/tables/db-changeLog-createConfParamString.xml::createConfParamString::ikasan dev ran successfully in 22ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorCategorisationLink.xml::createErrorCategorisationLink::ikasan dev: Table ErrorCategorisationLink created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorCategorisationLink.xml::createErrorCategorisationLink::ikasan dev: Index ErrorCategorisationLink01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorCategorisationLink.xml::createErrorCategorisationLink::ikasan dev: ChangeSet db/tables/db-changeLog-createErrorCategorisationLink.xml::createErrorCategorisationLink::ikasan dev ran successfully in 27ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorCategorisation.xml::createErrorCategorisation::ikasan dev: Table ErrorCategorisation created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorCategorisation.xml::createErrorCategorisation::ikasan dev: ChangeSet db/tables/db-changeLog-createErrorCategorisation.xml::createErrorCategorisation::ikasan dev ran successfully in 21ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorOccurrence.xml::createErrorOccurrence::ikasan dev: Table ErrorOccurrence created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorOccurrence.xml::createErrorOccurrence::ikasan dev: Index IkasanErrorOccurrence01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorOccurrence.xml::createErrorOccurrence::ikasan dev: ChangeSet db/tables/db-changeLog-createErrorOccurrence.xml::createErrorOccurrence::ikasan dev ran successfully in 22ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createExclusionEventAction.xml::createExclusionEventAction::ikasan dev: Table ExclusionEventAction created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createExclusionEventAction.xml::createExclusionEventAction::ikasan dev: Index ExclEventAction_ErrorUri created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createExclusionEventAction.xml::createExclusionEventAction::ikasan dev: ChangeSet db/tables/db-changeLog-createExclusionEventAction.xml::createExclusionEventAction::ikasan dev ran successfully in 21ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createExclusionEvent.xml::createExclusionEvent::ikasan dev: Table ExclusionEvent created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createExclusionEvent.xml::createExclusionEvent::ikasan dev: Index IkasanExclusionEvent01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createExclusionEvent.xml::createExclusionEvent::ikasan dev: ChangeSet db/tables/db-changeLog-createExclusionEvent.xml::createExclusionEvent::ikasan dev ran successfully in 19ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlowEventTriggerParameters.xml::createFlowEventTriggerParameters::ikasan dev: Table FlowEventTriggerParameters created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlowEventTriggerParameters.xml::createFlowEventTriggerParameters::ikasan dev: ChangeSet db/tables/db-changeLog-createFlowEventTriggerParameters.xml::createFlowEventTriggerParameters::ikasan dev ran successfully in 17ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlowEventTrigger.xml::createFlowEventTrigger::ikasan dev: Table FlowEventTrigger created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlowEventTrigger.xml::createFlowEventTrigger::ikasan dev: Index FlowEventTrigger01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlowEventTrigger.xml::createFlowEventTrigger::ikasan dev: ChangeSet db/tables/db-changeLog-createFlowEventTrigger.xml::createFlowEventTrigger::ikasan dev ran successfully in 16ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlow.xml::createFlow::ikasan dev: Table Flow created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createFlow.xml::createFlow::ikasan dev: ChangeSet db/tables/db-changeLog-createFlow.xml::createFlow::ikasan dev ran successfully in 16ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createIkasanModule.xml::createIkasanModule::ikasan dev: Table IkasanModule created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createIkasanModule.xml::createIkasanModule::ikasan dev: Index IkasanModu_Name_21398676592 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createIkasanModule.xml::createIkasanModule::ikasan dev: ChangeSet db/tables/db-changeLog-createIkasanModule.xml::createIkasanModule::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createIkasanWiretap.xml::createIkasanWiretap::ikasan dev: Table IkasanWiretap created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createIkasanWiretap.xml::createIkasanWiretap::ikasan dev: Index IkasanWiretap01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createIkasanWiretap.xml::createIkasanWiretap::ikasan dev: ChangeSet db/tables/db-changeLog-createIkasanWiretap.xml::createIkasanWiretap::ikasan dev ran successfully in 3ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigServiceClient.xml::createMCSConfigServiceClient::ikasan dev: Table MCSConfigServiceClient created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigServiceClient.xml::createMCSConfigServiceClient::ikasan dev: Index MCSConfigS_Name_1502885642 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigServiceClient.xml::createMCSConfigServiceClient::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSConfigServiceClient.xml::createMCSConfigServiceClient::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigurationContext.xml::createMCSConfigurationContext::ikasan dev: Table MCSConfigurationContext created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigurationContext.xml::createMCSConfigurationContext::ikasan dev: Index MCSConfigu_Name_702882792 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigurationContext.xml::createMCSConfigurationContext::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSConfigurationContext.xml::createMCSConfigurationContext::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigurationType.xml::createMCSConfigurationType::ikasan dev: Table MCSConfigurationType created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigurationType.xml::createMCSConfigurationType::ikasan dev: Index MCSConfigu_Name_21377716422 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSConfigurationType.xml::createMCSConfigurationType::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSConfigurationType.xml::createMCSConfigurationType::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSKeyLocationQuery.xml::createMCSKeyLocationQuery::ikasan dev: Table MCSKeyLocationQuery created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSKeyLocationQuery.xml::createMCSKeyLocationQuery::ikasan dev: Index MCSKeyLocQuery_mappingConfId created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSKeyLocationQuery.xml::createMCSKeyLocationQuery::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSKeyLocationQuery.xml::createMCSKeyLocationQuery::ikasan dev ran successfully in 17ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSMappingConfiguration.xml::createMCSMappingConfiguration::ikasan dev: Table MCSMappingConfiguration created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSMappingConfiguration.xml::createMCSMappingConfiguration::ikasan dev: Index MappingConfig_ConfigTypeId created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSMappingConfiguration.xml::createMCSMappingConfiguration::ikasan dev: Index MappingConfig_unique created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSMappingConfiguration.xml::createMCSMappingConfiguration::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSMappingConfiguration.xml::createMCSMappingConfiguration::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSSourceConfigGroupSeq.xml::createMCSSourceConfigGroupSeq::ikasan dev: Table MCSSourceConfigGroupSeq created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSSourceConfigGroupSeq.xml::createMCSSourceConfigGroupSeq::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSSourceConfigGroupSeq.xml::createMCSSourceConfigGroupSeq::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSSourceConfigValue.xml::createMCSSourceConfigValue::ikasan dev: Table MCSSourceConfigValue created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSSourceConfigValue.xml::createMCSSourceConfigValue::ikasan dev: Index SrcConfigValue_ConfigContextId created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSSourceConfigValue.xml::createMCSSourceConfigValue::ikasan dev: Index SrcConfig_TgtSysConfigValueId created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSSourceConfigValue.xml::createMCSSourceConfigValue::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSSourceConfigValue.xml::createMCSSourceConfigValue::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSTargetConfigValue.xml::createMCSTargetConfigValue::ikasan dev: Table MCSTargetConfigValue created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMCSTargetConfigValue.xml::createMCSTargetConfigValue::ikasan dev: ChangeSet db/tables/db-changeLog-createMCSTargetConfigValue.xml::createMCSTargetConfigValue::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMessageFilter.xml::createMessageFilter::ikasan dev: Table MessageFilter created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMessageFilter.xml::createMessageFilter::ikasan dev: Index MessageFilter01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createMessageFilter.xml::createMessageFilter::ikasan dev: ChangeSet db/tables/db-changeLog-createMessageFilter.xml::createMessageFilter::ikasan dev ran successfully in 17ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createModule.xml::createModule::ikasan dev: Table Module created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createModule.xml::createModule::ikasan dev: Index Module_7200025653 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createModule.xml::createModule::ikasan dev: ChangeSet db/tables/db-changeLog-createModule.xml::createModule::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPointToPointFlowProfile.xml::createPointToPointFlowProfile::ikasan dev: Table PointToPointFlowProfile created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPointToPointFlowProfile.xml::createPointToPointFlowProfile::ikasan dev: ChangeSet db/tables/db-changeLog-createPointToPointFlowProfile.xml::createPointToPointFlowProfile::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPointToPointFlow.xml::createPointToPointFlow::ikasan dev: Table PointToPointFlow created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPointToPointFlow.xml::createPointToPointFlow::ikasan dev: ChangeSet db/tables/db-changeLog-createPointToPointFlow.xml::createPointToPointFlow::ikasan dev ran successfully in 14ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPolicyLinkType.xml::createPolicyLinkType::ikasan dev: Table PolicyLinkType created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPolicyLinkType.xml::createPolicyLinkType::ikasan dev: Index PolicyLink_Name_12897686212 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPolicyLinkType.xml::createPolicyLinkType::ikasan dev: Index PolicyLink_TableN_12897686213 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPolicyLinkType.xml::createPolicyLinkType::ikasan dev: ChangeSet db/tables/db-changeLog-createPolicyLinkType.xml::createPolicyLinkType::ikasan dev ran successfully in 16ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPolicyLink.xml::createPolicyLink::ikasan dev: Table PolicyLink created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPolicyLink.xml::createPolicyLink::ikasan dev: ChangeSet db/tables/db-changeLog-createPolicyLink.xml::createPolicyLink::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPrincipalRole.xml::createPrincipalRole::ikasan dev: Table PrincipalRole created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPrincipalRole.xml::createPrincipalRole::ikasan dev: Primary key added to PrincipalRole (PrincipalId, RoleId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createPrincipalRole.xml::createPrincipalRole::ikasan dev: ChangeSet db/tables/db-changeLog-createPrincipalRole.xml::createPrincipalRole::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createRolePolicy.xml::createRolePolicy::ikasan dev: Table RolePolicy created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createRolePolicy.xml::createRolePolicy::ikasan dev: Primary key added to RolePolicy (RoleId, PolicyId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createRolePolicy.xml::createRolePolicy::ikasan dev: ChangeSet db/tables/db-changeLog-createRolePolicy.xml::createRolePolicy::ikasan dev ran successfully in 14ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPolicy.xml::createSecurityPolicy::ikasan dev: Table SecurityPolicy created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPolicy.xml::createSecurityPolicy::ikasan dev: Index Policy_Name created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPolicy.xml::createSecurityPolicy::ikasan dev: ChangeSet db/tables/db-changeLog-createSecurityPolicy.xml::createSecurityPolicy::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPrincipal.xml::createSecurityPrincipal::ikasan dev: Table SecurityPrincipal created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPrincipal.xml::createSecurityPrincipal::ikasan dev: Index Principal_Type created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPrincipal.xml::createSecurityPrincipal::ikasan dev: Index SecurityPr_Name_9593394512 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityPrincipal.xml::createSecurityPrincipal::ikasan dev: ChangeSet db/tables/db-changeLog-createSecurityPrincipal.xml::createSecurityPrincipal::ikasan dev ran successfully in 16ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityRole.xml::createSecurityRole::ikasan dev: Table SecurityRole created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityRole.xml::createSecurityRole::ikasan dev: Index SecurityRo_Name_10713398502 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSecurityRole.xml::createSecurityRole::ikasan dev: ChangeSet db/tables/db-changeLog-createSecurityRole.xml::createSecurityRole::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createServer.xml::createServer::ikasan dev: Table Server created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createServer.xml::createServer::ikasan dev: Index Server_Name_20598673742 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createServer.xml::createServer::ikasan dev: ChangeSet db/tables/db-changeLog-createServer.xml::createServer::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createStartupControl.xml::createStartupControl::ikasan dev: Table StartupControl created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createStartupControl.xml::createStartupControl::ikasan dev: Index StartupControl01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createStartupControl.xml::createStartupControl::ikasan dev: ChangeSet db/tables/db-changeLog-createStartupControl.xml::createStartupControl::ikasan dev ran successfully in 14ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSystemEvent.xml::createSystemEvent::ikasan dev: Table SystemEvent created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSystemEvent.xml::createSystemEvent::ikasan dev: Index SystemEvent01u created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createSystemEvent.xml::createSystemEvent::ikasan dev: ChangeSet db/tables/db-changeLog-createSystemEvent.xml::createSystemEvent::ikasan dev ran successfully in 15ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUserBusinessStream.xml::createUserBusinessStream::ikasan dev: Table UserBusinessStream created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUserBusinessStream.xml::createUserBusinessStream::ikasan dev: Primary key added to UserBusinessStream (UserId, BusinessStreamId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUserBusinessStream.xml::createUserBusinessStream::ikasan dev: ChangeSet db/tables/db-changeLog-createUserBusinessStream.xml::createUserBusinessStream::ikasan dev ran successfully in 14ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUserPrincipal.xml::createUserPrincipal::ikasan dev: Table UserPrincipal created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUserPrincipal.xml::createUserPrincipal::ikasan dev: Primary key added to UserPrincipal (UserId, PrincipalId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUserPrincipal.xml::createUserPrincipal::ikasan dev: ChangeSet db/tables/db-changeLog-createUserPrincipal.xml::createUserPrincipal::ikasan dev ran successfully in 14ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUsersAuthorities.xml::createUsersAuthorities::ikasan dev: Table UsersAuthorities created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUsersAuthorities.xml::createUsersAuthorities::ikasan dev: Primary key added to UsersAuthorities (UserId, AuthorityId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUsersAuthorities.xml::createUsersAuthorities::ikasan dev: ChangeSet db/tables/db-changeLog-createUsersAuthorities.xml::createUsersAuthorities::ikasan dev ran successfully in 14ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUsers.xml::createUsers::ikasan dev: Table Users created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUsers.xml::createUsers::ikasan dev: Index Users_Userna_10080035913 created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createUsers.xml::createUsers::ikasan dev: ChangeSet db/tables/db-changeLog-createUsers.xml::createUsers::ikasan dev ran successfully in 16ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createBusinessSteamFlowFk.xml::createBusinessStreamFlowFk::ikasan dev: Foreign key constraint added to BusinessStreamFlow (BusinessStreamId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createBusinessSteamFlowFk.xml::createBusinessStreamFlowFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createBusinessSteamFlowFk.xml::createBusinessStreamFlowFk::ikasan dev ran successfully in 36ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createErrorCategorisationLinkFk.xml::createErrorCategorisationLinkFk::ikasan dev: Foreign key constraint added to ErrorCategorisationLink (ErrorCategorisationId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createErrorCategorisationLinkFk.xml::createErrorCategorisationLinkFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createErrorCategorisationLinkFk.xml::createErrorCategorisationLinkFk::ikasan dev ran successfully in 31ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createFlowEventTriggerParametersFk.xml::createFlowEventTriggerFk::ikasan dev: Foreign key constraint added to FlowEventTriggerParameters (TriggerId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createFlowEventTriggerParametersFk.xml::createFlowEventTriggerFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createFlowEventTriggerParametersFk.xml::createFlowEventTriggerFk::ikasan dev ran successfully in 33ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSKeyLocationQueryFk.xml::createMCSKeyLocationQueryFk::ikasan dev: Foreign key constraint added to MCSKeyLocationQuery (MappingConfigurationId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSKeyLocationQueryFk.xml::createMCSKeyLocationQueryFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createMCSKeyLocationQueryFk.xml::createMCSKeyLocationQueryFk::ikasan dev ran successfully in 35ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml::createMCSMappingConfigurationFk::ikasan dev: Foreign key constraint added to MCSMappingConfiguration (ConfigurationTypeId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml::createMCSMappingConfigurationFk::ikasan dev: Foreign key constraint added to MCSMappingConfiguration (ConfigurationServiceClientId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml::createMCSMappingConfigurationFk::ikasan dev: Foreign key constraint added to MCSMappingConfiguration (SourceContextId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml::createMCSMappingConfigurationFk::ikasan dev: Foreign key constraint added to MCSMappingConfiguration (TargetContextId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml::createMCSMappingConfigurationFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml::createMCSMappingConfigurationFk::ikasan dev ran successfully in 142ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSSourceConfigValueFk.xml::createMCSSourceConfigValueFk::ikasan dev: Foreign key constraint added to MCSSourceConfigValue (MappingConfigurationId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSSourceConfigValueFk.xml::createMCSSourceConfigValueFk::ikasan dev: Foreign key constraint added to MCSSourceConfigValue (TargetConfigurationValueId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createMCSSourceConfigValueFk.xml::createMCSSourceConfigValueFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createMCSSourceConfigValueFk.xml::createMCSSourceConfigValueFk::ikasan dev ran successfully in 78ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPointToPointFlowFk.xml::PointToPointFlowFk::ikasan dev: Foreign key constraint added to PointToPointFlow (PointToPointFlowProfileId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPointToPointFlowFk.xml::PointToPointFlowFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createPointToPointFlowFk.xml::PointToPointFlowFk::ikasan dev ran successfully in 37ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPolicyLinkFk.xml::PolicyLinkFk::ikasan dev: Foreign key constraint added to PolicyLink (PolicyLinkTypeId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPolicyLinkFk.xml::PolicyLinkFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createPolicyLinkFk.xml::PolicyLinkFk::ikasan dev ran successfully in 39ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPrincipalRoleFk.xml::PolicyLinkFk::ikasan dev: Foreign key constraint added to PrincipalRole (PrincipalId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPrincipalRoleFk.xml::PolicyLinkFk::ikasan dev: Foreign key constraint added to PrincipalRole (RoleId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createPrincipalRoleFk.xml::PolicyLinkFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createPrincipalRoleFk.xml::PolicyLinkFk::ikasan dev ran successfully in 208ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createRolePolicyFk.xml::RolePolicyFk::ikasan dev: Foreign key constraint added to RolePolicy (PolicyId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createRolePolicyFk.xml::RolePolicyFk::ikasan dev: Foreign key constraint added to RolePolicy (RoleId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createRolePolicyFk.xml::RolePolicyFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createRolePolicyFk.xml::RolePolicyFk::ikasan dev ran successfully in 131ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createSecurityPolicyFk.xml::UserPrincipalFk::ikasan dev: Foreign key constraint added to UserPrincipal (PrincipalId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createSecurityPolicyFk.xml::UserPrincipalFk::ikasan dev: Foreign key constraint added to UserPrincipal (UserId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createSecurityPolicyFk.xml::UserPrincipalFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createSecurityPolicyFk.xml::UserPrincipalFk::ikasan dev ran successfully in 207ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUserBusinessStreamFk.xml::UserBusinessStreamFk::ikasan dev: Foreign key constraint added to UserBusinessStream (UserId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUserBusinessStreamFk.xml::UserBusinessStreamFk::ikasan dev: Foreign key constraint added to UserBusinessStream (BusinessStreamId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUserBusinessStreamFk.xml::UserBusinessStreamFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createUserBusinessStreamFk.xml::UserBusinessStreamFk::ikasan dev ran successfully in 187ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUserPrincipalFk.xml::UserPrincipalFk::ikasan dev: Marking ChangeSet: db/cardinality/db-changeLog-createUserPrincipalFk.xml::UserPrincipalFk::ikasan dev ran despite precondition failure due to onFail='MARK_RAN': 
+          db-changelog.xml : Not precondition failed
+
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUsersAuthoritiesFk.xml::UsersAuthoritiesFk::ikasan dev: Foreign key constraint added to UsersAuthorities (AuthorityId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUsersAuthoritiesFk.xml::UsersAuthoritiesFk::ikasan dev: Foreign key constraint added to UsersAuthorities (UserId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createUsersAuthoritiesFk.xml::UsersAuthoritiesFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createUsersAuthoritiesFk.xml::UsersAuthoritiesFk::ikasan dev ran successfully in 177ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAuthorities.xml::insertAuthorities::ikasan dev: New row inserted into Authorities
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAuthorities.xml::insertAuthorities::ikasan dev: New row inserted into Authorities
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAuthorities.xml::insertAuthorities::ikasan dev: ChangeSet db/data/db-changelog-insertAuthorities.xml::insertAuthorities::ikasan dev ran successfully in 4ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAdminUser.xml::insertAdminUser::ikasan dev: New row inserted into Users
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAdminUser.xml::insertAdminUser::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAdminUser.xml::insertAdminUser::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertAdminUser.xml::insertAdminUser::ikasan dev: ChangeSet db/data/db-changelog-insertAdminUser.xml::insertAdminUser::ikasan dev ran successfully in 5ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertMCSSourceConfigGroupSeq.xml::insertMCSSourceConfigGroupSeq::ikasan dev: New row inserted into MCSSourceConfigGroupSeq
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertMCSSourceConfigGroupSeq.xml::insertMCSSourceConfigGroupSeq::ikasan dev: ChangeSet db/data/db-changelog-insertMCSSourceConfigGroupSeq.xml::insertMCSSourceConfigGroupSeq::ikasan dev ran successfully in 0ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPrincipal
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityRole
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityRole
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityRole
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into PolicyLinkType
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into PolicyLinkType
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into PolicyLinkType
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: New row inserted into PolicyLinkType
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: Custom SQL executed
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev: ChangeSet db/data/db-changelog-insertSecurityRecords.xml::insertSecurityRecords::ikasan dev ran successfully in 25ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterErrorOccurrence.xml::alterErrorOccurrence::ikasan dev: Columns UserAction(VARCHAR(32)) added to ErrorOccurrence
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterErrorOccurrence.xml::alterErrorOccurrence::ikasan dev: Columns ActionedBy(VARCHAR(32)) added to ErrorOccurrence
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterErrorOccurrence.xml::alterErrorOccurrence::ikasan dev: Columns UserActionTimestamp(numeric(18)) added to ErrorOccurrence
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterErrorOccurrence.xml::alterErrorOccurrence::ikasan dev: ChangeSet db/alter/db-changeLog-alterErrorOccurrence.xml::alterErrorOccurrence::ikasan dev ran successfully in 25ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterAuthenticationMethod.xml::alterAuthenticationMethod-filters::ikasan dev: Columns UserSynchronisationFilter(VARCHAR(255)) added to AuthenticationMethod
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterAuthenticationMethod.xml::alterAuthenticationMethod-filters::ikasan dev: Columns GroupSynchronisationFilter(VARCHAR(255)) added to AuthenticationMethod
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterAuthenticationMethod.xml::alterAuthenticationMethod-filters::ikasan dev: ChangeSet db/alter/db-changeLog-alterAuthenticationMethod.xml::alterAuthenticationMethod-filters::ikasan dev ran successfully in 16ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterFlow.xml::alterFlow::ikasan dev: Columns FlowOrder(numeric(18)) added to Flow
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/alter/db-changeLog-alterFlow.xml::alterFlow::ikasan dev: ChangeSet db/alter/db-changeLog-alterFlow.xml::alterFlow::ikasan dev ran successfully in 7ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createNote.xml::createNote::ikasan dev: Table Note created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createNote.xml::createNote::ikasan dev: ChangeSet db/tables/db-changeLog-createNote.xml::createNote::ikasan dev ran successfully in 17ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorOccurrenceNote.xml::createErrorOccurrenceNote::ikasan dev: Table ErrorOccurrenceNote created
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorOccurrenceNote.xml::createErrorOccurrenceNote::ikasan dev: Primary key added to ErrorOccurrenceNote (ErrorUri, NoteId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/tables/db-changeLog-createErrorOccurrenceNote.xml::createErrorOccurrenceNote::ikasan dev: ChangeSet db/tables/db-changeLog-createErrorOccurrenceNote.xml::createErrorOccurrenceNote::ikasan dev ran successfully in 17ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createErrorOccurrenceNoteFk.xml::ErrorOccurrenceNoteFK::ikasan dev: Foreign key constraint added to ErrorOccurrenceNote (NoteId)
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/cardinality/db-changeLog-createErrorOccurrenceNoteFk.xml::ErrorOccurrenceNoteFK::ikasan dev: ChangeSet db/cardinality/db-changeLog-createErrorOccurrenceNoteFk.xml::ErrorOccurrenceNoteFK::ikasan dev ran successfully in 30ms
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords-1.1.0.xml::insertSecurityRecords-1.1.0::ikasan dev: New row inserted into SecurityPolicy
+INFO 10/11/15 07:33: liquibase: db-changelog.xml: db/data/db-changelog-insertSecurityRecords-1.1.0.xml::insertSecurityRecords-1.1.0::ikasan dev: ChangeSet db/data/db-changelog-insertSecurityRecords-1.1.0.xml::insertSecurityRecords-1.1.0::ikasan dev ran successfully in 1ms
+INFO 10/11/15 07:33: liquibase: Successfully released change log lock
+INFO 10/11/15 07:33: liquibase: Reading from PUBLIC.DATABASECHANGELOG
+INFO 10/11/15 07:33: liquibase: Successfully acquired change log lock
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTChecksumCommand.xml::createFTChecksumCommand::ikasan dev: Table FTChecksumCommand created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTChecksumCommand.xml::createFTChecksumCommand::ikasan dev: Index FTChecksumCommand01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTChecksumCommand.xml::createFTChecksumCommand::ikasan dev: ChangeSet db/tables/db-changeLog-createFTChecksumCommand.xml::createFTChecksumCommand::ikasan dev ran successfully in 19ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTCleanupChunksCommand.xml::createFTCleanupChunksCommand::ikasan dev: Table FTCleanupChunksCommand created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTCleanupChunksCommand.xml::createFTCleanupChunksCommand::ikasan dev: Index FTCleanupChunksCommand01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTCleanupChunksCommand.xml::createFTCleanupChunksCommand::ikasan dev: ChangeSet db/tables/db-changeLog-createFTCleanupChunksCommand.xml::createFTCleanupChunksCommand::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTDeliverBatchCommand.xml::createFTDeliverBatchCommand::ikasan dev: Table FTDeliverBatchCommand created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTDeliverBatchCommand.xml::createFTDeliverBatchCommand::ikasan dev: Index FTDeliverBatchCommand01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTDeliverBatchCommand.xml::createFTDeliverBatchCommand::ikasan dev: ChangeSet db/tables/db-changeLog-createFTDeliverBatchCommand.xml::createFTDeliverBatchCommand::ikasan dev ran successfully in 19ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTDeliverFileCommand.xml::createFTDeliverFileCommand::ikasan dev: Table FTDeliverFileCommand created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTDeliverFileCommand.xml::createFTDeliverFileCommand::ikasan dev: Index FTDeliverFileCommand01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTDeliverFileCommand.xml::createFTDeliverFileCommand::ikasan dev: ChangeSet db/tables/db-changeLog-createFTDeliverFileCommand.xml::createFTDeliverFileCommand::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileChunkHeader.xml::createFTFileChunkHeader::ikasan dev: Table FTFileChunkHeader created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileChunkHeader.xml::createFTFileChunkHeader::ikasan dev: Index FTFileChunkHeader01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileChunkHeader.xml::createFTFileChunkHeader::ikasan dev: ChangeSet db/tables/db-changeLog-createFTFileChunkHeader.xml::createFTFileChunkHeader::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileChunk.xml::createFTFileChunk::ikasan dev: Table FTFileChunk created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileChunk.xml::createFTFileChunk::ikasan dev: Index FTFileChunk01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileChunk.xml::createFTFileChunk::ikasan dev: ChangeSet db/tables/db-changeLog-createFTFileChunk.xml::createFTFileChunk::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileFilter.xml::createFTFileFilter::ikasan dev: Table FTFileFilter created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileFilter.xml::createFTFileFilter::ikasan dev: Index FTFileFilter01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileFilter.xml::createFTFileFilter::ikasan dev: Index FTFileFilter02u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileFilter.xml::createFTFileFilter::ikasan dev: Index FTFileFilter03u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTFileFilter.xml::createFTFileFilter::ikasan dev: ChangeSet db/tables/db-changeLog-createFTFileFilter.xml::createFTFileFilter::ikasan dev ran successfully in 18ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTRetrieveFileCommand.xml::createFTRetrieveFileCommand::ikasan dev: Table FTRetrieveFileCommand created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTRetrieveFileCommand.xml::createFTRetrieveFileCommand::ikasan dev: Index FTRetrieveFileCommand01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTRetrieveFileCommand.xml::createFTRetrieveFileCommand::ikasan dev: ChangeSet db/tables/db-changeLog-createFTRetrieveFileCommand.xml::createFTRetrieveFileCommand::ikasan dev ran successfully in 20ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTTransactionalResourceCommand.xml::createFTTransactionalResourceCommand::ikasan dev: Table FTTransactionalResourceCommand created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTTransactionalResourceCommand.xml::createFTTransactionalResourceCommand::ikasan dev: Index TransResCommand01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTTransactionalResourceCommand.xml::createFTTransactionalResourceCommand::ikasan dev: ChangeSet db/tables/db-changeLog-createFTTransactionalResourceCommand.xml::createFTTransactionalResourceCommand::ikasan dev ran successfully in 20ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTXid.xml::createFTXid::ikasan dev: Table FTXid created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTXid.xml::createFTXid::ikasan dev: Index FTXid01u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTXid.xml::createFTXid::ikasan dev: Index FTXid02u created
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/tables/db-changeLog-createFTXid.xml::createFTXid::ikasan dev: ChangeSet db/tables/db-changeLog-createFTXid.xml::createFTXid::ikasan dev ran successfully in 21ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/cardinality/db-changeLog-createFTFileChunkFk.xml::createFTFileChunkFk::ikasan dev: Foreign key constraint added to FTFileChunk (FileChunkHeaderId)
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/cardinality/db-changeLog-createFTFileChunkFk.xml::createFTFileChunkFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createFTFileChunkFk.xml::createFTFileChunkFk::ikasan dev ran successfully in 32ms
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/cardinality/db-changeLog-createFTTransactionalResourceCommandFk.xml::createFTTransactionalResourceCommandFk::ikasan dev: Foreign key constraint added to FTTransactionalResourceCommand (Xid_Id)
+INFO 10/11/15 07:33: liquibase: db-fileTransferPersistence-changelog.xml: db/cardinality/db-changeLog-createFTTransactionalResourceCommandFk.xml::createFTTransactionalResourceCommandFk::ikasan dev: ChangeSet db/cardinality/db-changeLog-createFTTransactionalResourceCommandFk.xml::createFTTransactionalResourceCommandFk::ikasan dev ran successfully in 28ms
+INFO 10/11/15 07:33: liquibase: Successfully released change log lock
+INFO 10/11/15 07:33: liquibase: Reading from PUBLIC.DATABASECHANGELOG
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.417 sec
+
+Results :
+
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ ikasan-setup ---
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/ikasan-setup-1.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ ikasan-setup ---
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/ikasan-setup-1.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ ikasan-setup ---
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/ikasan-setup-1.1.0-SNAPSHOT.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-setup/1.1.0-SNAPSHOT/ikasan-setup-1.1.0-SNAPSHOT.jar
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/pom.xml to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-setup/1.1.0-SNAPSHOT/ikasan-setup-1.1.0-SNAPSHOT.pom
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/platform/ikasan-setup/target/ikasan-setup-1.1.0-SNAPSHOT-sources.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-setup/1.1.0-SNAPSHOT/ikasan-setup-1.1.0-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 13.991 s
+[INFO] Finished at: 2015-11-10T07:33:51+00:00
+[INFO] Final Memory: 25M/439M
+[INFO] ------------------------------------------------------------------------

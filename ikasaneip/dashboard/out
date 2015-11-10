@@ -10,3 +10,9 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Ikasan Dashboard Parent 1.1.0-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ikasan-dashboard ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ ikasan-dashboard ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (regex-property) @ ikasan-dashboard ---

@@ -9,6 +9,9 @@
 	<include file="db/alter/db-changeLog-alterAuthenticationMethod.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterFlow.xml" relativeToChangelogFile="true" />
 	
+	<!-- 1.1.0 table modifications -->
+	<include file="db/modify/db-changeLog-modifyErrorOccurrence.xml" relativeToChangelogFile="true" />
+	
     <!-- 1.1.0 table creation -->    
 	<include file="db/tables/db-changeLog-createNote.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createErrorOccurrenceNote.xml" relativeToChangelogFile="true" />

@@ -290,7 +290,7 @@ public class Module
 		return "Module [id=" + id + ", name=" + name + ", description="
 				+ description + ", contextRoot=" + contextRoot
 				+ ", diagramUrl=" + diagramUrl + ", version=" + version
-				+ ", server=" + server + ", flows=" + flows
+				+ ", server=" + server.getName() + ", flows=" + flows
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";
 	}
