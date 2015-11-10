@@ -130,9 +130,10 @@ public class ErrorCategorisationWindow extends Window
      */
     protected void init()
     {   	
-    	setModal(true);
-		setHeight("90%");
-		setWidth("90%"); 
+    	this.setModal(true);
+    	this.setHeight("90%");
+		this.setWidth("90%"); 
+		this.setResizable(false);
 		
 		this.existingCategorisedErrorsTable = new Table();
 		this.existingCategorisedErrorsTable.setWidth("100%");
@@ -241,7 +242,7 @@ public class ErrorCategorisationWindow extends Window
 		
 		refreshExistingCategorisedErrorsTable();
 		
-		layout.setSizeFull();
+		layout.setWidth("100%");
 		layout.setSpacing(true);
 		layout.setMargin(true);
 		layout.setColumnExpandRatio(0, .25f);
@@ -409,13 +410,13 @@ public class ErrorCategorisationWindow extends Window
             	{
             		errorCategoryCombo.validate();
             		errorMessageTextArea.validate();
-            		actionCombo.validate();
+//            		actionCombo.validate();
                 } 
                 catch (InvalidValueException e) 
                 {
                 	errorCategoryCombo.setValidationVisible(true);
                 	errorMessageTextArea.setValidationVisible(true);
-                	actionCombo.setValidationVisible(true);
+//                	actionCombo.setValidationVisible(true);
                 	
                 	errorCategoryCombo.markAsDirty();
                 	errorMessageTextArea.markAsDirty();
@@ -519,17 +520,9 @@ public class ErrorCategorisationWindow extends Window
 		layout.addComponent(this.existingCategorisedErrorsTable, 0, 13, 1, 13);
 		layout.setComponentAlignment(this.existingCategorisedErrorsTable, Alignment.MIDDLE_CENTER);
 		
-		Panel paramPanel = new Panel();
-		paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-		paramPanel.setWidth("100%");
-		paramPanel.setContent(layout);
 		
-		GridLayout wrapper = new GridLayout();
-//		wrapper.setMargin(true);
-		wrapper.setSizeFull();
-		wrapper.addComponent(paramPanel);
-		
-		this.setContent(wrapper);
+
+		this.setContent(layout);
     }
 
     protected void refreshExistingCategorisedErrorsTable()
@@ -583,10 +576,17 @@ public class ErrorCategorisationWindow extends Window
     		{
     			componentName = "All";
     		}
+    		
+    		String action = errorCategorisationLink.getAction();
+    		
+    		if(action == null || action.trim().length() == 0)
+    		{
+    			action = "All";
+    		}
     		    		
     		this.existingCategorisedErrorsTable.addItem(new Object[]{moduleName, flowName
-     				, componentName, errorCategorisationLink.getAction(), errorCategory
-     				, errorCategorisationLink.getErrorCategorisation().getErrorDescription()}, errorCategorisationLink);
+     				, componentName, action, errorCategory, errorCategorisationLink.getErrorCategorisation()
+     				.getErrorDescription()}, errorCategorisationLink);
     	}
     }
     
@@ -646,12 +646,10 @@ public class ErrorCategorisationWindow extends Window
     	layout.removeComponent(errorCategoryCombo);
     	actionCombo = new ComboBox();
     	actionCombo.setPropertyDataSource(errorCategorisationLinkItem.getItemProperty("action"));
-		actionCombo.setRequired(true);
+		actionCombo.setRequired(false);
 		actionCombo.setRequiredError("An action must be selected!");
 		actionCombo.setValidationVisible(false);
-		actionCombo.setNullSelectionAllowed(false);
-		actionCombo.addValidator(new StringLengthValidator(
-	            "An action must be selected!", 1, -1, false));
+		actionCombo.setNullSelectionAllowed(true);
 		actionCombo.setHeight("30px");
 		
 		errorCategoryCombo = new ComboBox();

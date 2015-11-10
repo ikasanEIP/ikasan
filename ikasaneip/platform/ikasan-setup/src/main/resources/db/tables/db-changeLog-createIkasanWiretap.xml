@@ -53,7 +53,7 @@
 			<not><tableExists tableName="IkasanWiretap" /></not>
 		</preConditions>
 
-        <createTable tableName="IkasanWiretap" >
+        <createTable tableName="IkasanWiretap">
         
             <column autoIncrement="true" name="Id" type="numeric(18)">
                 <constraints nullable="false"/>

@@ -146,11 +146,13 @@ public class ErrorOccurrenceViewPanel extends Panel
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
 		
-		GridLayout layout = new GridLayout(2, 6);
+		GridLayout layout = new GridLayout(4, 7);
 		layout.setSizeFull();
 		layout.setSpacing(true);
-		layout.setColumnExpandRatio(0, 0.25f);
-		layout.setColumnExpandRatio(1, 0.75f);
+		layout.setColumnExpandRatio(0, 0.10f);
+		layout.setColumnExpandRatio(1, 0.40f);
+		layout.setColumnExpandRatio(2, 0.10f);
+		layout.setColumnExpandRatio(3, 0.40f);
 		
 		Label errorOccurrenceDetailsLabel = new Label("Error Details");
 		errorOccurrenceDetailsLabel.setStyleName(ValoTheme.LABEL_HUGE);
@@ -204,18 +206,63 @@ public class ErrorOccurrenceViewPanel extends Panel
 		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
 		
-		label = new Label("Error Message:");
+		label = new Label("URI:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 2, 1);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+	    
+		TextField uriTf = new TextField();
+		uriTf.setValue(this.errorOccurrence.getUri());
+		uriTf.setReadOnly(true);
+		uriTf.setWidth("80%");
+		layout.addComponent(uriTf, 3, 1);
+		
+		label = new Label("Event Life Identifier:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 2, 2);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+	    
+		TextField lidTf = new TextField();
+		lidTf.setValue((this.errorOccurrence.getEventLifeIdentifier() == null ) ? "" : this.errorOccurrence.getEventLifeIdentifier());
+		lidTf.setReadOnly(true);
+		lidTf.setWidth("80%");
+		layout.addComponent(lidTf, 3, 2);
+		
+		label = new Label("Action:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 2, 3);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+	    
+		TextField aTf = new TextField();
+		aTf.setValue((this.errorOccurrence.getAction() == null ) ? "" : this.errorOccurrence.getAction());
+		aTf.setReadOnly(true);
+		aTf.setWidth("80%");
+		layout.addComponent(aTf, 3, 3);
+		
+		label = new Label("Exception Class:");
 		label.setSizeUndefined();		
 		layout.addComponent(label, 0, 5);
+		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
+		
+		TextField ecTf = new TextField();
+		ecTf.setValue(this.errorOccurrence.getExceptionClass());
+		ecTf.setReadOnly(true);
+		ecTf.setWidth("95%");
+		ecTf.setNullRepresentation("");
+		layout.addComponent(ecTf, 1, 5, 3, 5);
+		
+		label = new Label("Error Message:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 6);
 		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
 		
 		TextArea tf5 = new TextArea();
 		tf5.setValue(this.errorOccurrence.getErrorMessage());
 		tf5.setReadOnly(true);
-		tf5.setWidth("80%");
+		tf5.setWidth("95%");
 		tf5.setRows(3);
 		tf5.setNullRepresentation("");
-		layout.addComponent(tf5, 1, 5);
+		layout.addComponent(tf5, 1, 6, 3, 6);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
@@ -262,7 +309,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(230, Unit.PIXELS);
+		formLayout.setHeight(290, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		

@@ -259,7 +259,7 @@ public class Flow implements Principal
 	public String toString()
 	{
 		return "Flow [id=" + id + ", name=" + name + ", description="
-				+ description + ", state=" + state + ", module=" + module
+				+ description + ", state=" + state + ", module=" + module.getName()
 				+ ", components=" + components + ", order=" + order
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";

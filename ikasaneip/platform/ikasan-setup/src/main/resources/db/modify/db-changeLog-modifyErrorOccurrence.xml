@@ -47,25 +47,80 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="alterAuthenticationMethod-filters" context="postBaseline">
-    
-    	<preConditions onFail="MARK_RAN">
-			<not><columnExists tableName="AuthenticationMethod" columnName="UserSynchronisationFilter"/></not>
-			<not><columnExists tableName="AuthenticationMethod" columnName="GroupSynchronisationFilter"/></not>
-		</preConditions>
-		
-		<addColumn tableName="AuthenticationMethod">
-	        <column name="UserSynchronisationFilter" type="VARCHAR(255)" defaultValue="">
-                <constraints nullable="false"/>
-            </column>
-	    </addColumn>
+    <changeSet author="ikasan dev" id="modifyErrorOccurrenceErrorDetailDataType" context="postBaseline" dbms="sybase">
 	    
-	    <addColumn tableName="AuthenticationMethod">
-	        <column name="GroupSynchronisationFilter" type="VARCHAR(255)" defaultValue="">
+	    <createTable tableName="ErrorOccurrenceNew">
+        
+            <column name="Uri" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-	    </addColumn>
+            <column name="ModuleName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FlowName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FlowElementName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ErrorDetail" type="UNITEXT"/>
+            <column name="EventLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="EventRelatedIdentifier" type="VARCHAR(255)"/>
+            <column name="Action" type="VARCHAR(255)"/>
+            <column name="Event" type="IMAGE"/>
+            <column defaultValueNumeric="0" name="Timestamp" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Expiry" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ErrorMessage" type="UNITEXT"/>
+            <column name="ExceptionClass" type="VARCHAR(512)"/>
+            
+        </createTable>
 
+		<sql>
+			insert into ErrorOccurrenceNew 
+			(
+				   Uri
+				  ,ModuleName
+				  ,FlowName
+				  ,FlowElementName
+				  ,ErrorDetail
+				  ,ErrorMessage
+				  ,ExceptionClass
+				  ,EventLifeIdentifier
+				  ,EventRelatedIdentifier
+				  ,[Action]
+				  ,Event
+				  ,Timestamp
+				  ,Expiry
+			) SELECT 
+				   Uri
+				  ,ModuleName
+				  ,FlowName
+				  ,FlowElementName
+				  ,ErrorDetail
+				  ,ErrorMessage
+				  ,ExceptionClass
+				  ,EventLifeIdentifier
+				  ,EventRelatedIdentifier
+				  ,[Action]
+				  ,Event
+				  ,Timestamp
+				  ,Expiry
+			FROM 
+				  ErrorOccurrence
+		</sql>
     </changeSet>
+    
+    <!-- changeSet author="ikasan dev" id="modifyErrorOccurrenceErrorMessageDataType" context="postBaseline" dbms="sybase">
+	    
+	    <modifyDataType 
+            columnName="ErrorMessage"
+            newDataType="UNITEXT"
+            tableName="ErrorOccurrence"/>
+
+    </changeSet -->
 
 </databaseChangeLog>
