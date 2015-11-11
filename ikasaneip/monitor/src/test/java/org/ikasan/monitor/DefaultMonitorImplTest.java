@@ -125,7 +125,7 @@ public class DefaultMonitorImplTest
         Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
-        ((ManagedService)monitor).destroy();
+        ((Monitor)monitor).destroy();
 
         monitor.invoke("stopped");
         mockery.assertIsSatisfied();
