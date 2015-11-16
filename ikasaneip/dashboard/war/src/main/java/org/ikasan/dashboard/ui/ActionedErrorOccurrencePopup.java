@@ -40,12 +40,10 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.exclusion.model.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.service.HospitalManagementService;
-import org.ikasan.topology.service.TopologyService;
+import org.ikasan.dashboard.ui.topology.panel.ActionedErrorOccurrenceViewPanel;
+import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
@@ -58,29 +56,23 @@ import com.vaadin.ui.UI;
  *
  */
 @Theme("dashboard")
-public class ExcludedEventDeepLinkUI extends UI
+public class ActionedErrorOccurrencePopup extends UI
 {
 	/* (non-Javadoc)
 	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
 	 */
 	@Override
 	protected void init(VaadinRequest request)
-	{		
-		ExclusionEvent exclusionEvent 
-		 	= (ExclusionEvent)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEvent");
-		ErrorOccurrence errorOccurrence
-		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
-		ExclusionEventAction exclusionEventAction
-	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
+	{
+		String errorUri = request.getParameter("errorUri");
 		
-		HospitalManagementService<ExclusionEventAction> hospitalManagementService
- 			= (HospitalManagementService<ExclusionEventAction>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
- 		
-		TopologyService topologyService
- 			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
+		 ErrorReportingService errorReportingService 
+		 	= (ErrorReportingService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportService");
+		 ErrorReportingManagementService errorReportingManagementService 
+		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
 	        
-		 ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, errorOccurrence, exclusionEventAction,
-					hospitalManagementService,  topologyService);
+		ActionedErrorOccurrenceViewPanel panel 
+			= new ActionedErrorOccurrenceViewPanel(errorUri, errorReportingManagementService, errorReportingService);
 		
 		this.setContent(panel);
 	}

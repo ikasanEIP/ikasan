@@ -252,16 +252,4 @@ public class Flow implements Principal
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "Flow [id=" + id + ", name=" + name + ", description="
-				+ description + ", state=" + state + ", module=" + module.getName()
-				+ ", components=" + components + ", order=" + order
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
-	}
 }

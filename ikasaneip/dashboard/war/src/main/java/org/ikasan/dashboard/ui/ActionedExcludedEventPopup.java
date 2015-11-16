@@ -40,9 +40,12 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
@@ -55,7 +58,7 @@ import com.vaadin.ui.UI;
  *
  */
 @Theme("dashboard")
-public class CategorisedErrorOccurrenceDeepLinkUI extends UI
+public class ActionedExcludedEventPopup extends UI
 {
 	/* (non-Javadoc)
 	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
@@ -63,14 +66,18 @@ public class CategorisedErrorOccurrenceDeepLinkUI extends UI
 	@Override
 	protected void init(VaadinRequest request)
 	{		
-		 CategorisedErrorOccurrence errorOccurrence
-	 		= (CategorisedErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("categorisedErrorOccurrence");
-
-		 ErrorReportingManagementService errorReportingManagementService 
-		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
+		ErrorOccurrence errorOccurrence
+		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
+		ExclusionEventAction exclusionEventAction
+	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
+		
+		HospitalManagementService<ExclusionEventAction> hospitalManagementService
+ 			= (HospitalManagementService<ExclusionEventAction>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
+ 		
+		TopologyService topologyService
+ 			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
 	        
-		 CategorisedErrorOccurrenceViewPanel panel 
-			= new CategorisedErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService);
+		 ActionedExclusionEventViewPanel panel = new ActionedExclusionEventViewPanel(errorOccurrence, exclusionEventAction, hospitalManagementService, topologyService);
 		
 		this.setContent(panel);
 	}

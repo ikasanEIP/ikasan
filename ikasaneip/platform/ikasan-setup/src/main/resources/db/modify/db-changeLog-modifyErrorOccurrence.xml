@@ -112,15 +112,11 @@
 			FROM 
 				  ErrorOccurrence
 		</sql>
+		
+		<dropTable cascadeConstraints="true" tableName="ErrorOccurrence"/>
+		
+		<renameTable catalogName="cat" newTableName="ErrorOccurrence" oldTableName="ErrorOccurrenceNew"/>
+		
     </changeSet>
-    
-    <!-- changeSet author="ikasan dev" id="modifyErrorOccurrenceErrorMessageDataType" context="postBaseline" dbms="sybase">
-	    
-	    <modifyDataType 
-            columnName="ErrorMessage"
-            newDataType="UNITEXT"
-            tableName="ErrorOccurrence"/>
-
-    </changeSet -->
 
 </databaseChangeLog>

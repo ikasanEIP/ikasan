@@ -46,6 +46,7 @@
         <constructor-arg ref="startupControlService"/>
         <constructor-arg ref="errorReportingService"/>
         <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">

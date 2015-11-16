@@ -52,8 +52,8 @@ import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -92,43 +92,26 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ErrorOccurrenceViewPanel extends Panel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
-	
+	private PlatformConfigurationService platformConfigurationService;
 
 	/**
 	 * @param policy
 	 */
 	public ErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
-			ErrorReportingManagementService errorReportingManagementService)
+			ErrorReportingManagementService errorReportingManagementService,
+			PlatformConfigurationService platformConfigurationService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;
 		this.errorReportingManagementService = errorReportingManagementService;
+		this.platformConfigurationService = platformConfigurationService;
 		
 		this.init();
 	}
-	
-	/**
-	 * @param policy
-	 */
-	public ErrorOccurrenceViewPanel(String errorUri,
-			ErrorReportingManagementService errorReportingManagementService,
-			ErrorReportingService errorReportingService)
-	{
-		super();
-		
-		this.errorReportingManagementService = errorReportingManagementService;
-		this.errorOccurrence = (ErrorOccurrence)errorReportingService.find(errorUri);
-		
-		this.init();
-	}
-
 
 	public void init()
 	{		
@@ -146,7 +129,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
 		
-		GridLayout layout = new GridLayout(4, 7);
+		GridLayout layout = new GridLayout(4, 8);
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setColumnExpandRatio(0, 0.10f);
@@ -239,9 +222,21 @@ public class ErrorOccurrenceViewPanel extends Panel
 		aTf.setWidth("80%");
 		layout.addComponent(aTf, 3, 3);
 		
-		label = new Label("Exception Class:");
+		label = new Label("Error Url:");
 		label.setSizeUndefined();		
 		layout.addComponent(label, 0, 5);
+		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
+		
+		TextField ecrTf = new TextField();
+		ecrTf.setValue(buildErrorUrl());
+		ecrTf.setReadOnly(true);
+		ecrTf.setWidth("95%");
+		ecrTf.setNullRepresentation("");
+		layout.addComponent(ecrTf, 1, 5, 3, 5);
+		
+		label = new Label("Exception Class:");
+		label.setSizeUndefined();		
+		layout.addComponent(label, 0, 6);
 		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
 		
 		TextField ecTf = new TextField();
@@ -249,11 +244,11 @@ public class ErrorOccurrenceViewPanel extends Panel
 		ecTf.setReadOnly(true);
 		ecTf.setWidth("95%");
 		ecTf.setNullRepresentation("");
-		layout.addComponent(ecTf, 1, 5, 3, 5);
+		layout.addComponent(ecTf, 1, 6, 3, 6);
 		
 		label = new Label("Error Message:");
 		label.setSizeUndefined();		
-		layout.addComponent(label, 0, 6);
+		layout.addComponent(label, 0, 7);
 		layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
 		
 		TextArea tf5 = new TextArea();
@@ -262,7 +257,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 		tf5.setWidth("95%");
 		tf5.setRows(3);
 		tf5.setNullRepresentation("");
-		layout.addComponent(tf5, 1, 6, 3, 6);
+		layout.addComponent(tf5, 1, 7, 3, 7);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
@@ -309,7 +304,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(290, Unit.PIXELS);
+		formLayout.setHeight(320, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		
@@ -332,6 +327,15 @@ public class ErrorOccurrenceViewPanel extends Panel
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;
+	}
+	
+	protected String buildErrorUrl()
+	{
+		StringBuffer dashboardUrl = new StringBuffer(this.platformConfigurationService.getConfigurationValue("dashboardBaseUrl"));
+		
+		dashboardUrl.append("/?errorUri=").append(this.errorOccurrence.getUri()).append("#!error-occurrence");
+		
+		return dashboardUrl.toString();
 	}
 	
 	protected Layout createCommentsTabsheet()

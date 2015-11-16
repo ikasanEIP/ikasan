@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.ActionedExcludedEventDeepLinkUI;
+import org.ikasan.dashboard.ui.ActionedExcludedEventPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -240,7 +240,7 @@ public class ActionedExclusionTab extends TopologyTab
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
-        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ActionedExcludedEventDeepLinkUI.class);
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ActionedExcludedEventPopup.class);
         	        popupOpener.extend(popupButton);
         	        
         	        popupButton.addClickListener(new Button.ClickListener() 

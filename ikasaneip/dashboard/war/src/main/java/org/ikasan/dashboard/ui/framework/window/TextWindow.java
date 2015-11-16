@@ -38,38 +38,62 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
+package org.ikasan.dashboard.ui.framework.window;
 
-import org.ikasan.dashboard.ui.topology.panel.WiretapPayloadViewPanel;
-import org.ikasan.spec.wiretap.WiretapEvent;
-
-import com.vaadin.annotations.Theme;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.Window;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-@Theme("dashboard")
-public class WiretapDeepLinkUI extends UI
+public class TextWindow extends Window
 {
-	/* (non-Javadoc)
-	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
-	 */
-	@Override
-	protected void init(VaadinRequest request)
-	{
-		String errorUri = request.getParameter("errorUri");
-		
-		WiretapEvent<String> wiretapEvent 
-		 	= (WiretapEvent<String>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("wiretapEvent");
-	        
-		WiretapPayloadViewPanel panel = new WiretapPayloadViewPanel(wiretapEvent);
-		
-		this.setContent(panel);
-	}
 
+	/**
+     * Constructor
+     * 
+     * @param dialogName
+     * @param message
+     * @param action
+     */
+    public TextWindow(String dialogName, String text)
+    {
+        super(dialogName);
+        this.
+        init(text);
+    }
+
+    /**
+     * Helper method to initialise this object.
+     * 
+     * @param message
+     */
+    protected void init(String text)
+    {
+    	super.setWidth("50%");
+    	super.setHeight("50%");
+        super.setModal(true);
+        super.setResizable(true);
+        super.center();
+        
+       TextArea ta = new TextArea();
+       ta.setSizeFull();
+       ta.setValue(text);
+       ta.setWordwrap(false);
+       
+       HorizontalLayout layout = new HorizontalLayout();
+       layout.setMargin(true);
+       layout.addComponent(ta);
+       layout.setSizeFull();
+       
+       Panel p = new Panel();
+       p.setSizeFull();
+       p.setContent(layout);
+        
+       super.setContent(p);
+    }
 }

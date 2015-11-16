@@ -40,10 +40,9 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.ActionedErrorOccurrenceViewPanel;
-import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
+import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
+import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
@@ -56,23 +55,22 @@ import com.vaadin.ui.UI;
  *
  */
 @Theme("dashboard")
-public class ActionedErrorOccurrenceDeepLinkUI extends UI
+public class CategorisedErrorOccurrencePopup extends UI
 {
 	/* (non-Javadoc)
 	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
 	 */
 	@Override
 	protected void init(VaadinRequest request)
-	{
-		String errorUri = request.getParameter("errorUri");
-		
-		 ErrorReportingService errorReportingService 
-		 	= (ErrorReportingService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportService");
+	{		
+		 CategorisedErrorOccurrence errorOccurrence
+	 		= (CategorisedErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("categorisedErrorOccurrence");
+
 		 ErrorReportingManagementService errorReportingManagementService 
 		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
 	        
-		ActionedErrorOccurrenceViewPanel panel 
-			= new ActionedErrorOccurrenceViewPanel(errorUri, errorReportingManagementService, errorReportingService);
+		 CategorisedErrorOccurrenceViewPanel panel 
+			= new CategorisedErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService);
 		
 		this.setContent(panel);
 	}

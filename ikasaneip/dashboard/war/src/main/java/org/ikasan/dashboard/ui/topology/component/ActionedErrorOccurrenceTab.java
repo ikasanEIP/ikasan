@@ -47,7 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.ActionedErrorOccurrenceDeepLinkUI;
+import org.ikasan.dashboard.ui.ActionedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -670,7 +670,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			popupButton.setIcon(VaadinIcons.MODAL);
 
-	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ActionedErrorOccurrenceDeepLinkUI.class);
+	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ActionedErrorOccurrencePopup.class);
 	        popupOpener.extend(popupButton);
 	        
 	        VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportService", this.errorReportingService);

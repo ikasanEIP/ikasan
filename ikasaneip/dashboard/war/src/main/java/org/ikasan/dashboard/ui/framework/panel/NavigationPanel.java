@@ -303,7 +303,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS, 
         		"User logging in: " + ikasanAuthentication.getName(), ikasanAuthentication.getName());
 
-		UI.getCurrent().getNavigator().navigateTo("landingView");
+//		UI.getCurrent().getNavigator().navigateTo("landingView");
 	}
 
 	/**

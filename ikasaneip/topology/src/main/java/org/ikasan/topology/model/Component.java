@@ -217,21 +217,6 @@ public class Component
 	}
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "Component [id=" + id + ", name=" + name + ", description="
-				+ description + ", configurable=" + configurable
-				+ ", configurationId=" + configurationId + ", flow=" + flow.getName()
-				+ ", module=" + flow.getModule().getName()
-				+ ", server=" + flow.getModule().getServer().getName()
-				+ ", order=" + order + ", createdDateTime=" + createdDateTime
-				+ ", updatedDateTime=" + updatedDateTime + "]";
-	}
-
-	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
