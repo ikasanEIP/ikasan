@@ -35,6 +35,8 @@
         <constructor-arg ref="menuContent"/>
         <constructor-arg ref="showMenuButton"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="errorReportingService"/>
     </bean>
         
     <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
@@ -180,9 +182,23 @@
                    <constructor-arg value="platformConfigurationView"/>
                    <constructor-arg ref="platformConfigurationPanel"/>
                 </bean>
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="error-occurrence"/>
+                   <constructor-arg ref="errorOccurrenceDeepLinkPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+    
+    <bean id="errorOccurrenceDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.ErrorOccurrenceDeepLinkPanel" scope="prototype">
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="errorReportingService"/>
+        <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="authenticationService"/>
+        <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
     <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->

@@ -47,7 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.CategorisedErrorOccurrenceDeepLinkUI;
+import org.ikasan.dashboard.ui.CategorisedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -418,7 +418,7 @@ public class CategorisedErrorTab extends TopologyTab
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
-        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(CategorisedErrorOccurrenceDeepLinkUI.class);
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(CategorisedErrorOccurrencePopup.class);
         	        popupOpener.extend(popupButton);
         	        
         	        popupButton.addClickListener(new Button.ClickListener() 

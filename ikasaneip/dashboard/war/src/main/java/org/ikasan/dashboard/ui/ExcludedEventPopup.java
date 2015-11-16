@@ -40,7 +40,7 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
+import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -58,7 +58,7 @@ import com.vaadin.ui.UI;
  *
  */
 @Theme("dashboard")
-public class ActionedExcludedEventDeepLinkUI extends UI
+public class ExcludedEventPopup extends UI
 {
 	/* (non-Javadoc)
 	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
@@ -66,6 +66,8 @@ public class ActionedExcludedEventDeepLinkUI extends UI
 	@Override
 	protected void init(VaadinRequest request)
 	{		
+		ExclusionEvent exclusionEvent 
+		 	= (ExclusionEvent)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEvent");
 		ErrorOccurrence errorOccurrence
 		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
 		ExclusionEventAction exclusionEventAction
@@ -77,7 +79,8 @@ public class ActionedExcludedEventDeepLinkUI extends UI
 		TopologyService topologyService
  			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
 	        
-		 ActionedExclusionEventViewPanel panel = new ActionedExclusionEventViewPanel(errorOccurrence, exclusionEventAction, hospitalManagementService, topologyService);
+		 ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, errorOccurrence, exclusionEventAction,
+					hospitalManagementService,  topologyService);
 		
 		this.setContent(panel);
 	}

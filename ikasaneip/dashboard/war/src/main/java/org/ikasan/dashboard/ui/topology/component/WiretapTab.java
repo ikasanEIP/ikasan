@@ -52,7 +52,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.WiretapDeepLinkUI;
+import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -342,7 +342,7 @@ public class WiretapTab extends TopologyTab
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
-        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapDeepLinkUI.class);
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
         	        popupOpener.extend(popupButton);
         	        
         	        popupButton.addClickListener(new Button.ClickListener() 

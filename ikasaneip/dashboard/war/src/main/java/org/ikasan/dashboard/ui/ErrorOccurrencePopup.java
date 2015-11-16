@@ -38,58 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.topology.window;
+package org.ikasan.dashboard.ui;
 
+import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 
-import com.vaadin.ui.Window;
+import com.vaadin.annotations.Theme;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.UI;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceViewWindow extends Window
+@Theme("dashboard")
+public class ErrorOccurrencePopup extends UI
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3347325521531925322L;
+	private Logger logger = Logger.getLogger(ErrorOccurrencePopup.class);
 	
-	private ErrorOccurrence errorOccurrence;
-	private ErrorReportingManagementService errorReportingManagementService;
-	private PlatformConfigurationService platformConfigurationService;
-	
-
-	/**
-	 * @param policy
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
 	 */
-	public ErrorOccurrenceViewWindow(ErrorOccurrence errorOccurrence,
-			ErrorReportingManagementService errorReportingManagementService,
-			PlatformConfigurationService platformConfigurationService)
-	{
-		super();
-		this.errorOccurrence = errorOccurrence;
-		this.errorReportingManagementService = errorReportingManagementService;
-		this.platformConfigurationService = platformConfigurationService;
+	@Override
+	protected void init(VaadinRequest request)
+	{		
+		 ErrorReportingService errorReportingService 
+		 	= (ErrorReportingService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportService");
+		 ErrorReportingManagementService errorReportingManagementService 
+		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
+		 PlatformConfigurationService platformConfigurationService 
+		 	= (PlatformConfigurationService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("platformConfigurationService");
+	        	
+		ErrorOccurrence errorOccurrence = (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
 		
-		this.init();
-	}
-
-
-	public void init()
-	{
-		ErrorOccurrenceViewPanel panel = new ErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService,
-				platformConfigurationService);
 		
-		this.setModal(true);
-		this.setResizable(false);
-		this.setHeight("90%");
-		this.setWidth("90%");
+		ErrorOccurrenceViewPanel panel 
+			= new ErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService, platformConfigurationService);
 		
 		this.setContent(panel);
 	}
+
 }

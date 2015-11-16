@@ -361,15 +361,14 @@ public class ErrorCategorisationServiceImpl implements
 		
 		for(ErrorCategorisationLink errorCategorisationLink: errorCategorisations)
 		{
-			logger.debug("Adding key " + new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
+			CategorisedErrorKey key = new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
 					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
-					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim()));
+					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim());
+			
+			logger.debug("Adding key " + key);
 			logger.debug("Adding value " + errorCategorisationLink.getErrorCategorisation());
 			
-			map.put(new CategorisedErrorKey(errorCategorisationLink.getModuleName().trim()
-					, errorCategorisationLink.getFlowName().trim(), errorCategorisationLink.getFlowElementName().trim()
-					, errorCategorisationLink.getAction().trim(), errorCategorisationLink.getExceptionClass().trim())
-					, errorCategorisationLink.getErrorCategorisation());	
+			map.put(key, errorCategorisationLink.getErrorCategorisation());	
 		}
 		
 		return map;

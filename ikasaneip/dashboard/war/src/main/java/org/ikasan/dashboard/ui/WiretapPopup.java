@@ -40,9 +40,8 @@
  */
 package org.ikasan.dashboard.ui;
 
-import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.dashboard.ui.topology.panel.WiretapPayloadViewPanel;
+import org.ikasan.spec.wiretap.WiretapEvent;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
@@ -55,7 +54,7 @@ import com.vaadin.ui.UI;
  *
  */
 @Theme("dashboard")
-public class ErrorOccurrenceDeepLinkUI extends UI
+public class WiretapPopup extends UI
 {
 	/* (non-Javadoc)
 	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
@@ -65,13 +64,10 @@ public class ErrorOccurrenceDeepLinkUI extends UI
 	{
 		String errorUri = request.getParameter("errorUri");
 		
-		 ErrorReportingService errorReportingService 
-		 	= (ErrorReportingService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportService");
-		 ErrorReportingManagementService errorReportingManagementService 
-		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
+		WiretapEvent<String> wiretapEvent 
+		 	= (WiretapEvent<String>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("wiretapEvent");
 	        
-		ErrorOccurrenceViewPanel panel 
-			= new ErrorOccurrenceViewPanel(errorUri, errorReportingManagementService, errorReportingService);
+		WiretapPayloadViewPanel panel = new WiretapPayloadViewPanel(wiretapEvent);
 		
 		this.setContent(panel);
 	}

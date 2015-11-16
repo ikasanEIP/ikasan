@@ -108,7 +108,14 @@
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>filteringtable</artifactId>
 		   <version>0.9.13.v7</version>
-		</dependency>	
+		</dependency>
+		
+		<dependency>
+		   <groupId>com.github.vaadin4qbanos</groupId>
+		   <artifactId>jsclipboard</artifactId>
+		   <version>1.0.2</version>
+		</dependency>
+			
 		
 		<!-- dependency>
 		  <groupId>com.googlecode.wicked-charts</groupId>
