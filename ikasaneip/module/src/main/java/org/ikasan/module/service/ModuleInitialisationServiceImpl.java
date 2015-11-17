@@ -171,6 +171,17 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
             innerContexts.add(applicationContext);
 
+            for(String beanName:applicationContext.getBeanDefinitionNames())
+            {
+                try {
+                    logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                }
+                catch(RuntimeException e)
+                {
+                    logger.warn("Failed to access " + beanName, e);
+                }
+            }
+
             // check for moduleActivator overrides and use the first one found
             try
             {

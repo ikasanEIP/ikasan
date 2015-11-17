@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A default implementation of the FlowElementInvoker for a splitter
@@ -73,7 +74,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     Boolean requiresFullEventForInvocation;
 
     /** count for number of submitted future tasks */
-    int count;
+    AtomicInteger count;
 
     /** handle to any exceptions called back from the future task */
     Throwable callbackException;
@@ -142,7 +143,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         }
 
         // initialise futures task stats
-        count = 0;
+        count = new AtomicInteger(0);
         callbackException = null;
 
         List<ListenableFuture<FlowInvocationContext>> futures = new ArrayList<ListenableFuture<FlowInvocationContext>>(payloads.size());
@@ -161,24 +162,27 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             FlowElement nextFlowElementInRoute = nextFlowElement;
 
             // TODO - replace new DefaultFlowInvocationContext with a factory method
-            Callable<FlowInvocationContext> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListener, moduleName, flowName, new DefaultFlowInvocationContext(), flowEvent);
+            FlowInvocationContext asyncTaskFlowInvocationContext = new DefaultFlowInvocationContext();
+            asyncTaskFlowInvocationContext.combine(flowInvocationContext);
+            Callable<FlowInvocationContext> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListener, moduleName, flowName, asyncTaskFlowInvocationContext, flowEvent);
             final ListenableFuture<FlowInvocationContext> listenableFuture = executorService.submit(asyncTask);
             futures.add(listenableFuture);
             Futures.addCallback(listenableFuture, new FutureCallback<FlowInvocationContext>() {
                 public void onSuccess(FlowInvocationContext taskFlowInvocationContext) {
-                    flowInvocationContext.combine(taskFlowInvocationContext);
-                    count++;
+                    count.addAndGet(1);
                 }
 
                 public void onFailure(Throwable thrown) {
-                    if (thrown instanceof SplitFlowElementException) {
-                        SplitFlowElementException splitFlowElementException = (SplitFlowElementException) thrown;
+                    synchronized (callbackException) {
                         if (callbackException == null) {
-                            callbackException = splitFlowElementException.getThrown();
-                            failedTaskFlowInvocationContext = splitFlowElementException.getFlowInvocationContext();
+                            if (thrown instanceof SplitFlowElementException) {
+                                SplitFlowElementException splitFlowElementException = (SplitFlowElementException) thrown;
+                                callbackException = splitFlowElementException.getThrown();
+                                failedTaskFlowInvocationContext = splitFlowElementException.getFlowInvocationContext();
+                            } else {
+                                callbackException = thrown;
+                            }
                         }
-                    } else {
-                        callbackException = thrown;
                     }
                 }
             });
@@ -237,7 +241,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
      */
     protected boolean pendingCallback(List payloads)
     {
-        return count < payloads.size() && callbackException == null;
+        return count.get() < payloads.size() && callbackException == null;
     }
 
     /**
@@ -253,7 +257,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
      */
     protected Callable newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
     {
-        return new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, new DefaultFlowInvocationContext(), flowEvent);
+        return new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
     }
 
     /**
@@ -321,7 +325,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
                     }
                 }
 
-                return null;
+                return this._flowInvocationContext;
             }
             catch(Throwable t)
             {
