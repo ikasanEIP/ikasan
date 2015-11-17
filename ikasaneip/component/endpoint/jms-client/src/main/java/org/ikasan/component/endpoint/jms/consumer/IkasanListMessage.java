@@ -53,14 +53,16 @@ import java.util.Enumeration;
  */
 public class IkasanListMessage extends ArrayList<Message> implements Message
 {
+    String jmsMessageId;
+
     @Override
     public String getJMSMessageID() throws JMSException {
-        return null;
+        return jmsMessageId;
     }
 
     @Override
-    public void setJMSMessageID(String s) throws JMSException {
-
+    public void setJMSMessageID(String jmsMessageId) throws JMSException {
+        this.jmsMessageId = jmsMessageId;
     }
 
     @Override

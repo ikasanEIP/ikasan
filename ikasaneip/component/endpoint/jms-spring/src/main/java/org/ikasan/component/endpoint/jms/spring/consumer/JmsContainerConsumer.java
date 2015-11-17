@@ -47,6 +47,7 @@ import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
+import org.ikasan.component.endpoint.jms.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -150,10 +151,24 @@ public class JmsContainerConsumer
 
         try
         {
-            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-                    ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
-                    extractContent(message));
-            this.eventListener.invoke(flowEvent);
+            if(message instanceof IkasanListMessage && configuration.isAutoSplitBatch())
+            {
+                IkasanListMessage msgs = (IkasanListMessage)message;
+                for(Message msg:msgs)
+                {
+                    FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                            ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
+                            extractContent(msg));
+                    this.eventListener.invoke(flowEvent);
+                }
+            }
+            else
+            {
+                FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                        ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
+                        extractContent(message));
+                this.eventListener.invoke(flowEvent);
+            }
         }
         catch (ManagedEventIdentifierException e)
         {
@@ -178,15 +193,31 @@ public class JmsContainerConsumer
         {
             throw new RuntimeException("No active eventListeners registered!");
         }
+
         try
         {
-        	 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-                     ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
-                     extractContent(event));
-            
-            Resubmission resubmission = new Resubmission(flowEvent);
-            
-            this.eventListener.invoke(resubmission);
+            if(event instanceof IkasanListMessage && configuration.isAutoSplitBatch())
+            {
+                IkasanListMessage msgs = (IkasanListMessage)event;
+                for(Message msg:msgs)
+                {
+                    FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                            ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
+                            extractContent(msg));
+                    this.eventListener.invoke(flowEvent);
+
+                    Resubmission resubmission = new Resubmission(flowEvent);
+                    this.eventListener.invoke(resubmission);
+                }
+            }
+            else
+            {
+                FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                        ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
+                        extractContent(event));
+                Resubmission resubmission = new Resubmission(flowEvent);
+                this.eventListener.invoke(resubmission);
+            }
         }
         catch (ManagedEventIdentifierException e)
         {

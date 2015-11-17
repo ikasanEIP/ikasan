@@ -40,14 +40,13 @@
  */
 package org.springframework.jms.listener;
 
+import org.ikasan.component.endpoint.jms.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.configuration.Configured;
 import org.springframework.jms.util.JndiUtils;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
+import javax.jms.*;
 
 /**
  * Extend DefaultMessageListenerContainer to ensure standard defaults are set on the container being instantiated.
@@ -163,4 +162,45 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
             refreshSharedConnection();
         }
     }
+
+    /**
+     * Build up a faux JMS message containing multiple instances of JMS messages consumed from the destination.
+     * @param consumer
+     * @return
+     * @throws JMSException
+     */
+    @Override
+    protected Message receiveMessage(MessageConsumer consumer) throws JMSException
+    {
+        if(this.configuration.isBatchMode())
+        {
+            IkasanListMessage listMessage = new IkasanListMessage();
+            while ( !append(listMessage, super.receiveMessage(consumer)) );
+
+            if(listMessage.size() == 0) return null;
+
+            // base the jms id off of the first messages jms id + batch size
+            listMessage.setJMSMessageID(listMessage.get(0).getJMSMessageID() + ":" + this.configuration.getBatchSize());
+            return listMessage;
+        }
+
+        return super.receiveMessage(consumer);
+    }
+
+    /**
+     * Consumer messages until no more or batch limit is reached.
+     * @param listMessage
+     * @param message
+     * @return
+     */
+    public boolean append(IkasanListMessage listMessage, Message message)
+    {
+        if (message != null)
+        {
+            listMessage.add(message);
+        }
+
+        return message == null || listMessage.size() >= (configuration.getBatchSize() == null ? 1:configuration.getBatchSize().intValue());
+    }
+
 }
