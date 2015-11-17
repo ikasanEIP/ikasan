@@ -83,6 +83,9 @@ public class SpringMessageConsumerConfiguration
     /** do we automatically pull the payload content from the JMS message */
     private boolean autoContentConversion = false;
 
+    /** batching consumer configuration limit */
+    private Integer batchSize;
+
     public String getDestinationJndiName() {
         return destinationJndiName;
     }
@@ -175,6 +178,14 @@ public class SpringMessageConsumerConfiguration
         this.autoContentConversion = autoContentConversion;
     }
 
+    public Integer getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+        this.batchSize = batchSize;
+    }
+
     @Override
     public String toString() {
         return "SpringMessageConsumerConfiguration{" +
@@ -189,6 +200,7 @@ public class SpringMessageConsumerConfiguration
                 ", durable=" + durable +
                 ", sessionTransacted=" + sessionTransacted +
                 ", autoContentConversion=" + autoContentConversion +
+                ", batchSize=" + batchSize +
                 '}';
     }
 }

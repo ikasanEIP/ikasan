@@ -94,6 +94,9 @@ public class ConcurrentSplitterFlowElementInvokerTest
         final List payloads = new ArrayList();
         payloads.add(payload);
 
+        final List<String> invokedComponents =  new ArrayList<String>();
+        invokedComponents.add("componentName");
+
         // expectations
         mockery.checking(new Expectations() {
             {
@@ -115,6 +118,9 @@ public class ConcurrentSplitterFlowElementInvokerTest
                 will(returnValue(flowElement));
                 exactly(1).of(flowEvent).setPayload(payload);
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowInvocationContext).getInvokedComponents();
+                will(returnValue(invokedComponents));
 
                 exactly(1).of(executorService).execute(with(any(Runnable.class)));
             }

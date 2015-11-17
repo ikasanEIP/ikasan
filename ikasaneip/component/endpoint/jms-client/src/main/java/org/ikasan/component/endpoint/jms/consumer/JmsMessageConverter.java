@@ -43,6 +43,7 @@ package org.ikasan.component.endpoint.jms.consumer;
 import javax.jms.*;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
