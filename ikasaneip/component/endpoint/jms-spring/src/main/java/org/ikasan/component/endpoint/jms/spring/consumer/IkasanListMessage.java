@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.jms.consumer;
+package org.ikasan.component.endpoint.jms.spring.consumer;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -279,7 +279,4 @@ public class IkasanListMessage extends ArrayList<Message> implements Message
     public void clearBody() throws JMSException {
 
     }
-
-    // public List<Message> messages = new ArrayList<Message>();
-
 }

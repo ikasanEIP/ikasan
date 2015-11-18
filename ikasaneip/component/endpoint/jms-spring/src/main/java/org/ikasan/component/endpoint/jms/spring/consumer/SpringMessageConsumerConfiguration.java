@@ -83,14 +83,14 @@ public class SpringMessageConsumerConfiguration
     /** do we automatically pull the payload content from the JMS message */
     private boolean autoContentConversion = false;
 
-    /** batching consumer configuration limit */
+    /** use batching or not */
     private boolean batchMode;
 
     /** batching consumer configuration limit */
-    private Integer batchSize;
+    private int batchSize;
 
     /** whether to split any batched JMS message list into individual message instances and invoke the flow for each instance */
-    private boolean autoSplitBatch;
+    private boolean autoSplitBatch = true;
 
     public String getDestinationJndiName() {
         return destinationJndiName;
@@ -184,11 +184,11 @@ public class SpringMessageConsumerConfiguration
         this.autoContentConversion = autoContentConversion;
     }
 
-    public Integer getBatchSize() {
+    public int getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(Integer batchSize) {
+    public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
     }
 
