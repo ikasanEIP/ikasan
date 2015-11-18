@@ -40,7 +40,7 @@
  */
 package org.springframework.jms.listener;
 
-import org.ikasan.component.endpoint.jms.consumer.IkasanListMessage;
+import org.ikasan.component.endpoint.jms.spring.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.configuration.Configured;
@@ -200,7 +200,7 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
             listMessage.add(message);
         }
 
-        return message == null || listMessage.size() >= (configuration.getBatchSize() == null ? 1:configuration.getBatchSize().intValue());
+        return message == null || listMessage.size() >= configuration.getBatchSize();
     }
 
 }

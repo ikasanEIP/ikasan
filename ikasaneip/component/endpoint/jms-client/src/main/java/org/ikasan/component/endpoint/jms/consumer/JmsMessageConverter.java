@@ -41,7 +41,9 @@
 package org.ikasan.component.endpoint.jms.consumer;
 
 import javax.jms.*;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility converter for JMS Messages where we simply want to extract the payload content.
@@ -104,16 +106,6 @@ public class JmsMessageConverter
         {
             // don't try and interpret the stream just return it as is
             return message;
-        }
-        else if(message instanceof IkasanListMessage)
-        {
-            List objects = new ArrayList();
-            for(Message listMessageInstance:(IkasanListMessage)message)
-            {
-                objects.add( extractContent(listMessageInstance) );
-            }
-
-            return objects;
         }
         else
         {

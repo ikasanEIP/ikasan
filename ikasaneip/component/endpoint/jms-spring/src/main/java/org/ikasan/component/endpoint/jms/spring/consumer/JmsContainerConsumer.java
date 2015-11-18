@@ -47,10 +47,11 @@ import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
-import org.ikasan.component.endpoint.jms.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
@@ -65,13 +66,16 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Consumer wrapping Spring's JMS Container.
  * @author Ikasan Development Team
  */
 public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
-        Consumer<EventListener<?>,EventFactory>,
+        Consumer<EventListener<?>,EventFactory>, Converter<Message,Object>,
         ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
 		, ResubmissionService<Message>
 {
@@ -181,7 +185,7 @@ public class JmsContainerConsumer
                 {
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                             ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
-                            extractContent(msg));
+                            msg);
                     invoke(flowEvent);
                 }
             }
@@ -189,7 +193,7 @@ public class JmsContainerConsumer
             {
                 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                         ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
-                        extractContent(message));
+                        message);
                 invoke(flowEvent);
             }
         }
@@ -197,11 +201,6 @@ public class JmsContainerConsumer
         {
             this.eventListener.invoke(e);
         }
-        catch (JMSException e)
-        {
-            this.eventListener.invoke(e);
-        }
-
     }
     
     /* (non-Javadoc)
@@ -221,7 +220,7 @@ public class JmsContainerConsumer
                 {
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                             ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
-                            extractContent(msg));
+                            msg);
                     invoke(new Resubmission(flowEvent));
                 }
             }
@@ -229,15 +228,11 @@ public class JmsContainerConsumer
             {
                 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                         ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
-                        extractContent(event));
+                        event);
                 invoke(new Resubmission(flowEvent));
             }
         }
         catch (ManagedEventIdentifierException e)
-        {
-            this.eventListener.invoke(e);
-        }
-        catch (JMSException e)
         {
             this.eventListener.invoke(e);
         }
@@ -301,16 +296,6 @@ public class JmsContainerConsumer
         }
     }
 
-    protected Object extractContent(Message message) throws JMSException
-    {
-        if(!this.configuration.isAutoContentConversion())
-        {
-            return message;
-        }
-
-        return JmsMessageConverter.extractContent(message);
-    }
-
     @Override
     public String getConfiguredResourceId()
     {
@@ -341,6 +326,35 @@ public class JmsContainerConsumer
         if(this.messageProvider != null && this.messageProvider instanceof Configured)
         {
             ((Configured<SpringMessageConsumerConfiguration>)this.messageProvider).setConfiguration(configuration);
+        }
+    }
+
+    @Override
+    public Object convert(Message message) throws TransformationException
+    {
+        try
+        {
+            if(!this.configuration.isAutoContentConversion())
+            {
+                return message;
+            }
+
+            if(message instanceof IkasanListMessage)
+            {
+                List msgs = new ArrayList();
+                for(Message msg:(IkasanListMessage)message)
+                {
+                    msgs.add( JmsMessageConverter.extractContent(msg) );
+                }
+
+                return msgs;
+            }
+
+            return JmsMessageConverter.extractContent(message);
+        }
+        catch(JMSException e)
+        {
+            throw new TransformationException(e);
         }
     }
 }
