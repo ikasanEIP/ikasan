@@ -42,6 +42,7 @@
  */
 package org.ikasan.component.validator.xml;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.ikasan.component.validator.ValidationException;
 import org.ikasan.component.validator.ValidationResult;
@@ -151,7 +152,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         } catch (SAXException e) {
 
             if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException(e);
+                throw new ValidationException(generateErrorMessage(e, source), e);
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
@@ -170,6 +171,25 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
             validationResult.setException(e);
         }
         return validationResult;
+    }
+
+    private String generateErrorMessage(SAXException e, SOURCE source) {
+
+        String payload;
+        if (sourceToByteArrayInputStreamConverter == null && source instanceof String) {
+            payload = (String) source;
+        } else {
+            try {
+                payload = IOUtils.toString(sourceToByteArrayInputStreamConverter.convert(source));
+            } catch (IOException ioe) {
+                logger.error(ioe);
+                payload = String.format("An exception occurred whilst converting the payload to a String: %s", ioe.getMessage());
+            }
+        }
+
+        String errorMessage = String.format("XML validation error: %s\n\nXML:\n%s", e.getMessage(), payload);
+
+        return errorMessage;
     }
 
     private ByteArrayInputStream createSourceAsBytes(SOURCE xml) {
