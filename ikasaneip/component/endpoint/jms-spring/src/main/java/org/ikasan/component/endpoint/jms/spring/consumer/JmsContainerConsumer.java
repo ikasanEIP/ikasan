@@ -141,14 +141,37 @@ public class JmsContainerConsumer
         this.messageProvider.stop();
     }
 
-    @Override
-    public void onMessage(Message message)
+    /**
+     * Invoke the eventListener with the given flowEvent.
+     * @param flowEvent
+     */
+    protected void invoke(FlowEvent flowEvent)
     {
         if(this.eventListener == null)
         {
-            throw new RuntimeException("No active eventListeners registered!");
+            throw new RuntimeException("No active eventListeners registered for flowEvent!");
         }
 
+        this.eventListener.invoke(flowEvent);
+    }
+
+    /**
+     * Invoke the eventListener with the given resubmission.
+     * @param resubmission
+     */
+    protected void invoke(Resubmission resubmission)
+    {
+        if(this.eventListener == null)
+        {
+            throw new RuntimeException("No active eventListeners registered for resubmission event!");
+        }
+
+        this.eventListener.invoke(resubmission);
+    }
+
+    @Override
+    public void onMessage(Message message)
+    {
         try
         {
             if(message instanceof IkasanListMessage && configuration.isAutoSplitBatch())
@@ -159,7 +182,7 @@ public class JmsContainerConsumer
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                             ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
                             extractContent(msg));
-                    this.eventListener.invoke(flowEvent);
+                    invoke(flowEvent);
                 }
             }
             else
@@ -167,7 +190,7 @@ public class JmsContainerConsumer
                 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                         ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
                         extractContent(message));
-                this.eventListener.invoke(flowEvent);
+                invoke(flowEvent);
             }
         }
         catch (ManagedEventIdentifierException e)
@@ -189,11 +212,6 @@ public class JmsContainerConsumer
 	{
 		logger.info("attempting to submit event: " + event);
 
-		if (this.eventListener == null)
-        {
-            throw new RuntimeException("No active eventListeners registered!");
-        }
-
         try
         {
             if(event instanceof IkasanListMessage && configuration.isAutoSplitBatch())
@@ -204,10 +222,7 @@ public class JmsContainerConsumer
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                             ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
                             extractContent(msg));
-                    this.eventListener.invoke(flowEvent);
-
-                    Resubmission resubmission = new Resubmission(flowEvent);
-                    this.eventListener.invoke(resubmission);
+                    invoke(new Resubmission(flowEvent));
                 }
             }
             else
@@ -215,8 +230,7 @@ public class JmsContainerConsumer
                 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
                         ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
                         extractContent(event));
-                Resubmission resubmission = new Resubmission(flowEvent);
-                this.eventListener.invoke(resubmission);
+                invoke(new Resubmission(flowEvent));
             }
         }
         catch (ManagedEventIdentifierException e)
