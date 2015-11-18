@@ -16,11 +16,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>org.ikasan.${dashed.project.version}.configuration org.apache.log4j</Dependencies>
+                            <Dependencies>org.ikasan.${dashed.project.version}.configuration org.apache.log4j
+                            </Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -28,7 +28,7 @@
         </plugins>
     </build>
 
-	<dependencies>
+    <dependencies>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -38,27 +38,27 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-setup</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>console-jar</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
             <groupId>commons-lang</groupId>
@@ -68,36 +68,36 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
-         </dependency>
+        </dependency>
 
-	    <dependency>
-	      <groupId>org.springframework.security</groupId>
-	      <artifactId>spring-security-web</artifactId>
-	    </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
 
-	    <dependency>
-	      <groupId>org.springframework.security</groupId>
-	      <artifactId>spring-security-config</artifactId>
-	    </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
 
-		<dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-taglibs</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>geronimo-spec</groupId>
-			<artifactId>geronimo-spec-j2ee</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<!-- This jar is added because jboss startup throwing exception Failed 
-			to load class "org.slf4j.impl.StaticLoggerBinder" TODO: UPDATE to 1.5.11 
-			When Jboss can handle it? -->
-		<!--dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			</dependency-->
-	</dependencies>
+        <!-- This jar is added because jboss startup throwing exception Failed
+            to load class "org.slf4j.impl.StaticLoggerBinder" TODO: UPDATE to 1.5.11
+            When Jboss can handle it? -->
+        <!--dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            </dependency-->
+    </dependencies>
 
 </project>
