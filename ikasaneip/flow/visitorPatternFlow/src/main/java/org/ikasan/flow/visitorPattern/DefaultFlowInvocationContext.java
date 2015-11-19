@@ -64,7 +64,6 @@ import org.ikasan.spec.flow.FlowInvocationContext;
  */
 public class DefaultFlowInvocationContext implements FlowInvocationContext
 {
-	
 	/**
 	 * a stack of the names of all components invoked so far
 	 */
@@ -103,6 +102,15 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	public List<String> getInvokedComponents()
 	{
 		return new ArrayList<String>(invokedComponents);
+	}
+
+	@Override
+	public void combine(FlowInvocationContext flowInvocationContext)
+	{
+		for(String invokedComponent:flowInvocationContext.getInvokedComponents())
+		{
+			this.addInvokedComponentName(invokedComponent);
+		}
 	}
 
 }

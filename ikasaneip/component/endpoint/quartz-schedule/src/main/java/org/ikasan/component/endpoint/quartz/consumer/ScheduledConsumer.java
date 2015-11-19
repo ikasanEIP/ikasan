@@ -41,7 +41,9 @@
 package org.ikasan.component.endpoint.quartz.consumer;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.TriggerKey.triggerKey;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -61,14 +63,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.resubmission.ResubmissionService;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 
 /**
  * This test class supports the <code>Consumer</code> class.
@@ -83,6 +78,9 @@ public class ScheduledConsumer<T>
      * logger
      */
     private static Logger logger = Logger.getLogger(ScheduledConsumer.class);
+
+    /** distinguish between business schedule callback and eager schedule callback */
+    private static String EAGER_SCHEDULE = "eagerSchedule_";
 
     /**
      * Scheduler
@@ -232,6 +230,8 @@ public class ScheduledConsumer<T>
             if(this.getConfiguration().isEager() && t != null){
                 // if this consumer is eager to consume messages and message provided returned not null
                 // results then quartz scheduler should be triggered
+
+
                 triggerSchedulerNow();
             }
         }
@@ -357,9 +357,30 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    protected void triggerSchedulerNow() throws SchedulerException {
+    protected void triggerSchedulerNow() throws SchedulerException
+    {
         JobKey jobkey = jobDetail.getKey();
-        scheduler.triggerJob(jobkey);
+        TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());
+        Trigger trigger = newTrigger().
+                withIdentity(triggerKey).forJob(jobkey.getName(), jobkey.getGroup()).
+                startAt(new Date()).
+                withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
+                build();
+
+        Date scheduledDate = null;
+        if(this.scheduler.checkExists(triggerKey))
+        {
+            scheduledDate = scheduler.rescheduleJob(triggerKey, trigger);
+        }
+        else
+        {
+            scheduledDate = scheduler.scheduleJob(trigger);
+        }
+
+        logger.info("Rescheduled consumer for flow ["
+                + jobkey.getName()
+                + "] module [" + jobkey.getGroup()
+                + "] for immediate callback [" + scheduledDate + "]");
     }
 
     public void setEventFactory(EventFactory flowEventFactory)
@@ -436,6 +457,12 @@ public class ScheduledConsumer<T>
      */
     protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
     {
+        if(this.consumerConfiguration.isIgnoreMisfire())
+        {
+            return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing())
+                    .build();
+        }
+
         return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression))
                 .build();
     }

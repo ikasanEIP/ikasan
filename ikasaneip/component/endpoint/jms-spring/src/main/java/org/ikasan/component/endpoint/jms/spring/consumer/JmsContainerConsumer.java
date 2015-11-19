@@ -50,6 +50,8 @@ import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
@@ -64,13 +66,16 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Consumer wrapping Spring's JMS Container.
  * @author Ikasan Development Team
  */
 public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
-        Consumer<EventListener<?>,EventFactory>,
+        Consumer<EventListener<?>,EventFactory>, Converter<Message,Object>,
         ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
 		, ResubmissionService<Message>
 {
@@ -140,30 +145,62 @@ public class JmsContainerConsumer
         this.messageProvider.stop();
     }
 
-    @Override
-    public void onMessage(Message message)
+    /**
+     * Invoke the eventListener with the given flowEvent.
+     * @param flowEvent
+     */
+    protected void invoke(FlowEvent flowEvent)
     {
         if(this.eventListener == null)
         {
-            throw new RuntimeException("No active eventListeners registered!");
+            throw new RuntimeException("No active eventListeners registered for flowEvent!");
         }
 
+        this.eventListener.invoke(flowEvent);
+    }
+
+    /**
+     * Invoke the eventListener with the given resubmission.
+     * @param resubmission
+     */
+    protected void invoke(Resubmission resubmission)
+    {
+        if(this.eventListener == null)
+        {
+            throw new RuntimeException("No active eventListeners registered for resubmission event!");
+        }
+
+        this.eventListener.invoke(resubmission);
+    }
+
+    @Override
+    public void onMessage(Message message)
+    {
         try
         {
-            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-                    ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
-                    extractContent(message));
-            this.eventListener.invoke(flowEvent);
+            if(message instanceof IkasanListMessage && configuration.isAutoSplitBatch())
+            {
+                IkasanListMessage msgs = (IkasanListMessage)message;
+                for(Message msg:msgs)
+                {
+                    FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                            ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
+                            msg);
+                    invoke(flowEvent);
+                }
+            }
+            else
+            {
+                FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                        ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
+                        message);
+                invoke(flowEvent);
+            }
         }
         catch (ManagedEventIdentifierException e)
         {
             this.eventListener.invoke(e);
         }
-        catch (JMSException e)
-        {
-            this.eventListener.invoke(e);
-        }
-
     }
     
     /* (non-Javadoc)
@@ -174,25 +211,28 @@ public class JmsContainerConsumer
 	{
 		logger.info("attempting to submit event: " + event);
 
-		if (this.eventListener == null)
-        {
-            throw new RuntimeException("No active eventListeners registered!");
-        }
         try
         {
-        	 FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-                     ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
-                     extractContent(event));
-            
-            Resubmission resubmission = new Resubmission(flowEvent);
-            
-            this.eventListener.invoke(resubmission);
+            if(event instanceof IkasanListMessage && configuration.isAutoSplitBatch())
+            {
+                IkasanListMessage msgs = (IkasanListMessage)event;
+                for(Message msg:msgs)
+                {
+                    FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                            ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
+                            msg);
+                    invoke(new Resubmission(flowEvent));
+                }
+            }
+            else
+            {
+                FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
+                        ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(event) : event.hashCode()),
+                        event);
+                invoke(new Resubmission(flowEvent));
+            }
         }
         catch (ManagedEventIdentifierException e)
-        {
-            this.eventListener.invoke(e);
-        }
-        catch (JMSException e)
         {
             this.eventListener.invoke(e);
         }
@@ -256,16 +296,6 @@ public class JmsContainerConsumer
         }
     }
 
-    protected Object extractContent(Message message) throws JMSException
-    {
-        if(!this.configuration.isAutoContentConversion())
-        {
-            return message;
-        }
-
-        return JmsMessageConverter.extractContent(message);
-    }
-
     @Override
     public String getConfiguredResourceId()
     {
@@ -296,6 +326,35 @@ public class JmsContainerConsumer
         if(this.messageProvider != null && this.messageProvider instanceof Configured)
         {
             ((Configured<SpringMessageConsumerConfiguration>)this.messageProvider).setConfiguration(configuration);
+        }
+    }
+
+    @Override
+    public Object convert(Message message) throws TransformationException
+    {
+        try
+        {
+            if(!this.configuration.isAutoContentConversion())
+            {
+                return message;
+            }
+
+            if(message instanceof IkasanListMessage)
+            {
+                List msgs = new ArrayList();
+                for(Message msg:(IkasanListMessage)message)
+                {
+                    msgs.add( JmsMessageConverter.extractContent(msg) );
+                }
+
+                return msgs;
+            }
+
+            return JmsMessageConverter.extractContent(message);
+        }
+        catch(JMSException e)
+        {
+            throw new TransformationException(e);
         }
     }
 }

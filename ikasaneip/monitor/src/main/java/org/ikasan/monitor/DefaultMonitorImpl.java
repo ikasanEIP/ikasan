@@ -43,6 +43,7 @@ package org.ikasan.monitor;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.monitor.Notifier;
 
 import java.util.ArrayList;
