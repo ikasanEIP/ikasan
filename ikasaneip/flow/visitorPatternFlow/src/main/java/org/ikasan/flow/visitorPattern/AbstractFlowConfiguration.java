@@ -49,6 +49,7 @@ import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
@@ -64,6 +65,9 @@ public class AbstractFlowConfiguration
     /** managed resources within the flow */
     protected List<FlowElement<ManagedResource>> managedReourceFlowElements =
         new ArrayList<FlowElement<ManagedResource>>();
+
+    /** managed services within the flow */
+    protected List<ManagedService> managedServices = new ArrayList<ManagedService>();
 
     /** configured resources within the flow */
     protected List<FlowElement<ConfiguredResource>> configuredReourceFlowElements =
@@ -110,6 +114,11 @@ public class AbstractFlowConfiguration
         
         for(FlowElement flowElement:getFlowElements())
         {
+            if(flowElement.getFlowElementInvoker() instanceof ManagedService)
+            {
+                this.managedServices.add( (ManagedService)flowElement.getFlowElementInvoker() );
+            }
+
             Object flowComponent = flowElement.getFlowComponent();
             if(flowComponent instanceof ManagedResource)
             {
@@ -133,6 +142,11 @@ public class AbstractFlowConfiguration
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements()
     {
         return this.configuredReourceFlowElements;
+    }
+
+    public List<ManagedService> getManagedServices()
+    {
+        return this.managedServices;
     }
 
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements()

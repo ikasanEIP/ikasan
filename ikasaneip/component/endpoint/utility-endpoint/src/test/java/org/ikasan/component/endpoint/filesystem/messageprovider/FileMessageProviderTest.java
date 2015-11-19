@@ -93,6 +93,8 @@ public class FileMessageProviderTest
                 exactly(2).of(configuration).getDirectoryDepth();
                 // ensure we don't walk the subdirectory
                 will(returnValue(1));
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(true));
             }
         });
 
@@ -123,6 +125,8 @@ public class FileMessageProviderTest
                 will(returnValue(filenames));
                 exactly(2).of(configuration).getDirectoryDepth();
                 will(returnValue(2));
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(true));
             }
         });
 
@@ -149,6 +153,8 @@ public class FileMessageProviderTest
             {
                 exactly(2).of(configuration).getFilenames();
                 will(returnValue(filenames));
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(true));
             }
         });
 
