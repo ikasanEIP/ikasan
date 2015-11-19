@@ -118,7 +118,7 @@ public class GraphCache
 		errorOccurrencesMap = new HashMap<ErrorOccurrenceKey, Integer>();
 		moduleErrorOccurrencesMap = new HashMap<String, Integer>();
 		
-		logger.info("Synchronising topology state cache.");
+		logger.debug("Synchronising topology state cache.");
 		List<ErrorOccurrence> errorOccurrences 
 			= errorReportingService.find(null, null, null, getMidnightToday(), getTwentyThreeFixtyNineToday());
 		

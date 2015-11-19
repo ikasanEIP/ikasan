@@ -172,8 +172,10 @@ public class MappingConfigurationValuesImportWindow extends Window
         });
 
         importButton.setStyleName(ValoTheme.BUTTON_SMALL);
-        importButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
+        importButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
                 try
                 {
                     saveImportedMappingConfigurationValues();
@@ -187,12 +189,14 @@ public class MappingConfigurationValuesImportWindow extends Window
                     		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
                     		+ "]", authentication.getName());
 
-                    logger.info("User: " + authentication.getName() 
+                    logger.debug("User: " + authentication.getName() 
                         + " successfully imported the following Mapping Configuration: " 
                             + mappingConfiguration);
                 }
                 catch (Exception e)
                 {
+                	logger.error("An error occurred trying to import a mapping configuration!", e); 
+                	
                     Notification.show("An error occurred trying to import a mapping configuration: " + e.getMessage()
                     		, Notification.Type.ERROR_MESSAGE);
                 }
@@ -253,9 +257,9 @@ public class MappingConfigurationValuesImportWindow extends Window
             Document document = builder.parse(
                 new ByteArrayInputStream(this.receiver.file.toByteArray()));
 
-            logger.info("Uploaded document = " + document);
+            logger.debug("Uploaded document = " + document);
 
-            logger.info("Document element = " + document.getDocumentElement().getNodeName());
+            logger.debug("Document element = " + document.getDocumentElement().getNodeName());
 
             if(errorHandler.errors.size() > 0 || errorHandler.fatal.size() > 0)
             {
@@ -271,6 +275,8 @@ public class MappingConfigurationValuesImportWindow extends Window
                     errors.append(exception.getMessage()).append("\n");
                 }
 
+                logger.error("An error occured parsing the uploaded XML document!\n" + errors.toString()); 
+                
                 Notification.show("An error occured parsing the uploaded XML document!\n", errors.toString()
                     , Notification.Type.ERROR_MESSAGE);
             }
@@ -280,7 +286,7 @@ public class MappingConfigurationValuesImportWindow extends Window
     
                 NodeList mappingConfigurationValues = documentRoot.getElementsByTagName("mappingConfigurationValue");
                 
-                logger.info("Number of mapping configuration values = " + mappingConfigurationValues.getLength());
+                logger.debug("Number of mapping configuration values = " + mappingConfigurationValues.getLength());
     
                 this.uploadLabel.setValue("Importing " + mappingConfigurationValues.getLength() 
                     + " configuration values. Press import to procede.");
@@ -392,7 +398,7 @@ public class MappingConfigurationValuesImportWindow extends Window
         }
 
         public void uploadSucceeded(SucceededEvent event) {
-            logger.info("File = " + new String(file.toByteArray()));
+            logger.debug("File = " + new String(file.toByteArray()));
         }
     };
 
@@ -403,17 +409,17 @@ public class MappingConfigurationValuesImportWindow extends Window
         List<SAXParseException> fatal = new ArrayList<SAXParseException>();
         
         public void warning(SAXParseException e) throws SAXException {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             warnings.add(e);
         }
 
         public void error(SAXParseException e) throws SAXException {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             errors.add(e);
         }
 
         public void fatalError(SAXParseException e) throws SAXException {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             fatal.add(e);
         }
     }

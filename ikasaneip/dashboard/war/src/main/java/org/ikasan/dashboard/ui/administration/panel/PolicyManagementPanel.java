@@ -387,12 +387,12 @@ public class PolicyManagementPanel extends Panel implements View
 			public void drop(final DragAndDropEvent dropEvent)
 			{
 				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
+				logger.debug("Trying to drop: " + dropEvent);
 				
 				if(rolesCombo.getValue() == null)
 				{
 					// Do nothing if there is no role selected
-					logger.info("Ignoring drop: " + dropEvent);
+					logger.debug("Ignoring drop: " + dropEvent);
 					return;
 				}
 
@@ -401,7 +401,7 @@ public class PolicyManagementPanel extends Panel implements View
 
 				final AutocompleteField sourceContainer = (AutocompleteField) t
 						.getDraggedComponent();
-				logger.info("sourceContainer.getText(): "
+				logger.debug("sourceContainer.getText(): "
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
@@ -681,6 +681,8 @@ public class PolicyManagementPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred deleting a policy", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -735,6 +737,8 @@ public class PolicyManagementPanel extends Panel implements View
 		}
 		catch(RuntimeException e)
 		{
+			logger.error("An error occurred saving a policy", e);
+			
 			StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
@@ -756,6 +760,8 @@ public class PolicyManagementPanel extends Panel implements View
 		}
 		catch(RuntimeException e)
 		{
+			logger.error("An error occurred saving a role", e);
+			
 			StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);

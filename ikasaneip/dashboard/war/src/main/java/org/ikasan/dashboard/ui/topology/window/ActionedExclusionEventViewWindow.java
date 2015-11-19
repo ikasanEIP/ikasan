@@ -85,7 +85,6 @@ public class ActionedExclusionEventViewWindow extends Window
 	private TextField roleName;
 	private TextField roleDescription;
 	private ErrorOccurrence errorOccurrence;
-	private SerialiserFactory serialiserFactory;
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
@@ -93,12 +92,11 @@ public class ActionedExclusionEventViewWindow extends Window
 	/**
 	 * @param policy
 	 */
-	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
+	public ActionedExclusionEventViewWindow(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;
-		this.serialiserFactory = serialiserFactory;
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
@@ -242,8 +240,11 @@ public class ActionedExclusionEventViewWindow extends Window
 		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 
-		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.action.getEvent());
-		eventEditor.setValue(event.toString());
+		if(this.action.getEvent() != null)
+		{
+			eventEditor.setValue(new String((byte[])this.action.getEvent()));
+		}
+		
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);

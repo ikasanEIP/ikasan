@@ -43,10 +43,14 @@ package org.ikasan.module.service;
 import org.apache.log4j.Logger;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
+
+import java.util.List;
 
 /**
  * Simple implementation of the default activation of a module.
@@ -107,7 +111,17 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     {
         for(Flow flow:module.getFlows())
         {
+            // stop flow and associated components
             flow.stop();
+
+            // destroy any managed services used by the flow
+            FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
+            List<ManagedService> managedServices = flowConfiguration.getManagedServices();
+            for(ManagedService managedService:managedServices)
+            {
+                managedService.destroy();
+            }
         }
+
     }
 }

@@ -273,19 +273,19 @@ public class RoleManagementPanel extends Panel implements View
 				if(role == null)
 				{
 					// Do nothing if there is no role selected
-					logger.info("Ignoring drop: " + dropEvent);
+					logger.debug("Ignoring drop: " + dropEvent);
 					return;
 				}
 				
 				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
+				logger.debug("Trying to drop: " + dropEvent);
 
 				final WrapperTransferable t = (WrapperTransferable) dropEvent
 						.getTransferable();
 
 				final AutocompleteField sourceContainer = (AutocompleteField) t
 						.getDraggedComponent();
-				logger.info("sourceContainer.getText(): "
+				logger.debug("sourceContainer.getText(): "
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
@@ -301,12 +301,12 @@ public class RoleManagementPanel extends Panel implements View
 		            	Policy policy = RoleManagementPanel.this.securityService
 								.findPolicyByName(sourceContainer.getText());
 		            	
-		            	logger.info("Trying to remove policy: " + policy);
+		            	logger.debug("Trying to remove policy: " + policy);
 						
 						Role selectedRole = RoleManagementPanel.this.securityService
 								.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
 						
-						logger.info("From role: " + selectedRole);
+						logger.debug("From role: " + selectedRole);
 						
 		            	selectedRole.getPolicies().remove(policy);		            	
 		            	RoleManagementPanel.this.saveRole(selectedRole);
@@ -445,12 +445,12 @@ public class RoleManagementPanel extends Panel implements View
 				
 				RoleManagementPanel.this.associatedPrincipalsTable.removeAllItems();
 				
-				logger.info("Trying to get pinciplas for role: " + role);
+				logger.debug("Trying to get pinciplas for role: " + role);
 				
 				List<IkasanPrincipal> principals = RoleManagementPanel.this.securityService
 						.getAllPrincipalsWithRole(role.getName());
 				
-				logger.info("Adding the following number of principals : " + principals.size());
+				logger.debug("Adding the following number of principals : " + principals.size());
 				
 				for(final IkasanPrincipal ikasanPrincipal: principals)
 		        {
@@ -467,7 +467,7 @@ public class RoleManagementPanel extends Panel implements View
 			            	Role selectedRole = RoleManagementPanel.this.securityService
 									.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
 							
-							logger.info("Removing principal role: " + selectedRole);
+							logger.debug("Removing principal role: " + selectedRole);
 							ikasanPrincipal.getRoles().remove(selectedRole);            	
 			            	RoleManagementPanel.this.securityService.savePrincipal(ikasanPrincipal);
 			            	
@@ -570,11 +570,13 @@ public class RoleManagementPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred saving a role", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
                     
-            		Notification.show("Cauget exception trying to save a Policy!", sw.toString()
+            		Notification.show("Cauget exception trying to save a Role!", sw.toString()
                         , Notification.Type.ERROR_MESSAGE);
             	}
             }
@@ -601,6 +603,8 @@ public class RoleManagementPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred deleting a role", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -638,6 +642,8 @@ public class RoleManagementPanel extends Panel implements View
 		}
 		catch(RuntimeException e)
 		{
+			logger.error("An error occurred saving a role", e);
+			
 			StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
@@ -672,12 +678,12 @@ public class RoleManagementPanel extends Panel implements View
 		{
 			RoleManagementPanel.this.associatedPrincipalsTable.removeAllItems();
 			
-			logger.info("Trying to get pincipals for role: " + role);
+			logger.debug("Trying to get pincipals for role: " + role);
 			
 			List<IkasanPrincipal> principals = RoleManagementPanel.this.securityService
 					.getAllPrincipalsWithRole(role.getName());
 			
-			logger.info("Adding the following number of principals : " + principals.size());
+			logger.debug("Adding the following number of principals : " + principals.size());
 			
 			for(final IkasanPrincipal ikasanPrincipal: principals)
 	        {
@@ -694,7 +700,7 @@ public class RoleManagementPanel extends Panel implements View
 		            	Role selectedRole = RoleManagementPanel.this.securityService
 								.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
 						
-						logger.info("Removing principal role: " + selectedRole);
+						logger.debug("Removing principal role: " + selectedRole);
 						ikasanPrincipal.getRoles().remove(selectedRole);            	
 		            	RoleManagementPanel.this.securityService.savePrincipal(ikasanPrincipal);
 		            	

@@ -3484,7 +3484,7 @@
 				</prop>
                 <prop key="create.checksumCommand">CREATE TABLE [FTChecksumCommand]
                     (
-                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
+                    [Id]                    [numeric](18) NOT NULL,
                     [Destructive]           [bit]         NOT NULL,
                     [ChecksumFilePath]      [varchar](255) NULL,
                     CONSTRAINT              [PK_FTChecksumCommand_Id] PRIMARY KEY CLUSTERED
@@ -3496,7 +3496,7 @@
 
                 <prop key="create.cleanupChunksCommand">CREATE TABLE [FTCleanupChunksCommand]
                     (
-                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
+                    [Id]                    [numeric](18)  NOT NULL,
                     [FileChunkHeaderId]     [numeric](18)  NULL,
                     CONSTRAINT              [PK_FTCleanupChunksCommand_Id] PRIMARY KEY CLUSTERED
                     (
@@ -3506,11 +3506,11 @@
                 </prop>
 
                 <prop key="create.deliverBatchCommand">CREATE TABLE [FTDeliverBatchCommand]
-                    (
-                    [Id]                     [numeric](18)  IDENTITY NOT NULL,
-                    [OutputDirectory]        [varchar](255) NULL,
-                    [TempDirectory]          [varchar](255) NULL,
-                    [BatchFolder]            [varchar](255) NULL,
+					(
+					[Id]                     [numeric](18)  NOT NULL,
+					[OutputDirectory]        [varchar](255) NULL,
+					[TempDirectory]          [varchar](255) NULL,
+					[BatchFolder]            [varchar](255) NULL,
                     [PutAttempted]           [bit] NOT NULL,
                     CONSTRAINT              [PK_FTDeliverBatchCommand_Id] PRIMARY KEY CLUSTERED
                     (
@@ -3521,7 +3521,7 @@
 
                 <prop key="create.deliverFileCommand">CREATE TABLE [FTDeliverFileCommand]
                     (
-                    [Id]                     [numeric](18)  IDENTITY NOT NULL,
+                    [Id]                     [numeric](18)  NOT NULL,
                     [FileName]               [varchar](255) NULL,
                     [TempFileName]           [varchar](255) NULL,
                     [OutputDirectory]        [varchar](255) NULL,
@@ -3556,7 +3556,7 @@
                     [Content]           [image]  NOT NULL,
                     [Ordinal]           [numeric](18) NOT NULL,
                     [Md5Hash]  		    [varchar](32) NULL,
-                    [FileChunkHeaderId] [numeric](18)) NOT NULL,
+                    [FileChunkHeaderId] [numeric](18) NOT NULL,
                     CONSTRAINT          [PK_FTFileChunk_Id] PRIMARY KEY CLUSTERED
                     (
                         [Id] ASC
@@ -3586,7 +3586,7 @@
 
                 <prop key="create.retrieveFileCommand">CREATE TABLE [FTRetrieveFileCommand]
                     (
-                    [Id]                   [numeric](18)  IDENTITY NOT NULL,
+                    [Id]                   [numeric](18)  NOT NULL,
                     [Destructive]          [bit]          NOT NULL,
                     [RenameOnSuccess]      [bit]          NOT NULL,
                     [RenameExtension]      [varchar](255) NULL,
@@ -3606,7 +3606,7 @@
                     [State]                    [varchar](255)  NOT NULL,
                     [GlobalTransactionId]      [varchar](255)  NOT NULL,
                     [BranchQualifier]          [varchar] (255) NOT NULL,
-                    [FormatId]                 [numeric](18    NOT NULL,
+                    [FormatId]                 [numeric](18)    NOT NULL,
                     [ClientId]                 [varchar](255)  NOT NULL,
                     [CreatedDateTime]          [numeric](18)   NOT NULL,
                     [LastUpdatedDateTime]      [numeric](18)   NOT NULL,
