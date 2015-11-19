@@ -279,4 +279,23 @@ public class IkasanListMessage extends ArrayList<Message> implements Message
     public void clearBody() throws JMSException {
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        IkasanListMessage messages = (IkasanListMessage) o;
+
+        return !(jmsMessageId != null ? !jmsMessageId.equals(messages.jmsMessageId) : messages.jmsMessageId != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (jmsMessageId != null ? jmsMessageId.hashCode() : 0);
+        return result;
+    }
 }
