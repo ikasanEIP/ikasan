@@ -246,7 +246,7 @@ public class TopologyServiceImpl implements TopologyService
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.info("Caught exception attempting to discover module with the following URL: " + url 
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
@@ -288,7 +288,7 @@ public class TopologyServiceImpl implements TopologyService
 						component = getComponent(flow.getComponents(), component);
 						component.setFlow(flow);
 						
-						logger.info("Saving component: " + component.getName());
+						logger.debug("Saving component: " + component.getName());
 
 						this.topologyDao.save(component);
 					}								    	

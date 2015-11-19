@@ -165,7 +165,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 		IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user
 				, authorities, (String)auth.getCredentials(), user.getPreviousAccessTimestamp());
 
-		logger.info("Returning authentication: " + ikasanAuthentication);
+		logger.debug("Returning authentication: " + ikasanAuthentication);
         return ikasanAuthentication;
     }
 

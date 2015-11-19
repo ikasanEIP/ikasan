@@ -61,6 +61,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -87,7 +88,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.model.BusinessStream;
@@ -210,7 +210,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private StartupControlService startupControlService;
 	private ErrorReportingService errorReportingService;
 	
-	private SerialiserFactory serialiserFactory;
 	
 	private BusinessStream businessStream;
 	
@@ -226,7 +225,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
+			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService)
 	{
@@ -249,11 +248,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.exclusionManagementService == null)
 		{
 			throw new IllegalArgumentException("exclusionManagementService cannot be null!");
-		}
-		this.serialiserFactory = serialiserFactory;
-		if(this.serialiserFactory == null)
-		{
-			throw new IllegalArgumentException("serialiserFactory cannot be null!");
 		}
 		this.hospitalManagementService = hospitalManagementService;
 		if(this.hospitalManagementService == null)
@@ -385,7 +379,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tab4.setSizeFull();
     		final ExclusionsTab actionedExclusionsTab = new ExclusionsTab(this.errorReportingService, 
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
-    				this.serialiserFactory, this.treeViewBusinessStreamCombo);
+    				this.treeViewBusinessStreamCombo);
     		
     		tab4.addComponent(actionedExclusionsTab.createLayout());
     		tabsheet.addTab(tab4, "Exclusions");
@@ -399,8 +393,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			tab5.setSizeFull();
 			ActionedExclusionTab actionedExclusionTab = new ActionedExclusionTab
 					(this.exclusionManagementService, this.hospitalManagementService,
-							this.errorReportingService, this.topologyService, this.serialiserFactory,
-							this.treeViewBusinessStreamCombo);
+							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo);
 			tab5.addComponent(actionedExclusionTab.createLayout());
 			tabsheet.addTab(tab5, "Actioned Exclusions");
     	}
@@ -422,7 +415,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			final VerticalLayout tab8 = new VerticalLayout();
 			tab8.setSizeFull();
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.serialiserFactory);
+					(this.errorCategorisationService, this.treeViewBusinessStreamCombo);
 			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
 			tabsheet.addTab(tab8, "Categorised Errors");
     	}
@@ -452,7 +445,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					
 					String state = flowStates.get(flow.getModule().getName() + "-" + flow.getName());
 	            	
-					logger.info("State = " + state);
+					logger.debug(flow.getModule().getName() + "-" + flow.getName() + " State = " + state);
 					
 	    			if(state != null && state.equals(RUNNING))
 	    			{
@@ -499,7 +492,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 {
                 	businessStream  = (BusinessStream)event.getProperty().getValue();
                 	
-                	logger.info("Value changed to business stream: " + businessStream.getName());
+                	logger.debug("Value changed to business stream: " + businessStream.getName());
                 
                 	moduleTree.removeAllItems();
                 	
@@ -507,8 +500,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	        	.getAttribute(DashboardSessionValueConstants.USER);
             		
             		if(authentication != null 
-                			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-                			&& businessStream.getName().equals("All"))
+                			&& ((authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY))
+                			&& businessStream.getName().equals("All")))
                 	{
                 		List<Server> servers = TopologyViewPanel.this.topologyService.getAllServers();
                 		
@@ -671,6 +664,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	                	}
                 	}        	
                 }
+                
+                for (Iterator<?> it = moduleTree.rootItemIds().iterator(); it.hasNext();) 
+        		{
+        			moduleTree.expandItemsRecursively(it.next());
+        		}
+        		
+        		for (Iterator<?> it = moduleTree.getItemIds().iterator(); it.hasNext();) 
+        		{
+        			Object nextItem = it.next();
+        			if(nextItem instanceof Module)
+        			{
+        				moduleTree.collapseItemsRecursively(nextItem);
+        			}
+        		}
+        		
             }
         });
 
@@ -694,6 +702,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				}
             	catch (DiscoveryException e)
 				{
+            		logger.error("An error occurred trying to auto discover modules!", e); 
+            		
 					Notification.show("An error occurred trying to auto discover modules: " 
 							+ e.getMessage(), Type.ERROR_MESSAGE);
 				}
@@ -758,22 +768,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-//		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
-//		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-//		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-//		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
-//		    			, action, hospitalManagementService, topologyService);
-//		    	
-//		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
-//		    	{
-//		            // inline close-listener
-//		            public void windowClose(CloseEvent e) 
-//		            {
-//		            	refreshExcludedEventsTable();
-//		            }
-//		        });
-//		    
-//		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
+		    	// Not implemented at the moment but left as a place holder.
 		    }
 		});
 		
@@ -790,9 +785,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	PagedSearchResult<SystemEvent> systemEvents = systemEventService.listSystemEvents(0, 10000, "timestamp", true, null, null, systemEventFromDate.getValue()
             			, systemEventToDate.getValue(), null);
             	
+            	if(systemEvents.getPagedResults() == null || systemEvents.getPagedResults().size() == 0)
+            	{
+            		Notification.show("The system events search returned no results!", Type.ERROR_MESSAGE);
+            	}
+            	
             	for(SystemEvent systemEvent: systemEvents.getPagedResults())
             	{
-            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
             	    String timestamp = format.format(systemEvent.getTimestamp());
             	    
             		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
@@ -811,10 +811,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.systemEventFromDate = new PopupDateField("From date");
 		this.systemEventFromDate.setResolution(Resolution.MINUTE);
 		this.systemEventFromDate.setValue(this.getMidnightToday());
+		this.systemEventFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.systemEventFromDate, 0, 0);
 		this.systemEventToDate = new PopupDateField("To date");
 		this.systemEventToDate.setResolution(Resolution.MINUTE);
 		this.systemEventToDate.setValue(this.getTwentyThreeFixtyNineToday());
+		this.systemEventToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
 		dateSelectLayout.addComponent(this.systemEventToDate, 1, 0);
 		
 		dateSelectLayout.addComponent(searchButton, 0, 1, 1, 1);
@@ -863,10 +865,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
+		logger.debug("authentication = " + authentication);
+		
+		if(authentication != null)
+		{
+			logger.debug("authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
+			logger.debug("authentication has topology authority " + authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY));
+		}
+		
 		if(authentication != null 
-    			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+    					authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY)))
     	{
 			List<Server> servers = this.topologyService.getAllServers();
+			
+			logger.debug("trying to load tree for " + servers.size());
 			
 			for(Server server: servers)
 			{	
@@ -882,7 +895,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	            this.moduleTree.setItemCaption(server, icon.getHtml() + " " + server.getName());
 	            this.moduleTree.setChildrenAllowed(server, true);
 	        	
-//	        	this.moduleTree.setItemIcon(server, icon);
 	
 		        for(Module module: modules)
 		        {	        	
@@ -1093,9 +1105,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public Action[] getActions(Object target, Object sender)
-	{     
-		logger.info("Getting action: " + target + " " + sender);
+	{    
+		IkasanAuthentication authentication = null;
 		
+		if(VaadinService.getCurrentRequest() != null
+				&& VaadinService.getCurrentRequest().getWrappedSession() != null)
+		{
+			authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+		}
+		
+		logger.debug("authentication fom session = " + authentication);
+		
+		if(authentication != null)
+		{
+			logger.debug("authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
+		}
+
 		if(target instanceof Server)
         {
             return serverActions;
@@ -1106,6 +1132,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         }
 		else if(target instanceof Flow)
         {
+			if(authentication != null 
+	    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
+			{
+				return this.flowActions;
+			}
+
 			Flow flow = ((Flow)target);
 			
 			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
@@ -1132,6 +1164,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         }
 		else if(target instanceof Component)
         {
+			if(authentication != null 
+	    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
+			{
+				return this.componentActions;
+			}
+	
 			if(((Component)target).isConfigurable())
 			{
 				return componentActionsConfigurable;
@@ -1151,7 +1189,22 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	 */
 	@Override
 	public void handleAction(Action action, Object sender, Object target)
-	{	                
+	{	
+		IkasanAuthentication authentication = null;
+		
+		if(VaadinService.getCurrentRequest() != null
+				&& VaadinService.getCurrentRequest().getWrappedSession() != null)
+		{
+			authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+		}
+		
+		if(authentication == null 
+    			|| (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
+		{
+			return;
+		}
+		
         if(target != null && target instanceof Component)
         {
         	if(action.equals(CONFIGURE))

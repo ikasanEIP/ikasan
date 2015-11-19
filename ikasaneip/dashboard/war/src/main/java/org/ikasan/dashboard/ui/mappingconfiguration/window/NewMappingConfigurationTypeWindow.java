@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewConfigurationTypeFieldGroup;
@@ -78,6 +79,8 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class NewMappingConfigurationTypeWindow extends Window implements View
 {
+	private Logger logger = Logger.getLogger(NewMappingConfigurationTypeWindow.class);
+	
     private static final long serialVersionUID = 3730025219462219485L;
 
     private RefreshGroup refreshGroup;
@@ -150,17 +153,22 @@ public class NewMappingConfigurationTypeWindow extends Window implements View
         
         Button saveButton = new Button("Save");
         saveButton.setStyleName(ValoTheme.BUTTON_SMALL);
-        saveButton.addClickListener(new ClickListener() {
+        saveButton.addClickListener(new ClickListener() 
+        {
             @Override
-            public void buttonClick(ClickEvent event) {
-                try {
+            public void buttonClick(ClickEvent event) 
+            {
+                try 
+                {
                     nameField.validate();
-                } catch (InvalidValueException e) {
+                } catch (InvalidValueException e) 
+                {
                     nameField.setValidationVisible(true);
                     return;
                 }
 
-                try {
+                try 
+                {
                     binder.commit();
                     UI.getCurrent().getNavigator().navigateTo("emptyPanel");
                     nameField.setValue("");
@@ -168,11 +176,15 @@ public class NewMappingConfigurationTypeWindow extends Window implements View
                     saveRequiredMonitor.setSaveRequired(false);
                     
                     close();
-                } catch (CommitException e) {
+                } 
+                catch (CommitException e) 
+                {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
 
+                    logger.error("An error occurred trying to save mapping configuration type!", e); 
+                    
                     Notification.show("Cauget exception trying to save a new Mapping Configuration Type!", sw.toString()
                         , Notification.Type.ERROR_MESSAGE);
                 }

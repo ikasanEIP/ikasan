@@ -240,12 +240,12 @@ public class PrincipalManagementPanel extends Panel implements View
 			public void drop(final DragAndDropEvent dropEvent)
 			{
 				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
+				logger.debug("Trying to drop: " + dropEvent);
 
 				if(rolesCombo.getValue() == null)
 				{
 					// Do nothing if there is no role selected
-					logger.info("Ignoring drop: " + dropEvent);
+					logger.debug("Ignoring drop: " + dropEvent);
 					return;
 				}
 
@@ -254,7 +254,7 @@ public class PrincipalManagementPanel extends Panel implements View
 
 				final AutocompleteField sourceContainer = (AutocompleteField) t
 						.getDraggedComponent();
-				logger.info("sourceContainer.getText(): "
+				logger.debug("sourceContainer.getText(): "
 						+ sourceContainer.getText());
 
 				Button deleteButton = new Button();
@@ -344,7 +344,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		       
 		        if(role != null)
 		        {
-			        logger.info("Value changed got Role: " + role);
+			        logger.debug("Value changed got Role: " + role);
 			        
 			        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
 					

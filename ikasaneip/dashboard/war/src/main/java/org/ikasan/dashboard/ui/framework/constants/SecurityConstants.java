@@ -47,6 +47,7 @@ package org.ikasan.dashboard.ui.framework.constants;
  */
 public class SecurityConstants
 {
+	public static String ANY_AUTHORITY = "ANY";
 	public static String ALL_AUTHORITY = "ALL";
 	public static String VIEW_BUSINESS_STREAM_AUTHORITY = "ViewBusinessStream";
 	public static String VIEW_WIRETAP_AUTHORITY = "ViewWiretap";

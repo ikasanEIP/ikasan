@@ -193,7 +193,6 @@ public class DashboardPanel extends Panel implements View//, Broadcaster.Broadca
 	    	for(int i=0; i<100; i++)
 	    	{
 	    		Broadcaster.broadcast("" + System.currentTimeMillis());
-	    		System.out.println("Sending Alert!");
     	    	try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
@@ -254,9 +253,7 @@ public class DashboardPanel extends Panel implements View//, Broadcaster.Broadca
         			        item.getItemProperty("Details");
 
                     detailsProperty.setValue(notesPopupView);
-        			
-        			System.out.println("container = " + container);
-        			System.out.println("Item = " + item);
+
         		} finally {
         			VaadinSession.getCurrent().getLockInstance().unlock();
         		}
@@ -286,8 +283,6 @@ public class DashboardPanel extends Panel implements View//, Broadcaster.Broadca
 
         			moduleProperty.setValue(event.getModule());
 
-        			System.out.println("container = " + container);
-        			System.out.println("Item = " + item);
         		} finally {
         			VaadinSession.getCurrent().getLockInstance().unlock();
         		}
