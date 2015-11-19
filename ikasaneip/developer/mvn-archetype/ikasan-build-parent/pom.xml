@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-mvn-archetype</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-build-parent-maven-plugin</artifactId>
