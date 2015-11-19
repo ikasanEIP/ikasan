@@ -45,6 +45,11 @@ package org.ikasan.component.validator;
  */
 public class ValidationException extends RuntimeException
 {
+
+    public ValidationException(Throwable cause) {
+        super(cause);
+    }
+
     public ValidationException(String reason)
     {
         super(reason);
