@@ -230,56 +230,56 @@ public class ErrorOccurrenceTab extends TopologyTab
 		    }
 		});
 		
-		this.container.addItemSetChangeListener(new ItemSetChangeListener()
-		{
-
-			@Override
-			public void containerItemSetChange(ItemSetChangeEvent event)
-			{			
-				String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
-
-		    	StringBuffer sb = new StringBuffer();
-		    	
-		    	for(ErrorOccurrence errorOccurrence: (List<ErrorOccurrence>)container.getItemIds())
-		    	{
-					sb.append(buildErrorUrl(dashboardUrl, errorOccurrence)).append("\n");	    	
-					errorClipboard = sb.toString();
-		    	}
-		    	
-		    	sb = new StringBuffer();
-		    	
-		    	for(Object property: container.getContainerPropertyIds())
-		    	{
-		    		if(container.getType(property) == String.class)
-		    		{
-		    			sb.append("||").append(property);
-		    		}
-		    	}
-		    	sb.append("||\n");
-		    	
-		    	
-		    	for(Object errorOccurrence: container.getItemIds())
-		    	{
-		    		Item item = container.getItem(errorOccurrence);
-		    		
-		    		
-		    		for(Object propertyId: container.getContainerPropertyIds())
-			    	{		    			
-		    			if(container.getType(propertyId) == String.class)
-			    		{
-		    				Property property = item.getItemProperty(propertyId);
-		    				
-		    				sb.append("|").append(property.getValue());
-			    		}
-			    	}
-		    		
-		    		sb.append("|\n");
-		    	}
-		    	
-		    	jiraClipboard = sb.toString();
-			}
-			
-		});
+//		this.container.addItemSetChangeListener(new ItemSetChangeListener()
+//		{
+//
+//			@Override
+//			public void containerItemSetChange(ItemSetChangeEvent event)
+//			{			
+//				String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
+//
+//		    	StringBuffer sb = new StringBuffer();
+//		    	
+//		    	for(ErrorOccurrence errorOccurrence: (List<ErrorOccurrence>)container.getItemIds())
+//		    	{
+//					sb.append(buildErrorUrl(dashboardUrl, errorOccurrence)).append("\n");	    	
+//					errorClipboard = sb.toString();
+//		    	}
+//		    	
+//		    	sb = new StringBuffer();
+//		    	
+//		    	for(Object property: container.getContainerPropertyIds())
+//		    	{
+//		    		if(container.getType(property) == String.class)
+//		    		{
+//		    			sb.append("||").append(property);
+//		    		}
+//		    	}
+//		    	sb.append("||\n");
+//		    	
+//		    	
+//		    	for(Object errorOccurrence: container.getItemIds())
+//		    	{
+//		    		Item item = container.getItem(errorOccurrence);
+//		    		
+//		    		
+//		    		for(Object propertyId: container.getContainerPropertyIds())
+//			    	{		    			
+//		    			if(container.getType(propertyId) == String.class)
+//			    		{
+//		    				Property property = item.getItemProperty(propertyId);
+//		    				
+//		    				sb.append("|").append(property.getValue());
+//			    		}
+//			    	}
+//		    		
+//		    		sb.append("|\n");
+//		    	}
+//		    	
+//		    	jiraClipboard = sb.toString();
+//			}
+//			
+//		});
 				
 		Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
