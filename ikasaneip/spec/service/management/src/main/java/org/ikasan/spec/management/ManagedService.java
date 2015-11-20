@@ -38,39 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
-
-import java.util.List;
+package org.ikasan.spec.management;
 
 /**
- * Interface providing the contract for transfer object operations within the flow invocation
- * 
- * @author Ikasan Development Team
+ * Interface provisioning callbacks for managed services
+ * which are module wide.
  *
+ * @author Ikasan Development Team
  */
-public interface FlowInvocationContext
+public interface ManagedService
 {
     /**
-     * Get the name of the last invoked component recorded in the context.
-     * @return componentName
+     * Shutdown and destroy this service.
      */
-	public String getLastComponentName();
-	
-	/**
-	 * Add an invoked componentName to the context.
-	 * @param componentName
-	 */
-	public void addInvokedComponentName(String componentName);
+    public void destroy();
 
-	/**
-	 * Return a list of all invoked componentNames
-	 * @return List componentNames
-	 */
-	public List<String> getInvokedComponents();
-
-	/**
-	 * Combine the incoming flowInvocationContext into this instance
-	 * @param flowInvocationContext
-	 */
-	public void combine(FlowInvocationContext flowInvocationContext);
 }

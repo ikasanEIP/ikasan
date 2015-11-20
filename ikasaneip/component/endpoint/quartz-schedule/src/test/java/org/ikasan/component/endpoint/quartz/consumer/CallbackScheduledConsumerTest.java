@@ -368,8 +368,10 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
 
-                exactly(1).of(scheduler).triggerJob(jobKey);
+                exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
+                will(returnValue(false));
 
+                exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
             }
         });
 
@@ -388,6 +390,50 @@ public class CallbackScheduledConsumerTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_execute_when_messageProvider_returns_true_and_not_in_recovery_and_consumer_is_eager_existing_trigger() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final CallBackMessageProvider mockCallBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final String identifier = "testId";
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockCallBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(true));
+
+                // check if consumer is eager
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(true));
+
+                // trigger now
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).rescheduleJob(with(any(TriggerKey.class)), with(any(Trigger.class)));
+            }
+        });
+
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+        scheduledConsumer.setCallBackMessageProvider(mockCallBackMessageProvider);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
+
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
 
     @Test
     public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
