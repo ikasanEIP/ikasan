@@ -34,7 +34,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
-              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 
        <!-- TODO point cuts below are commented out as these methods are called via REST and rest 
 		supplies its own security. -->
