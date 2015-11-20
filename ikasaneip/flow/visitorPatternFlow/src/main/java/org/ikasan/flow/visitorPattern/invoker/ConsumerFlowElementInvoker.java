@@ -42,6 +42,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
 
 /**
@@ -52,13 +53,36 @@ import org.ikasan.spec.flow.*;
 @SuppressWarnings("unchecked")
 public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Consumer>
 {
+    /** do we have a converter in this consumer */
+    Boolean hasConverter;
+
+    /** handle to any internal converter for this consumer */
+    Converter converter;
+
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
-        // nothing to do for consumers
+        if(hasConverter == null)
+        {
+            Consumer consumer = flowElement.getFlowComponent();
+            converter = getAsConverter(consumer);
+            if(converter == null)
+            {
+                hasConverter = Boolean.FALSE;
+            }
+            else
+            {
+                hasConverter = Boolean.TRUE;
+            }
+        }
+
+        if(hasConverter)
+        {
+            flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+        }
 
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
@@ -72,5 +96,19 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
         return flowElement;
     }
 
+    /**
+     * method to aid testing
+     * @param consumer
+     * @return
+     */
+    protected Converter getAsConverter(Consumer consumer)
+    {
+        if(consumer instanceof Converter)
+        {
+            return ((Converter)consumer);
+        }
+
+        return null;
+    }
 }
 
