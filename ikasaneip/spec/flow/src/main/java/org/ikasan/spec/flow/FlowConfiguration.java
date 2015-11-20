@@ -47,6 +47,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
@@ -58,6 +59,15 @@ public interface FlowConfiguration
 {
     public FlowElement<Consumer> getConsumerFlowElement();
     public List<FlowElement<?>> getFlowElements();
+
+    /**
+     * Getter for Managed Services within this flow.
+     * @return
+     *
+     * A Managed Service is something used by the flow that is automatically instantiated
+     * on deployment and requires destroying on undeployment.
+     */
+    public List<ManagedService> getManagedServices();
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
