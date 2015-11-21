@@ -45,9 +45,13 @@ import java.util.List;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
+
+
 
 
 /**
@@ -200,4 +204,36 @@ public interface TopologyDao
 	 * @return
 	 */
 	public Module getModuleByName(String name);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void saveFilter(Filter filter);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Filter getFilterByName(String name);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Filter> getAllFilters();
+	
+	/**
+	 * 
+	 * @param roleFilter
+	 */
+	public void saveRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	public RoleFilter getRoleFilterByRoleId(Long roleId);
 }

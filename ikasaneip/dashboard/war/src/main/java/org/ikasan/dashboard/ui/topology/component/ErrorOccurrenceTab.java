@@ -40,11 +40,17 @@
  */
 package org.ikasan.dashboard.ui.topology.component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ErrorOccurrencePopup;
@@ -63,6 +69,7 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
@@ -71,8 +78,6 @@ import org.ikasan.topology.model.Module;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Container.ItemSetChangeEvent;
-import com.vaadin.data.Container.ItemSetChangeListener;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
@@ -83,7 +88,10 @@ import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -229,57 +237,6 @@ public class ErrorOccurrenceTab extends TopologyTab
 		    	}
 		    }
 		});
-		
-//		this.container.addItemSetChangeListener(new ItemSetChangeListener()
-//		{
-//
-//			@Override
-//			public void containerItemSetChange(ItemSetChangeEvent event)
-//			{			
-//				String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
-//
-//		    	StringBuffer sb = new StringBuffer();
-//		    	
-//		    	for(ErrorOccurrence errorOccurrence: (List<ErrorOccurrence>)container.getItemIds())
-//		    	{
-//					sb.append(buildErrorUrl(dashboardUrl, errorOccurrence)).append("\n");	    	
-//					errorClipboard = sb.toString();
-//		    	}
-//		    	
-//		    	sb = new StringBuffer();
-//		    	
-//		    	for(Object property: container.getContainerPropertyIds())
-//		    	{
-//		    		if(container.getType(property) == String.class)
-//		    		{
-//		    			sb.append("||").append(property);
-//		    		}
-//		    	}
-//		    	sb.append("||\n");
-//		    	
-//		    	
-//		    	for(Object errorOccurrence: container.getItemIds())
-//		    	{
-//		    		Item item = container.getItem(errorOccurrence);
-//		    		
-//		    		
-//		    		for(Object propertyId: container.getContainerPropertyIds())
-//			    	{		    			
-//		    			if(container.getType(propertyId) == String.class)
-//			    		{
-//		    				Property property = item.getItemProperty(propertyId);
-//		    				
-//		    				sb.append("|").append(property.getValue());
-//			    		}
-//			    	}
-//		    		
-//		    		sb.append("|\n");
-//		    	}
-//		    	
-//		    	jiraClipboard = sb.toString();
-//			}
-//			
-//		});
 				
 		Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -617,8 +574,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		GridLayout hErrorTable = new GridLayout();
 		hErrorTable.setWidth("100%");
 		
-		GridLayout buttons = new GridLayout(5, 1);
-		buttons.setWidth("140px");
+		GridLayout buttons = new GridLayout(6, 1);
+		buttons.setWidth("170px");
 		
 		final Button selectAllButton = new Button();
 		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -778,7 +735,18 @@ public class ErrorOccurrenceTab extends TopologyTab
 		copyButton.addClickListener(new Button.ClickListener() 
         {
             public void buttonClick(ClickEvent event) 
-            {	           	
+            {	
+            	String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
+            	
+		    	StringBuffer sb = new StringBuffer();
+		    	
+		    	for(ErrorOccurrence errorOccurrence: (List<ErrorOccurrence>)container.getItemIds())
+		    	{
+					sb.append(buildErrorUrl(dashboardUrl, errorOccurrence)).append("\n");	    	
+		    	}
+		    	
+		    	errorClipboard = sb.toString();
+            	
                 TextWindow tw = new TextWindow("Error Links", errorClipboard);
                 
                 UI.getCurrent().addWindow(tw);
@@ -795,12 +763,54 @@ public class ErrorOccurrenceTab extends TopologyTab
 		jiraButton.addClickListener(new Button.ClickListener() 
         {
             public void buttonClick(ClickEvent event) 
-            {	           	
+            {	     
+            	StringBuffer sb = new StringBuffer();
+		    	
+		    	for(Object property: container.getContainerPropertyIds())
+		    	{
+		    		if(container.getType(property) == String.class)
+		    		{
+		    			sb.append("||").append(property);
+		    		}
+		    	}
+		    	sb.append("||\n");
+		    	
+		    	
+		    	for(Object errorOccurrence: container.getItemIds())
+		    	{
+		    		Item item = container.getItem(errorOccurrence);
+		    		
+		    		
+		    		for(Object propertyId: container.getContainerPropertyIds())
+			    	{		    			
+		    			if(container.getType(propertyId) == String.class)
+			    		{
+		    				Property property = item.getItemProperty(propertyId);
+		    				
+		    				sb.append("|").append(property.getValue());
+			    		}
+			    	}
+		    		
+		    		sb.append("|\n");
+		    	}
+		    	
+		    	jiraClipboard = sb.toString();
+            	
             	TextWindow tw = new TextWindow("Jira Table", jiraClipboard);
                 
                 UI.getCurrent().addWindow(tw);
             }
         });
+		
+		Button excelButton = new Button();
+		excelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		excelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		excelButton.setIcon(FontAwesome.FILE_EXCEL_O);
+		excelButton.setImmediate(true);
+		excelButton.setDescription("Export Excel table");
+		
+		FileDownloader fd = new FileDownloader(this.getExcelDownloadStream());
+        fd.extend(excelButton);
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
@@ -816,6 +826,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 
 		buttons.addComponent(copyButton);
 		buttons.addComponent(jiraButton);
+		buttons.addComponent(excelButton);
 		
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
@@ -848,6 +859,86 @@ public class ErrorOccurrenceTab extends TopologyTab
 		
 		return wrapper;
 	}
+	
+	/**
+     * Helper method to get the stream associated with the export of the file.
+     * 
+     * @return the StreamResource associated with the export.
+     */
+    private StreamResource getExcelDownloadStream() 
+    {
+		StreamResource.StreamSource source = new StreamResource.StreamSource() 
+		{
+		    public InputStream getStream() 
+		    {
+		    	ByteArrayOutputStream stream = null;
+		    	
+		        try
+		        {
+		            stream = getExcelStream();
+		        }
+		        catch (IOException e)
+		        {
+		        	logger.error(e.getMessage(), e);
+		        }
+		        
+		        InputStream input = new ByteArrayInputStream(stream.toByteArray());
+		        return input;
+		    }
+		};
+            
+	    StreamResource resource = new StreamResource ( source,"errors.csv");
+	    return resource;
+    }
+    
+    /**
+     * Helper method to get the ByteArrayOutputStream associated with the export.
+     * 
+     * @return
+     * @throws IOException
+     */
+    private ByteArrayOutputStream getExcelStream() throws IOException
+    {
+    	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+    	
+    	StringBuffer sb = new StringBuffer();
+    	
+    	for(Object property: container.getContainerPropertyIds())
+    	{
+    		if(container.getType(property) == String.class)
+    		{
+    			sb.append(property).append(",");
+    		}
+    	}
+    	
+    	sb.append("Error Url").append("\n");
+    	
+    	
+    	String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
+    	
+    	for(Object errorOccurrence: container.getItemIds())
+    	{
+    		Item item = container.getItem(errorOccurrence);
+    		
+    		
+    		for(Object propertyId: container.getContainerPropertyIds())
+	    	{		    			
+    			if(container.getType(propertyId) == String.class)
+	    		{
+    				Property property = item.getItemProperty(propertyId);
+    				
+    				sb.append("\"").append(property.getValue()).append("\",");
+	    		}
+	    	}
+    		
+    		sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrence)errorOccurrence)).append("\"");
+    		sb.append("\n");
+    	}
+    	
+    	out.write(sb.toString().getBytes());
+        
+        return out;
+    }
 	
 	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
 	{

@@ -38,51 +38,116 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.monitor.rest;
+package org.ikasan.topology.model;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.Serializable;
 
 /**
- * Module application implementing the REST contract
+ * 
+ * @author Ikasan Development Team
+ *
  */
-@Path("/topologyCache")
-public class TopologyCacheApplication
+public class RoleFilterKey implements Serializable
 {
-	private static Logger logger = Logger.getLogger(TopologyCacheApplication.class);
-    
-	@Autowired
-	private TopologyStateCache topologyStateCache;
+	private Long filterId;
+	private Long roleId;
 	
-    /**
-     * Registers the applications we implement and the Spring-Jersey glue
-     */
-    public TopologyCacheApplication()
-    {
-    }
+	public RoleFilterKey(){}
+	
+	/**
+	 * @param filterId
+	 * @param roleId
+	 */
+	public RoleFilterKey(Long filterId, Long roleId)
+	{
+		super();
+		this.filterId = filterId;
+		this.roleId = roleId;
+	}
+	
+	/**
+	 * @return the filterId
+	 */
+	public Long getFilterId()
+	{
+		return filterId;
+	}
+	
+	/**
+	 * @param filterId the filterId to set
+	 */
+	public void setFilterId(Long filterId)
+	{
+		this.filterId = filterId;
+	}
 
-    @PUT
-	@Path("/updateCache/{moduleName}/{flowName}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCache(@PathParam("moduleName") String moduleName, 
-    		@PathParam("flowName") String flowName, String state)
-    {
-        logger.debug("Updating topology state cache: ModuleName: " 
-        		+ moduleName + ", FlowName: " + flowName + ", State: " + state);
-        
-        String key = moduleName + "-" + flowName;
-        
-        this.topologyStateCache.update(key, state);
+	/**
+	 * @return the roleId
+	 */
+	public Long getRoleId()
+	{
+		return roleId;
+	}
 
-        return Response.ok("State cache successfully updated!").build();
-    }
-    
+	/**
+	 * @param roleId the roleId to set
+	 */
+	public void setRoleId(Long roleId)
+	{
+		this.roleId = roleId;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((filterId == null) ? 0 : filterId.hashCode());
+		result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoleFilterKey other = (RoleFilterKey) obj;
+		if (filterId == null)
+		{
+			if (other.filterId != null)
+				return false;
+		} else if (!filterId.equals(other.filterId))
+			return false;
+		if (roleId == null)
+		{
+			if (other.roleId != null)
+				return false;
+		} else if (!roleId.equals(other.roleId))
+			return false;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "RoleFilterKey [filterId=" + filterId + ", roleId=" + roleId
+				+ "]";
+	}
+	
+	
 }
