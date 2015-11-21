@@ -38,51 +38,58 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.monitor.rest;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
-import org.springframework.beans.factory.annotation.Autowired;
+package org.ikasan.topology.model;
 
 /**
- * Module application implementing the REST contract
+ * 
+ * @author Ikasan Development Team
+ *
  */
-@Path("/topologyCache")
-public class TopologyCacheApplication
+public class RoleFilter
 {
-	private static Logger logger = Logger.getLogger(TopologyCacheApplication.class);
-    
-	@Autowired
-	private TopologyStateCache topologyStateCache;
+	private RoleFilterKey id;
+	private Filter filter;
 	
-    /**
-     * Registers the applications we implement and the Spring-Jersey glue
-     */
-    public TopologyCacheApplication()
-    {
-    }
+	private RoleFilter(){}
+	
+	/**
+	 * @param id
+	 */
+	public RoleFilter(RoleFilterKey id)
+	{
+		super();
+		this.id = id;
+	}
 
-    @PUT
-	@Path("/updateCache/{moduleName}/{flowName}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCache(@PathParam("moduleName") String moduleName, 
-    		@PathParam("flowName") String flowName, String state)
-    {
-        logger.debug("Updating topology state cache: ModuleName: " 
-        		+ moduleName + ", FlowName: " + flowName + ", State: " + state);
-        
-        String key = moduleName + "-" + flowName;
-        
-        this.topologyStateCache.update(key, state);
+	/**
+	 * @return the id
+	 */
+	public RoleFilterKey getId()
+	{
+		return id;
+	}
 
-        return Response.ok("State cache successfully updated!").build();
-    }
-    
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(RoleFilterKey id)
+	{
+		this.id = id;
+	}
+
+	/**
+	 * @return the filter
+	 */
+	public Filter getFilter()
+	{
+		return filter;
+	}
+	
+	/**
+	 * @param filter the filter to set
+	 */
+	public void setFilter(Filter filter)
+	{
+		this.filter = filter;
+	}
 }

@@ -1,5 +1,5 @@
- /*
- * $Id$
+/*
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -41,183 +41,68 @@
 package org.ikasan.topology.model;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 
  * @author Ikasan Development Team
+ *
  */
-public class Flow
+public class FilterComponent
 {
-    private Long id;
-    private String name;
-    private String description;
-    private String state;
-    private Module module;
-    private Set<Component> components = new HashSet<Component>();
-    private int order;
-
+	private FilterComponentKey id;
+	private Component component;
+	private Integer order;
+	
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
     private Date updatedDateTime;
-
-    /**
-	 * Default constructor for Hibernate
-	 */
-    protected Flow(){}
-
-    /**
-	 * @param name
-	 * @param description
-	 * @param module
-	 */
-	public Flow(String name, String description, Module module)
-	{
-		super();
-		this.name = name;
-		this.description = description;
-		this.module = module;
-		
-		long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
-        this.updatedDateTime = new Date(now);
-	}
-
-	/**
-     * @return the id
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+   
     
-    /**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return description;
-	}
+    @SuppressWarnings("unused")
+	private FilterComponent()
+    {
+    }
 
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
+    /**
+     * 
+     */
+	public FilterComponent(FilterComponentKey id)
+    {
+		this.id = id;
+		
+    	long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+    }
+
 	
-	/**
-	 * @return the components
-	 */
-	public Set<Component> getComponents()
-	{
-		return components;
-	}
 
 	/**
-	 * @param components the components to set
+	 * @return the id
 	 */
-	public void setComponents(Set<Component> components)
+	public FilterComponentKey getId()
 	{
-		this.components = components;
+		return id;
 	}
 
-    /**
-     * @return the createdDateTime
-     */
-    public Date getCreatedDateTime()
-    {
-        return createdDateTime;
-    }
 
-    /**
-     * @param createdDateTime the createdDateTime to set
-     */
-    public void setCreatedDateTime(Date createdDateTime)
-    {
-        this.createdDateTime = createdDateTime;
-    }
-
-    /**
-     * @return the updatedDateTime
-     */
-    public Date getUpdatedDateTime()
-    {
-        return updatedDateTime;
-    }
-
-    /**
-     * @param updatedDateTime the updatedDateTime to set
-     */
-    public void setUpdatedDateTime(Date updatedDateTime)
-    {
-        this.updatedDateTime = updatedDateTime;
-    }
 
 	/**
-	 * @return the module
+	 * @param id the id to set
 	 */
-	public Module getModule()
+	public void setId(FilterComponentKey id)
 	{
-		return module;
+		this.id = id;
 	}
 
-	/**
-	 * @param module the module to set
-	 */
-	public void setModule(Module module)
-	{
-		this.module = module;
-	}
 
-	/**
-	 * @return the state
-	 */
-	public String getState()
-	{
-		return state;
-	}
-
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(String state)
-	{
-		this.state = state;
-	}
-	
 	/**
 	 * @return the order
 	 */
-	public int getOrder()
+	public Integer getOrder()
 	{
 		return order;
 	}
@@ -225,9 +110,76 @@ public class Flow
 	/**
 	 * @param order the order to set
 	 */
-	public void setOrder(int order)
+	public void setOrder(Integer order)
 	{
 		this.order = order;
+	}
+	
+	/**
+	 * @return the component
+	 */
+	public Component getComponent()
+	{
+		return component;
+	}
+
+	/**
+	 * @param component the component to set
+	 */
+	public void setComponent(Component component)
+	{
+		this.component = component;
+	}
+
+	/**
+	 * @return the createdDateTime
+	 */
+	public Date getCreatedDateTime()
+	{
+		return createdDateTime;
+	}
+
+	/**
+	 * @param createdDateTime the createdDateTime to set
+	 */
+	public void setCreatedDateTime(Date createdDateTime)
+	{
+		this.createdDateTime = createdDateTime;
+	}
+
+	/**
+	 * @return the updatedDateTime
+	 */
+	public Date getUpdatedDateTime()
+	{
+		return updatedDateTime;
+	}
+
+	/**
+	 * @param updatedDateTime the updatedDateTime to set
+	 */
+	public void setUpdatedDateTime(Date updatedDateTime)
+	{
+		this.updatedDateTime = updatedDateTime;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((component == null) ? 0 : component.hashCode());
+		result = prime * result
+				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((order == null) ? 0 : order.hashCode());
+		result = prime * result
+				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -242,14 +194,37 @@ public class Flow
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Flow other = (Flow) obj;
+		FilterComponent other = (FilterComponent) obj;
+		if (component == null)
+		{
+			if (other.component != null)
+				return false;
+		} else if (!component.equals(other.component))
+			return false;
+		if (createdDateTime == null)
+		{
+			if (other.createdDateTime != null)
+				return false;
+		} else if (!createdDateTime.equals(other.createdDateTime))
+			return false;
 		if (id == null)
 		{
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (order == null)
+		{
+			if (other.order != null)
+				return false;
+		} else if (!order.equals(other.order))
+			return false;
+		if (updatedDateTime == null)
+		{
+			if (other.updatedDateTime != null)
+				return false;
+		} else if (!updatedDateTime.equals(other.updatedDateTime))
+			return false;
 		return true;
-	}
-
+	}	
 }
