@@ -115,7 +115,7 @@
 		
 		<dropTable cascadeConstraints="true" tableName="ErrorOccurrence"/>
 		
-		<renameTable catalogName="cat" newTableName="ErrorOccurrence" oldTableName="ErrorOccurrenceNew"/>
+		<renameTable newTableName="ErrorOccurrence" oldTableName="ErrorOccurrenceNew"/>
 		
     </changeSet>
 
