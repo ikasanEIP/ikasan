@@ -61,11 +61,11 @@
             <column name="RoleId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

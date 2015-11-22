@@ -55,7 +55,7 @@
 
         <createTable tableName="ErrorCategorisation">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="ErrorCateg_8083869182"/>
             </column>
             <column name="ErrorCategory" type="VARCHAR(64)">

@@ -4,11 +4,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
     
+    <property name="dateType" value="datetime" dbms="h2, mssql, sybase"/>
+    <property name="dateType" value="timestamp" dbms="mysql"/>
+    
     <property name="getDate" value="current_date()" dbms="h2"/>
-    <property name="getDate" value="getdate()" dbms="mysql, mssql, sybase"/>
+    <property name="getDate" value="getdate()" dbms="mssql, sybase"/>
+    <property name="getDate" value="current_timestamp" dbms="mysql"/>
     
     <property name="identity" value="IDENTITY" dbms="h2"/>
-    <property name="identity" value="numeric(18)" dbms="mysql, mssql, sybase"/>
+    <property name="identity" value="numeric(18)" dbms="mssql, sybase"/>
+    <property name="identity" value="BIGINT" dbms="mysql"/>
     
     <property name="autoincrement" value="false" dbms="h2"/>
     <property name="autoincrement" value="true" dbms="mysql, mssql, sybase"/>

@@ -56,7 +56,7 @@
     
         <createTable tableName="SecurityPrincipal">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="SecurityPr_9593394513"/>
             </column>
             <column name="Name" type="UNIVARCHAR(256)">
@@ -68,11 +68,11 @@
             <column name="Description" type="UNIVARCHAR(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>
@@ -98,23 +98,23 @@
     
         <createTable tableName="SecurityPrincipal">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="SecurityPr_9593394513"/>
             </column>
-            <column name="Name" type="VARCHAR(256)">
+            <column name="Name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PrincipalType" type="VARCHAR(256)">
+            <column name="PrincipalType" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="Description" type="VARCHAR(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

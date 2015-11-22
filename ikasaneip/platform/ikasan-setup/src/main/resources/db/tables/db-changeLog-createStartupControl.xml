@@ -55,8 +55,8 @@
 
         <createTable tableName="StartupControl">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="StartupControlPk"/>
             </column>
             <column name="ModuleName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
@@ -73,10 +73,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'StartupControl', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="StartupControl01u" tableName="StartupControl" unique="true">
-            <column name="Id"/>
-        </createIndex>
 
     </changeSet>
 

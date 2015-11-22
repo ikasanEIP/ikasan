@@ -55,8 +55,8 @@
 
         <createTable tableName="IkasanWiretap">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+               <constraints primaryKey="true" primaryKeyName="IkasanWiretapPk"/>
             </column>
             <column name="ModuleName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
@@ -89,10 +89,6 @@
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'IkasanWiretap', 'identity_gap', 1</sql>
         
-        <createIndex indexName="IkasanWiretap01u" tableName="IkasanWiretap" unique="true">
-            <column name="Id"/>
-        </createIndex>
-        
     </changeSet>
     
     <changeSet author="ikasan dev" id="createIkasanWiretap" dbms="h2, mysql" context="baseline"> 
@@ -103,8 +99,8 @@
 		
         <createTable tableName="IkasanWiretap" >
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="IkasanWiretapPk"/>
             </column>
             <column name="ModuleName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
@@ -134,9 +130,7 @@
             
         </createTable>
         
-        <createIndex indexName="IkasanWiretap01u" tableName="IkasanWiretap" unique="true">
-            <column name="Id"/>
-        </createIndex>
+
         
     </changeSet>
     
@@ -148,8 +142,8 @@
 		
         <createTable tableName="IkasanWiretap" >
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="IkasanWiretapPk"/>
             </column>
             <column name="ModuleName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
@@ -178,10 +172,6 @@
             </column>
             
         </createTable>
-        
-        <createIndex indexName="IkasanWiretap01u" tableName="IkasanWiretap" unique="true">
-            <column name="Id"/>
-        </createIndex>
         
     </changeSet>
 
