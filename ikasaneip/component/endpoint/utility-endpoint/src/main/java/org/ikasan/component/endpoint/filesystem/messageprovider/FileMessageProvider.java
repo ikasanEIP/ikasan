@@ -117,8 +117,17 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
 
         if(files.size() > 0)
         {
-            logger.info("Processing files: " + files);
+            if(this.fileConsumerConfiguration.isLogMatchedFilenames())
+            {
+                logger.info("Matching file names: " + files);
+            }
+
             return files;
+        }
+
+        if(this.fileConsumerConfiguration.isLogMatchedFilenames())
+        {
+            logger.info("No matching file names");
         }
 
         return null;
