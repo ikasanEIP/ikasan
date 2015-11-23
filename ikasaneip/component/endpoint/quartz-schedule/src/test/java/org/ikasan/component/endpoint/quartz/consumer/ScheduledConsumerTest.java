@@ -43,7 +43,6 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
@@ -53,14 +52,8 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey; 
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.Job;
-import org.quartz.impl.JobDetailImpl;
+import org.quartz.*;
+
 
 /**
  * This test class supports the <code>ScheduledConsumer</code> class.
@@ -488,10 +481,13 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
-                 exactly(1).of(jobDetail).getKey();
+                exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
 
-                exactly(1).of(scheduler).triggerJob(jobKey);
+                exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
+                will(returnValue(false));
+
+                exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
             }
         });
 
@@ -509,6 +505,56 @@ public class ScheduledConsumerTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager_existing_eagerTrigger() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final String identifier = "testId";
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final JobDetail jobDetail = mockery.mock(JobDetail.class);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
+                // schedule the job
+                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                will(returnValue(identifier));
+
+                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                will(returnValue(mockFlowEvent));
+
+                exactly(1).of(eventListener).invoke(mockFlowEvent);
+
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(true));
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).rescheduleJob(with(any(TriggerKey.class)), with(any(Trigger.class)));
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+        scheduledConsumer.setJobDetail(jobDetail);
+
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
 
     /**
      * Extended ScheduledRecoveryManagerJobFactory for testing with replacement mocks.

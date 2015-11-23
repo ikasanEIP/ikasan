@@ -47,6 +47,8 @@ import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
 import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -72,10 +74,13 @@ public class ConsumerFlowElementInvokerTest
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
+    private Consumer consumer = mockery.mock(Consumer.class, "consumer");
+    private Converter mockedConverter = mockery.mock(Converter.class, "converter");
+    private Object payload = mockery.mock(Object.class, "payload");
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_consumer_flowElementInvoker()
+    public void test_consumer_flowElementInvoker_without_converter()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -85,6 +90,8 @@ public class ConsumerFlowElementInvokerTest
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(consumer));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(flowElement));
@@ -96,6 +103,41 @@ public class ConsumerFlowElementInvokerTest
 
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_consumer_flowElementInvoker_with_converter()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(consumer));
+
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(mockedConverter).convert(payload);
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new StubbedConsumerFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
 
     @Test(expected = InvalidFlowException.class)
     @SuppressWarnings("unchecked")
@@ -109,6 +151,8 @@ public class ConsumerFlowElementInvokerTest
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(consumer));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(null));
@@ -121,5 +165,14 @@ public class ConsumerFlowElementInvokerTest
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
+    }
+
+    class StubbedConsumerFlowElementInvoker extends ConsumerFlowElementInvoker
+    {
+        @Override
+        protected Converter getAsConverter(Consumer consumer)
+        {
+            return mockedConverter;
+        }
     }
 }
