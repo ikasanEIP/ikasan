@@ -49,7 +49,7 @@
 
     <changeSet author="ikasan dev" id="modifyErrorOccurrenceErrorDetailDataType" context="postBaseline" dbms="sybase">
 	    
-	    <createTable tableName="ErrorOccurrenceNew">
+	    <!-- createTable tableName="ErrorOccurrenceNew">
         
             <column name="Uri" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -77,45 +77,24 @@
             <column name="ErrorMessage" type="UNITEXT"/>
             <column name="ExceptionClass" type="VARCHAR(512)"/>
             
-        </createTable>
+        </createTable -->
 
+		<addColumn tableName="ErrorOccurrence">
+	        <column name="ErrorDetailNew" type="UNITEXT">
+                <constraints nullable="true"/>
+            </column>
+	    </addColumn>
+	    
 		<sql>
-			insert into ErrorOccurrenceNew 
-			(
-				   Uri
-				  ,ModuleName
-				  ,FlowName
-				  ,FlowElementName
-				  ,ErrorDetail
-				  ,ErrorMessage
-				  ,ExceptionClass
-				  ,EventLifeIdentifier
-				  ,EventRelatedIdentifier
-				  ,[Action]
-				  ,Event
-				  ,Timestamp
-				  ,Expiry
-			) SELECT 
-				   Uri
-				  ,ModuleName
-				  ,FlowName
-				  ,FlowElementName
-				  ,ErrorDetail
-				  ,ErrorMessage
-				  ,ExceptionClass
-				  ,EventLifeIdentifier
-				  ,EventRelatedIdentifier
-				  ,[Action]
-				  ,Event
-				  ,Timestamp
-				  ,Expiry
-			FROM 
-				  ErrorOccurrence
+			UPDATE ErrorOccurrence SET ErrorDetailNew = ErrorDetail
 		</sql>
 		
-		<dropTable cascadeConstraints="true" tableName="ErrorOccurrence"/>
+		<dropColumn columnName="ErrorDetail" tableName="ErrorOccurrence"/>
 		
-		<renameTable newTableName="ErrorOccurrence" oldTableName="ErrorOccurrenceNew"/>
+		<renameColumn 
+            newColumnName="ErrorDetail"
+            oldColumnName="ErrorDetailNew"
+            tableName="ErrorOccurrence"/>
 		
     </changeSet>
 

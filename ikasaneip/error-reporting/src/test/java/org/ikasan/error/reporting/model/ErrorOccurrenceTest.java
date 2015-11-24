@@ -61,7 +61,7 @@ public class ErrorOccurrenceTest
     @Test
     public void test_new_errorOccurrence()
     {
-        ErrorOccurrence<String> errorOccurrence = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", exception.getMessage(), exception.getClass().getName(), 1000L, "event");
+        ErrorOccurrence<String> errorOccurrence = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", exception.getMessage(), exception.getClass().getName(), 1000L, "event", "errorString");
         errorOccurrence.setEventLifeIdentifier("lifeId");
         errorOccurrence.setEventRelatedIdentifier("relatedLifeId");
 
