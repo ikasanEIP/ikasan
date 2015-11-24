@@ -8892,6 +8892,10 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
+.v-table-row:hover, .v-table-row-odd:hover {
+    background: #99CCFF;
+}
+
 .dashboard .v-table-body-noselection .v-table-row, .dashboard .v-table-body-noselection .v-table-row-odd {
 	cursor: default;
 }
@@ -13142,6 +13146,10 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+.v-table-row:hover, .v-table-row-odd:hover {
+    background: #99CCFF;
+}
+
 .dashboard .v-table-cell-content-ikasan-green-small {
 	font-size: 11px;
 	background-color: rgba(0, 153, 51, 0.2);
@@ -13149,11 +13157,21 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+.dashboard .v-table-row-ikasan-green-small:hover, .v-table-row-odd-ikasan-green-small:hover {
+    background: rgba(0, 153, 51, 0.3);
+}
+
+
 .dashboard .v-table-cell-content-ikasan-red-small {
 	font-size: 11px;
 	background-color: rgba(255, 0, 0, 0.2);
 	font-size: 9px;
 	vertical-align: top;
+}
+
+
+.dashboard .v-table-row-ikasan-red-small:hover, .v-table-row-odd-ikasan-red-small:hover {
+    background: rgba(255, 0, 0, 0.3);
 }
 
 .dashboard .v-table-cell-content-ikasan-orange-small {
@@ -13163,6 +13181,10 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+.dashboard .v-table-row-ikasan-orange-small:hover, .v-table-row-odd-ikasan-orange-small:hover {
+    background: rgba(255, 153, 0, 0.3);
+}
+
 .dashboard .v-table-cell-content-ikasan-indigo-small {
 	font-size: 11px;
 	background-color: rgba(75, 0, 130, 0.2);
@@ -13170,9 +13192,17 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+.dashboard .v-table-row-ikasan-indigo-small:hover, .v-table-row-odd-ikasan-indigo-small:hover {
+    background: rgba(75, 0, 130, 0.3);
+}
+
 .dashboard .v-table-cell-content-ikasan-small {
 	font-size: 9px;
 	vertical-align: top;
+}
+
+.dashboard .v-table-row-ikasan-ikasan-small:hover, .v-table-row-odd-ikasan-small:hover {
+    background: #99CCFF;
 }
 
 .dashboard .v-table-header td {

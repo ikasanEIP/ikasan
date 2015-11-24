@@ -98,6 +98,7 @@ import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
@@ -236,6 +237,16 @@ public class ErrorOccurrenceTab extends TopologyTab
 			    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    	}
 		    }
+		});
+		
+		this.errorOccurenceTable.setItemDescriptionGenerator(new ItemDescriptionGenerator() 
+		{                             
+			@Override
+			public String generateDescription(com.vaadin.ui.Component source,
+					Object itemId, Object propertyId)
+			{
+				 return "Double click the table row to view details of error "+ ((ErrorOccurrence)(itemId)).getUri();
+			}
 		});
 				
 		Button searchButton = new Button("Search");
@@ -911,7 +922,7 @@ public class ErrorOccurrenceTab extends TopologyTab
     		}
     	}
     	
-    	sb.append("Error Url").append("\n");
+    	sb.append("Error Url").append("\r\n");
     	
     	
     	String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
@@ -927,12 +938,25 @@ public class ErrorOccurrenceTab extends TopologyTab
 	    		{
     				Property property = item.getItemProperty(propertyId);
     				
-    				sb.append("\"").append(property.getValue()).append("\",");
+    				String csvCell = (String)property.getValue();
+    				
+    				if(csvCell != null && csvCell.contains("\""))
+    				{
+    					csvCell = csvCell.replaceAll("\"", "\"\"");
+    				}
+    				
+    				// Max length of a CSV cell in EXCEL
+    				if(csvCell != null && csvCell.length() > 32760)
+    				{
+    					csvCell = csvCell.substring(0, 32759);
+    				}
+    					
+    				sb.append("\"").append(csvCell).append("\",");
 	    		}
 	    	}
     		
     		sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrence)errorOccurrence)).append("\"");
-    		sb.append("\n");
+    		sb.append("\r\n");
     	}
     	
     	out.write(sb.toString().getBytes());

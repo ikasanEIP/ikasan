@@ -87,6 +87,7 @@ import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -189,6 +190,7 @@ public class CategorisedErrorTab extends TopologyTab
 		
 		this.categorizedErrorOccurenceTable.addStyleName("wordwrap-table");
 		this.categorizedErrorOccurenceTable.addStyleName(ValoTheme.TABLE_NO_STRIPES);
+		this.categorizedErrorOccurenceTable.addStyleName("ikasan");
 		
 		this.categorizedErrorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
@@ -263,7 +265,7 @@ public class CategorisedErrorTab extends TopologyTab
 				
 				return "ikasan-small";
 			}
-			});
+		});
 				
 		Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
