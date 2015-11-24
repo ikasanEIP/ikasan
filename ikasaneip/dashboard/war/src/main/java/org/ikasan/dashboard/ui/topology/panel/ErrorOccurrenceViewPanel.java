@@ -266,7 +266,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 		TabSheet tabsheet = new TabSheet();
 		tabsheet.setSizeFull();
 		
-		AceEditor editor = new AceEditor();
+		final AceEditor editor = new AceEditor();
 		editor.setValue(this.errorOccurrence.getErrorDetail());
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
@@ -274,11 +274,34 @@ public class ErrorOccurrenceViewPanel extends Panel
 		editor.setHeight(470, Unit.PIXELS);
 		editor.setWidth("100%");
 		
+		CheckBox eventWrapTextCheckBox = new CheckBox("Wrap text");
+		eventWrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+            @Override
+            public void valueChange(ValueChangeEvent event)
+            {
+                Object value = event.getProperty().getValue();
+                boolean isCheck = (null == value) ? false : (Boolean) value;
+               
+                editor.setWordWrap(isCheck);
+            }
+        });
+		
+		eventWrapTextCheckBox.setValue(true);
+		
 		final AceEditor eventEditor = new AceEditor();
 		
 		if(this.errorOccurrence.getEvent() != null)
 		{
-			eventEditor.setValue(new String((byte[])this.errorOccurrence.getEvent()));
+			if(this.errorOccurrence.getEventAsString() != null 
+					&& this.errorOccurrence.getEventAsString().length() > 0)
+			{
+				eventEditor.setValue(errorOccurrence.getEventAsString());
+			}
+			else
+			{
+				eventEditor.setValue(new String((byte[])this.errorOccurrence.getEvent()));
+			}
 		}
 		
 		eventEditor.setReadOnly(true);
@@ -314,9 +337,10 @@ public class ErrorOccurrenceViewPanel extends Panel
 		h1.addComponent(wrapTextCheckBox);
 		h1.addComponent(eventEditor);
 		
-		HorizontalLayout h2 = new HorizontalLayout();
+		VerticalLayout h2 = new VerticalLayout();
 		h2.setSizeFull();
 		h2.setMargin(true);
+		h2.addComponent(eventWrapTextCheckBox);
 		h2.addComponent(editor);
 		
 		tabsheet.addTab(h2, "Error Details");
