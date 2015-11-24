@@ -42,16 +42,12 @@ package org.ikasan.setup.persistence.service;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
-import org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -61,7 +57,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml"})
+@ContextConfiguration(locations = { "/hsqldb-datasource-conf.xml", "/providers-conf.xml"})
 public class PersistenceServiceImplTest
 {
     /**
@@ -74,61 +70,52 @@ public class PersistenceServiceImplTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
-  
-    @Resource 
-    PersistenceDAOHibernateImpl persistenceDAOHibernateImpl;
 
     @Resource
     PersistenceService persistenceService;
 
     /**
      * Test
-     */
-    @Before
-    public void setup()
-    {
-        persistenceService.createPersistence();
-        persistenceService.createAdminAccount();
-
-    }
-    
-    @After
-    public void dropAll(){
-        persistenceDAOHibernateImpl.delete("usersAuthorities");
-        persistenceDAOHibernateImpl.delete("authorities");
-        persistenceDAOHibernateImpl.delete("users");
-        persistenceDAOHibernateImpl.delete("consolePointToPointFlow");
-        persistenceDAOHibernateImpl.delete("consolePointToPointFlowProfile");
-        persistenceDAOHibernateImpl.delete("consoleModule");
-        persistenceDAOHibernateImpl.delete("moduleStartup");
-        persistenceDAOHibernateImpl.delete("systemEvent");
-        persistenceDAOHibernateImpl.delete("confParamString");
-        persistenceDAOHibernateImpl.delete("confParamMapString");
-        persistenceDAOHibernateImpl.delete("confParamMap");
-        persistenceDAOHibernateImpl.delete("confParamLong");
-        persistenceDAOHibernateImpl.delete("confParamListString");
-        persistenceDAOHibernateImpl.delete("confParamList");
-        persistenceDAOHibernateImpl.delete("confParamInteger");
-        persistenceDAOHibernateImpl.delete("confParamBoolean");
-        persistenceDAOHibernateImpl.delete("configurationParameter");
-        persistenceDAOHibernateImpl.delete("configuration");
-        persistenceDAOHibernateImpl.delete("flowEventTriggerParameters");
-        persistenceDAOHibernateImpl.delete("flowEVentTrigger");
-        persistenceDAOHibernateImpl.delete("version");
-        persistenceDAOHibernateImpl.delete("exclusionEvent");
-        persistenceDAOHibernateImpl.delete("filter");
-        persistenceDAOHibernateImpl.delete("wiretap");
-    }
-
-    /**
-     * Test
+     * @throws PersistenceServiceException 
      */
     @Test
-    @DirtiesContext
-    public void test_persistenceService_getVersion()
+    public void test_baseline_install_and_status() throws PersistenceServiceException
     {
-        String version = persistenceService.getVersion();
-        Assert.assertEquals("1.0.0", version);
+    	boolean status = this.persistenceService.baselinePersistenceChangesRequired();
+    	
+    	Assert.assertTrue(status);
+        persistenceService.createBaselinePersistence();
+        
+        status = this.persistenceService.baselinePersistenceChangesRequired();
+    	Assert.assertFalse(status);
     }
-
+    
+    /**
+     * Test
+     * @throws PersistenceServiceException 
+     */
+    @Test
+    public void test_post_baseline_install_and_status() throws PersistenceServiceException
+    {
+    	// Please not this test will need to change after post baseline changes are made.
+    	boolean status = this.persistenceService.postBaselinePersistenceChangesRequired();
+    	
+    	Assert.assertFalse(status);
+    }
+    
+    /**
+     * Test
+     * @throws PersistenceServiceException 
+     */
+    @Test
+    public void test_file_transfer_persistence_install_and_status() throws PersistenceServiceException
+    {
+    	boolean status = this.persistenceService.fileTransferPersistenceChangesRequired();
+    	
+    	Assert.assertTrue(status);
+        persistenceService.createFileTransferPersistence();
+        
+        status = this.persistenceService.fileTransferPersistenceChangesRequired();
+    	Assert.assertFalse(status);
+    }
 }

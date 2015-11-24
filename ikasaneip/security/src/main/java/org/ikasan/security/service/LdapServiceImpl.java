@@ -233,7 +233,7 @@ public class LdapServiceImpl implements LdapService
 		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
 		List<?> groups = ldapTemplate.search("",
-				"(objectclass=user)", searchControls, new ApplicationUserAttributeMapper(),
+				this.authenticationMethod.getUserSynchronisationFilter(), searchControls, new ApplicationUserAttributeMapper(),
 				contextProcessor);
 
 		return new PagedResult(groups, contextProcessor.getCookie());
@@ -284,7 +284,8 @@ public class LdapServiceImpl implements LdapService
 		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
 		List<?> groups = ldapTemplate.search("",
-				"(objectclass=group)", searchControls, new ApplicationSecurityGroupAttributeMapper(),
+				this.authenticationMethod.getGroupSynchronisationFilter(), 
+				searchControls, new ApplicationSecurityGroupAttributeMapper(),
 				contextProcessor);
 
 		return new PagedResult(groups, contextProcessor.getCookie());

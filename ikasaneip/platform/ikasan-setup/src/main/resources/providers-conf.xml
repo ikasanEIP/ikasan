@@ -46,52 +46,44 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- MOVE The persistenceCreatorService -->
-    <bean id="persistenceServiceFactory" class="org.ikasan.setup.persistence.service.PersistenceServiceFactoryImpl" >
-        <constructor-arg>
-            <util:map>
-                <entry key="Sybase12" value-ref="sybase12ProviderDao" />
-                <entry key="Sybase15" value-ref="sybase15ProviderDao" />
-                <!-- MySQL and SQLServer table creation is not yet tested - dont expose these -->
-                <!--entry key="MySQL" value-ref="mysqlProviderDao" /-->
-                <entry key="SQLServer2008" value-ref="sqlServer2008ProviderDao" />
-                <entry key="H2" value-ref="h2ProviderDao" />
-            </util:map>
-        </constructor-arg>
+
+	<bean id="persistenceService" class="org.ikasan.setup.persistence.service.PersistenceServiceImpl">
+        <constructor-arg ref="generalLiquibase"/>
+        <constructor-arg ref="fileTransferLiquibase"/>
     </bean>
+    
+    <bean id="generalLiquibase" class="liquibase.Liquibase">
+    	<constructor-arg value="db-changelog.xml"/>
+    	<constructor-arg ref="classLoaderResourceAccessor"/>
+    	<constructor-arg ref="database"/>
+ 	</bean>
+ 	
+ 	<bean id="fileTransferLiquibase" class="liquibase.Liquibase">
+    	<constructor-arg value="db-fileTransferPersistence-changelog.xml"/>
+    	<constructor-arg ref="classLoaderResourceAccessor"/>
+    	<constructor-arg ref="database"/>
+ 	</bean>
+ 		
+ 	<bean id="databaseFactoryInstance" class="liquibase.database.DatabaseFactory" factory-method="getInstance" lazy-init="false">
+ 	</bean>
+ 	
+ 	<bean id="connection" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	   <property name="targetObject" ref="ikasan.ds"/>
+	   <property name="targetMethod" value="getConnection"/>
+	</bean>
+	
+	<bean id="jdbcConnection" class="liquibase.database.jvm.JdbcConnection">
+	   <constructor-arg ref="connection"/>
+	</bean>
+	
+	<bean id="database" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	   <property name="targetObject" ref="databaseFactoryInstance"/>
+	   <property name="targetMethod" value="findCorrectDatabaseImplementation"/>
+	   <property name="arguments" ref="jdbcConnection"/>
+	</bean>
 
-    <bean id="sybase12ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="Sybase12"/>
-        <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
-    </bean>
-
-    <bean id="sybase15ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="Sybase15"/>
-        <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
-    </bean>
-
-    <bean id="mysqlProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="MySQL"/>
-        <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
-    </bean>
-
-    <bean id="sqlServer2008ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="SQLServer2008"/>
-        <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
-    </bean>
-
-    <bean id="h2ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="H2"/>
-        <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
-    </bean>
-
-    <!-- Session Factory for the persistence creator -->
-    <bean id="persistenceCreatorSessionFactory"
-          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.ds" />
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
-
+	<bean id="classLoaderResourceAccessor" class="liquibase.resource.ClassLoaderResourceAccessor">
+ 	</bean>
 </beans>

@@ -40,7 +40,6 @@
  */
 package org.ikasan.error.reporting.model;
 
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
@@ -101,6 +100,11 @@ public class ErrorOccurrence<EVENT>
      * Representation of the Event at the time that the error took place
      */
     private EVENT event;
+    
+    /**
+     * Representation of the Event as a String at the time that the error took place
+     */
+    private String eventAsString;
 
     /**
 	 * Time that this error was logged
@@ -111,6 +115,21 @@ public class ErrorOccurrence<EVENT>
      * useby date for the errorOccurrence, after which the system may delete it
      */
     private long expiry;
+    
+    /**
+     * Action performed by the user
+     */
+    private String userAction;
+    
+    /**
+     * Who performed the action
+     */
+    private String actionedBy;
+    
+    /**
+     * When the action was performed
+     */
+    private long userActionTimestamp;
 
     /**
      * Constructor
@@ -128,7 +147,7 @@ public class ErrorOccurrence<EVENT>
      * @param errorDetail
      * @param event
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, EVENT event)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, EVENT event, String eventAsString)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -162,6 +181,7 @@ public class ErrorOccurrence<EVENT>
 
         this.errorMessage = errorMessage;
         this.event = event;
+        this.eventAsString = eventAsString;
         this.timestamp = System.currentTimeMillis();
         this.uri = String.valueOf(this.hashCode());
         this.expiry = System.currentTimeMillis() + timeToLive;
@@ -176,7 +196,7 @@ public class ErrorOccurrence<EVENT>
      */
     public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive)
     {
-        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null);
+        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null, null);
     }
 
     public String getModuleName() 
@@ -313,52 +333,239 @@ public class ErrorOccurrence<EVENT>
 	{
 		this.exceptionClass = exceptionClass;
 	}
+	
+	/**
+	 * @return the userAction
+	 */
+	public String getUserAction()
+	{
+		return userAction;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	/**
+	 * @param userAction the userAction to set
+	 */
+	public void setUserAction(String userAction)
+	{
+		this.userAction = userAction;
+	}
 
-        ErrorOccurrence that = (ErrorOccurrence) o;
+	/**
+	 * @return the actionedBy
+	 */
+	public String getActionedBy()
+	{
+		return actionedBy;
+	}
 
-        if (timestamp != that.timestamp) return false;
-        if (!errorDetail.equals(that.errorDetail)) return false;
-        if (event != null ? !event.equals(that.event) : that.event != null) return false;
-        if (!flowElementName.equals(that.flowElementName)) return false;
-        if (!flowName.equals(that.flowName)) return false;
-        if (!moduleName.equals(that.moduleName)) return false;
-        if (!exceptionClass.equals(that.exceptionClass)) return false;
+	/**
+	 * @param actionedBy the actionedBy to set
+	 */
+	public void setActionedBy(String actionedBy)
+	{
+		this.actionedBy = actionedBy;
+	}
 
-        return true;
-    }
+	/**
+	 * @return the userActionTimestamp
+	 */
+	public long getUserActionTimestamp()
+	{
+		return userActionTimestamp;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = moduleName.hashCode();
-        result = 31 * result + flowName.hashCode();
-        result = 31 * result + flowElementName.hashCode();
-        result = 31 * result + errorDetail.hashCode();
-        result = 31 * result + (event != null ? event.hashCode() : 0);
-        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
-        return result;
-    }
+	/**
+	 * @param userActionTimestamp the userActionTimestamp to set
+	 */
+	public void setUserActionTimestamp(long userActionTimestamp)
+	{
+		this.userActionTimestamp = userActionTimestamp;
+	}
 
-    @Override
-    public String toString() {
-        return "ErrorOccurrence{" +
-                "uri='" + uri + '\'' +
-                ", moduleName='" + moduleName + '\'' +
-                ", flowName='" + flowName + '\'' +
-                ", flowElementName='" + flowElementName + '\'' +
-                ", errorDetail='" + errorDetail + '\'' +
-                ", errorMessage='" + errorMessage + '\'' +
-                ", exceptionClass='" + errorMessage + '\'' +
-                ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
-                ", eventRelatedIdentifier='" + eventRelatedIdentifier + '\'' +
-                ", action='" + action + '\'' +
-                ", event=" + event +
-                ", timestamp=" + timestamp +
-                ", expiry=" + expiry +
-                '}';
-    }
+	/**
+	 * @return the eventAsString
+	 */
+	public String getEventAsString()
+	{
+		return eventAsString;
+	}
+
+	/**
+	 * @param eventAsString the eventAsString to set
+	 */
+	public void setEventAsString(String eventAsString)
+	{
+		this.eventAsString = eventAsString;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result
+				+ ((actionedBy == null) ? 0 : actionedBy.hashCode());
+		result = prime * result
+				+ ((errorDetail == null) ? 0 : errorDetail.hashCode());
+		result = prime * result
+				+ ((errorMessage == null) ? 0 : errorMessage.hashCode());
+		result = prime * result + ((event == null) ? 0 : event.hashCode());
+		result = prime * result
+				+ ((eventAsString == null) ? 0 : eventAsString.hashCode());
+		result = prime
+				* result
+				+ ((eventLifeIdentifier == null) ? 0 : eventLifeIdentifier
+						.hashCode());
+		result = prime
+				* result
+				+ ((eventRelatedIdentifier == null) ? 0
+						: eventRelatedIdentifier.hashCode());
+		result = prime * result
+				+ ((exceptionClass == null) ? 0 : exceptionClass.hashCode());
+		result = prime * result + (int) (expiry ^ (expiry >>> 32));
+		result = prime * result
+				+ ((flowElementName == null) ? 0 : flowElementName.hashCode());
+		result = prime * result
+				+ ((flowName == null) ? 0 : flowName.hashCode());
+		result = prime * result
+				+ ((moduleName == null) ? 0 : moduleName.hashCode());
+		result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+		result = prime * result
+				+ ((userAction == null) ? 0 : userAction.hashCode());
+		result = prime * result
+				+ (int) (userActionTimestamp ^ (userActionTimestamp >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ErrorOccurrence other = (ErrorOccurrence) obj;
+		if (action == null)
+		{
+			if (other.action != null)
+				return false;
+		} else if (!action.equals(other.action))
+			return false;
+		if (actionedBy == null)
+		{
+			if (other.actionedBy != null)
+				return false;
+		} else if (!actionedBy.equals(other.actionedBy))
+			return false;
+		if (errorDetail == null)
+		{
+			if (other.errorDetail != null)
+				return false;
+		} else if (!errorDetail.equals(other.errorDetail))
+			return false;
+		if (errorMessage == null)
+		{
+			if (other.errorMessage != null)
+				return false;
+		} else if (!errorMessage.equals(other.errorMessage))
+			return false;
+		if (event == null)
+		{
+			if (other.event != null)
+				return false;
+		} else if (!event.equals(other.event))
+			return false;
+		if (eventAsString == null)
+		{
+			if (other.eventAsString != null)
+				return false;
+		} else if (!eventAsString.equals(other.eventAsString))
+			return false;
+		if (eventLifeIdentifier == null)
+		{
+			if (other.eventLifeIdentifier != null)
+				return false;
+		} else if (!eventLifeIdentifier.equals(other.eventLifeIdentifier))
+			return false;
+		if (eventRelatedIdentifier == null)
+		{
+			if (other.eventRelatedIdentifier != null)
+				return false;
+		} else if (!eventRelatedIdentifier.equals(other.eventRelatedIdentifier))
+			return false;
+		if (exceptionClass == null)
+		{
+			if (other.exceptionClass != null)
+				return false;
+		} else if (!exceptionClass.equals(other.exceptionClass))
+			return false;
+		if (expiry != other.expiry)
+			return false;
+		if (flowElementName == null)
+		{
+			if (other.flowElementName != null)
+				return false;
+		} else if (!flowElementName.equals(other.flowElementName))
+			return false;
+		if (flowName == null)
+		{
+			if (other.flowName != null)
+				return false;
+		} else if (!flowName.equals(other.flowName))
+			return false;
+		if (moduleName == null)
+		{
+			if (other.moduleName != null)
+				return false;
+		} else if (!moduleName.equals(other.moduleName))
+			return false;
+		if (timestamp != other.timestamp)
+			return false;
+		if (uri == null)
+		{
+			if (other.uri != null)
+				return false;
+		} else if (!uri.equals(other.uri))
+			return false;
+		if (userAction == null)
+		{
+			if (other.userAction != null)
+				return false;
+		} else if (!userAction.equals(other.userAction))
+			return false;
+		if (userActionTimestamp != other.userActionTimestamp)
+			return false;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ErrorOccurrence [uri=" + uri + ", moduleName=" + moduleName
+				+ ", flowName=" + flowName + ", flowElementName="
+				+ flowElementName + ", errorDetail=" + errorDetail
+				+ ", errorMessage=" + errorMessage + ", exceptionClass="
+				+ exceptionClass + ", eventLifeIdentifier="
+				+ eventLifeIdentifier + ", eventRelatedIdentifier="
+				+ eventRelatedIdentifier + ", action=" + action + ", event="
+				+ event + ", eventAsString=" + eventAsString + ", timestamp="
+				+ timestamp + ", expiry=" + expiry + ", userAction="
+				+ userAction + ", actionedBy=" + actionedBy
+				+ ", userActionTimestamp=" + userActionTimestamp + "]";
+	}
+
+	
 }

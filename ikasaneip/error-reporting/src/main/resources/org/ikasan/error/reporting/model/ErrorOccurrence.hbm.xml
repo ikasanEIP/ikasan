@@ -105,6 +105,11 @@
                   type="byte[]"
                   column="Event"
                   not-null="false" />
+                  
+        <property name="eventAsString"
+                  type="java.lang.String"
+                  column="EventAsString"
+                  not-null="false" />
 
         <property name="timestamp"
                   type="long"
@@ -115,6 +120,22 @@
                   type="long"
                   column="Expiry"
                   not-null="true" />
+                  
+        <property name="userAction"
+                  type="java.lang.String"
+                  column="UserAction"
+                  not-null="false" />
+        
+        <property name="actionedBy"
+                  type="java.lang.String"
+                  column="ActionedBy"
+                  not-null="false" />
+        
+        <property name="userActionTimestamp"
+                  type="long"
+                  column="UserActionTimestamp"
+                  not-null="false" />
+                  
     </class>
 
 </hibernate-mapping>
