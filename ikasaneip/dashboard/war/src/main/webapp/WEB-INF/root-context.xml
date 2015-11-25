@@ -66,6 +66,10 @@
 		<constructor-arg value="topLevel"/>
         <constructor-arg>
             <list>
+            	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value=""/>
+                   <constructor-arg ref="landingViewPanel"/>
+                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="landingView"/>
                    <constructor-arg ref="landingViewPanel"/>

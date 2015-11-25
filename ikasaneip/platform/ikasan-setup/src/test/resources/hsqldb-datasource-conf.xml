@@ -13,4 +13,12 @@
         <property name="password" value="sa" />
     </bean>
     
+    <!-- bean id="dataSource" name="ikasan.xads ikasan.ds"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.sybase.jdbc4.jdbc.SybDriver" />
+        <property name="url" value="jdbc:sybase:Tds:svc-esbdb01d:50100/Ikasan01" />
+        <property name="username" value="ikasan01d" />
+        <property name="password" value="Ikasan01d" />
+    </bean -->
+    
 </beans>

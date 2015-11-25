@@ -49,51 +49,33 @@
 
     <changeSet author="ikasan dev" id="modifyErrorOccurrenceErrorDetailDataType" context="postBaseline" dbms="sybase">
 	    
-	    <!-- createTable tableName="ErrorOccurrenceNew">
-        
-            <column name="Uri" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ModuleName" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FlowName" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FlowElementName" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ErrorDetail" type="UNITEXT"/>
-            <column name="EventLifeIdentifier" type="VARCHAR(255)"/>
-            <column name="EventRelatedIdentifier" type="VARCHAR(255)"/>
-            <column name="Action" type="VARCHAR(255)"/>
-            <column name="Event" type="IMAGE"/>
-            <column defaultValueNumeric="0" name="Timestamp" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="Expiry" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ErrorMessage" type="UNITEXT"/>
-            <column name="ExceptionClass" type="VARCHAR(512)"/>
-            
-        </createTable -->
-
 		<addColumn tableName="ErrorOccurrence">
 	        <column name="ErrorDetailNew" type="UNITEXT">
                 <constraints nullable="true"/>
             </column>
 	    </addColumn>
 	    
-		<sql>
-			UPDATE ErrorOccurrence SET ErrorDetailNew = ErrorDetail
-		</sql>
+	    <addColumn tableName="ErrorOccurrence">
+	        <column name="ErrorMessageNew" type="UNITEXT">
+                <constraints nullable="true"/>
+            </column>
+	    </addColumn>
+	    
+		
+		<customChange class="org.ikasan.setup.persistence.service.custom.ErrorOccurrenceCustomDataTypeMigrationTask" />
 		
 		<dropColumn columnName="ErrorDetail" tableName="ErrorOccurrence"/>
+		
+		<dropColumn columnName="ErrorMessage" tableName="ErrorOccurrence"/>
 		
 		<renameColumn 
             newColumnName="ErrorDetail"
             oldColumnName="ErrorDetailNew"
+            tableName="ErrorOccurrence"/>
+            
+        <renameColumn 
+            newColumnName="ErrorMessage"
+            oldColumnName="ErrorMessageNew"
             tableName="ErrorOccurrence"/>
 		
     </changeSet>
