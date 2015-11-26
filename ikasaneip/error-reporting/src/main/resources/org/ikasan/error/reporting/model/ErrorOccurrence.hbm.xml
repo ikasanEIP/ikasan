@@ -105,6 +105,11 @@
                   type="byte[]"
                   column="Event"
                   not-null="false" />
+                  
+        <property name="eventAsString"
+                  type="java.lang.String"
+                  column="EventAsString"
+                  not-null="false" />
 
         <property name="timestamp"
                   type="long"

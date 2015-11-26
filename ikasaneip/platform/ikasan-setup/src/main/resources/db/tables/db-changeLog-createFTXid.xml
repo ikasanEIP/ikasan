@@ -55,7 +55,7 @@
 
         <createTable tableName="FTXid">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints nullable="false"/>
             </column>
             <column name="State" type="VARCHAR(255)">
@@ -76,8 +76,8 @@
             <column name="CreatedDateTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LastUpdatedDateTime" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

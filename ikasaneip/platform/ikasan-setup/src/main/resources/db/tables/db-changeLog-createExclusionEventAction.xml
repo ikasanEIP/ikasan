@@ -55,19 +55,19 @@
 
         <createTable tableName="ExclusionEventAction">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="ExclusionE_19193428713"/>
             </column>
-            <column name="ErrorUri" type="VARCHAR(256)">
+            <column name="ErrorUri" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ModuleName" type="VARCHAR(256)">
+            <column name="ModuleName" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="FlowName" type="VARCHAR(256)">
+            <column name="FlowName" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ActionedBy" type="VARCHAR(256)">
+            <column name="ActionedBy" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="Action" type="VARCHAR(32)">

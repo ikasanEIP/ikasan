@@ -95,7 +95,7 @@ public class ErrorReportingManagementServiceImplTest
     	for(int i=0; i<1000; i++)
     	{
     		ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", 
-    				"errorMessage", "exceptionClass", 100, new byte[100]);
+    				"errorMessage", "exceptionClass", 100, new byte[100], "errorString");
     		
     		errorReportingServiceDao.save(eo);
     		

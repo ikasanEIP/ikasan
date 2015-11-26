@@ -54,10 +54,10 @@
 		</preConditions>
 
         <createTable tableName="Component">
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="Component_1363845242"/>
             </column>
-            <column name="Name" type="VARCHAR(256)">
+            <column name="Name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="Description" type="VARCHAR(1024)">
@@ -69,11 +69,11 @@
             <column name="FlowId" type="numeric(18)"/>
             <column name="ComponentOrder" type="numeric(18)"/>
             <column name="ConfigurationId" type="VARCHAR(256)"/>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
         </createTable>
         

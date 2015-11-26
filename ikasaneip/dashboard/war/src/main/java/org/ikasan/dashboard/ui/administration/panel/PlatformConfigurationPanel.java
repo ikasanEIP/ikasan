@@ -220,12 +220,6 @@ public class PlatformConfigurationPanel extends Panel implements View
 		paramLayout.setColumnExpandRatio(0, .25f);
 		paramLayout.setColumnExpandRatio(1, .75f);
 		
-		Label configLabel = new Label("Platform Configuration");
-		configLabel.addStyleName(ValoTheme.LABEL_HUGE);
-		configLabel.setSizeUndefined();
-		paramLayout.addComponent(configLabel, 0 , 0, 1, 0);
-		paramLayout.setComponentAlignment(configLabel, Alignment.TOP_LEFT);
-		
 		Label label = new Label(parameter.getName());
 		label.setIcon(VaadinIcons.COG);
 		label.addStyleName(ValoTheme.LABEL_LARGE);
@@ -570,6 +564,7 @@ public class PlatformConfigurationPanel extends Panel implements View
         GridLayout layout = new GridLayout();
         layout.setWidth("100%");
         layout.setSpacing(true);
+        layout.setMargin(true);
         
         Panel userPanel = null;
         Panel passwordPanel = null;
@@ -595,9 +590,26 @@ public class PlatformConfigurationPanel extends Panel implements View
         	}
         }
         
-        layout.addComponent(userPanel);
-        layout.addComponent(passwordPanel);
-        layout.addComponent(mapPanel);
+        Label configLabel = new Label("Platform Configuration");
+		configLabel.addStyleName(ValoTheme.LABEL_HUGE);
+		configLabel.setSizeUndefined();
+
+		layout.addComponent(configLabel);
+		
+		if(userPanel != null)
+		{
+			layout.addComponent(userPanel);
+		}
+		
+		if(passwordPanel != null)
+		{
+			layout.addComponent(passwordPanel);
+		}
+		
+		if(mapPanel != null)
+		{
+			layout.addComponent(mapPanel);
+		}
         	
 		this.setContent(layout);
 	}

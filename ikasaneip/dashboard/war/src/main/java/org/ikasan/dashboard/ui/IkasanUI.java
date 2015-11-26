@@ -40,8 +40,11 @@
  */
 package org.ikasan.dashboard.ui;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
@@ -52,6 +55,8 @@ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.google.common.eventbus.EventBus;
@@ -62,7 +67,10 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
+import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.communication.PushMode;
@@ -119,6 +127,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private MenuItem settingsItem;
     
     private SystemEventService systemEventService;
+    private ErrorReportingManagementService errorReportingManagementService;
+    private ErrorReportingService errorReportingService;
     
     /**
      * Constructor 
@@ -141,7 +151,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	        ViewComponentContainer viewComponentContainer, EventBus eventBus, VerticalLayout imagePanelLayout, 
 	        NavigationPanel navigationPanel, MenuLayout menuLayout,
             Image bannerImage, Menu menu, TopologyStateCache topologyStateCache, Label bannerLabel, GridLayout mainLayout,
-            CssLayout menuContent, Button showMenuButton, SystemEventService systemEventService)
+            CssLayout menuContent, Button showMenuButton, SystemEventService systemEventService,  ErrorReportingManagementService errorReportingManagementService,
+        	ErrorReportingService errorReportingService)
 	{
 	    this.views = views;
 	    this.eventBus = eventBus;
@@ -156,6 +167,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.menuContent = menuContent;
 	    this.showMenuButton = showMenuButton;
 	    this.systemEventService = systemEventService;
+	    this.errorReportingManagementService = errorReportingManagementService;
+	    this.errorReportingService = errorReportingService;
 	    Broadcaster.register(this);
 	}
 
@@ -164,7 +177,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     {    	
     	VaadinSession.getCurrent().setAttribute
     		(DashboardSessionValueConstants.TOPOLOGY_STATE_CACHE, this.topologyStateCache);
-    	
+    	    	
         addStyleName(ValoTheme.UI_WITH_MENU);
         
         this.mainLayout.setSizeFull();   
@@ -207,11 +220,14 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         }
         
         this.navigationPanel.setMenuComponents(menu.getMenuComponents());
-        
-        UI.getCurrent().getNavigator().navigateTo("landingView");  
+
+        if(getPage().getUriFragment() == null || (getPage().getUriFragment() != null && !getPage().getUriFragment().equals("!error-occurrence")))
+    	{
+        	UI.getCurrent().getNavigator().navigateTo("landingView"); 
+    	}
+
         this.navigationPanel.setVisible(true);
         this.navigationPanel.setMenu(menu);
-        
     }
     
     private Component buildContent() 

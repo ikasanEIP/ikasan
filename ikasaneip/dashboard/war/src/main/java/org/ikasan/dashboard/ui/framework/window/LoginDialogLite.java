@@ -137,6 +137,8 @@ public class LoginDialogLite extends Window
             1, null, true));
         userNameField.setValidationVisible(false);
         userNameField.setStyleName("ikasan");
+        userNameField.setValue("admin");
+        userNameField.setReadOnly(true);
         form.addComponent(userNameField, 1, 1);
 
         Label passwordLabel = new Label("Password:");

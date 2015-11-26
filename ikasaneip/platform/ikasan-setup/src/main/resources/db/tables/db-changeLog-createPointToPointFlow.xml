@@ -54,7 +54,7 @@
 		</preConditions>
 
         <createTable tableName="PointToPointFlow">
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="PointToPoi_Id_8320029642"/>
             </column>
             <column name="PointToPointFlowProfileId" type="numeric(18)">

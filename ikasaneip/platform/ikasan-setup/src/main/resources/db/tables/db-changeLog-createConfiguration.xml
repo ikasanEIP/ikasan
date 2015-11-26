@@ -55,10 +55,10 @@
 		
         <createTable tableName="Configuration">
         
-            <column name="ConfigurationId" type="VARCHAR(256)">
+            <column name="ConfigurationId" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Description" type="VARCHAR(256)"/>
+            <column name="Description" type="VARCHAR(255)"/>
             
         </createTable>
         
