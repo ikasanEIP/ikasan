@@ -55,7 +55,7 @@
 
         <createTable tableName="Users">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="Users_Id_10080035912"/>
             </column>
             <column name="Username" type="VARCHAR(50)">

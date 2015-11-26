@@ -145,9 +145,9 @@ public class HibernateErrorManagementDaoTest
     @Test
     public void test_save_find_and_delete_error_occurrence()
     {
-    	ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100]);
-    	ErrorOccurrence eo1 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100]);
-    	ErrorOccurrence eo2 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100]);
+    	ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrence eo1 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrence eo2 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
     	
     	this.errorReportingServiceDao.save(eo);
     	this.errorReportingServiceDao.save(eo1);

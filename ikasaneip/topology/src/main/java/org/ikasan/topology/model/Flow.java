@@ -40,22 +40,22 @@
  */
 package org.ikasan.topology.model;
 
-import java.security.Principal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 
  * @author Ikasan Development Team
  */
-public class Flow implements Principal
+public class Flow
 {
     private Long id;
     private String name;
     private String description;
     private String state;
     private Module module;
-    private Set<Component> components;
+    private Set<Component> components = new HashSet<Component>();
     private int order;
 
 	/** The data time stamp when an instance was first created */
@@ -252,16 +252,4 @@ public class Flow implements Principal
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "Flow [id=" + id + ", name=" + name + ", description="
-				+ description + ", state=" + state + ", module=" + module
-				+ ", components=" + components + ", order=" + order
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
-	}
 }

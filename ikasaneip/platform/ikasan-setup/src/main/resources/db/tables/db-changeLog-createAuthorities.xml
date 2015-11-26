@@ -54,7 +54,7 @@
 		</preConditions>
     
         <createTable tableName="Authorities">
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="Authoritie_Id_10720038192"/>
             </column>
             <column name="Authority" type="VARCHAR(50)">

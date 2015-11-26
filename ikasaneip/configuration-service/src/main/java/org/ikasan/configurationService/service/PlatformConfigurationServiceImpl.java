@@ -143,8 +143,6 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         }
         
         return null;
-	}
-
-	
+	}	
 
 }

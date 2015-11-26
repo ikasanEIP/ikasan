@@ -96,13 +96,26 @@
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>graph-explorer</artifactId>
 		   <version>0.7.0</version>
-		</dependency>	
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>contextmenu</artifactId>
+		   <version>4.5</version>
+		</dependency>
 		
 		<dependency>
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>filteringtable</artifactId>
 		   <version>0.9.13.v7</version>
-		</dependency>	
+		</dependency>
+		
+		<dependency>
+		   <groupId>com.github.vaadin4qbanos</groupId>
+		   <artifactId>jsclipboard</artifactId>
+		   <version>1.0.2</version>
+		</dependency>
+			
 		
 		<!-- dependency>
 		  <groupId>com.googlecode.wicked-charts</groupId>
@@ -243,6 +256,12 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.yaml</groupId>
+		    <artifactId>snakeyaml</artifactId>
+		    <version>1.13</version>
 		</dependency>
 		
 		<dependency>

@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.CategorisedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -80,11 +81,13 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -168,6 +171,8 @@ public class CategorisedErrorTab extends TopologyTab
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
+		
+		cont.addContainerProperty(" ", Button.class,  null);
 
         return cont;
     }
@@ -185,18 +190,22 @@ public class CategorisedErrorTab extends TopologyTab
 		
 		this.categorizedErrorOccurenceTable.addStyleName("wordwrap-table");
 		this.categorizedErrorOccurenceTable.addStyleName(ValoTheme.TABLE_NO_STRIPES);
+		this.categorizedErrorOccurenceTable.addStyleName("ikasan");
 		
 		this.categorizedErrorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	CategorisedErrorOccurrence errorOccurrence = (CategorisedErrorOccurrence)itemClickEvent.getItemId();
-		    	
-		    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
-		    		= new CategorisedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
-		    
-		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	if(itemClickEvent.isDoubleClick())
+		    	{
+			    	CategorisedErrorOccurrence errorOccurrence = (CategorisedErrorOccurrence)itemClickEvent.getItemId();
+			    	
+			    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
+			    		= new CategorisedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
+			    
+			    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	}
 		    }
 		});
 		
@@ -256,7 +265,7 @@ public class CategorisedErrorTab extends TopologyTab
 				
 				return "ikasan-small";
 			}
-			});
+		});
 				
 		Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -337,7 +346,7 @@ public class CategorisedErrorTab extends TopologyTab
             	resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size());
             	searchResultsSizeLayout.addComponent(resultsLabel);
 
-            	for(CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurrences)
+            	for(final CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurrences)
             	{
             		ErrorOccurrence errorOccurrence = categorisedErrorOccurrence.getErrorOccurrence();
             		
@@ -404,6 +413,27 @@ public class CategorisedErrorTab extends TopologyTab
     					cb.setValue(false);
     					item.getItemProperty("").setValue(cb);
         			}
+        			
+        			Button popupButton = new Button();
+        			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        			popupButton.setDescription("Open in new tab");
+        			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        			popupButton.setIcon(VaadinIcons.MODAL);
+        			
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(CategorisedErrorOccurrencePopup.class);
+        	        popupOpener.extend(popupButton);
+        	        
+        	        popupButton.addClickListener(new Button.ClickListener() 
+        	    	{
+        	            public void buttonClick(ClickEvent event) 
+        	            {
+        	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("categorisedErrorOccurrence", categorisedErrorOccurrence);
+
+        	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportManagementService", errorReportingManagementService);
+        	            }
+        	        });
+			    	
+        	        item.getItemProperty(" ").setValue(popupButton);
             	}
             }
         });

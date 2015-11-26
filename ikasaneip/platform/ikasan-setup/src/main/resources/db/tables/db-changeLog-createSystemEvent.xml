@@ -55,8 +55,8 @@
 		
         <createTable tableName="SystemEvent">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="SystemEventPk"/>
             </column>
             <column name="Subject" type="VARCHAR(128)">
                 <constraints nullable="false"/>
@@ -65,19 +65,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="Actor" type="VARCHAR(64)"/>
-            <column name="Timestamp" type="datetime">
+            <column name="Timestamp" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column name="Expiry" type="datetime"/>
+            <column name="Expiry" type="${dateType}"/>
             
         </createTable>
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'SystemEvent', 'identity_gap', 1</sql>
-        
-         <createIndex indexName="SystemEvent01u" tableName="SystemEvent" unique="true">
-            <column name="Id"/>
-        </createIndex>
         
     </changeSet>
 
