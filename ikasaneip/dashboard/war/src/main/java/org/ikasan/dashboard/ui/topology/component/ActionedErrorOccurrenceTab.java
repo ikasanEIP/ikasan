@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ActionedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -54,7 +55,6 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGen
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ActionedErrorOccurrenceViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -75,6 +75,7 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
@@ -154,6 +155,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		cont.addContainerProperty("Action Time", String.class,  null);
 		cont.addContainerProperty("Action By", String.class,  null);
 		cont.addContainerProperty("N/L", Layout.class,  null);
+		cont.addContainerProperty("", Button.class,  null);
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
@@ -192,11 +194,14 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
-		    	ActionedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
-		    		= new ActionedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
-		    	
-		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	if(itemClickEvent.isDoubleClick())
+		    	{
+			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
+			    	ActionedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
+			    		= new ActionedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
+			    	
+			    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	}
 		    }
 		});
 				
@@ -418,8 +423,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 			            }
 			        });
 					
-					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
+					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);	
 				}
 				
 			}
@@ -659,6 +663,22 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 			label.addStyleName(ValoTheme.LABEL_TINY);			
 			
 			item.getItemProperty("N/L").setValue(layout);
+			
+			Button popupButton = new Button();
+			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			popupButton.setDescription("Open in new tab");
+			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+			popupButton.setIcon(VaadinIcons.MODAL);
+
+	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ActionedErrorOccurrencePopup.class);
+	        popupOpener.extend(popupButton);
+	        
+	        VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportService", this.errorReportingService);
+	        VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportManagementService", this.errorReportingManagementService);
+	        // Add a parameter for the error uri.
+	        popupOpener.setParameter("errorUri", errorOccurrence.getUri());
+	        
+	        item.getItemProperty("").setValue(popupButton);
     	    
     	}
 	}

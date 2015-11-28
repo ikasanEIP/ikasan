@@ -40,12 +40,20 @@
  */
 package org.ikasan.topology.dao;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
+import org.ikasan.topology.model.FilterComponent;
+import org.ikasan.topology.model.FilterComponentKey;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.RoleFilter;
+import org.ikasan.topology.model.RoleFilterKey;
 import org.ikasan.topology.model.Server;
 import org.junit.Assert;
 import org.junit.Before;
@@ -136,9 +144,17 @@ public class HibernateTopologyDaoTest
     	flow = new Flow("Flow 4", "I am flow 4", module);
     	this.xaTopologyDao.save(flow);
     	flow = new Flow("Flow 5", "I am flow 5", module);
+    	
+    	Component component = new Component();
+    	component.setName("name");
+    	component.setDescription("description");
+    	component.setOrder(0);
+    	component.setConfigurable(false);
+    	component.setFlow(flow);
+    	
+    	flow.getComponents().add(component);
+    	
     	this.xaTopologyDao.save(flow);
-     	
-     	
     }
     
 	/**
@@ -216,5 +232,159 @@ public class HibernateTopologyDaoTest
 		List<Flow> flows =  this.xaTopologyDao.getFlowsByServerIdAndModuleId(servers.get(0).getId(), modules.get(0).getId());
 		
 		Assert.assertTrue(flows.size() == 5);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testSaveFilter()
+	{
+		Filter filter = new Filter();
+		filter.setName("testFilter");
+		filter.setDescription("testFilter description");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		Set<FilterComponent> components = new HashSet<FilterComponent>();
+		
+		for(Flow flow: flows)
+		{
+			for(Component component: flow.getComponents())
+			{
+				FilterComponent fc = new FilterComponent(new FilterComponentKey(filter.getId(), component.getId()));
+				fc.setComponent(component);
+				
+				components.add(fc);
+			}
+		}
+		
+		filter.setComponents(components);
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		
+		Assert.assertTrue(this.xaTopologyDao.getAllFilters().size() == 1);
+		
+		Assert.assertTrue(this.xaTopologyDao.getAllFilters().get(0).getComponents().size() == 1);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testGetFilterByName()
+	{
+		Filter filter = new Filter();
+		filter.setName("testFilter");
+		filter.setDescription("testFilter description");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		Set<FilterComponent> components = new HashSet<FilterComponent>();
+		
+		for(Flow flow: flows)
+		{
+			for(Component component: flow.getComponents())
+			{
+				FilterComponent fc = new FilterComponent(new FilterComponentKey(filter.getId(), component.getId()));
+				fc.setComponent(component);
+				
+				components.add(fc);
+			}
+		}
+		
+		filter.setComponents(components);
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		
+		Assert.assertTrue(this.xaTopologyDao.getFilterByName("testFilter") != null);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
+	 */
+	@Test
+	@DirtiesContext
+	public void testGetAllFilters()
+	{
+		Filter filter = new Filter();
+		filter.setName("testFilter");
+		filter.setDescription("testFilter description");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		Set<FilterComponent> components = new HashSet<FilterComponent>();
+		
+		for(Flow flow: flows)
+		{
+			for(Component component: flow.getComponents())
+			{
+				FilterComponent fc = new FilterComponent(new FilterComponentKey(filter.getId(), component.getId()));
+				fc.setComponent(component);
+				
+				components.add(fc);
+			}
+		}
+		
+		filter.setComponents(components);
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		filter = new Filter();
+		filter.setName("testFilter");
+		filter.setDescription("testFilter description");
+		
+		flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		components = new HashSet<FilterComponent>();
+		
+		for(Flow flow: flows)
+		{
+			for(Component component: flow.getComponents())
+			{
+				FilterComponent fc = new FilterComponent(new FilterComponentKey(filter.getId(), component.getId()));
+				fc.setComponent(component);
+				
+				components.add(fc);
+			}
+		}
+		
+		filter.setComponents(components);
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		
+		Assert.assertTrue(this.xaTopologyDao.getAllFilters().size() == 2);
+		
+		Assert.assertTrue(this.xaTopologyDao.getAllFilters().get(0).getComponents().size() == 1);
+		Assert.assertTrue(this.xaTopologyDao.getAllFilters().get(1).getComponents().size() == 1);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testSaveRoleFilter()
+	{
+		Filter filter = new Filter();
+		filter.setName("testFilter");
+		filter.setDescription("testFilter description");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		RoleFilter rf = new RoleFilter(new RoleFilterKey(new Long(1), filter.getId()));
+		
+		this.xaTopologyDao.saveRoleFilter(rf);
+		
+
+		Assert.assertTrue(this.xaTopologyDao.getRoleFilterByRoleId(new Long(1)) != null);
+		
+		Assert.assertTrue(this.xaTopologyDao.getRoleFilterByRoleId(new Long(1)).getFilter().getName().equals("testFilter"));
 	}
 }

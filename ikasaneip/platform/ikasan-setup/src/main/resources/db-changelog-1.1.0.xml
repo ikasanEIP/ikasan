@@ -4,10 +4,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
     
+    <!-- 1.1.0 table modifications -->
+	<include file="db/modify/db-changeLog-modifyErrorOccurrenceErrorDetailDataType.xml" relativeToChangelogFile="true" />
+	
     <!-- 1.1.0 table alterations -->    
 	<include file="db/alter/db-changeLog-alterErrorOccurrence.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterAuthenticationMethod.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterFlow.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterErrorOccurrenceAddEventAsString.xml" relativeToChangelogFile="true" />
 	
     <!-- 1.1.0 table creation -->    
 	<include file="db/tables/db-changeLog-createNote.xml" relativeToChangelogFile="true" />

@@ -48,11 +48,14 @@ import org.hibernate.criterion.Restrictions;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
 
 /**
  * Hibernate implementation of <code>TopologyDao</code>
@@ -338,6 +341,59 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 		criteria.add(Restrictions.not(Restrictions.in("name", componentNames)));
 
 		return (List<Component>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#saveFilter(com.unboundid.ldap.sdk.Filter)
+	 */
+	@Override
+	public void saveFilter(Filter filter)
+	{
+		this.getHibernateTemplate().saveOrUpdate(filter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getFilterByName(java.lang.String)
+	 */
+	@Override
+	public Filter getFilterByName(String name)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Filter.class);
+		criteria.add(Restrictions.eq("name", name));
+
+        return (Filter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getAllFilters()
+	 */
+	@Override
+	public List<Filter> getAllFilters()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Filter.class);
+
+        return (List<Filter>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#saveRoleFilter(org.ikasan.topology.model.RoleFilter)
+	 */
+	@Override
+	public void saveRoleFilter(RoleFilter roleFilter)
+	{
+		this.getHibernateTemplate().saveOrUpdate(roleFilter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getRoleFilterByRoleId(java.lang.Long)
+	 */
+	@Override
+	public RoleFilter getRoleFilterByRoleId(Long roleId)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(RoleFilter.class);
+		criteria.add(Restrictions.eq("id.roleId", roleId));
+
+        return (RoleFilter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
     

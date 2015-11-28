@@ -4,11 +4,11 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/security 
-        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+        http://www.springframework.org/schema/security/spring-security-4.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
 
     <context:annotation-config/>
     <context:component-scan base-package="org.ikasan.mapping.configuration.ui"/>
@@ -35,8 +35,10 @@
         <constructor-arg ref="menuContent"/>
         <constructor-arg ref="showMenuButton"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="errorReportingService"/>
     </bean>
-    
+        
     <bean id="menu" class="org.ikasan.dashboard.ui.Menu" scope="session">
         <constructor-arg ref="navigatorMap"/>
         <constructor-arg ref="menuLayout"/>
@@ -64,6 +66,10 @@
 		<constructor-arg value="topLevel"/>
         <constructor-arg>
             <list>
+            	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value=""/>
+                   <constructor-arg ref="landingViewPanel"/>
+                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="landingView"/>
                    <constructor-arg ref="landingViewPanel"/>
@@ -180,16 +186,43 @@
                    <constructor-arg value="platformConfigurationView"/>
                    <constructor-arg ref="platformConfigurationPanel"/>
                 </bean>
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="error-occurrence"/>
+                   <constructor-arg ref="errorOccurrenceDeepLinkPanel"/>
+                </bean>
+                <!-- bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="wiretap"/>
+                   <constructor-arg ref="wiretapDeepLinkPanel"/>
+                </bean -->
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
     </bean>
     
+    <bean id="errorOccurrenceDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.ErrorOccurrenceDeepLinkPanel" scope="prototype">
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="errorReportingService"/>
+        <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="authenticationService"/>
+        <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="platformConfigurationService"/>
+    </bean>
+    
+     <!-- bean id="wiretapDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.WiretapDeepLinkPanel" scope="prototype">
+        <constructor-arg ref="wiretapDao"/>
+        <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="authenticationService"/>
+        <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="platformConfigurationService"/>
+    </bean -->
+    
     <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
     <bean id="topLevelNavigator" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
       <property name="targetSource">
         <bean class="org.springframework.aop.target.LazyInitTargetSource">
-          <property name="targetBeanName"><idref local="topLevelNavigatorBean"/></property>
+          <property name="targetBeanName"><idref bean="topLevelNavigatorBean"/></property>
         </bean>
       </property>
     </bean>
@@ -198,7 +231,7 @@
     <bean id="navigationPanelProxy" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
       <property name="targetSource">
         <bean class="org.springframework.aop.target.LazyInitTargetSource">
-          <property name="targetBeanName"><idref local="navigationPanel"/></property>
+          <property name="targetBeanName"><idref bean="navigationPanel"/></property>
         </bean>
       </property>
     </bean>

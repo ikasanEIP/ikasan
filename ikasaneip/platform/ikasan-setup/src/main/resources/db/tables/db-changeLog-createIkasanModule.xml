@@ -55,26 +55,26 @@
 
         <createTable tableName="IkasanModule">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="IkasanModu_21398676593"/>
             </column>
-            <column name="Name" type="VARCHAR(256)">
+            <column name="Name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ContextRoot" type="VARCHAR(256)">
+            <column name="ContextRoot" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="Description" type="VARCHAR(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column name="DiagramUrl" type="VARCHAR(256)"/>
-            <column name="Version" type="VARCHAR(256)"/>
+            <column name="DiagramUrl" type="VARCHAR(255)"/>
+            <column name="Version" type="VARCHAR(255)"/>
             <column name="ServerId" type="numeric(18)"/>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

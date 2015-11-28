@@ -55,8 +55,8 @@
 
         <createTable tableName="FlowEventTrigger">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="FlowEventTriggerPk"/>
             </column>
             <column name="ModuleName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
