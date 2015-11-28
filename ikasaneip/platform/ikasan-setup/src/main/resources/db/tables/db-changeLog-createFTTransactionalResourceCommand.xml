@@ -55,7 +55,7 @@
 
         <createTable tableName="FTTransactionalResourceCommand">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints nullable="false"/>
             </column>
             <column name="State" type="VARCHAR(255)">

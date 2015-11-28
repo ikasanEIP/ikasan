@@ -100,6 +100,11 @@ public class ErrorOccurrence<EVENT>
      * Representation of the Event at the time that the error took place
      */
     private EVENT event;
+    
+    /**
+     * Representation of the Event as a String at the time that the error took place
+     */
+    private String eventAsString;
 
     /**
 	 * Time that this error was logged
@@ -142,7 +147,7 @@ public class ErrorOccurrence<EVENT>
      * @param errorDetail
      * @param event
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, EVENT event)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive, EVENT event, String eventAsString)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -176,6 +181,7 @@ public class ErrorOccurrence<EVENT>
 
         this.errorMessage = errorMessage;
         this.event = event;
+        this.eventAsString = eventAsString;
         this.timestamp = System.currentTimeMillis();
         this.uri = String.valueOf(this.hashCode());
         this.expiry = System.currentTimeMillis() + timeToLive;
@@ -190,7 +196,7 @@ public class ErrorOccurrence<EVENT>
      */
     public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, String errorMessage, String exceptionClass, long timeToLive)
     {
-        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null);
+        this(moduleName, flowName, flowElementName, errorDetail, errorMessage, exceptionClass, timeToLive, null, null);
     }
 
     public String getModuleName() 
@@ -376,9 +382,23 @@ public class ErrorOccurrence<EVENT>
 		this.userActionTimestamp = userActionTimestamp;
 	}
 
-    
+	/**
+	 * @return the eventAsString
+	 */
+	public String getEventAsString()
+	{
+		return eventAsString;
+	}
 
-    /* (non-Javadoc)
+	/**
+	 * @param eventAsString the eventAsString to set
+	 */
+	public void setEventAsString(String eventAsString)
+	{
+		this.eventAsString = eventAsString;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -394,6 +414,8 @@ public class ErrorOccurrence<EVENT>
 		result = prime * result
 				+ ((errorMessage == null) ? 0 : errorMessage.hashCode());
 		result = prime * result + ((event == null) ? 0 : event.hashCode());
+		result = prime * result
+				+ ((eventAsString == null) ? 0 : eventAsString.hashCode());
 		result = prime
 				* result
 				+ ((eventLifeIdentifier == null) ? 0 : eventLifeIdentifier
@@ -418,24 +440,6 @@ public class ErrorOccurrence<EVENT>
 		result = prime * result
 				+ (int) (userActionTimestamp ^ (userActionTimestamp >>> 32));
 		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "ErrorOccurrence [uri=" + uri + ", moduleName=" + moduleName
-				+ ", flowName=" + flowName + ", flowElementName="
-				+ flowElementName + ", errorDetail=" + errorDetail
-				+ ", errorMessage=" + errorMessage + ", exceptionClass="
-				+ exceptionClass + ", eventLifeIdentifier="
-				+ eventLifeIdentifier + ", eventRelatedIdentifier="
-				+ eventRelatedIdentifier + ", action=" + action + ", event="
-				+ event + ", timestamp=" + timestamp + ", expiry=" + expiry
-				+ ", userAction=" + userAction + ", actionedBy=" + actionedBy
-				+ ", userActionTimestamp=" + userActionTimestamp + "]";
 	}
 
 	/* (non-Javadoc)
@@ -480,6 +484,12 @@ public class ErrorOccurrence<EVENT>
 			if (other.event != null)
 				return false;
 		} else if (!event.equals(other.event))
+			return false;
+		if (eventAsString == null)
+		{
+			if (other.eventAsString != null)
+				return false;
+		} else if (!eventAsString.equals(other.eventAsString))
 			return false;
 		if (eventLifeIdentifier == null)
 		{
@@ -538,5 +548,24 @@ public class ErrorOccurrence<EVENT>
 		return true;
 	}
 
-   
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ErrorOccurrence [uri=" + uri + ", moduleName=" + moduleName
+				+ ", flowName=" + flowName + ", flowElementName="
+				+ flowElementName + ", errorDetail=" + errorDetail
+				+ ", errorMessage=" + errorMessage + ", exceptionClass="
+				+ exceptionClass + ", eventLifeIdentifier="
+				+ eventLifeIdentifier + ", eventRelatedIdentifier="
+				+ eventRelatedIdentifier + ", action=" + action + ", event="
+				+ event + ", eventAsString=" + eventAsString + ", timestamp="
+				+ timestamp + ", expiry=" + expiry + ", userAction="
+				+ userAction + ", actionedBy=" + actionedBy
+				+ ", userActionTimestamp=" + userActionTimestamp + "]";
+	}
+
+	
 }

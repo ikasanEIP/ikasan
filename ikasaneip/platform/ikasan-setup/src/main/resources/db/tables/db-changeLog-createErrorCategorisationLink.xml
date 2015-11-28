@@ -55,7 +55,7 @@
 
         <createTable tableName="ErrorCategorisationLink">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="ErrorCateg_8403870322"/>
             </column>
             <column name="ErrorCategorisationId" type="numeric(18)">

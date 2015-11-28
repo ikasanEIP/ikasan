@@ -118,31 +118,58 @@ $v-font-weight: 400;
 	}
 	
 	.v-table-cell-content-ikasan-green-small {
-		font-size: $v-font-size;
+		font-size: 11px;
 		background-color: rgba(0, 153, 51, 0.2);
 		font-size: 9px;
 		vertical-align: top;
 	}
-	
+
+	.v-table-row-ikasan-green-small:hover, .v-table-row-odd-ikasan-green-small:hover {
+	    background: rgba(0, 153, 51, 0.3);
+	}
+
+
 	.v-table-cell-content-ikasan-red-small {
-		font-size: $v-font-size;
+		font-size: 11px;
 		background-color: rgba(255, 0, 0, 0.2);
 		font-size: 9px;
 		vertical-align: top;
 	}
-	
+
+
+	.v-table-row-ikasan-red-small:hover, .v-table-row-odd-ikasan-red-small:hover {
+	    background: rgba(255, 0, 0, 0.3);
+	}
+
 	.v-table-cell-content-ikasan-orange-small {
-		font-size: $v-font-size;
+		font-size: 11px;
 		background-color: rgba(255, 153, 0, 0.2);
 		font-size: 9px;
 		vertical-align: top;
 	}
-	
+
+	.v-table-row-ikasan-orange-small:hover, .v-table-row-odd-ikasan-orange-small:hover {
+	    background: rgba(255, 153, 0, 0.3);
+	}
+
 	.v-table-cell-content-ikasan-indigo-small {
 		font-size: 11px;
 		background-color: rgba(75, 0, 130, 0.2);
 		font-size: 9px;
 		vertical-align: top;
+	}
+
+	.v-table-row-ikasan-indigo-small:hover, .v-table-row-odd-ikasan-indigo-small:hover {
+	    background: rgba(75, 0, 130, 0.3);
+	}
+
+	.v-table-cell-content-ikasan-small {
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+	.v-table-row-ikasan-ikasan-small:hover, .v-table-row-odd-ikasan-small:hover {
+	    background: #99CCFF;
 	}
 	
 	.v-table-cell-content-ikasan-small {
@@ -152,6 +179,10 @@ $v-font-weight: 400;
 	
 	.v-table-header td {
 		font-size: $v-font-size;
+	}
+	
+	.v-table-row:hover, .v-table-row-odd:hover {
+	    background: #99CCFF;
 	}
 	
 	.v-tree-node-caption {

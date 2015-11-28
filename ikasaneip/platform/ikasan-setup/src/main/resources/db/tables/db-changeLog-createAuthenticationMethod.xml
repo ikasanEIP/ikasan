@@ -54,7 +54,7 @@
 		</preConditions>
     
         <createTable tableName="AuthenticationMethod">
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="Authentica_16633419592"/>
             </column>
             <column name="Name" type="VARCHAR(128)">
@@ -66,7 +66,7 @@
             <column name="AuthOrder" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LastSynchronised" type="datetime"/>
+            <column name="LastSynchronised" type="${dateType}"/>
             <column defaultValueNumeric="1" name="Enabled" type="BIT">
                 <constraints nullable="false"/>
             </column>
@@ -86,11 +86,11 @@
             <column name="AppSecDescAttributeName" type="VARCHAR(256)"/>
             <column name="LdapUserDescAttributeName" type="VARCHAR(256)"/>
             <column name="MemberofAttributeName" type="VARCHAR(256)"/>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
         </createTable>
         

@@ -55,13 +55,13 @@
 		</preConditions>
 		
 		<addColumn tableName="AuthenticationMethod">
-	        <column name="UserSynchronisationFilter" type="VARCHAR(255)">
+	        <column name="UserSynchronisationFilter" type="VARCHAR(255)" defaultValue="">
                 <constraints nullable="false"/>
             </column>
 	    </addColumn>
 	    
 	    <addColumn tableName="AuthenticationMethod">
-	        <column name="GroupSynchronisationFilter" type="VARCHAR(255)">
+	        <column name="GroupSynchronisationFilter" type="VARCHAR(255)" defaultValue="">
                 <constraints nullable="false"/>
             </column>
 	    </addColumn>
