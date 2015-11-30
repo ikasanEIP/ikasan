@@ -61,15 +61,5 @@
     	<many-to-one name="component" class="org.ikasan.topology.model.Component" 
     		column="ComponentId" not-null="true" insert="false" update="false" lazy="false"/>
 
-		
-		<property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
-
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
 	</class>
 </hibernate-mapping>

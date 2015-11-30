@@ -90,7 +90,7 @@
                   unique="false"/>
         
         <many-to-one name="server" column="ServerId" 
-       		class="org.ikasan.topology.model.Server" not-null="false" />
+       		class="org.ikasan.topology.model.Server" not-null="false" lazy="false"/>
          
         <set name="flows" cascade="all" order-by="FlowOrder asc" lazy="false">
          	<key column="ModuleId"/>

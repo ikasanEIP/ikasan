@@ -395,6 +395,36 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 
         return (RoleFilter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getRoleFilterByRoleId(java.lang.Long)
+	 */
+	@Override
+	public RoleFilter getRoleFilterByFilterId(Long filterId)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(RoleFilter.class);
+		criteria.add(Restrictions.eq("id.filterId", filterId));
+
+        return (RoleFilter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteFilter(org.ikasan.topology.model.Filter)
+	 */
+	@Override
+	public void deleteFilter(Filter filter)
+	{
+		getHibernateTemplate().delete(filter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteRoleFilter(org.ikasan.topology.model.RoleFilter)
+	 */
+	@Override
+	public void deleteRoleFilter(RoleFilter roleFilter)
+	{
+		this.getHibernateTemplate().delete(roleFilter);
+	}
 
     
    

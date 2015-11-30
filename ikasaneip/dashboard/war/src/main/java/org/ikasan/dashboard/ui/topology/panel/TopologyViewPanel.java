@@ -74,6 +74,7 @@ import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
+import org.ikasan.dashboard.ui.topology.component.FilterManagementTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
@@ -84,6 +85,7 @@ import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -129,6 +131,8 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
@@ -219,6 +223,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private SystemEventService systemEventService;
 	private ErrorCategorisationService errorCategorisationService;
 	private TriggerManagementService triggerManagementService;
+	private SecurityService securityService;
 	
 	private HashMap<String, String> flowStates = new HashMap<String, String>();
 	
@@ -233,7 +238,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService)
+			 PlatformConfigurationService platformConfigurationService, SecurityService securityService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -299,6 +304,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.platformConfigurationService == null)
 		{
 			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
+		this.securityService = securityService;
+		if(this.securityService == null)
+		{
+			throw new IllegalArgumentException("securityService cannot be null!");
 		}
 		
 		init();
@@ -449,6 +459,36 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
 			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
 			tabsheet.addTab(tab8, "Categorised Errors");
+    	}
+    	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.MANAGE_FILTERS_AUTHORITY)))
+    	{
+    		final VerticalLayout manageFiltersTab = new VerticalLayout();
+    		manageFiltersTab.setSizeFull();
+    		
+    		final FilterManagementTab filterManagementTab = new FilterManagementTab
+					(this.topologyService, this.securityService);
+			manageFiltersTab.addComponent(filterManagementTab.createFilterManagementLayout());
+			
+    		tabsheet.addTab(manageFiltersTab, "Filters");
+    		
+    		tabsheet.addSelectedTabChangeListener(new SelectedTabChangeListener() 
+        	{
+    		    @Override
+    		    public void selectedTabChange(SelectedTabChangeEvent event) 
+    		    {
+    		    	logger.info("Selected tab: " + event.getTabSheet().getSelectedTab());
+    		    	logger.info("manageFiltersTab: " + event.getTabSheet().getSelectedTab());
+    		    	
+    		        if(manageFiltersTab.equals(event.getTabSheet().getSelectedTab()))
+    		        {
+    		        	logger.info("refreshing tab!");
+    		        	filterManagementTab.refresh();
+    		        }
+    		    }
+    		});
     	}
 
 		this.tabsheetPanel.setContent(tabsheet);
