@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -44,46 +42,31 @@
  Author:  Ikasan Development Team
  
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-    <class
-        name="org.ikasan.topology.model.Filter"
-        table="Filter">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    
+    <changeSet author="ikasan dev" id="createRoleFilter" context="postBaseline">
+    
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="RoleFilter" /></not>
+		</preConditions>
 
-        <id name="id" type="java.lang.Long" column="Id" unsaved-value="null">
-			<generator class="identity" />
-		</id>
+        <createTable tableName="RoleFilter">
+            <column name="RoleId" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FilterId" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+		</createTable>
+        
+        <!-- The statement below is required by sybase to set the identity gap to 1. -->
+        <sql dbms="sybase">sp_chgattribute 'RoleFilter', 'identity_gap', 1</sql>
+        
+        <addPrimaryKey columnNames="RoleId, FilterId" constraintName="RoleFilterPk" tableName="RoleFilter"/>
 
-		<property name="name" 
-				  column="Name" 
-				  type="java.lang.String" 
-				  not-null="true"/>
-
-		<property name="description" 
-				  column="Description" 
-				  type="java.lang.String" 
-				  not-null="true"/>
-				  
-		<property name="createdBy" 
-				  column="CreatedBy" 
-				  type="java.lang.String" 
-				  not-null="true"/>
-	    
-	    <set name="components" inverse="true" lazy="false" cascade="all">
-		    <key column="FilterId"/>
-		    <one-to-many class="org.ikasan.topology.model.FilterComponent"/>
-		</set>
-		
-		<property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
-
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
-    </class>
-</hibernate-mapping>
+    </changeSet>
+        
+</databaseChangeLog>

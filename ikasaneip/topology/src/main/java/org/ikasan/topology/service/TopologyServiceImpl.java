@@ -41,6 +41,7 @@
 package org.ikasan.topology.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -60,8 +61,12 @@ import org.ikasan.topology.dao.TopologyDao;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
+import org.ikasan.topology.model.FilterComponent;
+import org.ikasan.topology.model.FilterComponentKey;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -401,5 +406,98 @@ public class TopologyServiceImpl implements TopologyService
 	public void deleteBusinessStream(BusinessStream businessStream)
 	{
 		this.topologyDao.deleteBusinessStream(businessStream);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#createFilter(java.lang.String, java.lang.String, java.util.List)
+	 */
+	@Override
+	public Filter createFilter(String name, String description, String createdBy, Set<Component> components)
+	{
+		Filter filter = new Filter(name, description, createdBy);
+		filter.setName(name);
+		filter.setDescription(description);
+		
+		this.topologyDao.saveFilter(filter);
+		
+		Set<FilterComponent> filterComponents = new HashSet<FilterComponent>();
+		
+		for(Component component: components)
+		{
+			FilterComponent fc = new FilterComponent(new FilterComponentKey(filter.getId(), component.getId()));
+			fc.setComponent(component);
+			
+			filterComponents.add(fc);
+		}
+		
+		filter.setComponents(filterComponents);
+		
+		this.topologyDao.saveFilter(filter);
+		
+		return filter;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getAllFilters()
+	 */
+	@Override
+	public List<Filter> getAllFilters()
+	{
+		return this.topologyDao.getAllFilters();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#saveFilter(org.ikasan.topology.model.Filter)
+	 */
+	@Override
+	public void saveFilter(Filter filter)
+	{
+		filter.setUpdatedDateTime(new Date(System.currentTimeMillis()));
+		this.topologyDao.saveFilter(filter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#deleteFilter(org.ikasan.topology.model.Filter)
+	 */
+	@Override
+	public void deleteFilter(Filter filter)
+	{
+		this.topologyDao.deleteFilter(filter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#saveRoleFilter(org.ikasan.topology.model.RoleFilter)
+	 */
+	@Override
+	public void saveRoleFilter(RoleFilter roleFilter)
+	{
+		this.topologyDao.saveRoleFilter(roleFilter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getRoleFilters(java.lang.Long)
+	 */
+	@Override
+	public RoleFilter getRoleFilter(Long roleId)
+	{
+		return this.topologyDao.getRoleFilterByRoleId(roleId);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#deleteRoleFilter(org.ikasan.topology.model.RoleFilter)
+	 */
+	@Override
+	public void deleteRoleFilter(RoleFilter roleFilter)
+	{
+		this.topologyDao.deleteRoleFilter(roleFilter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getRoleFilterByFilterId(java.lang.Long)
+	 */
+	@Override
+	public RoleFilter getRoleFilterByFilterId(Long filterId)
+	{
+		return this.topologyDao.getRoleFilterByFilterId(filterId);
 	}
 }

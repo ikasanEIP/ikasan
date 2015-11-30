@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-	$Id$ 
-	$URL$ 
+	$Id$ $URL$ 
 	==================================================================== 
 	Ikasan Enterprise Integration Platform Distributed under the Modified BSD 
 	License. Copyright notice: The copyright for this software and a full listing 
@@ -33,17 +32,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<changeSet author="ikasan dev" id="insertSecurityRecords-1.1.0" context="postBaseline">
-			
+	<changeSet dbms="sybase, h2, mssql" author="ikasan dev" id="createFilterComponentFk" context="postBaseline">
+
 		<preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">select count(*) from SecurityPolicy where Name = 'ActionErrors'</sqlCheck>
-        </preConditions>
-        
-		<insert tableName="SecurityPolicy">
-			<column name="Name" value="ActionErrors" />
-			<column name="Description" value="A policy to allow users to action errors" />
-		</insert>
-				
+			<not><foreignKeyConstraintExists foreignKeyName="FilterComponentFK" /></not>
+		</preConditions>
+		
+		<addForeignKeyConstraint baseColumnNames="ComponentId"
+			baseTableName="FilterComponent" constraintName="FilterComponentFK"
+			deferrable="false" initiallyDeferred="false" referencedColumnNames="Id" 
+			referencedTableName="Component" />
+
 	</changeSet>
 
 </databaseChangeLog>

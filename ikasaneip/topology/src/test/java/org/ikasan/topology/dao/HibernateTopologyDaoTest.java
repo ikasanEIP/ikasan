@@ -238,9 +238,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testSaveFilter()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -273,9 +271,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testGetFilterByName()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -309,9 +305,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testGetAllFilters()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -334,9 +328,7 @@ public class HibernateTopologyDaoTest
 		
 		this.xaTopologyDao.saveFilter(filter);
 		
-		filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		flows = this.xaTopologyDao.getAllFlows();
 		
@@ -370,9 +362,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testSaveRoleFilter()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		

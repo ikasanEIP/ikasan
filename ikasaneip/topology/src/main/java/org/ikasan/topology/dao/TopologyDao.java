@@ -236,4 +236,24 @@ public interface TopologyDao
 	 * @return
 	 */
 	public RoleFilter getRoleFilterByRoleId(Long roleId);
+
+	
+	/**
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	public RoleFilter getRoleFilterByFilterId(Long roleId);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void deleteFilter(Filter filter);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void deleteRoleFilter(RoleFilter roleFilter);
 }
