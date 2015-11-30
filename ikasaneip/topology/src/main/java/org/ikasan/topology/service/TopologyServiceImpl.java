@@ -500,4 +500,13 @@ public class TopologyServiceImpl implements TopologyService
 	{
 		return this.topologyDao.getRoleFilterByFilterId(filterId);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#deleteFilterComponents(java.lang.Long)
+	 */
+	@Override
+	public void deleteFilterComponents(Long filterId)
+	{
+		this.topologyDao.deleteFilterComponents(filterId);
+	}
 }

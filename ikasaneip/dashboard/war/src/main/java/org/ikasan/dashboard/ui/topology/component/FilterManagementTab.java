@@ -150,7 +150,7 @@ public class FilterManagementTab extends TopologyTab
 		cont.addContainerProperty("Description", String.class,  null);
 		cont.addContainerProperty("Created By", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
-		cont.addContainerProperty("", CheckBox.class,  null);
+		cont.addContainerProperty("", Button.class,  null);
 		
         return cont;
     }
@@ -193,6 +193,8 @@ public class FilterManagementTab extends TopologyTab
                 	
                 	if(roleFilter != null)
                 	{
+                		filter = roleFilter.getFilter();
+                		
                 		for(Role role: (Collection<Role>)rolesCombo.getItemIds())
                 		{
                 			if(role.getId().equals(roleFilter.getId().getRoleId()))
@@ -200,6 +202,10 @@ public class FilterManagementTab extends TopologyTab
                 				rolesCombo.select(role);
                 			}
                 		}
+                	}
+                	else
+                	{
+                		rolesCombo.select(rolesCombo.getNullSelectionItemId());
                 	}
                 	
 	            	for(FilterComponent filterComponent: filter.getComponents())
@@ -228,6 +234,8 @@ public class FilterManagementTab extends TopologyTab
 	            		componentSet.addAll((Collection<? extends Component>)components.getItemIds());
 	            	}
 	            	
+	            	topologyService.deleteFilterComponents(filter.getId());
+	            	
 	            	Set<FilterComponent> filterComponents = new HashSet<FilterComponent>();
 	        		
 	        		for(Component component: componentSet)
@@ -238,14 +246,15 @@ public class FilterManagementTab extends TopologyTab
 	        			filterComponents.add(fc);
 	        		}
 	        		
-	        		filter.setName(nameTextField.getValue());
-	        		filter.setDescription(descriptionTextArea.getValue());
-	        		filter.setComponents(filterComponents);
-	        		
 	        		if(rolesCombo.getValue() != null)
 	        		{
 	        			Role role = (Role)rolesCombo.getValue();
 	        			roleFilter = topologyService.getRoleFilterByFilterId(filter.getId());
+	        			
+	        			if(roleFilter != null)
+	        			{
+	        				filter = roleFilter.getFilter();
+	        			}
 	        			
 	        			if(roleFilter != null && !role.getId().equals(roleFilter.getId().getRoleId()))
 	        			{
@@ -259,7 +268,15 @@ public class FilterManagementTab extends TopologyTab
 	        				roleFilter.setFilter(filter);
 	        			}
 	        			
+	        			filter.setName(nameTextField.getValue());
+		        		filter.setDescription(descriptionTextArea.getValue());
+		        		filter.getComponents().addAll(filterComponents);
+		        		
+	        			topologyService.saveFilter(filter);
+	        			
 	        			topologyService.saveRoleFilter(roleFilter);
+		        		
+		        		Notification.show("Filter saved!", Type.HUMANIZED_MESSAGE);
 	        		}
 	        		else
 	        		{
@@ -269,17 +286,22 @@ public class FilterManagementTab extends TopologyTab
 	        				rolesCombo.setValue(null);
 	        				roleFilter = null;
 	        			}
-	        		}
 	        			
-	        		
-	        		topologyService.saveFilter(filter);
-	        		
-	        		Notification.show("Filter saved!", Type.HUMANIZED_MESSAGE);
+	        			filter.setName(nameTextField.getValue());
+		        		filter.setDescription(descriptionTextArea.getValue());
+		        		filter.setComponents(filterComponents);
+		        		
+	        			topologyService.saveFilter(filter);
+    	        		
+    	        		Notification.show("Filter saved!", Type.HUMANIZED_MESSAGE);
+	        		}
             	}
             	else
             	{
             		Notification.show("No filter to save! Either create a new one or select one from the table below.", Type.WARNING_MESSAGE);
             	}
+            	
+            	refresh();
             }
         });
 		
@@ -297,7 +319,6 @@ public class FilterManagementTab extends TopologyTab
 
 		GridLayout layout = new GridLayout(1, 6);
 		layout.setMargin(false);
-//		layout.setHeight(270 , Unit.PIXELS);
 		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSpacing(true);
@@ -443,7 +464,7 @@ public class FilterManagementTab extends TopologyTab
 		Label filterHintLabel = new Label();
 		filterHintLabel.setCaptionAsHtml(true);
 		filterHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
-				" Drag items from the topology tree to the tables below in order to narrow your search.");
+				" Drag items from the topology tree to the tables below in order to create a filter.");
 		filterHintLabel.addStyleName(ValoTheme.LABEL_TINY);
 		filterHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
 		
@@ -497,6 +518,10 @@ public class FilterManagementTab extends TopologyTab
                         	modules.removeAllItems();
                         	flows.removeAllItems();
                         	components.removeAllItems();
+                        	
+                        	rolesCombo.select(rolesCombo.getNullSelectionItemId());
+                        	
+                        	refresh();
                         }
                     }
                 });
@@ -544,14 +569,14 @@ public class FilterManagementTab extends TopologyTab
 		this.rolesCombo.setWidth("80%");
 		controlsLayout.addComponent(this.rolesCombo, 1, 3);
 		
-//		layout.addComponent(filterHintLabel);
+		layout.addComponent(filterHintLabel);
 		layout.addComponent(controlsLayout);
 		layout.addComponent(hListSelectLayout);
 		layout.addComponent(hButtonLayout);
 		layout.setSizeFull();
 		
 		Panel filterPanel = new Panel();
-		filterPanel.setHeight(500, Unit.PIXELS);
+		filterPanel.setHeight(440, Unit.PIXELS);
 		filterPanel.setWidth("100%");
 		filterPanel.setContent(layout);
 		filterPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -578,7 +603,7 @@ public class FilterManagementTab extends TopologyTab
 		hErrorTable.addComponent(this.filterTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
-		vSplitPanel.setSplitPosition(210, Unit.PIXELS);
+		vSplitPanel.setSplitPosition(450, Unit.PIXELS);
 		
 		VerticalLayout wrapper = new VerticalLayout();
 		wrapper.setSizeFull();
@@ -679,6 +704,45 @@ public class FilterManagementTab extends TopologyTab
 			item.getItemProperty("Description").setValue(filter.getDescription());
 			item.getItemProperty("Created By").setValue(filter.getCreatedBy());
 			item.getItemProperty("Timestamp").setValue(timestamp);
+			
+			Button deleteButton = new Button();
+			deleteButton.setIcon(VaadinIcons.TRASH);
+			deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+			deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+
+			item.getItemProperty("").setValue(deleteButton);
+			
+			// Add the delete functionality to each role that is added
+			deleteButton.addClickListener(new Button.ClickListener() 
+	        {
+	            public void buttonClick(ClickEvent event) 
+	            {		
+	            	if(filter.equals(FilterManagementTab.this.filter))
+	            	{
+	            		components.removeAllItems();
+	            		flows.removeAllItems();
+	            		modules.removeAllItems();
+	            		
+	            		nameTextField.setValue("");
+	            		descriptionTextArea.setValue("");
+	            		
+	            		rolesCombo.select(rolesCombo.getNullSelectionItemId());
+	            	}
+	            	
+	            	tableContainer.removeItem(filter);
+	            	
+	            	topologyService.deleteFilterComponents(filter.getId());
+	            	RoleFilter roleFilter = topologyService.getRoleFilterByFilterId(filter.getId());
+	            	
+	            	if(roleFilter != null)
+	            	{
+	            		topologyService.deleteRoleFilter(roleFilter);
+	            		
+	            	}
+	            	
+	            	topologyService.deleteFilter(filter);
+	            }
+	        });
     	}
     	
     	List<Role> roles = this.securityService.getAllRoles();
