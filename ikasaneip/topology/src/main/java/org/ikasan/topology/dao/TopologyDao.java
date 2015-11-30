@@ -256,4 +256,10 @@ public interface TopologyDao
 	 * @param filter
 	 */
 	public void deleteRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param filterId
+	 */
+	public void deleteFilterComponents(Long filterId);
 }

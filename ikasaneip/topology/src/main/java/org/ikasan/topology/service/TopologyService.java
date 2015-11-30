@@ -217,4 +217,10 @@ public interface TopologyService
 	 * @param roleFilter
 	 */
 	public void deleteRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param filterId
+	 */
+	public void deleteFilterComponents(Long filterId);
 }

@@ -43,6 +43,9 @@ package org.ikasan.topology.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.topology.model.BusinessStream;
@@ -54,6 +57,7 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 
@@ -66,6 +70,8 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateTopologyDao extends HibernateDaoSupport implements TopologyDao
 {
 
+	private static final String DELETE_FILTER_COMPONENT = "delete from FilterComponent where id.filterId = :filterId"; 
+	
 	/* (non-Javadoc)
 	 * @see org.ikasan.topology.dao.TopologyDao#getAllServers()
 	 */
@@ -426,6 +432,26 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 		this.getHibernateTemplate().delete(roleFilter);
 	}
 
-    
-   
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteFilterComponents(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void deleteFilterComponents(final Long filterId)
+	{
+		this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(DELETE_FILTER_COMPONENT);
+                
+                query.setParameter("filterId", filterId);
+
+                query.executeUpdate();
+                
+                return null;
+            }
+        });
+	}
 }
