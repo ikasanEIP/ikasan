@@ -115,10 +115,6 @@ public class FilterManagementTab extends TopologyTab
 	
 	private TopologyService topologyService;
 	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	private Table components = new Table("Components");
-
 	private Container tableContainer;
 	
 	private Label resultsLabel = new Label();
@@ -320,128 +316,15 @@ public class FilterManagementTab extends TopologyTab
 		GridLayout layout = new GridLayout(1, 6);
 		layout.setMargin(false);
 		
+		super.initialiseFilterTables();
+		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
-		
-		modules.setIcon(VaadinIcons.ARCHIVE);
-		modules.addContainerProperty("Module Name", String.class,  null);
-		modules.addContainerProperty("", Button.class,  null);
-		modules.setSizeFull();
-		modules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		modules.setDragMode(TableDragMode.ROW);
-		modules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.debug("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
-					
-					addModule(module);
-
-					for(final Flow flow: module.getFlows())
-					{				
-						addFlow(flow);
-						
-						for(final Component component: flow.getComponents())
-						{							
-							addComponent(component);
-						}
-					}
-				}
+		listSelectLayout.addComponent(super.modules, 0, 0);
+		listSelectLayout.addComponent(super.flows, 1, 0);
+		listSelectLayout.addComponent(super.components, 2, 0);
 				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(modules, 0, 0);
-		
-		flows.setIcon(VaadinIcons.AUTOMATION);
-		flows.addContainerProperty("Flow Name", String.class,  null);
-		flows.addContainerProperty("", Button.class,  null);
-		flows.setSizeFull();
-		flows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		flows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-										
-					addFlow(flow);
-						
-					for(final Component component: flow.getComponents())
-					{						
-						addComponent(component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(flows, 1, 0);
-		
-		components.setIcon(VaadinIcons.COG);
-		components.setSizeFull();
-		components.addContainerProperty("Component Name", String.class,  null);
-		components.addContainerProperty("", Button.class,  null);
-		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		components.setSizeFull();
-		components.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		components.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					
-					addComponent(component);		
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.components, 2, 0);
-		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
 		vSplitPanel.setHeight("95%");
 		
@@ -611,81 +494,6 @@ public class FilterManagementTab extends TopologyTab
 		
 		return wrapper;
 	}
-	
-	private void addModule(final Module module)
-	{
-		Button deleteButton = new Button();
-		deleteButton.setIcon(VaadinIcons.TRASH);
-		deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-		
-		// Add the delete functionality to each role that is added
-		deleteButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {		
-            	modules.removeItem(module);
-            	
-            	for(Flow flow: module.getFlows())
-            	{
-            		flows.removeItem(flow);
-            		
-            		for(Component component: flow.getComponents())
-            		{
-            			components.removeItem(component);
-            		}
-            	}
-            }
-        });
-		
-		modules.addItem(new Object[]{module.getName(), deleteButton}, module);
-	}
-	
-	private void addFlow(final Flow flow)
-	{
-		Button deleteButton = new Button();
-		deleteButton.setIcon(VaadinIcons.TRASH);
-		deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		
-		// Add the delete functionality to each role that is added
-		deleteButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {		
-            	flows.removeItem(flow);
-            	
-            	for(Component component: flow.getComponents())
-        		{
-        			components.removeItem(component);
-        		}
-            }
-        });
-		
-		flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-	}
-	
-	private void addComponent(final Component component)
-	{
-		Button deleteButton = new Button();
-		deleteButton.setIcon(VaadinIcons.TRASH);
-		deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-		
-		// Add the delete functionality to each role that is added
-		deleteButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {		
-            	components.removeItem(component);
-            }
-        });
-		
-		components.addItem(new Object[]{component.getName(), deleteButton}, component);
-	}
-
 
 	public void refresh()
 	{

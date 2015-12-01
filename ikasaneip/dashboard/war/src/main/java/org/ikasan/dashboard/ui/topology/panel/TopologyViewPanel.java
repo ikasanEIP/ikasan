@@ -76,6 +76,8 @@ import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.FilterManagementTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
+import org.ikasan.dashboard.ui.topology.util.FilterMap;
+import org.ikasan.dashboard.ui.topology.util.FilterUtil;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
 import org.ikasan.dashboard.ui.topology.window.ServerWindow;
@@ -111,6 +113,7 @@ import com.google.common.eventbus.Subscribe;
 import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
@@ -120,6 +123,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -130,6 +134,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.PopupView.Content;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
@@ -232,6 +238,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TabSheet tabsheet;
 	
 	private PlatformConfigurationService platformConfigurationService;
+	
+	private VerticalLayout popupViewLayout = new VerticalLayout();
+	private PopupView filtersPopup = new PopupView("Filters", popupViewLayout);
+	
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
@@ -546,13 +556,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		
 		GridLayout layout = new GridLayout(1, 4);
+		layout.setSpacing(true);
+		layout.setWidth("100%");
 		
 		Label roleManagementLabel = new Label("Topology");
  		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
  		layout.addComponent(roleManagementLabel, 0, 0);
- 		
-		layout.setSpacing(true);
-		layout.setWidth("100%");
+		
+		layout.addComponent(filtersPopup);
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
 				
@@ -816,6 +827,83 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		this.topologyTreePanel.setContent(layout);
 	}
+	
+	protected void createFilterPopupContent()
+	{
+		FilterMap filterMap = (FilterMap)VaadinService.getCurrentRequest().getWrappedSession()
+    		.getAttribute(DashboardSessionValueConstants.FILTERS);
+		
+		if(filterMap.getFilters().size() == 0)
+		{
+			popupViewLayout = new VerticalLayout();
+			popupViewLayout.setMargin(true);
+			popupViewLayout.setSpacing(true);
+			popupViewLayout.setWidth("100%");
+			
+			Label manageFilters = new Label("Manage Filters");
+			manageFilters.addStyleName(ValoTheme.LABEL_BOLD);
+			manageFilters.addStyleName(ValoTheme.LABEL_LARGE);
+			popupViewLayout.addComponent(manageFilters);
+
+			Label filterName = new Label("No filters available!");
+			
+			popupViewLayout.addComponent(filterName);
+		}
+		else
+		{
+			popupViewLayout = new VerticalLayout();
+			popupViewLayout.setMargin(true);
+			popupViewLayout.setSpacing(true);
+			popupViewLayout.setWidth("100%");
+			
+			Label manageFilters = new Label("Manage Filters");
+			manageFilters.addStyleName(ValoTheme.LABEL_BOLD);
+			manageFilters.addStyleName(ValoTheme.LABEL_LARGE);
+			popupViewLayout.addComponent(manageFilters);
+			
+			int i=1;
+			
+			for(FilterUtil filterUtil: filterMap.getFilters())
+			{
+				BeanItem<FilterUtil> filterItem = new BeanItem<FilterUtil>(filterUtil);
+				
+				CheckBox filterSelected = new CheckBox(filterUtil.getFilter().getName());
+				filterSelected.setPropertyDataSource(filterItem.getItemProperty("selected"));
+				
+				popupViewLayout.addComponent(filterSelected);
+				
+				i++;
+			}
+		}
+		
+		this.filtersPopup.setImmediate(true);
+		this.filtersPopup.setContent(new Content()
+		{
+			
+			@Override
+			public com.vaadin.ui.Component getPopupComponent()
+			{
+				Panel popupPanel = new Panel();
+				popupPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+				popupPanel.setHeight("300px");
+				popupPanel.setWidth("200px");
+				
+				popupViewLayout.setImmediate(true);
+				popupPanel.setContent(popupViewLayout);
+				popupPanel.setImmediate(true);
+				
+				return popupPanel;
+			}
+			
+			@Override
+			public String getMinimizedValueAsHTML()
+			{
+				return "Filters";
+			}
+		});
+		
+		this.filtersPopup.markAsDirty();
+	}
 
 	
 	protected Layout createSystemEventPanel()
@@ -927,6 +1015,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		}
 		
 		this.refreshTree();
+		
+		createFilterPopupContent();
 	}
 	
 	protected void refreshTree()

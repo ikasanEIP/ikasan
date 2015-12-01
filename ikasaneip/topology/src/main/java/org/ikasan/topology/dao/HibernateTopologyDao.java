@@ -394,12 +394,12 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	 * @see org.ikasan.topology.dao.TopologyDao#getRoleFilterByRoleId(java.lang.Long)
 	 */
 	@Override
-	public RoleFilter getRoleFilterByRoleId(Long roleId)
+	public List<RoleFilter> getRoleFiltersByRoleId(List<Long> roleIds)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(RoleFilter.class);
-		criteria.add(Restrictions.eq("id.roleId", roleId));
+		criteria.add(Restrictions.in("id.roleId", roleIds));
 
-        return (RoleFilter)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+        return (List<RoleFilter>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 	
 	/* (non-Javadoc)
