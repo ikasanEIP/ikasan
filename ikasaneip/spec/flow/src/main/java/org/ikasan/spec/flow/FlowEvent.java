@@ -52,29 +52,35 @@ public interface FlowEvent<IDENTIFIER,PAYLOAD>
      * Get immutable flow event identifier.
      * @return IDENTIFIER - event identifier
      */
-    public IDENTIFIER getIdentifier();
+    IDENTIFIER getIdentifier();
 
     /**
      * Get related event identifier identifier.
      * @return IDENTIFIER - event identifier
      */
-    public IDENTIFIER getRelatedIdentifier();
+    IDENTIFIER getRelatedIdentifier();
 
     /**
 	 * Get the immutable created date/time of the flow event.
-	 * @return long - create date time
+	 * @return long - created date time
 	 */
-	public long getTimestamp();
+	long getTimestamp();
 
 	/**
 	 * Get the payload of this flow event.
 	 * @return PAYLOAD payload
 	 */
-	public PAYLOAD getPayload();
+	PAYLOAD getPayload();
 	
 	/**
 	 * Set the payload of this flow event.
 	 * @param payload - payload
 	 */
-	public void setPayload(PAYLOAD payload);
+	void setPayload(PAYLOAD payload);
+
+    /**
+     * Replace the internals of this flow event with the provided
+     * @param flowEvent a new flow event to use
+     */
+    void replace(FlowEvent<IDENTIFIER, PAYLOAD> flowEvent);
 }
