@@ -478,9 +478,9 @@ public class TopologyServiceImpl implements TopologyService
 	 * @see org.ikasan.topology.service.TopologyService#getRoleFilters(java.lang.Long)
 	 */
 	@Override
-	public RoleFilter getRoleFilter(Long roleId)
+	public List<RoleFilter> getRoleFilters(List<Long> roleIds)
 	{
-		return this.topologyDao.getRoleFilterByRoleId(roleId);
+		return this.topologyDao.getRoleFiltersByRoleId(roleIds);
 	}
 
 	/* (non-Javadoc)

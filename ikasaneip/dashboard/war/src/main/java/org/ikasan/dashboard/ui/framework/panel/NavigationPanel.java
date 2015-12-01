@@ -40,6 +40,7 @@
  */
 package org.ikasan.dashboard.ui.framework.panel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,17 +57,19 @@ import org.ikasan.dashboard.ui.framework.util.CommitHandler;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
+import org.ikasan.dashboard.ui.topology.util.FilterMap;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.topology.model.RoleFilter;
+import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
-import com.vaadin.server.Page.UriFragmentChangedEvent;
-import com.vaadin.server.Page.UriFragmentChangedListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -75,6 +78,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -110,6 +114,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	private Menu menu;
 	private SystemEventService systemEventService;
 	private UserService userService; 
+	private TopologyService topologyService;
 
 	/**
 	 * 
@@ -129,7 +134,8 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 			VerticalLayout imagePanelLayout,
 			HashMap<String, IkasanUINavigator> views,
 			List<RefreshGroup> refreshGroups,
-			SystemEventService systemEventService, UserService userService)
+			SystemEventService systemEventService, UserService userService,
+			TopologyService topologyService)
 	{
 		this.authenticationService = authenticationService;
 		this.visibilityGroup = visibilityGroup;
@@ -141,6 +147,8 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		this.refreshGroups = refreshGroups;
 		this.systemEventService = systemEventService;
 		this.userService = userService;
+		this.topologyService = topologyService;
+		
 		init();
 	}
 
@@ -302,8 +310,31 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		
 		systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS, 
         		"User logging in: " + ikasanAuthentication.getName(), ikasanAuthentication.getName());
+		
+		User user = (User)ikasanAuthentication.getPrincipal();
+		
+		ArrayList<Long> roleIds = new ArrayList<Long>();
+		
+		for(IkasanPrincipal principal: user.getPrincipals())
+		{
+			for(Role role: principal.getRoles())
+			{
+				roleIds.add(role.getId());
+			}
+		}
+		
+		List<RoleFilter> roleFilters = this.topologyService.getRoleFilters(roleIds);
+		
+		FilterMap filters = new FilterMap();
+		
+		for(RoleFilter roleFilter: roleFilters)
+		{
+			filters.addFilter(roleFilter.getFilter());
+		}
+		
+		VaadinService.getCurrentRequest().getWrappedSession()
+        	.setAttribute(DashboardSessionValueConstants.FILTERS, filters);
 
-//		UI.getCurrent().getNavigator().navigateTo("landingView");
 	}
 
 	/**

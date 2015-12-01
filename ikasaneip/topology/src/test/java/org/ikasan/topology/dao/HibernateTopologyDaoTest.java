@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.dao;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -372,9 +373,11 @@ public class HibernateTopologyDaoTest
 		
 		this.xaTopologyDao.saveRoleFilter(rf);
 		
-
-		Assert.assertTrue(this.xaTopologyDao.getRoleFilterByRoleId(new Long(1)) != null);
+		List<Long> roleIds = new ArrayList<Long>();
+		roleIds.add(new Long(1));
 		
-		Assert.assertTrue(this.xaTopologyDao.getRoleFilterByRoleId(new Long(1)).getFilter().getName().equals("testFilter"));
+		Assert.assertTrue(this.xaTopologyDao.getRoleFiltersByRoleId(roleIds) != null);
+		
+		Assert.assertTrue(this.xaTopologyDao.getRoleFiltersByRoleId(roleIds).get(0).getFilter().getName().equals("testFilter"));
 	}
 }

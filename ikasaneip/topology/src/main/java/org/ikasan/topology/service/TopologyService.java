@@ -202,7 +202,7 @@ public interface TopologyService
 	 * @param roleId
 	 * @return
 	 */
-	public RoleFilter getRoleFilter(Long roleId);
+	public List<RoleFilter> getRoleFilters(List<Long> roleIds);
 	
 	/**
 	 * 

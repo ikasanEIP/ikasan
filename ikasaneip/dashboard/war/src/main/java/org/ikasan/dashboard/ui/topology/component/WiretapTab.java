@@ -124,11 +124,7 @@ public class WiretapTab extends TopologyTab
 	private FilterTable wiretapTable;
 	
 	private WiretapDao wiretapDao;
-	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	private Table components = new Table("Components");
-	
+
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	
@@ -374,216 +370,15 @@ public class WiretapTab extends TopologyTab
 		layout.setMargin(false);
 		layout.setHeight(270 , Unit.PIXELS);
 		
+		super.initialiseFilterTables();
+		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
+		listSelectLayout.addComponent(super.modules, 0, 0);
+		listSelectLayout.addComponent(super.flows, 1, 0);
+		listSelectLayout.addComponent(super.components, 2, 0);
 		
-		modules.setIcon(VaadinIcons.ARCHIVE);
-		modules.addContainerProperty("Module Name", String.class,  null);
-		modules.addContainerProperty("", Button.class,  null);
-		modules.setSizeFull();
-		modules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		modules.setDragMode(TableDragMode.ROW);
-		modules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.debug("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	modules.removeItem(module);
-			            }
-			        });
-					
-					modules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	flows.removeItem(flow);
-				            }
-				        });
-						
-						flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(VaadinIcons.TRASH);
-							deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-							deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	components.removeItem(component);
-					            }
-					        });
-							
-							components.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(modules, 0, 0);
-		
-		flows.setIcon(VaadinIcons.AUTOMATION);
-		flows.addContainerProperty("Flow Name", String.class,  null);
-		flows.addContainerProperty("", Button.class,  null);
-		flows.setSizeFull();
-		flows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		flows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	flows.removeItem(flow);
-			            }
-			        });
-					
-					flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	components.removeItem(component);
-				            }
-				        });
-						
-						components.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(flows, 1, 0);
-		
-		components.setIcon(VaadinIcons.COG);
-		components.setSizeFull();
-		components.addContainerProperty("Component Name", String.class,  null);
-		components.addContainerProperty("", Button.class,  null);
-		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		components.setSizeFull();
-		components.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		components.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	components.removeItem(component);
-			            }
-			        });
-					
-					components.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.components, 2, 0);
-
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);

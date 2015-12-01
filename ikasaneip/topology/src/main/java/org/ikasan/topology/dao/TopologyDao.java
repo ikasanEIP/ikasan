@@ -235,7 +235,7 @@ public interface TopologyDao
 	 * @param roleId
 	 * @return
 	 */
-	public RoleFilter getRoleFilterByRoleId(Long roleId);
+	public List<RoleFilter> getRoleFiltersByRoleId(List<Long> roleIds);
 
 	
 	/**
