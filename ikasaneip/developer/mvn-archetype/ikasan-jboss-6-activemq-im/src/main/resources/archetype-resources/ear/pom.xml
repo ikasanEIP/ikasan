@@ -38,7 +38,7 @@
                                 javax.servlet.jsp.api,javax.servlet.jstl.api,javax.servlet.api, org.apache.log4j,
 								${groupId}.${artifactId}.${dashed.project.version}.conf,
 								org.hornetq, org.jboss.remote-naming, org.jboss.msc, org.jboss.as.naming,
-								org.apache.activemq.ra.${dashed.version.org.apache.activemq}
+								org.apache.activemq.ra.${dashed.version.activemq}
 							</Dependencies>
 						</manifestEntries>
 					</archive>

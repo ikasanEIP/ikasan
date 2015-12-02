@@ -145,7 +145,8 @@ public class JmsObjectMessageConverterTest {
         JmsObjectMessageDefaultImpl result = uut.convert(message);
 
         //assert
-        assertEquals(jmsMessageId, result.getJMSMessageID());
+        // TODO - find better workaround for the activeMQ ID: prefix
+        assertEquals("ID:" + jmsMessageId, result.getJMSMessageID());
 
     }
 

@@ -47,7 +47,7 @@
         <version>1.0.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-im-jboss6-amq-maven-plugin</artifactId>
+    <artifactId>ikasan-im-jboss6-activemq-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>IkasanEIP Maven Archetype for a AMQ Integration Module</name>
 
