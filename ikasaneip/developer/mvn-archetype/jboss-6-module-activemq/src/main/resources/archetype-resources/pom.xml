@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>esb-build</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+
+    <groupId>org.ikasan</groupId>
+    <artifactId>jboss-activemq-module</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>ActiveMQ JBoss Module</name>
+
+    <!-- SCM URLS -->
+    <scm>
+        <developerConnection><!-- scm:svn: developer connection URL --></developerConnection>
+        <url><!-- SCM connection URL --></url>
+        <connection><!-- scm:svn: connection URL --></connection>
+    </scm>
+
+    <!-- should be overridden at build time -->
+    <properties>
+        <activemq.url>tcp://localhost:61616</activemq.url>
+        <version.activemq>5.11.1</version.activemq>
+        <version.dashed.activemq>5-11-1</version.dashed.activemq>
+    </properties>
+
+    <ciManagement>
+        <system><!-- CI Tool --></system>
+        <url><!-- CI URL --></url>
+    </ciManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <descriptors>
+                        <descriptor>distribution.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-rar</artifactId>
+            <type>rar</type>
+            <version>${version.activemq}</version>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,31 @@
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>cli</directory>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>module/module.xml</source>
+            <outputDirectory>jboss-eap/modules/org/apache/activemq/ra/${version.dashed.activemq}/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+    </files>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>jboss-eap/modules/org/apache/activemq/ra/${version.dashed.activemq}/main</outputDirectory>
+            <includes>
+                <include>org.apache.activemq:activemq-rar</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

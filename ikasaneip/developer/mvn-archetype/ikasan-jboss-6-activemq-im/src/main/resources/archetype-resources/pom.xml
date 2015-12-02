@@ -16,6 +16,10 @@
     <name>${artifactId} Integration Module Parent POM</name>
     <description>Describe the purpose of this Integration Module</description>
 
+    <properties>
+        <dashed.version.org.apache.activemq>5-12-1</dashed.version.org.apache.activemq>
+    </properties>
+
     <!-- build plugins -->
     <build>
         <plugins>
