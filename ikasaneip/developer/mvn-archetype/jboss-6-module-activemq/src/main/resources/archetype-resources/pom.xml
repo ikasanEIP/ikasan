@@ -24,8 +24,6 @@
     <!-- should be overridden at build time -->
     <properties>
         <activemq.url>tcp://localhost:61616</activemq.url>
-        <version.activemq>5.11.1</version.activemq>
-        <version.dashed.activemq>5-11-1</version.dashed.activemq>
     </properties>
 
     <ciManagement>
@@ -44,6 +42,26 @@
                         <descriptor>distribution.xml</descriptor>
                     </descriptors>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>activemq-version-regex-property</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>dashed.version.activemq</name>
+                            <value>${version.activemq}</value>
+                            <regex>^([0-9]+)\.([0-9]+)\.([0-9]+)(.*)?$</regex>
+                            <replacement>$1-$2-$3$4</replacement>
+                            <failIfNoMatch>true</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

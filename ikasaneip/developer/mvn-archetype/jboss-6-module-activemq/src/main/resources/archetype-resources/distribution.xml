@@ -13,14 +13,14 @@
     <files>
         <file>
             <source>module/module.xml</source>
-            <outputDirectory>jboss-eap/modules/org/apache/activemq/ra/${version.dashed.activemq}/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/apache/activemq/ra/${dashed.version.activemq}/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
 
     <dependencySets>
         <dependencySet>
-            <outputDirectory>jboss-eap/modules/org/apache/activemq/ra/${version.dashed.activemq}/main</outputDirectory>
+            <outputDirectory>jboss-eap/modules/org/apache/activemq/ra/${dashed.version.activemq}/main</outputDirectory>
             <includes>
                 <include>org.apache.activemq:activemq-rar</include>
             </includes>
