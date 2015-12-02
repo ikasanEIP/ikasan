@@ -51,6 +51,11 @@
     <packaging>maven-plugin</packaging>
     <name>IkasanEIP Maven Archetype for a AMQ Integration Module</name>
 
+    <!-- override at build time -->
+    <properties>
+        <activemq.url>tcp://localhost:61616</activemq.url>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>

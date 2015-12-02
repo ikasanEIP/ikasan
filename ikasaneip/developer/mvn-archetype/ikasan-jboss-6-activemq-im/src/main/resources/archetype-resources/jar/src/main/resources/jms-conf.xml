@@ -18,13 +18,12 @@
     </bean>
 
     <bean id="${flowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
-        <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
-        <property name="destinationJndiName" value="/jms/topic/sample"/>
+        <property name="connectionFactoryName" value="java:/ra/activeMQ/ActiveMQConnectionFactory"/>
+        <property name="destinationJndiName" value="java:/activemq/topic/topic.1"/>
         <property name="destinationJndiProperties">
             <map>
-                <entry key="java.naming.provider.url" value="remote://localhost:4597"/>
-                <entry key="java.naming.factory.initial" value="org.jboss.naming.remote.client.InitialContextFactory"/>
-                <entry key="java.naming.factory.url.pkgs" value="java.naming.factory.url.pkgs"/>
+                <entry key="java.naming.provider.url" value="tcp://localhost:61616"/>
+                <entry key="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
             </map>
         </property>
         <property name="sessionTransacted" value="true"/>
@@ -43,13 +42,12 @@
     </bean>
 
     <bean id="${flowName}ProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
-        <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
-        <property name="destinationJndiName" value="/jms/topic/sample"/>
+        <property name="connectionFactoryName" value="java:/ra/activeMQ/ActiveMQConnectionFactory"/>
+        <property name="destinationJndiName" value="java:/activemq/topic/topic.2"/>
         <property name="destinationJndiProperties">
             <map>
-                <entry key="java.naming.provider.url" value="remote://localhost:4597"/>
-                <entry key="java.naming.factory.initial" value="org.jboss.naming.remote.client.InitialContextFactory"/>
-                <entry key="java.naming.factory.url.pkgs" value="java.naming.factory.url.pkgs"/>
+                <entry key="java.naming.provider.url" value="tcp://localhost:61616"/>
+                <entry key="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
             </map>
         </property>
         <property name="sessionTransacted" value="true"/>

@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module xmlns="urn:jboss:module:1.1" name="org.apache.activemq.ra.${version.dashed.activemq}">
+    <resources>
+    <resource-root path="."/>
+    <resource-root path="activemq-broker-${version.activemq}.jar"/>
+    <resource-root path="activemq-client-${version.activemq}.jar"/>
+    <resource-root path="activemq-jms-pool-${version.activemq}.jar"/>
+    <resource-root path="activemq-kahadb-store-${version.activemq}.jar"/>
+    <resource-root path="activemq-openwire-legacy-${version.activemq}.jar"/>
+    <resource-root path="activemq-pool-${version.activemq}.jar"/>
+    <resource-root path="activemq-protobuf-${version.activemq}.jar"/>
+    <resource-root path="activemq-ra-${version.activemq}.jar"/>
+    <resource-root path="activemq-spring-${version.activemq}.jar"/>
+    <resource-root path="aopalliance-1.0.jar"/>
+    <resource-root path="commons-pool-1.6.jar"/>
+    <resource-root path="commons-logging-1.1.3.jar"/>
+    <resource-root path="hawtbuf-1.9.jar"/>
+    <resource-root path="spring-aop-3.2.4.RELEASE.jar"/>
+    <resource-root path="spring-beans-3.2.4.RELEASE.jar"/>
+    <resource-root path="spring-context-3.2.4.RELEASE.jar"/>
+    <resource-root path="spring-core-3.2.4.RELEASE.jar"/>
+    <resource-root path="spring-expression-3.2.4.RELEASE.jar"/>
+    <resource-root path="xbean-spring-3.14.jar"/>
+  </resources>
+  <exports>
+    <exclude path="org/springframework/**"/>
+    <exclude path="org/apache/xbean/**"/>
+    <exclude path="org/apache/commons/**"/>
+    <exclude path="org/aopalliance/**"/>
+    <exclude path="org/fusesource/**"/>
+  </exports>
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="org.slf4j"/>
+    <module name="javax.resource.api"/>
+    <module name="javax.jms.api"/>
+    <module name="javax.management.j2ee.api"/>
+  </dependencies>
+</module>
