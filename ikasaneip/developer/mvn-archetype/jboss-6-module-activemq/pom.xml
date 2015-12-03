@@ -43,23 +43,51 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-developer</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <artifactId>ikasan-mvn-archetype</artifactId>
+        <version>1.0.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-mvn-archetype</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Platform Developer Maven Archetypes</name>
+    <artifactId>jboss6-module-activemq-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <name>IkasanEIP Maven Archetype for a Jboss module supporting ActiveMQ</name>
 
-    <modules>
-        <module>ikasan-build-parent</module>
-        <module>ikasan-jboss-6-filesystem-im</module>
-        <module>ikasan-jboss-6-jms-im</module>
-        <module>ikasan-jboss-6-db-im</module>
-        <module>ikasan-jboss-6-sftp-im</module>
-        <module>jboss-6-module-activemq</module>
-        <module>ikasan-jboss-6-activemq-im</module>
-        <module>ikasan-rt-conf-jboss-6</module>
-    </modules>
-
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-plugin-plugin</artifactId>
+			<version>3.2</version>
+		</dependency>
+	</dependencies>
+	
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <goalPrefix>jboss-module-activemq</goalPrefix>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                    <execution>
+                        <id>help-descriptor</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
