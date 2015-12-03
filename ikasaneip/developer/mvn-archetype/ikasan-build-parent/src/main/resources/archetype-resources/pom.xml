@@ -46,9 +46,10 @@
         <version.org.jmock>2.6.0</version.org.jmock>
         <version.org.jmock.jmock-legacy>2.5.1</version.org.jmock.jmock-legacy>
         <version.com.h2database>1.4.178</version.com.h2database>
-        <version.activemq.core>5.7.0</version.activemq.core>
         <version.commons-io>2.4</version.commons-io>
         <version.dom4j>1.6.1</version.dom4j>
+        <version.activemq>5.12.1</version.activemq>
+        <version.activemq.core>5.7.0</version.activemq.core>
     </properties>
 
     <dependencyManagement>
@@ -111,6 +112,13 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-core</artifactId>
+                <version>${version.activemq.core}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-test</artifactId>
                 <version>${version.ikasan}</version>
@@ -161,12 +169,6 @@
                 <artifactId>geronimo-spec-j2ee</artifactId>
                 <version>${version.geronimo.spec}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-core</artifactId>
-                <version>${version.activemq.core}</version>
             </dependency>
 
             <dependency>
