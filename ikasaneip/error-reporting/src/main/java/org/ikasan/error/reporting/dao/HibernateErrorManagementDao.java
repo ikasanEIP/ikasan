@@ -49,15 +49,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.dao.constants.ErrorManagementDaoConstants;
+import org.ikasan.error.reporting.model.ErrorCategorisationLink;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Link;
 import org.ikasan.error.reporting.model.Note;
-import org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -279,6 +280,7 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	/* (non-Javadoc)
 	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#close(java.util.List)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void close(final List<String> uris, final String user)
 	{
@@ -294,14 +296,52 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
                 query.setParameter(ErrorManagementDaoConstants.USER, user);
                 query.setParameter(ErrorManagementDaoConstants.TIMESTAMP, System.currentTimeMillis());
                 
-                logger.info("Query: " + query);
-                System.out.println("Query: " + query);
+                logger.debug("Query: " + query);
                 
                 query.executeUpdate();
                 
                 return null;
             }
         });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNumberOfModuleErrors(java.lang.String)
+	 */
+	@Override
+	public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+		
+		if(moduleName != null)
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+		
+		if(excluded)
+		{
+			criteria.add(Restrictions.eq("action", "ExcludeEvent"));
+		}
+		
+		if(actioned)
+		{
+			criteria.add(Restrictions.isNotNull("userAction"));
+		}
+		
+		criteria.setProjection(Projections.projectionList()
+		                    .add(Projections.count("moduleName")));
+		
+		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
 }

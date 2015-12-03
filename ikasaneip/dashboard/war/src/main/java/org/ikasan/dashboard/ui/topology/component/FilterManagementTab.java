@@ -151,7 +151,7 @@ public class FilterManagementTab extends TopologyTab
         return cont;
     }
 	
-	public Layout createFilterManagementLayout()
+	public void createLayout()
 	{	
 		this.filterTable = new FilterTable();
 		this.filterTable.setFilterBarVisible(true);
@@ -488,11 +488,8 @@ public class FilterManagementTab extends TopologyTab
 		vSplitPanel.setSecondComponent(hErrorTable);
 		vSplitPanel.setSplitPosition(450, Unit.PIXELS);
 		
-		VerticalLayout wrapper = new VerticalLayout();
-		wrapper.setSizeFull();
-		wrapper.addComponent(vSplitPanel);
-		
-		return wrapper;
+		this.setSizeFull();
+		this.addComponent(vSplitPanel);
 	}
 
 	public void refresh()

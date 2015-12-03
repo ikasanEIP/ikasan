@@ -54,7 +54,6 @@ import java.util.zip.ZipOutputStream;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -67,46 +66,30 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.tepi.filtertable.FilterTable;
-import org.vaadin.peter.contextmenu.ContextMenu;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableFooterEvent;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableHeaderEvent;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableRowEvent;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Resource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -165,7 +148,7 @@ public class WiretapTab extends TopologyTab
         return cont;
     }
 	
-	public Layout createWiretapLayout()
+	public void createLayout()
 	{	
 		this.wiretapTable = new FilterTable();
 		this.wiretapTable.setFilterBarVisible(true);
@@ -584,7 +567,8 @@ public class WiretapTab extends TopologyTab
 		wrapper.setComponentAlignment(filterButtonLayout, Alignment.MIDDLE_RIGHT);
 		wrapper.addComponent(vSplitPanel);
 		
-		return wrapper;
+		this.setSizeFull();
+		this.addComponent(wrapper);
 	}
 	
     

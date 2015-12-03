@@ -104,7 +104,7 @@ public class BusinessStreamTab extends TopologyTab
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
-	public Layout createBusinessStreamLayout()
+	public void createLayout()
 	{		
 		this.businessStreamTable = new Table();
 		this.businessStreamTable.addContainerProperty("Server Name", String.class,  null);
@@ -430,7 +430,8 @@ public class BusinessStreamTab extends TopologyTab
     	layout.addComponent(controlsLayout);
 		layout.addComponent(this.businessStreamTable);
 		
-		return layout;
+		this.addComponent(layout);
+		this.setSizeFull();
 	}
 
 }

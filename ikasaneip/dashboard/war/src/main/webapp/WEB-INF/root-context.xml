@@ -241,6 +241,9 @@
     <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
     	<constructor-arg ref="eventExclusionsTable"/>
     	<constructor-arg ref="flowStateTable"/>
+    	<constructor-arg ref="errorReportingManagementService"/>
+    	<constructor-arg ref="topologyService"/>
+    	<constructor-arg ref="hospitalManagementService"/>
     	<!-- constructor-arg ref="graphCache"/ -->
     </bean>
     

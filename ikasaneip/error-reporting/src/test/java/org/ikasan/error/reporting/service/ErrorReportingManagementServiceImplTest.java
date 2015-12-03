@@ -49,7 +49,7 @@ import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Link;
+import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.junit.Assert;
@@ -83,7 +83,7 @@ public class ErrorReportingManagementServiceImplTest
     ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao;
     
     @Resource 
-    ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote> errorReportingManagementService;
+    ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
     
     List<String> uris;
     

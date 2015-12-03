@@ -44,10 +44,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -75,6 +75,7 @@ import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.FilterManagementTab;
+import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.dashboard.ui.topology.util.FilterUtil;
@@ -86,6 +87,7 @@ import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -136,6 +138,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.PopupView.Content;
+import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
@@ -217,7 +220,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private PopupDateField systemEventToDate;
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	
 	private StartupControlService startupControlService;
@@ -231,7 +234,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TriggerManagementService triggerManagementService;
 	private SecurityService securityService;
 	
-	private HashMap<String, String> flowStates = new HashMap<String, String>();
+	private ConcurrentHashMap<String, String> flowStates = new ConcurrentHashMap<String, String>();
 	
 	private TopologyStateCache topologyCache;
 	
@@ -242,10 +245,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private VerticalLayout popupViewLayout = new VerticalLayout();
 	private PopupView filtersPopup = new PopupView("Filters", popupViewLayout);
 	
+	private TopologyTab currentTab;
+	
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
+			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
 			 PlatformConfigurationService platformConfigurationService, SecurityService securityService)
@@ -368,85 +373,74 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_BUSINESS_STREAM_AUTHORITY)))
-    	{
-			VerticalLayout tab1 = new VerticalLayout();
-			tab1.setSizeFull();
-			
+    	{			
 			BusinessStreamTab businessStreamTab = new BusinessStreamTab(this.topologyService
 					, this.businessStreamCombo);
 			
-			tab1.addComponent(businessStreamTab.createBusinessStreamLayout());
-			tabsheet.addTab(tab1, "Business Stream");
+			businessStreamTab.createLayout();
+			
+			tabsheet.addTab(businessStreamTab, "Business Stream");
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_WIRETAP_AUTHORITY)))
     	{
-    		VerticalLayout tab2 = new VerticalLayout();
-    		tab2.setSizeFull();
-    		
-    		WiretapTab wiretapTab = new WiretapTab
+       		WiretapTab wiretapTab = new WiretapTab
 					(this.wiretapDao, this.treeViewBusinessStreamCombo);
-			tab2.addComponent(wiretapTab.createWiretapLayout());
+       		wiretapTab.createLayout();
 			
-    		tabsheet.addTab(tab2, "Wiretaps");
+    		tabsheet.addTab(wiretapTab, "Wiretaps");
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ERRORS_AUTHORITY)))
-    	{
-    		VerticalLayout tab3 = new VerticalLayout();
-    		tab3.setSizeFull();
-    		
+    	{    		
     		ErrorOccurrenceTab errorOccurrenceTab = new ErrorOccurrenceTab
 					(this.errorReportingService, this.treeViewBusinessStreamCombo
 							, this.errorReportingManagementService, this.platformConfigurationService);
-			tab3.addComponent(errorOccurrenceTab.createCategorisedErrorLayout());
+    		errorOccurrenceTab.createLayout();
 			
-    		tabsheet.addTab(tab3, "Errors");
+    		tabsheet.addTab(errorOccurrenceTab, "Errors");
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ERRORS_AUTHORITY)))
-    	{
-    		VerticalLayout tab3 = new VerticalLayout();
-    		tab3.setSizeFull();
-    		
+    	{    		
     		ActionedErrorOccurrenceTab actionedErrorOccurrenceTab = new ActionedErrorOccurrenceTab
 					(this.errorReportingService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
-			tab3.addComponent(actionedErrorOccurrenceTab.createCategorisedErrorLayout());
 			
-    		tabsheet.addTab(tab3, "Actioned Errors");
+    		actionedErrorOccurrenceTab.createLayout();
+    		
+    		tabsheet.addTab(actionedErrorOccurrenceTab, "Actioned Errors");
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
     	{
-    		final VerticalLayout tab4 = new VerticalLayout();
-    		tab4.setSizeFull();
     		final ExclusionsTab actionedExclusionsTab = new ExclusionsTab(this.errorReportingService, 
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
     				this.treeViewBusinessStreamCombo);
     		
-    		tab4.addComponent(actionedExclusionsTab.createLayout());
-    		tabsheet.addTab(tab4, "Exclusions");
+    		actionedExclusionsTab.createLayout();
+    		
+    		tabsheet.addTab(actionedExclusionsTab, "Exclusions");
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ACTIONED_EXCLUSIONS_AUTHORITY)))
     	{		
-	    	final VerticalLayout tab5 = new VerticalLayout();
-			tab5.setSizeFull();
 			ActionedExclusionTab actionedExclusionTab = new ActionedExclusionTab
 					(this.exclusionManagementService, this.hospitalManagementService,
 							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo);
-			tab5.addComponent(actionedExclusionTab.createLayout());
-			tabsheet.addTab(tab5, "Actioned Exclusions");
+			
+			actionedExclusionTab.createLayout();
+			
+			tabsheet.addTab(actionedExclusionTab, "Actioned Exclusions");
     	}
 		
     	if(authentication != null 
@@ -463,43 +457,45 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
     	{
-			final VerticalLayout tab8 = new VerticalLayout();
-			tab8.setSizeFull();
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
 					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
-			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
-			tabsheet.addTab(tab8, "Categorised Errors");
+			
+			categorisedErrorTab.createLayout();
+			
+			tabsheet.addTab(categorisedErrorTab, "Categorised Errors");
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.MANAGE_FILTERS_AUTHORITY)))
     	{
-    		final VerticalLayout manageFiltersTab = new VerticalLayout();
-    		manageFiltersTab.setSizeFull();
     		
     		final FilterManagementTab filterManagementTab = new FilterManagementTab
 					(this.topologyService, this.securityService);
-			manageFiltersTab.addComponent(filterManagementTab.createFilterManagementLayout());
+
+    		filterManagementTab.createLayout();
 			
-    		tabsheet.addTab(manageFiltersTab, "Filters");
+    		tabsheet.addTab(filterManagementTab, "Filters");
     		
-    		tabsheet.addSelectedTabChangeListener(new SelectedTabChangeListener() 
-        	{
-    		    @Override
-    		    public void selectedTabChange(SelectedTabChangeEvent event) 
-    		    {
-    		    	logger.info("Selected tab: " + event.getTabSheet().getSelectedTab());
-    		    	logger.info("manageFiltersTab: " + event.getTabSheet().getSelectedTab());
-    		    	
-    		        if(manageFiltersTab.equals(event.getTabSheet().getSelectedTab()))
-    		        {
-    		        	logger.info("refreshing tab!");
-    		        	filterManagementTab.refresh();
-    		        }
-    		    }
-    		});
     	}
+    	
+    	tabsheet.addSelectedTabChangeListener(new SelectedTabChangeListener() 
+    	{
+		    @Override
+		    public void selectedTabChange(SelectedTabChangeEvent event) 
+		    {
+		    	if(event.getTabSheet().getSelectedTab() instanceof TopologyTab)
+		    	{
+		    		currentTab = (TopologyTab)event.getTabSheet().getSelectedTab();
+		    		currentTab.applyFilter();
+		    	}
+		    	
+		        if(event.getTabSheet().getSelectedTab() instanceof FilterManagementTab)
+		        {
+		        	((FilterManagementTab)event.getTabSheet().getSelectedTab()).refresh();
+		        }
+		    }
+		});
 
 		this.tabsheetPanel.setContent(tabsheet);
 	}
@@ -563,6 +559,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
  		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
  		layout.addComponent(roleManagementLabel, 0, 0);
 		
+ 		filtersPopup.addPopupVisibilityListener(new PopupView.PopupVisibilityListener()
+		{		
+			@Override
+			public void popupVisibilityChange(PopupVisibilityEvent event)
+			{
+				if (!event.isPopupVisible()) 
+				{
+		           	if(currentTab != null)
+		           	{
+		           		currentTab.applyFilter();
+		           	}
+		        }
+			}
+		});
+ 		
 		layout.addComponent(filtersPopup);
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
