@@ -53,6 +53,7 @@ import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -63,14 +64,8 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
@@ -81,13 +76,11 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
@@ -103,8 +96,8 @@ public class ExclusionsTab extends TopologyTab
 	
 	private Table exclusionsTable;
 	
-	private Table exclusionModules = new Table("Modules");
-	private Table exclusionFlows = new Table("Flows");
+	private Table modules = new Table("Modules");
+	private Table flows = new Table("Flows");
 	
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -116,12 +109,12 @@ public class ExclusionsTab extends TopologyTab
 	
 	private ErrorReportingService errorReportingService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	
 	
 	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
 	{
 		this.errorReportingService = errorReportingService;
 		this.exclusionManagementService = exclusionManagementService;
@@ -130,7 +123,7 @@ public class ExclusionsTab extends TopologyTab
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
-	public Layout createLayout()
+	public void createLayout()
 	{
 		this.exclusionsTable = new Table();
 		this.exclusionsTable.setSizeFull();
@@ -176,133 +169,22 @@ public class ExclusionsTab extends TopologyTab
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	exclusionModules.removeAllItems();
-            	exclusionFlows.removeAllItems();
+            	modules.removeAllItems();
+            	flows.removeAllItems();
             }
         });
 
 		GridLayout layout = new GridLayout(1, 6);
 		layout.setMargin(false);
 		layout.setHeight(270 , Unit.PIXELS);
-		
+				
+		super.initialiseFilterTables();
+
 		GridLayout listSelectLayout = new GridLayout(2, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
-		
-		exclusionModules.setIcon(VaadinIcons.ARCHIVE);
-		exclusionModules.addContainerProperty("Module Name", String.class,  null);
-		exclusionModules.addContainerProperty("", Button.class,  null);
-		exclusionModules.setSizeFull();
-		exclusionModules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		exclusionModules.setDragMode(TableDragMode.ROW);
-		exclusionModules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	exclusionModules.removeItem(module);
-			            }
-			        });
-					
-					exclusionModules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	exclusionFlows.removeItem(flow);
-				            }
-				        });
-						
-						exclusionFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(exclusionModules, 0, 0);
-		
-		exclusionFlows.setIcon(VaadinIcons.AUTOMATION);
-		exclusionFlows.addContainerProperty("Flow Name", String.class,  null);
-		exclusionFlows.addContainerProperty("", Button.class,  null);
-		exclusionFlows.setSizeFull();
-		exclusionFlows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		exclusionFlows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-				
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	exclusionFlows.removeItem(flow);
-			            }
-			        });
-					
-					exclusionFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(exclusionFlows, 1, 0);
+		listSelectLayout.addComponent(super.modules, 0, 0);
+		listSelectLayout.addComponent(super.flows, 1, 0);
 				
 		GridLayout dateSelectLayout = new GridLayout(2, 1);
 
@@ -420,7 +302,8 @@ public class ExclusionsTab extends TopologyTab
 		wrapper.setComponentAlignment(filterButtonLayout, Alignment.MIDDLE_RIGHT);
 		wrapper.addComponent(vSplitPanel);
 		
-		return wrapper;
+		this.addComponent(wrapper);
+		this.setSizeFull();
 	}
 	
 	public void refreshExcludedEventsTable()
@@ -429,10 +312,10 @@ public class ExclusionsTab extends TopologyTab
 
     	ArrayList<String> modulesNames = null;
     	
-    	if(exclusionModules.getItemIds().size() > 0)
+    	if(modules.getItemIds().size() > 0)
     	{
         	modulesNames = new ArrayList<String>();
-        	for(Object module: exclusionModules.getItemIds())
+        	for(Object module: modules.getItemIds())
         	{
         		modulesNames.add(((Module)module).getName());
         	}
@@ -440,10 +323,10 @@ public class ExclusionsTab extends TopologyTab
     	
     	ArrayList<String> flowNames = null;
     	
-    	if(exclusionFlows.getItemIds().size() > 0)
+    	if(flows.getItemIds().size() > 0)
     	{
     		flowNames = new ArrayList<String>();
-    		for(Object flow: exclusionFlows.getItemIds())
+    		for(Object flow: flows.getItemIds())
         	{
         		flowNames.add(((Flow)flow).getName());
         	}

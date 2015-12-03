@@ -38,52 +38,52 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
-
-import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.exclusion.model.ExclusionEvent;
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.hospital.service.HospitalManagementService;
-import org.ikasan.topology.service.TopologyService;
-
-import com.vaadin.annotations.Theme;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.UI;
+package org.ikasan.hospital.model;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-@Theme("dashboard")
-public class ExcludedEventPopup extends UI
+public class ModuleActionedExclusionCount
 {
-	/* (non-Javadoc)
-	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
+	private String moduleName;
+	private Long count;
+	
+	/**
+	 * @param moduleName
+	 * @param count
 	 */
-	@Override
-	protected void init(VaadinRequest request)
-	{		
-		ExclusionEvent exclusionEvent 
-		 	= (ExclusionEvent)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEvent");
-		ErrorOccurrence errorOccurrence
-		 	= (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
-		ExclusionEventAction exclusionEventAction
-	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
-		
-		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService
- 			= (HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
- 		
-		TopologyService topologyService
- 			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
-	        
-		 ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, errorOccurrence, exclusionEventAction,
-					hospitalManagementService,  topologyService);
-		
-		this.setContent(panel);
+	public ModuleActionedExclusionCount(String moduleName, Long count)
+	{
+		super();
+		this.moduleName = moduleName;
+		this.count = count;
 	}
 
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName()
+	{
+		return moduleName;
+	}
+
+	/**
+	 * @return the count
+	 */
+	public Long getCount()
+	{
+		return count;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ModuleErrorCount [moduleName=" + moduleName + ", count="
+				+ count + "]";
+	}
 }

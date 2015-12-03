@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 
 
 /**
@@ -78,4 +79,12 @@ public interface HospitalDao
 	 * @return
 	 */
 	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
+	
+    /**
+     * 
+     * @param moduleName
+     * @return
+     */
+    public Long getNumberOfModuleActionedExclusions(String moduleName, Date startDate, Date endDate);
+  
 }

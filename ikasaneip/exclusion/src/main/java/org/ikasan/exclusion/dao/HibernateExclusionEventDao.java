@@ -45,8 +45,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -175,5 +178,36 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 		criteria.addOrder(Order.desc("timestamp"));	
 		
 		return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNumberOfModuleActionedExclusions(java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public Long getNumberOfModuleActionedExclusions(String moduleName,
+			Date startDate, Date endDate)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+		
+		if(moduleName != null)
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+		
+		
+		criteria.setProjection(Projections.projectionList()
+		                    .add(Projections.count("moduleName")));
+		
+		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 }

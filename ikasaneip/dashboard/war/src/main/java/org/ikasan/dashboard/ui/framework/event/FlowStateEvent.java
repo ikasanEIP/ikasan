@@ -40,7 +40,7 @@
  */
 package org.ikasan.dashboard.ui.framework.event;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 
@@ -49,12 +49,12 @@ import java.util.HashMap;
  */
 public class FlowStateEvent
 {
-	private HashMap<String, String> flowStateMap;
+	private ConcurrentHashMap<String, String> flowStateMap;
 
 	/**
 	 * @param flowStateMap
 	 */
-	public FlowStateEvent(HashMap<String, String> flowStateMap)
+	public FlowStateEvent(ConcurrentHashMap<String, String> flowStateMap)
 	{
 		super();
 		this.flowStateMap = flowStateMap;
@@ -63,7 +63,7 @@ public class FlowStateEvent
 	/**
 	 * @return the flowStateMap
 	 */
-	public HashMap<String, String> getFlowStateMap()
+	public ConcurrentHashMap<String, String> getFlowStateMap()
 	{
 		return flowStateMap;
 	}
@@ -71,7 +71,7 @@ public class FlowStateEvent
 	/**
 	 * @param flowStateMap the flowStateMap to set
 	 */
-	public void setFlowStateMap(HashMap<String, String> flowStateMap)
+	public void setFlowStateMap(ConcurrentHashMap<String, String> flowStateMap)
 	{
 		this.flowStateMap = flowStateMap;
 	}
