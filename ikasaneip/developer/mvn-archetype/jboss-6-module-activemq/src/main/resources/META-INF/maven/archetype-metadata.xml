@@ -37,29 +37,36 @@
  ====================================================================
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+                      name="jboss6-module-activemq-maven-plugin" partial="true">
 
-    <modelVersion>4.0.0</modelVersion>
+    <requiredProperties>
+        <requiredProperty key="buildParentGroupId">
+            <defaultValue>${groupId}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="buildParentArtifactId">
+            <defaultValue>esb-build</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="buildParentVersion">
+            <defaultValue>1.0.0-SNAPSHOT</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="groupId">
+            <defaultValue>org.ikasan</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="artifactId">
+            <defaultValue>jboss-activemq-module</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="version">
+            <defaultValue>1.0.0-SNAPSHOT</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-developer</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
-    </parent>
+    <fileSets>
+        <fileSet filtered="true" packaged="false">
+            <directory></directory>
+        </fileSet>
+    </fileSets>
 
-    <artifactId>ikasan-mvn-archetype</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Platform Developer Maven Archetypes</name>
-
-    <modules>
-        <module>ikasan-build-parent</module>
-        <module>ikasan-jboss-6-filesystem-im</module>
-        <module>ikasan-jboss-6-jms-im</module>
-        <module>ikasan-jboss-6-db-im</module>
-        <module>ikasan-jboss-6-sftp-im</module>
-        <module>jboss-6-module-activemq</module>
-        <module>ikasan-jboss-6-activemq-im</module>
-        <module>ikasan-rt-conf-jboss-6</module>
-    </modules>
-
-</project>
+</archetype-descriptor>
