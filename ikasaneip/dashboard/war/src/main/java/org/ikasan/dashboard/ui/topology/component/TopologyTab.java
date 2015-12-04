@@ -112,6 +112,12 @@ public abstract class TopologyTab extends VerticalLayout
 		}
 	}
 	
+	public void resetSearchDates()
+	{
+		errorFromDate.setValue(this.getMidnightToday());
+		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
+	}
+	
 	public void applyFilter()
 	{
 		FilterMap filterMap = (FilterMap)VaadinService.getCurrentRequest().getWrappedSession()
