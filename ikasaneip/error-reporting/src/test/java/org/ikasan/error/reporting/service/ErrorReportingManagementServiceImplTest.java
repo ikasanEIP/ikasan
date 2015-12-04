@@ -54,7 +54,6 @@ import org.ikasan.error.reporting.model.Note;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -105,7 +104,7 @@ public class ErrorReportingManagementServiceImplTest
     	
     }
 
-	@Ignore
+
     @Test
     @DirtiesContext
     public void test_close_error_occurrences()
