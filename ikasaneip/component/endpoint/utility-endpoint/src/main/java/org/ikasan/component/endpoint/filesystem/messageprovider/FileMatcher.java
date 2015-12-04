@@ -66,14 +66,19 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     /** depth of the directory tree to walk */
     private int directoryDepth;
 
+    /** whether to ignore changes to the file system whilst we are scanning */
+    private boolean ignoreFileRenameWhilstScanning;
+
     /**
      * Constructor
+     * @param ignoreFileRenameWhilstScanning
      * @param parentPath
      * @param pattern
      * @param endpointListener
      */
-    FileMatcher(String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
+    FileMatcher(boolean ignoreFileRenameWhilstScanning, String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
     {
+        this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
         this.parentPath = parentPath;
         if(parentPath == null)
         {
@@ -139,6 +144,11 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exception)
     {
+        if(ignoreFileRenameWhilstScanning && exception instanceof NoSuchFileException)
+        {
+            return FileVisitResult.CONTINUE;
+        }
+
         this.endpointListener.onException(exception);
         return FileVisitResult.TERMINATE;
     }
