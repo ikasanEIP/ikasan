@@ -1,303 +1,309 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-dashboard-war</artifactId>
-    <packaging>war</packaging>
-    <version>1.1.0-SNAPSHOT</version>
-    <name>Ikasan Dashboard</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.ikasan</groupId>
+	<artifactId>ikasan-dashboard-war</artifactId>
+	<packaging>war</packaging>
+	<version>1.1.0-SNAPSHOT</version>
+	<name>Ikasan Dashboard</name>
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-dashboard</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>org.ikasan</groupId>
+		<artifactId>ikasan-dashboard</artifactId>
+		<version>1.1.0-SNAPSHOT</version>
+	</parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.plugin.version>${version.vaadin}</vaadin.plugin.version>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<vaadin.plugin.version>${version.vaadin}</vaadin.plugin.version>
+	</properties>
 
-    <repositories>
-        <repository>
-            <id>vaadin-addons</id>
-            <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
-        </repository>
-        <repository>
-            <id>vaadin-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+   			<id>vaadin-addons</id>
+   			<url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+		</repository>
+		<repository>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	
+	<dependencies>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>vaadin-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-server</artifactId>
+		</dependency>
 
-    <dependencies>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-server</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-push</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-themes</artifactId>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>aceeditor</artifactId>
+		</dependency>
+		
+		<!-- dependency>
+		   <groupId>org.vaadin.highcharts</groupId>
+		   <artifactId>highcharts</artifactId>
+		   <version>1.1</version>
+		</dependency -->
+		
+		<dependency>
+		   <groupId>org.vaadin.icons</groupId>
+		   <artifactId>vaadin-icons</artifactId>
+		   <version>1.0.1</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>graph-explorer</artifactId>
+		   <version>0.7.0</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>contextmenu</artifactId>
+		   <version>4.5</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>filteringtable</artifactId>
+		   <version>0.9.13.v7</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>com.github.vaadin4qbanos</groupId>
+		   <artifactId>jsclipboard</artifactId>
+		   <version>1.0.2</version>
+		</dependency>
+			
+		
+		<!-- dependency>
+		  <groupId>com.googlecode.wicked-charts</groupId>
+		  <artifactId>wicked-charts-highcharts</artifactId>
+		  <version>1.5.0</version>
+		  <exclusions>
+		     <exclusion>
+		       	<groupId>com.fasterxml.jackson.core</groupId>
+            	<artifactId>jackson-core</artifactId>
+		     </exclusion>
+		     <exclusion>
+		       	<groupId>com.fasterxml.jackson.core</groupId>
+            	<artifactId>jackson-databind</artifactId>
+		     </exclusion>
+			 <exclusion>
+		       	<groupId>com.fasterxml.jackson.core</groupId>
+            	<artifactId>jackson-annotations</artifactId>
+		     </exclusion>
+		   </exclusions>
+		</dependency -->
+	
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>ru.xpoft.vaadin</groupId>
+			<artifactId>spring-vaadin-integration</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-mapping</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-topology</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client-compiled</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-security</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-setup</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-system-event</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-push</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-themes</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>aceeditor</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.icons</groupId>
-            <artifactId>vaadin-icons</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>graph-explorer</artifactId>
-            <version>0.7.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>contextmenu</artifactId>
-            <version>4.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>filteringtable</artifactId>
-            <version>0.9.13.v7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.vaadin4qbanos</groupId>
-            <artifactId>jsclipboard</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.xpoft.vaadin</groupId>
-            <artifactId>spring-vaadin-integration</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-        </dependency>
-
-        <dependency>
+		<dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-mapping</artifactId>
+            <artifactId>ikasan-eip</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-topology</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-setup</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-system-event</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-mapping</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-topology</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-setup</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-system-event</artifactId>
-        </dependency>
-
-        <dependency>
+ 
+ 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-hospital</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
         </dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-error-reporting-service</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-exclusion-service</artifactId>
+		</dependency>
+		
+		<!-- dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-serialiser</artifactId>
+		</dependency -->
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-error-reporting-service</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.yaml</groupId>
+		    <artifactId>snakeyaml</artifactId>
+		    <version>1.13</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>com.zybnet</groupId>
+		   <artifactId>vaadin-autocomplete</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-exclusion-service</artifactId>
-        </dependency>
-
-        <!-- dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-serialiser</artifactId>
-        </dependency -->
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-ldap</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.13</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.zybnet</groupId>
-            <artifactId>vaadin-autocomplete</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
 
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
         </dependency>
-
+                
         <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-processing</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-processing</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
         </dependency>
-
+        
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-spring3</artifactId>
@@ -316,201 +322,154 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
         </dependency>
+        
+        <dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+        
+        <dependency>
+			<groupId>org.xwiki.rendering</groupId>
+			<artifactId>xwiki-rendering-syntax-xwiki21</artifactId>
+			<version>4.1.3</version>
+	    </dependency>
+	    
+	    <dependency>
+			<groupId>org.xwiki.commons</groupId>
+			<artifactId>xwiki-commons-component-default</artifactId>
+			<version>4.1.3</version>
+	    </dependency>
+	    
+	    <dependency>
+		      <groupId>org.xwiki.rendering</groupId>
+		      <artifactId>xwiki-rendering-macro-toc</artifactId>
+		      <version>4.1.3</version>
+	    </dependency>
+	    <dependency>
+		      <groupId>org.xwiki.rendering</groupId>
+		      <artifactId>xwiki-rendering-macro-html</artifactId>
+		      <version>4.1.3</version>
+	    </dependency>
+		
+		<!-- Test dependencies-->
+		
+		<dependency>
+		   <groupId>com.vaadin</groupId>
+		   <artifactId>vaadin-testbench</artifactId>
+		   <scope>test</scope>
+		</dependency>
 
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.xwiki.rendering</groupId>
-            <artifactId>xwiki-rendering-syntax-xwiki21</artifactId>
-            <version>4.1.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.xwiki.commons</groupId>
-            <artifactId>xwiki-commons-component-default</artifactId>
-            <version>4.1.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.xwiki.rendering</groupId>
-            <artifactId>xwiki-rendering-macro-toc</artifactId>
-            <version>4.1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xwiki.rendering</groupId>
-            <artifactId>xwiki-rendering-macro-html</artifactId>
-            <version>4.1.3</version>
-        </dependency>
-
-        <!-- Test dependencies-->
-
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-junit4</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- required for testing daos using in memory dbs -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-error-reporting</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-serialiser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.8.13</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-configuration</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-search</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-wiretap</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-module</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-exclusion</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-hospital</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-
-    </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <!-- As we are doing "inplace" GWT compilation, ensure the widgetset -->
-            <!-- directory is cleaned properly -->
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/webapp/VAADIN/widgetsets</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <archive>
-                        <manifestEntries>
-                            <Dependencies>org.ikasan.${dashed.project.version}.configuration</Dependencies>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- required for testing daos using in memory dbs -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!-- As we are doing "inplace" GWT compilation, ensure the widgetset -->
+			<!-- directory is cleaned properly -->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>src/main/webapp/VAADIN/widgetsets</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<archive>
+						<manifestEntries>
+							<Dependencies>org.ikasan.${dashed.project.version}.configuration</Dependencies>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-maven-plugin</artifactId>
                 <version>${vaadin.plugin.version}</version>
                 <configuration>
                     <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
-
+                    
                     <webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets
                     </webappDirectory>
                     <hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets
                     </hostedWebapp>
                     <noServer>true</noServer>
-
+                    
                     <draftCompile>false</draftCompile>
                     <compileReport>true</compileReport>
                     <style>OBF</style>
@@ -529,43 +488,43 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings
-                    only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.vaadin</groupId>
-                                        <artifactId>
-                                            vaadin-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [7.1.10,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>resources</goal>
-                                            <goal>compile</goal>
-                                            <goal>update-theme</goal>
-                                            <goal>compile-theme</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.vaadin</groupId>
+										<artifactId>
+											vaadin-maven-plugin
+										</artifactId>
+										<versionRange>
+											[7.1.10,)
+										</versionRange>
+										<goals>
+											<goal>resources</goal>
+											<goal>compile</goal>
+											<goal>update-theme</goal>
+											<goal>compile-theme</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>
