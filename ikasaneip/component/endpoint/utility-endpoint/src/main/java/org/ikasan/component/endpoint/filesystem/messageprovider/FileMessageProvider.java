@@ -182,7 +182,7 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         int lastIndexOffullPath = fullyQualifiedFilename.lastIndexOf(FQN_PATH_SEPARATOR);
         String path = fullyQualifiedFilename.substring(0,lastIndexOffullPath);
         String name = fullyQualifiedFilename.substring(++lastIndexOffullPath);
-        return new FileMatcher(path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
+        return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
     }
 
     @Override
