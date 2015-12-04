@@ -355,6 +355,15 @@ public class ErrorOccurrenceViewPanel extends Panel
 	
 	protected String buildErrorUrl()
 	{
+		String dashboardBaseUrl = this.platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
+		
+		if(dashboardBaseUrl == null || dashboardBaseUrl.length() == 0)
+		{
+			Notification.show("A value for dashboardBaseUrl has not been configured in the Platform Configuration. " +
+					"Cannot display an error URL for this error!", Type.WARNING_MESSAGE);
+			return "";
+		}
+		
 		StringBuffer dashboardUrl = new StringBuffer(this.platformConfigurationService.getConfigurationValue("dashboardBaseUrl"));
 		
 		dashboardUrl.append("/?errorUri=").append(this.errorOccurrence.getUri()).append("#!error-occurrence");
