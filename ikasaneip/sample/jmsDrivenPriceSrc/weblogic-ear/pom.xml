@@ -1,66 +1,64 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-  <!-- standard parent -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!-- standard parent -->
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-jmsDrivenSrc-parent</artifactId>
         <version>1.0.0-rc4-SNAPSHOT</version>
     </parent>
 
-	<artifactId>sample-wls-jmsDrivenPriceSrc-ear</artifactId>
-	<packaging>ear</packaging>
-	<name>Sample JMS Weblogic configured EAR</name>
+    <artifactId>sample-wls-jmsDrivenPriceSrc-ear</artifactId>
+    <packaging>ear</packaging>
+    <name>Sample JMS Weblogic configured EAR</name>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-ear-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<filtering>false</filtering>
-					<defaultJavaBundleDir>/APP-INF/lib</defaultJavaBundleDir>
-					<modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <filtering>false</filtering>
+                    <defaultJavaBundleDir>/APP-INF/lib</defaultJavaBundleDir>
+                    <modules>
                         <webModule>
                             <groupId>org.ikasan</groupId>
                             <artifactId>sample-jmsDrivenPriceSrc-war</artifactId>
                             <contextRoot>/sample-jmsDrivenPriceSrc</contextRoot>
                         </webModule>
-					</modules>
-				</configuration>
-			</plugin>
-              <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-javadoc-plugin</artifactId>
-                     <version>2.8.1</version>
-                     <executions>
-                           <execution>
-                                  <id>attach-javadocs</id>
-                                  <goals>
-                                         <goal>jar</goal>
-                                  </goals>
-                           </execution>
-                     </executions>
-              </plugin>
-              <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-source-plugin</artifactId>
-                     <version>2.1.2</version>
-                     <executions>
-                           <execution>
-                                  <id>attach-sources</id>
-                                  <goals>
-                                         <goal>jar</goal>
-                                  </goals>
-                           </execution>
-                     </executions>
-              </plugin>
-		</plugins>
-	</build>
+                    </modules>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
-    
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-jmsDrivenPriceSrc</artifactId>
@@ -84,12 +82,12 @@
             <artifactId>ikasan-builder-spring</artifactId>
         </dependency>
 
-       <dependency>
+        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
         </dependency>
- 
-         <dependency>
+
+        <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
         </dependency>
@@ -99,5 +97,5 @@
             <artifactId>hsqldb</artifactId>
         </dependency>
 
-	</dependencies>
+    </dependencies>
 </project>

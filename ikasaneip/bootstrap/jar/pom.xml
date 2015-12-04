@@ -43,26 +43,27 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.ikasan</groupId>
-		<artifactId>bootstrap-parent</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>bootstrap-parent</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>ikasan-bootstrap</artifactId>
-	<packaging>jar</packaging>
-	<name>Ikasan Bootstrap Source Flow JAR</name>
+    <artifactId>ikasan-bootstrap</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Bootstrap Source Flow JAR</name>
 
-	<dependencies>
-		<!-- specs -->
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-uber-spec</artifactId>
+    <dependencies>
+        <!-- specs -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
             <scope>provided</scope>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -70,47 +71,47 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
             <scope>provided</scope>
-		</dependency>
+        </dependency>
 
-		<dependency>
-			<groupId>geronimo-spec</groupId>
-			<artifactId>geronimo-spec-j2ee</artifactId>
-				<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <scope>provided</scope>
         </dependency>
-                        
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-            <scope>provided</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
             <scope>provided</scope>
-		</dependency>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -123,6 +124,6 @@
             <artifactId>spring-web</artifactId>
             <scope>provided</scope>
         </dependency>
-        
-	</dependencies>
+
+    </dependencies>
 </project>
