@@ -58,7 +58,6 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -292,7 +291,6 @@ public class ConfiguredResourceConfigurationServiceTest
     /**
      *  IKASAN-719: ConfiguredResourceConfigurationService fails on update for non persisted configuration
      */
-    @Ignore
     @Test
     @DirtiesContext
     public void test_configurationService_update_of_a_dynamic_configuration_that_hasnt_been_saved_previously()
@@ -334,7 +332,6 @@ public class ConfiguredResourceConfigurationServiceTest
     /**
      *  IKASAN-719: ConfiguredResourceConfigurationService fails on update for non persisted configuration
      */
-    @Ignore
     @Test
     @DirtiesContext
     public void test_exception_masked_field_not_string()
@@ -375,7 +372,6 @@ public class ConfiguredResourceConfigurationServiceTest
     /**
      *  IKASAN-924: ConfiguredResoureConfigurationService failing on update of dynamic configurations containing a map property
      */
-    @Ignore
     @Test
     @DirtiesContext
     public void test_configurationService_update_of_a_dynamic_configuration_with_map_property()
