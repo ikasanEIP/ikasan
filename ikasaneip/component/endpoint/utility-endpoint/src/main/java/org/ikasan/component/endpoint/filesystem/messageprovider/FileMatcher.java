@@ -90,14 +90,20 @@ public class FileMatcher extends SimpleFileVisitor<Path>
      * Compares the regexp against the file/directory name
      * @param path
      */
-    void match(Path path)
+    FileVisitResult match(Path path)
     {
         Path name = path.getFileName();
+        if(!endpointListener.isActive())
+        {
+            return FileVisitResult.TERMINATE;
+        }
 
         if (name != null && matcher.matches(name))
         {
             this.endpointListener.onMessage(path.toString());
         }
+
+        return FileVisitResult.CONTINUE;
     }
 
     /**
@@ -109,8 +115,7 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
     {
-        match(file);
-        return FileVisitResult.CONTINUE;
+        return match(file);
     }
 
     /**
@@ -122,8 +127,7 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
     {
-        match(dir);
-        return FileVisitResult.CONTINUE;
+        return match(dir);
     }
 
     /**
