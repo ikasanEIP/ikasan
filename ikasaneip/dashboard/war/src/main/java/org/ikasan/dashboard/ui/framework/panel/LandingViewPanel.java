@@ -52,6 +52,7 @@ import org.ikasan.dashboard.ui.dashboard.chart.DashboardChart;
 import org.ikasan.dashboard.ui.framework.component.EventExclusionsTable;
 import org.ikasan.dashboard.ui.framework.component.FlowStateTable;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.dashboard.ui.topology.util.FilterUtil;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -85,6 +86,7 @@ import com.vaadin.addon.charts.model.style.SolidColor;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Notification;
@@ -321,14 +323,14 @@ public class LandingViewPanel extends Panel implements View
         
         conf.addSeries(unactionedErrorsSeries);
         
-        PlotOptionsColumn  greenPlot = new PlotOptionsColumn();
-        greenPlot.setColor(SolidColor.LIGHTGREEN);
-        greenPlot.setBorderWidth(0);
-
-        ListSeries actionedErrorsSeries = new ListSeries("Errors Actioned", actionedTotals);
-        actionedErrorsSeries.setPlotOptions(greenPlot);
-        
-        conf.addSeries(actionedErrorsSeries);
+//        PlotOptionsColumn  greenPlot = new PlotOptionsColumn();
+//        greenPlot.setColor(SolidColor.LIGHTGREEN);
+//        greenPlot.setBorderWidth(0);
+//
+//        ListSeries actionedErrorsSeries = new ListSeries("Errors Actioned", actionedTotals);
+//        actionedErrorsSeries.setPlotOptions(greenPlot);
+//        
+//        conf.addSeries(actionedErrorsSeries);
 
         chart.drawChart(conf);
         
@@ -337,10 +339,9 @@ public class LandingViewPanel extends Panel implements View
             @Override
             public void onClick(PointClickEvent event) 
             {
-            	Notification.show("Clicked: " + event.getCategory());
-
             	Module module = moduleMap.get(event.getCategory());
-            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("module", module);
+            	VaadinSession.getCurrent().setAttribute("module", module);
+            	VaadinSession.getCurrent().setAttribute("tab", TopologyViewPanel.CATEGORISED_ERROR_TAB);
             	UI.getCurrent().getNavigator().navigateTo("topologyView");
             }
         });
@@ -493,14 +494,14 @@ public class LandingViewPanel extends Panel implements View
         
         conf.addSeries(unactionedExclusionsSeries);
         
-        PlotOptionsColumn greenPlot = new PlotOptionsColumn();
-        greenPlot.setColor(SolidColor.LIGHTGREEN);
-        greenPlot.setBorderWidth(0);
-
-        ListSeries actionedExclusionsSeries = new ListSeries("Actioned Excluded Messages", actionedExcludedTotals);
-        actionedExclusionsSeries.setPlotOptions(greenPlot);
-        
-        conf.addSeries(actionedExclusionsSeries);
+//        PlotOptionsColumn greenPlot = new PlotOptionsColumn();
+//        greenPlot.setColor(SolidColor.LIGHTGREEN);
+//        greenPlot.setBorderWidth(0);
+//
+//        ListSeries actionedExclusionsSeries = new ListSeries("Actioned Excluded Messages", actionedExcludedTotals);
+//        actionedExclusionsSeries.setPlotOptions(greenPlot);
+//        
+//        conf.addSeries(actionedExclusionsSeries);
         
         chart.drawChart(conf);
         
@@ -509,10 +510,9 @@ public class LandingViewPanel extends Panel implements View
             @Override
             public void onClick(PointClickEvent event) 
             {
-            	Notification.show("Clicked: " + event.getCategory());
-
             	Module module = moduleMap.get(event.getCategory());
-            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("module", module);
+            	VaadinSession.getCurrent().setAttribute("module", module);
+            	VaadinSession.getCurrent().setAttribute("tab", TopologyViewPanel.CATEGORISED_ERROR_TAB);
             	UI.getCurrent().getNavigator().navigateTo("topologyView");
             }
         });

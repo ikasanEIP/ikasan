@@ -402,4 +402,14 @@ public class ActionedExclusionTab extends TopologyTab
 		this.addComponent(wrapper);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
+	 */
+	@Override
+	public void search()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

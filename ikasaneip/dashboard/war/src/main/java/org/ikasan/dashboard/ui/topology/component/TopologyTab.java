@@ -63,6 +63,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
@@ -82,7 +83,34 @@ public abstract class TopologyTab extends VerticalLayout
 	protected Table flows = new Table("Flows");
 	protected Table components = new Table("Components");
 	
+	protected PopupDateField errorFromDate;
+	protected PopupDateField errorToDate;
+	
 	public abstract void createLayout();
+	
+	public abstract void search();
+	
+	public void applyModuleFilter(Module module)
+	{
+		modules.removeAllItems();
+		flows.removeAllItems();
+		components.removeAllItems();
+		
+		errorFromDate.setValue(null);
+		errorToDate.setValue(null);
+		
+		this.addModule(module);
+		
+		for(Flow flow: module.getFlows())
+		{
+			this.addFlow(flow);
+			
+			for(Component component: flow.getComponents())
+			{
+				this.addComponent(component);
+			}
+		}
+	}
 	
 	public void applyFilter()
 	{
