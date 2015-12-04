@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="${flowName}Consumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        <property name="messageProvider" ref="jmsListener"/>
+        <property name="configuration" ref="${flowName}ConsumerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${flowName}Consumer"/>
+    </bean>
+
+    <bean id="jmsListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
+        <property name="messageListener" ref="${flowName}Consumer" />
+        <property name="exceptionListener" ref="${flowName}Consumer" />
+        <property name="errorHandler" ref="${flowName}Consumer" />
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+
+    <bean id="${flowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+        <property name="connectionFactoryName" value="java:/ra/activeMQ/ActiveMQConnectionFactory"/>
+        <property name="destinationJndiName" value="java:/activemq/topic/topic.1"/>
+        <property name="destinationJndiProperties">
+            <map>
+                <entry key="java.naming.provider.url" value="tcp://localhost:61616"/>
+                <entry key="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+            </map>
+        </property>
+        <property name="sessionTransacted" value="true"/>
+        <property name="pubSubDomain" value="true"/>
+        <property name="durable" value="true"/>
+        <property name="durableSubscriptionName" value="${artifactId}-${flowName}Consumer"/>
+        <property name="autoContentConversion" value="true"/>
+    </bean>
+
+    <bean id="${flowName}Producer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+        <constructor-arg>
+            <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
+        </constructor-arg>
+        <property name="configuration" ref="${flowName}ProducerConfiguration"/>
+        <property name="configuredResourceId" value="${artifactId}-${flowName}ProducerConfiguration"/>
+    </bean>
+
+    <bean id="${flowName}ProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+        <property name="connectionFactoryName" value="java:/ra/activeMQ/ActiveMQConnectionFactory"/>
+        <property name="destinationJndiName" value="java:/activemq/topic/topic.2"/>
+        <property name="destinationJndiProperties">
+            <map>
+                <entry key="java.naming.provider.url" value="tcp://localhost:61616"/>
+                <entry key="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+            </map>
+        </property>
+        <property name="sessionTransacted" value="true"/>
+        <property name="pubSubDomain" value="true"/>
+        <property name="messageIdEnabled" value="true"/>
+        <property name="deliveryPersistent" value="true"/>
+    </bean>
+
+</beans>

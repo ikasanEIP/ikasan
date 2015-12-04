@@ -1057,13 +1057,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
     	String tab = (String)VaadinSession.getCurrent().getAttribute("tab");
     	
-    	logger.info("Got tab: " + tab);
+    	logger.debug("Got tab: " + tab);
     	
     	if(tab != null)
     	{
 	    	AbstractComponent tabComponent = this.tabComponentMap.get(tab);
 	    	
-	    	logger.info("Got tabComponent: " + tabComponent);
+	    	logger.debug("Got tabComponent: " + tabComponent);
 	    	
 	    	if(tabComponent != null)
 	    	{
@@ -1076,6 +1076,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    		{
 	    			((TopologyTab)tabComponent).applyModuleFilter(module);
 	    			((TopologyTab)tabComponent).search();
+	    			((TopologyTab)tabComponent).resetSearchDates();
+	    			((TopologyTab)tabComponent).applyFilter();
 	    		}
 	    		
 	    		this.tabsheet.setSelectedTab(tabComponent);

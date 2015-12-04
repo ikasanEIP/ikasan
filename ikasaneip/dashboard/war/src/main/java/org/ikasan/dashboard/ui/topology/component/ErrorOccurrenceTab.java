@@ -537,6 +537,13 @@ public class ErrorOccurrenceTab extends TopologyTab
             {	
             	String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
             	
+            	if(dashboardUrl == null || dashboardUrl.length() == 0)
+        		{
+        			Notification.show("A value for dashboardBaseUrl has not been configured in the Platform Configuration. " +
+        					"Cannot display the error URLs!", Type.WARNING_MESSAGE);
+        			return;
+        		}
+            	
 		    	StringBuffer sb = new StringBuffer();
 		    	
 		    	for(ErrorOccurrence errorOccurrence: (List<ErrorOccurrence>)container.getItemIds())
@@ -716,6 +723,12 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	String dashboardUrl = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
     	
+    	if(dashboardUrl == null || dashboardUrl.length() == 0)
+		{
+			Notification.show("A value for dashboardBaseUrl has not been configured in the Platform Configuration. " +
+					"Cannot include the error URLs in the downloaded CSV!", Type.WARNING_MESSAGE);
+		}
+    	
     	for(Object errorOccurrence: container.getItemIds())
     	{
     		Item item = container.getItem(errorOccurrence);
@@ -744,7 +757,11 @@ public class ErrorOccurrenceTab extends TopologyTab
 	    		}
 	    	}
     		
-    		sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrence)errorOccurrence)).append("\"");
+    		if(dashboardUrl != null)
+    		{
+    			sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrence)errorOccurrence)).append("\"");
+    		}
+    		
     		sb.append("\r\n");
     	}
     	
