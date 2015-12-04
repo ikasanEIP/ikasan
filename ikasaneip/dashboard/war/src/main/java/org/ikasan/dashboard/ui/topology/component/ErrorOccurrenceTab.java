@@ -935,4 +935,14 @@ public class ErrorOccurrenceTab extends TopologyTab
 		
 		return dashboardUrl.toString();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
+	 */
+	@Override
+	public void search()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

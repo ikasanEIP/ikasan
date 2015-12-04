@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -123,6 +124,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -171,6 +173,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     
     /** paused state string constant */
     private static String PAUSED = "paused";
+    
+    public static final String BUSINESS_STREAM_TAB = "businessStream";
+    public static final String WIRETAP_TAB = "wiretap";
+    public static final String ERROR_OCCURRENCE_TAB = "errorOccurrence";
+    public static final String ACTIONED_ERROR_TAB = "actionErrorOccurrence";
+    public static final String EVENT_EXCLUSION_TAB = "eventExclusion";
+    public static final String ACTIONED_EVENT_EXCLUSION_TAB = "actionedEventExclusion";
+    public static final String CATEGORISED_ERROR_TAB = "categorisedError";
     
 	/**
 	 * 
@@ -246,6 +256,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private PopupView filtersPopup = new PopupView("Filters", popupViewLayout);
 	
 	private TopologyTab currentTab;
+	
+	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -380,6 +392,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			businessStreamTab.createLayout();
 			
 			tabsheet.addTab(businessStreamTab, "Business Stream");
+			
+			tabComponentMap.put(BUSINESS_STREAM_TAB, businessStreamTab);
     	}
     	
     	if(authentication != null 
@@ -391,6 +405,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
        		wiretapTab.createLayout();
 			
     		tabsheet.addTab(wiretapTab, "Wiretaps");
+    		
+    		tabComponentMap.put(WIRETAP_TAB, wiretapTab);
     	}
     	
     	if(authentication != null 
@@ -403,6 +419,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		errorOccurrenceTab.createLayout();
 			
     		tabsheet.addTab(errorOccurrenceTab, "Errors");
+    	
+    		tabComponentMap.put(ERROR_OCCURRENCE_TAB, errorOccurrenceTab);
     	}
     	
     	if(authentication != null 
@@ -415,19 +433,23 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		actionedErrorOccurrenceTab.createLayout();
     		
     		tabsheet.addTab(actionedErrorOccurrenceTab, "Actioned Errors");
+    		
+    		tabComponentMap.put(ACTIONED_ERROR_TAB, actionedErrorOccurrenceTab);
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
     	{
-    		final ExclusionsTab actionedExclusionsTab = new ExclusionsTab(this.errorReportingService, 
+    		final ExclusionsTab exclusionsTab = new ExclusionsTab(this.errorReportingService, 
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
     				this.treeViewBusinessStreamCombo);
     		
-    		actionedExclusionsTab.createLayout();
+    		exclusionsTab.createLayout();
     		
-    		tabsheet.addTab(actionedExclusionsTab, "Exclusions");
+    		tabsheet.addTab(exclusionsTab, "Exclusions");
+    		
+    		tabComponentMap.put(EVENT_EXCLUSION_TAB, exclusionsTab);
     	}
     	
     	if(authentication != null 
@@ -441,6 +463,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			actionedExclusionTab.createLayout();
 			
 			tabsheet.addTab(actionedExclusionTab, "Actioned Exclusions");
+			
+			tabComponentMap.put(ACTIONED_EVENT_EXCLUSION_TAB, actionedExclusionTab);
     	}
 		
     	if(authentication != null 
@@ -463,6 +487,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			categorisedErrorTab.createLayout();
 			
 			tabsheet.addTab(categorisedErrorTab, "Categorised Errors");
+			
+			tabComponentMap.put(CATEGORISED_ERROR_TAB, categorisedErrorTab);
     	}
     	
     	if(authentication != null 
@@ -1028,6 +1054,33 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.refreshTree();
 		
 		createFilterPopupContent();
+		
+    	String tab = (String)VaadinSession.getCurrent().getAttribute("tab");
+    	
+    	logger.info("Got tab: " + tab);
+    	
+    	if(tab != null)
+    	{
+	    	AbstractComponent tabComponent = this.tabComponentMap.get(tab);
+	    	
+	    	logger.info("Got tabComponent: " + tabComponent);
+	    	
+	    	if(tabComponent != null)
+	    	{
+	    		Module module = (Module)VaadinSession.getCurrent().getAttribute("module");
+	    		
+	    		VaadinSession.getCurrent().setAttribute("tab", null);
+	    		VaadinSession.getCurrent().setAttribute("module", null);
+	    		
+	    		if(tabComponent instanceof TopologyTab)
+	    		{
+	    			((TopologyTab)tabComponent).applyModuleFilter(module);
+	    			((TopologyTab)tabComponent).search();
+	    		}
+	    		
+	    		this.tabsheet.setSelectedTab(tabComponent);
+	    	}
+    	}
 	}
 	
 	protected void refreshTree()
