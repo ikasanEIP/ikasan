@@ -77,5 +77,7 @@
 		<property name="applicationSecurityDescriptionAttributeName" column="AppSecDescAttributeName" type="java.lang.String" not-null="false"/>
 		<property name="ldapUserDescriptionAttributeName" column="LdapUserDescAttributeName" type="java.lang.String" not-null="false"/>
 		<property name="memberofAttributeName" column="MemberofAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="userSynchronisationFilter" column="UserSynchronisationFilter" type="java.lang.String" not-null="false"/>
+		<property name="GroupSynchronisationFilter" column="GroupSynchronisationFilter" type="java.lang.String" not-null="false"/>
 	</class>
 </hibernate-mapping>

@@ -40,13 +40,18 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.component;
 
+import org.tepi.filtertable.FilterTable;
+
+import com.vaadin.ui.CustomTable;
+import com.vaadin.ui.Grid.CellReference;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Grid;
 
 /**
  * @author Ikasan Development Team
  *
  */
-public class IkasanSmallCellStyleGenerator implements Table.CellStyleGenerator
+public class IkasanSmallCellStyleGenerator implements FilterTable.CellStyleGenerator, Table.CellStyleGenerator, Grid.CellStyleGenerator
 {
 
     private static final long serialVersionUID = -7878494388136309726L;
@@ -59,4 +64,22 @@ public class IkasanSmallCellStyleGenerator implements Table.CellStyleGenerator
     {
         return "ikasan-small";
     }
+
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.CustomTable.CellStyleGenerator#getStyle(com.vaadin.ui.CustomTable, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public String getStyle(CustomTable source, Object itemId, Object propertyId)
+	{
+		return "ikasan-small";
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.Grid.CellStyleGenerator#getStyle(com.vaadin.ui.Grid.CellReference)
+	 */
+	@Override
+	public String getStyle(CellReference cellReference)
+	{
+		return "ikasan-small";
+	}
 }

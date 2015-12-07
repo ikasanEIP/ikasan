@@ -52,6 +52,7 @@ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.util.CommitHandler;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
@@ -64,6 +65,8 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.Page.UriFragmentChangedEvent;
+import com.vaadin.server.Page.UriFragmentChangedListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -79,7 +82,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Ikasan Development Team
  * 
  */
-public class NavigationPanel extends Panel implements ViewContext
+public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 {
 
 	private static final long serialVersionUID = 5649279357596506519L;
@@ -145,7 +148,7 @@ public class NavigationPanel extends Panel implements ViewContext
 	 * Helper method to initialise the object.
 	 */
 	protected void init()
-	{
+	{		 
 		logger.debug("Initialising navigation panel.");
 
 		this.setWidth(100, Unit.PERCENTAGE);
@@ -300,7 +303,7 @@ public class NavigationPanel extends Panel implements ViewContext
 		systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS, 
         		"User logging in: " + ikasanAuthentication.getName(), ikasanAuthentication.getName());
 
-		UI.getCurrent().getNavigator().navigateTo("landingView");
+//		UI.getCurrent().getNavigator().navigateTo("landingView");
 	}
 
 	/**

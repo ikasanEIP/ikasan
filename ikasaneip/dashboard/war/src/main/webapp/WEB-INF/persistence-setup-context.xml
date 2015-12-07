@@ -4,7 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/security 
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
@@ -14,6 +14,10 @@
 		<constructor-arg value="persistanceSetup"/>
         <constructor-arg>
             <list>
+            	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value=""/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
@@ -28,11 +32,14 @@
     </bean>
     
     <bean id="persistanceSetupPanel" class="org.ikasan.dashboard.ui.framework.panel.PersistanceSetupPanel" scope="session">
-    	<constructor-arg ref="persistenceServiceFactory"/>
+    	<constructor-arg ref="persistenceService"/>
     	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="authenticationService"/>
+		<constructor-arg ref="configurationService"/>
     </bean> 
 
 	<bean id="persistanceSetupComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
+
 </beans>

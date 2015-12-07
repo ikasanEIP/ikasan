@@ -42,10 +42,10 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.spec.component.endpoint.Broker;
-import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
@@ -62,6 +62,7 @@ public class BrokerFlowElementInvokerTest
     private Mockery mockery = new Mockery()
     {{
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
     }};
 
     private FlowEventListener flowEventListener = mockery.mock(FlowEventListener.class, "flowEventListener");
@@ -144,9 +145,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(broker));
                 exactly(1).of(broker).invoke(flowEvent);
                 will(returnValue(flowEvent));
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(flowEvent).setPayload(payload);
+                exactly(1).of(flowEvent).replace(flowEvent);
 
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(null));
@@ -162,9 +161,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(broker));
                 exactly(1).of(broker).invoke(flowEvent);
                 will(returnValue(flowEvent));
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(flowEvent).setPayload(payload);
+                exactly(1).of(flowEvent).replace(flowEvent);
 
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(null));

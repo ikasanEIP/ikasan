@@ -57,4 +57,14 @@ public interface AuthenticationService
      * @throws SecurityServiceException
      */
     public Authentication login(String username, String password) throws AuthenticationServiceException;
+    
+    
+    /**
+     * This method will authenticate against the local data store only.
+     * @param username
+     * @param password
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public Authentication authenticateLocal(String username, String password) throws AuthenticationServiceException;
 }

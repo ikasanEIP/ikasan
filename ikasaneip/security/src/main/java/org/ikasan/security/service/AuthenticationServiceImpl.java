@@ -132,8 +132,43 @@ public class AuthenticationServiceImpl implements AuthenticationService
 
 		if(authentication == null)
 		{
-			logger.info("Authentication failed for user " + username + ". Authenticaiton is null!!");
-			throw new AuthenticationServiceException("Error authenticating! Authenticaiton is null!!");
+			logger.info("Authentication failed for user " + username + ". Authentication is null!!");
+			throw new AuthenticationServiceException("Error authenticating! Authentication is null!!");
+		}
+
+		return authentication;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.AuthenticationService#authenticateLocal(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Authentication authenticateLocal(String username, String password)
+			throws AuthenticationServiceException
+	{
+		Authentication authentication = null;
+		
+		
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
+		
+		AuthenticationProvider authProvider = authenticationProviderFactory.getLocalAuthenticationProvider();
+			
+		try
+		{
+			authentication = authProvider.authenticate(auth);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			logger.info("Authentication failed for user " + username);
+			throw new AuthenticationServiceException("Error authenticating!" + e);
+		}
+
+		if(authentication == null)
+		{
+			logger.info("Authentication failed for user " + username + ". Authentication is null!!");
+			throw new AuthenticationServiceException("Error authenticating! Authentication is null!!");
 		}
 
 		return authentication;

@@ -280,5 +280,19 @@ public class Module
 	{
 		this.contextRoot = contextRoot;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Module [id=" + id + ", name=" + name + ", description="
+				+ description + ", contextRoot=" + contextRoot
+				+ ", diagramUrl=" + diagramUrl + ", version=" + version
+				+ ", server=" + server.getName() + ", flows=" + flows
+				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+				+ updatedDateTime + "]";
+	}
     
 }
