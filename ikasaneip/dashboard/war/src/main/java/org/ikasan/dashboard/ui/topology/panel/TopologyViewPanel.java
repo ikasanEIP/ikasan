@@ -68,6 +68,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
+import org.ikasan.dashboard.ui.topology.component.ActionedErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
 import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
@@ -84,6 +85,8 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.module.StartupControlService;
@@ -209,7 +212,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private StartupControlService startupControlService;
 	private ErrorReportingService errorReportingService;
-	
+	private ErrorReportingManagementService errorReportingManagementService;
 	
 	private BusinessStream businessStream;
 	
@@ -223,11 +226,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private TabSheet tabsheet;
 	
+	private PlatformConfigurationService platformConfigurationService;
+	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
-			 StartupControlService startupControlService, ErrorReportingService errorReportingService)
+			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
+			 PlatformConfigurationService platformConfigurationService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -284,7 +290,17 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("errorReportingService cannot be null!");
 		}
-
+		this.errorReportingManagementService = errorReportingManagementService;
+		if(this.errorReportingManagementService == null)
+		{
+			throw new IllegalArgumentException("errorReportingManagementService cannot be null!");
+		}
+		this.platformConfigurationService = platformConfigurationService;
+		if(this.platformConfigurationService == null)
+		{
+			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
+		
 		init();
 	}
 
@@ -365,10 +381,25 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tab3.setSizeFull();
     		
     		ErrorOccurrenceTab errorOccurrenceTab = new ErrorOccurrenceTab
-					(this.errorReportingService, this.treeViewBusinessStreamCombo);
+					(this.errorReportingService, this.treeViewBusinessStreamCombo
+							, this.errorReportingManagementService, this.platformConfigurationService);
 			tab3.addComponent(errorOccurrenceTab.createCategorisedErrorLayout());
 			
     		tabsheet.addTab(tab3, "Errors");
+    	}
+    	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ERRORS_AUTHORITY)))
+    	{
+    		VerticalLayout tab3 = new VerticalLayout();
+    		tab3.setSizeFull();
+    		
+    		ActionedErrorOccurrenceTab actionedErrorOccurrenceTab = new ActionedErrorOccurrenceTab
+					(this.errorReportingService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
+			tab3.addComponent(actionedErrorOccurrenceTab.createCategorisedErrorLayout());
+			
+    		tabsheet.addTab(tab3, "Actioned Errors");
     	}
     	
     	if(authentication != null 
@@ -415,7 +446,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			final VerticalLayout tab8 = new VerticalLayout();
 			tab8.setSizeFull();
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo);
+					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
 			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
 			tabsheet.addTab(tab8, "Categorised Errors");
     	}
@@ -792,7 +823,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	
             	for(SystemEvent systemEvent: systemEvents.getPagedResults())
             	{
-            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT);
+            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(systemEvent.getTimestamp());
             	    
             		systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
@@ -811,12 +842,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.systemEventFromDate = new PopupDateField("From date");
 		this.systemEventFromDate.setResolution(Resolution.MINUTE);
 		this.systemEventFromDate.setValue(this.getMidnightToday());
-		this.systemEventFromDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		this.systemEventFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(this.systemEventFromDate, 0, 0);
 		this.systemEventToDate = new PopupDateField("To date");
 		this.systemEventToDate.setResolution(Resolution.MINUTE);
 		this.systemEventToDate.setValue(this.getTwentyThreeFixtyNineToday());
-		this.systemEventToDate.setDateFormat(DashboardConstants.DATE_FORMAT);
+		this.systemEventToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(this.systemEventToDate, 1, 0);
 		
 		dateSelectLayout.addComponent(searchButton, 0, 1, 1, 1);

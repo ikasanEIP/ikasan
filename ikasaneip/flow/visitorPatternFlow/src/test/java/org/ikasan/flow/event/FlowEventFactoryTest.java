@@ -40,11 +40,9 @@
  */
 package org.ikasan.flow.event;
 
-import junit.framework.Assert;
-
-import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.FlowEvent;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -58,6 +56,7 @@ public class FlowEventFactoryTest
      * Test success FlowEventFactory flowEvent creation.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void test_newEvent()
     {
         long before = System.currentTimeMillis();
@@ -70,11 +69,32 @@ public class FlowEventFactoryTest
         Assert.assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() <= after);
         Assert.assertEquals("original payload", flowEvent.getPayload());
         
-        flowEvent.setPayload(new String("Im a new payload"));
+        flowEvent.setPayload("Im a new payload");
         Assert.assertEquals("Im a new payload", flowEvent.getPayload());
 
-        flowEvent.setPayload(new Integer(10));
-        Assert.assertEquals(new Integer(10), flowEvent.getPayload());
+        flowEvent.setPayload(10);
+        Assert.assertEquals(10, flowEvent.getPayload());
     }
 
+    /**
+     * Test replace.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_replace()
+    {
+        long before = System.currentTimeMillis();
+        EventFactory<FlowEvent<?,?>> eventFactory = new FlowEventFactory();
+        FlowEvent flowEvent = eventFactory.newEvent("identifier", "original payload");
+        long after = System.currentTimeMillis();
+
+        FlowEvent replacementFlowEvent = eventFactory.newEvent("newId", "new payload");
+
+        flowEvent.replace(replacementFlowEvent);
+
+        Assert.assertNotNull(flowEvent);
+        Assert.assertEquals("newId", flowEvent.getIdentifier());
+        Assert.assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() >= after);
+        Assert.assertEquals("new payload", flowEvent.getPayload());
+    }
 }

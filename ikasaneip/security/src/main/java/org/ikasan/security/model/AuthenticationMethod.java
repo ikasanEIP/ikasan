@@ -71,6 +71,8 @@ public class AuthenticationMethod
 	private String ldapUserDescriptionAttributeName = "";
 	private String applicationSecurityDescriptionAttributeName = "";
 	private String memberofAttributeName = "";
+	private String userSynchronisationFilter = "";
+	private String groupSynchronisationFilter = "";
 	
 	public AuthenticationMethod()
 	{
@@ -432,6 +434,38 @@ public class AuthenticationMethod
 		this.enabled = enabled;
 	}
 
+	/**
+	 * @return the userFilter
+	 */
+	public String getUserSynchronisationFilter()
+	{
+		return userSynchronisationFilter;
+	}
+
+	/**
+	 * @param userFilter the userFilter to set
+	 */
+	public void setUserSynchronisationFilter(String userFilter)
+	{
+		this.userSynchronisationFilter = userFilter;
+	}
+
+	/**
+	 * @return the groupFilter
+	 */
+	public String getGroupSynchronisationFilter()
+	{
+		return groupSynchronisationFilter;
+	}
+
+	/**
+	 * @param groupFilter the groupFilter to set
+	 */
+	public void setGroupSynchronisationFilter(String groupFilter)
+	{
+		this.groupSynchronisationFilter = groupFilter;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -470,6 +504,10 @@ public class AuthenticationMethod
 				* result
 				+ ((firstNameAttributeName == null) ? 0
 						: firstNameAttributeName.hashCode());
+		result = prime
+				* result
+				+ ((groupSynchronisationFilter == null) ? 0
+						: groupSynchronisationFilter.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime
 				* result
@@ -509,6 +547,10 @@ public class AuthenticationMethod
 				* result
 				+ ((userAccountNameAttributeName == null) ? 0
 						: userAccountNameAttributeName.hashCode());
+		result = prime
+				* result
+				+ ((userSynchronisationFilter == null) ? 0
+						: userSynchronisationFilter.hashCode());
 		return result;
 	}
 
@@ -573,6 +615,13 @@ public class AuthenticationMethod
 			if (other.firstNameAttributeName != null)
 				return false;
 		} else if (!firstNameAttributeName.equals(other.firstNameAttributeName))
+			return false;
+		if (groupSynchronisationFilter == null)
+		{
+			if (other.groupSynchronisationFilter != null)
+				return false;
+		} else if (!groupSynchronisationFilter
+				.equals(other.groupSynchronisationFilter))
 			return false;
 		if (id == null)
 		{
@@ -660,6 +709,13 @@ public class AuthenticationMethod
 		} else if (!userAccountNameAttributeName
 				.equals(other.userAccountNameAttributeName))
 			return false;
+		if (userSynchronisationFilter == null)
+		{
+			if (other.userSynchronisationFilter != null)
+				return false;
+		} else if (!userSynchronisationFilter
+				.equals(other.userSynchronisationFilter))
+			return false;
 		return true;
 	}
 
@@ -691,8 +747,10 @@ public class AuthenticationMethod
 				+ ldapUserDescriptionAttributeName
 				+ ", applicationSecurityDescriptionAttributeName="
 				+ applicationSecurityDescriptionAttributeName
-				+ ", memberofAttributeName=" + memberofAttributeName + "]";
+				+ ", memberofAttributeName=" + memberofAttributeName
+				+ ", userSynchronisationFilter=" + userSynchronisationFilter
+				+ ", groupSynchronisationFilter=" + groupSynchronisationFilter
+				+ "]";
 	}
-
-
+	
 }

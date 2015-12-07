@@ -47,5 +47,6 @@ package org.ikasan.dashboard.ui.framework.constants;
  */
 public class DashboardConstants
 {
-	public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	public static final String DATE_FORMAT_TABLE_VIEWS = "dd/MM/yyyy HH:mm:ss.SSS";
+	public static final String DATE_FORMAT_CALENDAR_VIEWS = "dd/MM/yyyy HH:mm:ss";
 }

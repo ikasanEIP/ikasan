@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.cache.GraphCache;
 import org.ikasan.dashboard.ui.framework.panel.LandingViewPanel;
 import org.ikasan.dashboard.ui.monitor.component.MonitorPanel;
+import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 
@@ -74,13 +75,14 @@ public class MonitorViewPanel extends Panel implements View
     private GraphCache graphCache;
     private TopologyService topologyService;
     private List<View> views;
+    private StartupControlService startupControlService;
     
     /**
      * Constructor
      * 
      * @param ikasanModuleService
      */
-    public MonitorViewPanel(TopologyService topologyService)
+    public MonitorViewPanel(TopologyService topologyService, StartupControlService startupControlService)
     {
         super();
 
@@ -88,6 +90,11 @@ public class MonitorViewPanel extends Panel implements View
         if(topologyService == null)
 		{
 			throw new IllegalArgumentException("topologyService cannot be null!");
+		}
+        this.startupControlService = startupControlService;
+        if(startupControlService == null)
+		{
+			throw new IllegalArgumentException("startupControlService cannot be null!");
 		}
 
         
@@ -138,7 +145,7 @@ public class MonitorViewPanel extends Panel implements View
         
         for(Server server: servers)
         {
-        	MonitorPanel panel = new MonitorPanel(this.topologyService, server);
+        	MonitorPanel panel = new MonitorPanel(this.topologyService, server, startupControlService);
         	dashboardPanels.addComponent(panel.buildServerComponent());
         	
         	this.views.add(panel);

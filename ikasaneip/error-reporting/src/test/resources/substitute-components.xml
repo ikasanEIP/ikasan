@@ -48,7 +48,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
        
@@ -77,10 +77,12 @@
 
     <aop:config>
 		<aop:pointcut id="ecDaoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorCategorisationDao.*(..))"/>
+		<aop:pointcut id="emDaoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorManagementDao.*(..))"/>
         <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
         <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
 
 		<aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="ecDaoMethods"/>
+		<aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="emDaoMethods"/>
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="daoMethods"/>
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>

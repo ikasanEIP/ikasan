@@ -56,11 +56,9 @@ import org.ikasan.dashboard.ui.IkasanUI;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.event.FlowStateEvent;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
-import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
-import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -74,14 +72,11 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -90,11 +85,10 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Tree;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
@@ -145,14 +139,18 @@ public class MonitorPanel extends Panel implements View, Action.Handler
     
     /** paused state string constant */
     private static String PAUSED = "paused";
+    
+    private StartupControlService startupControlService;
 	
 	/**
 	 * @param topologyService
 	 */
-	public MonitorPanel(TopologyService topologyService, Server server)
+	public MonitorPanel(TopologyService topologyService, Server server,
+			StartupControlService startupControlService)
 	{
 		super();
 		this.topologyService = topologyService;
+		this.startupControlService = startupControlService;
 		this.server = server;
 		
 		EventBus eventBus = ((IkasanUI)UI.getCurrent()).getEventBus();    	
@@ -183,18 +181,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
     	layout.addComponent(serverDescriptionLabel, 0, 1);
     	layout.addComponent(serverUrlLabel, 0, 2);
     	
-    	statusLabel.setCaptionAsHtml(true);
-    	
-    	MonitorIcons icon = MonitorIcons.SERVER;
-    	icon.setSizePixels(64);
-    	
-    	Label serverLabel = new Label();
-    	serverLabel.setCaption(icon.getHtml());
-    	serverLabel.setCaptionAsHtml(true);
-    	
-    	layout.addComponent(serverLabel, 1, 0, 1, 2);
-    	layout.setComponentAlignment(serverLabel, Alignment.MIDDLE_CENTER);
-    	
+    	statusLabel.setCaptionAsHtml(true);    	
     	
     	layout.addComponent(statusLabel, 0, 3, 1, 3);
     	layout.setComponentAlignment(statusLabel, Alignment.MIDDLE_CENTER);
@@ -224,11 +211,56 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 				{
 					String state = this.stateMap.get(key);
 					
-					if(state.equals(STOPPED) || state.equals(RECOVERING) || state.equals(STOPPED_IN_ERROR))
+					if(state.equals(RECOVERING) || state.equals(STOPPED_IN_ERROR))
 					{
 						icon = MonitorIcons.EXCLAMATION_CIRCLE_O;
 						icon.setSizePixels(64);
 				    	icon.setColor("red");
+				    	
+				    	statusLabel.setCaption(icon.getHtml());
+				    	
+				    	return;
+					}
+					
+					if(state.equals(STOPPED))
+					{
+						for(Flow flow: module.getFlows())
+						{
+							if(key.contains(flow.getName()))
+							{
+								StartupControl startupControl = this.startupControlService.getStartupControl(module.getName()
+									, flow.getName());
+								
+								if(!startupControl.isDisabled())
+								{
+									icon = MonitorIcons.EXCLAMATION_CIRCLE_O;
+									icon.setSizePixels(64);
+							    	icon.setColor("red");
+							    	
+							    	statusLabel.setCaption(icon.getHtml());
+							    	
+							    	return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		for(String key: stateMap.keySet())
+		{
+			for(Module module: server.getModules())
+			{
+				if(key.startsWith(module.getName()))
+				{
+					String state = this.stateMap.get(key);
+					
+					if(state.equals(PAUSED))
+					{
+						icon = MonitorIcons.PAUSE;
+						icon.setSizePixels(64);
+				    	icon.setColor("purple");
 				    	
 				    	statusLabel.setCaption(icon.getHtml());
 				    	

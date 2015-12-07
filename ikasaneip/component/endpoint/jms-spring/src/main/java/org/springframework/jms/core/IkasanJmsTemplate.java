@@ -88,7 +88,7 @@ public class IkasanJmsTemplate extends JmsTemplate
         }
         catch(IllegalArgumentException e)
         {
-            logger.info("Ignoring failed afterPropertiesSet()", e);
+            logger.debug("Ignoring failed afterPropertiesSet()", e);
         }
     }
 
