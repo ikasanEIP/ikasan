@@ -43,18 +43,38 @@ package org.ikasan.dashboard.ui.topology.panel;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
+import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
+import org.ikasan.topology.service.TopologyService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -70,6 +90,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -96,6 +117,8 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class CategorisedErrorOccurrenceViewPanel extends Panel
 {
+	private static Logger logger = Logger.getLogger(ExclusionEventViewPanel.class);
+	
 	/**
 	 * 
 	 */
@@ -105,16 +128,27 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	
 	private ErrorReportingManagementService errorReportingManagementService;
 	
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	
+	private TopologyService topologyService;
+	
+	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
+	
 
 	/**
 	 * @param policy
 	 */
 	public CategorisedErrorOccurrenceViewPanel(CategorisedErrorOccurrence errorOccurrence,
-			ErrorReportingManagementService errorReportingManagementService)
+			ErrorReportingManagementService errorReportingManagementService,
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService)
 	{
 		super();
 		this.categorisedErrorOccurrence = errorOccurrence;
 		this.errorReportingManagementService = errorReportingManagementService;
+		this.hospitalManagementService = hospitalManagementService;
+		this.topologyService = topologyService;
+		this.exclusionManagementService = exclusionManagementService;
 		
 		this.init();
 	}
@@ -136,7 +170,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
 		
-		GridLayout layout = new GridLayout(4, 7);
+		GridLayout layout = new GridLayout(4, 8);
 		layout.setWidth("100%");
 		layout.setSpacing(true);
 		layout.setColumnExpandRatio(0, .10f);
@@ -242,12 +276,15 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		systemAction.setWidth("80%");
 		layout.addComponent(systemAction, 3, 2);
 		
+		ExclusionEventAction action = this.hospitalManagementService.getExclusionEventActionByErrorUri(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
+		
 		label = new Label("User Action:");
 		label.setSizeUndefined();		
 		layout.addComponent(label, 2, 3);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
-		TextField userAction = new TextField();
+		
+		final TextField userAction = new TextField();
 		userAction.setValue("");
 		userAction.setReadOnly(true);
 		userAction.setWidth("80%");
@@ -258,11 +295,190 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		layout.addComponent(label, 2, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
-		TextField userActionBy = new TextField();
+		final TextField userActionBy = new TextField();
 		userActionBy.setValue("");
 		userActionBy.setReadOnly(true);
 		userActionBy.setWidth("80%");
 		layout.addComponent(userActionBy, 3, 4);
+		
+		if(action != null)
+		{
+			userAction.setValue(action.getAction());
+			userActionBy.setValue(action.getActionedBy());
+		}
+		
+		
+		if(action == null && this.categorisedErrorOccurrence.getErrorOccurrence().getAction().equals("ExcludeEvent"))
+		{
+			final Button resubmitButton = new Button("Re-submit");
+			final Button ignoreButton = new Button("Ignore");
+			
+			final ExclusionEvent exclusionEvent = exclusionManagementService.find(categorisedErrorOccurrence.getErrorOccurrence().getUri());
+			
+			resubmitButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            @SuppressWarnings("unchecked")
+				public void buttonClick(ClickEvent event) 
+	            {
+	            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	        	.getAttribute(DashboardSessionValueConstants.USER);
+	            	
+	            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+	            	
+	            	ClientConfig clientConfig = new ClientConfig();
+	            	clientConfig.register(feature) ;
+	            	
+	            	Client client = ClientBuilder.newClient(clientConfig);
+	            	
+	            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+	            	
+	            	if(module == null)
+	            	{
+	            		Notification.show("Unable to find server information for module we are attempting to re-submit to: " 
+	            				+ exclusionEvent.getModuleName()
+	            				, Type.ERROR_MESSAGE);
+	            		
+	            		return;
+	            	}
+	            	
+	            	Server server = module.getServer();
+	        		
+	        		String url = server.getUrl() + ":" + server.getPort()
+	        				+ module.getContextRoot() 
+	        				+ "/rest/resubmission/resubmit/"
+	        	    		+ exclusionEvent.getModuleName()
+	        	    		+ "/"
+	        	    		+ exclusionEvent.getFlowName()
+	        	    		+ "/"
+	        	    		+ exclusionEvent.getErrorUri();
+	        		
+	        		logger.debug("Resubmission Url: " + url);
+	        		
+	        	    WebTarget webTarget = client.target(url);
+	        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
+	        	    
+	        	    if(response.getStatus()  != 200)
+	        	    {
+	        	    	response.bufferEntity();
+	        	        
+	        	        String responseMessage = response.readEntity(String.class);
+	        	        
+	        	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
+	        	        
+	        	    	Notification.show("An error was received trying to resubmit event: " 
+	        	    			+ responseMessage, Type.ERROR_MESSAGE);
+	        	    }
+	        	    else
+	        	    {
+	        	    	Notification.show("Event resumitted successfully.");
+	        	    	resubmitButton.setVisible(false);
+	        	    	ignoreButton.setVisible(false);
+	        	    	
+	        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+	        	    	userAction.setReadOnly(false);
+	        	    	userActionBy.setReadOnly(false);
+	//        			tf8.setReadOnly(false);
+	        	    	userAction.setValue(action.getAction());
+	        	    	userActionBy.setValue(action.getActionedBy());
+	//        			tf8.setValue(new Date(action.getTimestamp()).toString());
+	        	    	userAction.setReadOnly(true);
+	        	    	userActionBy.setReadOnly(true);
+	//        			tf8.setReadOnly(true);
+	        	    	
+	        	    	closeAssociatedErrorOccurence();
+	        	    }
+	            }
+	        });
+			
+			ignoreButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            @SuppressWarnings("unchecked")
+				public void buttonClick(ClickEvent event) 
+	            {
+	            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	        	.getAttribute(DashboardSessionValueConstants.USER);
+	            	
+	            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+	            	
+	            	ClientConfig clientConfig = new ClientConfig();
+	            	clientConfig.register(feature) ;
+	            	
+	            	Client client = ClientBuilder.newClient(clientConfig);
+	            	
+	            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+	            	
+	            	if(module == null)
+	            	{
+	            		logger.error("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName()); 
+	            		
+	            		Notification.show("Unable to find server information for module we are submitting the ignore to: " + exclusionEvent.getModuleName() 
+	            				, Type.ERROR_MESSAGE);
+	            		
+	            		return;
+	            	}
+	            	
+	            	Server server = module.getServer();
+	        		
+	        		String url = server.getUrl() + ":" + server.getPort()
+	        				+ module.getContextRoot() 
+	        				+ "/rest/resubmission/ignore/"
+	        				+ exclusionEvent.getModuleName() 
+	        	    		+ "/"
+	        	    		+ exclusionEvent.getFlowName()
+	        	    		+ "/"
+	        	    		+ exclusionEvent.getErrorUri();
+	        		
+	        		logger.debug("Ignore Url: " + url);
+	        		
+	        	    WebTarget webTarget = client.target(url);
+	        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
+	        	    
+	        	    if(response.getStatus()  != 200)
+	        	    {
+	        	    	response.bufferEntity();
+	        	        
+	        	        String responseMessage = response.readEntity(String.class);
+	        	        
+	        	        logger.error("An error was received trying to resubmit event: " 
+	        	    			+ responseMessage);
+	        	        
+	        	    	Notification.show("An error was received trying to resubmit event: " 
+	        	    			+ responseMessage, Type.ERROR_MESSAGE);
+	        	    }
+	        	    else
+	        	    {
+	        	    	Notification.show("Event ignored successfully.");
+	        	    	resubmitButton.setVisible(false);
+	        	    	ignoreButton.setVisible(false);
+	        	    	
+	        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+	        	    	userAction.setReadOnly(false);
+	        	    	userActionBy.setReadOnly(false);
+	//        			tf8.setReadOnly(false);
+	        	    	userAction.setValue(action.getAction());
+	        	    	userActionBy.setValue(action.getActionedBy());
+	//        			tf8.setValue(new Date(action.getTimestamp()).toString());
+	        	    	userAction.setReadOnly(true);
+	        	    	userActionBy.setReadOnly(true);
+	//        			tf8.setReadOnly(true);
+	        	    	
+	        	    	closeAssociatedErrorOccurence();
+	        	    }
+	            }
+	        });
+			
+			HorizontalLayout buttonLayout = new HorizontalLayout();
+			buttonLayout.setHeight("100%");
+			buttonLayout.setSpacing(true);
+			buttonLayout.setWidth(200, Unit.PIXELS);
+			buttonLayout.setMargin(true);
+			buttonLayout.addComponent(resubmitButton);
+			buttonLayout.addComponent(ignoreButton);		
+		
+			layout.addComponent(buttonLayout, 0, 5, 3, 5);
+			layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
+		}
+
 		
 		
 		AceEditor errorMessageEditor = new AceEditor();
@@ -346,6 +562,19 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 
 		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
 		return errorOccurrenceDetailsPanel;
+	}
+	
+	protected void closeAssociatedErrorOccurence()
+	{
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+    	
+    	ArrayList<String> uris = new ArrayList<String>();
+    	
+    	uris.add(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());    	
+    	
+    	errorReportingManagementService.close(uris, "This error was automatically closed as the associated excluded event has been actioned."
+    			, authentication.getName());
 	}
 	
 	protected Layout createCommentsTabsheet()

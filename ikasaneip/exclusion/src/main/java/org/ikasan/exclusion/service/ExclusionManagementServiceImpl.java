@@ -112,5 +112,14 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 	{
 		return this.exclusionEventDao.find(moduleName, flowName, startDate, endDate, identifier);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.exclusion.ExclusionManagementService#find(java.lang.String)
+	 */
+	@Override
+	public ExclusionEvent find(String errorUri)
+	{
+		return this.exclusionEventDao.find(errorUri);
+	}
 }
  

@@ -78,6 +78,7 @@ import com.vaadin.addon.charts.model.LayoutDirection;
 import com.vaadin.addon.charts.model.Legend;
 import com.vaadin.addon.charts.model.ListSeries;
 import com.vaadin.addon.charts.model.PlotOptionsColumn;
+import com.vaadin.addon.charts.model.Stacking;
 import com.vaadin.addon.charts.model.Tooltip;
 import com.vaadin.addon.charts.model.VerticalAlign;
 import com.vaadin.addon.charts.model.XAxis;
@@ -89,7 +90,6 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -218,55 +218,40 @@ public class LandingViewPanel extends Panel implements View
     	chart.setSizeFull();
 
         Configuration conf = chart.getConfiguration();
-
         conf.setTitle("ESB Error Report");
 
-        List<ModuleErrorCount> moduleErrorCountsTotal = this.errorReportingManagementService.getModuleErrorCount
-        		(moduleNames, false, false, null, null);
+        List<ModuleErrorCount> moduleUnactionedErrorsTotal = this.errorReportingManagementService.getModuleErrorCount
+        		(moduleNames, false, false, null, this.getMidnightToday());
         
-        List<ModuleErrorCount> moduleErrorCountsExcluded = this.errorReportingManagementService.getModuleErrorCount
-        		(moduleNames, true, false, null, null);
-        
-        List<ModuleErrorCount> moduleErrorCountsActioned = this.errorReportingManagementService.getModuleErrorCount
-        		(moduleNames, false, true, null, null);
-        
-        List<ModuleActionedExclusionCount> moduleActionedExclusionCounts = this.hospitalManagementService.getModuleActionedExclusionCount(moduleNames, null, null);
+        List<ModuleErrorCount> moduleUnactionedErrorsTodayTotal = this.errorReportingManagementService.getModuleErrorCount
+        		(moduleNames, false, false, this.getMidnightToday(), this.getTwentyThreeFixtyNineToday());
         
         HashMap<String, ErrorStats> errorStatsMap = new HashMap<String, ErrorStats>();
         
-        for(ModuleErrorCount moduleErrorCount: moduleErrorCountsTotal)
+        for(ModuleErrorCount moduleErrorCount: moduleUnactionedErrorsTotal)
         {
+        	logger.debug("Adding errors before today: " + moduleErrorCount);
         	ErrorStats errorStats = new ErrorStats();
         	errorStats.module = moduleMap.get(moduleErrorCount.getModuleName());
-        	errorStats.totalErrors = moduleErrorCount.getCount();
+        	errorStats.totalErrorsUnactioned = moduleErrorCount.getCount();
         	
         	errorStatsMap.put(errorStats.module.getName(), errorStats);
         }
         
-        for(ModuleErrorCount moduleErrorCount: moduleErrorCountsActioned)
+        for(ModuleErrorCount moduleErrorCount: moduleUnactionedErrorsTodayTotal)
         {
+        	logger.debug("Adding errors today: " + moduleErrorCount);
         	ErrorStats errorStats = errorStatsMap.get(moduleErrorCount.getModuleName());
-
-        	errorStats.totalActioned = moduleErrorCount.getCount();
+        	errorStats.totalErrorsUnactionedToday = moduleErrorCount.getCount();
+        	
+        	errorStatsMap.put(errorStats.module.getName(), errorStats);
         }
         
-        for(ModuleErrorCount moduleErrorCount: moduleErrorCountsExcluded)
-        {
-        	ErrorStats errorStats = errorStatsMap.get(moduleErrorCount.getModuleName());
-
-        	errorStats.totalExcluded = moduleErrorCount.getCount();
-        }
         
-        for(ModuleActionedExclusionCount moduleErrorCount: moduleActionedExclusionCounts)
-        {
-        	ErrorStats errorStats = errorStatsMap.get(moduleErrorCount.getModuleName());
-
-        	errorStats.totalActionedExcluded = moduleErrorCount.getCount();
-        }
         
         String[] xAxisNames = new String[errorStatsMap.size()];
-        Long[] errorUnactioned = new Long[errorStatsMap.size()];
-        Long[] actionedTotals = new Long[errorStatsMap.size()];
+        Long[] errorUnactionedBeforeToday = new Long[errorStatsMap.size()];
+        Long[] errorUnactionedToday = new Long[errorStatsMap.size()];
         
         int i=0;
         
@@ -275,8 +260,8 @@ public class LandingViewPanel extends Panel implements View
         	ErrorStats errorStats = errorStatsMap.get(key);
         	
 	        xAxisNames[i] = errorStats.module.getName();
-	    	errorUnactioned[i] = errorStats.totalErrors - errorStats.totalActioned;
-	    	actionedTotals[i] = errorStats.totalActioned;
+	    	errorUnactionedBeforeToday[i] = errorStats.totalErrorsUnactioned;
+	    	errorUnactionedToday[i] = errorStats.totalErrorsUnactionedToday;
 	    	
 	    	i++;
         }
@@ -289,7 +274,6 @@ public class LandingViewPanel extends Panel implements View
         Labels xlabels = x.getLabels();
         xlabels.setAlign(HorizontalAlign.RIGHT); // Default
         xlabels.setBackgroundColor(SolidColor.PALEGREEN);
-//        xlabels.setRotation(-45);
         xlabels.setStep(1); 
         xlabels.getStyle().setFontSize("12px");
 
@@ -316,21 +300,22 @@ public class LandingViewPanel extends Panel implements View
         PlotOptionsColumn redPlot = new PlotOptionsColumn();
         redPlot.setColor(SolidColor.RED);
         redPlot.setBorderWidth(0);
+        redPlot.setStacking(Stacking.NORMAL);
 
-        ListSeries unactionedErrorsSeries = new ListSeries("Errors Unactioned", errorUnactioned);
-        unactionedErrorsSeries.setPlotOptions(redPlot);
-        
+        ListSeries unactionedErrorsSeries = new ListSeries("Errors Unactioned Before Today", errorUnactionedBeforeToday);
+        unactionedErrorsSeries.setPlotOptions(redPlot);       
         
         conf.addSeries(unactionedErrorsSeries);
         
-//        PlotOptionsColumn  greenPlot = new PlotOptionsColumn();
-//        greenPlot.setColor(SolidColor.LIGHTGREEN);
-//        greenPlot.setBorderWidth(0);
-//
-//        ListSeries actionedErrorsSeries = new ListSeries("Errors Actioned", actionedTotals);
-//        actionedErrorsSeries.setPlotOptions(greenPlot);
-//        
-//        conf.addSeries(actionedErrorsSeries);
+        PlotOptionsColumn  orangePlot = new PlotOptionsColumn();
+        orangePlot.setColor(SolidColor.ORANGE);
+        orangePlot.setBorderWidth(0);
+        orangePlot.setStacking(Stacking.NORMAL);
+
+        ListSeries unactionedErrorsTodaySeries = new ListSeries("Errors Unactioned Today", errorUnactionedToday);
+        unactionedErrorsTodaySeries.setPlotOptions(orangePlot);
+        
+        conf.addSeries(unactionedErrorsTodaySeries);
 
         chart.drawChart(conf);
         
@@ -388,55 +373,38 @@ public class LandingViewPanel extends Panel implements View
     	chart.setSizeFull();
 
         Configuration conf = chart.getConfiguration();
-
         conf.setTitle("ESB Exclusion Report");
 
-        List<ModuleErrorCount> moduleErrorCountsTotal = this.errorReportingManagementService.getModuleErrorCount
-        		(moduleNames, false, false, null, null);
+        List<ModuleErrorCount> moduleUnactionedErrorsTotal = this.errorReportingManagementService.getModuleErrorCount
+        		(moduleNames, true, false, null, this.getMidnightToday());
         
-        List<ModuleErrorCount> moduleErrorCountsExcluded = this.errorReportingManagementService.getModuleErrorCount
-        		(moduleNames, true, false, null, null);
-        
-        List<ModuleErrorCount> moduleErrorCountsActioned = this.errorReportingManagementService.getModuleErrorCount
-        		(moduleNames, false, true, null, null);
-        
-        List<ModuleActionedExclusionCount> moduleActionedExclusionCounts = this.hospitalManagementService.getModuleActionedExclusionCount(moduleNames, null, null);
+        List<ModuleErrorCount> moduleUnactionedErrorsTodayTotal = this.errorReportingManagementService.getModuleErrorCount
+        		(moduleNames, true, false, this.getMidnightToday(), this.getTwentyThreeFixtyNineToday());
         
         HashMap<String, ErrorStats> errorStatsMap = new HashMap<String, ErrorStats>();
         
-        for(ModuleErrorCount moduleErrorCount: moduleErrorCountsTotal)
+        for(ModuleErrorCount moduleErrorCount: moduleUnactionedErrorsTotal)
         {
+        	logger.debug("Adding exclusions before today: " + moduleErrorCount);
         	ErrorStats errorStats = new ErrorStats();
         	errorStats.module = moduleMap.get(moduleErrorCount.getModuleName());
-        	errorStats.totalErrors = moduleErrorCount.getCount();
+        	errorStats.totalErrorsUnactioned = moduleErrorCount.getCount();
         	
         	errorStatsMap.put(errorStats.module.getName(), errorStats);
         }
         
-        for(ModuleErrorCount moduleErrorCount: moduleErrorCountsActioned)
+        for(ModuleErrorCount moduleErrorCount: moduleUnactionedErrorsTodayTotal)
         {
+        	logger.debug("Adding exclusions today: " + moduleErrorCount);
         	ErrorStats errorStats = errorStatsMap.get(moduleErrorCount.getModuleName());
-
-        	errorStats.totalActioned = moduleErrorCount.getCount();
+        	errorStats.totalErrorsUnactionedToday = moduleErrorCount.getCount();
+        	
+        	errorStatsMap.put(errorStats.module.getName(), errorStats);
         }
-        
-        for(ModuleErrorCount moduleErrorCount: moduleErrorCountsExcluded)
-        {
-        	ErrorStats errorStats = errorStatsMap.get(moduleErrorCount.getModuleName());
-
-        	errorStats.totalExcluded = moduleErrorCount.getCount();
-        }
-        
-        for(ModuleActionedExclusionCount moduleErrorCount: moduleActionedExclusionCounts)
-        {
-        	ErrorStats errorStats = errorStatsMap.get(moduleErrorCount.getModuleName());
-
-        	errorStats.totalActionedExcluded = moduleErrorCount.getCount();
-        }
-        
+               
         String[] xAxisNames = new String[errorStatsMap.size()];
-        Long[] excludedUnactionedTotals = new Long[errorStatsMap.size()];
-        Long[] actionedExcludedTotals = new Long[errorStatsMap.size()];
+        Long[] errorUnactionedBeforeToday = new Long[errorStatsMap.size()];
+        Long[] errorUnactionedToday = new Long[errorStatsMap.size()];
         
         int i=0;
         
@@ -445,8 +413,8 @@ public class LandingViewPanel extends Panel implements View
         	ErrorStats errorStats = errorStatsMap.get(key);
         	
 	        xAxisNames[i] = errorStats.module.getName();
-	    	excludedUnactionedTotals[i] = errorStats.totalExcluded - errorStats.totalActionedExcluded;
-	    	actionedExcludedTotals[i] = errorStats.totalActionedExcluded;
+	    	errorUnactionedBeforeToday[i] = errorStats.totalErrorsUnactioned;
+	    	errorUnactionedToday[i] = errorStats.totalErrorsUnactionedToday;
 	    	
 	    	i++;
         }
@@ -456,11 +424,9 @@ public class LandingViewPanel extends Panel implements View
         x.setAllowDecimals(false);
         conf.addxAxis(x);
         
-        
         Labels xlabels = x.getLabels();
         xlabels.setAlign(HorizontalAlign.RIGHT); // Default
         xlabels.setBackgroundColor(SolidColor.PALEGREEN);
-//        xlabels.setRotation(-45);
         xlabels.setStep(1); 
         xlabels.getStyle().setFontSize("12px");
 
@@ -487,22 +453,23 @@ public class LandingViewPanel extends Panel implements View
         PlotOptionsColumn redPlot = new PlotOptionsColumn();
         redPlot.setColor(SolidColor.RED);
         redPlot.setBorderWidth(0);
+        redPlot.setStacking(Stacking.NORMAL);
 
-        ListSeries unactionedExclusionsSeries = new ListSeries("Unactioned Excluded Messages", excludedUnactionedTotals);
-        unactionedExclusionsSeries.setPlotOptions(redPlot);
+        ListSeries unactionedErrorsSeries = new ListSeries("Exclusions Unactioned Before Today", errorUnactionedBeforeToday);
+        unactionedErrorsSeries.setPlotOptions(redPlot);       
         
+        conf.addSeries(unactionedErrorsSeries);
         
-        conf.addSeries(unactionedExclusionsSeries);
+        PlotOptionsColumn  orangePlot = new PlotOptionsColumn();
+        orangePlot.setColor(SolidColor.ORANGE);
+        orangePlot.setBorderWidth(0);
+        orangePlot.setStacking(Stacking.NORMAL);
+
+        ListSeries unactionedErrorsTodaySeries = new ListSeries("Exclusions Unactioned Today", errorUnactionedToday);
+        unactionedErrorsTodaySeries.setPlotOptions(orangePlot);
         
-//        PlotOptionsColumn greenPlot = new PlotOptionsColumn();
-//        greenPlot.setColor(SolidColor.LIGHTGREEN);
-//        greenPlot.setBorderWidth(0);
-//
-//        ListSeries actionedExclusionsSeries = new ListSeries("Actioned Excluded Messages", actionedExcludedTotals);
-//        actionedExclusionsSeries.setPlotOptions(greenPlot);
-//        
-//        conf.addSeries(actionedExclusionsSeries);
-        
+        conf.addSeries(unactionedErrorsTodaySeries);
+
         chart.drawChart(conf);
         
         chart.addPointClickListener(new PointClickListener() 
@@ -575,9 +542,7 @@ public class LandingViewPanel extends Panel implements View
 	private class ErrorStats
 	{
 		Module module;
-		Long totalErrors;
-		Long totalExcluded;
-		Long totalActioned;
-		Long totalActionedExcluded;
+		Long totalErrorsUnactioned = new Long(0);
+		Long totalErrorsUnactionedToday = new Long(0);
 	}
 }
