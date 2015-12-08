@@ -660,4 +660,13 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 		
 		return returnValue;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.mapping.service.MappingConfigurationService#getReverseMapping(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String getReverseMapping(String clientName, String configurationType, String sourceSystem, String targetSystem, String targetSystemValue)
+	{
+		return this.dao.getReverseMapping(clientName, configurationType, sourceSystem, targetSystem, targetSystemValue);
+	}
 }
