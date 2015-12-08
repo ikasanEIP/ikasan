@@ -66,14 +66,19 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     /** depth of the directory tree to walk */
     private int directoryDepth;
 
+    /** whether to ignore changes to the file system whilst we are scanning */
+    private boolean ignoreFileRenameWhilstScanning;
+
     /**
      * Constructor
+     * @param ignoreFileRenameWhilstScanning
      * @param parentPath
      * @param pattern
      * @param endpointListener
      */
-    FileMatcher(String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
+    FileMatcher(boolean ignoreFileRenameWhilstScanning, String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
     {
+        this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
         this.parentPath = parentPath;
         if(parentPath == null)
         {
@@ -90,14 +95,20 @@ public class FileMatcher extends SimpleFileVisitor<Path>
      * Compares the regexp against the file/directory name
      * @param path
      */
-    void match(Path path)
+    FileVisitResult match(Path path)
     {
         Path name = path.getFileName();
+        if(!endpointListener.isActive())
+        {
+            return FileVisitResult.TERMINATE;
+        }
 
         if (name != null && matcher.matches(name))
         {
             this.endpointListener.onMessage(path.toString());
         }
+
+        return FileVisitResult.CONTINUE;
     }
 
     /**
@@ -109,8 +120,7 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
     {
-        match(file);
-        return FileVisitResult.CONTINUE;
+        return match(file);
     }
 
     /**
@@ -122,8 +132,7 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
     {
-        match(dir);
-        return FileVisitResult.CONTINUE;
+        return match(dir);
     }
 
     /**
@@ -135,6 +144,11 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exception)
     {
+        if(ignoreFileRenameWhilstScanning && exception instanceof NoSuchFileException)
+        {
+            return FileVisitResult.CONTINUE;
+        }
+
         this.endpointListener.onException(exception);
         return FileVisitResult.TERMINATE;
     }

@@ -75,6 +75,8 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration
     /** log filenames found */
     private boolean logMatchedFilenames = false;
 
+    private boolean ignoreFileRenameWhilstScanning = true;
+
     public List<String> getFilenames() {
         return filenames;
     }
@@ -139,5 +141,13 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration
 
     public void setLogMatchedFilenames(boolean logMatchedFilenames) {
         this.logMatchedFilenames = logMatchedFilenames;
+    }
+
+    public boolean isIgnoreFileRenameWhilstScanning() {
+        return ignoreFileRenameWhilstScanning;
+    }
+
+    public void setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning) {
+        this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
     }
 }
