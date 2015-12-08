@@ -240,6 +240,8 @@ public class MappingConfigurationServiceTest
 				.addTargetSystemConfiguration("singleValueResult2");
 		
 		// Add same value twice to create exception
+		this.addSourceSystemConfiguration("reverse",
+				mappingConfigurationId3, targetId1);
 		this.addSourceSystemConfiguration("singleValueTwice",
 				mappingConfigurationId4, targetId15);
 		this.addSourceSystemConfiguration("", mappingConfigurationId4,
@@ -526,6 +528,19 @@ public class MappingConfigurationServiceTest
 						sourceSystemValues);
 
 		Assert.assertEquals("Snowball", result);
+		
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add(null);
+		sourceSystemValues.add(null);
+
+		result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("Snowball", result);
 
 		sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("1424");
@@ -545,6 +560,19 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("1424");
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add("");
+
+		result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("Snowball", result);
+		
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add("ignore");
+		sourceSystemValues.add(null);
 
 		result = this.xaMappingConfigurationService
 				.getTargetConfigurationValueWithIgnores("CMI2",
@@ -644,6 +672,18 @@ public class MappingConfigurationServiceTest
 
 		Assert.assertEquals(null, result);
 
+	}
+	
+	@Test
+	@DirtiesContext
+	public void test_reverse_mapping()
+	{
+		String result = this.xaMappingConfigurationService
+				.getReverseMapping("CMI2",
+						"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+						"BARCLON");
+
+		Assert.assertEquals("reverse", result);
 	}
 
 	@Test

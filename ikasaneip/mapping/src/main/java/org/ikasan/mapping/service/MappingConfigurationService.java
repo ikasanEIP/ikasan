@@ -459,4 +459,15 @@ public interface MappingConfigurationService
      */
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
 
+    /**
+     * 
+     * @param clientName
+     * @param configurationType
+     * @param sourceSystem
+     * @param targetSystem
+     * @param targetSystemValue
+     * @return
+     */
+    public String getReverseMapping(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final String targetSystemValue);
 }
