@@ -60,13 +60,19 @@ import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
+import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.service.TopologyService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -123,16 +129,28 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private ErrorReportingManagementService errorReportingManagementService;
 	
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	
+	private TopologyService topologyService;
+	
+	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
+	
 	private Label resultsLabel = new Label();
 	
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
-			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService)
+			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService,
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
+			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService)
 	{
 		this.errorCategorisationService = errorCategorisationService;
 		this.businessStreamCombo = businessStreamCombo;
 		this.errorReportingManagementService = errorReportingManagementService;
+		this.hospitalManagementService = hospitalManagementService;
+		this.topologyService = topologyService;
+		this.exclusionManagementService = exclusionManagementService;
+		
 		container = this.buildContainer();
 	}
 	
@@ -184,7 +202,8 @@ public class CategorisedErrorTab extends TopologyTab
 			    	CategorisedErrorOccurrence errorOccurrence = (CategorisedErrorOccurrence)itemClickEvent.getItemId();
 			    	
 			    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
-			    		= new CategorisedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
+			    		= new CategorisedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService,
+			    				hospitalManagementService, topologyService, exclusionManagementService);
 			    
 			    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    	}
@@ -954,6 +973,12 @@ public class CategorisedErrorTab extends TopologyTab
 	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("categorisedErrorOccurrence", categorisedErrorOccurrence);
 
 	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportManagementService", errorReportingManagementService);
+	            	
+	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("hospitalManagementService", hospitalManagementService);
+	            	
+	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+	            	
+	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionManagementService", exclusionManagementService);
 	            }
 	        });
 	    	

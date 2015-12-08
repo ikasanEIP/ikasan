@@ -260,6 +260,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
 	
+	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
@@ -482,7 +483,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
     	{
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
+					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService,
+							this.hospitalManagementService, this.topologyService, this.exclusionManagementService);
 			
 			categorisedErrorTab.createLayout();
 			

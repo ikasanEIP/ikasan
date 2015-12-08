@@ -337,6 +337,10 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 		{
 			criteria.add(Restrictions.isNotNull("userAction"));
 		}
+		else
+		{
+			criteria.add(Restrictions.isNull("userAction"));
+		}
 		
 		criteria.setProjection(Projections.projectionList()
 		                    .add(Projections.count("moduleName")));

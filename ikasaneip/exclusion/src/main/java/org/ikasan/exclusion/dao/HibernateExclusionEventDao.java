@@ -50,6 +50,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -175,6 +176,18 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 		criteria.addOrder(Order.desc("timestamp"));	
 		
 		return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.lang.String)
+	 */
+	@Override
+	public ExclusionEvent find(String errorUri)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+        criteria.add(Restrictions.eq("errorUri", errorUri));
+
+        return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
 
 }
