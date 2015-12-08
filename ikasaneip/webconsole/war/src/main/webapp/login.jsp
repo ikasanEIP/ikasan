@@ -92,7 +92,7 @@
             <ol>
                 <li>
     				<label for="j_username">User</label>
-				    <input type='text' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
+				    <input type='text' name='j_username'/>
 			    </li>
                 <li>
                     <label for="j_password">Password</label>
