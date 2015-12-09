@@ -56,6 +56,7 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -240,6 +241,8 @@ public class MappingConfigurationServiceTest
 				.addTargetSystemConfiguration("singleValueResult2");
 		
 		// Add same value twice to create exception
+		this.addSourceSystemConfiguration("reverse",
+				mappingConfigurationId3, targetId1);
 		this.addSourceSystemConfiguration("singleValueTwice",
 				mappingConfigurationId4, targetId15);
 		this.addSourceSystemConfiguration("", mappingConfigurationId4,
@@ -526,6 +529,19 @@ public class MappingConfigurationServiceTest
 						sourceSystemValues);
 
 		Assert.assertEquals("Snowball", result);
+		
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add(null);
+		sourceSystemValues.add(null);
+
+		result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("Snowball", result);
 
 		sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("1424");
@@ -545,6 +561,19 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("1424");
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add("");
+
+		result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("Snowball", result);
+		
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add("1424");
+		sourceSystemValues.add("ignore");
+		sourceSystemValues.add(null);
 
 		result = this.xaMappingConfigurationService
 				.getTargetConfigurationValueWithIgnores("CMI2",
@@ -644,6 +673,77 @@ public class MappingConfigurationServiceTest
 
 		Assert.assertEquals(null, result);
 
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_null_source_value()
+			throws MappingConfigurationServiceException
+	{
+		String value = null;
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							value);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_null_source_values()
+			throws MappingConfigurationServiceException
+	{
+		List<String> values = null;
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							values);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_empty_source_values()
+			throws MappingConfigurationServiceException
+	{
+		List<String> values = new ArrayList<String>();
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							values);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_reverse_mapping_with_multiple_source_values()
+			throws MappingConfigurationServiceException
+	{
+		MappingConfigurationServiceConfiguration config = new MappingConfigurationServiceConfiguration();
+		config.setReverseMapping(true);
+		this.xaMappingConfigurationService.setConfiguration(config);
+		
+		List<String> values = new ArrayList<String>();
+		values.add("value1");
+		values.add("value2");
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							values);
+	}
+	
+	
+	@Test
+	@DirtiesContext
+	public void test_reverse_mapping()
+	{
+		MappingConfigurationServiceConfiguration config = new MappingConfigurationServiceConfiguration();
+		config.setReverseMapping(true);
+		this.xaMappingConfigurationService.setConfiguration(config);
+		
+		String result = this.xaMappingConfigurationService
+				.getTargetConfigurationValue("CMI2",
+						"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+						"BARCLON");
+
+		Assert.assertEquals("reverse", result);
 	}
 
 	@Test

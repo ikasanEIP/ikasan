@@ -118,6 +118,7 @@ public interface MappingConfigurationService
      * @return
      * @throws MappingConfigurationServiceException 
      */
+    @Deprecated
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
             byte[] payload) throws MappingConfigurationServiceException;
 
@@ -466,5 +467,4 @@ public interface MappingConfigurationService
      * @param configuration
      */
     public void setConfiguration(MappingConfigurationServiceConfiguration configuration);
-
 }

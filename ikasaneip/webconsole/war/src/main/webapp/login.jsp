@@ -68,10 +68,6 @@
 <h2>Management Console</h2>
 </div>
 
-
-
-
-
     <div class="middle">
     <%-- this form-login-page form is also used as the
          form-error-page to ask for a login again.
