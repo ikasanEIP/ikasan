@@ -57,6 +57,7 @@ import org.ikasan.mapping.model.MappingConfigurationLite;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.ikasan.mapping.util.SetProducer;
 import org.springframework.dao.DataAccessException;
 
@@ -71,10 +72,11 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 {
     private Logger logger = Logger.getLogger(MappingConfigurationServiceImpl.class);
 
-    /** Access to market data */
+    
     protected final MappingConfigurationDao dao;
     protected final KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory;
-
+    protected MappingConfigurationServiceConfiguration configuration;
+    
     /**
      * Constructor
      * 
@@ -659,5 +661,15 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 		}
 		
 		return returnValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.mapping.service.MappingConfigurationService#setConfiguration(org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration)
+	 */
+	@Override
+	public void setConfiguration(
+			MappingConfigurationServiceConfiguration configuration)
+	{
+		this.configuration = configuration;
 	}
 }
