@@ -320,7 +320,6 @@ public abstract class TopologyTab extends VerticalLayout
 		deleteButton.setIcon(VaadinIcons.TRASH);
 		deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
 		
 		// Add the delete functionality to each role that is added
 		deleteButton.addClickListener(new Button.ClickListener() 

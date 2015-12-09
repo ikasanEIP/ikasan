@@ -43,7 +43,6 @@ package org.ikasan.dashboard.ui.topology.panel;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +59,9 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
+import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -71,7 +73,6 @@ import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
@@ -88,26 +89,27 @@ import org.xwiki.rendering.syntax.Syntax;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinService;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HasComponents;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -286,7 +288,6 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		
 		final TextField userAction = new TextField();
 		userAction.setValue("");
-		userAction.setReadOnly(true);
 		userAction.setWidth("80%");
 		layout.addComponent(userAction, 3, 3);
 		
@@ -297,7 +298,6 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		
 		final TextField userActionBy = new TextField();
 		userActionBy.setValue("");
-		userActionBy.setReadOnly(true);
 		userActionBy.setWidth("80%");
 		layout.addComponent(userActionBy, 3, 4);
 		
@@ -306,6 +306,9 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 			userAction.setValue(action.getAction());
 			userActionBy.setValue(action.getActionedBy());
 		}
+		
+		userAction.setReadOnly(true);
+		userActionBy.setReadOnly(true);
 		
 		
 		if(action == null && this.categorisedErrorOccurrence.getErrorOccurrence().getAction().equals("ExcludeEvent"))
@@ -478,6 +481,55 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 			layout.addComponent(buttonLayout, 0, 5, 3, 5);
 			layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 		}
+		else
+		{
+			final Button closeButton = new Button("Close");
+			
+			closeButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            @SuppressWarnings("unchecked")
+				public void buttonClick(ClickEvent event) 
+	            {
+	            	ArrayList<ErrorOccurrence> errorOccurences = new ArrayList<ErrorOccurrence>();
+	            	errorOccurences.add(categorisedErrorOccurrence.getErrorOccurrence());
+	            	
+	            	final ErrorOccurrenceCloseWindow closeWindow = new ErrorOccurrenceCloseWindow(errorReportingManagementService,
+	            			errorOccurences);
+	            	
+	            	UI.getCurrent().addWindow(closeWindow);
+	            	
+	            	closeWindow.addCloseListener(new Window.CloseListener() 
+	            	{
+	                    public void windowClose(CloseEvent e) 
+	                    {
+	                    	if(closeWindow.getAction().equals(ErrorOccurrenceCloseWindow.CLOSE))
+	                    	{
+	                    		HasComponents parent = CategorisedErrorOccurrenceViewPanel.this.getParent();
+	                    		
+	                    		logger.info("parent = " + parent);
+	                    		
+	                    		if(parent instanceof CategorisedErrorOccurrenceViewWindow)
+	                    		{
+	                    			((CategorisedErrorOccurrenceViewWindow)parent).close();
+	                    		}
+	                    	}
+	                    }
+	                });
+	            } 	
+	        });
+			
+			HorizontalLayout buttonLayout = new HorizontalLayout();
+			buttonLayout.setHeight("100%");
+			buttonLayout.setSpacing(true);
+			buttonLayout.setWidth(200, Unit.PIXELS);
+			buttonLayout.setMargin(true);
+			buttonLayout.addComponent(closeButton);		
+		
+			layout.addComponent(buttonLayout, 0, 5, 3, 5);
+			layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
+		}
+			
+		
 
 		
 		
@@ -530,7 +582,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(200, Unit.PIXELS);
+		formLayout.setHeight(270, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 				

@@ -578,7 +578,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			}
 		});
 		
-		
 		GridLayout layout = new GridLayout(1, 4);
 		layout.setSpacing(true);
 		layout.setWidth("100%");
@@ -1048,13 +1047,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	protected void refresh()
 	{
+		logger.info("Start refresh!");
 		if(this.tabsheet == null)
 		{
+			logger.info("createTabSheet!");
+			this.refreshTree();
 			this.createTabSheet();
 		}
 		
-		this.refreshTree();
+//		logger.info("refreshTree!");
+//		this.refreshTree();
 		
+		logger.info("createFilterPopupContent!");
 		createFilterPopupContent();
 		
     	String tab = (String)VaadinSession.getCurrent().getAttribute("tab");
@@ -1076,15 +1080,24 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    		
 	    		if(tabComponent instanceof TopologyTab)
 	    		{
+	    			 logger.info("applyModuleFilter!");
 	    			((TopologyTab)tabComponent).applyModuleFilter(module);
+	    			logger.info("search!");
 	    			((TopologyTab)tabComponent).search();
+	    			logger.info("resetSearchDates!");
 	    			((TopologyTab)tabComponent).resetSearchDates();
+	    			logger.info("applyFilter!");
 	    			((TopologyTab)tabComponent).applyFilter();
 	    		}
 	    		
 	    		this.tabsheet.setSelectedTab(tabComponent);
 	    	}
     	}
+    	
+    	VaadinSession.getCurrent().setAttribute("tab", null);
+    	VaadinSession.getCurrent().setAttribute("module", null);
+    	
+    	logger.info("End refresh!");
 	}
 	
 	protected void refreshTree()

@@ -294,8 +294,9 @@ public class LandingViewPanel extends Panel implements View
         conf.setLegend(legend);
 
         Tooltip tooltip = new Tooltip();
-        tooltip.setFormatter("function() { return '' + this.x + '<br>' + this.series.name + ': ' + this.y + '';}");
+        tooltip.setFormatter("function() { return '' + this.x + '<br>' + this.series.name + ': ' + this.y + '' + '<br>Click to view errors' ;}");
         conf.setTooltip(tooltip);
+        
 
         PlotOptionsColumn redPlot = new PlotOptionsColumn();
         redPlot.setColor(SolidColor.RED);
@@ -447,7 +448,7 @@ public class LandingViewPanel extends Panel implements View
         conf.setLegend(legend);
 
         Tooltip tooltip = new Tooltip();
-        tooltip.setFormatter("function() { return '' + this.x + '<br>' + this.series.name + ': ' + this.y + '';}");
+        tooltip.setFormatter("function() { return '' + this.x + '<br>' + this.series.name + ': ' + this.y + '' + '<br>Click to view errors';}");
         conf.setTooltip(tooltip);
 
         PlotOptionsColumn redPlot = new PlotOptionsColumn();
