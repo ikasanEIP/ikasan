@@ -817,6 +817,7 @@ public class CategorisedErrorTab extends TopologyTab
 	@Override
 	public void search()
 	{
+		logger.info("Start search!");
 		categorizedErrorOccurenceTable.removeAllItems();
 
     	ArrayList<String> modulesNames = null;
@@ -984,5 +985,7 @@ public class CategorisedErrorTab extends TopologyTab
 	    	
 	        item.getItemProperty(" ").setValue(popupButton);
     	}
+    	
+    	 logger.info("End search!");
     }	
 }
