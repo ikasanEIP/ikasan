@@ -59,4 +59,10 @@ public interface EndpointListener<MESSAGE,EXCEPTION extends Throwable>
      * @param exception
      */
     public void onException(EXCEPTION exception);
+
+    /**
+     * Is this endpoint listener currently actively listening.
+     * @return boolean
+     */
+    public boolean isActive();
 }
