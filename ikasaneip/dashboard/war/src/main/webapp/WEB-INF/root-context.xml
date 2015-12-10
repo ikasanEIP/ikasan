@@ -186,14 +186,6 @@
                    <constructor-arg value="platformConfigurationView"/>
                    <constructor-arg ref="platformConfigurationPanel"/>
                 </bean>
-                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="error-occurrence"/>
-                   <constructor-arg ref="errorOccurrenceDeepLinkPanel"/>
-                </bean>
-                <!-- bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="wiretap"/>
-                   <constructor-arg ref="wiretapDeepLinkPanel"/>
-                </bean -->
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>

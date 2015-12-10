@@ -70,9 +70,13 @@
     <servlet>
         <servlet-name>Ikasan Dashboard</servlet-name>
         <servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
-        <init-param>
+        <!-- init-param>
             <param-name>beanName</param-name>
             <param-value>ikasanUI</param-value>
+        </init-param -->
+        <init-param>
+            <param-name>UIProvider</param-name>
+            <param-value>org.ikasan.dashboard.ui.DashboardUIProvider</param-value>
         </init-param>
         <init-param>
             <param-name>systemMessagesBeanName</param-name>
