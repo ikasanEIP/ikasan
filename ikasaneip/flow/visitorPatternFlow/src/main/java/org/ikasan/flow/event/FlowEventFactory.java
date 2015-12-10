@@ -40,10 +40,10 @@
  */
 package org.ikasan.flow.event;
 
-import java.io.Serializable;
-
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.FlowEvent;
+
+import java.io.Serializable;
 
 /**
  * Implementation of the EventFactory contract based on the creation 
@@ -61,12 +61,12 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
      */
     public <IDENTIFIER,PAYLOAD> FlowEvent<IDENTIFIER,PAYLOAD> newEvent(IDENTIFIER identifier, PAYLOAD payload)
     {
-        return new GenericFlowEvent<IDENTIFIER,PAYLOAD>(identifier, payload);
+        return new GenericFlowEvent<>(identifier, payload);
     }
 
     public <IDENTIFIER,PAYLOAD> FlowEvent<IDENTIFIER, PAYLOAD> newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, PAYLOAD payload)
     {
-        return new GenericFlowEvent<IDENTIFIER,PAYLOAD>(identifier, relatedIdentifier, payload);
+        return new GenericFlowEvent<>(identifier, relatedIdentifier, payload);
     }
 
 	/**
@@ -75,16 +75,16 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 	 * @author Ikasan Development Team
 	 *
 	 */
-	private class GenericFlowEvent<String,PAYLOAD> implements FlowEvent<String,PAYLOAD>, Serializable
+	private class GenericFlowEvent<ID,PAYLOAD> implements FlowEvent<ID,PAYLOAD>, Serializable
 	{
 		/** default serial id */
         private static final long serialVersionUID = 1L;
 
         /** immutable identifier */
-        private String identifier;
+        private ID identifier;
 
         /** immutable related identifier */
-        private String relatedIdentifier;
+        private ID relatedIdentifier;
 
 		/** immutable event creation timestamp */
 	    private long timestamp;
@@ -97,7 +97,7 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
          * @param identifier
          * @param payload
          */
-        protected GenericFlowEvent(String identifier, PAYLOAD payload)
+        protected GenericFlowEvent(ID identifier, PAYLOAD payload)
         {
             this.identifier = identifier;
             if(identifier == null)
@@ -114,7 +114,7 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
          * @param relatedIdentifier
          * @param payload
          */
-        protected GenericFlowEvent(String identifier, String relatedIdentifier, PAYLOAD payload)
+        protected GenericFlowEvent(ID identifier, ID relatedIdentifier, PAYLOAD payload)
         {
             this.identifier = identifier;
             if(identifier == null)
@@ -130,7 +130,7 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 		 * Get immutable flow event identifier.
 		 * @return String - event identifier
 		 */
-		public String getIdentifier()
+		public ID getIdentifier()
 		{
 		    return this.identifier;
 		}
@@ -139,7 +139,7 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
          * Get immutable flow event related identifier.
          * @return String - event related identifier
          */
-        public String getRelatedIdentifier()
+        public ID getRelatedIdentifier()
         {
             return this.relatedIdentifier;
         }
@@ -170,6 +170,19 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 		{
 		    this.payload = payload;
 		}
+
+        @Override
+        public void replace(FlowEvent<ID, PAYLOAD> flowEvent)
+        {
+            if (flowEvent != null)
+            {
+                this.setPayload(flowEvent.getPayload());
+
+                this.identifier = flowEvent.getIdentifier();
+                this.timestamp = flowEvent.getTimestamp();
+                this.relatedIdentifier = flowEvent.getRelatedIdentifier();
+            }
+        }
 
         @Override
         public java.lang.String toString()

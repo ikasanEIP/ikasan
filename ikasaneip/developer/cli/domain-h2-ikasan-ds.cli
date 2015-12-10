@@ -1,0 +1,43 @@
+# mssql driver and datasource registration
+connect
+batch
+
+# full profile
+# #######################################################################
+
+# H2 Driver comes shipped with JBoss 6, so no need to add this
+
+# Add an ikasan non-XA datasource
+data-source add \
+    --profile=full \
+    --name=h2-ikasan-ds \
+    --driver-name=h2 \
+    --connection-url="jdbc:h2:mem:ikasan01;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" \
+    --jndi-name=java:/datasource/ikasan/ds \
+    --user-name=sa \
+    --password=sa \
+    --use-ccm=true \
+    --max-pool-size=25 \
+    --blocking-timeout-wait-millis=5000
+data-source enable --name=h2-ikasan-ds --profile=full
+
+
+# Add an Ikasan XA datasource
+xa-data-source add \
+    --profile=full \
+    --name=h2-ikasan-xads \
+    --driver-name=h2 \
+    --jndi-name=java:/datasource/ikasan/xads \
+    --user-name=sa \
+    --password=sa \
+    --recovery-username=sa \
+    --recovery-password=sa \
+    --use-ccm=true \
+    --max-pool-size=25 \
+    --blocking-timeout-wait-millis=5000
+/profile=full/subsystem=datasources/xa-data-source=h2-ikasan-xads/xa-datasource-properties=URL:add(value=jdbc:h2:mem:ikasan01)
+xa-data-source enable --name=h2-ikasan-xads --profile=full
+
+# Execute and reload
+run-batch
+
