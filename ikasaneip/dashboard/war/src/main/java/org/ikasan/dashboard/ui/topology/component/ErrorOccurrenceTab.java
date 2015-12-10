@@ -892,6 +892,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 			popupButton.setIcon(VaadinIcons.MODAL);
 
 	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ErrorOccurrencePopup.class);
+	        popupOpener.setFeatures("height=200,width=300,resizable");
 	        popupOpener.extend(popupButton);
 	        
 	        popupButton.addClickListener(new Button.ClickListener() 
