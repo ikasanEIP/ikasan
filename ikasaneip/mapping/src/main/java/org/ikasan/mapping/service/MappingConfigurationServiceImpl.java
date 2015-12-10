@@ -57,6 +57,7 @@ import org.ikasan.mapping.model.MappingConfigurationLite;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.ikasan.mapping.util.SetProducer;
 import org.springframework.dao.DataAccessException;
 
@@ -71,10 +72,11 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 {
     private Logger logger = Logger.getLogger(MappingConfigurationServiceImpl.class);
 
-    /** Access to market data */
+    
     protected final MappingConfigurationDao dao;
     protected final KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory;
-
+    protected MappingConfigurationServiceConfiguration configuration;
+    
     /**
      * Constructor
      * 
@@ -97,45 +99,6 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
-     */
-    @Override
-    public Long saveMappingConfiguration(MappingConfiguration mappingConfiguration) throws MappingConfigurationServiceException
-    {
-        Long id;
-        
-        try
-        {
-            id = this.dao.storeMappingConfiguration(mappingConfiguration);
-        }
-        catch(DataAccessException e)
-        {
-        	logger.error("An error has occurred trying to save a mapping configuration", e);
-            throw new MappingConfigurationServiceException(e);
-        }
-
-        return id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
-     */
-    @Override
-    public Long saveSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
-    {
-        return this.dao.storeSourceConfigurationValue(sourceConfigurationValue);
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
-     */
-    @Override
-    public Long saveTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
-    {
-        return this.dao.storeTargetConfigurationValue(targetConfigurationValue);
-    }
-
     /*
      * (non-Javadoc)
      * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
@@ -144,7 +107,26 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem, 
             final String targetSystem, final List<String> sourceSystemValues)
     {
-        return this.dao.getTargetConfigurationValue(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues);
+    	if(sourceSystemValues == null || sourceSystemValues.size() == 0)
+    	{
+    		 throw new RuntimeException("Null or empty source paramaters cannot be supplied to a mapping configuration look up.");
+    	}
+    	
+    	if(this.configuration != null && this.configuration.isReverseMapping())
+        {
+        	if(sourceSystemValues.size() > 1)
+        	{
+        		 throw new RuntimeException("The mapping configuration is configured for reverse mappings. Only one source parameter can be" +
+        		 		" provided for a reverse mapping as only one to one reverse mappings are supported. You have provided " + sourceSystemValues.size() 
+        		 		+ " source parameters.");
+        	}
+        	
+        	return this.dao.getReverseMapping(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues.get(0));
+        }
+        else
+        {            
+            return this.dao.getTargetConfigurationValue(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues);
+        }
     }
 
     /* (non-Javadoc)
@@ -153,17 +135,23 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     @Override
     public String getTargetConfigurationValue(final String clientName, String configurationType, String sourceSystem, String targetSystem,
             String sourceSystemValue)
-    {
-        List<String> sourceSystemValues = new ArrayList<String>();
+    {      
+    	if(sourceSystemValue == null)
+    	{
+    		 throw new RuntimeException("A null source paramater cannot be supplied to a mapping configuration look up.");
+    	}
+    	
+    	List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add(sourceSystemValue);
-
-        return this.dao.getTargetConfigurationValue(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues);
+        
+        return getTargetConfigurationValue(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues);
     }
 
     /* (non-Javadoc)
      * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, byte[])
      */
     @Override
+    @Deprecated
     public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceContext,
             final String targetContext, final byte[] payload) throws MappingConfigurationServiceException
     {
@@ -228,6 +216,110 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         }
 
         return returnValue;
+    }
+    
+    /* (non-Javadoc)
+	 * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
+	 */
+	public String getTargetConfigurationValueWithIgnores(String clientName,
+			String configurationTypeName, String sourceContext,
+			String targetContext, List<String> sourceSystemValues)
+	{
+		String returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
+				targetContext, sourceSystemValues, sourceSystemValues.size());
+		
+		boolean resultFound = false;
+		
+		if(returnValue == null)
+		{
+			for(int i=sourceSystemValues.size() - 1; i>0; i--)
+			{
+				List<List<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
+				
+				String result = null;
+				
+				for(List<String> subSet: subSets)
+				{
+					ArrayList<String> subList = new ArrayList<String>();
+					subList.addAll(subSet);
+					
+					returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
+							targetContext, subList, sourceSystemValues.size());
+					
+					if(returnValue != null && resultFound)
+					{
+						StringBuffer sourceSystemValuesSB = new StringBuffer();
+
+	                    sourceSystemValuesSB.append("[SourceSystemValues = ");
+	                    for(String sourceSystemValue: sourceSystemValues)
+	                    {
+	                        sourceSystemValuesSB.append(sourceSystemValue).append(" ");
+	                    }
+	                    sourceSystemValuesSB.append("]");
+
+	                    String errorMessage = "Multiple sub results returned from the mapping configuration service. " +
+	                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationTypeName + "] [SourceContext = " + sourceContext + "] " +
+	                            "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
+	                    
+	                    logger.error(errorMessage);
+	                    
+	                    throw new RuntimeException(errorMessage);
+					}
+					
+					if(returnValue != null)
+					{
+						resultFound = true;
+						result = returnValue;
+					}
+				}
+				
+				if(result != null)
+				{
+					return result;
+				}
+			}
+		}
+		
+		return returnValue;
+	}
+    
+    /* (non-Javadoc)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
+     */
+    @Override
+    public Long saveMappingConfiguration(MappingConfiguration mappingConfiguration) throws MappingConfigurationServiceException
+    {
+        Long id;
+        
+        try
+        {
+            id = this.dao.storeMappingConfiguration(mappingConfiguration);
+        }
+        catch(DataAccessException e)
+        {
+        	logger.error("An error has occurred trying to save a mapping configuration", e);
+            throw new MappingConfigurationServiceException(e);
+        }
+
+        return id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
+     */
+    @Override
+    public Long saveSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
+    {
+        return this.dao.storeSourceConfigurationValue(sourceConfigurationValue);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     */
+    @Override
+    public Long saveTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
+    {
+        return this.dao.storeTargetConfigurationValue(targetConfigurationValue);
     }
 
     /* (non-Javadoc)
@@ -595,78 +687,14 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     {
         return this.dao.getTargetConfigurationContextByClientNameTypeAndSourceContext(clientName, type, sourceContext); 
     }
-	
-	/* (non-Javadoc)
-	 * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
-	 */
-	public String getTargetConfigurationValueWithIgnores(String clientName,
-			String configurationTypeName, String sourceContext,
-			String targetContext, List<String> sourceSystemValues)
-	{
-		String returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
-				targetContext, sourceSystemValues, sourceSystemValues.size());
-		
-		boolean resultFound = false;
-		
-		if(returnValue == null)
-		{
-			for(int i=sourceSystemValues.size() - 1; i>0; i--)
-			{
-				List<List<String>> subSets = SetProducer.combinations(sourceSystemValues, i);
-				
-				String result = null;
-				
-				for(List<String> subSet: subSets)
-				{
-					ArrayList<String> subList = new ArrayList<String>();
-					subList.addAll(subSet);
-					
-					returnValue = this.dao.getTargetConfigurationValueWithIgnores(clientName, configurationTypeName, sourceContext, 
-							targetContext, subList, sourceSystemValues.size());
-					
-					if(returnValue != null && resultFound)
-					{
-						StringBuffer sourceSystemValuesSB = new StringBuffer();
-
-	                    sourceSystemValuesSB.append("[SourceSystemValues = ");
-	                    for(String sourceSystemValue: sourceSystemValues)
-	                    {
-	                        sourceSystemValuesSB.append(sourceSystemValue).append(" ");
-	                    }
-	                    sourceSystemValuesSB.append("]");
-
-	                    String errorMessage = "Multiple sub results returned from the mapping configuration service. " +
-	                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationTypeName + "] [SourceContext = " + sourceContext + "] " +
-	                            "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
-	                    
-	                    logger.error(errorMessage);
-	                    
-	                    throw new RuntimeException(errorMessage);
-					}
-					
-					if(returnValue != null)
-					{
-						resultFound = true;
-						result = returnValue;
-					}
-				}
-				
-				if(result != null)
-				{
-					return result;
-				}
-			}
-		}
-		
-		return returnValue;
-	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.mapping.service.MappingConfigurationService#getReverseMapping(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.ikasan.mapping.service.MappingConfigurationService#setConfiguration(org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration)
 	 */
 	@Override
-	public String getReverseMapping(String clientName, String configurationType, String sourceSystem, String targetSystem, String targetSystemValue)
+	public void setConfiguration(
+			MappingConfigurationServiceConfiguration configuration)
 	{
-		return this.dao.getReverseMapping(clientName, configurationType, sourceSystem, targetSystem, targetSystemValue);
+		this.configuration = configuration;
 	}
 }

@@ -56,6 +56,7 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -674,12 +675,71 @@ public class MappingConfigurationServiceTest
 
 	}
 	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_null_source_value()
+			throws MappingConfigurationServiceException
+	{
+		String value = null;
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							value);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_null_source_values()
+			throws MappingConfigurationServiceException
+	{
+		List<String> values = null;
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							values);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_empty_source_values()
+			throws MappingConfigurationServiceException
+	{
+		List<String> values = new ArrayList<String>();
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							values);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_reverse_mapping_with_multiple_source_values()
+			throws MappingConfigurationServiceException
+	{
+		MappingConfigurationServiceConfiguration config = new MappingConfigurationServiceConfiguration();
+		config.setReverseMapping(true);
+		this.xaMappingConfigurationService.setConfiguration(config);
+		
+		List<String> values = new ArrayList<String>();
+		values.add("value1");
+		values.add("value2");
+		this.xaMappingConfigurationService
+					.getTargetConfigurationValue("CMI2",
+							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
+							values);
+	}
+	
+	
 	@Test
 	@DirtiesContext
 	public void test_reverse_mapping()
 	{
+		MappingConfigurationServiceConfiguration config = new MappingConfigurationServiceConfiguration();
+		config.setReverseMapping(true);
+		this.xaMappingConfigurationService.setConfiguration(config);
+		
 		String result = this.xaMappingConfigurationService
-				.getReverseMapping("CMI2",
+				.getTargetConfigurationValue("CMI2",
 						"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
 						"BARCLON");
 
