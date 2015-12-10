@@ -137,7 +137,8 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationType, final String sourceSystem
             , final String targetSystem, final List<String> sourceSystemValues, final int numParams)
     {
@@ -164,7 +165,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 int i=0;
                 for(String sourceSystemValue: sourceSystemValues)
                 {
-                	if(sourceSystemValue.equals(""))
+                	if(sourceSystemValue == null || sourceSystemValue.equals(""))
                 	{
                 		sourceSystemValue = "ignore";
                 	}
@@ -193,6 +194,48 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                     String errorMessage = "Multiple results returned from the mapping configuration service. " +
                             "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
                             "[TargetContext = " + targetSystem + "] " + sourceSystemValuesSB.toString();
+                    
+                    logger.error(errorMessage);
+                    
+                    throw new RuntimeException(errorMessage);
+                }
+                else
+                {
+                    return results.get(0);
+                }
+            }
+        });
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Override
+    public String getReverseMapping(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final String targetSystemValue)
+    {
+    	return (String)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+ 
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+            	Query query = session.createQuery(MappingConfigurationDaoConstants.REVERSE_MAPPING_CONFIGURATION_QUERY);
+                query.setParameter(MappingConfigurationDaoConstants.TARGET_SYSTEM_VALUE, targetSystemValue);
+                query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
+                query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceSystem);
+                query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
+                query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
+
+                List<String> results = (List<String>)query.list();
+
+                if(results.size() == 0)
+                {
+                    return null;
+                }
+                else if(results.size() > 1)
+                {                    
+                	String errorMessage = "Multiple results returned from the mapping configuration service. " +
+                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem + "] " +
+                            "[TargetContext = " + targetSystem + "] " + "[TargetSystemValue = " + targetSystemValue + "]";
                     
                     logger.error(errorMessage);
                     

@@ -43,12 +43,14 @@ package org.ikasan.component.endpoint.filesystem.messageprovider;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.quartz.JobExecutionContext;
@@ -86,22 +88,37 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
     /** post processor on the read files */
     MessageProviderPostProcessor messageProviderPostProcessor;
 
+    /** maintain a control state to coordinate the stopping of any processing */
+    boolean active;
+
     @Override
     public List<File> invoke(JobExecutionContext context)
     {
         List<File> files = new ArrayList<File>();
         filenames.clear();
 
-        for(FileMatcher fileMatcher:fileMatchers)
+        try
         {
-            try
+            for(FileMatcher fileMatcher:fileMatchers)
             {
-                fileMatcher.invoke();
+                try
+                {
+                    fileMatcher.invoke();
+                }
+                catch(IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
             }
-            catch(IOException e)
+        }
+        catch(ConcurrentModificationException e)
+        {
+            if(isActive())
             {
-                throw new RuntimeException(e);
+                throw e;
             }
+
+            throw new ForceTransactionRollbackException("File processing interrupted by a stop request.");
         }
 
         for(String filename:filenames)
@@ -165,7 +182,7 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         int lastIndexOffullPath = fullyQualifiedFilename.lastIndexOf(FQN_PATH_SEPARATOR);
         String path = fullyQualifiedFilename.substring(0,lastIndexOffullPath);
         String name = fullyQualifiedFilename.substring(++lastIndexOffullPath);
-        return new FileMatcher(path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
+        return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
     }
 
     @Override
@@ -181,6 +198,12 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
     }
 
     @Override
+    public boolean isActive()
+    {
+        return this.active;
+    }
+
+    @Override
     public void startManagedResource()
     {
         if(fileConsumerConfiguration.getFilenames() != null)
@@ -191,12 +214,14 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
             }
         }
 
+        this.active = true;
         logger.info("  - Started embedded managed component [FileMessageProvider]");
     }
 
     @Override
     public void stopManagedResource()
     {
+        this.active = false;
         this.fileMatchers.clear();
         logger.info("  - Stopped embedded managed component [FileMessageProvider]");
     }
