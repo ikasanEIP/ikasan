@@ -54,6 +54,7 @@
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" />
 <script type="text/javascript" src="<c:url value='/js/jquery-1.4.2.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
+<c:url value="/j_spring_security_logout" var="logoutUrl" />
 </head>
 <body>
 <div id="wrap">
@@ -79,7 +80,7 @@
 		</security:authorize>
 	</ul>
 	<span id="sessioninfo">
-		logged in as <security:authentication property="principal.username"/> - <a href="<c:url value="/j_spring_security_logout"/>">Logout</a>
+		logged in as <security:authentication property="principal.username"/> - <a href="${logoutUrl}">Logout</a>
 	</span>
 </div>
 
