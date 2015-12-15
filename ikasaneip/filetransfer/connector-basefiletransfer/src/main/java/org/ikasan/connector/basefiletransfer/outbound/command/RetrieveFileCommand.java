@@ -40,10 +40,6 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.io.File;
-
-import javax.resource.ResourceException;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -52,6 +48,15 @@ import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitException;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import javax.resource.ResourceException;
+import java.io.File;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Retrieves a specified file from a remote directory
@@ -72,7 +77,10 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
     /** Rename the file on successful retrieval */
     protected boolean renameOnSuccess;
     
-    /** Extension with which to rename successfully retrieved files */
+    /** Extension with which to rename successfully retrieved files
+     * As optional timestamp can be specified by using a pattern of
+     * /[dateFormat]/ in the renameExtension
+     * e.g. "/yyyyMMddHHmmss/.complete" */
     protected String renameExtension;
 
     /** Move the remote file once successfully retrieved */
@@ -83,9 +91,14 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
 
     /** Whether or not to destroy the file after we pick it up */
     protected boolean destructive;
+
+    /** Pattern used in replacing a timestamp in a rename extension, for instance, captures /[dateFormat]/ */
+    protected Pattern renameTimestampExtensionPattern = Pattern.compile("(/[^/]+/)");
+
+    private DateTimeFormatter timestampFormatter;
     
     /**
-     * No args constructor required by Hibernate
+     * No args constructor required by Hibernate and unit tests
      */
     protected  RetrieveFileCommand(){
         // Do Nothing
@@ -101,7 +114,8 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
      * @param moveOnSuccessNewPath to move file
      * @param destructive flag
      */
-    public RetrieveFileCommand(BaseFileTransferDao dao, boolean renameOnSuccess, String renameExtension,boolean moveOnSuccess, String moveOnSuccessNewPath,boolean destructive)
+    public RetrieveFileCommand(BaseFileTransferDao dao, boolean renameOnSuccess, String renameExtension,
+            boolean moveOnSuccess, String moveOnSuccessNewPath, boolean destructive)
     {
         super();
         this.dao = dao;
@@ -111,6 +125,7 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
         this.moveOnSuccessNewPath = moveOnSuccessNewPath;
         this.destructive = destructive;
 
+        parseTimestampFormat();
         // This should never occur as we are checking for this earlier, but just in case...
         if (renameOnSuccess && destructive)
         {
@@ -177,7 +192,7 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
 
             if (renameOnSuccess)
             {
-                renameFile(sourcePath, sourcePath+renameExtension);
+                renameFile(sourcePath, sourcePath + expandRenameExtension());
             }
             else if (moveOnSuccess)
             {
@@ -209,6 +224,34 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
     protected void doRollback()
     {
         logger.info("rollback called on this command:" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    protected String expandRenameExtension()
+    {
+        if (timestampFormatter != null)
+        {
+            Matcher matcher = renameTimestampExtensionPattern.matcher(renameExtension);
+            String timestamp = timestampFormatter.print(new Date(DateTimeUtils.currentTimeMillis()).getTime());
+            return matcher.replaceAll(timestamp);
+        }
+        else
+        {
+            return renameExtension;
+        }
+    }
+
+    protected void parseTimestampFormat()
+    {
+        if (renameExtension != null && renameOnSuccess)
+        {
+            Matcher matcher = renameTimestampExtensionPattern.matcher(renameExtension);
+            if (matcher.find())
+            {
+                String timestampFormat = matcher.group(1);
+                // strip off the / from beginning and end of the timestamp format String
+                timestampFormatter = DateTimeFormat.forPattern(timestampFormat.substring(1, timestampFormat.length() - 1)).withZoneUTC();
+            }
+        }
     }
 
     /**
@@ -278,13 +321,13 @@ public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalRe
     }
 
     /**
-     * Private setter sued by Hibernate
+     * Private setter used by Hibernate
      * @param renameExtension when renaming file
      */
-    @SuppressWarnings("unused")
-    private void setRenameExtension(String renameExtension)
+    protected void setRenameExtension(String renameExtension)
     {
         this.renameExtension = renameExtension;
+        parseTimestampFormat();
     }
 
     /**
