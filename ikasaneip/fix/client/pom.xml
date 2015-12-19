@@ -1,0 +1,119 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.ikasan</groupId>
+		<artifactId>ikasan-fix</artifactId>
+		<version>1.2.0-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>org.ikasan</groupId>
+	<artifactId>ikasan-client-connector-fix</artifactId>
+	<packaging>jar</packaging>
+	<name>Ikasan Client Fix Initiator Applications</name>
+
+	<!-- Config below is to enable a standalone application to run using the maven exec plugin  -->
+	<!-- To run cd to the api directory and run the following command : -->
+	<!-- mvn exec:java -Dexec.mainClass=org.ikasan.client.connector.app.test.CmiQuickFixClientAppTest -Dexec.args=Fidessa_UAT-->
+	<!-- the application class has been included in the test folders but will not run as part of the -->
+	<!-- surefire or integration tests as it does not have the Test suffix in the classname -->
+
+
+	<profiles>
+		<profile>
+			<id>ClientApp</id>
+			<activation>
+				<property>
+					<name>ClientApp</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<executable>java</executable>
+							<mainClass>org.ikasan.client.connector.app.test.CmiQuickFixClientAppTest</mainClass>
+							<arguments>
+								<argument>-classpath</argument>
+								<!-- automatically creates the classpath using all project dependencies,
+                 also adding the project build directory -->
+								<classpath />
+								<argument>org.ikasan.client.connector.app.test.CmiQuickFixClientAppTest</argument>
+							</arguments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>quickfixj</groupId>
+			<artifactId>quickfixj-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.mina</groupId>
+			<artifactId>mina-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mizuho.esb.mhi.connector-fix-api</groupId>
+			<artifactId>api-connector-fix</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.mina</groupId>
+		  <artifactId>mina-filter-ssl</artifactId>
+		</dependency>
+		<!-- Unescaping unicode in java - required for sending fix messages from file etc...-->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<!-- Unit Test dependencies -->
+		<!-- Newer JMock library -->
+		<!-- JMock-JUnit4 integration -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- JMock-JUnit4 integration -->
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mizuho.esb.mhi.connector-fix-fake</groupId>
+			<artifactId>fake-connector-fix</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>		
+		<!-- all other dependencies are inherited from the parent pom -->
+	</dependencies>
+</project>

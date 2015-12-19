@@ -201,7 +201,13 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         {
             wiretapDao.setHousekeepingBatchSize(wiretapServiceConfiguration.getHousekeepingBatchSize());
             wiretapDao.setBatchHousekeepDelete(wiretapServiceConfiguration.isBatchHousekeepDelete());
+            wiretapDao.setTransactionBatchSize(wiretapServiceConfiguration.getTransactionBatchSize());
         }
+    }
+    
+    public boolean housekeepablesExist()
+    {
+    	return this.wiretapDao.housekeepablesExist();
     }
 
     public WiretapServiceConfiguration getWiretapServiceConfiguration()
