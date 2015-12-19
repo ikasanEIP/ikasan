@@ -102,4 +102,10 @@ public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
      * deleted
      */
     public void housekeep();
+    
+    /**
+	 * Method to state that there are housekeepable records available.
+	 * @return
+	 */
+	public boolean housekeepablesExist();
 }

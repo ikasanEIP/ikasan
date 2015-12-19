@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * $Id: pom.xml 51288 2015-11-29 17:20:00Z donnal $
+ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/enterpriseServiceBus/trunk/projects/fix/connector-fix/adapter/pom.xml $
+ *
+ * ====================================================================
+ *
+ * Copyright (c) 2000-2011 by Mizuho International plc.
+ * All Rights Reserved.
+ *
+ * ====================================================================
+ *
+ *
+ * Author:  ESB Development Team
+ *
+ *
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.ikasan</groupId>
+		<artifactId>ikasan-fix</artifactId>
+		<version>1.2.0-SNAPSHOT</version>
+	</parent>
+
+    <artifactId>adapter-connector-fix-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Ikasan FIX Connector JCA Adapter Parent</name>
+
+    <modules>
+        <module>jar</module>
+        <module>client</module>
+        <module>rar</module>
+    </modules>
+	
+	<dependencies>
+			<dependency>
+				<groupId>geronimo-spec</groupId>
+				<artifactId>geronimo-spec-j2ee</artifactId>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- JTA -->
+			<dependency>
+				<groupId>geronimo-spec</groupId>
+				<artifactId>geronimo-spec-jta</artifactId>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- Ikasan endpoint spec contracts -->
+			<dependency>
+	        	<groupId>org.ikasan</groupId>
+	           	<artifactId>ikasan-eip</artifactId>
+	           	<scope>provided</scope>
+	        </dependency>
+	
+	       <!-- Ikasan generic JCA implementation -->
+	        <dependency>
+	            <groupId>org.ikasan</groupId>
+	            <artifactId>ikasan-jca-base</artifactId>
+	            <scope>provided</scope>
+	        </dependency>
+
+			<!-- LRCO -->
+			<dependency>
+				<groupId>org.jboss.transaction</groupId>
+				<artifactId>jboss-jta</artifactId>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- Forced dependency because of silly way connector-base is implemented -->
+			<!--dependency>
+				<groupId>org.ikasan</groupId>
+				<artifactId>ikasan-common</artifactId>
+				<scope>test</scope>
+			</dependency-->
+			<dependency>
+				<groupId>javax.resource</groupId>
+				<artifactId>connector</artifactId>
+			</dependency>
+			
+			<dependency>
+				<groupId>quickfixj</groupId>
+				<artifactId>quickfixj-all</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>jboss</groupId>
+				<artifactId>jboss-jmx</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-core</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.mina</groupId>
+				<artifactId>mina-filter-ssl</artifactId>
+			</dependency>
+			 <dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				 <scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock-junit4</artifactId>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+</project>
