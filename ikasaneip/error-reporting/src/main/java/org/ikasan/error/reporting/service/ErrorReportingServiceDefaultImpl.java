@@ -40,14 +40,14 @@
  */
 package org.ikasan.error.reporting.service;
 
-import java.util.Date;
-import java.util.List;
-
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Default implementation of the ErrorReportingService.
@@ -191,13 +191,13 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         if(event instanceof FlowEvent)
         {
             FlowEvent<String,Object> flowEvent = (FlowEvent)event;
-            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()));
+            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()), flowEvent.getPayload().toString());
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
             return errorOccurrence;
         }
 
-        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(event));
+        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(event), event.toString());
     }
 
     /**
@@ -220,7 +220,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 
         Throwable cause = throwable;
         while (cause!=null){
-            flattenedBuffer.append(throwable.toString());
+            flattenedBuffer.append(cause.toString());
             flattenedBuffer.append("\n");
             for (StackTraceElement stackTraceElement : cause.getStackTrace()){
                 flattenedBuffer.append(stackTraceElement.toString());

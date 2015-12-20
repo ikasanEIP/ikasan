@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.spec.management.ManagedService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 
@@ -50,7 +51,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public class SampleMonitor implements Monitor
+public class SampleMonitor implements Monitor, ManagedService
 {
 
     /* (non-Javadoc)

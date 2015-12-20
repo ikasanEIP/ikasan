@@ -40,22 +40,23 @@
  */
 package org.ikasan.topology.model;
 
-import java.security.Principal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 
  * @author Ikasan Development Team
  */
-public class Flow implements Principal
+public class Flow
 {
     private Long id;
     private String name;
     private String description;
     private String state;
     private Module module;
-    private Set<Component> components;
+    private Set<Component> components = new HashSet<Component>();
+    private int order;
 
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -212,4 +213,43 @@ public class Flow implements Principal
 	{
 		this.state = state;
 	}
+	
+	/**
+	 * @return the order
+	 */
+	public int getOrder()
+	{
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(int order)
+	{
+		this.order = order;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Flow other = (Flow) obj;
+		if (id == null)
+		{
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 }

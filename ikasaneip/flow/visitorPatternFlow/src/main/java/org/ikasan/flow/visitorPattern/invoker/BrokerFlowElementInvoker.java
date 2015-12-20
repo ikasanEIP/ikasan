@@ -70,8 +70,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
                 Object o = broker.invoke(flowEvent);
                 if (o instanceof FlowEvent)
                 {
-                    FlowEvent brokerFlowEvent = (FlowEvent)o;
-                    flowEvent.setPayload(brokerFlowEvent.getPayload());
+                    flowEvent.replace((FlowEvent) o);
                 }
                 else
                 {
@@ -94,8 +93,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
                 Object o = broker.invoke(flowEvent);
                 if (o instanceof FlowEvent)
                 {
-                    FlowEvent brokerFlowEvent = (FlowEvent)o;
-                    flowEvent.setPayload(brokerFlowEvent.getPayload());
+                    flowEvent.replace((FlowEvent) o);
                 }
                 else
                 {

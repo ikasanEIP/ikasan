@@ -55,10 +55,10 @@
 
         <createTable tableName="MCSSourceConfigValue">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="MCSSourceC_4702897042"/>
             </column>
-            <column name="SourceSystemValue" type="VARCHAR(256)">
+            <column name="SourceSystemValue" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="MappingConfigurationId" type="numeric(18)">
@@ -68,11 +68,11 @@
                 <constraints nullable="false"/>
             </column>
             <column name="SourceConfigGroupId" type="numeric(18)"/>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

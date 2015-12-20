@@ -72,6 +72,7 @@ import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -252,6 +253,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred testing an LDAP connection", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -263,6 +266,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(Exception e)
             	{
+            		logger.error("An error occurred testing an LDAP connection", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -309,6 +314,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred saving an authentication method", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -358,6 +365,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred deleting an authentication method", e);
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -387,6 +396,15 @@ public class UserDirectoriesPanel extends Panel implements View
         		window.setWidth("90%");
         		
         		window.setContent(authMethodPanel);
+        		
+        		window.addCloseListener(new Window.CloseListener() 
+        		{
+                    // inline close-listener
+                    public void windowClose(CloseEvent e) 
+                    {
+                        populateAll();
+                    }
+                });
         		
         		UI.getCurrent().addWindow(window);
             }
@@ -426,6 +444,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred synchronising an LDAP repository", e); 
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -437,6 +457,8 @@ public class UserDirectoriesPanel extends Panel implements View
             	}
             	catch(Exception e)
             	{
+            		logger.error("An error occurred synchronising an LDAP repository", e); 
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);

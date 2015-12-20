@@ -55,26 +55,26 @@
 
         <createTable tableName="Server">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="Server_20598673743"/>
             </column>
-            <column name="Name" type="VARCHAR(256)">
+            <column name="Name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="Description" type="VARCHAR(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Url" type="VARCHAR(256)">
+            <column name="Url" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="Port" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

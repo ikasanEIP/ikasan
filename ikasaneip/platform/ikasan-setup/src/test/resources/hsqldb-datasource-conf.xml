@@ -3,7 +3,7 @@
     xsi:schemaLocation="
 
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
     
     <bean id="dataSource" name="ikasan.xads ikasan.ds"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -12,5 +12,13 @@
         <property name="username" value="sa" />
         <property name="password" value="sa" />
     </bean>
+    
+    <!-- bean id="dataSource" name="ikasan.xads ikasan.ds"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.sybase.jdbc4.jdbc.SybDriver" />
+        <property name="url" value="jdbc:sybase:Tds:svc-esbdb01d:50100/Ikasan01" />
+        <property name="username" value="ikasan01d" />
+        <property name="password" value="Ikasan01d" />
+    </bean -->
     
 </beans>

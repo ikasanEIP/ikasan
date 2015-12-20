@@ -137,6 +137,8 @@ public class LoginDialogLite extends Window
             1, null, true));
         userNameField.setValidationVisible(false);
         userNameField.setStyleName("ikasan");
+        userNameField.setValue("admin");
+        userNameField.setReadOnly(true);
         form.addComponent(userNameField, 1, 1);
 
         Label passwordLabel = new Label("Password:");
@@ -181,7 +183,7 @@ public class LoginDialogLite extends Window
                 try 
                 {
                     binder.commit();
-                    ikasanAuthentication = (IkasanAuthentication)authenticationService.login
+                    ikasanAuthentication = (IkasanAuthentication)authenticationService.authenticateLocal
                     		(userNameField.getValue(), passwordField.getValue());
                     userNameField.setValue("");
                     passwordField.setValue("");

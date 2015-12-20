@@ -76,6 +76,9 @@
 				<value>/org/ikasan/topology/model/Module.hbm.xml</value>
 				<value>/org/ikasan/topology/model/Server.hbm.xml</value>
 				<value>/org/ikasan/topology/model/UserBusinessStream.hbm.xml</value>
+				<value>/org/ikasan/topology/model/Filter.hbm.xml</value>
+				<value>/org/ikasan/topology/model/FilterComponent.hbm.xml</value>
+				<value>/org/ikasan/topology/model/RoleFilter.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
@@ -102,6 +105,9 @@
 				<value>/org/ikasan/topology/model/Module.hbm.xml</value>
 				<value>/org/ikasan/topology/model/Server.hbm.xml</value>
 				<value>/org/ikasan/topology/model/UserBusinessStream.hbm.xml</value>
+				<value>/org/ikasan/topology/model/Filter.hbm.xml</value>
+				<value>/org/ikasan/topology/model/FilterComponent.hbm.xml</value>
+				<value>/org/ikasan/topology/model/RoleFilter.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />

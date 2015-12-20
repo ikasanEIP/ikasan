@@ -92,7 +92,7 @@
         <many-to-one name="server" column="ServerId" 
        		class="org.ikasan.topology.model.Server" not-null="false" />
          
-        <set name="flows" cascade="all" order-by="Id asc" lazy="false">
+        <set name="flows" cascade="all" order-by="FlowOrder asc" lazy="false">
          	<key column="ModuleId"/>
          	<one-to-many class="org.ikasan.topology.model.Flow"/>
       	</set>

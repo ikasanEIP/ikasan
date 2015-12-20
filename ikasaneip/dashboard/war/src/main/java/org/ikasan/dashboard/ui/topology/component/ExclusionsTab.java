@@ -46,7 +46,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
+import org.ikasan.dashboard.ui.ExcludedEventPopup;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -55,7 +56,6 @@ import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
@@ -69,8 +69,9 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.server.Resource;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -81,14 +82,14 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -118,17 +119,14 @@ public class ExclusionsTab extends TopologyTab
 	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	private TopologyService topologyService;
 	
-	private SerialiserFactory serialiserFactory;
 	
 	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService, SerialiserFactory serialiserFactory, 
-			ComboBox businessStreamCombo)
+			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
 	{
 		this.errorReportingService = errorReportingService;
 		this.exclusionManagementService = exclusionManagementService;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
-		this.serialiserFactory = serialiserFactory;
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
@@ -140,28 +138,24 @@ public class ExclusionsTab extends TopologyTab
 		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
+		this.exclusionsTable.addContainerProperty("", Button.class,  null);
+		
 		
 		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
-		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
-		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
-		    			, action, hospitalManagementService, topologyService);
-		    	
-		    	exclusionEventViewWindow.addCloseListener(new Window.CloseListener()
+		    	if(itemClickEvent.isDoubleClick())
 		    	{
-		            // inline close-listener
-		            public void windowClose(CloseEvent e) 
-		            {
-		            	refreshExcludedEventsTable();
-		            }
-		        });
-		    
-		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
+			    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
+			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
+			    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+			    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
+			    			, action, hospitalManagementService, topologyService);
+			    
+			    	UI.getCurrent().addWindow(exclusionEventViewWindow);
+		    	}
 		    }
 		});
 		
@@ -206,9 +200,6 @@ public class ExclusionsTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -216,8 +207,6 @@ public class ExclusionsTab extends TopologyTab
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
 					
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
@@ -278,9 +267,6 @@ public class ExclusionsTab extends TopologyTab
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
-				// criteria verify that this is safe
-				logger.info("Trying to drop: " + dropEvent);
-
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
 			
@@ -288,9 +274,7 @@ public class ExclusionsTab extends TopologyTab
 				{
 					final Flow flow = (Flow) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ flow.getName());
-					
+				
 					Button deleteButton = new Button();
 					deleteButton.setIcon(VaadinIcons.TRASH);
 					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -326,10 +310,12 @@ public class ExclusionsTab extends TopologyTab
 		fromDate = new PopupDateField("From date");
 		fromDate.setResolution(Resolution.MINUTE);
 		fromDate.setValue(this.getMidnightToday());
+		fromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(fromDate, 0, 0);
 		toDate = new PopupDateField("To date");
 		toDate.setResolution(Resolution.MINUTE);
 		toDate.setValue(this.getTwentyThreeFixtyNineToday());
+		toDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(toDate, 1, 0);
 				
 		
@@ -479,15 +465,48 @@ public class ExclusionsTab extends TopologyTab
     	
     	List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
     			flowNames, fromDate.getValue(),  toDate.getValue(), null);
+    	
+    	if(exclusionEvents == null || exclusionEvents.size() == 0)
+    	{
+    		Notification.show("The exclusions search returned no results!", Type.ERROR_MESSAGE);
+    	}
 
-    	for(ExclusionEvent exclusionEvent: exclusionEvents)
+    	for(final ExclusionEvent exclusionEvent: exclusionEvents)
     	{
     		Date date = new Date(exclusionEvent.getTimestamp());
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
-    	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
-    				timestamp}, exclusionEvent);
+    	    Button popupButton = new Button();
+			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			popupButton.setDescription("Open in new tab");
+			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+			popupButton.setIcon(VaadinIcons.MODAL);
+			
+			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ExcludedEventPopup.class);
+	        popupOpener.extend(popupButton);
+	        
+	        popupButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            public void buttonClick(ClickEvent event) 
+	            {
+	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEvent", exclusionEvent);
+	         	    
+	         	    ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
+	     	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+	     	    	
+	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorOccurrence", errorOccurrence);
+	     			
+	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEventAction", action);
+	     			
+	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("hospitalManagementService", hospitalManagementService);
+	     	 		
+	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+	            }
+	        });
+    	    	    	    
+	    	exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
+	    				timestamp, popupButton}, exclusionEvent);
     	}
 	}
 

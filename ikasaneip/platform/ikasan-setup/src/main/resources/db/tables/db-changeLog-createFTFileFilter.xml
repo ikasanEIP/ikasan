@@ -55,7 +55,7 @@
 
         <createTable tableName="FTFileFilter">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints nullable="false"/>
             </column>
             <column name="ClientId" type="VARCHAR(255)">
@@ -64,10 +64,10 @@
             <column name="Criteria" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LastModified" type="datetime">
+            <column name="LastModified" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column name="LastAccessed" type="datetime">
+            <column name="LastAccessed" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
             <column name="Size" type="numeric(18)">

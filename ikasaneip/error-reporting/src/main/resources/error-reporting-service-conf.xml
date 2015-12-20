@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" scope="prototype" />
 
@@ -14,8 +14,17 @@
         <constructor-arg ref="errorCategorisationDao"/>
         <constructor-arg ref="errorReportingServiceDao"/>
     </bean>
+    
+    <bean id="errorReportingManagementService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
+        <constructor-arg ref="errorManagementDao"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
 
 	<bean id="errorCategorisationDao" class="org.ikasan.error.reporting.dao.HibernateErrorCategorisationDao">
+        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+    </bean>
+    
+    <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">
         <property name="sessionFactory" ref="errorReportingSessionFactory"/>
     </bean>
     
@@ -30,6 +39,11 @@
                 <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
                 <value>org/ikasan/error/reporting/model/ErrorCategorisation.hbm.xml</value>
                 <value>org/ikasan/error/reporting/model/ErrorCategorisationLink.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrenceAction.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/Link.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

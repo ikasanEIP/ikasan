@@ -45,9 +45,13 @@ import java.util.List;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
+
+
 
 
 /**
@@ -104,7 +108,21 @@ public interface TopologyDao
 	 * 
 	 * @return
 	 */
-	public Flow getFlowsByServerIdModuleIdAndFlowname(Long serverId, Long moduleId, String flowName);
+	public Flow getFlowByServerIdModuleIdAndFlowname(Long serverId, Long moduleId, String flowName);
+	
+	/**
+	 * Get a components by server id, module id and flow name and component name not in.
+	 * 
+	 * @return
+	 */
+	public List<Component> getComponentsByServerIdModuleIdAndFlownameAndComponentNameNotIn(Long serverId, Long moduleId, String flowName, List<String> componentNames);
+	
+	/**
+	 * Get a orphaned flow by server id, module id and flow names.
+	 * 
+	 * @return
+	 */
+	public List<Flow> getFlowsByServerIdModuleIdAndNotInFlownames(Long serverId, Long moduleId, List<String> flowName);
 
 	
 	/**
@@ -186,4 +204,36 @@ public interface TopologyDao
 	 * @return
 	 */
 	public Module getModuleByName(String name);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void saveFilter(Filter filter);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Filter getFilterByName(String name);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Filter> getAllFilters();
+	
+	/**
+	 * 
+	 * @param roleFilter
+	 */
+	public void saveRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	public RoleFilter getRoleFilterByRoleId(Long roleId);
 }

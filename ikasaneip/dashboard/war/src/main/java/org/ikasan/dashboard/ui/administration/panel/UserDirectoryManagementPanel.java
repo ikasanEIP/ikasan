@@ -90,6 +90,8 @@ public class UserDirectoryManagementPanel extends Panel
 	private static final String LDAP_USER_DESCRIPTION_ATTRIBUTE_NAME = "description";
 	private static final String APPLICATION_SECURITY_DESCRIPTION_ATTRIBUTE_NAME = "description";
 	private static final String MEMBER_OF_ATTRIBUTE_NAME = "memberOf";
+	private static final String USER_FILTER = "(objectclass=user)";
+	private static final String GROUP_FILTER = "(objectclass=group)";
 	
     private Logger logger = Logger.getLogger(UserDirectoryManagementPanel.class);
 
@@ -121,6 +123,8 @@ public class UserDirectoryManagementPanel extends Panel
 	private TextField applicationSecurityGroupAttributeName;
 	private TextField applicationSecurityDescriptionAttributeName;
 	private TextField memberofAttributeName;
+	private TextField userSynchronisationFilter;
+	private TextField groupSynchronisationFilter;
     
     private AuthenticationMethod authenticationMethod;
     private ComboBox authenticationMethodCombo = new ComboBox();
@@ -175,7 +179,7 @@ public class UserDirectoryManagementPanel extends Panel
         securityAdministrationPanel.setWidth("100%");
         securityAdministrationPanel.setHeight("100%");
         
-        GridLayout gridLayout = new GridLayout(2, 25);
+        GridLayout gridLayout = new GridLayout(2, 27);
         gridLayout.setSpacing(true);
         gridLayout.setWidth("100%");
         gridLayout.setHeight("100%");
@@ -301,6 +305,8 @@ public class UserDirectoryManagementPanel extends Panel
                 	memberofAttributeName.setValue(MEMBER_OF_ATTRIBUTE_NAME);
                 	applicationSecurityGroupAttributeName.setValue(APPLICATION_SECURITY_GROUP_ATTRIBUTE_NAME);
                 	applicationSecurityDescriptionAttributeName.setValue(APPLICATION_SECURITY_DESCRIPTION_ATTRIBUTE_NAME);
+                	userSynchronisationFilter.setValue(USER_FILTER);
+                	groupSynchronisationFilter.setValue(GROUP_FILTER);
                 }
                 else
                 {
@@ -315,6 +321,8 @@ public class UserDirectoryManagementPanel extends Panel
                 	memberofAttributeName.setValue("");
                 	applicationSecurityGroupAttributeName.setValue("");
                 	applicationSecurityDescriptionAttributeName.setValue("");
+                	userSynchronisationFilter.setValue("");
+                	groupSynchronisationFilter.setValue("");
                 }
             }
         });
@@ -323,15 +331,35 @@ public class UserDirectoryManagementPanel extends Panel
         gridLayout.addComponent(ldapAttributes, 0, 12);
         gridLayout.addComponent(checkbox, 1, 12);
         
+        final Label userSynchFilterLabel = new Label("User Synchronisation Filter:");
+        userSynchFilterLabel.setSizeUndefined();
+        this.userSynchronisationFilter = new TextField();
+        this.userSynchronisationFilter.setWidth("300px");
+        this.userSynchronisationFilter.setRequired(true);
+        
+        gridLayout.addComponent(userSynchFilterLabel, 0, 13);
+        gridLayout.setComponentAlignment(userSynchFilterLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.userSynchronisationFilter, 1, 13);
+        
+        final Label groupSynchFilterLabel = new Label("Group Synchronisation Filter:");
+        groupSynchFilterLabel.setSizeUndefined();
+        this.groupSynchronisationFilter = new TextField();
+        this.groupSynchronisationFilter.setWidth("300px");
+        this.groupSynchronisationFilter.setRequired(true);
+        
+        gridLayout.addComponent(groupSynchFilterLabel, 0, 14);
+        gridLayout.setComponentAlignment(groupSynchFilterLabel, Alignment.MIDDLE_RIGHT);
+        gridLayout.addComponent(this.groupSynchronisationFilter, 1, 14);
+        
         final Label userSearchFieldLabel = new Label("User Search Filter:");
         userSearchFieldLabel.setSizeUndefined();
         this.ldapUserSearchFilter = new TextField();
         this.ldapUserSearchFilter.setWidth("300px");
         this.ldapUserSearchFilter.setRequired(true);
         
-        gridLayout.addComponent(userSearchFieldLabel, 0, 13);
+        gridLayout.addComponent(userSearchFieldLabel, 0, 15);
         gridLayout.setComponentAlignment(userSearchFieldLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.ldapUserSearchFilter, 1, 13);
+        gridLayout.addComponent(this.ldapUserSearchFilter, 1, 15);
 
         final Label emailAttributeNameLabel = new Label("Email:");
         emailAttributeNameLabel.setSizeUndefined();
@@ -339,9 +367,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.emailAttributeName.setWidth("300px");
         this.emailAttributeName.setRequired(true);
         
-        gridLayout.addComponent(emailAttributeNameLabel, 0, 14);
+        gridLayout.addComponent(emailAttributeNameLabel, 0, 16);
         gridLayout.setComponentAlignment(emailAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.emailAttributeName, 1, 14);
+        gridLayout.addComponent(this.emailAttributeName, 1, 16);
         
         final Label userAccountNameAttributeNameLabel = new Label("Account Name:");
         userAccountNameAttributeNameLabel.setSizeUndefined();
@@ -349,9 +377,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.userAccountNameAttributeName.setWidth("300px");
         this.userAccountNameAttributeName.setRequired(true);
         
-        gridLayout.addComponent(userAccountNameAttributeNameLabel, 0, 15);
+        gridLayout.addComponent(userAccountNameAttributeNameLabel, 0, 17);
         gridLayout.setComponentAlignment(userAccountNameAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.userAccountNameAttributeName, 1, 15);
+        gridLayout.addComponent(this.userAccountNameAttributeName, 1, 17);
 
         final Label accountTypeAttributeNameLabel = new Label("Account Type:");
         accountTypeAttributeNameLabel.setSizeUndefined();
@@ -359,9 +387,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.accountTypeAttributeName.setWidth("300px");
         this.accountTypeAttributeName.setRequired(true);
         
-        gridLayout.addComponent(accountTypeAttributeNameLabel, 0, 16);
+        gridLayout.addComponent(accountTypeAttributeNameLabel, 0, 18);
         gridLayout.setComponentAlignment(accountTypeAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.accountTypeAttributeName, 1, 16);
+        gridLayout.addComponent(this.accountTypeAttributeName, 1, 18);
         
         final Label firstNameAttributeNameLabel = new Label("First Name:");
         firstNameAttributeNameLabel.setSizeUndefined();
@@ -369,9 +397,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.firstNameAttributeName.setWidth("300px");
         this.firstNameAttributeName.setRequired(true);
         
-        gridLayout.addComponent(firstNameAttributeNameLabel, 0, 17);
+        gridLayout.addComponent(firstNameAttributeNameLabel, 0, 19);
         gridLayout.setComponentAlignment(firstNameAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.firstNameAttributeName, 1, 17);
+        gridLayout.addComponent(this.firstNameAttributeName, 1, 19);
         
         final Label surnameAttributeNameLabel = new Label("Surname:");
         surnameAttributeNameLabel.setSizeUndefined();
@@ -379,9 +407,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.surnameAttributeName.setWidth("300px");
         this.surnameAttributeName.setRequired(true);
         
-        gridLayout.addComponent(surnameAttributeNameLabel, 0, 18);
+        gridLayout.addComponent(surnameAttributeNameLabel, 0, 20);
         gridLayout.setComponentAlignment(surnameAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.surnameAttributeName, 1, 18);
+        gridLayout.addComponent(this.surnameAttributeName, 1, 20);
        
         final Label departmentAttributeNameLabel = new Label("User Department:");
         departmentAttributeNameLabel.setSizeUndefined();
@@ -389,9 +417,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.departmentAttributeName.setWidth("300px");
         this.departmentAttributeName.setRequired(true);
         
-        gridLayout.addComponent(departmentAttributeNameLabel, 0, 19);
+        gridLayout.addComponent(departmentAttributeNameLabel, 0, 21);
         gridLayout.setComponentAlignment(departmentAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.departmentAttributeName, 1, 19);
+        gridLayout.addComponent(this.departmentAttributeName, 1, 21);
        
         final Label ldapUserDescriptionAttributeNameLabel = new Label("User Description:");
         ldapUserDescriptionAttributeNameLabel.setSizeUndefined();
@@ -399,9 +427,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.ldapUserDescriptionAttributeName.setWidth("300px");
         this.ldapUserDescriptionAttributeName.setRequired(true);
         
-        gridLayout.addComponent(ldapUserDescriptionAttributeNameLabel, 0, 20);
+        gridLayout.addComponent(ldapUserDescriptionAttributeNameLabel, 0, 22);
         gridLayout.setComponentAlignment(ldapUserDescriptionAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.ldapUserDescriptionAttributeName, 1, 20);
+        gridLayout.addComponent(this.ldapUserDescriptionAttributeName, 1, 22);
         
         
         final Label memberOfAttributeNameLabel = new Label("Member Of:");
@@ -410,9 +438,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.memberofAttributeName.setWidth("300px");
         this.memberofAttributeName.setRequired(true);
         
-        gridLayout.addComponent(memberOfAttributeNameLabel, 0, 21);
+        gridLayout.addComponent(memberOfAttributeNameLabel, 0, 23);
         gridLayout.setComponentAlignment(memberOfAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.memberofAttributeName, 1, 21);
+        gridLayout.addComponent(this.memberofAttributeName, 1, 23);
         
         final Label applicationSecurityGroupAttributeNameLabel = new Label("Group Name:");
         applicationSecurityGroupAttributeNameLabel.setSizeUndefined();
@@ -420,9 +448,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.applicationSecurityGroupAttributeName.setWidth("300px");
         this.applicationSecurityGroupAttributeName.setRequired(true);
         
-        gridLayout.addComponent(applicationSecurityGroupAttributeNameLabel, 0, 22);
+        gridLayout.addComponent(applicationSecurityGroupAttributeNameLabel, 0, 24);
         gridLayout.setComponentAlignment(applicationSecurityGroupAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.applicationSecurityGroupAttributeName, 1, 22);
+        gridLayout.addComponent(this.applicationSecurityGroupAttributeName, 1, 24);
 
         final Label applicationSecurityAttributeNameLabel = new Label("Group Description:");
         applicationSecurityAttributeNameLabel.setSizeUndefined();
@@ -430,9 +458,9 @@ public class UserDirectoryManagementPanel extends Panel
         this.applicationSecurityDescriptionAttributeName.setWidth("300px");
         this.applicationSecurityDescriptionAttributeName.setRequired(true);
         
-        gridLayout.addComponent(applicationSecurityAttributeNameLabel, 0, 23);
+        gridLayout.addComponent(applicationSecurityAttributeNameLabel, 0, 25);
         gridLayout.setComponentAlignment(applicationSecurityAttributeNameLabel, Alignment.MIDDLE_RIGHT);
-        gridLayout.addComponent(this.applicationSecurityDescriptionAttributeName, 1, 23);
+        gridLayout.addComponent(this.applicationSecurityDescriptionAttributeName, 1, 25);
 
         
         final BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
@@ -454,6 +482,8 @@ public class UserDirectoryManagementPanel extends Panel
         this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
         this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityDescriptionAttributeName"));
         this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
+        this.userSynchronisationFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("userSynchronisationFilter"));
+        this.groupSynchronisationFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("groupSynchronisationFilter"));
         
         Button saveButton = new Button("Save");
         saveButton.addClickListener(new Button.ClickListener() 
@@ -462,7 +492,7 @@ public class UserDirectoryManagementPanel extends Panel
             {
             	try
             	{
-            		logger.info("saving auth method: " + authenticationMethod);
+            		logger.debug("saving auth method: " + authenticationMethod);
             		authenticationMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
             		
             		if(authenticationMethod.getOrder() == null)
@@ -474,6 +504,8 @@ public class UserDirectoryManagementPanel extends Panel
             	}
             	catch(RuntimeException e)
             	{
+            		logger.error("An error occurred saving an authentication method", e); 
+            		
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     e.printStackTrace(pw);
@@ -494,7 +526,7 @@ public class UserDirectoryManagementPanel extends Panel
         buttonLayout.setHeight("20px");
         buttonLayout.addComponent(saveButton);
         
-        gridLayout.addComponent(buttonLayout, 0, 24, 1, 24);
+        gridLayout.addComponent(buttonLayout, 0, 26, 1, 26);
 
         VerticalLayout wrapperLayout = new VerticalLayout();
         wrapperLayout.addComponent(gridLayout);

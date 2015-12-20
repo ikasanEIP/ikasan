@@ -72,6 +72,11 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration
     /** depth of the directory tree to walk */
     private int directoryDepth = 1;
 
+    /** log filenames found */
+    private boolean logMatchedFilenames = false;
+
+    private boolean ignoreFileRenameWhilstScanning = true;
+
     public List<String> getFilenames() {
         return filenames;
     }
@@ -128,5 +133,21 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration
     public void setDirectoryDepth(int directoryDepth)
     {
         this.directoryDepth = directoryDepth;
+    }
+
+    public boolean isLogMatchedFilenames() {
+        return logMatchedFilenames;
+    }
+
+    public void setLogMatchedFilenames(boolean logMatchedFilenames) {
+        this.logMatchedFilenames = logMatchedFilenames;
+    }
+
+    public boolean isIgnoreFileRenameWhilstScanning() {
+        return ignoreFileRenameWhilstScanning;
+    }
+
+    public void setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning) {
+        this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
     }
 }
