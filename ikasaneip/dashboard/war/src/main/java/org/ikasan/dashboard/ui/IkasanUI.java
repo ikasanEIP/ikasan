@@ -40,8 +40,11 @@
  */
 package org.ikasan.dashboard.ui;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
@@ -52,8 +55,8 @@ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.google.common.eventbus.EventBus;
@@ -64,13 +67,13 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.communication.PushMode;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -80,11 +83,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.ConnectorTracker;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -127,6 +127,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private MenuItem settingsItem;
     
     private SystemEventService systemEventService;
+    private ErrorReportingManagementService errorReportingManagementService;
+    private ErrorReportingService errorReportingService;
     
     /**
      * Constructor 
@@ -149,7 +151,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	        ViewComponentContainer viewComponentContainer, EventBus eventBus, VerticalLayout imagePanelLayout, 
 	        NavigationPanel navigationPanel, MenuLayout menuLayout,
             Image bannerImage, Menu menu, TopologyStateCache topologyStateCache, Label bannerLabel, GridLayout mainLayout,
-            CssLayout menuContent, Button showMenuButton, SystemEventService systemEventService)
+            CssLayout menuContent, Button showMenuButton, SystemEventService systemEventService,  ErrorReportingManagementService errorReportingManagementService,
+        	ErrorReportingService errorReportingService)
 	{
 	    this.views = views;
 	    this.eventBus = eventBus;
@@ -164,6 +167,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.menuContent = menuContent;
 	    this.showMenuButton = showMenuButton;
 	    this.systemEventService = systemEventService;
+	    this.errorReportingManagementService = errorReportingManagementService;
+	    this.errorReportingService = errorReportingService;
 	    Broadcaster.register(this);
 	}
 
@@ -172,7 +177,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     {    	
     	VaadinSession.getCurrent().setAttribute
     		(DashboardSessionValueConstants.TOPOLOGY_STATE_CACHE, this.topologyStateCache);
-    	
+    	    	
         addStyleName(ValoTheme.UI_WITH_MENU);
         
         this.mainLayout.setSizeFull();   
@@ -215,8 +220,12 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         }
         
         this.navigationPanel.setMenuComponents(menu.getMenuComponents());
-        
-        UI.getCurrent().getNavigator().navigateTo("landingView");  
+
+        if(getPage().getUriFragment() == null || (getPage().getUriFragment() != null && !getPage().getUriFragment().equals("!error-occurrence")))
+    	{
+        	UI.getCurrent().getNavigator().navigateTo("landingView"); 
+    	}
+
         this.navigationPanel.setVisible(true);
         this.navigationPanel.setMenu(menu);
     }
@@ -230,52 +239,10 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
 
-//        menuContent.addComponent(this.buildTitle());
         menuContent.addComponent(this.menu);
 
         return menuContent;
-    }
-    
-    private Component buildTitle() 
-    {
-        Label logo = new Label("<strong>Ikasan Dashboard</strong>",
-                ContentMode.HTML);
-        logo.setSizeUndefined();
-        HorizontalLayout logoWrapper = new HorizontalLayout(logo);
-        logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
-        logoWrapper.addStyleName("valo-menu-title");
-        return logoWrapper;
-    }
-    
-    private Component buildUserMenu() {
-        final MenuBar settings = new MenuBar();
-        settings.addStyleName("user-menu");
-//        final User user = getCurrentUser();
-        settingsItem = settings.addItem("", new ThemeResource(
-                "img/profile-pic-300px.jpg"), null);
-        
-        settingsItem.addItem("Edit Profile", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-               
-            }
-        });
-        settingsItem.addItem("Preferences", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                
-            }
-        });
-        settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-               
-            }
-        });
-        return settings;
-    }
-    
+    }    
     
     private Component buildToggleButton() 
     {
@@ -324,7 +291,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             @Override
             public void run() 
             {
-            	logger.info("Broadcasting new FlowStateEvent");
+            	logger.debug("Broadcasting new FlowStateEvent");
             	eventBus.post(new FlowStateEvent((HashMap<String, String>)message));
             }
         });	
@@ -342,7 +309,11 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         this.navigationPanel.reset();
         
        //Invalidate HttpSession
-        httpSession.invalidate();
+        if(httpSession != null)
+        {
+        	 httpSession.invalidate();
+        }
+       
         vSession.close();
         
        //Redirect the user to the login/default Page

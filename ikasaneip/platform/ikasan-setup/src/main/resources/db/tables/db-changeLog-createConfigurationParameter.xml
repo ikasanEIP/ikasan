@@ -47,7 +47,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="createConfigurationParameter" context="baseline">
+    <changeSet dbms="sybase, h2, mssql" author="ikasan dev" id="createConfigurationParameter" context="baseline">
     	
     	<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="ConfigurationParameter" /></not>
@@ -56,7 +56,7 @@
         <createTable tableName="ConfigurationParameter">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints nullable="false"/>
+                <constraints primaryKey="true" primaryKeyName="ConfigurationParameterPk"/>
             </column>
             <column name="ConfigurationIdentifier" type="VARCHAR(256)">
                 <constraints nullable="false"/>
@@ -74,6 +74,28 @@
             <column name="ConfigurationIdentifier"/>
             <column name="PositionRef"/>
         </createIndex>
+
+    </changeSet>
+    
+    <changeSet dbms="mysql" author="ikasan dev" id="createConfigurationParameter" context="baseline">
+    	
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ConfigurationParameter" /></not>
+		</preConditions>
+
+        <createTable tableName="ConfigurationParameter">
+        
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="ConfigurationParameterPk"/>
+            </column>
+            <column name="ConfigurationIdentifier" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PositionRef" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            
+        </createTable>
 
     </changeSet>
     

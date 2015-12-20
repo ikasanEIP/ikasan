@@ -55,7 +55,7 @@
 
         <createTable tableName="PolicyLink">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="PolicyLink_13857689632"/>
             </column>
             <column name="PolicyLinkTypeId" type="numeric(18)">
@@ -64,14 +64,14 @@
             <column name="TargetId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="Name" type="VARCHAR(256)">
+            <column name="Name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="datetime">
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="${getDate}" name="UpdatedDateTime" type="datetime">
-                <constraints nullable="false"/>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
             </column>
             
         </createTable>

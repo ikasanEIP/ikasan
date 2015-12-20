@@ -58,7 +58,7 @@
             <column defaultValueNumeric="0" name="Criteria" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ClientId" type="VARCHAR(256)">
+            <column name="ClientId" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="CriteriaDescription" type="VARCHAR(512)"/>

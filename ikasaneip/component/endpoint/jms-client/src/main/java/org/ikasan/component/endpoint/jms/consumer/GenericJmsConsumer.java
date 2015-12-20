@@ -273,6 +273,12 @@ public class GenericJmsConsumer
         }
     }
 
+    @Override
+    public boolean isActive()
+    {
+        return (messageConsumer != null);
+    }
+
     /**
      * Stop the underlying JMS
      */
@@ -325,13 +331,12 @@ public class GenericJmsConsumer
     }
 
     /**
-     * TODO - find a better way to ascertain if underlying JMS is running?
      * Is the underlying JMS actively running
      * @return boolean
      */
     public boolean isRunning()
     {
-        return connection != null;
+        return isActive();
     }
 
     /**

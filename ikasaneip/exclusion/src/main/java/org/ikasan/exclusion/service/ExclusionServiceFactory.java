@@ -56,7 +56,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
  */
 public class ExclusionServiceFactory
 {
-    /** blacklist DAO handle */
+    /** blacklist DAO handle */	
     BlackListDao blackListDao;
 
     /** exclusionEvent DAO handle */

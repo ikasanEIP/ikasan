@@ -4,7 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/security 
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
@@ -14,6 +14,10 @@
 		<constructor-arg value="topology"/>
         <constructor-arg>
             <list>
+            	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value=""/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
@@ -38,7 +42,6 @@
         <constructor-arg ref="componentConfigurationWindow" />
         <constructor-arg ref="wiretapDao" />
         <constructor-arg ref="exclusionManagementService" />
-        <constructor-arg ref="ikasanSerialiserFactory" />
         <constructor-arg ref="hospitalManagementService" />
         <constructor-arg ref="systemEventService"/>
         <constructor-arg ref="errorCategorisationService"/>
@@ -46,6 +49,8 @@
         <constructor-arg ref="topologyStateCache"/>
         <constructor-arg ref="startupControlService"/>
         <constructor-arg ref="errorReportingService"/>
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">

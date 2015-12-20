@@ -130,7 +130,7 @@ public class NewContextFieldGroup extends FieldGroup
             systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
             		"Created new mapping configuration context: " + context.getName(), authentication.getName());
 
-            logger.info("User: " + authentication.getName()
+            logger.debug("User: " + authentication.getName()
                 + " added a new Mapping Configuration Context:  " 
                     + context);
         }

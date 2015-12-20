@@ -80,7 +80,6 @@ import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.vaadin.data.Validator;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -320,33 +319,33 @@ public class ComponentConfigurationWindow extends Window
 
             		if(parameter instanceof ConfigurationParameterIntegerImpl)
             		{
-            			logger.info("Setting Integer value: " + textField.getValue());
+            			logger.debug("Setting Integer value: " + textField.getValue());
             			
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             				parameter.setValue(new Integer(textField.getValue()));
             		}
             		else if(parameter instanceof ConfigurationParameterStringImpl)
             		{
-            			logger.info("Setting String value: " + textField.getValue());
+            			logger.debug("Setting String value: " + textField.getValue());
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             				parameter.setValue(textField.getValue());
             		}
             		else if(parameter instanceof ConfigurationParameterBooleanImpl)
             		{
-            			logger.info("Setting Boolean value: " + textField.getValue());
+            			logger.debug("Setting Boolean value: " + textField.getValue());
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             				parameter.setValue(new Boolean(textField.getValue()));
             		}
             		else if(parameter instanceof ConfigurationParameterLongImpl)
             		{
-            			logger.info("Setting Boolean value: " + textField.getValue());
+            			logger.debug("Setting Boolean value: " + textField.getValue());
             			if(textField.getValue() != null && textField.getValue().length() > 0)
             				parameter.setValue(new Long	(textField.getValue()));
             		}
             		else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
             		{
             			PasswordField passwordField = passwordFields.get(parameter.getName());
-            			logger.info("Setting Masked String value: " + passwordField.getValue());
+            			logger.debug("Setting Masked String value: " + passwordField.getValue());
             			if(passwordField.getValue() != null && passwordField.getValue().length() > 0)
             				parameter.setValue(passwordField.getValue());
             		}
@@ -356,7 +355,7 @@ public class ComponentConfigurationWindow extends Window
             			
             			HashMap<String, String> map = new HashMap<String, String>();
             			
-            			logger.info("Saving map: " + mapTextFields.size());
+            			logger.debug("Saving map: " + mapTextFields.size());
             			
             			for(String key: mapTextFields.keySet())
             			{
@@ -364,7 +363,7 @@ public class ComponentConfigurationWindow extends Window
             				{
             					TextFieldKeyValuePair pair = mapTextFields.get(key);
             					
-            					logger.info("Saving for key: " + key);
+            					logger.debug("Saving for key: " + key);
             					
             					if(pair.key.getValue() != "")
             					{
@@ -459,7 +458,6 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
-		logger.info(parameter.getName() + " " + parameter.getValue());
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		PasswordField passwordField = new PasswordField();
@@ -558,7 +556,6 @@ public class ComponentConfigurationWindow extends Window
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
-		logger.info(parameter.getName() + " " + parameter.getValue());
 		Label valueLabel = new Label("Value:");
 		valueLabel.setSizeUndefined();
 		TextArea textField = new TextArea();

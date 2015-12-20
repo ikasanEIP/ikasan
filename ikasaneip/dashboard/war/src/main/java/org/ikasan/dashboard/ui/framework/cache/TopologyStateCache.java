@@ -127,7 +127,7 @@ public class TopologyStateCache
 	{
 		stateMap = new HashMap<String, String>();
 				
-		logger.info("Synchronising topology state cache.");
+		logger.debug("Synchronising topology state cache.");
 		
 		List<Server> servers = new ArrayList<Server>();
 		try
@@ -144,7 +144,7 @@ public class TopologyStateCache
 		String username = this.platformConfigurationService.getWebServiceUsername();
 		String password = this.platformConfigurationService.getWebServicePassword();
 		
-		logger.info("Number of servers to synch: " + servers.size());
+		logger.debug("Number of servers to synch: " + servers.size());
 		for(Server server: servers)
 		{
 			logger.debug("Synchronising server: " + server.getName());
@@ -203,7 +203,7 @@ public class TopologyStateCache
 		}
 		catch(Exception e)
 		{
-			logger.info("Caught exception attempting to discover module with the following URL: " + url 
+			logger.debug("Caught exception attempting to discover module with the following URL: " + url 
 	    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			
 			return new HashMap<String, String>();

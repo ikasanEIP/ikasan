@@ -55,7 +55,7 @@
 
         <createTable tableName="Module">
         
-            <column autoIncrement="true" name="Id" type="numeric(18)">
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="Module_Id_7200025652"/>
             </column>
             <column name="Name" type="VARCHAR(255)">

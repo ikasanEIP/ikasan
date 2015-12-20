@@ -51,12 +51,28 @@ public interface MappingConfigurationDaoConstants
     public static final String SOURCE_CONTEXT = "sourceContext";
     public static final String TARGET_CONTEXT = "targetContext";
     public static final String SOURCE_SYSTEM_VALUE = "sourceSystemValue";
+    public static final String TARGET_SYSTEM_VALUE = "targetSystemValue";
     public static final String SOURCE_SYSTEM_VALUE_SIZE_CONFIRM = "sourceSystemValueSizeConfirm";
     public static final String NUMBER_OF_PARAMS = "numberOfParams";
     public static final String CONFIGURATION_SERVICE_CLIENT_NAME = "configurationServiceClientName";
     public static final String TARGET_CONFIGURATION_VALUE_ID = "targetConfigurationValueId";
     public static final String SIZE = "size";
 
+    
+    /** The base HQL query used to access the mapping configurations. */
+    public static final String REVERSE_MAPPING_CONFIGURATION_QUERY = "select distinct scv.sourceSystemValue from ConfigurationType as ct," +
+            " MappingConfiguration as mc, TargetConfigurationValue as tcv, SourceConfigurationValue as scv, ConfigurationServiceClient as csc" +
+             " where ct.name = :" + CONFIGURATION_TYPE +
+             " and ct.id = mc.configurationType" +
+             " and mc.sourceContext = (select cc.id from ConfigurationContext as cc where cc.name = :" + SOURCE_CONTEXT  + ")" +
+             " and mc.targetContext = (select cc.id from ConfigurationContext as cc where cc.name = :" + TARGET_CONTEXT  + ")" +
+             " and mc.numberOfParams = 1" +
+             " and mc.configurationServiceClient = csc.id" +
+             " and csc.name = :" + CONFIGURATION_SERVICE_CLIENT_NAME + 
+             " and mc.id = scv.mappingConfigurationId" +
+             " and tcv.id = scv.targetConfigurationValue" +
+    		 " and tcv.targetSystemValue = :" + TARGET_SYSTEM_VALUE;
+    
     /** The base HQL query used to access the mapping configurations. */
     public static final String MAPPING_CONFIGURATION_QUERY = "select distinct tcv.targetSystemValue from ConfigurationType as ct," +
             " MappingConfiguration as mc, TargetConfigurationValue as tcv, SourceConfigurationValue as scv, ConfigurationServiceClient as csc" +
