@@ -456,18 +456,17 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-            Criteria criteria = session.createCriteria(WiretapEvent.class);
-            criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
-            criteria.setProjection(Projections.rowCount());
-            Long rowCount = new Long(0);
-            List<Long> rowCountList = criteria.list();
-            if (!rowCountList.isEmpty())
-            {
-                rowCount = rowCountList.get(0);
-            }
-            logger.info(rowCount+", housekeepables exist");
-            return new Boolean(rowCount>0);
-            
+	            Criteria criteria = session.createCriteria(WiretapEvent.class);
+	            criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
+	            criteria.setProjection(Projections.rowCount());
+	            Long rowCount = new Long(0);
+	            List<Long> rowCountList = criteria.list();
+	            if (!rowCountList.isEmpty())
+	            {
+	                rowCount = rowCountList.get(0);
+	            }
+	            logger.info(rowCount+", housekeepables exist");
+	            return new Boolean(rowCount>0);            
             }
         });
 	}
