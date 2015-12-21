@@ -40,39 +40,32 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.io.File;
-import java.net.URISyntaxException;
-
-import javax.resource.ResourceException;
-
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.XidImpl;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandGetException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandRenameException;
-import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
-import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
+import org.ikasan.connector.basefiletransfer.net.*;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-
+import org.joda.time.DateTimeUtils;
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
+import javax.resource.ResourceException;
+import java.io.File;
+import java.net.URISyntaxException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Ikasan Development Team
  */
 public class RetrieveFileCommandTest
 {
+
     /**
      * Testing the constructor with moveOnSuccess, renameOnSuccess, and destructive, all set to false.
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
@@ -83,7 +76,7 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = false;
-        String extention = null;
+        String extension = null;
         boolean move = false;
         String newPath = null;
         boolean destructive = false;
@@ -91,7 +84,7 @@ public class RetrieveFileCommandTest
         RetrieveFileCommand command = null;
         try
         {
-            command = new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            command = new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
         }
         catch (IllegalArgumentException e)
         {
@@ -113,7 +106,7 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = true;
-        String extention = ".renamed"; //$NON-NLS-1$
+        String extension = ".renamed"; //$NON-NLS-1$
         boolean move = false;
         String newPath = null;
         boolean destructive = false;
@@ -121,7 +114,7 @@ public class RetrieveFileCommandTest
         RetrieveFileCommand command = null;
         try
         {
-            command = new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            command = new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
         }
         catch (IllegalArgumentException e)
         {
@@ -143,7 +136,7 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = false;
-        String extention = null;
+        String extension = null;
         boolean move = false;
         String newPath = null;
         boolean destructive = true;
@@ -151,7 +144,7 @@ public class RetrieveFileCommandTest
         RetrieveFileCommand command = null;
         try
         {
-            command = new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            command = new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
         }
         catch (IllegalArgumentException e)
         {
@@ -173,7 +166,7 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = false;
-        String extention = null;
+        String extension = null;
         boolean move = true;
         String newPath = "/archDir"; //$NON-NLS-1$
         boolean destructive = false;
@@ -181,7 +174,7 @@ public class RetrieveFileCommandTest
         RetrieveFileCommand command = null;
         try
         {
-            command = new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            command = new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
         }
         catch (IllegalArgumentException e)
         {
@@ -203,14 +196,14 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = true;
-        String extention = null;
+        String extension = null;
         boolean move = true;
         String newPath = null;
         boolean destructive = true;
         IllegalArgumentException exception = null;
         try
         {
-            new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
             fail("Caught IllegalArgumentException."); //$NON-NLS-1$
         }
         catch (IllegalArgumentException e)
@@ -223,23 +216,23 @@ public class RetrieveFileCommandTest
     }
 
     /**
-     * Testing the constructor with renameOnSuccess true but a null renameOnSuccessExtention
+     * Testing the constructor with renameOnSuccess true but a null renameOnSuccessextension
      * Expected to throw an IllegalArgumentException.
      */
     @Test
-    public void testConstructor_RenameNullExtention()
+    public void testConstructor_RenameNullextension()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = true;
-        String extention = null;
+        String extension = null;
         boolean move = false;
         String newPath = null;
         boolean destructive = false;
         IllegalArgumentException exception = null;
         try
         {
-            new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
             fail("Caught IllegalArgumentException."); //$NON-NLS-1$
         }
         catch (IllegalArgumentException e)
@@ -259,14 +252,14 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = false;
-        String extention = null;
+        String extension = null;
         boolean move = true;
         String newPath = null;
         boolean destructive = false;
         Exception exception = null;
         try
         {
-            new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
             fail("Caught IllegalArgumentException."); //$NON-NLS-1$
         }
         catch (IllegalArgumentException e)
@@ -286,14 +279,14 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = true;
-        String extention = null;
+        String extension = null;
         boolean move = true;
         String newPath = null;
         boolean destructive = false;
         Exception exception = null;
         try
         {
-            new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
             fail("Caught IllegalArgumentException."); //$NON-NLS-1$
         }
         catch (IllegalArgumentException e)
@@ -313,14 +306,14 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = false;
-        String extention = null;
+        String extension = null;
         boolean move = true;
         String newPath = null;
         boolean destructive = true;
         Exception exception = null;
         try
         {
-            new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
             fail("Caught IllegalArgumentException."); //$NON-NLS-1$
         }
         catch (IllegalArgumentException e)
@@ -340,14 +333,14 @@ public class RetrieveFileCommandTest
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
         boolean rename = true;
-        String extention = null;
+        String extension = null;
         boolean move = false;
         String newPath = null;
         boolean destructive = true;
         Exception exception = null;
         try
         {
-            new RetrieveFileCommand(dao,rename,extention,move,newPath,destructive);
+            new RetrieveFileCommand(dao,rename,extension,move,newPath,destructive);
             fail("Caught IllegalArgumentException."); //$NON-NLS-1$
         }
         catch (IllegalArgumentException e)
@@ -386,9 +379,9 @@ public class RetrieveFileCommandTest
         context.checking(new Expectations()
         {
             {
-                one(client).ensureConnection();
-                one(client).cd(sourceDir);
-                one(client).get(entry);
+                oneOf(client).ensureConnection();
+                oneOf(client).cd(sourceDir);
+                oneOf(client).get(entry);
                 will(returnValue(file));
             }
         });
@@ -397,7 +390,7 @@ public class RetrieveFileCommandTest
         interfaceMockery.checking(new Expectations()
         {
             {
-                one(dao).persistClientListEntry(entry);
+                oneOf(dao).persistClientListEntry(entry);
             }
         });
         // create the command
@@ -461,13 +454,13 @@ public class RetrieveFileCommandTest
         context.checking(new Expectations()
         {
             {
-                one(client).ensureConnection();
-                one(client).cd(sourceDir);
-                one(client).get(entry);
+                oneOf(client).ensureConnection();
+                oneOf(client).cd(sourceDir);
+                oneOf(client).get(entry);
                 will(returnValue(file));
-                one(client).ensureConnection();
-                one(client).rename(platformFriendly(srcPath), platformFriendly(renamePath));
-                //one(client).rename(srcPath, movePath);
+                oneOf(client).ensureConnection();
+                oneOf(client).rename(platformFriendly(srcPath), platformFriendly(renamePath));
+                //oneOf(client).rename(srcPath, movePath);
             }
         });
         // mock the dao
@@ -475,7 +468,7 @@ public class RetrieveFileCommandTest
         interfaceMockery.checking(new Expectations()
         {
             {
-                one(dao).persistClientListEntry(entry);
+                oneOf(dao).persistClientListEntry(entry);
             }
         });
         // create the command
@@ -494,8 +487,8 @@ public class RetrieveFileCommandTest
         assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
 
         assertEquals("command state should be executed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
-                .getState());
+                AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
+                        .getState());
         // commit the command
         command.commit();
 
@@ -506,9 +499,6 @@ public class RetrieveFileCommandTest
 
     /**
      * Fix paths to allow tests to run on Windows or UNIX
-     *
-     * @param path
-     * @return
      */
     private String platformFriendly(String path) {
 		return new File(path).getPath();
@@ -550,12 +540,12 @@ public class RetrieveFileCommandTest
         context.checking(new Expectations()
         {
             {
-                one(client).ensureConnection();
-                one(client).cd(sourceDir);
-                one(client).get(entry);
+                oneOf(client).ensureConnection();
+                oneOf(client).cd(sourceDir);
+                oneOf(client).get(entry);
                 will(returnValue(file));
-                one(client).ensureConnection();
-                one(client).rename(platformFriendly(srcPath), platformFriendly(movePath));
+                oneOf(client).ensureConnection();
+                oneOf(client).rename(platformFriendly(srcPath), platformFriendly(movePath));
             }
         });
         // mock the dao
@@ -563,7 +553,7 @@ public class RetrieveFileCommandTest
         interfaceMockery.checking(new Expectations()
         {
             {
-                one(dao).persistClientListEntry(entry);
+                oneOf(dao).persistClientListEntry(entry);
             }
         });
         // create the command
@@ -624,14 +614,14 @@ public class RetrieveFileCommandTest
         context.checking(new Expectations()
         {
             {
-                one(client).ensureConnection();
-                one(client).cd(sourceDir);
-                one(client).get(entry);
+                oneOf(client).ensureConnection();
+                oneOf(client).cd(sourceDir);
+                oneOf(client).get(entry);
                 will(returnValue(file));
-                one(client).ensureConnection();
-                one(client).rename(srcPath, renamePath);
-                one(client).ensureConnection();
-                one(client).rename(renamePath, srcPath);
+                oneOf(client).ensureConnection();
+                oneOf(client).rename(srcPath, renamePath);
+                oneOf(client).ensureConnection();
+                oneOf(client).rename(renamePath, srcPath);
             }
         });
         // mock the dao
@@ -639,7 +629,7 @@ public class RetrieveFileCommandTest
         interfaceMockery.checking(new Expectations()
         {
             {
-                one(dao).persistClientListEntry(entry);
+                oneOf(dao).persistClientListEntry(entry);
             }
         });
         // create the command
@@ -663,4 +653,51 @@ public class RetrieveFileCommandTest
             AbstractTransactionalResourceCommand.ROLLED_BACK_STATE.getName(),
             command.getState());
     }
+
+    @Test
+    public void testExpandExtension_yyyyMMdd()
+    {
+        RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done./yyyyMMdd/", false, null, false);
+        DateTimeUtils.setCurrentMillisFixed(1450177200000L);
+        String extension = retrieveFileCommand.expandRenameExtension();
+        Assert.assertEquals(".done.20151215", extension);
+    }
+
+    @Test
+    public void testExpandExtension_yyyyMMdd_in_bst()
+    {
+        RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done./yyyyMMdd/", false, null, false);
+        DateTimeUtils.setCurrentMillisFixed(1439337600000L);
+        String extension = retrieveFileCommand.expandRenameExtension();
+        Assert.assertEquals(".done.20150812", extension);
+    }
+
+    @Test
+    public void testExpandExtension_yyyyMMdd_changeTo_yyyyMMddHHmmss()
+    {
+        RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done./yyyyMMdd/", false, null, false);
+        DateTimeUtils.setCurrentMillisFixed(1450177200000L);
+        String extension = retrieveFileCommand.expandRenameExtension();
+        Assert.assertEquals(".done.20151215", extension);
+        retrieveFileCommand.setRenameExtension(".done./yyyyMMddHHmmss/");
+        String extension2 = retrieveFileCommand.expandRenameExtension();
+        Assert.assertEquals(".done.20151215110000", extension2);
+
+    }
+
+    @Test
+    public void testExpandExtension_no_timestamp()
+    {
+        RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done", false, null, false);
+        String extension = retrieveFileCommand.expandRenameExtension();
+        Assert.assertEquals(".done", extension);
+    }
+
+    @After
+    public void after_test()
+    {
+        // be nice to other tests
+        DateTimeUtils.setCurrentMillisSystem();
+    }
+
 }

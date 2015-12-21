@@ -76,7 +76,7 @@
             <column name="CreatedDateTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="UpdatedDateTime" type="${dateType}">
+            <column name="LastUpdatedDateTime" type="numeric(18)">
                 <constraints nullable="true"/>
             </column>
             

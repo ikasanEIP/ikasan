@@ -50,6 +50,7 @@ import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 
 
 /**
@@ -117,6 +118,7 @@ public interface MappingConfigurationService
      * @return
      * @throws MappingConfigurationServiceException 
      */
+    @Deprecated
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
             byte[] payload) throws MappingConfigurationServiceException;
 
@@ -458,5 +460,11 @@ public interface MappingConfigurationService
      * @return
      */
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
-
+    
+    /**
+     * Set the configuration.
+     * 
+     * @param configuration
+     */
+    public void setConfiguration(MappingConfigurationServiceConfiguration configuration);
 }
