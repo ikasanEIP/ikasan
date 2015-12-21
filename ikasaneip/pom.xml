@@ -44,16 +44,15 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-        <relativePath/>
-    </parent>
+        <parent>
+          <groupId>org.sonatype.oss</groupId>
+          <artifactId>oss-parent</artifactId>
+          <version>7</version>
+          <relativePath />
+        </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
@@ -63,8 +62,8 @@
     <description>Ikasan Parent Project</description>
 
     <organization>
-        <name>Ikasan</name>
-        <url>http://www.ikasan.org</url>
+      <name>Ikasan</name>
+      <url>http://www.ikasan.org</url>
     </organization>
     <inceptionYear>2007</inceptionYear>
 
@@ -85,7 +84,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>0</timezone>
+            <timezone>0</timezone>	
         </developer>
         <developer>
             <id>magicduncan</id>
@@ -258,14 +257,15 @@
     </issueManagement>
     <!-- CI Server -->
     <ciManagement>
-        <system>travis</system>
-        <url>https://travis-ci.org/ikasanEIP/ikasan</url>
+        <system>hudson</system>
+        <url>http://www.ikasan.org/hudson/</url>
     </ciManagement>
     <!-- Repositories required for Ikasan modules -->
     <repositories>
         <!-- Ikasan snapshot repo -->
         <repository>
             <id>ikasaneip-snapshots</id>
+            <!--url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url -->
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>false</enabled>
@@ -300,6 +300,7 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
+
         <!-- TODO - Reviewing functional usage of this reposiory -->
         <repository>
             <id>mvncentral</id>
@@ -311,12 +312,15 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+
+
     </repositories>
     <!-- Plugin repositories -->
     <pluginRepositories>
         <!-- Ikasan snapshot repo for plugins -->
         <pluginRepository>
             <id>ikasaneip-snapshots</id>
+            <!--url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url -->
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>false</enabled>
@@ -357,9 +361,9 @@
         <version.kryo>3.0.1</version.kryo>
         <version.org.hibernate>4.3.9.Final</version.org.hibernate>
         <version.org.hibernate-validator>4.3.2.Final</version.org.hibernate-validator>
-        <version.org.springframework>4.2.2.RELEASE</version.org.springframework>
+		<version.org.springframework>4.2.2.RELEASE</version.org.springframework>
         <version.org.springframework.security>4.0.3.RELEASE</version.org.springframework.security>
-        <version.org.springframework.security.taglibs>3.2.7.RELEASE</version.org.springframework.security.taglibs>
+		<version.org.springframework.security.taglibs>3.2.7.RELEASE</version.org.springframework.security.taglibs>
         <version.org.springframework.security.spring-security-config>4.0.3.RELEASE</version.org.springframework.security.spring-security-config>
         <version.org.springframework.security.spring-security-web>4.0.3.RELEASE</version.org.springframework.security.spring-security-web>
         <version.org.springframework.ldap>1.3.1.RELEASE</version.org.springframework.ldap>
@@ -418,14 +422,14 @@
         <version.com.jcraft.jsch>0.1.53</version.com.jcraft.jsch>
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>0.14.0</version.org.apache.sshd>
-        <version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
-        <version.org.glassfish.json>1.0</version.org.glassfish.json>
-        <version.javax.ws.rs>2.0</version.javax.ws.rs>
-        <version.com.zybnet.vaadin-autocomplete>1.1.1</version.com.zybnet.vaadin-autocomplete>
-        <version.vaadin>7.5.1</version.vaadin>
-        <version.com.google.guava>12.0</version.com.google.guava>
-        <version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
-        <version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
+		<version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
+		<version.org.glassfish.json>1.0</version.org.glassfish.json>
+		<version.javax.ws.rs>2.0</version.javax.ws.rs>
+		<version.com.zybnet.vaadin-autocomplete>1.1.1</version.com.zybnet.vaadin-autocomplete>
+		<version.vaadin>7.5.1</version.vaadin>
+		<version.com.google.guava>12.0</version.com.google.guava>
+		<version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
+		<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -447,122 +451,110 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>1.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-archetype-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>2.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.1</version>
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
-                        <testSource>1.7</testSource>
-                        <testTarget>1.7</testTarget>
+						<testSource>1.7</testSource>
+						<testTarget>1.7</testTarget>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-ear-plugin</artifactId>
-                    <version>2.10.1</version>
+                    <version>2.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-ejb-plugin</artifactId>
-                    <version>2.5.1</version>
+                    <version>2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
+                    <version>1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
+                    <version>2.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.3</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <configuration>
-                                <additionalparam>-Xdoclint:none</additionalparam>
-                            </configuration>
-                        </execution>
-                    </executions>
+                    <version>2.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jboss.maven.plugins</groupId>
                     <artifactId>maven-jdocbook-plugin</artifactId>
-                    <version>2.3.9</version>
+                    <version>2.3.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.4</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-rar-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
-                    <!-- TODO not sure why we need these deps -->
+                    <version>2.5.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
                             <artifactId>maven-scm-api</artifactId>
-                            <version>1.9.4</version>
+                            <version>1.9.1</version>
                         </dependency>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
                             <artifactId>maven-scm-provider-gitexe</artifactId>
-                            <version>1.9.4</version>
+                            <version>1.9.1</version>
                         </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.4.3</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                     </configuration>
@@ -570,114 +562,113 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-plugin</artifactId>
-                    <version>1.9.4</version>
+                    <version>1.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19</version>
-                    <!-- TODO Split Verifier was added due to poor cobertura support, remove when switching to jacoco? -->
-                    <configuration>
-                        <argLine>-XX:-UseSplitVerifier</argLine>
-                    </configuration>
+                    <version>2.6</version>
+					<configuration>
+						<argLine>-XX:-UseSplitVerifier</argLine>
+					</configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.2</version>
+                    <version>1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.4</version>
                 </plugin>
                 <plugin>
-                    <!--TODO This plugin's configuration is used in m2e only. Check if m2e now maps these in Eclipse -->
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.mojo
-                                        </groupId>
-                                        <artifactId>
-                                            build-helper-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.9.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>regex-property</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.vaadin</groupId>
-                                        <artifactId>
-                                            vaadin-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [7.5.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>
-                                                update-widgetset
-                                            </goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.apache.maven.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            maven-plugin-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [3.4,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>descriptor</goal>
-                                            <goal>helpmojo</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
+					<!--TODO TEXT. This plugin's configuration is used in m2e only. -->
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											build-helper-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>regex-property</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.vaadin</groupId>
+										<artifactId>
+											vaadin-maven-plugin
+										</artifactId>
+										<versionRange>
+											[7.5.1,)
+										</versionRange>
+										<goals>
+											<goal>
+												update-widgetset
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-plugin-plugin
+										</artifactId>
+										<versionRange>
+											[3.2,)
+										</versionRange>
+										<goals>
+											<goal>descriptor</goal>
+											<goal>helpmojo</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.1.2</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -690,7 +681,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
+                <version>1.7</version>
                 <executions>
                     <execution>
                         <id>regex-property</id>
@@ -724,72 +715,68 @@
     </build>
     <reporting>
         <plugins>
-            <!-- TODO Enable change log reporting once we figure out the SCM referencing issue -->
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changelog-plugin</artifactId>
-                <version>2.3</version>
-            </plugin>
-            -->
+            <!-- TODO Enable change log reporting once we figure out the SCM referencing
+                issue -->
+            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.2</version> </plugin> -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.4</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>2.7</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-linkcheck-plugin</artifactId>
-                <version>1.2</version>
+                <version>1.0.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19</version>
+                <version>2.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.19</version>
+                <version>2.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0</version>
+                <version>2.0-beta-2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.5</version>
+                <version>2.5</version>
                 <configuration>
                     <sourceEncoding>utf-8</sourceEncoding>
-                    <targetJdk>1.7</targetJdk>
+                    <targetJdk>1.5</targetJdk>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>2.3.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>1.2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.3</version>
+                <version>2.3.1</version>
             </plugin>
         </plugins>
     </reporting>
@@ -826,104 +813,104 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>all</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <!-- ikasan eip core -->
-                <module>spec</module>
-                <module>system-event</module>
-                <module>module</module>
-                <module>bootstrap</module>  <!-- TODO - is this still required ? -->
-                <module>scheduler</module>
-                <module>serialiser</module>
-                <module>exclusion</module>
-                <module>error-reporting</module>
-                <module>recovery-manager</module>
-                <module>flow</module>
-                <module>configuration-service</module>
-                <module>wiretap</module>
-                <module>security</module>
-                <module>filter</module>
-                <module>rest</module>
-                <module>test</module>
-                <module>monitor</module>
-                <module>marshaller</module>
-                <module>component</module>
-                <module>jca</module>
-                <module>platform</module>
-                <module>builder</module>
-                <module>compatibility</module>
-                <module>filetransfer</module>
-                <module>mapping</module>
-                <module>management</module>
-                <module>hospital</module>
-                <module>webconsole</module>
-                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-                <!-- module>console</module -->
-                <module>topology</module>
-                <module>dashboard</module>
-                <module>developer</module>
-                <module>sample</module>
-                <module>transaction</module>
-            </modules>
-        </profile>
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+       <!-- ikasan eip core -->
+        <module>spec</module>
+        <module>system-event</module>
+        <module>module</module>
+        <module>bootstrap</module>  <!-- TODO - is this still required ? -->
+        <module>scheduler</module>
+        <module>serialiser</module>
+        <module>exclusion</module>
+        <module>error-reporting</module>
+        <module>recovery-manager</module>
+        <module>flow</module>
+        <module>configuration-service</module>
+        <module>wiretap</module>
+        <module>security</module>
+        <module>filter</module>
+		<module>rest</module>
+        <module>test</module>
+        <module>monitor</module>
+        <module>marshaller</module>
+        <module>component</module>
+        <module>jca</module>
+        <module>platform</module>
+        <module>builder</module>
+        <module>compatibility</module>
+   		<module>filetransfer</module>
+        <module>mapping</module>
+        <module>management</module>
+        <module>hospital</module>
+        <module>webconsole</module>
+		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+        <!-- module>console</module -->
+		<module>topology</module>
+        <module>dashboard</module>
+        <module>developer</module>
+        <module>sample</module>
+        <module>transaction</module>
+      </modules>
+    </profile>
 
-        <profile>
-            <id>core-and-components</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>spec</module>
-                <module>system-event</module>
-                <module>module</module>
-                <module>bootstrap</module>
-                <module>scheduler</module>
-                <module>serialiser</module>
-                <module>exclusion</module>
-                <module>error-reporting</module>
-                <module>recovery-manager</module>
-                <module>flow</module>
-                <module>configuration-service</module>
-                <module>wiretap</module>
-                <module>security</module>
-                <module>filter</module>
-                <module>rest</module>
-                <module>test</module>
-                <module>monitor</module>
-                <module>marshaller</module>
-                <module>component</module>
-                <module>jca</module>
-                <module>platform</module>
-                <module>builder</module>
-                <module>compatibility</module>
-                <module>filetransfer</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>top-level-services-and-applications</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>mapping</module>
-                <module>management</module>
-                <module>platform</module>
-                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-                <!-- module>console</module -->
-                <module>hospital</module>
-                <module>webconsole</module>
-                <module>topology</module>
-                <module>dashboard</module>
-                <module>developer</module>
-                <module>sample</module>
-                <module>transaction</module>
-            </modules>
-        </profile>
+    <profile>
+      <id>core-and-components</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+    	<module>spec</module>
+        <module>system-event</module>
+        <module>module</module>
+        <module>bootstrap</module>
+        <module>scheduler</module>
+        <module>serialiser</module>
+        <module>exclusion</module>
+        <module>error-reporting</module>
+        <module>recovery-manager</module>
+        <module>flow</module>
+        <module>configuration-service</module>
+        <module>wiretap</module>
+        <module>security</module>
+        <module>filter</module>
+		<module>rest</module>
+        <module>test</module>
+        <module>monitor</module>
+        <module>marshaller</module>
+        <module>component</module>
+        <module>jca</module>
+        <module>platform</module>
+        <module>builder</module>
+        <module>compatibility</module>
+		<module>filetransfer</module>
+      </modules>
+    </profile>
+    
+    <profile>
+      <id>top-level-services-and-applications</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>mapping</module>
+        <module>management</module>
+        <module>platform</module>
+		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. --> 
+        <!-- module>console</module -->
+        <module>hospital</module>
+        <module>webconsole</module>
+        <module>topology</module>
+        <module>dashboard</module>
+        <module>developer</module>
+        <module>sample</module>
+        <module>transaction</module>
+      </modules>
+    </profile>
     </profiles>
 
     <dependencyManagement>
@@ -953,8 +940,8 @@
                 <artifactId>ikasan-spec-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-hospital</artifactId>
                 <version>${project.version}</version>
@@ -1067,8 +1054,8 @@
                 <artifactId>ikasan-spec-component</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-resubmission</artifactId>
                 <version>${project.version}</version>
@@ -1079,8 +1066,8 @@
                 <artifactId>ikasan-spec-wiretap</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-rest</artifactId>
                 <version>${project.version}</version>
@@ -1139,20 +1126,20 @@
                 <artifactId>ikasan-consumer</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-mapping</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-hospital</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-rest</artifactId>
                 <version>${project.version}</version>
@@ -1237,7 +1224,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+			<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
             <!-- dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>console-jar</artifactId>
@@ -1347,26 +1334,26 @@
                 <artifactId>spring-orm</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${version.org.springframework}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-                <version>${version.org.springframework}</version>
-            </dependency>
+			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aspects</artifactId>
+				<version>${version.org.springframework}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>${version.org.springframework}</version>
+			</dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jms</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
-
-            <dependency>
+			
+			<dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>${version.org.springframework}</version>
@@ -1578,173 +1565,173 @@
                 <artifactId>spring-jdbc</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
+			
+	<!-- Jersey -->
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.core</groupId>
+		<artifactId>jersey-server</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-json-jackson</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
 
-            <!-- Jersey -->
+	<dependency>
+		<groupId>org.glassfish.jersey.containers</groupId>
+		<artifactId>jersey-container-servlet</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.core</groupId>
+		<artifactId>jersey-client</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish</groupId>
+		<artifactId>javax.json</artifactId>
+		<version>${version.org.glassfish.json}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-moxy</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-json-processing</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+	</dependency>
 
-            <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-server</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
+	<dependency>
+		<groupId>org.glassfish.jersey.ext</groupId>
+		<artifactId>jersey-spring3</artifactId>
+		<version>${version.org.glassfish.jersey}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.sun.jersey</groupId>
+		<artifactId>jersey-json</artifactId>
+		<version>${version.com.sun.jersey}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.sun.jersey.contribs</groupId>
+		<artifactId>jersey-spring</artifactId>
+		<version>${version.com.sun.jersey}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
 
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-json-jackson</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
+	<dependency>
+		<groupId>javax.ws.rs</groupId>
+		<artifactId>javax.ws.rs-api</artifactId>
+		<version>${version.javax.ws.rs}</version>
+	</dependency>
+	
+	<!-- Vaadin -->
+	
+	<dependency>
+	   <groupId>com.zybnet</groupId>
+	   <artifactId>vaadin-autocomplete</artifactId>
+	   <version>${version.com.zybnet.vaadin-autocomplete}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-server</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
 
-            <dependency>
-                <groupId>org.glassfish.jersey.containers</groupId>
-                <artifactId>jersey-container-servlet</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-client-compiled</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
 
-            <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.json</artifactId>
-                <version>${version.org.glassfish.json}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-moxy</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-json-processing</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jersey.ext</groupId>
-                <artifactId>jersey-spring3</artifactId>
-                <version>${version.org.glassfish.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>${version.com.sun.jersey}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-spring</artifactId>
-                <version>${version.com.sun.jersey}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>javax.ws.rs-api</artifactId>
-                <version>${version.javax.ws.rs}</version>
-            </dependency>
-
-            <!-- Vaadin -->
-
-            <dependency>
-                <groupId>com.zybnet</groupId>
-                <artifactId>vaadin-autocomplete</artifactId>
-                <version>${version.com.zybnet.vaadin-autocomplete}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-server</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-client-compiled</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-client</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-push</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-themes</artifactId>
-                <version>${version.vaadin}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-testbench</artifactId>
-                <version>4.0.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.vaadin.addons</groupId>
-                <artifactId>aceeditor</artifactId>
-                <version>${version.org.vaadin.addons.aceeditor}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${version.com.google.guava}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ru.xpoft.vaadin</groupId>
-                <artifactId>spring-vaadin-integration</artifactId>
-                <version>${version.ru.xpoft.vaadin.spring-vaadin-integration}</version>
-            </dependency>
-
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-client</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-push</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-themes</artifactId>
+		<version>${version.vaadin}</version>
+	</dependency>
+	
+	<dependency>
+	   <groupId>com.vaadin</groupId>
+	   <artifactId>vaadin-testbench</artifactId>
+	   <version>4.0.2</version>
+	</dependency>
+	
+	<dependency>
+	   <groupId>org.vaadin.addons</groupId>
+	   <artifactId>aceeditor</artifactId>
+	   <version>${version.org.vaadin.addons.aceeditor}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.google.guava</groupId>
+		<artifactId>guava</artifactId>
+		<version>${version.com.google.guava}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>ru.xpoft.vaadin</groupId>
+		<artifactId>spring-vaadin-integration</artifactId>
+		<version>${version.ru.xpoft.vaadin.spring-vaadin-integration}</version>
+	</dependency>
+			
             <!-- TODO: Upgrade to 1.8.1.2 at some stage -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
