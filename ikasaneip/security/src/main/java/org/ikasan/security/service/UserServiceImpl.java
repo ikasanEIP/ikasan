@@ -299,6 +299,7 @@ public class UserServiceImpl implements UserService
         String encodedPassword = passwordEncoder.encodePassword(newPassword, null);
         User user = loadUserByUsername(username);
         user.setPassword(encodedPassword);
+        user.setEnabled(true);
         userDao.save(user);
     }
 
