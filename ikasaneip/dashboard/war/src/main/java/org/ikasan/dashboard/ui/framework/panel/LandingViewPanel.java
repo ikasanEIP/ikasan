@@ -168,7 +168,7 @@ public class LandingViewPanel extends Panel implements View
         
         this.chartLayout.setSizeFull();
         
-        this.chartLayout.addComponent(buildErrorsChart());
+//        this.chartLayout.addComponent(buildErrorsChart());
 		this.chartLayout.addComponent(buildExclusionsChart());
         
         verticalLayout.addComponent(this.chartLayout);
@@ -374,7 +374,8 @@ public class LandingViewPanel extends Panel implements View
     	chart.setSizeFull();
 
         Configuration conf = chart.getConfiguration();
-        conf.setTitle("ESB Exclusion Report");
+        conf.setTitle("ESB Error Report");
+        conf.setSubTitle("This report displays errors that require an action to be performed. They typically occur due to a data related issue.");
 
         List<ModuleErrorCount> moduleUnactionedErrorsTotal = this.errorReportingManagementService.getModuleErrorCount
         		(moduleNames, true, false, null, this.getMidnightToday());
@@ -511,7 +512,7 @@ public class LandingViewPanel extends Panel implements View
 	    		.getAttribute(DashboardSessionValueConstants.FILTERS) != null)
     	{
     		this.chartLayout.removeAllComponents();
-    		this.chartLayout.addComponent(buildErrorsChart());
+//    		this.chartLayout.addComponent(buildErrorsChart());
     		this.chartLayout.addComponent(buildExclusionsChart());
     	}
     }

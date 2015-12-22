@@ -78,7 +78,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupView;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -334,6 +333,9 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		
 		VaadinService.getCurrentRequest().getWrappedSession()
         	.setAttribute(DashboardSessionValueConstants.FILTERS, filters);
+		
+      UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+      UI.getCurrent().getNavigator().navigateTo("landingView");
 
 	}
 
