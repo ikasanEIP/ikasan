@@ -218,7 +218,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 
         if(getPage().getUriFragment() == null || (getPage().getUriFragment() != null && !getPage().getUriFragment().equals("!error-occurrence")))
     	{
-        	UI.getCurrent().getNavigator().navigateTo("landingView"); 
+        	UI.getCurrent().getNavigator().navigateTo("emptyPanel"); 
     	}
 
         this.navigationPanel.setVisible(true);
