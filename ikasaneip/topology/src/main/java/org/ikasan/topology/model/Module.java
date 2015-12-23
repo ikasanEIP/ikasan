@@ -304,6 +304,9 @@ public class Module implements Comparable<Module>
 	@Override
 	public int compareTo(Module that)
 	{
-		return this.name != null && that != null && that.name != null ? this.name.compareTo(that.name) : -1;
+		return (this.name != null
+                && that != null
+                && that.name != null)
+                    ? this.name.compareTo(that.name) : -1;
 	}
 }
