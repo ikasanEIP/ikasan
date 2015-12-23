@@ -47,7 +47,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -55,6 +57,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.component.container.WiretapEventBeanQuery;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -66,11 +69,13 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.tepi.filtertable.FilterTable;
+import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryDefinition;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
@@ -119,11 +124,14 @@ public class WiretapTab extends TopologyTab
 	private float splitPosition;
 	private Unit splitUnit;
 	
-	private Container tableContainer;
+	private LazyQueryContainer tableContainer;
 	
 	private Label resultsLabel = new Label();
 	
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
+	
+	private BeanQueryFactory<WiretapEventBeanQuery> queryFactory = new
+			BeanQueryFactory<WiretapEventBeanQuery>(WiretapEventBeanQuery.class);
 	
 	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo)
 	{
@@ -133,11 +141,15 @@ public class WiretapTab extends TopologyTab
 		tableContainer = this.buildContainer();
 	}
 	
-	protected Container buildContainer() 
+	protected LazyQueryContainer buildContainer() 
 	{
-		IndexedContainer cont = new IndexedContainer();
+		Map<String,Object> queryConfiguration=new HashMap<String,Object>();
+		
+		queryFactory.setQueryConfiguration(queryConfiguration);
+			
+		LazyQueryContainer cont = new LazyQueryContainer(new LazyQueryDefinition(true, 50, "identifier"), queryFactory);
 
-		cont.addContainerProperty("Module Name", String.class,  null);
+		cont.addContainerProperty("moduleName", String.class,  null);
 		cont.addContainerProperty("Flow Name", String.class,  null);
 		cont.addContainerProperty("Component Name", String.class,  null);
 		cont.addContainerProperty("Event Id / Payload Id", String.class,  null);
@@ -156,16 +168,18 @@ public class WiretapTab extends TopologyTab
 		this.wiretapTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.wiretapTable.addStyleName("ikasan");
 		
-		this.wiretapTable.setColumnExpandRatio("Module Name", .14f);
+		this.wiretapTable.setColumnExpandRatio("moduleName", .14f);
+		this.wiretapTable.setColumnHeader("moduleName", "Module Name");
 		this.wiretapTable.setColumnExpandRatio("Flow Name", .18f);
 		this.wiretapTable.setColumnExpandRatio("Component Name", .2f);
 		this.wiretapTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
 		this.wiretapTable.setColumnExpandRatio("Timestamp", .1f);
 		this.wiretapTable.setColumnExpandRatio("", .05f);
-		this.wiretapTable.setContainerDataSource(tableContainer);
 		
 		this.wiretapTable.addStyleName("wordwrap-table");
 		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		
+		this.wiretapTable.setContainerDataSource(tableContainer);
 		
 		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
@@ -228,7 +242,7 @@ public class WiretapTab extends TopologyTab
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {           	
-            	wiretapTable.removeAllItems();
+//            	wiretapTable.removeAllItems();
 
             	HashSet<String> modulesNames = null;
             	
@@ -277,63 +291,77 @@ public class WiretapTab extends TopologyTab
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
             	}
-            	           	
-         
-            	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
-            	// results with Vaadin.
-            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
-            			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
-
-            	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
-            	{
-            		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
-            		
-            		return;
-            	}
+            	
+            	HashMap<String, Object> queryConfiguration = new HashMap<String, Object>();
+            	queryConfiguration.put(WiretapEventBeanQuery.MODULE_NAMES, modulesNames);
+            	queryConfiguration.put(WiretapEventBeanQuery.FLOW_NAMES, flowNames);
+            	queryConfiguration.put(WiretapEventBeanQuery.COMPONENT_NAMES, componentNames);   
+            	queryConfiguration.put(WiretapEventBeanQuery.WIRETAP_SERVICE, wiretapDao);   
+            	
+            	queryFactory.setQueryConfiguration(queryConfiguration);
+            	
+            	tableContainer.refresh();
             	
             	searchResultsSizeLayout.removeAllComponents();
-            	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size());
+            	resultsLabel = new Label("Number of records returned: " + tableContainer.size());
             	searchResultsSizeLayout.addComponent(resultsLabel);
             	
-            	for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
-            	{
-            		Date date = new Date(wiretapEvent.getTimestamp());
-            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
-            	    String timestamp = format.format(date);
-            	    
-            	    Item item = tableContainer.addItem(wiretapEvent);			            	    
-            	    
-            	    item.getItemProperty("Module Name").setValue(wiretapEvent.getModuleName());
-        			item.getItemProperty("Flow Name").setValue(wiretapEvent.getFlowName());
-        			item.getItemProperty("Component Name").setValue(wiretapEvent.getComponentName());
-        			item.getItemProperty("Event Id / Payload Id").setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
-        			item.getItemProperty("Timestamp").setValue(timestamp);
-        			
-        			CheckBox cb = new CheckBox();
-        			cb.setImmediate(true);
-        			cb.setDescription("Select in order to add to bulk download.");
-        			
-        			item.getItemProperty("").setValue(cb);
-        			
-        			Button popupButton = new Button();
-        			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        			popupButton.setDescription("Open in new tab");
-        			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-        			popupButton.setIcon(VaadinIcons.MODAL);
-        			
-        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
-        	        popupOpener.extend(popupButton);
-        	        
-        	        popupButton.addClickListener(new Button.ClickListener() 
-        	    	{
-        	            public void buttonClick(ClickEvent event) 
-        	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
-        	            }
-        	        });
-        	        
-        	        item.getItemProperty(" ").setValue(popupButton);
-            	}
+            	
+//            	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
+//            	// results with Vaadin.
+//            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
+//            			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
+//
+//            	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
+//            	{
+//            		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
+//            		
+//            		return;
+//            	}
+//            	
+//            	searchResultsSizeLayout.removeAllComponents();
+//            	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size());
+//            	searchResultsSizeLayout.addComponent(resultsLabel);
+//            	
+//            	for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
+//            	{
+//            		Date date = new Date(wiretapEvent.getTimestamp());
+//            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+//            	    String timestamp = format.format(date);
+//            	    
+//            	    Item item = tableContainer.addItem(wiretapEvent);			            	    
+//            	    
+//            	    item.getItemProperty("Module Name").setValue(wiretapEvent.getModuleName());
+//        			item.getItemProperty("Flow Name").setValue(wiretapEvent.getFlowName());
+//        			item.getItemProperty("Component Name").setValue(wiretapEvent.getComponentName());
+//        			item.getItemProperty("Event Id / Payload Id").setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
+//        			item.getItemProperty("Timestamp").setValue(timestamp);
+//        			
+//        			CheckBox cb = new CheckBox();
+//        			cb.setImmediate(true);
+//        			cb.setDescription("Select in order to add to bulk download.");
+//        			
+//        			item.getItemProperty("").setValue(cb);
+//        			
+//        			Button popupButton = new Button();
+//        			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//        			popupButton.setDescription("Open in new tab");
+//        			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+//        			popupButton.setIcon(VaadinIcons.MODAL);
+//        			
+//        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
+//        	        popupOpener.extend(popupButton);
+//        	        
+//        	        popupButton.addClickListener(new Button.ClickListener() 
+//        	    	{
+//        	            public void buttonClick(ClickEvent event) 
+//        	            {
+//        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
+//        	            }
+//        	        });
+//        	        
+//        	        item.getItemProperty(" ").setValue(popupButton);
+//            	}
             }
         });
 		
@@ -653,3 +681,4 @@ public class WiretapTab extends TopologyTab
 	}
 
 }
+

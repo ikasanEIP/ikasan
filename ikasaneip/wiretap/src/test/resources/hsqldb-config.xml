@@ -1,4 +1,5 @@
-/*
+<!--
+ /*
  * $Id$
  * $URL$
  *
@@ -38,64 +39,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.service;
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-/**
- * Configuration bean for the Wiretap service
- */
-public class WiretapServiceConfiguration
-{
-    /**
-     * If batchHousekeepDelete is true, this sets the number of wiretaps
-     * deleted on each batch execution
-     */
-    private int housekeepingBatchSize;
+    <!-- =================================================================== -->
+    <!-- HSQL provides an in-memory database                                 -->
+    <!-- =================================================================== -->
     
-    /**
-     * Sets the number of wiretaps deleted on each transaction execution
-     */
-    private int transactionBatchSize;
-
-    /**
-     * Boolean to determine if wiretaps are deleted in batches during housekeeping
-     */
-    private boolean batchHousekeepDelete;
-
-
-    /* Getters and setters */
-    public int getHousekeepingBatchSize()
-    {
-        return housekeepingBatchSize;
-    }
-
-    public void setHousekeepingBatchSize(int housekeepingBatchSize)
-    {
-        this.housekeepingBatchSize = housekeepingBatchSize;
-    }
-
-    public boolean isBatchHousekeepDelete()
-    {
-        return batchHousekeepDelete;
-    }
-
-    public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
-    {
-        this.batchHousekeepDelete = batchHousekeepDelete;
-    }
-
-	/**
-	 * @return the transactionBatchSize
-	 */
-	public int getTransactionBatchSize()
-	{
-		return transactionBatchSize;
-	}
-
-	/**
-	 * @param transactionBatchSize the transactionBatchSize to set
-	 */
-	public void setTransactionBatchSize(int transactionBatchSize)
-	{
-		this.transactionBatchSize = transactionBatchSize;
-	}
-}
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+        <entry key="hibernate.flushMode" value="commit"/>
+    </util:map>
+    
+    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
+    </bean>
+    
+  
+</beans>
