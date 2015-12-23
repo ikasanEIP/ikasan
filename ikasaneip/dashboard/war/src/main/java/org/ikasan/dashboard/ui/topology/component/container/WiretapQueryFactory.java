@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,68 +38,47 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.model;
+package org.ikasan.dashboard.ui.topology.component.container;
 
-import org.ikasan.spec.wiretap.WiretapEvent;
+import java.util.HashMap;
+
+import org.vaadin.addons.lazyquerycontainer.Query;
+import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
+import org.vaadin.addons.lazyquerycontainer.QueryFactory;
 
 /**
- * Implementation of a flowEvent based on payload being of any generic type.
  * 
  * @author Ikasan Development Team
  *
  */
-public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>
+public class WiretapQueryFactory implements QueryFactory
 {
-    /** event id */
-    private String eventId;
+	HashMap<String, Object> queryConfiguration = new HashMap<String, Object>();
+	
+	/* (non-Javadoc)
+	 * @see org.vaadin.addons.lazyquerycontainer.QueryFactory#constructQuery(org.vaadin.addons.lazyquerycontainer.QueryDefinition)
+	 */
+	@Override
+	public Query constructQuery(QueryDefinition arg0)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /** related event id */
-    private String relatedEventId;
+	/**
+	 * @return the queryConfiguration
+	 */
+	public HashMap<String, Object> getQueryConfiguration()
+	{
+		return queryConfiguration;
+	}
 
-    /** event created date/time */
-    private long eventTimestamp;
+	/**
+	 * @param queryConfiguration the queryConfiguration to set
+	 */
+	public void setQueryConfiguration(HashMap<String, Object> queryConfiguration)
+	{
+		this.queryConfiguration = queryConfiguration;
+	}
 
-
-    public WiretapFlowEvent()
-    {
-    }
-
-    public WiretapFlowEvent(final String moduleName, final String flowName, final String componentName,
-            final String eventId, final String relatedEventId, final long eventTimestamp, final String event, final Long expiry)
-    {
-        super(moduleName, flowName, componentName, event, expiry);
-        this.eventId = eventId;
-        this.relatedEventId = relatedEventId;
-        this.eventTimestamp = eventTimestamp;
-    }
-
-    public String getEventId()
-    {
-        return eventId;
-    }
-
-    protected void setEventId(String eventId)
-    {
-        this.eventId = eventId;
-    }
-
-    public String getRelatedEventId()
-    {
-        return relatedEventId;
-    }
-
-    protected void setRelatedEventId(String relatedEventId)
-    {
-        this.relatedEventId = relatedEventId;
-    }
-
-    public long getEventTimestamp()
-    {
-        return eventTimestamp;
-    }
-
-    protected void setEventTimestamp(long eventTimestamp)
-    {
-        this.eventTimestamp = eventTimestamp;
-    }
 }
