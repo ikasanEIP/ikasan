@@ -50,7 +50,7 @@ import java.util.Set;
  * @author Ikasan Development Team
  *
  */
-public class Module
+public class Module implements Comparable<Module>
 {
 
     private Long id;
@@ -294,5 +294,16 @@ public class Module
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";
 	}
-    
+
+    /**
+     * Natural ordering on the name of the module
+     * @param that the other Module to compare against
+     * @return a negative integer, zero, or a positive integer as this object
+     *          is less than, equal to, or greater than the specified object.
+     */
+	@Override
+	public int compareTo(Module that)
+	{
+		return this.name != null && that != null && that.name != null ? this.name.compareTo(that.name) : -1;
+	}
 }
