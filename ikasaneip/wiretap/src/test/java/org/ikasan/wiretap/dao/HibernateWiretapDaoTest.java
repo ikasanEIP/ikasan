@@ -38,64 +38,72 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.service;
+package org.ikasan.wiretap.dao;
+
+import javax.annotation.Resource;
+
+import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
 
 /**
- * Configuration bean for the Wiretap service
+ * @author Ikasan Development Team
+ *
  */
-public class WiretapServiceConfiguration
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+})
+public class HibernateWiretapDaoTest
 {
+    /** Object being tested */
+    @Resource private WiretapDao wiretapDao;
+
     /**
-     * If batchHousekeepDelete is true, this sets the number of wiretaps
-     * deleted on each batch execution
+     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
+     * being tested
      */
-    private int housekeepingBatchSize;
+    @Before public void setup()
+    {    	
+    	
+    	for(int i=0; i< 10000; i++)
+    	{
+	    	WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+	                "eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
+	    	
+	    	this.wiretapDao.save(event);
+    	}
+    	
+    }
+
+    /**
+     * Putting an instance of StateModel into the StateModel store
+     * 
+     * @throws StateModelDaoException if error accessing state model store
+     */
+    @Test 
+    @DirtiesContext
+    public void test_success_no_results()
+    {
+    	wiretapDao.setBatchHousekeepDelete(true);
+    	wiretapDao.setHousekeepingBatchSize(100);
+    	wiretapDao.setTransactionBatchSize(2000);
+    	
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    }
+
     
-    /**
-     * Sets the number of wiretaps deleted on each transaction execution
-     */
-    private int transactionBatchSize;
-
-    /**
-     * Boolean to determine if wiretaps are deleted in batches during housekeeping
-     */
-    private boolean batchHousekeepDelete;
-
-
-    /* Getters and setters */
-    public int getHousekeepingBatchSize()
-    {
-        return housekeepingBatchSize;
-    }
-
-    public void setHousekeepingBatchSize(int housekeepingBatchSize)
-    {
-        this.housekeepingBatchSize = housekeepingBatchSize;
-    }
-
-    public boolean isBatchHousekeepDelete()
-    {
-        return batchHousekeepDelete;
-    }
-
-    public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
-    {
-        this.batchHousekeepDelete = batchHousekeepDelete;
-    }
-
-	/**
-	 * @return the transactionBatchSize
-	 */
-	public int getTransactionBatchSize()
-	{
-		return transactionBatchSize;
-	}
-
-	/**
-	 * @param transactionBatchSize the transactionBatchSize to set
-	 */
-	public void setTransactionBatchSize(int transactionBatchSize)
-	{
-		this.transactionBatchSize = transactionBatchSize;
-	}
 }
