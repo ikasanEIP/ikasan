@@ -45,33 +45,7 @@ package org.ikasan.spec.configuration;
  * @author Ikasan Development Team
  *
  */
-public interface PlatformConfigurationService
+public class PlatformConfigurationConstants
 {
-	/**
-	 * Method to get a platform configuration value from the configuration service.
-	 * 
-	 * @param paramName
-	 * @return
-	 */
-	public String getConfigurationValue(String paramName);
-
-	/**
-	 * The the username for the account that is used to validate web service calls.
-	 * 
-	 * @return
-	 */
-	public String getWebServiceUsername();
-	
-	/**
-	  * The the password for the account that is used to validate web service calls.
-	 * @return
-	 */
-	public String getWebServicePassword();
-
-	/**
-	 * Returns the size of result sets returned for the dashboard.
-	 * 
-	 * @return
-	 */
-	public Integer getSearchResultSetSize();
+	public static final String RESULT_SET_SIZE = "resultSetSize";
 }

@@ -402,7 +402,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_WIRETAP_AUTHORITY)))
     	{
        		WiretapTab wiretapTab = new WiretapTab
-					(this.wiretapDao, this.treeViewBusinessStreamCombo);
+					(this.wiretapDao, this.treeViewBusinessStreamCombo, this.platformConfigurationService);
        		wiretapTab.createLayout();
 			
     		tabsheet.addTab(wiretapTab, "Wiretaps");

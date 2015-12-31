@@ -118,7 +118,7 @@ public class MapErrorReportingServiceDao<T>
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName,
 			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate)
+			Date startDate, Date endDate, int size)
 	{
 		// TODO Auto-generated method stub
 		return null;

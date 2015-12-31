@@ -616,7 +616,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 		 */
 		@Override
 		public List find(List moduleName, List flowName, List flowElementname,
-				Date startDate, Date endDate)
+				Date startDate, Date endDate, int size)
 		{
 			// TODO Auto-generated method stub
 			return null;

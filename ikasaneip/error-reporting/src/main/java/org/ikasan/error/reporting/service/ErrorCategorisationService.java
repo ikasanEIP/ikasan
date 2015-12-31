@@ -116,5 +116,5 @@ public interface ErrorCategorisationService
 	 * @return
 	 */
 	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
-			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate);
+			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate, int size);
 }

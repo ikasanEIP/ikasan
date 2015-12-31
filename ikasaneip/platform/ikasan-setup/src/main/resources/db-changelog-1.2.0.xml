@@ -19,4 +19,7 @@
 	
 	<!-- 1.2.0 data creation -->
 	
+	<!-- 1.2.0 index creation -->
+	<include file="db/index/db-changeLog-createIndexIkasanWiretapExpiry.xml" relativeToChangelogFile="true" />
+	
 </databaseChangeLog>

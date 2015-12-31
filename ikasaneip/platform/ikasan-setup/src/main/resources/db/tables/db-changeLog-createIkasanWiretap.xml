@@ -89,12 +89,6 @@
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'IkasanWiretap', 'identity_gap', 1</sql>
         
-        <createIndex
-            indexName="IX_IkasanWiretap_Expiry"
-            tableName="IkasanWiretap">
-	        <column name="Expiry" type="numeric(18)"/>
-	    </createIndex>
-        
     </changeSet>
     
     <changeSet author="ikasan dev" id="createIkasanWiretap" dbms="h2, mysql" context="baseline"> 
@@ -136,11 +130,7 @@
             
         </createTable>
         
-		<createIndex
-            indexName="IX_IkasanWiretap_Expiry"
-            tableName="IkasanWiretap">
-	        <column name="Expiry" type="numeric(18)"/>
-	    </createIndex>
+
         
     </changeSet>
     
@@ -182,12 +172,6 @@
             </column>
             
         </createTable>
-        
-        <createIndex
-            indexName="IX_IkasanWiretap_Expiry"
-            tableName="IkasanWiretap">
-	        <column name="Expiry" type="numeric(18)"/>
-	    </createIndex>
         
     </changeSet>
 

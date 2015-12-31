@@ -120,7 +120,7 @@ public class ErrorReportingManagementServiceImplTest
     	List<String> componentNames = new ArrayList<String>();
     	componentNames.add("componentName");
     	
-    	Assert.assertTrue(errorReportingServiceDao.find(moduleNames, flowNames, componentNames, null, null).size() == 1);
+    	Assert.assertTrue(errorReportingServiceDao.find(moduleNames, flowNames, componentNames, null, null, 1000).size() == 1);
     }
 
     

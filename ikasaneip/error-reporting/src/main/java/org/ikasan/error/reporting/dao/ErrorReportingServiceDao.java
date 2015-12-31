@@ -69,7 +69,7 @@ public interface ErrorReportingServiceDao<EVENT>
      * @return
      */
     public List<EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate);
+			Date startDate, Date endDate, int size);
 
     /**
      * Save the incoming EVENT.
