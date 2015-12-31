@@ -48,6 +48,7 @@ import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationConstants;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 
 /**
@@ -57,6 +58,8 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
  */
 public class PlatformConfigurationServiceImpl implements PlatformConfigurationService
 {
+	private static final int DEFAULT_RESULT_SIZE = 2000;
+	
 	protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 	
 	public PlatformConfigurationServiceImpl(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
@@ -143,6 +146,28 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         }
         
         return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.PlatformConfigurationService#getSearchResultSetSize()
+	 */
+	@Override
+	public Integer getSearchResultSetSize()
+	{
+		String resultSetSizeString = this.getConfigurationValue(PlatformConfigurationConstants.RESULT_SET_SIZE);
+		
+		Integer size = null;
+		
+		try
+		{
+			size = new Integer(resultSetSizeString);
+		}
+		catch(NumberFormatException e)
+		{
+			size = DEFAULT_RESULT_SIZE;
+		}
+		
+		return size;
 	}	
 
 }

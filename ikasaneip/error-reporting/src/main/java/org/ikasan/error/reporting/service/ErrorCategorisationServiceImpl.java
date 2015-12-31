@@ -149,9 +149,10 @@ public class ErrorCategorisationServiceImpl implements
 	 */
 	@Override
 	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames,
-			List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate)
+			List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate,
+			int size)
 	{
-		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate);
+		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate, size);
 		
 		Map<CategorisedErrorKey, ErrorCategorisation> categorisedErrorMap = this.getErrorCategorisationMap();
 		

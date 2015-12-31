@@ -817,7 +817,7 @@ public class CategorisedErrorTab extends TopologyTab
 	@Override
 	public void search()
 	{
-		logger.info("Start search!");
+		logger.debug("Start search!");
 		categorizedErrorOccurenceTable.removeAllItems();
 
     	ArrayList<String> modulesNames = null;
@@ -875,7 +875,7 @@ public class CategorisedErrorTab extends TopologyTab
  
     	List<CategorisedErrorOccurrence> categorisedErrorOccurrences = errorCategorisationService
     			.findCategorisedErrorOccurences(modulesNames, flowNames, componentNames, "", "", errorCategory,
-    					errorFromDate.getValue(), errorToDate.getValue());
+    					errorFromDate.getValue(), errorToDate.getValue(), 1000);
     	
     	if(categorisedErrorOccurrences == null || categorisedErrorOccurrences.size() == 0)
     	{

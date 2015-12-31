@@ -90,7 +90,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 	 */
 	@Override
 	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate)
+			Date startDate, Date endDate, int size)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
 		
@@ -122,7 +122,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		criteria.add(Restrictions.isNull("userAction"));
 		criteria.addOrder(Order.desc("expiry"));
 
-        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
 	}
     
     @Override

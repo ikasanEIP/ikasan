@@ -120,7 +120,7 @@ public class GraphCache
 		
 		logger.debug("Synchronising topology state cache.");
 		List<ErrorOccurrence> errorOccurrences 
-			= errorReportingService.find(null, null, null, getMidnightToday(), getTwentyThreeFixtyNineToday());
+			= errorReportingService.find(null, null, null, getMidnightToday(), getTwentyThreeFixtyNineToday(), 1000);
 		
 		for(ErrorOccurrence errorOccurrence: errorOccurrences)
 		{

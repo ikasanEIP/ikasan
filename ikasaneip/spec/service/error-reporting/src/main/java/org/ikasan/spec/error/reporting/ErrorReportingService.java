@@ -76,7 +76,7 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
      * @return
      */
     public List<ERROR_REPORTING_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-    		Date startDate, Date endDate);
+    		Date startDate, Date endDate, int size);
 
     /**
      * Logs an Error where there is an inflight Event involved in a Flow

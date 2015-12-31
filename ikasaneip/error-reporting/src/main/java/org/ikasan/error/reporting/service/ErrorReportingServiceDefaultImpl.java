@@ -239,9 +239,9 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 	 */
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate)
+			Date startDate, Date endDate, int size)
 	{
-		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate);
+		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate, size);
 	}
 
 	

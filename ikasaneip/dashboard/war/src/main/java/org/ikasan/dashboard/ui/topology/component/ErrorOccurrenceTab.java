@@ -81,9 +81,11 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
@@ -821,7 +823,8 @@ public class ErrorOccurrenceTab extends TopologyTab
     	}
     	
 		List<ErrorOccurrence> errorOccurences = errorReportingService
-    			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+    			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue(),
+    					platformConfigurationService.getSearchResultSetSize());
     	
     	if((errorOccurences == null || errorOccurences.size() == 0) && showError)
     	{
@@ -833,6 +836,20 @@ public class ErrorOccurrenceTab extends TopologyTab
     	searchResultsSizeLayout.removeAllComponents();
     	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size());
     	searchResultsSizeLayout.addComponent(this.resultsLabel);
+    	
+    	if(errorOccurences.size() > platformConfigurationService.getSearchResultSetSize())
+    	{
+    		Notification notif = new Notification(
+    			    "Warning",
+    			    "The number of results returned this search exceeds the configured search " +
+    			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
+    			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
+    			    Type.ERROR_MESSAGE);
+    		notif.setDelayMsec(-1);
+    		notif.setPosition(Position.MIDDLE_CENTER);
+    		
+    		notif.show(Page.getCurrent());
+    	}
     	
     	for(final ErrorOccurrence errorOccurrence: errorOccurences)
     	{

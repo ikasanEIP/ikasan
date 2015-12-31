@@ -94,6 +94,7 @@ public class WiretapEventBeanQuery extends AbstractBeanQuery<WiretapEvent>
 	protected WiretapEvent constructBean()
 	{
 		logger.info("Construct bean!");
+		
 		return new WiretapFlowEvent();
 	}
 
