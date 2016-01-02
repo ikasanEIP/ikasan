@@ -177,8 +177,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
@@ -623,8 +623,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
 			buttons.addComponent(selectAllButton);
 			buttons.addComponent(closeSelectedButton);
@@ -775,6 +775,9 @@ public class ErrorOccurrenceTab extends TopologyTab
 	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
 	{
 		errorOccurenceTable.removeAllItems();
+		
+		container = buildContainer();
+		this.errorOccurenceTable.setContainerDataSource(container);
 
     	ArrayList<String> modulesNames = null;
     	
@@ -809,7 +812,7 @@ public class ErrorOccurrenceTab extends TopologyTab
         	}
     	}
     	
-    	if(modulesNames == null && flowNames == null && componentNames == null
+    	if(modulesNames == null && flowNames == null && componentNames == null && businessStreamCombo != null
     			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
     	{
     		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
@@ -833,19 +836,22 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
+    	Long resultSize = errorReportingService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+    	
     	searchResultsSizeLayout.removeAllComponents();
-    	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size());
+    	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size() + " of " + resultSize);
     	searchResultsSizeLayout.addComponent(this.resultsLabel);
     	
-    	if(errorOccurences.size() > platformConfigurationService.getSearchResultSetSize())
+    	if(resultSize > platformConfigurationService.getSearchResultSetSize())
     	{
     		Notification notif = new Notification(
     			    "Warning",
-    			    "The number of results returned this search exceeds the configured search " +
+    			    "The number of results returned by this search exceeds the configured search " +
     			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
     			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
-    			    Type.ERROR_MESSAGE);
+    			    Type.HUMANIZED_MESSAGE);
     		notif.setDelayMsec(-1);
+    		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
     		notif.setPosition(Position.MIDDLE_CENTER);
     		
     		notif.show(Page.getCurrent());
@@ -966,7 +972,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 	{
 		StringBuffer dashboardUrl = new StringBuffer(baseUrl);
 		
-		dashboardUrl.append("/?errorUri=").append(errorOccurrence.getUri()).append("#!error-occurrence");
+		dashboardUrl.append("/?errorUri=").append(errorOccurrence.getUri()).append("&ui=errorOccurrence");
 		
 		return dashboardUrl.toString();
 	}

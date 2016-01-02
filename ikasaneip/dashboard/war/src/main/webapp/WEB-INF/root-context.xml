@@ -201,6 +201,17 @@
         <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
+    <bean id="errorOccurrencesByFilterDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.ErrorOccurrencesByFilterDeepLinkPanel" scope="prototype">
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="errorReportingService"/>
+        <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="authenticationService"/>
+        <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="platformConfigurationService"/>
+        <constructor-arg ref="topologyService"/>
+    </bean>
+    
      <!-- bean id="wiretapDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.WiretapDeepLinkPanel" scope="prototype">
         <constructor-arg ref="wiretapDao"/>
         <constructor-arg ref="navigationPanel"/>

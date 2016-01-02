@@ -484,7 +484,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
 					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService,
-							this.hospitalManagementService, this.topologyService, this.exclusionManagementService);
+							this.hospitalManagementService, this.topologyService, this.exclusionManagementService,
+							this.platformConfigurationService);
 			
 			categorisedErrorTab.createLayout();
 			

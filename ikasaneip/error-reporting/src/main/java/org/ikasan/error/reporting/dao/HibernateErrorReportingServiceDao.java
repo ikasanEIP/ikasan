@@ -199,4 +199,59 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
             }
         });
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, int)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Long rowCount(final List<String> moduleName, final List<String> flowName,
+			final List<String> flowElementname, final Date startDate, final Date endDate)
+	{
+		return (Long) getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+			
+				Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+				
+				if(moduleName != null && moduleName.size() > 0)
+				{
+					criteria.add(Restrictions.in("moduleName", moduleName));
+				}
+				
+				if(flowName != null && flowName.size() > 0)
+				{
+					criteria.add(Restrictions.in("flowName", flowName));
+				}
+				
+				if(flowElementname != null && flowElementname.size() > 0)
+				{
+					criteria.add(Restrictions.in("flowElementName", flowElementname));
+				}
+				
+				if(startDate != null)
+				{
+					criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+				}
+				
+				if(endDate != null)
+				{
+					criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+				}
+				
+				criteria.add(Restrictions.isNull("userAction"));
+				criteria.addOrder(Order.desc("expiry")); 
+				criteria.setProjection(Projections.rowCount());
+			    Long rowCount = new Long(0);
+			    List<Long> rowCountList = criteria.list();
+			    if (!rowCountList.isEmpty())
+			    {
+			        rowCount = rowCountList.get(0);
+			    }
+			    
+			    return rowCount;
+            }
+        });
+	}
 }
