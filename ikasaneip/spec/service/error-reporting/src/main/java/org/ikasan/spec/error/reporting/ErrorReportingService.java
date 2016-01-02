@@ -131,5 +131,18 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
      * Housekeep expired exclusionEvents.
      */
     public void housekeep();
+    
+    /**
+     * Helper method to return the row count based on the criteria.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param flowElementname
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public Long rowCount(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate);
 
 }

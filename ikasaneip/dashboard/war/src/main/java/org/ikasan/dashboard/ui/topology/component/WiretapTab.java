@@ -294,25 +294,8 @@ public class WiretapTab extends TopologyTab
             		{
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
-            	}
+            	}            	
             	
-//            	HashMap<String, Object> queryConfiguration = new HashMap<String, Object>();
-//            	queryConfiguration.put(WiretapEventBeanQuery.MODULE_NAMES, modulesNames);
-//            	queryConfiguration.put(WiretapEventBeanQuery.FLOW_NAMES, flowNames);
-//            	queryConfiguration.put(WiretapEventBeanQuery.COMPONENT_NAMES, componentNames);   
-//            	queryConfiguration.put(WiretapEventBeanQuery.WIRETAP_SERVICE, wiretapDao);   
-//            	
-//            	queryFactory.setQueryConfiguration(queryConfiguration);
-//            	
-//            	tableContainer.refresh();
-            	
-            	searchResultsSizeLayout.removeAllComponents();
-            	resultsLabel = new Label("Number of records returned: " + tableContainer.size());
-            	searchResultsSizeLayout.addComponent(resultsLabel);
-            	
-            	
-            	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
-            	// results with Vaadin.
             	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
             			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
@@ -320,6 +303,10 @@ public class WiretapTab extends TopologyTab
             	{
             		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
             		
+            		searchResultsSizeLayout.removeAllComponents();
+                	resultsLabel = new Label("Number of records returned: 0 of 0");
+                	searchResultsSizeLayout.addComponent(resultsLabel);
+                	
             		return;
             	}
             	
@@ -330,11 +317,12 @@ public class WiretapTab extends TopologyTab
             	{
             		Notification notif = new Notification(
             			    "Warning",
-            			    "The number of results returned this search exceeds the configured search " +
+            			    "The number of results returned by this search exceeds the configured search " +
             			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
             			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
-            			    Type.ERROR_MESSAGE);
+            			    Type.HUMANIZED_MESSAGE);
             		notif.setDelayMsec(-1);
+            		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
             		notif.setPosition(Position.MIDDLE_CENTER);
             		
             		notif.show(Page.getCurrent());

@@ -69,6 +69,10 @@ public class DashboardUIProvider extends SpringUIProvider
 		{
 			return "errorOccurrenceDeepLinkPanel";
 		}
+		else if(ui != null && ui.equals("errorOccurrencesByFilter"))
+		{
+			return "errorOccurrencesByFilterDeepLinkPanel";
+		}
 			
 		return "ikasanUI";
 	}

@@ -329,7 +329,7 @@ public class HibernateTopologyDaoTest
 		
 		this.xaTopologyDao.saveFilter(filter);
 		
-		filter = new Filter("testFilter", "testFilterDescription", "me");
+		filter = new Filter("testFilter2", "testFilterDescription", "me");
 		
 		flows = this.xaTopologyDao.getAllFlows();
 		

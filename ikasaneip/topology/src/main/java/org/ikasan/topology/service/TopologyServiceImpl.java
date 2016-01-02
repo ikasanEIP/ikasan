@@ -509,4 +509,13 @@ public class TopologyServiceImpl implements TopologyService
 	{
 		this.topologyDao.deleteFilterComponents(filterId);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getFilterByName(java.lang.String)
+	 */
+	@Override
+	public Filter getFilterByName(String name)
+	{
+		return this.topologyDao.getFilterByName(name);
+	}
 }

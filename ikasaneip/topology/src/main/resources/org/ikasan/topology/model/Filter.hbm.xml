@@ -59,7 +59,8 @@
 		<property name="name" 
 				  column="Name" 
 				  type="java.lang.String" 
-				  not-null="true"/>
+				  not-null="true"
+				  unique="true"/>
 
 		<property name="description" 
 				  column="Description" 

@@ -334,8 +334,11 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		VaadinService.getCurrentRequest().getWrappedSession()
         	.setAttribute(DashboardSessionValueConstants.FILTERS, filters);
 		
-      UI.getCurrent().getNavigator().navigateTo("emptyPanel");
-      UI.getCurrent().getNavigator().navigateTo("landingView");
+		if(UI.getCurrent().getNavigator() != null)
+		{
+			UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+	        UI.getCurrent().getNavigator().navigateTo("landingView");
+		}
 
 	}
 

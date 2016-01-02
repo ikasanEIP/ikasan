@@ -621,6 +621,17 @@ public class ScheduledRecoveryManagerIntegrationTest
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.ikasan.spec.error.reporting.ErrorReportingService#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+		 */
+		@Override
+		public Long rowCount(List moduleName, List flowName,
+				List flowElementname, Date startDate, Date endDate)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     /**

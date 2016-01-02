@@ -262,4 +262,5 @@ public interface TopologyDao
 	 * @param filterId
 	 */
 	public void deleteFilterComponents(Long filterId);
+
 }

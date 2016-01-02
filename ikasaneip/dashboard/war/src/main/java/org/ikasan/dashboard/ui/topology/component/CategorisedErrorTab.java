@@ -65,6 +65,7 @@ import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.model.BusinessStream;
@@ -81,8 +82,10 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -139,10 +142,13 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
+	private PlatformConfigurationService platformConfigurationService;
+	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
 			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
-			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService)
+			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+			PlatformConfigurationService platformConfigurationService)
 	{
 		this.errorCategorisationService = errorCategorisationService;
 		this.businessStreamCombo = businessStreamCombo;
@@ -150,6 +156,7 @@ public class CategorisedErrorTab extends TopologyTab
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
 		this.exclusionManagementService = exclusionManagementService;
+		this.platformConfigurationService = platformConfigurationService;
 		
 		container = this.buildContainer();
 	}
@@ -276,168 +283,6 @@ public class CategorisedErrorTab extends TopologyTab
 			public void buttonClick(ClickEvent event) 
             {
             	search();
-//            	categorizedErrorOccurenceTable.removeAllItems();
-//
-//            	ArrayList<String> modulesNames = null;
-//            	
-//            	if(modules.getItemIds().size() > 0)
-//            	{
-//	            	modulesNames = new ArrayList<String>();
-//	            	for(Object module: modules.getItemIds())
-//	            	{
-//	            		modulesNames.add(((Module)module).getName());
-//	            	}
-//            	}
-//            	
-//            	ArrayList<String> flowNames = null;
-//            	
-//            	if(flows.getItemIds().size() > 0)
-//            	{
-//            		flowNames = new ArrayList<String>();
-//            		for(Object flow: flows.getItemIds())
-//                	{
-//                		flowNames.add(((Flow)flow).getName());
-//                	}
-//            	}
-//            	
-//            	ArrayList<String> componentNames = null;
-//            	
-//            	if(components.getItemIds().size() > 0)
-//            	{
-//            		componentNames = new ArrayList<String>();
-//	            	for(Object component: components.getItemIds())
-//	            	{
-//	            		componentNames.add(((Component)component).getName());
-//	            	}
-//            	}
-//            	
-//            	if(modulesNames == null && flowNames == null && componentNames == null
-//            			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-//            	{
-//            		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-//            		
-//            		modulesNames = new ArrayList<String>();
-//            		
-//            		for(BusinessStreamFlow flow: businessStream.getFlows())
-//            		{
-//            			modulesNames.add(flow.getFlow().getModule().getName());
-//            		}
-//            	}
-//            	
-//            	String errorCategory = null;
-//            	
-//            	if(errorCategoryCombo != null && errorCategoryCombo.getValue() != null)
-//            	{
-//            		errorCategory = (String)errorCategoryCombo.getValue();
-//            	}
-//         
-//            	List<CategorisedErrorOccurrence> categorisedErrorOccurrences = errorCategorisationService
-//            			.findCategorisedErrorOccurences(modulesNames, flowNames, componentNames, "", "", errorCategory,
-//            					errorFromDate.getValue(), errorToDate.getValue());
-//            	
-//            	if(categorisedErrorOccurrences == null || categorisedErrorOccurrences.size() == 0)
-//            	{
-//            		Notification.show("The categorised error search returned no results!", Type.ERROR_MESSAGE);
-//            		
-//            		return;
-//            	}
-//            	
-//            	List<String> noteUris =  errorReportingManagementService.getAllErrorUrisWithNote();
-//            	
-//            	searchResultsSizeLayout.removeAllComponents();
-//            	resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size());
-//            	searchResultsSizeLayout.addComponent(resultsLabel);
-//
-//            	for(final CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurrences)
-//            	{
-//            		ErrorOccurrence errorOccurrence = categorisedErrorOccurrence.getErrorOccurrence();
-//            		
-//            		Date date = new Date(errorOccurrence.getTimestamp());
-//            		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
-//            	    String timestamp = format.format(date);
-//            	    
-//            	    Label categoryLabel = new Label();
-//            	    
-//            	    if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.BLOCKER))
-//            	    {
-//            	    	categoryLabel = new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML);
-//            	    }
-//            	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.CRITICAL))
-//            	    {
-//            	    	categoryLabel = new Label(VaadinIcons.EXCLAMATION.getHtml(), ContentMode.HTML);
-//            	    }
-//            	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.MAJOR))
-//            	    {
-//            	    	categoryLabel = new Label(VaadinIcons.ARROW_UP.getHtml(), ContentMode.HTML);
-//            	    }
-//            	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.TRIVIAL))
-//            	    {
-//            	    	categoryLabel = new Label(VaadinIcons.ARROW_DOWN.getHtml(), ContentMode.HTML);
-//            	    }
-//            	    
-//            	    
-//            	    VerticalLayout layout = new VerticalLayout();
-//            	    layout.addComponent(new Label(VaadinIcons.ARCHIVE.getHtml() + " " +  errorOccurrence.getModuleName(), ContentMode.HTML));
-//            	    layout.addComponent(new Label(VaadinIcons.AUTOMATION.getHtml() + " " +  errorOccurrence.getFlowName(), ContentMode.HTML));
-//            	    layout.addComponent(new Label(VaadinIcons.COG.getHtml() + " " +  errorOccurrence.getFlowElementName(), ContentMode.HTML));
-//            	    layout.setSpacing(true);
-//            	                	    
-//            	    Item item = container.addItem(categorisedErrorOccurrence);			            	    
-//
-//            	    item.getItemProperty("Error Location").setValue(layout);
-//        			item.getItemProperty("Error Message").setValue(categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription());
-//        			item.getItemProperty("Timestamp").setValue(timestamp);
-//        			
-//        			HorizontalLayout commentLayout = new HorizontalLayout();
-//        			commentLayout.setSpacing(true);
-//            	    
-//            	    Label label = new Label(VaadinIcons.COMMENT.getHtml(), ContentMode.HTML);			
-//        			label.addStyleName(ValoTheme.LABEL_TINY);
-//        			
-//        			if(noteUris.contains(errorOccurrence.getUri()))
-//        			{
-//        				commentLayout.addComponent(label);
-//        			}
-//        			
-//        			label = new Label(VaadinIcons.LINK.getHtml(), ContentMode.HTML);			
-//        			label.addStyleName(ValoTheme.LABEL_TINY);
-//        			
-//        			
-//        			item.getItemProperty("N/L").setValue(commentLayout);
-//        			
-//        			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-//        		        	.getAttribute(DashboardSessionValueConstants.USER);
-//        			
-//        			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-//        					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
-//        			{	
-//        				CheckBox cb = new CheckBox();
-//    					cb.setValue(false);
-//    					item.getItemProperty("").setValue(cb);
-//        			}
-//        			
-//        			Button popupButton = new Button();
-//        			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-//        			popupButton.setDescription("Open in new tab");
-//        			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-//        			popupButton.setIcon(VaadinIcons.MODAL);
-//        			
-//        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(CategorisedErrorOccurrencePopup.class);
-//        	        popupOpener.extend(popupButton);
-//        	        
-//        	        popupButton.addClickListener(new Button.ClickListener() 
-//        	    	{
-//        	            public void buttonClick(ClickEvent event) 
-//        	            {
-//        	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("categorisedErrorOccurrence", categorisedErrorOccurrence);
-//
-//        	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportManagementService", errorReportingManagementService);
-//        	            }
-//        	        });
-//			    	
-//        	        item.getItemProperty(" ").setValue(popupButton);
-//            	}
-//            }
             }
         });
 		
@@ -881,14 +726,35 @@ public class CategorisedErrorTab extends TopologyTab
     	{
     		Notification.show("The categorised error search returned no results!", Type.ERROR_MESSAGE);
     		
+    		searchResultsSizeLayout.removeAllComponents();
+        	this.resultsLabel = new Label("Number of records returned: 0 of 0");
+        	searchResultsSizeLayout.addComponent(this.resultsLabel);
+    		
     		return;
     	}
     	
-    	List<String> noteUris =  errorReportingManagementService.getAllErrorUrisWithNote();
+    	Long resultSize = errorCategorisationService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	searchResultsSizeLayout.removeAllComponents();
-    	resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size());
-    	searchResultsSizeLayout.addComponent(resultsLabel);
+    	this.resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size() + " of " + resultSize);
+    	searchResultsSizeLayout.addComponent(this.resultsLabel);
+    	
+    	if(resultSize > platformConfigurationService.getSearchResultSetSize())
+    	{
+    		Notification notif = new Notification(
+    			    "Warning",
+    			    "The number of results returned by this search exceeds the configured search " +
+    			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
+    			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
+    			    Type.HUMANIZED_MESSAGE);
+    		notif.setDelayMsec(-1);
+    		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+    		notif.setPosition(Position.MIDDLE_CENTER);
+    		
+    		notif.show(Page.getCurrent());
+    	}
+    	
+    	List<String> noteUris =  errorReportingManagementService.getAllErrorUrisWithNote();
 
     	for(final CategorisedErrorOccurrence categorisedErrorOccurrence: categorisedErrorOccurrences)
     	{

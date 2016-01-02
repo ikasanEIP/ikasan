@@ -117,4 +117,16 @@ public interface ErrorCategorisationService
 	 */
 	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
 			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate, int size);
+	
+	/**
+	 * Get the row count for the given criteria.
+	 * 
+	 * @param moduleName
+	 * @param flowName
+	 * @param flowElementname
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public Long rowCount(List<String> moduleName, List<String> flowName, List<String> flowElementname, Date startDate, Date endDate);
 }

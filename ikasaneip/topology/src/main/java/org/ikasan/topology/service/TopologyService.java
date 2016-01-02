@@ -223,4 +223,12 @@ public interface TopologyService
 	 * @param filterId
 	 */
 	public void deleteFilterComponents(Long filterId);
+	
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Filter getFilterByName(String name);
 }
