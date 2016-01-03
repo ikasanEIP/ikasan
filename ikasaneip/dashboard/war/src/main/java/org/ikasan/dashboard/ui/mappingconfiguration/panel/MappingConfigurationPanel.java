@@ -405,7 +405,7 @@ public class MappingConfigurationPanel extends Panel implements View
         queryParamsPanel.setContent(paramQueriesLayout);
         this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
-        vpanel.setSplitPosition(325, Unit.PIXELS);
+        vpanel.setSplitPosition(350, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
