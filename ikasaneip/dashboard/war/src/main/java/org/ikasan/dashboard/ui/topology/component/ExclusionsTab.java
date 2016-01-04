@@ -96,9 +96,6 @@ public class ExclusionsTab extends TopologyTab
 	
 	private Table exclusionsTable;
 	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	

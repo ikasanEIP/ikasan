@@ -261,6 +261,18 @@ public interface TopologyDao
 	 * 
 	 * @param filterId
 	 */
-	public void deleteFilterComponents(Long filterId);
+	public void deleteFilterComponentsByFilterId(Long filterId);
+	
+	/**
+	 * 
+	 * @param componentId
+	 */
+	public void deleteFilterComponentsByComponentId(Long componentId);
+	
+	/**
+	 * 
+	 * @param componentId
+	 */
+	public void deleteBusinessStreamFlowByFlowId(Long flowId);
 
 }

@@ -102,10 +102,6 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 	
 	private FilterTable errorOccurenceTable;
 	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	private Table components = new Table("Components");
-	
 	private PopupDateField errorFromDate;
 	private PopupDateField errorToDate;
 	
