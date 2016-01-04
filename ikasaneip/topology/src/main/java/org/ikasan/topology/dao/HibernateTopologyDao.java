@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -70,7 +71,9 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateTopologyDao extends HibernateDaoSupport implements TopologyDao
 {
 
-	private static final String DELETE_FILTER_COMPONENT = "delete from FilterComponent where id.filterId = :filterId"; 
+	private static final String DELETE_FILTER_COMPONENT_BY_FILTER_ID = "delete from FilterComponent where id.filterId = :filterId"; 
+	private static final String DELETE_FILTER_COMPONENT_BY_COMPONENT_ID = "delete from FilterComponent where id.filterId = :filterId";
+	private static final String DELETE_BUSINESS_STREAM_FLOW_BY_FLOW_ID = "delete from BusinessStreamFlow where id.flowId = :flowId";
 	
 	/* (non-Javadoc)
 	 * @see org.ikasan.topology.dao.TopologyDao#getAllServers()
@@ -90,6 +93,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void save(Server server)
 	{
+		server.setUpdatedDateTime(new Date());
 		this.getHibernateTemplate().saveOrUpdate(server);		
 	}
 
@@ -111,6 +115,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void save(Module module)
 	{
+		module.setUpdatedDateTime(new Date());
 		this.getHibernateTemplate().saveOrUpdate(module);
 	}
 
@@ -132,6 +137,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void save(Flow flow)
 	{
+		flow.setUpdatedDateTime(new Date());
 		this.getHibernateTemplate().saveOrUpdate(flow);
 	}
 
@@ -153,6 +159,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void saveBusinessStream(BusinessStream businessStream)
 	{
+		businessStream.setUpdatedDateTime(new Date());
 		this.getHibernateTemplate().saveOrUpdate(businessStream);		
 	}
 
@@ -285,6 +292,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void save(Component component)
 	{
+		component.setUpdatedDateTime(new Date());
 		this.getHibernateTemplate().saveOrUpdate(component);
 	}
 
@@ -355,6 +363,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public void saveFilter(Filter filter)
 	{
+		filter.setUpdatedDateTime(new Date());
 		this.getHibernateTemplate().saveOrUpdate(filter);
 	}
 
@@ -437,16 +446,60 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void deleteFilterComponents(final Long filterId)
+	public void deleteFilterComponentsByFilterId(final Long filterId)
 	{
 		this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Query query = session.createQuery(DELETE_FILTER_COMPONENT);
+                Query query = session.createQuery(DELETE_FILTER_COMPONENT_BY_FILTER_ID);
                 
                 query.setParameter("filterId", filterId);
+
+                query.executeUpdate();
+                
+                return null;
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteFilterComponentsByComponentId(java.lang.Long)
+	 */
+	@Override
+	public void deleteFilterComponentsByComponentId(final Long componentId)
+	{
+		this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(DELETE_FILTER_COMPONENT_BY_COMPONENT_ID);
+                
+                query.setParameter("componentId", componentId);
+
+                query.executeUpdate();
+                
+                return null;
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStreamFlowByFlowId(java.lang.Long)
+	 */
+	@Override
+	public void deleteBusinessStreamFlowByFlowId(final Long flowId)
+	{
+		this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(DELETE_BUSINESS_STREAM_FLOW_BY_FLOW_ID);
+                
+                query.setParameter("flowId", flowId);
 
                 query.executeUpdate();
                 

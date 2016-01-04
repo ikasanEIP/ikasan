@@ -348,6 +348,10 @@ public class TopologyServiceImpl implements TopologyService
 				module.getFlows().remove(flow);
 				flow.getModule().getFlows().remove(flow);
 				flow.setModule(null);
+				
+				// we need to delete any references to the flow before deleting it. 
+				this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
+				
 				this.topologyDao.delete(flow);
 			}
 		}
@@ -378,6 +382,10 @@ public class TopologyServiceImpl implements TopologyService
 			
 			component.getFlow().getComponents().remove(component);
 			component.setFlow(null);
+			
+			// we need to delete any references to the component before deleting it. 
+			this.topologyDao.deleteFilterComponentsByComponentId(component.getId());
+			
 			this.topologyDao.delete(component);
 		}
 	}
@@ -392,6 +400,7 @@ public class TopologyServiceImpl implements TopologyService
 			
 			if(c.getName().trim().equals(component.getName().trim()))
 			{
+				c.setConfigurationId(component.getConfigurationId());
 				return c;
 			}
 		}
@@ -507,7 +516,7 @@ public class TopologyServiceImpl implements TopologyService
 	@Override
 	public void deleteFilterComponents(Long filterId)
 	{
-		this.topologyDao.deleteFilterComponents(filterId);
+		this.topologyDao.deleteFilterComponentsByFilterId(filterId);
 	}
 
 	/* (non-Javadoc)
