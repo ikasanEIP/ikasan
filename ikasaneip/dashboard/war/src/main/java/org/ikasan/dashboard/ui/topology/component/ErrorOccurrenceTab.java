@@ -910,12 +910,12 @@ public class ErrorOccurrenceTab extends TopologyTab
 			
 			Button popupButton = new Button();
 			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-			popupButton.setDescription("Open in new tab");
+			popupButton.setDescription("Open in new window");
 			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			popupButton.setIcon(VaadinIcons.MODAL);
 
 	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ErrorOccurrencePopup.class);
-	        popupOpener.setFeatures("height=200,width=300,resizable");
+	        popupOpener.setFeatures("height=600,width=900,resizable");
 	        popupOpener.extend(popupButton);
 	        
 	        popupButton.addClickListener(new Button.ClickListener() 
