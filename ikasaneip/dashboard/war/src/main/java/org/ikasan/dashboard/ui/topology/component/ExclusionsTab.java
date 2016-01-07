@@ -48,6 +48,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ExcludedEventPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -55,6 +57,7 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.model.BusinessStream;
@@ -62,8 +65,11 @@ import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.VaadinService;
@@ -71,16 +77,17 @@ import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
@@ -94,7 +101,7 @@ public class ExclusionsTab extends TopologyTab
 {
 	private Logger logger = Logger.getLogger(ExclusionsTab.class);
 	
-	private Table exclusionsTable;
+	private FilterTable exclusionsTable;
 	
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -109,6 +116,8 @@ public class ExclusionsTab extends TopologyTab
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 	
+	private IndexedContainer container = null;
+	
 	
 	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
@@ -120,15 +129,37 @@ public class ExclusionsTab extends TopologyTab
 		this.businessStreamCombo = businessStreamCombo;
 	}
 	
+	protected IndexedContainer buildContainer() 
+	{
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Module Name", String.class,  null);
+		cont.addContainerProperty("Flow Name", String.class,  null);
+		cont.addContainerProperty("Event Payload", String.class,  null);
+		cont.addContainerProperty("Timestamp", String.class,  null);
+		cont.addContainerProperty("", Button.class,  null);
+
+        return cont;
+    }
+	
 	public void createLayout()
 	{
-		this.exclusionsTable = new Table();
+		this.container = this.buildContainer();
+		
+		this.exclusionsTable = new FilterTable();
+		this.exclusionsTable.setFilterBarVisible(true);
 		this.exclusionsTable.setSizeFull();
 		this.exclusionsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
-		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
-		this.exclusionsTable.addContainerProperty("", Button.class,  null);
+		this.exclusionsTable.setContainerDataSource(container);
+		this.exclusionsTable.setColumnExpandRatio("Module Name", .14f);
+		this.exclusionsTable.setColumnExpandRatio("Flow Name", .18f);
+		this.exclusionsTable.setColumnExpandRatio("Event Payload", .33f);
+		this.exclusionsTable.setColumnExpandRatio("Timestamp", .1f);
+		this.exclusionsTable.setColumnExpandRatio("", .05f);
+		
+		this.exclusionsTable.addStyleName("wordwrap-table");
+		this.exclusionsTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.exclusionsTable.addStyleName("ikasan");
 		
 		
 		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
@@ -357,22 +388,36 @@ public class ExclusionsTab extends TopologyTab
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
+    	    final ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
+    	    
+    	    Item item = container.addItem(exclusionEvent);			            	    
+    	    
+    	    item.getItemProperty("Module Name").setValue(exclusionEvent.getModuleName());
+			item.getItemProperty("Flow Name").setValue(exclusionEvent.getFlowName());
+			
+			if(exclusionEvent.getEvent() != null)
+			{
+				item.getItemProperty("Event Payload").setValue(new String(exclusionEvent.getEvent()));
+			}
+			
+			item.getItemProperty("Timestamp").setValue(timestamp);
+    	    
     	    Button popupButton = new Button();
 			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-			popupButton.setDescription("Open in new tab");
+			popupButton.setDescription("Open in new window");
 			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			popupButton.setIcon(VaadinIcons.MODAL);
 			
 			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ExcludedEventPopup.class);
+			popupOpener.setFeatures("height=600,width=900,resizable");
 	        popupOpener.extend(popupButton);
 	        
 	        popupButton.addClickListener(new Button.ClickListener() 
 	    	{
 	            public void buttonClick(ClickEvent event) 
 	            {
-	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEvent", exclusionEvent);
+	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEvent", exclusionEvent);
 	         	    
-	         	    ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
 	     	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	     	    	
 	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorOccurrence", errorOccurrence);
@@ -384,9 +429,8 @@ public class ExclusionsTab extends TopologyTab
 	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
 	            }
 	        });
-    	    	    	    
-	    	exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
-	    				timestamp, popupButton}, exclusionEvent);
+	        
+	        item.getItemProperty("").setValue(popupButton);    	    	    	    
     	}
 	}
 

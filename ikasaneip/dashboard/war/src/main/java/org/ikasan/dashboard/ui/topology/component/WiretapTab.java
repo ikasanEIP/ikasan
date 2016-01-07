@@ -352,11 +352,12 @@ public class WiretapTab extends TopologyTab
         			
         			Button popupButton = new Button();
         			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        			popupButton.setDescription("Open in new tab");
+        			popupButton.setDescription("Open in new window");
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
         			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
+        			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
         	        popupButton.addClickListener(new Button.ClickListener() 
