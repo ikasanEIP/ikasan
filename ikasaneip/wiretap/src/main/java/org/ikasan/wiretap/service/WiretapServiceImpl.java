@@ -40,8 +40,12 @@
  */
 package org.ikasan.wiretap.service;
 
+import java.util.Date;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -50,15 +54,12 @@ import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.Date;
-import java.util.Set;
-
 /**
  * Default implementation of the <code>WiretapService</code>
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean, HousekeeperService
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
@@ -182,17 +183,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         }
     }
 
-    /**
-     * Housekeep the wiretaps by deleting expired ones.
-     */
-    public void housekeep()
-    {
-    	logger.info("wiretap housekeep called");
-    	long startTime = System.currentTimeMillis();
-        wiretapDao.deleteAllExpired();
-        long endTime = System.currentTimeMillis();
-        logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
-    }
+    
 
     @Override
     public void afterPropertiesSet() throws Exception
@@ -204,11 +195,6 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
             wiretapDao.setTransactionBatchSize(wiretapServiceConfiguration.getTransactionBatchSize());
         }
     }
-    
-    public boolean housekeepablesExist()
-    {
-    	return this.wiretapDao.housekeepablesExist();
-    }
 
     public WiretapServiceConfiguration getWiretapServiceConfiguration()
     {
@@ -218,5 +204,27 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     public void setWiretapServiceConfiguration(WiretapServiceConfiguration wiretapServiceConfiguration)
     {
         this.wiretapServiceConfiguration = wiretapServiceConfiguration;
+    }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.management.HousekeeperService#houseKeepablesExist()
+	 */
+	@Override
+	public boolean housekeepablesExist()
+	{
+		return this.wiretapDao.housekeepablesExist();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.wiretap.WiretapService#housekeep()
+	 */
+	@Override
+    public void housekeep()
+    {
+    	logger.info("wiretap housekeep called");
+    	long startTime = System.currentTimeMillis();
+        wiretapDao.deleteAllExpired();
+        long endTime = System.currentTimeMillis();
+        logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
     }
 }

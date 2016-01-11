@@ -48,6 +48,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.springframework.orm.hibernate4.HibernateCallback;
@@ -71,6 +72,9 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     /** The batch size used when {@link #batchedHousekeep} option is set. Default to 100*/
     private int batchSize = 100;
+    
+    /** Batch size used when in a single transaction */    
+	private Integer transactionBatchSize = 1000;
 
     /**
      * Setter for {@link #batchedHousekeep} flag for overriding default
@@ -150,14 +154,21 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     /**
      * Delete expired messages 100 at a time until non is left
      */
-    private void batchDeleteAllExpired()
+    protected void batchDeleteAllExpired()
     {
-        List<FilterEntry> expired = this.findExpiredMessages();
-        while(expired != null)
-        {
-            this.getHibernateTemplate().deleteAll(expired);
-            expired = this.findExpiredMessages();
-        }
+    	logger.info("MessageFilter batch delete.");
+    	
+    	int numDeleted = 0;
+    	
+    	while(housekeepablesExist() && numDeleted < this.transactionBatchSize)
+    	{
+	        List<FilterEntry> expired = this.findExpiredMessages();
+	    	
+	        this.getHibernateTemplate().deleteAll(expired);
+	        
+	        numDeleted += expired.size();
+	        expired = this.findExpiredMessages();
+    	}
     }
 
     /**
@@ -165,7 +176,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
      * @return List of max 100 expired filter entries 
      */
     @SuppressWarnings("unchecked")
-    private List<FilterEntry> findExpiredMessages()
+    public List<FilterEntry> findExpiredMessages()
     {
         List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().execute( new HibernateCallback<Object>()
         {
@@ -188,5 +199,40 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             return foundMessages;
         }
     }
+    
+    /**
+	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
+	 * 
+	 * @return true if there is at least 1 expired WiretapFlowEvent 
+	 */
+	public boolean housekeepablesExist() 
+	{
+		return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+	            Criteria criteria = session.createCriteria(FilterEntry.class);
+	            criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
+	            criteria.setProjection(Projections.rowCount());
+	            Long rowCount = new Long(0);
+	            List<Long> rowCountList = criteria.list();
+	            if (!rowCountList.isEmpty())
+	            {
+	                rowCount = rowCountList.get(0);
+	            }
+	            logger.info(rowCount+", MessageFilter housekeepables exist");
+	            return new Boolean(rowCount>0);            
+            }
+        });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.filter.duplicate.dao.FilteredMessageDao#setTransactionBatchSize(int)
+	 */
+	@Override
+	public void setTransactionBatchSize(int transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
 
 }
