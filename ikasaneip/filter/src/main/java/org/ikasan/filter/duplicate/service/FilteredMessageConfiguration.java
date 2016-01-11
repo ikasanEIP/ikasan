@@ -56,6 +56,9 @@ public class FilteredMessageConfiguration extends FilterConfiguration
 
     /** batched housekeeping - default true */
     private boolean batchedHousekeep = true;
+    
+    /** default transaction size of 1000 */
+    private int transactionBatchSize = 1000;
 
     public int getHousekeepBatchSize() {
         return housekeepBatchSize;
@@ -72,4 +75,20 @@ public class FilteredMessageConfiguration extends FilterConfiguration
     public void setBatchedHousekeep(boolean batchedHousekeep) {
         this.batchedHousekeep = batchedHousekeep;
     }
+
+	/**
+	 * @return the transactionBatchSize
+	 */
+	public int getTransactionBatchSize()
+	{
+		return transactionBatchSize;
+	}
+
+	/**
+	 * @param transactionBatchSize the transactionBatchSize to set
+	 */
+	public void setTransactionBatchSize(int transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
 }

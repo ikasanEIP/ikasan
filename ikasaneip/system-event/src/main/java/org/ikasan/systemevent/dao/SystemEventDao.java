@@ -105,4 +105,16 @@ public interface SystemEventDao {
 	public Integer getHousekeepingBatchSize();
 
 	public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
+	
+	/**
+	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
+	 * 
+	 * @return true if there is at least 1 expired WiretapFlowEvent 
+	 */
+	public boolean housekeepablesExist();
+	
+	/**
+	 * @param transactionBatchSize the transactionBatchSize to set
+	 */
+	public void setTransactionBatchSize(Integer transactionBatchSize);
 }
