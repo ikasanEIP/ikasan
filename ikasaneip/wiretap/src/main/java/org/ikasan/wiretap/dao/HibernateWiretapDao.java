@@ -48,6 +48,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -71,6 +72,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
 	private static final String EXPIRY = "expiry";
 	private static final String EVENT_ID = "eventId";
+	private static final String BATCH_SIZE = "batchSize";
 	
 	/** Query used for housekeeping expired wiretap events */
     private static final String HOUSEKEEP_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
@@ -79,10 +81,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
 
     /** Batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete WiretapFlowEvent s where s.identifier in (:event_ids)";
+    private static final String BATCHED_HOUSEKEEP_QUERY = "delete from IkasanWiretap where Id in  (select top" +
+    		" " + BATCH_SIZE + " Id from IkasanWiretap where Expiry <= " + EXPIRY + ")";
     
-    /** Query to get the ids to delete **/
-    private static final String HOUSEKEEP_ID_QUERY = "select id from WiretapFlowEvent where expiry <= :" + EXPIRY;
+    private static final String HOUSEKEEPABLES_EXIST = "SELECT CAST(COUNT(1) AS BIT) AS HousekeepableExists FROM IkasanWiretap" +
+    		" WHERE EXISTS (select * from IkasanWiretap where Expiry <= " + EXPIRY + ")";
+    
     
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
@@ -91,7 +95,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	private Integer housekeepingBatchSize = 1000;
 	
 	/** Batch size used when in a single transaction */    
-	private Integer transactionBatchSize = 20000;
+	private Integer transactionBatchSize = 5000;
     
     /**
      * Constructor
@@ -399,51 +403,32 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	 *  and attempts to delete that batch
 	 */
 	private void batchHousekeepDelete() {
-		logger.info("batched housekeeper called");
+		logger.info("Wiretap batched housekeeper called");
 		
 		int numberDeleted = 0;
 		
 		while(housekeepablesExist() && numberDeleted < this.transactionBatchSize)
 		{
-			final List<Long> housekeepableBatch = getHousekeepableBatch();
 			
-			numberDeleted += housekeepableBatch.size();
+			numberDeleted += this.housekeepingBatchSize;
 			
 			getHibernateTemplate().execute(new HibernateCallback<Object>()
 	        {
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
+	            	String queryString = BATCHED_HOUSEKEEP_QUERY.replace(BATCH_SIZE, Integer.toString(housekeepingBatchSize));
+	            	queryString = queryString.replace(EXPIRY, Long.toString(System.currentTimeMillis()));
 	            	
-	                Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
-	                query.setParameterList("event_ids", housekeepableBatch);
+	            	SQLQuery query = session.createSQLQuery(queryString);
+
 	            	query.executeUpdate();
-	                return null;
+	                return null;		                
 	            }
 	        });
 		}
 		
 	}
 
-	/**
-	 * Identifies a batch (List of Ids) of housekeepable items
-	 * 
-	 * @return List of ids for WiretapFlowEvents
-	 */
-	@SuppressWarnings("unchecked")
-	private List<Long> getHousekeepableBatch() 
-	{
-		return (List<Long>) getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {            	
-            	Query query = session.createQuery(HOUSEKEEP_ID_QUERY);
-                query.setParameter(EXPIRY, System.currentTimeMillis());
-                query.setMaxResults(housekeepingBatchSize);
-                
-                return query.list();
-            }
-        });
-	}
 
 	/**
 	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
@@ -455,21 +440,24 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 		return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
-            {
-	            Criteria criteria = session.createCriteria(WiretapEvent.class);
-	            criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
-	            criteria.setProjection(Projections.rowCount());
-	            Long rowCount = new Long(0);
-	            List<Long> rowCountList = criteria.list();
-	            if (!rowCountList.isEmpty())
-	            {
-	                rowCount = rowCountList.get(0);
-	            }
-	            logger.info(rowCount+", housekeepables exist");
-	            return new Boolean(rowCount>0);            
-            }
+            {            	
+	        	 Criteria criteria = session.createCriteria(WiretapEvent.class);
+	             criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
+	             criteria.setProjection(Projections.rowCount());
+	             Long rowCount = new Long(0);
+	             List<Long> rowCountList = criteria.list();
+	             
+	             if (!rowCountList.isEmpty())
+	             {
+	                 rowCount = rowCountList.get(0);
+	             }
+	             logger.info(rowCount+", Wiretap housekeepables exist");
+	             return new Boolean(rowCount>0);            
+            }         
         });
 	}
+
+
 
     public boolean isBatchHousekeepDelete()
     {

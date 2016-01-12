@@ -40,13 +40,16 @@
  */
 package org.ikasan.filter.duplicate.dao;
 
+import java.util.Date;
+
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,16 +62,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 /*
  * Application context will be loaded from location:
  * classpath:/org/ikasan/filter/duplicate/dao/MessagePersistenceDaoInMemDBTest-context.xml
  */
 
-@ContextConfiguration
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/FilteredMessageDaoInMemDBTest-context.xml",
+        "/log4j.xml"
+})
 public class FilteredMessageDaoInMemDBTest
 {
-    @Autowired
+    @Resource
     private FilteredMessageDao duplicateFilterDao;
 
     /**
@@ -140,6 +147,47 @@ public class FilteredMessageDaoInMemDBTest
 
         found = this.duplicateFilterDao.findMessage(three);
         Assert.assertNotNull(found);
+    }
+    
+    /**
+     * Test case: bulk delete only expired messages found in persistence. Searching for
+     * housekept entries will return null.
+     * @throws InterruptedException 
+     */
+    @Test 
+    @DirtiesContext
+    public void bulk_batch_delete_expired_entries() throws InterruptedException
+    {
+    	for(int i=0; i<19768; i++)
+    	{
+	        FilterEntry one = new DefaultFilterEntry(new Date().hashCode(), "bulk_delete_test" + i	, 0);
+	        this.duplicateFilterDao.save(one);
+    	}
+
+        Thread.sleep(10l); // let time move on 
+        this.duplicateFilterDao.setBatchedHousekeep(true);
+        this.duplicateFilterDao.setTransactionBatchSize(20000);
+        
+        this.duplicateFilterDao.deleteAllExpired();
+        
+        this.duplicateFilterDao.setBatchedHousekeep(false);
+        
+        Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
+        
+        for(int i=0; i<77; i++)
+    	{
+	        FilterEntry one = new DefaultFilterEntry(new Date().hashCode(), "bulk_delete_test" + i	, 0);
+	        this.duplicateFilterDao.save(one);
+    	}
+
+        Thread.sleep(10l); // let time move on 
+        this.duplicateFilterDao.setBatchedHousekeep(true);
+        
+        this.duplicateFilterDao.deleteAllExpired();
+        
+        this.duplicateFilterDao.setBatchedHousekeep(false);
+        
+        Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
     }
 
     /**
