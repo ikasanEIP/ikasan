@@ -41,6 +41,8 @@
 
 package org.ikasan.filter.duplicate.dao;
 
+import java.util.List;
+
 import org.ikasan.filter.duplicate.model.FilterEntry;
 
 /**
@@ -84,4 +86,24 @@ public interface FilteredMessageDao
      * @param batchSize
      */
     public void setBatchSize(int batchSize);
+    
+    /**
+     * Allow the transaction batch size to be overridden
+     * @param transactionBatchSize
+     */
+    public void setTransactionBatchSize(int trasnactionBatchSize);
+    
+    /**
+	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
+	 * 
+	 * @return true if there is at least 1 expired WiretapFlowEvent 
+	 */
+	public boolean housekeepablesExist();
+	
+	/**
+	 * Find expired messages.
+	 * 
+	 * @return
+	 */
+	public List<FilterEntry> findExpiredMessages();
 }

@@ -65,7 +65,7 @@ public class DefaultDuplicateFilterServiceTest
     private final FilterEntry entry = this.mockery.mock(FilterEntry.class, "filterEntry");
 
     /** Implementation of {@link DuplicateFilterService} to be tested*/
-    private DuplicateFilterService serviceToTest = new DefaultDuplicateFilterService(this.dao);
+    private DefaultDuplicateFilterService serviceToTest = new DefaultDuplicateFilterService(this.dao);
 
     /**
      * Test case: persist message

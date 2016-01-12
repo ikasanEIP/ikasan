@@ -64,9 +64,4 @@ public interface DuplicateFilterService
      * @return true of message is found, false otherwise
      */
     public boolean isDuplicate(FilterEntry message);
-
-    /**
-     * Housekeep expired message filter entries
-     */
-    public void housekeep();
 }
