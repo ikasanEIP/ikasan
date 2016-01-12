@@ -81,7 +81,10 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     private boolean batchHousekeepDelete = false;
 
     /** Batch size used when in batching housekeep */
-    private Integer housekeepingBatchSize = null;
+    private Integer housekeepingBatchSize = 100;
+    
+    /** Batch size used when in a single transaction */    
+   	private Integer transactionBatchSize = 1000;
 
     /** logger instance */
     private static final Logger logger = Logger.getLogger(HibernateSystemEventDao.class);
@@ -93,11 +96,13 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      * @param housekeepingBatchSize - batch size, only respected if set to use
      *            batching
      */
-    public HibernateSystemEventDao(boolean batchHousekeepDelete, Integer housekeepingBatchSize)
+    public HibernateSystemEventDao(boolean batchHousekeepDelete, Integer housekeepingBatchSize,
+    		Integer transactionBatchSize)
     {
         this();
         this.batchHousekeepDelete = batchHousekeepDelete;
         this.housekeepingBatchSize = housekeepingBatchSize;
+        this.transactionBatchSize = transactionBatchSize;
     }
 
     /**
@@ -292,8 +297,11 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      */
     private void batchHousekeepDelete()
     {
-        logger.info("called batchHousekeppDelete");
-        while (housekeepablesExist())
+        logger.info("SystemEvent called batchHousekeepDelete");
+        
+        int numDeleted = 0;
+        
+        while (housekeepablesExist() && numDeleted < this.transactionBatchSize)
         {
             final List<Long> housekeepableBatch = getHousekeepableBatch();
 
@@ -309,8 +317,9 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
                     return null;
                 }
             });
+            
+            numDeleted += housekeepableBatch.size();
         }
-
     }
 
     /**
@@ -349,7 +358,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      * 
      * @return true if there is at least 1 expired SystemFlowEvent
      */
-    private boolean housekeepablesExist()
+    public boolean housekeepablesExist()
     {
         return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
@@ -364,9 +373,8 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
                 {
                     rowCount = rowCountList.get(0);
                 }
-                logger.info(rowCount + ", housekeepables exist");
+                logger.info(rowCount + ", SystemEvent housekeepables exist");
                 return new Boolean(rowCount > 0);
-
             }
         });
 
@@ -395,5 +403,11 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     {
         this.housekeepingBatchSize = housekeepingBatchSize;
     }
+
+    @Override
+	public void setTransactionBatchSize(Integer transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
 
 }

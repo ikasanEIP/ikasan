@@ -50,6 +50,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.service.TopologyService;
 
+import com.vaadin.data.Container;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Window;
 
@@ -75,14 +76,14 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	
+	private Container container;
+	
 
-	/**
-	 * @param policy
-	 */
 	public CategorisedErrorOccurrenceViewWindow(CategorisedErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
-			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService)
+			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+			Container container)
 	{
 		super();
 		this.categorisedErrorOccurrence = errorOccurrence;
@@ -90,6 +91,7 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
 		this.exclusionManagementService = exclusionManagementService;
+		this.container = container;
 		
 		this.init();
 	}
@@ -107,7 +109,7 @@ public class CategorisedErrorOccurrenceViewWindow extends Window
 
 		CategorisedErrorOccurrenceViewPanel panel 
 			= new CategorisedErrorOccurrenceViewPanel(this.categorisedErrorOccurrence, this.errorReportingManagementService,
-					this.hospitalManagementService, this.topologyService, this.exclusionManagementService);
+					this.hospitalManagementService, this.topologyService, this.exclusionManagementService, container);
 		
 		this.setContent(panel);
 	}
