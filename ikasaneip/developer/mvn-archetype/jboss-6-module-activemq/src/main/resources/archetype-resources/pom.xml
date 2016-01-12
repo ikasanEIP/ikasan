@@ -23,7 +23,7 @@
 
     <!-- should be overridden at build time -->
     <properties>
-        <activemq.url>tcp://localhost:61616</activemq.url>
+        <activemq.url>"tcp://localhost:61616?jms.rmIdFromConnectionId=true"</activemq.url>
     </properties>
 
     <ciManagement>
