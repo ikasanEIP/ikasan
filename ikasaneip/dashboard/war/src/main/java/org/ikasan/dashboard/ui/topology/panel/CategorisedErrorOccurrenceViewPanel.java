@@ -61,7 +61,6 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -86,6 +85,7 @@ import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
 import org.xwiki.rendering.renderer.printer.WikiPrinter;
 import org.xwiki.rendering.syntax.Syntax;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator.InvalidValueException;
@@ -136,6 +136,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	
+	private Container container;
+	
 
 	/**
 	 * @param policy
@@ -143,7 +145,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	public CategorisedErrorOccurrenceViewPanel(CategorisedErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
-			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService)
+			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+			Container container)
 	{
 		super();
 		this.categorisedErrorOccurrence = errorOccurrence;
@@ -151,6 +154,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
 		this.exclusionManagementService = exclusionManagementService;
+		this.container = container;
 		
 		this.init();
 	}
@@ -380,13 +384,10 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	        	    	userAction.setReadOnly(false);
 	        	    	userActionBy.setReadOnly(false);
-	//        			tf8.setReadOnly(false);
 	        	    	userAction.setValue(action.getAction());
 	        	    	userActionBy.setValue(action.getActionedBy());
-	//        			tf8.setValue(new Date(action.getTimestamp()).toString());
 	        	    	userAction.setReadOnly(true);
 	        	    	userActionBy.setReadOnly(true);
-	//        			tf8.setReadOnly(true);
 	        	    	
 	        	    	closeAssociatedErrorOccurence();
 	        	    }
@@ -457,13 +458,10 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 	        	    	userAction.setReadOnly(false);
 	        	    	userActionBy.setReadOnly(false);
-	//        			tf8.setReadOnly(false);
 	        	    	userAction.setValue(action.getAction());
 	        	    	userActionBy.setValue(action.getActionedBy());
-	//        			tf8.setValue(new Date(action.getTimestamp()).toString());
 	        	    	userAction.setReadOnly(true);
 	        	    	userActionBy.setReadOnly(true);
-	//        			tf8.setReadOnly(true);
 	        	    	
 	        	    	closeAssociatedErrorOccurence();
 	        	    }
@@ -627,6 +625,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
     	
     	errorReportingManagementService.close(uris, "This error was automatically closed as the associated excluded event has been actioned."
     			, authentication.getName());
+    	
+    	this.container.removeItem(this.categorisedErrorOccurrence);
 	}
 	
 	protected Layout createCommentsTabsheet()

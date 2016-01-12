@@ -51,4 +51,12 @@ public interface HousekeeperService
      * Invoke the housekeep operation.
      */
     public void housekeep();
+    
+    /**
+     * Method to return if there are and items to house keep.
+     * 
+     * @return true if there are otherwise false.
+     * 
+     */
+    public boolean housekeepablesExist();
 }

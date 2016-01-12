@@ -78,6 +78,7 @@ import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
@@ -144,6 +145,12 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
+	private ArrayList<String> modulesNames;
+	private ArrayList<String> flowNames;
+	private ArrayList<String> componentNames;
+	
+	private Long resultSize;
+	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
 			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
@@ -180,6 +187,17 @@ public class CategorisedErrorTab extends TopologyTab
 		}
 		
 		cont.addContainerProperty(" ", Button.class,  null);
+		
+		cont.addItemSetChangeListener(new Container.ItemSetChangeListener()
+		{			
+			@Override
+			public void containerItemSetChange(ItemSetChangeEvent event)
+			{				
+				searchResultsSizeLayout.removeAllComponents();
+		    	resultsLabel = new Label("Number of records returned: " + event.getContainer().size() + " of " + resultSize);
+		    	searchResultsSizeLayout.addComponent(resultsLabel);
+			}
+		});
 
         return cont;
     }
@@ -210,7 +228,7 @@ public class CategorisedErrorTab extends TopologyTab
 			    	
 			    	CategorisedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
 			    		= new CategorisedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService,
-			    				hospitalManagementService, topologyService, exclusionManagementService);
+			    				hospitalManagementService, topologyService, exclusionManagementService, container);
 			    
 			    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
 		    	}
@@ -665,7 +683,7 @@ public class CategorisedErrorTab extends TopologyTab
 		logger.debug("Start search!");
 		categorizedErrorOccurenceTable.removeAllItems();
 
-    	ArrayList<String> modulesNames = null;
+    	modulesNames = null;
     	
     	if(modules.getItemIds().size() > 0)
     	{
@@ -676,7 +694,7 @@ public class CategorisedErrorTab extends TopologyTab
         	}
     	}
     	
-    	ArrayList<String> flowNames = null;
+    	flowNames = null;
     	
     	if(flows.getItemIds().size() > 0)
     	{
@@ -687,7 +705,7 @@ public class CategorisedErrorTab extends TopologyTab
         	}
     	}
     	
-    	ArrayList<String> componentNames = null;
+    	componentNames = null;
     	
     	if(components.getItemIds().size() > 0)
     	{
@@ -733,7 +751,7 @@ public class CategorisedErrorTab extends TopologyTab
     		return;
     	}
     	
-    	Long resultSize = errorCategorisationService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+    	resultSize = errorCategorisationService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	searchResultsSizeLayout.removeAllComponents();
     	this.resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size() + " of " + resultSize);
@@ -847,6 +865,8 @@ public class CategorisedErrorTab extends TopologyTab
 	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
 	            	
 	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionManagementService", exclusionManagementService);
+	            	
+	            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("container", container);
 	            }
 	        });
 	    	

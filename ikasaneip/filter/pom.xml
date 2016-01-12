@@ -101,6 +101,12 @@
           <scope>provided</scope>
       </dependency>
 
+	  <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-management</artifactId>
+          <scope>provided</scope>
+      </dependency>
+ 
       <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
@@ -167,6 +173,7 @@
           <artifactId>commons-codec</artifactId>
           <scope>test</scope>
         </dependency>
+        
 
         <!-- required for testing daos using in memory dbs -->
         <dependency>

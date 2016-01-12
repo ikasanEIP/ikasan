@@ -51,6 +51,7 @@ import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Container;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
@@ -82,10 +83,12 @@ public class CategorisedErrorOccurrencePopup extends UI
 			
 		 ExclusionManagementService<ExclusionEvent, String> exclusionManagementService 
 		 	= (ExclusionManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionManagementService");
+		 
+		 Container container = (Container)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("container");
 	        
 		 CategorisedErrorOccurrenceViewPanel panel 
 			= new CategorisedErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService,
-					hospitalManagementService, topologyService, exclusionManagementService);
+					hospitalManagementService, topologyService, exclusionManagementService, container);
 		
 		this.setContent(panel);
 	}
