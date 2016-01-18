@@ -483,11 +483,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
     	{
 			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService,
+					(this.errorCategorisationService, this.errorReportingManagementService,
 							this.hospitalManagementService, this.topologyService, this.exclusionManagementService,
-							this.platformConfigurationService);
+							this.platformConfigurationService, true);
 			
 			categorisedErrorTab.createLayout();
+			categorisedErrorTab.resetSearchDates();
 			
 			tabsheet.addTab(categorisedErrorTab, "Categorised Errors");
 			

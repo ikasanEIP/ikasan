@@ -38,43 +38,101 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
+package org.ikasan.dashboard.notification;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.notification.NotifierServiceImpl;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 
 /**
- * 
  * 
  * @author Ikasan Development Team
  *
  */
-public class WebAppStartStopListener implements ServletContextListener
+public class NotificationContentProducerConfiguration
 {
-	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
+	private String subject;
+	private String body;
+	private String recipients;
+	private String notificationName;
+	private Long lastEmailSentTimeStamp;
 	
-    // Our web app (Vaadin app) is starting up.
-    public void contextInitialized ( ServletContextEvent servletContextEvent )
-    {
-        ServletContext ctx = servletContextEvent.getServletContext();
-        logger.info( "Web app context initialized." ); 
-        logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
-        logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
+	/**
+	 * @return the subject
+	 */
+	public String getSubject()
+	{
+		return subject;
+	}
+	
+	/**
+	 * @param subject the subject to set
+	 */
+	public void setSubject(String subject)
+	{
+		this.subject = subject;
+	}
+	
+	/**
+	 * @return the body
+	 */
+	public String getBody()
+	{
+		return body;
+	}
+	
+	/**
+	 * @param body the body to set
+	 */
+	public void setBody(String body)
+	{
+		this.body = body;
+	}
+	
+	
 
-    }
+	/**
+	 * @return the notificationName
+	 */
+	public String getNotificationName()
+	{
+		return notificationName;
+	}
 
-    // Our web app (Vaadin app) is shutting down.
-    public void contextDestroyed ( ServletContextEvent servletContextEvent )
-    {
+	/**
+	 * @param notificationName the notificationName to set
+	 */
+	public void setNotificationName(String notificationName)
+	{
+		this.notificationName = notificationName;
+	}
 
-    	logger.info( "Web app context destroyed." );  // INFO logging.
-        TopologyStateCache.shutdown();
-        NotifierServiceImpl.shutdown();
-    }
+	/**
+	 * @return the lastEmailSentTimeStamp
+	 */
+	public Long getLastEmailSentTimeStamp()
+	{
+		return lastEmailSentTimeStamp;
+	}
 
+	/**
+	 * @param lastEmailSentTimeStamp the lastEmailSentTimeStamp to set
+	 */
+	public void setLastEmailSentTimeStamp(Long lastEmailSentTimeStamp)
+	{
+		this.lastEmailSentTimeStamp = lastEmailSentTimeStamp;
+	}
+
+	/**
+	 * @return the recipients
+	 */
+	public String getRecipients()
+	{
+		return recipients;
+	}
+
+	/**
+	 * @param recipients the recipients to set
+	 */
+	public void setRecipients(String recipients)
+	{
+		this.recipients = recipients;
+	}
 }

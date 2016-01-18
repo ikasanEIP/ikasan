@@ -50,6 +50,7 @@ import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 
@@ -231,4 +232,30 @@ public interface TopologyService
 	 * @return
 	 */
 	public Filter getFilterByName(String name);
+	
+	/**
+	 * 
+	 * @param notification
+	 */
+	public void save(Notification notification);
+	
+	/**
+	 * 
+	 * @param notification
+	 */
+	public void delete(Notification notification);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Notification getNotificationByName(String name);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public List<Notification> getAllNotifications();
 }

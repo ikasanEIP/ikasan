@@ -134,4 +134,17 @@ public class MapErrorReportingServiceDao<T>
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+	 */
+	@Override
+	public List<ErrorOccurrence> find(List<String> moduleName,
+			List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate, String action, String exceptionClass,
+			int size)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

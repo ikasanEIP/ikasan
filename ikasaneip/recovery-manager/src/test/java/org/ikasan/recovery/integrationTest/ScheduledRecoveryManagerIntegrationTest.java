@@ -632,6 +632,18 @@ public class ScheduledRecoveryManagerIntegrationTest
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.ikasan.spec.error.reporting.ErrorReportingService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+		 */
+		@Override
+		public List find(List moduleName, List flowName, List flowElementname,
+				Date startDate, Date endDate, String action,
+				String exceptionClass, int size)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     /**

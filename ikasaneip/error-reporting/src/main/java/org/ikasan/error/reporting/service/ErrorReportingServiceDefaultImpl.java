@@ -254,4 +254,16 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 		return this.errorReportingServiceDao.rowCount(moduleName, flowName, flowElementname, startDate, endDate);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+	 */
+	@Override
+	public List<ErrorOccurrence> find(List<String> moduleName,
+			List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate, String action, String exceptionClass,
+			int size)
+	{
+		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate, action, exceptionClass, size);
+	}
+
 }

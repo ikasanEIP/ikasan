@@ -38,43 +38,58 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
+package org.ikasan.dashboard.notification;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.notification.NotifierServiceImpl;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.topology.model.Notification;
 
 /**
- * 
  * 
  * @author Ikasan Development Team
  *
  */
-public class WebAppStartStopListener implements ServletContextListener
+public abstract class NotificationConfiguredResource implements ConfiguredResource<NotificationContentProducerConfiguration>
 {
-	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
+	public static final String CONFIGURED_RESOURCE_ID_PREFIX = "dashboardNotificationConfiguredResourceId-";
 	
-    // Our web app (Vaadin app) is starting up.
-    public void contextInitialized ( ServletContextEvent servletContextEvent )
-    {
-        ServletContext ctx = servletContextEvent.getServletContext();
-        logger.info( "Web app context initialized." ); 
-        logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
-        logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
+	protected Notification notification;
+	protected NotificationContentProducerConfiguration configuration =
+			new NotificationContentProducerConfiguration();
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
+	 */
+	@Override
+	public NotificationContentProducerConfiguration getConfiguration()
+	{
+		return this.configuration;
+	}
 
-    }
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.Configured#setConfiguration(java.lang.Object)
+	 */
+	@Override
+	public void setConfiguration(NotificationContentProducerConfiguration configuration)
+	{
+		this.configuration = configuration;
+	}
 
-    // Our web app (Vaadin app) is shutting down.
-    public void contextDestroyed ( ServletContextEvent servletContextEvent )
-    {
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguredResourceId()
+	 */
+	@Override
+	public String getConfiguredResourceId()
+	{
+		return this.CONFIGURED_RESOURCE_ID_PREFIX + notification.getName();
+	}
 
-    	logger.info( "Web app context destroyed." );  // INFO logging.
-        TopologyStateCache.shutdown();
-        NotifierServiceImpl.shutdown();
-    }
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
+	 */
+	@Override
+	public void setConfiguredResourceId(String id)
+	{
+		// nothing to do here as we have a fixed name based upon the name passed in on construction.
+	}
 
 }

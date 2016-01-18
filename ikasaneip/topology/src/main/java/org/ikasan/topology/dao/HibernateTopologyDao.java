@@ -55,6 +55,7 @@ import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 import org.springframework.dao.support.DataAccessUtils;
@@ -506,5 +507,46 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
                 return null;
             }
         });
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Notification)
+	 */
+	@Override
+	public void save(Notification notification)
+	{
+		this.getHibernateTemplate().saveOrUpdate(notification);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.model.Notification)
+	 */
+	@Override
+	public void delete(Notification notification)
+	{
+		this.getHibernateTemplate().delete(notification);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getNotificationByName(java.lang.String)
+	 */
+	@Override
+	public Notification getNotificationByName(String name)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
+		criteria.add(Restrictions.eq("name", name));
+
+        return (Notification)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getAllNotifications()
+	 */
+	@Override
+	public List<Notification> getAllNotifications()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
+
+        return (List<Notification>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 }
