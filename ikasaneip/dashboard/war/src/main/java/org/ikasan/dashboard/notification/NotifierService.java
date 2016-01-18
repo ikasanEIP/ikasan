@@ -38,43 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.notification.NotifierServiceImpl;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+package org.ikasan.dashboard.notification;
 
 /**
- * 
  * 
  * @author Ikasan Development Team
  *
  */
-public class WebAppStartStopListener implements ServletContextListener
+public interface NotifierService
 {
-	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
+	public static final String STATE_RUNNING = "running";
+	public static final String STATE_STOPPED = "stopped";
 	
-    // Our web app (Vaadin app) is starting up.
-    public void contextInitialized ( ServletContextEvent servletContextEvent )
-    {
-        ServletContext ctx = servletContextEvent.getServletContext();
-        logger.info( "Web app context initialized." ); 
-        logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
-        logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
+	/**
+	 * 
+	 */
+	public void performNotifications();
+	
+	/**
+	 * 
+	 */
+	public void start();
+	
+	/**
+	 * 
+	 */
+	public void stop();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getState();
 
-    }
-
-    // Our web app (Vaadin app) is shutting down.
-    public void contextDestroyed ( ServletContextEvent servletContextEvent )
-    {
-
-    	logger.info( "Web app context destroyed." );  // INFO logging.
-        TopologyStateCache.shutdown();
-        NotifierServiceImpl.shutdown();
-    }
-
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNotificationInterval();
 }

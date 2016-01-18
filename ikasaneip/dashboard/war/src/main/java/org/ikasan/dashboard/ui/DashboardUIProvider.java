@@ -61,7 +61,7 @@ public class DashboardUIProvider extends SpringUIProvider
 	@Override
 	protected String getUIBeanName(VaadinRequest request)
 	{
-		logger.info("UI = " + request.getParameter("ui"));
+		logger.debug("UI = " + request.getParameter("ui"));
 		
 		String ui = request.getParameter("ui");
 		
@@ -72,6 +72,10 @@ public class DashboardUIProvider extends SpringUIProvider
 		else if(ui != null && ui.equals("errorOccurrencesByFilter"))
 		{
 			return "errorOccurrencesByFilterDeepLinkPanel";
+		}
+		else if(ui != null && ui.equals("categorisedErrorByFilter"))
+		{
+			return "categorisedErrorByFilterDeepLinkPanel";
 		}
 			
 		return "ikasanUI";

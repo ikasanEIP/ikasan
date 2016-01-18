@@ -66,6 +66,7 @@ import org.ikasan.topology.model.FilterComponent;
 import org.ikasan.topology.model.FilterComponentKey;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 
@@ -526,5 +527,41 @@ public class TopologyServiceImpl implements TopologyService
 	public Filter getFilterByName(String name)
 	{
 		return this.topologyDao.getFilterByName(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#save(org.ikasan.topology.model.Notification)
+	 */
+	@Override
+	public void save(Notification notification)
+	{
+		this.topologyDao.save(notification);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#delete(org.ikasan.topology.model.Notification)
+	 */
+	@Override
+	public void delete(Notification notification)
+	{
+		this.topologyDao.delete(notification);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getNotificationByName(java.lang.String)
+	 */
+	@Override
+	public Notification getNotificationByName(String name)
+	{
+		return this.topologyDao.getNotificationByName(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getAllNotifications()
+	 */
+	@Override
+	public List<Notification> getAllNotifications()
+	{
+		return this.topologyDao.getAllNotifications();
 	}
 }

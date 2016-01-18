@@ -315,7 +315,8 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		userActionBy.setReadOnly(true);
 		
 		
-		if(action == null && this.categorisedErrorOccurrence.getErrorOccurrence().getAction().equals("ExcludeEvent"))
+		if(action == null && this.categorisedErrorOccurrence.getErrorOccurrence().getAction() != null && 
+				this.categorisedErrorOccurrence.getErrorOccurrence().getAction().equals("ExcludeEvent"))
 		{
 			final Button resubmitButton = new Button("Re-submit");
 			final Button ignoreButton = new Button("Ignore");

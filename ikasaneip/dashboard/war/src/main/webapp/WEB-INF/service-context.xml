@@ -229,6 +229,7 @@
 			   <value>/org/ikasan/topology/model/Filter.hbm.xml</value>
 			   <value>/org/ikasan/topology/model/FilterComponent.hbm.xml</value>
 			   <value>/org/ikasan/topology/model/RoleFilter.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Notification.hbm.xml</value>
 			   <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
 			   <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
 			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>

@@ -75,6 +75,21 @@ public interface ErrorReportingServiceDao<EVENT>
 			Date startDate, Date endDate, int size);
     
     /**
+     * Find an error reporting events based on a list of moduleName, flowName and flowElementName
+     * as well as a date range.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param flowElementname
+     * @param startDate
+     * @param endDate
+     * 
+     * @return
+     */
+    public List<EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate, String action, String exceptionClass, int size);
+    
+    /**
      * Helper method to return the row count based on the criteria.
      * 
      * @param moduleName

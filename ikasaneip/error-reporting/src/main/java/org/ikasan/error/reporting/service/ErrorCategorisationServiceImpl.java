@@ -152,7 +152,8 @@ public class ErrorCategorisationServiceImpl implements
 			List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate,
 			int size)
 	{
-		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate, size);
+		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames
+				, flowElementNames, startDate, endDate, size);
 		
 		Map<CategorisedErrorKey, ErrorCategorisation> categorisedErrorMap = this.getErrorCategorisationMap();
 		

@@ -68,8 +68,6 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
@@ -122,7 +120,6 @@ public class CategorisedErrorTab extends TopologyTab
 	private FilterTable categorizedErrorOccurenceTable;
 	
 	private ComboBox errorCategoryCombo;
-	private ComboBox businessStreamCombo;
 	
 	private float splitPosition;
 	private Unit splitUnit;
@@ -149,21 +146,22 @@ public class CategorisedErrorTab extends TopologyTab
 	private ArrayList<String> flowNames;
 	private ArrayList<String> componentNames;
 	
-	private Long resultSize;
+	
+	private boolean showFilter = true;
 	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
-			ComboBox businessStreamCombo, ErrorReportingManagementService errorReportingManagementService,
+			ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
 			TopologyService topologyService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			PlatformConfigurationService platformConfigurationService)
+			PlatformConfigurationService platformConfigurationService, boolean showFilter)
 	{
 		this.errorCategorisationService = errorCategorisationService;
-		this.businessStreamCombo = businessStreamCombo;
 		this.errorReportingManagementService = errorReportingManagementService;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
 		this.exclusionManagementService = exclusionManagementService;
 		this.platformConfigurationService = platformConfigurationService;
+		this.showFilter = showFilter;
 		
 		container = this.buildContainer();
 	}
@@ -180,8 +178,8 @@ public class CategorisedErrorTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
@@ -194,7 +192,7 @@ public class CategorisedErrorTab extends TopologyTab
 			public void containerItemSetChange(ItemSetChangeEvent event)
 			{				
 				searchResultsSizeLayout.removeAllComponents();
-		    	resultsLabel = new Label("Number of records returned: " + event.getContainer().size() + " of " + resultSize);
+		    	resultsLabel = new Label("Number of records returned: " + event.getContainer().size() + " of " + event.getContainer().size());
 		    	searchResultsSizeLayout.addComponent(resultsLabel);
 			}
 		});
@@ -345,12 +343,12 @@ public class CategorisedErrorTab extends TopologyTab
 		dateSelectLayout.setSizeFull();
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
-		errorFromDate.setValue(this.getMidnightToday());
+//		errorFromDate.setValue(this.getMidnightToday());
 		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
-		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
+//		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
 		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
@@ -391,6 +389,21 @@ public class CategorisedErrorTab extends TopologyTab
 		hSearchLayout.setWidth("100%");
 		hSearchLayout.addComponent(searchLayout);
 		hSearchLayout.setComponentAlignment(searchLayout, Alignment.MIDDLE_CENTER);
+		
+		if(this.showFilter)
+		{
+			hideFilterButton.setVisible(true);
+        	showFilterButton.setVisible(false);
+        	vSplitPanel.setSplitPosition(310, Unit.PIXELS);
+		}
+		else
+		{
+			hideFilterButton.setVisible(false);
+        	showFilterButton.setVisible(true);
+        	splitPosition = vSplitPanel.getSplitPosition();
+        	splitUnit = vSplitPanel.getSplitPositionUnit();
+        	vSplitPanel.setSplitPosition(0, Unit.PIXELS);
+		}
 		
 		hideFilterButton.addClickListener(new Button.ClickListener() 
         {
@@ -596,7 +609,8 @@ public class CategorisedErrorTab extends TopologyTab
         });
 		
 		buttons.addComponent(selectAllButton);
-		buttons.addComponent(closeSelectedButton);
+		// removing the close button. Need to revisit the concept of closing errors.
+//		buttons.addComponent(closeSelectedButton);
 		buttons.addComponent(commentSelectedButton);
 		
 		HorizontalLayout hl = new HorizontalLayout();
@@ -616,8 +630,8 @@ public class CategorisedErrorTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
 			gl.addComponent(hl);
 		}
@@ -626,7 +640,7 @@ public class CategorisedErrorTab extends TopologyTab
 		
 		hErrorTable.addComponent(this.categorizedErrorOccurenceTable);
 		vSplitPanel.setSecondComponent(hErrorTable);
-		vSplitPanel.setSplitPosition(310, Unit.PIXELS);
+
 		
 		GridLayout wrapper = new GridLayout(1, 2);
 		wrapper.setRowExpandRatio(0, .01f);
@@ -677,6 +691,7 @@ public class CategorisedErrorTab extends TopologyTab
 	/* (non-Javadoc)
 	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void search()
 	{
@@ -716,19 +731,6 @@ public class CategorisedErrorTab extends TopologyTab
         	}
     	}
     	
-    	if(modulesNames == null && flowNames == null && componentNames == null
-    			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-    	{
-    		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-    		
-    		modulesNames = new ArrayList<String>();
-    		
-    		for(BusinessStreamFlow flow: businessStream.getFlows())
-    		{
-    			modulesNames.add(flow.getFlow().getModule().getName());
-    		}
-    	}
-    	
     	String errorCategory = null;
     	
     	if(errorCategoryCombo != null && errorCategoryCombo.getValue() != null)
@@ -751,26 +753,10 @@ public class CategorisedErrorTab extends TopologyTab
     		return;
     	}
     	
-    	resultSize = errorCategorisationService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	searchResultsSizeLayout.removeAllComponents();
-    	this.resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size() + " of " + resultSize);
+    	this.resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size() + " of " + categorisedErrorOccurrences.size());
     	searchResultsSizeLayout.addComponent(this.resultsLabel);
-    	
-    	if(resultSize > platformConfigurationService.getSearchResultSetSize())
-    	{
-    		Notification notif = new Notification(
-    			    "Warning",
-    			    "The number of results returned by this search exceeds the configured search " +
-    			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
-    			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
-    			    Type.HUMANIZED_MESSAGE);
-    		notif.setDelayMsec(-1);
-    		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
-    		notif.setPosition(Position.MIDDLE_CENTER);
-    		
-    		notif.show(Page.getCurrent());
-    	}
     	
     	List<String> noteUris =  errorReportingManagementService.getAllErrorUrisWithNote();
 
@@ -782,26 +768,6 @@ public class CategorisedErrorTab extends TopologyTab
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
-    	    Label categoryLabel = new Label();
-    	    
-    	    if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.BLOCKER))
-    	    {
-    	    	categoryLabel = new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML);
-    	    }
-    	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.CRITICAL))
-    	    {
-    	    	categoryLabel = new Label(VaadinIcons.EXCLAMATION.getHtml(), ContentMode.HTML);
-    	    }
-    	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.MAJOR))
-    	    {
-    	    	categoryLabel = new Label(VaadinIcons.ARROW_UP.getHtml(), ContentMode.HTML);
-    	    }
-    	    else if(categorisedErrorOccurrence.getErrorCategorisation().getErrorCategory().equals(ErrorCategorisation.TRIVIAL))
-    	    {
-    	    	categoryLabel = new Label(VaadinIcons.ARROW_DOWN.getHtml(), ContentMode.HTML);
-    	    }
-    	    
-    	    
     	    VerticalLayout layout = new VerticalLayout();
     	    layout.addComponent(new Label(VaadinIcons.ARCHIVE.getHtml() + " " +  errorOccurrence.getModuleName(), ContentMode.HTML));
     	    layout.addComponent(new Label(VaadinIcons.AUTOMATION.getHtml() + " " +  errorOccurrence.getFlowName(), ContentMode.HTML));
@@ -811,7 +777,8 @@ public class CategorisedErrorTab extends TopologyTab
     	    Item item = container.addItem(categorisedErrorOccurrence);			            	    
 
     	    item.getItemProperty("Error Location").setValue(layout);
-			item.getItemProperty("Error Message").setValue(categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription());
+			item.getItemProperty("Error Message").setValue(categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
+					+ " " + categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage());
 			item.getItemProperty("Timestamp").setValue(timestamp);
 			
 			HorizontalLayout commentLayout = new HorizontalLayout();
@@ -834,8 +801,8 @@ public class CategorisedErrorTab extends TopologyTab
 			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 		        	.getAttribute(DashboardSessionValueConstants.USER);
 			
-			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 			{	
 				CheckBox cb = new CheckBox();
 				cb.setValue(false);

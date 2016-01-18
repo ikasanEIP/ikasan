@@ -38,43 +38,15 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.notification.NotifierServiceImpl;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+package org.ikasan.topology.constants;
 
 /**
- * 
  * 
  * @author Ikasan Development Team
  *
  */
-public class WebAppStartStopListener implements ServletContextListener
+public class NotificationConstants
 {
-	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
-	
-    // Our web app (Vaadin app) is starting up.
-    public void contextInitialized ( ServletContextEvent servletContextEvent )
-    {
-        ServletContext ctx = servletContextEvent.getServletContext();
-        logger.info( "Web app context initialized." ); 
-        logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
-        logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
-
-    }
-
-    // Our web app (Vaadin app) is shutting down.
-    public void contextDestroyed ( ServletContextEvent servletContextEvent )
-    {
-
-    	logger.info( "Web app context destroyed." );  // INFO logging.
-        TopologyStateCache.shutdown();
-        NotifierServiceImpl.shutdown();
-    }
-
+	public static final String CATEGORISED_ERROR_NOTIFICATION_CONTEXT = "Categorised Error";
+	public static final String CATEGORISED_ERROR_NOTIFICATION_CONTEXT_PERIODIC = "Categorised Error Periodic";	
 }

@@ -38,43 +38,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui;
+package org.ikasan.dashboard.notification;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import org.ikasan.spec.configuration.ConfiguredResource;
 
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.notification.NotifierServiceImpl;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 
 /**
- * 
  * 
  * @author Ikasan Development Team
  *
  */
-public class WebAppStartStopListener implements ServletContextListener
+public interface NotificationContentProducer extends ConfiguredResource<NotificationContentProducerConfiguration>
 {
-	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
 	
-    // Our web app (Vaadin app) is starting up.
-    public void contextInitialized ( ServletContextEvent servletContextEvent )
-    {
-        ServletContext ctx = servletContextEvent.getServletContext();
-        logger.info( "Web app context initialized." ); 
-        logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
-        logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
-
-    }
-
-    // Our web app (Vaadin app) is shutting down.
-    public void contextDestroyed ( ServletContextEvent servletContextEvent )
-    {
-
-    	logger.info( "Web app context destroyed." );  // INFO logging.
-        TopologyStateCache.shutdown();
-        NotifierServiceImpl.shutdown();
-    }
-
+	public String getNoitificationReceivers();
+	
+	public String getNotificationSubject();
+	
+	public String getNotificationContent();
+	
+	public boolean isNotificationRequired();
 }
