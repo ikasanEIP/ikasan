@@ -73,7 +73,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	private static final String EXPIRY = "expiry";
 	private static final String EVENT_ID = "eventId";
 	private static final String BATCH_SIZE = "batchSize";
-	private static final String DELETED_IDS = "deletedIds";
 
     /** Query used for housekeeping expired wiretap events */
     private static final String HOUSEKEEP_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
