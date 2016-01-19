@@ -50,7 +50,9 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.CategorisedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceCloseWindow;
 import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceCommentWindow;
 import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
@@ -76,15 +78,14 @@ import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -126,7 +127,7 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private ErrorCategorisationService errorCategorisationService;
 	
-	private Container container = null;
+	private IndexedContainer container = null;
 	
 	private ErrorReportingManagementService errorReportingManagementService;
 	
@@ -149,6 +150,19 @@ public class CategorisedErrorTab extends TopologyTab
 	
 	private boolean showFilter = true;
 	
+	private Long resultSize = new Long(0);
+	
+	private Container.ItemSetChangeListener listener =  new Container.ItemSetChangeListener()
+	{			
+		@Override
+		public void containerItemSetChange(ItemSetChangeEvent event)
+		{				
+			searchResultsSizeLayout.removeAllComponents();
+	    	resultsLabel = new Label("Number of records returned: " + event.getContainer().size() + " of " + resultSize);
+	    	searchResultsSizeLayout.addComponent(resultsLabel);
+		}
+	};
+	
 	public CategorisedErrorTab(ErrorCategorisationService errorCategorisationService,
 			ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
@@ -166,7 +180,7 @@ public class CategorisedErrorTab extends TopologyTab
 		container = this.buildContainer();
 	}
 	
-	protected Container buildContainer() 
+	protected IndexedContainer buildContainer() 
 	{
 		IndexedContainer cont = new IndexedContainer();
 
@@ -185,17 +199,6 @@ public class CategorisedErrorTab extends TopologyTab
 		}
 		
 		cont.addContainerProperty(" ", Button.class,  null);
-		
-		cont.addItemSetChangeListener(new Container.ItemSetChangeListener()
-		{			
-			@Override
-			public void containerItemSetChange(ItemSetChangeEvent event)
-			{				
-				searchResultsSizeLayout.removeAllComponents();
-		    	resultsLabel = new Label("Number of records returned: " + event.getContainer().size() + " of " + event.getContainer().size());
-		    	searchResultsSizeLayout.addComponent(resultsLabel);
-			}
-		});
 
         return cont;
     }
@@ -608,10 +611,58 @@ public class CategorisedErrorTab extends TopologyTab
             }
         });
 		
+		Button jiraButton = new Button();
+		jiraButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		jiraButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		jiraButton.setIcon(AtlassianIcons.JIRA);
+		jiraButton.setImmediate(true);
+		jiraButton.setDescription("Export JIRA table");
+		
+		jiraButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	     
+            	StringBuffer sb = new StringBuffer();
+		    
+		    	sb.append("||").append("Module Name");
+		    	sb.append("||").append("Flow Name");
+		    	sb.append("||").append("Component Name");
+		    	sb.append("||").append("Error Message");
+		    	sb.append("||").append("Timestamp");
+		    	sb.append("||\n");
+		    	
+		    	
+		    	for(Object errorOccurrence: container.getItemIds())
+		    	{
+		    		CategorisedErrorOccurrence categorisedErrorOccurrence = (CategorisedErrorOccurrence)errorOccurrence;
+		    		
+		    		sb.append("|").append(categorisedErrorOccurrence.getErrorOccurrence().getModuleName());
+		    		sb.append("|").append(categorisedErrorOccurrence.getErrorOccurrence().getFlowName());
+		    		sb.append("|").append(categorisedErrorOccurrence.getErrorOccurrence().getFlowElementName());
+		    		sb.append("|").append("{code}").append(categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
+							+ " " + categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage()).append("{code}");
+		    		
+		    		Date date = new Date(categorisedErrorOccurrence.getErrorOccurrence().getTimestamp());
+		    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+		    	    String timestamp = format.format(date);
+		    	    
+		    	    sb.append("|").append(timestamp);
+		    		
+		    		sb.append("|\n");
+		    	}
+		    	
+            	
+            	TextWindow tw = new TextWindow("Jira Table", sb.toString());
+                
+                UI.getCurrent().addWindow(tw);
+            }
+        });
+		
 		buttons.addComponent(selectAllButton);
 		// removing the close button. Need to revisit the concept of closing errors.
 //		buttons.addComponent(closeSelectedButton);
 		buttons.addComponent(commentSelectedButton);
+		buttons.addComponent(jiraButton);
 		
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
@@ -700,6 +751,8 @@ public class CategorisedErrorTab extends TopologyTab
 
     	modulesNames = null;
     	
+    	this.container.removeItemSetChangeListener(listener);
+    	
     	if(modules.getItemIds().size() > 0)
     	{
         	modulesNames = new ArrayList<String>();
@@ -753,9 +806,10 @@ public class CategorisedErrorTab extends TopologyTab
     		return;
     	}
     	
+    	resultSize = errorCategorisationService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	searchResultsSizeLayout.removeAllComponents();
-    	this.resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size() + " of " + categorisedErrorOccurrences.size());
+    	this.resultsLabel = new Label("Number of records returned: " + categorisedErrorOccurrences.size() + " of " + resultSize);
     	searchResultsSizeLayout.addComponent(this.resultsLabel);
     	
     	List<String> noteUris =  errorReportingManagementService.getAllErrorUrisWithNote();
@@ -840,6 +894,8 @@ public class CategorisedErrorTab extends TopologyTab
 	        item.getItemProperty(" ").setValue(popupButton);
     	}
     	
-    	 logger.info("End search!");
+    	this.container.addItemSetChangeListener(listener);    	 
+    	
+    	logger.info("End search!");
     }	
 }

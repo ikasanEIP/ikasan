@@ -40,6 +40,8 @@
  */
 package org.ikasan.dashboard.notification.contentproducer;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -107,11 +109,11 @@ public class CategorisedErrorNotificationContentProducer extends NotificationCon
 		}
 	}
 	
-	protected String createDeepLinkUrl()
+	protected String createDeepLinkUrl() throws UnsupportedEncodingException
 	{
 		StringBuilder deeplinkUrl = new StringBuilder(this.platfromConfigurationService.getConfigurationValue("dashboardBaseUrl"));
 		
-		deeplinkUrl.append("/?filter=").append(this.notification.getFilter().getName()).append("&ui=categorisedErrorByFilter");
+		deeplinkUrl.append("/?filter=").append(URLEncoder.encode(this.notification.getFilter().getName(), "UTF-8")).append("&ui=categorisedErrorByFilter");
 		
 		return deeplinkUrl.toString();
 	}
@@ -139,7 +141,7 @@ public class CategorisedErrorNotificationContentProducer extends NotificationCon
 	 * @see org.ikasan.dashboard.notification.NotificationContentProducer#getNotificationContent()
 	 */
 	@Override
-	public String getNotificationContent()
+	public String getNotificationContent() throws UnsupportedEncodingException
 	{
 		StringBuilder body = new StringBuilder(this.configuration.getBody()).append("<br>");
 		

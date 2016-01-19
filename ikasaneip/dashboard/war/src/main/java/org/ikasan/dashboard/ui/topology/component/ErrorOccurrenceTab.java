@@ -827,7 +827,7 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
 		List<ErrorOccurrence> errorOccurences = errorReportingService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue(),
-    					platformConfigurationService.getSearchResultSetSize());
+    					platformConfigurationService.getSearchResultSetSize() * 5);
     	
     	if((errorOccurences == null || errorOccurences.size() == 0) && showError)
     	{
