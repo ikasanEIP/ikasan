@@ -1082,13 +1082,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    		
 	    		if(tabComponent instanceof TopologyTab)
 	    		{
-	    			 logger.info("applyModuleFilter!");
+	    			 logger.debug("applyModuleFilter!");
 	    			((TopologyTab)tabComponent).applyModuleFilter(module);
-	    			logger.info("search!");
+	    			logger.debug("search!");
 	    			((TopologyTab)tabComponent).search();
-	    			logger.info("resetSearchDates!");
+	    			logger.debug("resetSearchDates!");
 	    			((TopologyTab)tabComponent).resetSearchDates();
-	    			logger.info("applyFilter!");
+	    			logger.debug("applyFilter!");
 	    			((TopologyTab)tabComponent).applyFilter();
 	    		}
 	    		
@@ -1099,7 +1099,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	VaadinSession.getCurrent().setAttribute("tab", null);
     	VaadinSession.getCurrent().setAttribute("module", null);
     	
-    	logger.info("End refresh!");
+    	logger.debug("End refresh!");
 	}
 	
 	protected void refreshTree()

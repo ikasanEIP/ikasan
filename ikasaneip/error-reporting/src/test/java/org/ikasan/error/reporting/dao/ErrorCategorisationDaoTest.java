@@ -128,7 +128,6 @@ public class ErrorCategorisationDaoTest
     
     @DirtiesContext
     @Test
-    @Ignore
     public void test_save_and_find_categorised_error()
     {
     	ErrorOccurrence errorOccurrence = new ErrorOccurrence
@@ -189,65 +188,12 @@ public class ErrorCategorisationDaoTest
         ArrayList<String> componentNames = new ArrayList<String>();
         componentNames.add("flowElementName");
         
-        List<CategorisedErrorOccurrence> categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, null, null, null, new Date(100), 
-        				new Date(new Long("10000000000000")));
+       Long count = this.errorCategorisationDao
+        		.rowCount(moduleNames, flowNames, componentNames, new Date(0), 
+        				new Date(System.currentTimeMillis()));
         
-        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 1);
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 0);
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, flowNames, componentNames, null, null, ErrorCategorisation.BLOCKER, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 1);
-        
-        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, null, null, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 2);
-        
-        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
-        System.out.println(categorisedErrorOccurences.get(1).getErrorCategorisation());
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, null, null, null, null, ErrorCategorisation.BLOCKER, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 0);
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(moduleNames, flowNames, null, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 1);
-        
-        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(null, null, null, null, null, ErrorCategorisation.BLOCKER, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 2);
-        
-        System.out.println(categorisedErrorOccurences.get(0).getErrorCategorisation());
-        System.out.println(categorisedErrorOccurences.get(1).getErrorCategorisation());
-        
-        categorisedErrorOccurences = this.errorCategorisationDao
-        		.findCategorisedErrorOccurences(null, null, null, null, null, ErrorCategorisation.TRIVIAL, new Date(100), 
-        				new Date(new Long("10000000000000")));
-        
-        Assert.assertEquals(categorisedErrorOccurences.size(), 0);
+        Assert.assertTrue(count == 3);      
+
     } 
 
 }

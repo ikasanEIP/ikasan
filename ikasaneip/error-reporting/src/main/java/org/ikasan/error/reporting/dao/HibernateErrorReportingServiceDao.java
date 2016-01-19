@@ -293,12 +293,12 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		
 		if(exceptionClass != null)
 		{
-			criteria.add(Restrictions.lt("exceptionClass", exceptionClass));
+			criteria.add(Restrictions.eq("exceptionClass", exceptionClass));
 		}
 		
 		if(exceptionClass != null)
 		{
-			criteria.add(Restrictions.lt("action", action));
+			criteria.add(Restrictions.eq("action", action));
 		}
 		
 		criteria.add(Restrictions.isNull("userAction"));

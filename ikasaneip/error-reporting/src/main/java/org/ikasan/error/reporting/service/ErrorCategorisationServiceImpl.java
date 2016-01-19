@@ -519,10 +519,10 @@ public class ErrorCategorisationServiceImpl implements
 	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public Long rowCount(List<String> moduleName, List<String> flowName,
-			List<String> flowElementname, Date startDate, Date endDate)
+	public Long rowCount(List<String> moduleNames, List<String> flowNames,
+			List<String> flowElementNames, Date startDate, Date endDate)
 	{
-		return this.errorReportingService.rowCount(moduleName, flowName, flowElementname, startDate, endDate);
+		return this.errorCategorisationDao.rowCount(moduleNames, flowNames, flowElementNames, startDate, endDate);
 	}
 
 }

@@ -42,6 +42,7 @@ package org.ikasan.dashboard.ui.topology.component;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -49,8 +50,12 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ExcludedEventPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
@@ -69,9 +74,13 @@ import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
@@ -85,7 +94,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.UI;
@@ -118,6 +129,10 @@ public class ExclusionsTab extends TopologyTab
 	
 	private IndexedContainer container = null;
 	
+	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
+	
+	private Label resultsLabel = new Label();
+	
 	
 	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
@@ -135,7 +150,7 @@ public class ExclusionsTab extends TopologyTab
 
 		cont.addContainerProperty("Module Name", String.class,  null);
 		cont.addContainerProperty("Flow Name", String.class,  null);
-		cont.addContainerProperty("Event Payload", String.class,  null);
+		cont.addContainerProperty("Error Message", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
 		cont.addContainerProperty("", Button.class,  null);
 
@@ -153,7 +168,7 @@ public class ExclusionsTab extends TopologyTab
 		this.exclusionsTable.setContainerDataSource(container);
 		this.exclusionsTable.setColumnExpandRatio("Module Name", .14f);
 		this.exclusionsTable.setColumnExpandRatio("Flow Name", .18f);
-		this.exclusionsTable.setColumnExpandRatio("Event Payload", .33f);
+		this.exclusionsTable.setColumnExpandRatio("Error Message", .33f);
 		this.exclusionsTable.setColumnExpandRatio("Timestamp", .1f);
 		this.exclusionsTable.setColumnExpandRatio("", .05f);
 		
@@ -315,12 +330,93 @@ public class ExclusionsTab extends TopologyTab
 		
 		vSplitPanel.setFirstComponent(filterPanel);
 		
-		CssLayout hErrorTable = new CssLayout();
-		hErrorTable.setSizeFull();
-		hErrorTable.addComponent(this.exclusionsTable);
+		GridLayout hErrorTable = new GridLayout();
+		hErrorTable.setWidth("100%");
+		
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
 		vSplitPanel.setSplitPosition(310, Unit.PIXELS);
+		
+		GridLayout buttons = new GridLayout(1, 1);
+		buttons.setWidth("170px");				
+		
+		
+		Button jiraButton = new Button();
+		jiraButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		jiraButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		jiraButton.setIcon(AtlassianIcons.JIRA);
+		jiraButton.setImmediate(true);
+		jiraButton.setDescription("Export JIRA table");
+		
+		jiraButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	     
+            	StringBuffer sb = new StringBuffer();
+		    	
+		    	for(Object property: container.getContainerPropertyIds())
+		    	{
+		    		if(container.getType(property) == String.class)
+		    		{
+		    			sb.append("||").append(property);
+		    		}
+		    	}
+		    	sb.append("||\n");
+		    	
+		    	
+		    	for(Object errorOccurrence: container.getItemIds())
+		    	{
+		    		Item item = container.getItem(errorOccurrence);
+		    		
+		    		
+		    		for(Object propertyId: container.getContainerPropertyIds())
+			    	{		    			
+		    			if(container.getType(propertyId) == String.class)
+			    		{
+		    				Property property = item.getItemProperty(propertyId);
+		    				
+		    				if(((String)property.getValue()).length() > 300)
+		    				{
+		    					sb.append("|").append("{code}").append((String)property.getValue()).append("{code}");
+		    				}
+		    				else
+		    				{
+		    					sb.append("|").append(property.getValue());
+		    				}
+			    		}
+			    	}
+		    		
+		    		sb.append("|\n");
+		    	}
+		    	
+            	
+            	TextWindow tw = new TextWindow("Jira Table", sb.toString());
+                
+                UI.getCurrent().addWindow(tw);
+            }
+        });
+
+		
+		buttons.addComponent(jiraButton);
+		buttons.setComponentAlignment(jiraButton, Alignment.MIDDLE_RIGHT);
+
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setWidth("100%");
+		hl.addComponent(buttons);
+		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
+		
+		searchResultsSizeLayout.setWidth("100%");
+		searchResultsSizeLayout.addComponent(this.resultsLabel);
+		searchResultsSizeLayout.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
+		
+		GridLayout gl = new GridLayout(2, 1);
+		gl.setWidth("100%");
+		
+		gl.addComponent(searchResultsSizeLayout);
+		gl.addComponent(hl);
+		
+		hErrorTable.addComponent(gl);
+		hErrorTable.addComponent(this.exclusionsTable);
 		
 		GridLayout wrapper = new GridLayout(1, 2);
 		wrapper.setRowExpandRatio(0, .01f);
@@ -377,6 +473,10 @@ public class ExclusionsTab extends TopologyTab
     	List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
     			flowNames, fromDate.getValue(),  toDate.getValue(), null);
     	
+    	searchResultsSizeLayout.removeAllComponents();
+    	this.resultsLabel = new Label("Number of records returned: " + exclusionEvents.size() + " of " + exclusionEvents.size());
+    	searchResultsSizeLayout.addComponent(this.resultsLabel);
+    	
     	if(exclusionEvents == null || exclusionEvents.size() == 0)
     	{
     		Notification.show("The exclusions search returned no results!", Type.ERROR_MESSAGE);
@@ -397,7 +497,7 @@ public class ExclusionsTab extends TopologyTab
 			
 			if(exclusionEvent.getEvent() != null)
 			{
-				item.getItemProperty("Event Payload").setValue(new String(exclusionEvent.getEvent()));
+				item.getItemProperty("Error Message").setValue(new String(errorOccurrence.getErrorMessage()));
 			}
 			
 			item.getItemProperty("Timestamp").setValue(timestamp);

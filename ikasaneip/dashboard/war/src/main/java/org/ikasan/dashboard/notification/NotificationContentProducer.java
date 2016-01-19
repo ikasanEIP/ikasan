@@ -40,6 +40,8 @@
  */
 package org.ikasan.dashboard.notification;
 
+import java.io.UnsupportedEncodingException;
+
 import org.ikasan.spec.configuration.ConfiguredResource;
 
 
@@ -55,7 +57,7 @@ public interface NotificationContentProducer extends ConfiguredResource<Notifica
 	
 	public String getNotificationSubject();
 	
-	public String getNotificationContent();
+	public String getNotificationContent() throws UnsupportedEncodingException;
 	
 	public boolean isNotificationRequired();
 }
