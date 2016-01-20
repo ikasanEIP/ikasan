@@ -659,8 +659,6 @@ public class CategorisedErrorTab extends TopologyTab
         });
 		
 		buttons.addComponent(selectAllButton);
-		// removing the close button. Need to revisit the concept of closing errors.
-//		buttons.addComponent(closeSelectedButton);
 		buttons.addComponent(commentSelectedButton);
 		buttons.addComponent(jiraButton);
 		
@@ -684,9 +682,11 @@ public class CategorisedErrorTab extends TopologyTab
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
 				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
-			gl.addComponent(hl);
+			buttons.addComponent(closeSelectedButton);
 		}
 		
+		
+		gl.addComponent(hl);
 		hErrorTable.addComponent(gl);
 		
 		hErrorTable.addComponent(this.categorizedErrorOccurenceTable);

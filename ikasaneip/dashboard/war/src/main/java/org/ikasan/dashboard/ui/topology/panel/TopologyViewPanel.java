@@ -404,6 +404,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
        		WiretapTab wiretapTab = new WiretapTab
 					(this.wiretapDao, this.treeViewBusinessStreamCombo, this.platformConfigurationService);
        		wiretapTab.createLayout();
+       		wiretapTab.applyFilter();
 			
     		tabsheet.addTab(wiretapTab, "Wiretaps");
     		
@@ -418,6 +419,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					(this.errorReportingService, this.treeViewBusinessStreamCombo
 							, this.errorReportingManagementService, this.platformConfigurationService);
     		errorOccurrenceTab.createLayout();
+			errorOccurrenceTab.applyFilter();
 			
     		tabsheet.addTab(errorOccurrenceTab, "Errors");
     	
@@ -432,10 +434,29 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					(this.errorReportingService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
 			
     		actionedErrorOccurrenceTab.createLayout();
+    		actionedErrorOccurrenceTab.applyFilter();
     		
     		tabsheet.addTab(actionedErrorOccurrenceTab, "Actioned Errors");
     		
     		tabComponentMap.put(ACTIONED_ERROR_TAB, actionedErrorOccurrenceTab);
+    	}
+    	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
+    	{
+			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
+					(this.errorCategorisationService, this.errorReportingManagementService,
+							this.hospitalManagementService, this.topologyService, this.exclusionManagementService,
+							this.platformConfigurationService, true);
+			
+			categorisedErrorTab.createLayout();
+			categorisedErrorTab.resetSearchDates();
+			categorisedErrorTab.applyFilter();
+			
+			tabsheet.addTab(categorisedErrorTab, "Categorised Errors");
+			
+			tabComponentMap.put(CATEGORISED_ERROR_TAB, categorisedErrorTab);
     	}
     	
     	if(authentication != null 
@@ -447,6 +468,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     				this.treeViewBusinessStreamCombo);
     		
     		exclusionsTab.createLayout();
+    		exclusionsTab.applyFilter();
     		
     		tabsheet.addTab(exclusionsTab, "Exclusions");
     		
@@ -462,6 +484,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo);
 			
 			actionedExclusionTab.createLayout();
+			actionedExclusionTab.applyFilter();
 			
 			tabsheet.addTab(actionedExclusionTab, "Actioned Exclusions");
 			
@@ -470,7 +493,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ACTIONED_EXCLUSIONS_AUTHORITY)))
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_SYSTEM_EVENT_AUTHORITY)))
     	{		
     		final VerticalLayout tab6 = new VerticalLayout();
     		tab6.setSizeFull();
@@ -478,22 +501,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tabsheet.addTab(tab6, "System Events");
     	}
 				
-    	if(authentication != null 
-    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
-    	{
-			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.errorReportingManagementService,
-							this.hospitalManagementService, this.topologyService, this.exclusionManagementService,
-							this.platformConfigurationService, true);
-			
-			categorisedErrorTab.createLayout();
-			categorisedErrorTab.resetSearchDates();
-			
-			tabsheet.addTab(categorisedErrorTab, "Categorised Errors");
-			
-			tabComponentMap.put(CATEGORISED_ERROR_TAB, categorisedErrorTab);
-    	}
+    	
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
