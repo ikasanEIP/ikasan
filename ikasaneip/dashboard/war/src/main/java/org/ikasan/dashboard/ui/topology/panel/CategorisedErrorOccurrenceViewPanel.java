@@ -57,6 +57,7 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWindow;
@@ -468,6 +469,20 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	        	    }
 	            }
 	        });
+			
+			resubmitButton.setVisible(false);
+			ignoreButton.setVisible(false);
+			
+			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+			
+			if(authentication != null 
+	    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+	    					|| authentication.hasGrantedAuthority(SecurityConstants.ACTION_EXCLUSIONS_AUTHORITY)))
+	    	{
+				resubmitButton.setVisible(true);
+				ignoreButton.setVisible(true);
+	    	}
 			
 			HorizontalLayout buttonLayout = new HorizontalLayout();
 			buttonLayout.setHeight("100%");
