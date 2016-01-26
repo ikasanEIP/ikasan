@@ -75,7 +75,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	private static final String BATCH_SIZE = "batchSize";
 
     /** Query used for housekeeping expired wiretap events */
-    private static final String HOUSEKEEP_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
+    private static final String HOUSEKEEP_DELETE_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
 
     /** Query for finding all wiretap events with the same payloadId */
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
@@ -96,6 +96,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	/** Batch size used when in a single transaction */
 	private Integer transactionBatchSize = 5000;
 
+    private String housekeepQuery;
     /**
      * Constructor
      */
@@ -382,7 +383,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
 
-	                Query query = session.createQuery(HOUSEKEEP_QUERY);
+	                Query query = session.createQuery(HOUSEKEEP_DELETE_QUERY);
 	                query.setParameter(EXPIRY, System.currentTimeMillis());
 	            	query.executeUpdate();
 	                return null;
@@ -415,10 +416,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	        {
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
-	            	String queryString = BATCHED_HOUSEKEEP_QUERY.replace(BATCH_SIZE, Integer.toString(housekeepingBatchSize));
-	            	queryString = queryString.replace(EXPIRY, Long.toString(System.currentTimeMillis()));
+                    SQLQuery query = session.createSQLQuery(housekeepQuery);
 
-	            	SQLQuery query = session.createSQLQuery(queryString);
+                    query.setParameter("batchSize", housekeepingBatchSize);
+                    query.setParameter("expiry", System.currentTimeMillis());
 
 	            	query.executeUpdate();
 	                return null;
@@ -493,4 +494,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	{
 		this.transactionBatchSize = transactionBatchSize;
 	}
+
+    @Override public void setHousekeepQuery(String housekeepQuery)
+    {
+        this.housekeepQuery = housekeepQuery;
+    }
 }
