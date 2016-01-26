@@ -97,7 +97,9 @@ public class HibernateWiretapDaoTest
     	wiretapDao.setBatchHousekeepDelete(true);
     	wiretapDao.setHousekeepingBatchSize(100);
     	wiretapDao.setTransactionBatchSize(2000);
-    	
+    	wiretapDao.setHousekeepQuery("delete top _bs_ from IkasanWiretap where Expiry <= _ex_");   //sybase
+//		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
+//		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
     	this.wiretapDao.deleteAllExpired();
     	this.wiretapDao.deleteAllExpired();
     	this.wiretapDao.deleteAllExpired();
