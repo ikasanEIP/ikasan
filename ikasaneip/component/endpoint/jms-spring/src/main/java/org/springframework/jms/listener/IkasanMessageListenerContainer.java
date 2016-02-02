@@ -40,10 +40,12 @@
  */
 package org.springframework.jms.listener;
 
-import org.ikasan.component.endpoint.jms.spring.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
+import org.ikasan.component.endpoint.jms.spring.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
+import org.ikasan.exclusion.service.IsExclusionServiceAware;
 import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.springframework.jms.util.JndiUtils;
 
 import javax.jms.*;
@@ -53,10 +55,11 @@ import javax.jms.*;
  *
  * @author Ikasan Development Team
  */
-public class IkasanMessageListenerContainer extends DefaultMessageListenerContainer implements MessageProvider, Configured<SpringMessageConsumerConfiguration>
+public class IkasanMessageListenerContainer extends DefaultMessageListenerContainer implements MessageProvider, Configured<SpringMessageConsumerConfiguration>, IsExclusionServiceAware
 {
     /** configuration instance */
     SpringMessageConsumerConfiguration configuration;
+    private ExclusionService exclusionService;
 
     /**
      * Constructor with preferred defaults.
@@ -172,7 +175,7 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
     @Override
     protected Message receiveMessage(MessageConsumer consumer) throws JMSException
     {
-        if(this.configuration.isBatchMode())
+        if(this.configuration.isBatchMode() && exclusionService.isBlackListEmpty())
         {
             IkasanListMessage listMessage = new IkasanListMessage();
             while ( !append(listMessage, super.receiveMessage(consumer)) );
@@ -203,4 +206,9 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         return message == null || listMessage.size() >= configuration.getBatchSize();
     }
 
+    @Override
+    public void setExclusionService(ExclusionService exclusionService) {
+
+        this.exclusionService = exclusionService;
+    }
 }
