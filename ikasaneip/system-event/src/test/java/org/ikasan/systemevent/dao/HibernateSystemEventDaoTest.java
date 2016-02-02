@@ -38,11 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.dao;
+package org.ikasan.systemevent.dao;
+
+import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.ikasan.systemevent.model.SystemEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +52,6 @@ import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 
 
 /**
@@ -62,11 +63,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations={
         "/hsqldb-config.xml",
         "/substitute-components.xml",
+        "/systemevent-service-conf.xml"
 })
-public class HibernateWiretapDaoTest
+public class HibernateSystemEventDaoTest
 {
     /** Object being tested */
-    @Resource private WiretapDao wiretapDao;
+    @Resource private SystemEventDao systemEventDao;
 
     /**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
@@ -77,10 +79,7 @@ public class HibernateWiretapDaoTest
     	
     	for(int i=0; i< 10000; i++)
     	{
-	    	WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
-	                "eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
-	    	
-	    	this.wiretapDao.save(event);
+	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
     	}
     	
     }
@@ -94,17 +93,32 @@ public class HibernateWiretapDaoTest
     @DirtiesContext
     public void test_success_no_results()
     {
-    	wiretapDao.setBatchHousekeepDelete(true);
-    	wiretapDao.setHousekeepingBatchSize(100);
-    	wiretapDao.setTransactionBatchSize(2000);
-    	wiretapDao.setHousekeepQuery("delete top _bs_ from IkasanWiretap where Expiry <= _ex_");   //sybase
-//		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
-//		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
+    	systemEventDao.setBatchHousekeepDelete(true);
+    	systemEventDao.setHousekeepingBatchSize(100);
+    	systemEventDao.setTransactionBatchSize(2000);
+    	
+    	while(systemEventDao.housekeepablesExist())
+    	{
+    		this.systemEventDao.deleteExpired();
+    	}
+    	
+    	
+    	for(int i=0; i< 13456; i++)
+    	{
+	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+    	}
+    	
+    	systemEventDao.setHousekeepingBatchSize(1000);
+    	systemEventDao.setTransactionBatchSize(20000);
+    	
+    	this.systemEventDao.deleteExpired();
+    	
+    	for(int i=0; i< 79; i++)
+    	{
+	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+    	}
+    	
+    	this.systemEventDao.deleteExpired();
     }
 
     
