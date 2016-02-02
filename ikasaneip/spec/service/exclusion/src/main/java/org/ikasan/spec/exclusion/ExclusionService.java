@@ -94,4 +94,6 @@ public interface ExclusionService<ENTITY, IDENTIFIER>
      * Housekeep expired exclusionEvents.
      */
     public void housekeep();
+
+    boolean isBlackListEmpty();
 }
