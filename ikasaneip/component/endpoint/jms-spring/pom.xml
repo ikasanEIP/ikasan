@@ -86,5 +86,10 @@
 		  <scope>test</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

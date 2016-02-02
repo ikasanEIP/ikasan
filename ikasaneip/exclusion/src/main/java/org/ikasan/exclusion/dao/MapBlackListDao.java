@@ -119,4 +119,9 @@ public class MapBlackListDao
             logger.info("Deleted expired blacklist events for identifiers[" + expiredIdentifiers + "]");
         }
     }
+
+    @Override
+    public int count() {
+        return blackList.size();
+    }
 }
