@@ -89,6 +89,8 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     /** Authentication order*/
     private String preferredAuthentications = new String();
 
+    protected String preferredKeyExchangeAlgorithm = null;
+
     /** Default serial version uid */
     private static final long serialVersionUID = 1L;
 
@@ -361,6 +363,14 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
         return this.connectionTimeout;
     }
 
+    public String getPreferredKeyExchangeAlgorithm() {
+        return preferredKeyExchangeAlgorithm;
+    }
+
+    public void setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm) {
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
+    }
+
     /**
      * String representation of the ConnectionRequestInfo
      */
@@ -380,6 +390,7 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
             + "Poll time:                        [" + pollTime + "]\n"
             + "Private key file name:            [" + privateKeyFilename + "]\n"
             + "Preferred authentication order:   [" + this.preferredAuthentications + "]\n"
+            + "Preferred key exchange algorithm:   [" + this.preferredKeyExchangeAlgorithm + "]\n"
             + "Username:                         [" + username + "]";
 
             return requestInfoAsString;
