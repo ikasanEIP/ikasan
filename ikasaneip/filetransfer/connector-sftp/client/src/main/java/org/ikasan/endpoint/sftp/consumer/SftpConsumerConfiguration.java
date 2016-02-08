@@ -40,10 +40,10 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
+
+import javax.resource.spi.InvalidPropertyException;
 
 /**
  * SFTP Consumer Configuration model.
@@ -139,6 +139,15 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
     /** Consume files from sourceDirectory in recursive way */
     private Boolean isRecursive = Boolean.FALSE;
 
+    protected String preferredKeyExchangeAlgorithm;
+
+    public String getPreferredKeyExchangeAlgorithm() {
+        return preferredKeyExchangeAlgorithm;
+    }
+
+    public void setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm) {
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
+    }
 
     /**
      * @return the sourceDirectory
