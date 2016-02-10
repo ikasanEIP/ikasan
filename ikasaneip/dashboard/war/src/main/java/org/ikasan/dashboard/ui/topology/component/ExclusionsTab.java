@@ -40,13 +40,28 @@
  */
 package org.ikasan.dashboard.ui.topology.component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.ExcludedEventPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -54,8 +69,6 @@ import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
@@ -69,6 +82,7 @@ import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
@@ -81,6 +95,7 @@ import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
@@ -88,15 +103,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.UI;
@@ -152,8 +163,18 @@ public class ExclusionsTab extends TopologyTab
 		cont.addContainerProperty("Flow Name", String.class,  null);
 		cont.addContainerProperty("Error Message", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
-		cont.addContainerProperty("", Button.class,  null);
+		
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
+		
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_EXCLUSIONS_AUTHORITY)))
+		{	
+			cont.addContainerProperty("", CheckBox.class,  null);
+		}
 
+		cont.addContainerProperty(" ", Button.class,  null);
+		
         return cont;
     }
 	
@@ -170,7 +191,7 @@ public class ExclusionsTab extends TopologyTab
 		this.exclusionsTable.setColumnExpandRatio("Flow Name", .18f);
 		this.exclusionsTable.setColumnExpandRatio("Error Message", .33f);
 		this.exclusionsTable.setColumnExpandRatio("Timestamp", .1f);
-		this.exclusionsTable.setColumnExpandRatio("", .05f);
+		this.exclusionsTable.setColumnExpandRatio(" ", .05f);
 		
 		this.exclusionsTable.addStyleName("wordwrap-table");
 		this.exclusionsTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -337,9 +358,278 @@ public class ExclusionsTab extends TopologyTab
 		vSplitPanel.setSecondComponent(hErrorTable);
 		vSplitPanel.setSplitPosition(310, Unit.PIXELS);
 		
-		GridLayout buttons = new GridLayout(1, 1);
-		buttons.setWidth("170px");				
+		GridLayout buttons = new GridLayout(5, 1);
+		buttons.setSpacing(true);
+		buttons.setWidth("150px");				
 		
+		final Button selectAllButton = new Button();
+		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+		selectAllButton.setImmediate(true);
+		selectAllButton.setDescription("Select / deselect all records below.");
+		
+		selectAllButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();
+            	
+            	Resource r = selectAllButton.getIcon();
+            	
+            	if(r.equals(VaadinIcons.CHECK_SQUARE_O))
+            	{
+            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
+            		
+            		for(ExclusionEvent eo: items)
+                	{
+                		Item item = container.getItem(eo);
+                		
+                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+                		
+                		cb.setValue(true);
+                	}
+            	}
+            	else
+            	{
+            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
+            		
+            		for(ExclusionEvent eo: items)
+                	{
+                		Item item = container.getItem(eo);
+                		
+                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+                		
+                		cb.setValue(false);
+                	}
+            	}
+            }
+        });
+		
+		buttons.addComponent(selectAllButton);
+		buttons.setComponentAlignment(selectAllButton, Alignment.MIDDLE_RIGHT);
+		
+		Button replaySelectedButton = new Button();
+		replaySelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		replaySelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		replaySelectedButton.setIcon(VaadinIcons.PLAY);
+		replaySelectedButton.setImmediate(true);
+		replaySelectedButton.setDescription("Replay all the below selected exclusioned events.");
+		
+		replaySelectedButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	            	
+            	Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();       	
+            	
+            	final List<ExclusionEvent> myItems = new ArrayList<ExclusionEvent>(items);
+            	
+            	// We need to sort so that we can resubmit the oldest events first!
+            	Comparator<ExclusionEvent> comparator = new Comparator<ExclusionEvent>() 
+            	{
+            	    public int compare(ExclusionEvent c1, ExclusionEvent c2) 
+            	    {
+            	        if (c2.getTimestamp() < c1.getTimestamp())
+            	        {
+            	        	return 1;
+            	        }
+            	        else if (c1.getTimestamp() < c2.getTimestamp())
+            	        {
+            	        	return -1;
+            	        }
+            	        else
+            	        {
+            	        	return 0;
+            	        }
+            	    }
+            	};
+
+            	Collections.sort(myItems, comparator);
+            	
+            	for(ExclusionEvent eo: items)
+            	{
+            		logger.info("timestamp:" + eo.getTimestamp());
+            		
+            		Item item = container.getItem(eo);
+            		
+            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+            		
+            		if(cb.getValue() == false)
+            		{
+            			myItems.remove(eo);
+            		}
+            	}
+            	
+            	if(myItems.size() == 0)
+            	{
+            		Notification.show("You need to select some excluded events to replay.", Type.ERROR_MESSAGE);
+            	}
+            	else
+            	{
+            		
+            		for(ExclusionEvent exclusionEvent: myItems)
+            		{
+            		
+	            		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	            	        	.getAttribute(DashboardSessionValueConstants.USER);
+	                	
+	                	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+	                	
+	                	ClientConfig clientConfig = new ClientConfig();
+	                	clientConfig.register(feature) ;
+	                	
+	                	Client client = ClientBuilder.newClient(clientConfig);
+	                	
+	                	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+	                	
+	                	if(module == null)
+	                	{
+	                		Notification.show("Unable to find server information for module we are attempting to re-submit to: " + exclusionEvent.getModuleName() 
+	                				, Type.ERROR_MESSAGE);
+	                		
+	                		return;
+	                	}
+	                	
+	                	Server server = module.getServer();
+	            		
+	            		String url = server.getUrl() + ":" + server.getPort()
+	            				+ module.getContextRoot() 
+	            				+ "/rest/resubmission/resubmit/"
+	            	    		+ exclusionEvent.getModuleName() 
+	            	    		+ "/"
+	            	    		+ exclusionEvent.getFlowName()
+	            	    		+ "/"
+	            	    		+ exclusionEvent.getErrorUri();
+	            		
+	            		logger.debug("Resubmission Url: " + url);
+	            		
+	            	    WebTarget webTarget = client.target(url);
+	            	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
+	            	    
+	            	    if(response.getStatus()  != 200)
+	            	    {
+	            	    	response.bufferEntity();
+	            	        
+	            	        String responseMessage = response.readEntity(String.class);
+	            	        
+	            	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
+	            	        
+	            	    	Notification.show("An error was received trying to resubmit event: " 
+	            	    			+ responseMessage, Type.ERROR_MESSAGE);
+	            	    	return;
+	            	    }
+	            	    else
+	            	    {
+	            	    	container.removeItem(exclusionEvent);
+	            	    	Notification.show("Events resumitted successfully.");
+	            	    }
+            		}
+            	}
+            }
+        });
+		
+		buttons.addComponent(replaySelectedButton);
+		buttons.setComponentAlignment(replaySelectedButton, Alignment.MIDDLE_RIGHT);
+		
+		Button ignoreSelectedButton = new Button();
+		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		ignoreSelectedButton.setIcon(VaadinIcons.CLOSE);
+		ignoreSelectedButton.setImmediate(true);
+		ignoreSelectedButton.setDescription("Ignore all the below selected exclusioned events.");
+		
+		ignoreSelectedButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	            	
+            	Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();
+            	
+            	final Collection<ExclusionEvent> myItems = new ArrayList<ExclusionEvent>(items);
+            	
+            	for(ExclusionEvent eo: items)
+            	{
+            		Item item = container.getItem(eo);
+            		
+            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+            		
+            		if(cb.getValue() == false)
+            		{
+            			myItems.remove(eo);
+            		}
+            	}
+            	
+            	if(myItems.size() == 0)
+            	{
+            		Notification.show("You need to select some excluded events to ignore.", Type.ERROR_MESSAGE);
+            	}
+            	else
+            	{
+            		
+            		for(ExclusionEvent exclusionEvent: myItems)
+            		{
+            		
+	            		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	            	        	.getAttribute(DashboardSessionValueConstants.USER);
+	                	
+	                	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+	                	
+	                	ClientConfig clientConfig = new ClientConfig();
+	                	clientConfig.register(feature) ;
+	                	
+	                	Client client = ClientBuilder.newClient(clientConfig);
+	                	
+	                	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+	                	
+	                	if(module == null)
+	                	{
+	                		Notification.show("Unable to find server information for module we are attempting to re-submit to: " + exclusionEvent.getModuleName() 
+	                				, Type.ERROR_MESSAGE);
+	                		
+	                		return;
+	                	}
+	                	
+	                	Server server = module.getServer();
+	            		
+	                	String url = server.getUrl() + ":" + server.getPort()
+	            				+ module.getContextRoot() 
+	            				+ "/rest/resubmission/ignore/"
+	            				+ exclusionEvent.getModuleName() 
+	            	    		+ "/"
+	            	    		+ exclusionEvent.getFlowName()
+	            	    		+ "/"
+	            	    		+ exclusionEvent.getErrorUri();
+	            		
+	            		logger.debug("Ignore Url: " + url);
+	            		
+	            	    WebTarget webTarget = client.target(url);
+	            	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
+	            	    
+	            	    if(response.getStatus()  != 200)
+	            	    {
+	            	    	response.bufferEntity();
+	            	        
+	            	        String responseMessage = response.readEntity(String.class);
+	            	        
+	            	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
+	            	        
+	            	    	Notification.show("An error was received trying to resubmit event: " 
+	            	    			+ responseMessage, Type.ERROR_MESSAGE);
+	            	    	
+	            	    	return;
+	            	    }
+	            	    else
+	            	    {
+	            	    	container.removeItem(exclusionEvent);
+	            	    	Notification.show("Events ignored successfully.");
+	            	    }
+            		}
+            	}
+            }
+        });
+		
+		buttons.addComponent(ignoreSelectedButton);
+		buttons.setComponentAlignment(ignoreSelectedButton, Alignment.MIDDLE_RIGHT);
+
 		
 		Button jiraButton = new Button();
 		jiraButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -399,6 +689,19 @@ public class ExclusionsTab extends TopologyTab
 		
 		buttons.addComponent(jiraButton);
 		buttons.setComponentAlignment(jiraButton, Alignment.MIDDLE_RIGHT);
+		
+		Button excelButton = new Button();
+		excelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		excelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		excelButton.setIcon(FontAwesome.FILE_EXCEL_O);
+		excelButton.setImmediate(true);
+		excelButton.setDescription("Export Excel table");
+		
+		FileDownloader fd = new FileDownloader(this.getExcelDownloadStream());
+        fd.extend(excelButton);
+        
+        buttons.addComponent(excelButton);
+		buttons.setComponentAlignment(excelButton, Alignment.MIDDLE_RIGHT);
 
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
@@ -530,9 +833,110 @@ public class ExclusionsTab extends TopologyTab
 	            }
 	        });
 	        
-	        item.getItemProperty("").setValue(popupButton);    	    	    	    
+	        final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+		        	.getAttribute(DashboardSessionValueConstants.USER);
+			
+			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+			{	
+				CheckBox cb = new CheckBox();
+			
+				cb.setValue(false);
+				item.getItemProperty("").setValue(cb);
+			}
+	        
+	        item.getItemProperty(" ").setValue(popupButton);    	    	    	    
     	}
 	}
+	
+	/**
+     * Helper method to get the stream associated with the export of the file.
+     * 
+     * @return the StreamResource associated with the export.
+     */
+    private StreamResource getExcelDownloadStream() 
+    {
+		StreamResource.StreamSource source = new StreamResource.StreamSource() 
+		{
+		    public InputStream getStream() 
+		    {
+		    	ByteArrayOutputStream stream = null;
+		    	
+		        try
+		        {
+		            stream = getExcelStream();
+		        }
+		        catch (IOException e)
+		        {
+		        	logger.error(e.getMessage(), e);
+		        }
+		        
+		        InputStream input = new ByteArrayInputStream(stream.toByteArray());
+		        return input;
+		    }
+		};
+            
+	    StreamResource resource = new StreamResource ( source,"exclusions.csv");
+	    return resource;
+    }
+    
+    /**
+     * Helper method to get the ByteArrayOutputStream associated with the export.
+     * 
+     * @return
+     * @throws IOException
+     */
+    private ByteArrayOutputStream getExcelStream() throws IOException
+    {
+    	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+    	
+    	StringBuffer sb = new StringBuffer();
+    	
+    	for(Object property: container.getContainerPropertyIds())
+    	{
+    		if(container.getType(property) == String.class)
+    		{
+    			sb.append(property).append(",");
+    		}
+    	}
+    	
+    	sb.append("\r\n");
+    	    	
+    	for(Object errorOccurrence: container.getItemIds())
+    	{
+    		Item item = container.getItem(errorOccurrence);
+    		
+    		
+    		for(Object propertyId: container.getContainerPropertyIds())
+	    	{		    			
+    			if(container.getType(propertyId) == String.class)
+	    		{
+    				Property property = item.getItemProperty(propertyId);
+    				
+    				String csvCell = (String)property.getValue();
+    				
+    				if(csvCell != null && csvCell.contains("\""))
+    				{
+    					csvCell = csvCell.replaceAll("\"", "\"\"");
+    				}
+    				
+    				// Max length of a CSV cell in EXCEL
+    				if(csvCell != null && csvCell.length() > 32760)
+    				{
+    					csvCell = csvCell.substring(0, 32759);
+    				}
+    					
+    				sb.append("\"").append(csvCell).append("\",");
+	    		}
+	    	}
+    		
+    		sb.append("\r\n");
+    	}
+    	
+    	out.write(sb.toString().getBytes());
+        
+        return out;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()

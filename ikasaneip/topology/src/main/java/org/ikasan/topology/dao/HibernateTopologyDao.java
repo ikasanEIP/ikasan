@@ -73,7 +73,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 {
 
 	private static final String DELETE_FILTER_COMPONENT_BY_FILTER_ID = "delete from FilterComponent where id.filterId = :filterId"; 
-	private static final String DELETE_FILTER_COMPONENT_BY_COMPONENT_ID = "delete from FilterComponent where id.filterId = :filterId";
+	private static final String DELETE_FILTER_COMPONENT_BY_COMPONENT_ID = "delete from FilterComponent where id.componentId = :componentId";
 	private static final String DELETE_BUSINESS_STREAM_FLOW_BY_FLOW_ID = "delete from BusinessStreamFlow where id.flowId = :flowId";
 	
 	/* (non-Javadoc)

@@ -50,6 +50,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -322,15 +323,41 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 
                 if (restrictionExists(moduleNames))
                 {
-                    criteria.add(Restrictions.in("moduleName", moduleNames));
+//                    criteria.add(Restrictions.in("moduleName", moduleNames));
+                	
+                	Disjunction disjunction = Restrictions.disjunction();
+                	
+                	for(String moduleName: moduleNames)
+                	{
+                		disjunction.add(Restrictions.eq("moduleName",moduleName));
+                	}
+                	
+                	criteria.add(disjunction);
                 }
                 if (restrictionExists(moduleFlows))
                 {
-                    criteria.add(Restrictions.in("flowName", moduleFlows));
+//                    criteria.add(Restrictions.in("flowName", moduleFlows));
+                    
+                	Disjunction disjunction = Restrictions.disjunction();
+                	
+                    for(String flowName: moduleFlows)
+                	{
+                    	disjunction.add(Restrictions.eq("flowName",flowName));
+                	}
+                    
+                    criteria.add(disjunction);
                 }
                 if (restrictionExists(componentNames))
                 {
-                    criteria.add(Restrictions.in("componentName", componentNames));
+//                    criteria.add(Restrictions.in("componentName", componentNames));
+                	Disjunction disjunction = Restrictions.disjunction();
+                	
+                    for(String componentName: componentNames)
+                	{
+                    	disjunction.add(Restrictions.eq("componentName",componentName));
+                	}
+                    
+                    criteria.add(disjunction);
                 }
                 if (restrictionExists(eventId))
                 {
@@ -349,6 +376,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                     criteria.add(Restrictions.lt("timestamp", untilDate.getTime()));
                 }
 
+                logger.info("Criteria: " + criteria);
                 return criteria;
             }
         });
