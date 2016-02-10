@@ -92,7 +92,7 @@ public class HibernateWiretapDaoTest
      */
     @Test 
     @DirtiesContext
-    public void test_success_no_results()
+    public void test_success_housekeep()
     {
     	wiretapDao.setBatchHousekeepDelete(true);
     	wiretapDao.setHousekeepingBatchSize(100);

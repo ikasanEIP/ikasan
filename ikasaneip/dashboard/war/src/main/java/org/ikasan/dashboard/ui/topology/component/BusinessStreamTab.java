@@ -42,10 +42,14 @@ package org.ikasan.dashboard.ui.topology.component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.graph.IkasanNetworkDiagram;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -56,6 +60,14 @@ import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
 import org.vaadin.teemu.VaadinIcons;
+import org.vaadin.visjs.networkDiagram.Color;
+import org.vaadin.visjs.networkDiagram.Edge;
+import org.vaadin.visjs.networkDiagram.Node;
+import org.vaadin.visjs.networkDiagram.Node.NodeClickListener;
+import org.vaadin.visjs.networkDiagram.options.HierarchicalLayout;
+import org.vaadin.visjs.networkDiagram.options.HierarchicalLayout.Direction;
+import org.vaadin.visjs.networkDiagram.options.Options;
+import org.vaadin.visjs.networkDiagram.options.physics.Physics;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -65,15 +77,15 @@ import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.Resource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
@@ -97,6 +109,8 @@ public class BusinessStreamTab extends TopologyTab
 	private TopologyService topologyService;	
 	
 	private ComboBox businessStreamCombo;
+	
+	private int i=0;
 	
 	public BusinessStreamTab(TopologyService topologyService, ComboBox businessStreamCombo)
 	{
@@ -427,12 +441,190 @@ public class BusinessStreamTab extends TopologyTab
 		controlsLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
 		controlsLayout.addComponent(descriptionTextArea, 1, 2);
     	
-    	layout.addComponent(controlsLayout);
-		layout.addComponent(this.businessStreamTable);
+//    	layout.addComponent(controlsLayout);
+//		layout.addComponent(this.businessStreamTable);
+		layout.addComponent(getNetwrokDiagram());
 		
 		this.addComponent(layout);
 		this.setSizeFull();
 	}
+	
+	public DragAndDropWrapper getNetwrokDiagram() 
+	{
+		Physics p = new Physics();
+		
+		HierarchicalLayout l = new HierarchicalLayout();
+		l.setEnabled(true);
+		l.setDirection(Direction.LR);
+		
+        Options options = new Options();
+        options.setZoomable(true);
+        options.setConfigurePhysics(false);
+        options.setClickToUse(false);
+        options.setStabilizationIterations(0);
+        options.setStabilize(true);
+        
+//        options.setStabilize(true);
+//        options.setPhysics(p);
+//        options.setHierarchicalLayout(l);
+        
+        final IkasanNetworkDiagram networkDiagram = new IkasanNetworkDiagram(options);
+        networkDiagram.setWidth("100%");
+        networkDiagram.setHeight("600px");
+        addComponent(networkDiagram);
+
+        //create nodes
+        final Node node1 = new Node(1,"ESB");  
+        node1.setMass(25);
+        node1.setShape(Node.Shape.database);
+        Color esbc = new Color();
+        esbc.setBackgroundColor("#FE9900");
+        esbc.setColor("#FE9900");
+        esbc.setHoverColor("#FE9900");
+        esbc.setHighlightColor("#FE9900");
+        node1.setColor(esbc);
+        
+//        node1.setImage("https://vaadin.com/download/vaadin-icons/png/flash.png");
+        Node node2 = new Node(2,"Node 2");
+       
+//        node2.setImage("https://vaadin.com/download/vaadin-icons/png/archive.png");
+        final Node node3 = new Node(3,"Node 3");
+        
+//        node3.setImage("https://vaadin.com/download/vaadin-icons/png/archive.png");
+        Node node4 = new Node(4,"Node 4");
+        
+//        node4.setImage("https://vaadin.com/download/vaadin-icons/png/archive.png");
+        Node node5 = new Node(5,"Node 5");
+        
+//        node5.setImage("https://vaadin.com/download/vaadin-icons/png/archive.png");
+        Node node6 = new Node(6,"Node 6");
+       
+//        node6.setImage("https://vaadin.com/download/vaadin-icons/png/archive.png");
+        
+        final Node murex = new Node(10,"MUREX");
+        murex.setShape(Node.Shape.square);
+        Color mc = new Color();
+        mc.setBackgroundColor("#504faf");
+        mc.setColor("#504faf");
+        mc.setHoverColor("#504faf");
+        mc.setHighlightColor("#504faf");
+        murex.setColor(mc);
+
+        //create edges
+        final Edge edge1 = new Edge(node2.getId(),node1.getId(), 2);
+        edge1.setStyle(Edge.Style.arrow);
+        
+        Edge edge2 = new Edge(node3.getId(),node1.getId(), 2);
+        edge2.setStyle(Edge.Style.arrow);
+        Edge edge3 = new Edge(node1.getId(),node5.getId(), 2);
+        edge3.setStyle(Edge.Style.arrow);
+        Edge edge4 = new Edge(node1.getId(),node4.getId(), 2);
+        edge4.setStyle(Edge.Style.arrow);
+        Edge edge5 = new Edge(node1.getId(),node6.getId(), 2);
+        edge5.setStyle(Edge.Style.arrow);
+        
+        Edge edge6 = new Edge(murex.getId(),node6.getId(), 2);
+        edge6.setStyle(Edge.Style.arrow);
+
+        networkDiagram.addNode(node1);
+        networkDiagram.addNode(node2,node3,node4,node5,node6, murex);
+        networkDiagram.addEdge(edge1,edge2,edge3,edge4,edge5,edge6);
+        
+        DragAndDropWrapper layoutWrapper =
+                new DragAndDropWrapper(networkDiagram);
+        
+
+        // Handle moving components within the AbsoluteLayout
+        layoutWrapper.setDropHandler(new DropHandler() 
+        {
+            public AcceptCriterion getAcceptCriterion() 
+            {
+                return AcceptAll.get();
+            }
+
+            public void drop(DragAndDropEvent event) 
+            {            	
+            	final DataBoundTransferable t = (DataBoundTransferable) event
+                        .getTransferable();
+		
+				if(t.getItemId() instanceof Module)
+				{
+					final Module module = (Module) t
+							.getItemId();
+					
+					Node node = new Node(module.getId().intValue(), module.getName());
+					
+					node.setImage("https://vaadin.com/download/vaadin-icons/png/archive.png");
+					
+					Edge edge = new Edge(node.getId(),node1.getId(), 2);
+			        edge.setStyle(Edge.Style.arrow);
+					
+					networkDiagram.addNode(node);
+					networkDiagram.addEdge(edge);					
+	            }
+            }
+            
+        });
+        
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				
+				UI.getCurrent().access(new Runnable() 
+				{
+		            @Override
+		            public void run() 
+		            {
+		            	VaadinSession.getCurrent().getLockInstance().lock();
+		        		try 
+		        		{
+		        			i++;
+		    				if(i%2 == 0)
+		    				{
+		    					Color c = new Color("#000000");
+		    					c.setColor("#000000");
+		    					edge1.setColor(c);
+		    					logger.info("Setting colour black +");
+		    					
+		    					c = new Color("#00FF00");
+		    					c.setColor("#00FF00");
+		    					node3.setColor(c);
+		    				}
+		    				else
+		    				{
+		    					Color c = new Color("#ff0000");
+		    					c.setColor("#ff0000");
+		    					edge1.setColor(c);
+		    					logger.info("Setting colour red +");
+		    					
+		    					c = new Color("#ff0000");
+		    					c.setColor("#ff0000");
+		    					node3.setColor(c);
+		    				}
+		    				
+		    				networkDiagram.updateEdge(edge1);
+		    				networkDiagram.updateNode(node3);
+		    				
+		        		} 
+		        		finally 
+		        		{
+		        			VaadinSession.getCurrent().getLockInstance().unlock();
+		        		}
+		            	
+		            	UI.getCurrent().push();	
+		            }
+		        });	
+				
+			}
+		}, 10, 10, TimeUnit.SECONDS);
+        
+        
+        return layoutWrapper;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
