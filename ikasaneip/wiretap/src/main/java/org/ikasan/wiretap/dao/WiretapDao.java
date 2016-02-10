@@ -133,4 +133,6 @@ public interface WiretapDao
 	 * @return
 	 */
 	public boolean housekeepablesExist();
+
+    void setHousekeepQuery(String housekeepQuery);
 }
