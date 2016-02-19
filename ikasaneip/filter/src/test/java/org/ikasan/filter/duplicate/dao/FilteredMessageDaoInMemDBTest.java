@@ -44,7 +44,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
@@ -130,13 +130,15 @@ public class FilteredMessageDaoInMemDBTest
     {
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(one);
+        this.duplicateFilterDao.setHousekeepQuery("delete top _bs_ from MessageFilter where Expiry <= _ex_");   //sybase
 
         FilterEntry two = new DefaultFilterEntry("two".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(two);
 
         FilterEntry three = new DefaultFilterEntry("three".hashCode(), "bulk_delete_test", 1);
         this.duplicateFilterDao.save(three);
-        Thread.sleep(10l); // let time move on 
+        Thread.sleep(10l); // let time move on
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         this.duplicateFilterDao.deleteAllExpired();
 
         FilterEntry found = this.duplicateFilterDao.findMessage(one);
@@ -165,12 +167,11 @@ public class FilteredMessageDaoInMemDBTest
     	}
 
         Thread.sleep(10l); // let time move on 
-        this.duplicateFilterDao.setBatchedHousekeep(true);
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         this.duplicateFilterDao.setTransactionBatchSize(20000);
-        
         this.duplicateFilterDao.deleteAllExpired();
         
-        this.duplicateFilterDao.setBatchedHousekeep(false);
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         
         Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
         
@@ -181,11 +182,11 @@ public class FilteredMessageDaoInMemDBTest
     	}
 
         Thread.sleep(10l); // let time move on 
-        this.duplicateFilterDao.setBatchedHousekeep(true);
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         
         this.duplicateFilterDao.deleteAllExpired();
         
-        this.duplicateFilterDao.setBatchedHousekeep(false);
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         
         Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
     }
@@ -199,8 +200,8 @@ public class FilteredMessageDaoInMemDBTest
     @DirtiesContext
     public void batch_delete_expired_entries() throws InterruptedException
     {
-        this.duplicateFilterDao.setBatchedHousekeep(true);
-        this.duplicateFilterDao.setBatchSize(1);
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
+        this.duplicateFilterDao.setHousekeepingBatchSize(1);
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "batch_delete_test", 0);
         this.duplicateFilterDao.save(one);
 

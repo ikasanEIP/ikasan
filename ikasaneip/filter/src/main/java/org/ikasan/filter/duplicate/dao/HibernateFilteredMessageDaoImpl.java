@@ -43,10 +43,7 @@ package org.ikasan.filter.duplicate.dao;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.*;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -68,32 +65,16 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= :" + EXPIRY;
 
     /** Flag for batch housekeeping option. Defaults to true */
-    private boolean batchedHousekeep = true;
+    private boolean batchHousekeepDelete = true;
 
-    /** The batch size used when {@link #batchedHousekeep} option is set. Default to 100*/
-    private int batchSize = 100;
-    
-    /** Batch size used when in a single transaction */    
+    /** The batch size used when {@link #batchHousekeepDelete} option is set. Default to 100*/
+    private int housekeepingBatchSize = 100;
+
+    /** Batch size used when in a single transaction */
 	private Integer transactionBatchSize = 1000;
 
-    /**
-     * Setter for {@link #batchedHousekeep} flag for overriding default
-     * value
-     * @param batchedHousekeep
-     */
-    public void setBatchedHousekeep(boolean batchedHousekeep)
-    {
-        this.batchedHousekeep = batchedHousekeep;
-    }
+    private String housekeepQuery;
 
-    /**
-     * Setter for {@link #batchSize} for overriding default value
-     * @param batchSize
-     */
-    public void setBatchSize(int batchSize)
-    {
-        this.batchSize = batchSize;
-    }
 
     /*
      * (non-Javadoc)
@@ -131,7 +112,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
      */
     public void deleteAllExpired()
     {
-        if (!this.batchedHousekeep)
+        if (!this.batchHousekeepDelete)
         {
         	getHibernateTemplate().execute(new HibernateCallback<Object>()
 	        {
@@ -157,17 +138,27 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     protected void batchDeleteAllExpired()
     {
     	logger.info("MessageFilter batch delete.");
-    	
-    	int numDeleted = 0;
-    	
-    	while(housekeepablesExist() && numDeleted < this.transactionBatchSize)
-    	{
-	        List<FilterEntry> expired = this.findExpiredMessages();
-	    	
-	        this.getHibernateTemplate().deleteAll(expired);
-	        
-	        numDeleted += expired.size();
-	        expired = this.findExpiredMessages();
+
+        int numDeleted = 0;
+
+        while (housekeepablesExist() && numDeleted < this.transactionBatchSize)
+        {
+            getHibernateTemplate().execute(new HibernateCallback<Object>()
+            {
+                public Object doInHibernate(Session session) throws HibernateException{
+
+
+                    String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
+                            .replace("_ex_", String.valueOf(System.currentTimeMillis()));
+
+                    SQLQuery query = session.createSQLQuery(formattedQuery);
+                    query.executeUpdate();
+
+                    return null;
+                }
+            });
+
+            numDeleted += housekeepingBatchSize;
     	}
     }
 
@@ -185,7 +176,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             {
                 Criteria criteria = session.createCriteria(FilterEntry.class);
                 criteria.add(Restrictions.lt(FilterEntry.EXPRIY_PROP_KEY, System.currentTimeMillis()));
-                criteria.setMaxResults(batchSize);
+                criteria.setMaxResults(housekeepingBatchSize);
                 return criteria.list();
             }
         });
@@ -234,5 +225,30 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 	{
 		this.transactionBatchSize = transactionBatchSize;
 	}
+
+    @Override
+    public void setHousekeepQuery(String housekeepQuery)
+    {
+        this.housekeepQuery = housekeepQuery;
+    }
+
+    /**
+     * Setter for {@link #batchHousekeepDelete} flag for overriding default
+     * value
+     * @param batchHousekeepDelete
+     */
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
+    {
+        this.batchHousekeepDelete = batchHousekeepDelete;
+    }
+
+    /**
+     * Setter for {@link #housekeepingBatchSize} for overriding default value
+     * @param housekeepingBatchSize
+     */
+    public void setHousekeepingBatchSize(int housekeepingBatchSize)
+    {
+        this.housekeepingBatchSize = housekeepingBatchSize;
+    }
 
 }
