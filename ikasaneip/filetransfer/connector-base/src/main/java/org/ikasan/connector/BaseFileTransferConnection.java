@@ -142,7 +142,7 @@ public interface
                                      boolean chunking, int chunkSize, boolean checksum,
                                      long minAge, boolean destructive, boolean filterDuplicates,
                                      boolean filterOnFilename, boolean filterOnLastModifedDate,
-                                     boolean chronological, boolean isRecursive) throws ResourceException;
+                                     boolean chronological, boolean isRecursive, boolean alwaysChunk) throws ResourceException;
 
     /**
      * Housekeeping the file transfer based connectors

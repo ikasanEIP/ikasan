@@ -147,7 +147,8 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
                          this.configuration.getFilterOnFilename().booleanValue(),
                          this.configuration.getFilterOnLastModifiedDate().booleanValue(),
                          this.configuration.getChronological().booleanValue(),
-                         this.configuration.getIsRecursive().booleanValue());
+                         this.configuration.getIsRecursive().booleanValue(),
+                         this.configuration.getAlwaysChunk().booleanValue());
                 if (payload != null)
                 {
                     return payload;

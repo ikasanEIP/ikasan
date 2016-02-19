@@ -40,10 +40,10 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
+
+import javax.resource.spi.InvalidPropertyException;
 
 /**
  * SFTP Consumer Configuration model.
@@ -90,6 +90,9 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
 
     /** Maximum size of chunk when chunking, defaults to 1MB */
     private Integer chunkSize = Integer.valueOf(1048576);
+
+    /** If true always chunk regardless of threshold **/
+    private Boolean alwaysChunk = Boolean.FALSE;
 
     /** Attempt to verify integrity of retrieved file by comparing with a checksum supplied by the remote system */
     private Boolean checksum = Boolean.FALSE;
@@ -703,5 +706,12 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration
             }
         }
     }
-    
+
+    public Boolean getAlwaysChunk() {
+        return alwaysChunk;
+    }
+
+    public void setAlwaysChunk(Boolean alwaysChunk) {
+        this.alwaysChunk = alwaysChunk;
+    }
 }

@@ -40,20 +40,8 @@
  */
 package org.ikasan.connector.ftp.outbound;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
-
 import org.apache.log4j.Logger;
-import org.ikasan.filetransfer.Payload;
-import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
-import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
+import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.ConnectorException;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -63,17 +51,9 @@ import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
-import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferMappedRecordTransformer;
-import org.ikasan.connector.basefiletransfer.outbound.command.ChecksumDeliveredCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.ChecksumValidatorCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.ChunkingRetrieveFileCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.CleanupChunksCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.FileDiscoveryCommand;
-import org.ikasan.connector.basefiletransfer.outbound.command.RetrieveFileCommand;
+import org.ikasan.connector.basefiletransfer.outbound.command.*;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.FilenameRegexpMatchedTargetDirectorySelector;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.TargetDirectorySelector;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
@@ -85,6 +65,18 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.ChunkHeaderLoadException;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
+import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class implements the virtual connection to the FTP server.<br>
@@ -225,7 +217,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
     @SuppressWarnings("unchecked")
     public Payload getDiscoveredFile(String sourceDir, String filenamePattern, boolean renameOnSuccess, String renameOnSuccessExtension, boolean moveOnSuccess,
             String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum, long minAge, boolean destructive, boolean filterDuplicates,
-            boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean chronological, boolean isRecursive) throws ResourceException
+            boolean filterOnFilename, boolean filterOnLastModifiedDate, boolean chronological, boolean isRecursive, boolean alwaysChunk) throws ResourceException
     {
         Payload result = null;
         ExecutionContext executionContext = new ExecutionContext();
@@ -260,7 +252,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
                 fullMovePath = fullMovePath + entry.getUri().getPath().substring(lastIndexOf);
             }
             result = sourceFile(entry, this.clientId, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, fullMovePath, chunking, chunkSize, checksum,
-                destructive, baseFileTransferDao);
+                destructive, baseFileTransferDao, alwaysChunk);
 
         }
         return result;
@@ -460,7 +452,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
      * @throws ResourceException Exception thrown by the FTP conenctor
      */
     private Payload sourceFile(ClientListEntry entry, String clientID, boolean renameOnSuccess, String renameOnSuccessExtension, boolean moveOnSuccess,
-            String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum, boolean destructive, BaseFileTransferDao baseFileTransferDao)
+            String moveOnSuccessNewPath, boolean chunking, int chunkSize, boolean checksum, boolean destructive, BaseFileTransferDao baseFileTransferDao, boolean alwaysChunk)
             throws ResourceException
     {
         logger.debug("sourceFile called with entry: [" + entry + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -469,7 +461,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.CLIENT_ID, clientID);
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
-        if(chunking && shouldChunk(entry))
+        if(chunking && (shouldChunk(entry) || alwaysChunk))
         {
             FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             // chunking specific
