@@ -290,7 +290,7 @@ public class Module implements Comparable<Module>
 		return "Module [id=" + id + ", name=" + name + ", description="
 				+ description + ", contextRoot=" + contextRoot
 				+ ", diagramUrl=" + diagramUrl + ", version=" + version
-				+ ", server=" + server.getName() + ", flows=" + flows
+				+ ", server=" + server.getId() + " " +  server.getName() + ", flows=" + flows
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";
 	}

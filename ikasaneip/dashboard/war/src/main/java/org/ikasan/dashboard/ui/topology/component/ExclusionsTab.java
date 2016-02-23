@@ -798,7 +798,7 @@ public class ExclusionsTab extends TopologyTab
     	    item.getItemProperty("Module Name").setValue(exclusionEvent.getModuleName());
 			item.getItemProperty("Flow Name").setValue(exclusionEvent.getFlowName());
 			
-			if(exclusionEvent.getEvent() != null)
+			if(errorOccurrence != null && errorOccurrence.getErrorMessage() != null)
 			{
 				item.getItemProperty("Error Message").setValue(new String(errorOccurrence.getErrorMessage()));
 			}

@@ -87,17 +87,17 @@ public class EmailNotifier implements Notifier
 
         try
 		{
+        	logger.info("Sending notification to: " + notificationContentProducer.getNoitificationReceivers());
         	if(notificationContentProducer.getNoitificationReceivers() != null)
         	{
         		message.addRecipients(Message.RecipientType.TO, toArray( parseRecipients(notificationContentProducer.getNoitificationReceivers()) ));
         	}
-        	
-//			message.addRecipients(Message.RecipientType.CC, toArray( configuration.getCcRecipients() ));
-//	        message.addRecipients(Message.RecipientType.BCC, toArray( configuration.getBccRecipients() ));
 
 	        message.setSubject(notificationContentProducer.getNotificationSubject());
+	        logger.info("Subject: " + notificationContentProducer.getNotificationSubject());
 
 	        BodyPart bodyPart = new MimeBodyPart();
+	        logger.info("Body: " + notificationContentProducer.getNotificationContent());
 	        if(notificationContentProducer.getNotificationContent() != null)
 	        {
 	            bodyPart.setContent(notificationContentProducer.getNotificationContent(), "text/html; charset=utf-8");
@@ -107,6 +107,7 @@ public class EmailNotifier implements Notifier
 	        multipart.addBodyPart(bodyPart);
 	        message.setContent(multipart);
 	        Transport.send(message);
+	        logger.info("Email sent!");
 	        
 		} 
         catch (Exception e)
