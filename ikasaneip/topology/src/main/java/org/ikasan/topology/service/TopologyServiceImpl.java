@@ -232,9 +232,12 @@ public class TopologyServiceImpl implements TopologyService
     	
     	ObjectMapper mapper = new ObjectMapper();
     	
+    	// Firstly sort out the server module relationships
 		for(Server server: servers)
 		{
-			List<Module> modules = this.topologyDao.getAllModules();			
+			List<Module> modules = this.topologyDao.getAllModules();	
+			
+			Set<Module> moduleSet = new HashSet<Module>();
 			
 			for(Module module: modules)
 			{	
@@ -261,9 +264,53 @@ public class TopologyServiceImpl implements TopologyService
 			    	continue;
 			    }
 			    
-			    module.setServer(server);
+			    logger.debug("Successfully discovered module using URL: " + url 
+		    			+ ". Server =  " + server);
 			    
-			    this.topologyDao.save(module);
+			    module.setServer(server);
+
+			    moduleSet.add(module);
+			    
+			    server.setModules(moduleSet);
+			    
+			    this.topologyDao.save(server);
+			}
+		}
+		
+		// Now sort out the flows on servers
+		for(Server server: servers)
+		{
+			List<Module> modules = this.topologyDao.getAllModules();	
+			
+			Set<Module> moduleSet = new HashSet<Module>();
+			
+			for(Module module: modules)
+			{	
+				List<String> discoveredFlowNames = new ArrayList<String>();
+				
+				String url = server.getUrl() + ":" + server.getPort() 
+						+ module.getContextRoot() 
+						+ "/rest/discovery/flows/"
+						+ module.getName();
+				
+			    WebTarget webTarget = client.target(url);
+			    
+			    JsonArray flowResponse = null;
+			    
+			    try
+			    {
+			    	flowResponse = webTarget.request().get(JsonArray.class);
+			    }
+			    catch(Exception e)
+			    {
+			    	// We may not find the module on the server so just move on to the next module.
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
+			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
+			    	continue;
+			    }
+			    
+			    logger.debug("Successfully discovered module using URL: " + url 
+		    			+ ". Server =  " + server);
 			    
 			    for(JsonValue flowValue: flowResponse)
 			    { 
@@ -292,6 +339,10 @@ public class TopologyServiceImpl implements TopologyService
 					
 					Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
 						(server.getId(), module.getId(), flow.getName());
+					
+					logger.info("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
+							+ " flow name = " + flow.getName());
+					logger.info("Loaded dbFlow: " + dbFlow);
 					
 					if(dbFlow != null)
 					{

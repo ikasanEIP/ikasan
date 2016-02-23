@@ -232,4 +232,11 @@ public class Server
 		this.port = port;
 	}
 
+	@Override
+	public String toString() {
+		return "Server [id=" + id + ", name=" + name + ", description="
+				+ description + ", url=" + url + ", port=" + port
+				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+				+ updatedDateTime + "]";
+	}
 }
