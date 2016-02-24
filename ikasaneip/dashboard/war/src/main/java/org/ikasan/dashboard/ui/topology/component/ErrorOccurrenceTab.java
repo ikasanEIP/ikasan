@@ -803,14 +803,15 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	ArrayList<String> componentNames = null;
     	
-    	if(components.getItemIds().size() > 0)
-    	{
-    		componentNames = new ArrayList<String>();
-        	for(Object component: components.getItemIds())
-        	{
-        		componentNames.add(((Component)component).getName());
-        	}
-    	}
+//    	TODO Components are too granular for the search. Need to find a better solution.
+//    	if(components.getItemIds().size() > 0)
+//    	{
+//    		componentNames = new ArrayList<String>();
+//        	for(Object component: components.getItemIds())
+//        	{
+//        		componentNames.add(((Component)component).getName());
+//        	}
+//    	}
     	
     	if(modulesNames == null && flowNames == null && componentNames == null && businessStreamCombo != null
     			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))

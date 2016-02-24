@@ -323,9 +323,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 
                 if (restrictionExists(moduleNames))
                 {
-//                    criteria.add(Restrictions.in("moduleName", moduleNames));
-                	
-                	Disjunction disjunction = Restrictions.disjunction();
+               	    Disjunction disjunction = Restrictions.disjunction();
                 	
                 	for(String moduleName: moduleNames)
                 	{
@@ -335,9 +333,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 	criteria.add(disjunction);
                 }
                 if (restrictionExists(moduleFlows))
-                {
-//                    criteria.add(Restrictions.in("flowName", moduleFlows));
-                    
+                {                    
                 	Disjunction disjunction = Restrictions.disjunction();
                 	
                     for(String flowName: moduleFlows)
@@ -349,7 +345,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 if (restrictionExists(componentNames))
                 {
-//                    criteria.add(Restrictions.in("componentName", componentNames));
                 	Disjunction disjunction = Restrictions.disjunction();
                 	
                     for(String componentName: componentNames)
