@@ -41,13 +41,7 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
-import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
-import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.splitting.Splitter;
-import org.ikasan.spec.component.splitting.SplitterException;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -57,7 +51,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -80,13 +73,17 @@ public class ConcurrentSplitterFlowElementInvokerTest
     private FlowEventListener flowEventListener = mockery.mock(FlowEventListener.class, "flowEventListener");
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
-    private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
-    private FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class, "flowElementInvoker");
+    /** the sub flow element, also used as the current splitter flow element */
+    private FlowElement subFlowElement = mockery.mock(FlowElement.class, "subFlowElement");
+
+    /** the main flow element, called after the concurrent subflows */
+    private FlowElement mainFlowElement = mockery.mock(FlowElement.class, "mainFlowElement");
+    private FlowElementInvoker mainFlowElementInvoker = mockery.mock(FlowElementInvoker.class, "mainFlowElementInvoker");
+
     private Splitter splitter = mockery.mock(Splitter.class, "splitter");
     private Object payload = mockery.mock(Object.class, "payload");
-    private Callable asyncTask = mockery.mock(Callable.class, "mockAsyncTask");
-    private ExecutorService executorService = mockery.mock(ExecutorService.class, "mockExecutorService");
-    private ListenableFuture listenableFuture = mockery.mock(ListenableFuture.class, "mockListenableFuture");
+    private ConcurrentSplitterFlowElementInvoker.SplitFlowElement asyncTask = mockery.mock(ConcurrentSplitterFlowElementInvoker.SplitFlowElement.class, "mockAsyncTask");
+    private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     @Test
     @SuppressWarnings("unchecked")
@@ -94,40 +91,55 @@ public class ConcurrentSplitterFlowElementInvokerTest
         final List payloads = new ArrayList();
         payloads.add(payload);
 
-        final List<String> invokedComponents =  new ArrayList<String>();
+        final List<String> invokedComponents =  new ArrayList<>();
         invokedComponents.add("componentName");
+
+        asyncTask._flowEvent = flowEvent;
+        asyncTask._flowInvocationContext = flowInvocationContext;
 
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(flowElement).getComponentName();
+                exactly(1).of(subFlowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
 
-                exactly(1).of(flowElement).getFlowComponent();
+                exactly(1).of(subFlowElement).getFlowComponent();
                 will(returnValue(splitter));
                 exactly(1).of(splitter).split(flowEvent);
                 will(throwException(new ClassCastException()));
-                exactly(1).of(flowEvent).getPayload();
+                exactly(2).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(splitter).split(payload);
                 will(returnValue(payloads));
 
-                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-                will(returnValue(flowElement));
+                exactly(1).of(subFlowElement).getTransition(FlowElement.SUBFLOW_TRANSITION_NAME);
+                will(returnValue(subFlowElement));
+
+                exactly(1).of(asyncTask).call();
+                will(returnValue(asyncTask));
+
                 exactly(1).of(flowEvent).setPayload(payload);
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(subFlowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(mainFlowElement));
+
+                exactly(1).of(mainFlowElement).getFlowElementInvoker();
+                will(returnValue(mainFlowElementInvoker));
+                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
+                will(returnValue(null));
+
+                exactly(1).of(flowEvent).setPayload(payload);
+                exactly(2).of(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
 
                 exactly(1).of(flowInvocationContext).getInvokedComponents();
                 will(returnValue(invokedComponents));
-
-                exactly(1).of(executorService).execute(with(any(Runnable.class)));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1, null);
-        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
         mockery.assertIsSatisfied();
     }
 
@@ -144,17 +156,9 @@ public class ConcurrentSplitterFlowElementInvokerTest
         }
 
         /**
-         * Return mocked async task.
-         *
-         * @param nextFlowElementInRoute
-         * @param flowEventListener
-         * @param moduleName
-         * @param flowName
-         * @param flowInvocationContext
-         * @param flowEvent
-         * @return
+         * Mock the async task.
          */
-        protected Callable newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
+        protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
         {
             return asyncTask;
         }
