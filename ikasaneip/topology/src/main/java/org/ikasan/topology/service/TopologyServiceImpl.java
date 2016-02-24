@@ -312,6 +312,8 @@ public class TopologyServiceImpl implements TopologyService
 			    logger.debug("Successfully discovered module using URL: " + url 
 		    			+ ". Server =  " + server);
 			    
+			    Set<Flow> flowSet = new HashSet<Flow>();
+			    
 			    for(JsonValue flowValue: flowResponse)
 			    { 
 			    	List<String> discoveredComponentNames = new ArrayList<String>();
@@ -352,9 +354,13 @@ public class TopologyServiceImpl implements TopologyService
 					
 					flow.setModule(module);
 					
+					flowSet.add(flow);
+					
 					logger.debug("Saving flow: " + flow);
 					this.topologyDao.save(flow);
-											
+					
+					Set<Component> componentSet = new HashSet<Component>();
+					
 					for(Component component: components)
 					{
 						component = getComponent(flow.getComponents(), component);
@@ -363,10 +369,19 @@ public class TopologyServiceImpl implements TopologyService
 						logger.debug("Saving component: " + component.getName());
 
 						this.topologyDao.save(component);
+						
+						componentSet.add(component);
 					}	
 					
+					flow.setComponents(componentSet);
+					
+					this.topologyDao.save(flow);
 					this.cleanUpComponents(server.getId(), module.getId(), flow.getName(), discoveredComponentNames);
 			    }
+			    
+			    module.setFlows(flowSet);
+			    
+			    this.topologyDao.save(module);
 			    
 			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
 			}

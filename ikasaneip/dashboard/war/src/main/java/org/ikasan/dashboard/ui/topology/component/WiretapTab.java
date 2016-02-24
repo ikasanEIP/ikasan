@@ -272,16 +272,17 @@ public class WiretapTab extends TopologyTab
             	
             	HashSet<String> componentNames = null;
             	
-            	if(components.getItemIds().size() > 0)
-            	{
-            		componentNames = new HashSet<String>();
-	            	for(Object component: components.getItemIds())
-	            	{
-	            		
-	            		componentNames.add("before " + ((Component)component).getName());
-	            		componentNames.add("after " + ((Component)component).getName());
-	            	}
-            	}
+//            	TODO Components are too granular for the search. Need to find a better solution.
+//            	if(components.getItemIds().size() > 0)
+//            	{
+//            		componentNames = new HashSet<String>();
+//	            	for(Object component: components.getItemIds())
+//	            	{
+//	            		
+//	            		componentNames.add("before " + ((Component)component).getName());
+//	            		componentNames.add("after " + ((Component)component).getName());
+//	            	}
+//            	}
             	
             	if(modulesNames == null && flowNames == null && componentNames == null
             			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))

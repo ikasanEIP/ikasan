@@ -78,7 +78,6 @@ import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.Property;
 import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -775,14 +774,15 @@ public class CategorisedErrorTab extends TopologyTab
     	
     	componentNames = null;
     	
-    	if(components.getItemIds().size() > 0)
-    	{
-    		componentNames = new ArrayList<String>();
-        	for(Object component: components.getItemIds())
-        	{
-        		componentNames.add(((Component)component).getName());
-        	}
-    	}
+//    	TODO Components are too granular for the search. Need to find a better solution.
+//    	if(components.getItemIds().size() > 0)
+//    	{
+//    		componentNames = new ArrayList<String>();
+//        	for(Object component: components.getItemIds())
+//        	{
+//        		componentNames.add(((Component)component).getName());
+//        	}
+//    	}
     	
     	String errorCategory = null;
     	
