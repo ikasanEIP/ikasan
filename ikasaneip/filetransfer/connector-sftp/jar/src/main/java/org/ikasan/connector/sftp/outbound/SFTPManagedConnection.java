@@ -40,17 +40,6 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.Iterator;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.security.auth.Subject;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ikasan.connector.BaseFileTransferConnection;
@@ -58,8 +47,17 @@ import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
 import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
-
 import org.ikasan.connector.sftp.net.SFTPClient;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.security.auth.Subject;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+import java.io.File;
+import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * This EJB implements the ManagedConnection for the SFTP resource adapter. This
@@ -377,9 +375,21 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
 
         Integer connectionTimeout = this.scri.getConnectionTimeout();
 
+        String preferredKeyExchangeAlgorithm = this.scri.getPreferredKeyExchangeAlgorithm();
+
 
         //Create a SFTPClient
-        this.sftpClient = new SFTPClient(privateKey, knownHosts, username, password, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
+        this.sftpClient = new SFTPClient(privateKey,
+                                         knownHosts,
+                                         username,
+                                         password,
+                                         remoteHostname,
+                                         remotePort,
+                                         localHostname,
+                                         maxRetryAttempts,
+                                         preferredAuthentications,
+                                         connectionTimeout,
+                                         preferredKeyExchangeAlgorithm);
 
         try
         {
