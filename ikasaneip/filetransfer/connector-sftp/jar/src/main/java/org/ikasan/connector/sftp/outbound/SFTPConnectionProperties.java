@@ -80,7 +80,8 @@ public enum SFTPConnectionProperties
     /** Password */
     PASSWORD("password"), //$NON-NLS-1$
     /** XA Connection Factory Handle */
-    XA_CF_HANDLE("sftpXAConnectionFactoryHandle");
+    XA_CF_HANDLE("sftpXAConnectionFactoryHandle"),
+    PREFERRED_DEX("preferredKeyExchangeAlgorithm");
 
     /** Serialize ID */
     private static final long serialVersionUID = 1L;
