@@ -6,21 +6,16 @@ import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.sftp.ssh.SftpServerWithPasswordAuthenticator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by amajewski on 24/06/15.
@@ -41,7 +36,7 @@ public class SFTPClientTest
         tempDir = Files.createTempDirectory("tempfiles");
         server = new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD, tempDir);
         server.start();
-        uut = new SFTPClient(null,null,"testUser","testPassword","localhost",SFTP_PORT_PASSWORD,"localhost",3,"",20000);
+        uut = new SFTPClient(null,null,"testUser","testPassword","localhost",SFTP_PORT_PASSWORD,"localhost",3,"",20000,null);
 
         uut.connect();
 
