@@ -189,15 +189,16 @@ public class ActionedExclusionTab extends TopologyTab
             	
             	ArrayList<String> componentNames = null;
             	
-//            	TODO Components are too granular for the search. Need to find a better solution.
-//            	if(components.getItemIds().size() > 0)
-//            	{
-//            		componentNames = new ArrayList<String>();
-//	            	for(Object component: components.getItemIds())
-//	            	{
-//	            		componentNames.add(((Component)component).getName());
-//	            	}
-//            	}
+            	if(components.getItemIds().size() > 0 
+            			&& modules.getItemIds().size() == 0
+            			&& flows.getItemIds().size() == 0)
+            	{
+            		componentNames = new ArrayList<String>();
+	            	for(Object component: components.getItemIds())
+	            	{
+	            		componentNames.add(((Component)component).getName());
+	            	}
+            	}
             	
             	if(modulesNames == null && flowNames == null && componentNames == null
             			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
