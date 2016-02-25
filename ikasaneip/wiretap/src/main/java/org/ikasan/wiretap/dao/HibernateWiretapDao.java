@@ -80,9 +80,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     /** Query for finding all wiretap events with the same payloadId */
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
 
-    /** Batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete top " + BATCH_SIZE + " from IkasanWiretap where Expiry <= " + EXPIRY;
-
     private static final String HOUSEKEEPABLES_EXIST = "SELECT CAST(COUNT(1) AS BIT) AS HousekeepableExists FROM IkasanWiretap" +
     		" WHERE EXISTS (select * from IkasanWiretap where Expiry <= " + EXPIRY + ")";
 
@@ -121,8 +118,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * Save the wiretapFlowEvent
      *
      * @see
-     * org.ikasan.framework.event.wiretap.dao.WiretapDao#save(
-     * org.ikasan.framework.event.wiretap.model.WiretapFlowEvent)
+     * org.ikasan.wiretap.dao.WiretapDao#save(
+     * org.ikasan.wiretap.model.WiretapFlowEvent)
      */
     public void save(WiretapEvent wiretapEvent)
     {
@@ -416,6 +413,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	        {
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
+
                     String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
                                                     .replace("_ex_", String.valueOf(System.currentTimeMillis()));
 

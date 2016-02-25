@@ -45,6 +45,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.ikasan.systemevent.model.SystemEvent;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,39 +88,49 @@ public class HibernateSystemEventDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
      */
     @Test 
     @DirtiesContext
-    public void test_success_no_results()
+    public void test_success_no_results_sybase()
     {
-    	systemEventDao.setBatchHousekeepDelete(true);
-    	systemEventDao.setHousekeepingBatchSize(100);
-    	systemEventDao.setTransactionBatchSize(2000);
-    	
-    	while(systemEventDao.housekeepablesExist())
+		systemEventDao.setHousekeepQuery("delete top _bs_ from SystemEvent where Expiry <= getdate()");   //sybase
+    }
+
+	@Test
+	@DirtiesContext
+	public void test_success_no_results_mysql()
+	{
+		systemEventDao.setHousekeepQuery("delete top _bs_ from SystemEvent where Expiry <= now()"); //mysql
+	}
+
+	@Test
+	@DirtiesContext
+	public void test_success_no_results_mssql()
+	{
+		systemEventDao.setHousekeepQuery("delete top ( _bs_ ) from SystemEvent where Expiry <= getdate()"); //mssql
+	}
+
+	@After
+	public void process()
+	{
+		systemEventDao.setBatchHousekeepDelete(true);
+		systemEventDao.setHousekeepingBatchSize(100);
+		systemEventDao.setTransactionBatchSize(2000);
+		while(systemEventDao.housekeepablesExist())
     	{
     		this.systemEventDao.deleteExpired();
     	}
-    	
-    	
-    	for(int i=0; i< 13456; i++)
-    	{
-	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
-    	}
-    	
-    	systemEventDao.setHousekeepingBatchSize(1000);
-    	systemEventDao.setTransactionBatchSize(20000);
-    	
-    	this.systemEventDao.deleteExpired();
-    	
-    	for(int i=0; i< 79; i++)
-    	{
-	    	systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
-    	}
-    	
-    	this.systemEventDao.deleteExpired();
-    }
-
-    
+		for(int i=0; i< 13456; i++)
+        {
+            systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+		systemEventDao.setHousekeepingBatchSize(1000);
+		systemEventDao.setTransactionBatchSize(20000);
+		this.systemEventDao.deleteExpired();
+		for(int i=0; i< 79; i++)
+        {
+            systemEventDao.save(new SystemEvent("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+		this.systemEventDao.deleteExpired();
+	}
 }

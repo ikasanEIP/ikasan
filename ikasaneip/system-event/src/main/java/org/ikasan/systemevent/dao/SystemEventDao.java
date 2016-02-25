@@ -117,4 +117,6 @@ public interface SystemEventDao {
 	 * @param transactionBatchSize the transactionBatchSize to set
 	 */
 	public void setTransactionBatchSize(Integer transactionBatchSize);
+
+	void setHousekeepQuery(String housekeepQuery);
 }

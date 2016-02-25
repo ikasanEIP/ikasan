@@ -45,10 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -68,14 +65,13 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateSystemEventDao extends HibernateDaoSupport implements SystemEventDao
 {
+    /** logger instance */
+    private static final Logger logger = Logger.getLogger(HibernateSystemEventDao.class);
 
 	private static final String EXPIRY = "expiry";
 	
     /** Query used for housekeeping expired system events */
     private static final String HOUSEKEEP_QUERY = "delete SystemEvent w where w.expiry <= :" + EXPIRY;
-
-    /** Batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete SystemEvent s where s.id in (:event_ids)";
 
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
@@ -86,8 +82,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     /** Batch size used when in a single transaction */    
    	private Integer transactionBatchSize = 1000;
 
-    /** logger instance */
-    private static final Logger logger = Logger.getLogger(HibernateSystemEventDao.class);
+    private String housekeepQuery;
 
     /**
      * Constructor
@@ -303,22 +298,23 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
         
         while (housekeepablesExist() && numDeleted < this.transactionBatchSize)
         {
-            final List<Long> housekeepableBatch = getHousekeepableBatch();
 
             getHibernateTemplate().execute(new HibernateCallback<Object>()
             {
                 public Object doInHibernate(Session session) throws HibernateException
                 {
 
-                    Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
-                    query.setParameterList("event_ids", housekeepableBatch);
+                    String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize));
+
+                    SQLQuery query = session.createSQLQuery(formattedQuery);
+
                     query.executeUpdate();
 
                     return null;
                 }
             });
             
-            numDeleted += housekeepableBatch.size();
+            numDeleted += housekeepingBatchSize;
         }
     }
 
@@ -409,5 +405,10 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
 	{
 		this.transactionBatchSize = transactionBatchSize;
 	}
+
+    @Override public void setHousekeepQuery(String housekeepQuery)
+    {
+        this.housekeepQuery = housekeepQuery;
+    }
 
 }

@@ -43,6 +43,7 @@ package org.ikasan.wiretap.dao;
 import javax.annotation.Resource;
 
 import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,7 +73,8 @@ public class HibernateWiretapDaoTest
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
      */
-    @Before public void setup()
+    @Before
+	public void setup()
     {    	
     	
     	for(int i=0; i< 10000; i++)
@@ -88,24 +90,38 @@ public class HibernateWiretapDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
      */
     @Test 
     @DirtiesContext
-    public void test_success_no_results()
+    public void test_success_no_results_sybase()
     {
-    	wiretapDao.setBatchHousekeepDelete(true);
-    	wiretapDao.setHousekeepingBatchSize(100);
-    	wiretapDao.setTransactionBatchSize(2000);
     	wiretapDao.setHousekeepQuery("delete top _bs_ from IkasanWiretap where Expiry <= _ex_");   //sybase
-//		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
-//		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    	this.wiretapDao.deleteAllExpired();
-    }
+	}
 
-    
+	@Test
+	@DirtiesContext
+	public void test_success_no_results_mssql()
+	{
+		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
+	}
+
+	@Test
+	@DirtiesContext
+	public void test_success_no_results_mysql()
+	{
+		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
+	}
+
+	@After
+	public void process()
+	{
+		wiretapDao.setBatchHousekeepDelete(true);
+		wiretapDao.setHousekeepingBatchSize(100);
+		wiretapDao.setTransactionBatchSize(2000);
+		this.wiretapDao.deleteAllExpired();
+		this.wiretapDao.deleteAllExpired();
+		this.wiretapDao.deleteAllExpired();
+		this.wiretapDao.deleteAllExpired();
+		this.wiretapDao.deleteAllExpired();
+	}
 }
