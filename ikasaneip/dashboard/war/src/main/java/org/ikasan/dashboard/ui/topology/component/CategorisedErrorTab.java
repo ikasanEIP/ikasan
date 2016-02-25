@@ -748,41 +748,39 @@ public class CategorisedErrorTab extends TopologyTab
 		logger.debug("Start search!");
 		categorizedErrorOccurenceTable.removeAllItems();
 
-    	modulesNames = null;
+    	modulesNames = new ArrayList<String>();
     	
     	this.container.removeItemSetChangeListener(listener);
     	
     	if(modules.getItemIds().size() > 0)
     	{
-        	modulesNames = new ArrayList<String>();
         	for(Object module: modules.getItemIds())
         	{
         		modulesNames.add(((Module)module).getName());
         	}
     	}
     	
-    	flowNames = null;
+    	flowNames = new ArrayList<String>();
     	
     	if(flows.getItemIds().size() > 0)
     	{
-    		flowNames = new ArrayList<String>();
     		for(Object flow: flows.getItemIds())
         	{
         		flowNames.add(((Flow)flow).getName());
         	}
     	}
     	
-    	componentNames = null;
+    	componentNames = new ArrayList<String>();
     	
-//    	TODO Components are too granular for the search. Need to find a better solution.
-//    	if(components.getItemIds().size() > 0)
-//    	{
-//    		componentNames = new ArrayList<String>();
-//        	for(Object component: components.getItemIds())
-//        	{
-//        		componentNames.add(((Component)component).getName());
-//        	}
-//    	}
+    	if(components.getItemIds().size() > 0 
+    			&& modules.getItemIds().size() == 0
+    			&& flows.getItemIds().size() == 0)
+    	{
+        	for(Object component: components.getItemIds())
+        	{
+        		componentNames.add(((Component)component).getName());
+        	}
+    	}
     	
     	String errorCategory = null;
     	

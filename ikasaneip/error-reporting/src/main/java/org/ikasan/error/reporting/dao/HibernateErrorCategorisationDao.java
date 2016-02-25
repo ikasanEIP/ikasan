@@ -41,6 +41,7 @@
 package org.ikasan.error.reporting.dao;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -75,12 +76,13 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 			"where (l.ModuleName = e.ModuleName and l.FlowName = e.FlowName and l.FlowElementName = e.FlowElementName) " +
 			"or (l.ModuleName = e.ModuleName and l.FlowName = e.FlowName) " +
 			"or (l.ModuleName = e.ModuleName) " +
-			"and e.ModuleName in(:" + MODULE_NAMES +") " +
-			"and e.FlowName in (:" + FLOW_NAMES + ") " +
-			"and e.FlowElementName in (:" + COMPONENT_NAMES + ") " +
 			"and e.Timestamp <= :" + END_DATE + " " +
 			"and e.Timestamp >= :" + START_DATE + " " +
-			"and e.UserAction is NULL";
+			"and e.UserAction is NULL ";
+	
+	public final String MODULE_NAMES_CLAUSE = "and e.ModuleName in(:" + MODULE_NAMES +") ";
+	public final String FLOW_NAMES_CLAUSE = "and e.FlowName in (:" + FLOW_NAMES + ") ";
+	public final String COMPONENT_NAMES_CLAUSE =  "and e.FlowElementName in (:" + COMPONENT_NAMES + ") ";
 	
 	/* (non-Javadoc)
 	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#save(org.ikasan.error.reporting.model.ErrorCategorisation)
@@ -196,12 +198,42 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 		return (Long) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
-            {            	
-            	SQLQuery query = session.createSQLQuery(ERROR_CATERORISED_COUNT_SQL);
+            {     
+            	StringBuffer queryBuffer = new StringBuffer(ERROR_CATERORISED_COUNT_SQL);
             	
-            	query.setParameterList(MODULE_NAMES, moduleNames);
-            	query.setParameterList(FLOW_NAMES, flowNames);
-            	query.setParameterList(COMPONENT_NAMES, flowElementNames);
+            	if(moduleNames != null && !moduleNames.isEmpty())
+            	{
+            		queryBuffer.append(MODULE_NAMES_CLAUSE); 
+            		
+            	}
+            	
+            	if(flowNames != null && !flowNames.isEmpty())
+            	{
+            		queryBuffer.append(FLOW_NAMES_CLAUSE); 
+            	}
+            	
+            	if(flowElementNames != null && !flowElementNames.isEmpty())
+            	{
+            		queryBuffer.append(COMPONENT_NAMES_CLAUSE); 
+            	}
+            	
+            	SQLQuery query = session.createSQLQuery(queryBuffer.toString());
+            	
+            	if(moduleNames != null && !moduleNames.isEmpty())
+            	{
+            		query.setParameterList(MODULE_NAMES, moduleNames);
+            	}
+            	
+            	if(flowNames != null && !flowNames.isEmpty())
+            	{
+            		query.setParameterList(FLOW_NAMES, flowNames);
+            	}
+            	
+            	if(flowElementNames != null && !flowElementNames.isEmpty())
+            	{
+            		query.setParameterList(COMPONENT_NAMES, flowElementNames);
+            	}
+            	
             	
             	if(startDate == null)
             	{
