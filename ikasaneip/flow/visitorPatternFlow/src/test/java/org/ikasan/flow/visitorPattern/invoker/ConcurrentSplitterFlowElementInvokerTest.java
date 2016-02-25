@@ -111,6 +111,9 @@ public class ConcurrentSplitterFlowElementInvokerTest
                 will(throwException(new ClassCastException()));
                 exactly(2).of(flowEvent).getPayload();
                 will(returnValue(payload));
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("id"));
+
                 exactly(1).of(splitter).split(payload);
                 will(returnValue(payloads));
 
@@ -119,8 +122,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
                 exactly(1).of(asyncTask).call();
                 will(returnValue(asyncTask));
-
-                exactly(1).of(flowEvent).setPayload(payload);
 
                 exactly(1).of(subFlowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(mainFlowElement));
@@ -131,10 +132,11 @@ public class ConcurrentSplitterFlowElementInvokerTest
                 will(returnValue(null));
 
                 exactly(1).of(flowEvent).setPayload(payload);
-                exactly(2).of(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+                exactly(1).of(flowEventListener).afterFlowElement(with(any(String.class)), with(any(String.class)), with(any(FlowElement.class)), with(any(FlowEvent.class)));
 
-                exactly(1).of(flowInvocationContext).getInvokedComponents();
-                will(returnValue(invokedComponents));
+                exactly(1).of(flowInvocationContext).combine(flowInvocationContext);
+
             }
         });
 

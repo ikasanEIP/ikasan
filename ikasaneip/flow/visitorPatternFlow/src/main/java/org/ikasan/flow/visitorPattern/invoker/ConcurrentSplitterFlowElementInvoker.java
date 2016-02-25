@@ -42,6 +42,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import com.google.common.util.concurrent.*;
 import org.apache.log4j.Logger;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.splitting.Splitter;
@@ -76,16 +77,12 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     /** does this component require the full flowEvent or just the payload */
     Boolean requiresFullEventForInvocation;
 
-    /** count for number of submitted future tasks */
-    AtomicInteger count;
-
     /** handle to any exceptions called back from the future task */
     Throwable callbackException;
 
     /** handle to the failed tasks flow invocation context */
     FlowInvocationContext failedTaskFlowInvocationContext;
 
-    private final Object _sync = new Object();
 
     /**
      * Constructor
@@ -110,17 +107,16 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         FlowElement nextSubFlowElement = getSubFlowTransition(flowElement);
         if (nextSubFlowElement == null)
         {
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a ConcurrentSplitter, but it has no subFlow transition! "
-                    + "ConcurrentSplitter should never be the last component in a flow");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a concurrent Splitter, but it has no 'subFlow' transition! "
+                    + "concurrent Splitter should never be the last component in a flow");
         }
 
         FlowElement nextMainFlowElement = getDefaultTransition(flowElement);
         if (nextMainFlowElement == null)
         {
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a ConcurrentSplitter, but it has no default transition! "
-                    + "ConcurrentSplitter should never be the last component in a flow");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a concurrent Splitter, but it has no 'default' transition! "
+                    + "concurrent Splitter should never be the last component in a flow");
         }
-
 
         Splitter splitter = flowElement.getFlowComponent();
         List payloads;
@@ -157,52 +153,34 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         }
 
         // initialise futures task stats
-        count = new AtomicInteger(0);
+        AtomicInteger count = new AtomicInteger(0);
         callbackException = null;
 
         List<ListenableFuture<SplitFlowElement>> futures = new ArrayList<>(payloads.size());
         final List<Object> subFlowPayloads = new ArrayList<>(payloads.size());
+        SplitFlowCallback splitFlowCallback = new SplitFlowCallback(subFlowPayloads, flowInvocationContext, count);
         for (Object payload : payloads)
         {
+            FlowEvent asyncFlowEvent;
             if(payload instanceof FlowEvent)
             {
-                flowEvent = (FlowEvent)payload;
+                asyncFlowEvent =  new FlowEventFactory().newEvent(((FlowEvent)payload).getIdentifier(), (FlowEvent)((FlowEvent) payload).getPayload());
             }
             else
             {
-                flowEvent.setPayload(payload);
+                asyncFlowEvent =  new FlowEventFactory().newEvent(flowEvent.getIdentifier(), payload);
             }
-            notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+            notifyListenersAfterElement(flowEventListener, moduleName, flowName, asyncFlowEvent, flowElement);
 
             FlowElement nextFlowElementInRoute = nextSubFlowElement;
 
             // TODO - replace new DefaultFlowInvocationContext with a factory method
-            final FlowInvocationContext asyncTaskFlowInvocationContext = new DefaultFlowInvocationContext();
+            FlowInvocationContext asyncTaskFlowInvocationContext = new DefaultFlowInvocationContext();
 
-            Callable<SplitFlowElement> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListener, moduleName, flowName, asyncTaskFlowInvocationContext, flowEvent);
+            Callable<SplitFlowElement> asyncTask = newAsyncTask(nextFlowElementInRoute, flowEventListener, moduleName, flowName, asyncTaskFlowInvocationContext, asyncFlowEvent);
             final ListenableFuture<SplitFlowElement> listenableFuture = executorService.submit(asyncTask);
             futures.add(listenableFuture);
-            Futures.addCallback(listenableFuture, new FutureCallback<SplitFlowElement>() {
-                public void onSuccess(SplitFlowElement splitFlowElement) {
-                    subFlowPayloads.add(splitFlowElement._flowEvent.getPayload());
-                    asyncTaskFlowInvocationContext.combine(splitFlowElement._flowInvocationContext);
-                    count.addAndGet(1);
-                }
-
-                public void onFailure(Throwable thrown) {
-                    synchronized (_sync) {
-                        if (callbackException == null) {
-                            if (thrown instanceof SplitFlowElementException) {
-                                SplitFlowElementException splitFlowElementException = (SplitFlowElementException) thrown;
-                                callbackException = splitFlowElementException.getThrown();
-                                failedTaskFlowInvocationContext = splitFlowElementException.getFlowInvocationContext();
-                            } else {
-                                callbackException = thrown;
-                            }
-                        }
-                    }
-                }
-            });
+            Futures.addCallback(listenableFuture, splitFlowCallback);
 
             if(callbackException != null)
             {
@@ -210,7 +188,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             }
         }
 
-        while( pendingCallback(payloads) )
+        while( pendingCallback(payloads, count) )
         {
             try
             {
@@ -280,10 +258,10 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     }
 
     /**
-     * Retrieves the default transition if any for this flowElement
+     * Retrieves the subflow transition for this flowElement
      *
      * @param flowElement The flow element we want the transition for
-     * @return default transition
+     * @return subflow transition
      */
     FlowElement getSubFlowTransition(FlowElement flowElement)
     {
@@ -297,7 +275,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
      * @param payloads
      * @return
      */
-    protected boolean pendingCallback(List payloads)
+    protected boolean pendingCallback(List payloads, AtomicInteger count)
     {
         return count.get() < payloads.size() && callbackException == null;
     }
@@ -316,6 +294,45 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     protected SplitFlowElement newAsyncTask(FlowElement nextFlowElementInRoute, FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
     {
         return new SplitFlowElement(nextFlowElementInRoute, flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent);
+    }
+
+    protected class SplitFlowCallback implements FutureCallback<SplitFlowElement>
+    {
+        protected List<Object> subFlowPayloads;
+        protected FlowInvocationContext flowInvocationContext;
+        protected AtomicInteger count;
+        private final Object mutex = new Object();
+
+        protected SplitFlowCallback(List<Object> subFlowPayloads, FlowInvocationContext flowInvocationContext, AtomicInteger count)
+        {
+            this.subFlowPayloads = subFlowPayloads;
+            this.flowInvocationContext = flowInvocationContext;
+            this.count = count;
+        }
+
+        public void onSuccess(SplitFlowElement splitFlowElement) {
+            // we need to sync since the underlying Lists are not
+            synchronized (mutex)
+            {
+                subFlowPayloads.add(splitFlowElement._flowEvent.getPayload());
+                flowInvocationContext.combine(splitFlowElement._flowInvocationContext);
+                count.addAndGet(1);
+            }
+        }
+
+        public void onFailure(Throwable thrown) {
+            synchronized (mutex) {
+                if (callbackException == null) {
+                    if (thrown instanceof SplitFlowElementException) {
+                        SplitFlowElementException splitFlowElementException = (SplitFlowElementException) thrown;
+                        callbackException = splitFlowElementException.getThrown();
+                        failedTaskFlowInvocationContext = splitFlowElementException.getFlowInvocationContext();
+                    } else {
+                        callbackException = thrown;
+                    }
+                }
+            }
+        }
     }
 
     /**
