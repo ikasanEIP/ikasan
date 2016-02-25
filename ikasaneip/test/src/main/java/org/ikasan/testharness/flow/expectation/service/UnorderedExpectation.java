@@ -47,31 +47,32 @@ import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
 import org.junit.Assert;
 
+import java.util.Iterator;
+
 /**
- * Implementation of a FlowExpectation based on applying the expectations in
- * a strict given order.
+ * Implementation of the AbstractListExpectation based on applying the expectations in
+ * any order.
  *
  * @author Ikasan Development Team
  *
  */
-public class OrderedExpectation extends AbstractListExpectation
+public class UnorderedExpectation extends AbstractListExpectation
 {
-    /** Logger instance */
-    private static Logger logger = Logger.getLogger(OrderedExpectation.class);
+    private static final Logger logger = Logger.getLogger(UnorderedExpectation.class);
 
     /**
-     * Constructor
+     * Default constructor that will initialise a default comparator
      */
-    public OrderedExpectation()
+    public UnorderedExpectation()
     {
         super();
     }
 
     /**
-     * Contructor allowing an alternate comparator service.
+     * Constructor allowing an alternate comparator service.
      * @param comparatorService
      */
-    public OrderedExpectation(ComparatorService comparatorService)
+    public UnorderedExpectation(ComparatorService comparatorService)
     {
         super(comparatorService);
     }
@@ -79,38 +80,52 @@ public class OrderedExpectation extends AbstractListExpectation
 
     /**
      * Is this actual operation satisfied with a corresponding expectation
-     * @param actual
+     * @param actual the Capture
      */
     @SuppressWarnings("unchecked")
     public void isSatisfied(Capture<?> actual)
     {
-        Assert.assertFalse("FAILED - Not enough expectations specified. Actual behaviour reports next invocation of " +  actual.getActual().getClass().getName(),
+        Assert.assertFalse("FAILED - Not enough expectations specified. Actual behaviour reports next invocation of " + actual.getActual().getClass().getName(),
                 expectations.isEmpty());
 
-        DefaultExpectation expectation = expectations.remove(0);
-        ExpectationComparator expectationComparator = expectation.getExpectationComparator();
+        // iterate through the list of expectations, trying to match one, if found remove else error
+        Iterator<DefaultExpectation> iterator = expectations.iterator();
+        boolean foundExpectation = false;
+        while (iterator.hasNext())
+        {
+            DefaultExpectation expectation = iterator.next();
+            ExpectationComparator expectationComparator = expectation.getExpectationComparator();
+            try
+            {
+                expectationComparator.compare(expectation.getExpectation(), actual.getActual());
+                iterator.remove();
+                foundExpectation = true;
+                logger.info("PASSED - " + expectation.getDescription());
+                break;
+            }
+            catch (ComparisonFailure cfe)
+            {
+                // we ignore this since we are looking for a match
+            }
+            catch(ClassCastException e)
+            {
+                logger.info("FAILED - " + expectation.getDescription());
+                String comparatorClassName = expectationComparator.getClass().getName();
+                String expectationClassName = expectation.getExpectation().getClass().getName();
+                String actualClassName = actual.getActual().getClass().getName();
+                throw new RuntimeException("FAILED - " + expectation.getDescription()
+                        + " when invoking Comparator.compare method["
+                        + comparatorClassName
+                        + "]. Could be comparator method parameters are of the wrong type for this expectation class[" +
+                        expectationClassName + "] or actual class[" + actualClassName + "].",e);
+            }
+        }
 
-        try
+        if (!foundExpectation)
         {
-            expectationComparator.compare(expectation.getExpectation(), actual.getActual());
-            logger.info("PASSED - " + expectation.getDescription());
-        }
-        catch(ComparisonFailure e)
-        {
-            logger.info("FAILED - " + expectation.getDescription());
-            throw e;
-        }
-        catch(ClassCastException e)
-        {
-            logger.info("FAILED - " + expectation.getDescription());
-            String comparatorClassName = expectationComparator.getClass().getName();
-            String expectationClassName = expectation.getExpectation().getClass().getName();
-            String actualClassName = actual.getActual().getClass().getName();
-            throw new RuntimeException("FAILED - " + expectation.getDescription()
-                    + " when invoking Comparator.compare method["
-                    + comparatorClassName
-                    + "]. Could be comparator method parameters are of the wrong type for this expectation class[" +
-                    expectationClassName + "] or actual class[" + actualClassName + "].",e);
+            logger.info("FAILED - NOT IN EXPECTED LIST: " + actual.getActual());
+            throw new ComparisonFailure("FAILED", actual.getActual().toString(), "NOT FOUND IN LIST");
         }
     }
+
 }
