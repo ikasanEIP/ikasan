@@ -43,6 +43,8 @@ package org.ikasan.filter.duplicate.dao;
 
 import org.ikasan.filter.duplicate.model.FilterEntry;
 
+import java.util.List;
+
 /**
  * DAO interface for interacting with filtered messages.
  * 
@@ -60,9 +62,9 @@ public interface FilteredMessageDao
     /**
      * Try to find {@link FilterEntry} by its id: clientId and
      * criteria.
-     * 
+     *
      * @param message {@link FilterEntry} to be found
-     * 
+     *
      * @return The found {@link FilterEntry} or null if nothing
      *         found in persistence.
      */
@@ -77,11 +79,33 @@ public interface FilteredMessageDao
      * Allow batching of housekeep tasks to be turned on/off
      * @param batchedHousekeep
      */
-    public void setBatchedHousekeep(boolean batchedHousekeep);
+    public void setBatchHousekeepDelete(boolean batchedHousekeep);
 
     /**
      * Allow the batch size to be overridden
      * @param batchSize
      */
-    public void setBatchSize(int batchSize);
+    public void setHousekeepingBatchSize(int batchSize);
+
+    /**
+     * Allow the transaction batch size to be overridden
+     * @param transactionBatchSize transactionBatchSize
+     */
+    public void setTransactionBatchSize(int transactionBatchSize);
+
+    /**
+     * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
+     *
+     * @return true if there is at least 1 expired WiretapFlowEvent
+     */
+    public boolean housekeepablesExist();
+
+    /**
+     * Find expired messages.
+     *
+     * @return
+     */
+    public List<FilterEntry> findExpiredMessages();
+
+    void setHousekeepQuery(String housekeepQuery);
 }

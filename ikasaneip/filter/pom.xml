@@ -187,6 +187,13 @@
             <scope>provided</scope>
         </dependency>
 
+
+      <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-management</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
         <!-- TODO Upgrade these two at some point -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -199,6 +206,7 @@
             <artifactId>javassist</artifactId>
                <scope>test</scope>
         </dependency>
+
 
   </dependencies>
 
