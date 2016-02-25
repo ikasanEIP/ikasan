@@ -100,6 +100,8 @@ public class SftpProducerConfiguration
     /** Clean up chunks from the database after successful delivery of a payload **/ 
     protected Boolean cleanUpChunks = Boolean.TRUE;
 
+    protected String preferredKeyExchangeAlgorithm;
+
     /**
      * @return the clientID
      */
@@ -389,5 +391,11 @@ public class SftpProducerConfiguration
         this.cleanUpChunks = cleanUpChunks;
     }
 
-    
+    public String getPreferredKeyExchangeAlgorithm() {
+        return preferredKeyExchangeAlgorithm;
+    }
+
+    public void setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm) {
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
+    }
 }

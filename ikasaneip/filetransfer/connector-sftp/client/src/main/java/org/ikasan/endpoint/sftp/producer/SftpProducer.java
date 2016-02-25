@@ -240,6 +240,7 @@ public class SftpProducer implements Producer<Payload>,
         spec.setUsername(sftpProducerConfiguration.getUsername());
         spec.setPassword(sftpProducerConfiguration.getPassword());
         spec.setCleanupJournalOnComplete(sftpProducerConfiguration.getCleanupJournalOnComplete());
+        spec.setPreferredKeyExchangeAlgorithm(sftpProducerConfiguration.getPreferredKeyExchangeAlgorithm());
         return spec;
     }
     private SFTPConnectionSpec createAlternateSpec(SftpProducerConfiguration sftpProducerConfiguration) {
