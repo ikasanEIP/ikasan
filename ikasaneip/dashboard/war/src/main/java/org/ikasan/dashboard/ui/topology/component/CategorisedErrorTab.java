@@ -459,8 +459,8 @@ public class CategorisedErrorTab extends TopologyTab
 		GridLayout hErrorTable = new GridLayout();
 		hErrorTable.setWidth("100%");
 		
-		GridLayout buttons = new GridLayout(3, 1);
-		buttons.setWidth("80px");
+		GridLayout buttons = new GridLayout(4, 1);
+		buttons.setWidth("100px");
 		
 		final Button selectAllButton = new Button();
 		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -854,7 +854,8 @@ public class CategorisedErrorTab extends TopologyTab
 		        	.getAttribute(DashboardSessionValueConstants.USER);
 			
 			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
+					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+					&& !errorOccurrence.getAction().equals("ExcludeEvent"))
 			{	
 				CheckBox cb = new CheckBox();
 				cb.setValue(false);

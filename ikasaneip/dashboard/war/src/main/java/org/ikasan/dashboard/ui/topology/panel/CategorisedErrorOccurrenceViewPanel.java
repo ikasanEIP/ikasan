@@ -622,6 +622,28 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		tabsheet.addTab(h3, "Error Message");
 		tabsheet.addTab(h2, "Error Details");
 		tabsheet.addTab(h1, "Message Data");
+		
+		if(this.categorisedErrorOccurrence.getErrorOccurrence().getAction() != null && 
+				this.categorisedErrorOccurrence.getErrorOccurrence().getAction().equals("ExcludeEvent"))
+		{
+			ExclusionEvent exclusionEvent = this.exclusionManagementService.find(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
+			AceEditor originalMessageEditor = new AceEditor();
+			originalMessageEditor.setValue(new String(exclusionEvent.getEvent()));
+			originalMessageEditor.setReadOnly(true);
+			originalMessageEditor.setMode(AceMode.xml);
+			originalMessageEditor.setTheme(AceTheme.textmate);
+			originalMessageEditor.setHeight(500, Unit.PIXELS);
+			originalMessageEditor.setWidth("100%");
+			originalMessageEditor.setWordWrap(true);
+			
+			HorizontalLayout originalMessageLayout = new HorizontalLayout();
+			originalMessageLayout.setSizeFull();
+			originalMessageLayout.setMargin(true);
+			originalMessageLayout.addComponent(originalMessageEditor);
+			
+			tabsheet.addTab(originalMessageLayout, "Original Message");
+		}
+
 		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
 		
 		wrapperLayout.addComponent(tabsheet, 0, 1);

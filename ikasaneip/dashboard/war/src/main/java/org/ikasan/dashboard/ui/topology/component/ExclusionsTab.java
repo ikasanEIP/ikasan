@@ -358,8 +358,7 @@ public class ExclusionsTab extends TopologyTab
 		vSplitPanel.setSecondComponent(hErrorTable);
 		vSplitPanel.setSplitPosition(310, Unit.PIXELS);
 		
-		GridLayout buttons = new GridLayout(5, 1);
-		buttons.setSpacing(true);
+		GridLayout buttons = new GridLayout(6, 1);
 		buttons.setWidth("150px");				
 		
 		final Button selectAllButton = new Button();
@@ -407,7 +406,6 @@ public class ExclusionsTab extends TopologyTab
         });
 		
 		buttons.addComponent(selectAllButton);
-		buttons.setComponentAlignment(selectAllButton, Alignment.MIDDLE_RIGHT);
 		
 		Button replaySelectedButton = new Button();
 		replaySelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -529,12 +527,11 @@ public class ExclusionsTab extends TopologyTab
         });
 		
 		buttons.addComponent(replaySelectedButton);
-		buttons.setComponentAlignment(replaySelectedButton, Alignment.MIDDLE_RIGHT);
 		
 		Button ignoreSelectedButton = new Button();
 		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		ignoreSelectedButton.setIcon(VaadinIcons.CLOSE);
+		ignoreSelectedButton.setIcon(VaadinIcons.BAN);
 		ignoreSelectedButton.setImmediate(true);
 		ignoreSelectedButton.setDescription("Ignore all the below selected exclusioned events.");
 		
@@ -628,8 +625,6 @@ public class ExclusionsTab extends TopologyTab
         });
 		
 		buttons.addComponent(ignoreSelectedButton);
-		buttons.setComponentAlignment(ignoreSelectedButton, Alignment.MIDDLE_RIGHT);
-
 		
 		Button jiraButton = new Button();
 		jiraButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -688,7 +683,6 @@ public class ExclusionsTab extends TopologyTab
 
 		
 		buttons.addComponent(jiraButton);
-		buttons.setComponentAlignment(jiraButton, Alignment.MIDDLE_RIGHT);
 		
 		Button excelButton = new Button();
 		excelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -701,8 +695,7 @@ public class ExclusionsTab extends TopologyTab
         fd.extend(excelButton);
         
         buttons.addComponent(excelButton);
-		buttons.setComponentAlignment(excelButton, Alignment.MIDDLE_RIGHT);
-
+        
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
 		hl.addComponent(buttons);
