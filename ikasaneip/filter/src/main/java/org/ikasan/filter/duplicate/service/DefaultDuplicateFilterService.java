@@ -43,7 +43,6 @@ package org.ikasan.filter.duplicate.service;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.spec.configuration.Configured;
-import org.ikasan.spec.management.HousekeeperService;
 
 /**
  * The default implementation for {@link DuplicateFilterService}
@@ -51,7 +50,7 @@ import org.ikasan.spec.management.HousekeeperService;
  * @author Ikasan Development Team
  *
  */
-public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>, HousekeeperService
+public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>
 {
     /** {@link FilteredMessageDao} for accessing encountered messages*/
     private final FilteredMessageDao dao;
@@ -98,6 +97,14 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
         this.dao.save(message);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#housekeepExpiredMessages()
+     */
+    public void housekeep()
+    {
+        this.dao.deleteAllExpired();
+    }
 
     @Override
     public FilteredMessageConfiguration getConfiguration() {
@@ -110,26 +117,7 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
         this.configuration = configuration;
 
         // set dependents
-        this.dao.setBatchHousekeepDelete(configuration.isBatchHousekeepDelete());
-        this.dao.setHousekeepingBatchSize(configuration.getHousekeepingBatchSize());
-        this.dao.setTransactionBatchSize(configuration.getTransactionBatchSize());
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.management.HousekeeperService#houseKeepablesExist()
-     */
-    @Override
-    public boolean housekeepablesExist()
-    {
-        return this.dao.housekeepablesExist();
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#housekeep()
-     */
-    @Override
-    public void housekeep()
-    {
-        this.dao.deleteAllExpired();
+        this.dao.setBatchedHousekeep(configuration.isBatchedHousekeep());
+        this.dao.setBatchSize(configuration.getHousekeepBatchSize());
     }
 }
