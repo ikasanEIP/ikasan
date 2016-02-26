@@ -43,7 +43,6 @@ package org.ikasan.wiretap.dao;
 import javax.annotation.Resource;
 
 import org.ikasan.wiretap.model.WiretapFlowEvent;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,62 +65,45 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 })
 public class HibernateWiretapDaoTest
 {
-	/** Object being tested */
-	@Resource private WiretapDao wiretapDao;
+    /** Object being tested */
+    @Resource private WiretapDao wiretapDao;
 
-	/**
-	 * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
-	 * being tested
-	 */
-	@Before
-	public void setup()
-	{
+    /**
+     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
+     * being tested
+     */
+    @Before public void setup()
+    {    	
+    	
+    	for(int i=0; i< 10000; i++)
+    	{
+	    	WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+	                "eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
+	    	
+	    	this.wiretapDao.save(event);
+    	}
+    	
+    }
 
-		for(int i=0; i< 10000; i++)
-		{
-			WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
-					"eventId", "relatedEventId", System.currentTimeMillis() ,"event", System.currentTimeMillis() - 1000000000);
+    /**
+     * Putting an instance of StateModel into the StateModel store
+     * 
+     * @throws StateModelDaoException if error accessing state model store
+     */
+    @Test 
+    @DirtiesContext
+    public void test_success_no_results()
+    {
+    	wiretapDao.setBatchHousekeepDelete(true);
+    	wiretapDao.setHousekeepingBatchSize(100);
+    	wiretapDao.setTransactionBatchSize(2000);
+    	
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    	this.wiretapDao.deleteAllExpired();
+    }
 
-			this.wiretapDao.save(event);
-		}
-
-	}
-
-	/**
-	 * Putting an instance of StateModel into the StateModel store
-	 *
-	 */
-	@Test
-	@DirtiesContext
-	public void test_success_no_results_sybase()
-	{
-		wiretapDao.setHousekeepQuery("delete top _bs_ from IkasanWiretap where Expiry <= _ex_");   //sybase
-	}
-
-	@Test
-	@DirtiesContext
-	public void test_success_no_results_mssql()
-	{
-		wiretapDao.setHousekeepQuery("delete top ( _bs_ ) from IkasanWiretap where Expiry <= _ex_"); //mssql
-	}
-
-	@Test
-	@DirtiesContext
-	public void test_success_no_results_mysql()
-	{
-		wiretapDao.setHousekeepQuery("delete from IkasanWiretap where Expiry <= _ex_ limit _bs_"); //mysql
-	}
-
-	@After
-	public void process()
-	{
-		wiretapDao.setBatchHousekeepDelete(true);
-		wiretapDao.setHousekeepingBatchSize(100);
-		wiretapDao.setTransactionBatchSize(2000);
-		this.wiretapDao.deleteAllExpired();
-		this.wiretapDao.deleteAllExpired();
-		this.wiretapDao.deleteAllExpired();
-		this.wiretapDao.deleteAllExpired();
-		this.wiretapDao.deleteAllExpired();
-	}
+    
 }

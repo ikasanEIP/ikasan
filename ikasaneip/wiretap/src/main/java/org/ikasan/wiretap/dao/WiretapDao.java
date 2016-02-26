@@ -124,15 +124,13 @@ public interface WiretapDao
 
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
 
-    public Integer getTransactionBatchSize();
+	public Integer getTransactionBatchSize();
 
-    public void setTransactionBatchSize(Integer transactionBatchSize);
-
-    /**
-     * Method to state that there are housekeepable records available.
-     * @return
-     */
-    public boolean housekeepablesExist();
-
-    void setHousekeepQuery(String housekeepQuery);
+	public void setTransactionBatchSize(Integer transactionBatchSize);
+	
+	/**
+	 * Method to state that there are housekeepable records available.
+	 * @return
+	 */
+	public boolean housekeepablesExist();
 }
