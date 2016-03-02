@@ -40,11 +40,11 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ikasan.filetransfer.xml.serializer.XMLSerializer;
 import org.ikasan.filetransfer.xml.serializer.XStreamXmlSerializerImpl;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Model class that contains header information common to all related File
@@ -116,6 +116,28 @@ public class FileChunkHeader
             String clientId)
     {
         this();
+        setSequenceLength(sequenceLength);
+        setExternalMd5Hash(externalMd5Hash);
+        setFileName(fileName);
+        setChunkTimeStamp(chunkTimeStamp);
+        setClientId(clientId);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param id
+     * @param sequenceLength
+     * @param externalMd5Hash
+     * @param fileName
+     * @param chunkTimeStamp
+     * @param clientId
+     */
+    public FileChunkHeader(Long id, Long sequenceLength, String externalMd5Hash, String fileName, Long chunkTimeStamp,
+                           String clientId)
+    {
+        this();
+        setId(id);
         setSequenceLength(sequenceLength);
         setExternalMd5Hash(externalMd5Hash);
         setFileName(fileName);

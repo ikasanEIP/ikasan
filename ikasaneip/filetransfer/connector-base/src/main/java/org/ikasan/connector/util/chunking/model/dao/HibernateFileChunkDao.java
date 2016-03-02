@@ -72,6 +72,12 @@ public class HibernateFileChunkDao implements FileChunkDao
      * Hibernate fileName parameter
      */
     private static final String FILE_NAME_PARAMETER = "fileName";
+
+    /**
+     * Hibernate fileName parameter
+     */
+    private static final String FILE_CHUNK_HEADER_ID_PARAMETER = "id";
+
     /**
      * Hibernate chunkTimeStamp parameter
      */
@@ -89,6 +95,11 @@ public class HibernateFileChunkDao implements FileChunkDao
      */
     private static final String FIND_RELATED_CHUNKS = "select f.id, f.ordinal, f.fileChunkHeader from FileChunk f where f.fileChunkHeader.fileName = :"
             + FILE_NAME_PARAMETER + " and f.fileChunkHeader.chunkTimeStamp = :" + CHUNK_TIME_STAMP_PARAMETER;
+    /**
+     * Hibernate query for finding all related FileChunks by FileChunkHeader id
+     */
+    private static final String FIND_RELATED_CHUNKS_BY_FILECHUNKHEADER_ID = "select f.id, f.ordinal, f.fileChunkHeader from FileChunk f where f.fileChunkHeader.id = :"
+            + FILE_CHUNK_HEADER_ID_PARAMETER;
     /**
      * Hibernate query for finding the latest timestamp for a given filename
      */
@@ -269,6 +280,36 @@ public class HibernateFileChunkDao implements FileChunkDao
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see chunkedFtp.dao.FileChunkDao#findChunks(java.lang.String,
+     *      java.lang.Long)
+     */
+    public List<FileConstituentHandle> findChunks(Long fileChunkHeaderId)
+    {
+        List<FileConstituentHandle> result = new ArrayList<FileConstituentHandle>();
+
+        Session querySession = sessionFactory.openSession();
+        StringBuffer queryString = new StringBuffer(FIND_RELATED_CHUNKS_BY_FILECHUNKHEADER_ID);
+
+        Query query = querySession.createQuery(queryString.toString());
+        query.setParameter(FILE_CHUNK_HEADER_ID_PARAMETER, fileChunkHeaderId);
+
+        List<?> results = query.list();
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();)
+        {
+            Object[] row = (Object[]) iter.next();
+            Long primaryKey = (Long) row[0];
+            Long ordinal = (Long) row[1];
+            FileChunkHeader fileChunkHeader = (FileChunkHeader) row[2];
+            result.add(new FileChunk(fileChunkHeader, ordinal, primaryKey));
+        }
+        querySession.close();
+        logger.debug("HibernateFileChunkDao.findChunks returning result of length:" + result.size()); //$NON-NLS-1$
+        Collections.sort(result);
+        return result;
+    }
     /**
      * Retrieves the latest timestamp on any chunks persisted for a given
      * fileName
@@ -330,8 +371,7 @@ public class HibernateFileChunkDao implements FileChunkDao
 
         // Therefore, need to identify the chunks first, delete them, then
         // delete the header
-        List<FileConstituentHandle> chunkHandles = findChunks(fileChunkHeader.getFileName(), fileChunkHeader
-            .getChunkTimeStamp(), null, null);
+        List<FileConstituentHandle> chunkHandles = findChunks(fileChunkHeader.getId());
 
         Session session = null;
         try
