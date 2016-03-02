@@ -244,4 +244,9 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
     public void setCriticalOnStartup(boolean criticalOnStartup) {
 
     }
+
+    public void setSourceToByteArrayInputStreamConverter(Converter<SOURCE, ByteArrayInputStream> sourceToByteArrayInputStreamConverter)
+    {
+        this.sourceToByteArrayInputStreamConverter = sourceToByteArrayInputStreamConverter;
+    }
 }
