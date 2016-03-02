@@ -101,8 +101,9 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, final FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         FlowElement nextSubFlowElement = getSubFlowTransition(flowElement);
         if (nextSubFlowElement == null)
@@ -151,6 +152,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             throw new SplitterException("FlowElement [" + flowElement.getComponentName() + "] contains a ConcurrentSplitter. "
                     + "ConcurrentSplitter must return at least one payload.");
         }
+        endFlowElementInvocation(flowElementInvocation, flowElement);
 
         // initialise futures task stats
         AtomicInteger count = new AtomicInteger(0);

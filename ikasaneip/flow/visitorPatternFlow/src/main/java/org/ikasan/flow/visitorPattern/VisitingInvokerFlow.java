@@ -55,12 +55,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
@@ -74,6 +69,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings(value={"unchecked", "javadoc"})
 public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware
 {
     /** logger instance */
@@ -135,6 +131,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
     /** serialiserFactory handle */
     private SerialiserFactory serialiserFactory;
+
+    /** List of listeners for the end of the FlowInvocation using the associated context */
+    private List<FlowInvocationContextListener> flowInvocationContextListeners;
+
 
     /**
      * Constructor
@@ -426,12 +426,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public boolean isRunning()
     {
         String currentState = this.getState();
-        if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
-        {
-            return true;
-        }
+        return currentState.equals(RECOVERING) || currentState.equals(RUNNING);
 
-        return false;
     }
 
     /**
@@ -454,7 +450,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         // start the consumer
         Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = consumerFlowElement.getFlowComponent();
-        consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
+        consumer.setListener(this);
 
         // if event factory has not been set on the consumer then set the default
         if(consumer.getEventFactory() == null)
@@ -581,6 +577,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public void invoke(FlowEvent<?,?> event)
     {
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+        flowInvocationContext.startFlow();
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
         Object originalEventLifeIdentifier = event.getIdentifier();
@@ -600,21 +597,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
             else
             {
-                configureDynamicConfiguredResources(flowInvocationContext);
+                configureDynamicConfiguredResources();
                 invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
-                updateDynamicConfiguredResources(flowInvocationContext);
+                updateDynamicConfiguredResources();
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
                 }
             }
+            flowInvocationContext.endFlow();
         }
         catch(Throwable throwable)
         {
+            flowInvocationContext.endFlow();
             this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event, originalEventLifeIdentifier);
         }
         finally
         {
+            this.notifyFlowInvocationContextListeners(flowInvocationContext);
             this.notifyMonitor();
         }
     }
@@ -626,56 +626,44 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	public void invoke(Resubmission<FlowEvent<?,?>> event)
 	{
 		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+        flowInvocationContext.startFlow();
 
         try
         {
-            configureDynamicConfiguredResources(flowInvocationContext);
+            configureDynamicConfiguredResources();
             invoke(moduleName, name, flowInvocationContext, event.getEvent(), this.flowConfiguration.getConsumerFlowElement());
-            updateDynamicConfiguredResources(flowInvocationContext);
+            updateDynamicConfiguredResources();
             if(this.recoveryManager.isRecovering())
             {
                 this.recoveryManager.cancel();
             }
+            flowInvocationContext.endFlow();
         }
         catch(Throwable throwable)
         {
+            flowInvocationContext.endFlow();
             this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent(), event.getEvent().getIdentifier());
         }
         finally
         {
+            this.notifyFlowInvocationContextListeners(flowInvocationContext);
             this.notifyMonitor();
         }
 	}
 
-	private void configureDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+	private void configureDynamicConfiguredResources()
     {
         for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
         {
-            try
-            {
-                this.flowConfiguration.configure(flowElement.getFlowComponent());
-            }
-            catch(RuntimeException e)
-            {
-                flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-                throw e;
-            }
+            this.flowConfiguration.configure(flowElement.getFlowComponent());
         }
     }
     
-    private void updateDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+    private void updateDynamicConfiguredResources()
     {
         for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
         {
-            try
-            {
-                this.flowConfiguration.update(flowElement.getFlowComponent());
-            }
-            catch(RuntimeException e)
-            {
-                flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-                throw e;
-            }
+            this.flowConfiguration.update(flowElement.getFlowComponent());
         }
     }
 
@@ -733,6 +721,29 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
         }
     }
+
+    /**
+     * Notify any FlowInvocationContextListeners that the flow has completed
+     */
+    protected void notifyFlowInvocationContextListeners(FlowInvocationContext flowInvocationContext)
+    {
+        if (flowInvocationContextListeners != null)
+        {
+            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
+            {
+                try
+                {
+                    listener.endFlow(flowInvocationContext);
+                }
+                catch (RuntimeException e)
+                {
+                    logger.error("Unable to invoke FlowInvocationContextListener, continuing", e);
+                }
+            }
+        }
+
+    }
+
 
     /**
      * Set the flow monitor
@@ -828,7 +839,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected class ManagedResourceRecoveryManagerFactory
     {
         // cache of managed resource recovery managers
-        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<String,ManagedResourceRecoveryManager>();
+        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<>();
         
         /**
          * Get the named managed resource recovery manager
@@ -931,4 +942,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 		return this.serialiserFactory;
 	}
 
+    @Override
+    public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
 }

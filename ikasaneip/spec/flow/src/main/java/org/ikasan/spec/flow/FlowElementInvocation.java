@@ -38,59 +38,55 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
-
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.flow.*;
+package org.ikasan.spec.flow;
 
 /**
- * A default implementation of the FlowElementInvoker for a producer
- *
+ * Contract for a model of an invocation of a FlowElement. This effectively holds meta-data regarding
+ * the invocations of FlowElements for a specific event
  * @author Ikasan Development Team
+ *
  */
-@SuppressWarnings("unchecked")
-public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Producer>
-{
-    /** does this producer require the flowEvent or just the payload */
-    Boolean requiresFullEventForInvocation;
+public interface FlowElementInvocation<IDENTIFIER> {
 
-    @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Producer> flowElement)
-    {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+    /**
+     * Called before the FlowElement is invoked by the FlowElementInvoker
+     * @param flowElement the FlowElement
+     */
+    void beforeInvocation(FlowElement flowElement);
 
-        Producer producer = flowElement.getFlowComponent();
-        if(requiresFullEventForInvocation == null)
-        {
-            try
-            {
-                // try with flowEvent and if successful mark this producer
-                producer.invoke(flowEvent);
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.ClassCastException e)
-            {
-                producer.invoke(flowEvent.getPayload());
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                producer.invoke(flowEvent);
-            }
-            else
-            {
-                producer.invoke(flowEvent.getPayload());
-            }
-        }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        // producer is last in the flow
-        return null;
-    }
+    /**
+     * Called after the FlowElement is invoked by the FlowElementInvoker
+     * @param flowElement
+     */
+    void afterInvocation(FlowElement flowElement);
 
+    /**
+     * Get the underlying FlowElement that was invoked
+     * @return the FlowElement
+     */
+    FlowElement getFlowElement();
+
+    /**
+     * Get the start time of the invocation in milliseconds
+     * @return the epoch time in milliseconds when this FlowElement was invoked
+     */
+    long getStartTimeMillis();
+
+    /**
+     * Get the end time of the invocation in milliseconds
+     * @return the epoch time in milliseconds after the FlowElement was invoked
+     */
+    long getEndTimeMillis();
+
+    /**
+     * Returns the identifier for the this invocation
+     * @return the IDENTIFIER
+     */
+    IDENTIFIER getIdentifier();
+
+    /**
+     * Sets the identifier
+     * @param identifier
+     */
+    void setIdentifier(IDENTIFIER identifier);
 }
-

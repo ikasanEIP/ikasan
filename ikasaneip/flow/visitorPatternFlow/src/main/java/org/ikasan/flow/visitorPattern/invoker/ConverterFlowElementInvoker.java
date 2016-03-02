@@ -58,8 +58,8 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Converter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Converter converter = flowElement.getFlowComponent();
 
@@ -91,7 +91,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
         }
         else
         {
-            if(requiresFullEventForInvocation.booleanValue())
+            if(requiresFullEventForInvocation)
             {
                 // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
                 Object o = converter.convert(flowEvent);
@@ -110,7 +110,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
                 flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
             }
         }
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

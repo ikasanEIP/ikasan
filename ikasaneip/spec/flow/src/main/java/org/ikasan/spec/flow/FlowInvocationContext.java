@@ -50,27 +50,50 @@ import java.util.List;
  */
 public interface FlowInvocationContext
 {
+
+    /**
+     * Indicate a flow has started
+     */
+    void startFlow();
+
+    /**
+     * Indicate the flow has completed
+     */
+    void endFlow();
+
+    /**
+     * Add an FlowElement invocation event
+     * @param flowElementInvocation the invocation
+     */
+    void addInvocation(FlowElementInvocation flowElementInvocation);
+
+    /**
+     * Get the epoch start time of this flow invocation
+     * @return the epoch start time in milliseconds
+     */
+    long getFlowStartTimeMillis();
+
+    /**
+     * Get the epoch end time of this flow invocation
+     * @return the epoch end time in milliseconds
+     */
+    long getFlowEndTimeMillis();
+
     /**
      * Get the name of the last invoked component recorded in the context.
      * @return componentName
      */
-	public String getLastComponentName();
-	
-	/**
-	 * Add an invoked componentName to the context.
-	 * @param componentName
-	 */
-	public void addInvokedComponentName(String componentName);
+	String getLastComponentName();
 
-	/**
-	 * Return a list of all invoked componentNames
-	 * @return List componentNames
-	 */
-	public List<String> getInvokedComponents();
+    /**
+     * Get the List of invocation events
+     * @return the List of invocations
+     */
+    List<FlowElementInvocation> getInvocations();
 
 	/**
 	 * Combine the incoming flowInvocationContext into this instance
-	 * @param flowInvocationContext
+	 * @param flowInvocationContext the FlowInvocationContext to combine into this instance
 	 */
-	public void combine(FlowInvocationContext flowInvocationContext);
+	void combine(FlowInvocationContext flowInvocationContext);
 }

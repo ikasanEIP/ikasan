@@ -79,7 +79,7 @@ public class TranslatorFlowElementInvokerTest
             {
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -110,7 +110,7 @@ public class TranslatorFlowElementInvokerTest
             {
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();

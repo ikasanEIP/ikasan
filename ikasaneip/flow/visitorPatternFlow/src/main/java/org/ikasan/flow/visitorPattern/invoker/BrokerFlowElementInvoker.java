@@ -57,8 +57,8 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Broker broker = flowElement.getFlowComponent();
         if(requiresFullEventForInvocation == null)
@@ -87,7 +87,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
         }
         else
         {
-            if(requiresFullEventForInvocation.booleanValue())
+            if(requiresFullEventForInvocation)
             {
                 // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
                 Object o = broker.invoke(flowEvent);
@@ -105,7 +105,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
                 flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
             }
         }
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {
