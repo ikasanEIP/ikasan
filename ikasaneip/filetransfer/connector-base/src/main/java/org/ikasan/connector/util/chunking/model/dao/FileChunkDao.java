@@ -40,11 +40,11 @@
  */
 package org.ikasan.connector.util.chunking.model.dao;
 
-import java.util.List;
-
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
+
+import java.util.List;
 
 /**
  * Data Access Object for persisting, querying and reloading file chunks
@@ -76,6 +76,13 @@ public interface FileChunkDao {
 	 * @return unordered List of FileConstituentHandles referencing chunks matching the fileName
 	 */
 	public List<FileConstituentHandle> findChunks(String fileName, Long fileChunkTimeStamp, Long noOfChunks, Long maxAge);
+
+	/**
+	 * Retrieves a set of FileConstituentHandles representing a complete reconsitutable set
+	 * @param chunkHeaderId
+	 * @return unordered List of FileConstituentHandles referencing chunks matching the fileName
+	 */
+	public List<FileConstituentHandle> findChunks(Long chunkHeaderId);
 
 	
 	/**

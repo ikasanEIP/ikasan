@@ -40,13 +40,6 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.io.OutputStream;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.resource.ResourceException;
-
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -64,12 +57,15 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
-
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import javax.resource.ResourceException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Test class for the ChunkingRetrieveFileCommand
@@ -171,6 +167,11 @@ public class ChunkingRetrieveFileCommandTest
                 Long maxAge)
         {
             return new ArrayList<FileConstituentHandle>();
+        }
+
+        @Override
+        public List<FileConstituentHandle> findChunks(Long chunkHeaderId) {
+            return null;
         }
 
         public FileChunk load(FileConstituentHandle fileConstituentHandle)

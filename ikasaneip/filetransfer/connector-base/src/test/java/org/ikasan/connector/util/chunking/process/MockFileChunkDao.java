@@ -40,18 +40,14 @@
  */
 package org.ikasan.connector.util.chunking.process;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.ikasan.filetransfer.util.checksum.DigestChecksum;
-import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.filetransfer.util.checksum.DigestChecksum;
+import org.ikasan.filetransfer.util.checksum.Md5Checksum;
+
+import java.util.*;
 
 /**
  * Simple Mock implementation of the FileChunkDao
@@ -126,6 +122,11 @@ public class MockFileChunkDao implements FileChunkDao
     public List<FileConstituentHandle> findChunks(String fileName, Long fileChunkTimeStamp, Long noOfChunks, Long maxAge)
     {
         return handles;
+    }
+
+    @Override
+    public List<FileConstituentHandle> findChunks(Long chunkHeaderId) {
+        return null;
     }
 
     public FileChunk load(FileConstituentHandle fileConstituentHandle)
