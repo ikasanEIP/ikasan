@@ -371,8 +371,7 @@ public class HibernateFileChunkDao implements FileChunkDao
 
         // Therefore, need to identify the chunks first, delete them, then
         // delete the header
-        List<FileConstituentHandle> chunkHandles = findChunks(fileChunkHeader.getFileName(), fileChunkHeader
-            .getChunkTimeStamp(), null, null);
+        List<FileConstituentHandle> chunkHandles = findChunks(fileChunkHeader.getId());
 
         Session session = null;
         try
