@@ -38,59 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
-
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.flow.*;
+package org.ikasan.spec.flow;
 
 /**
- * A default implementation of the FlowElementInvoker for a producer
+ * Listener contract for the FlowInvocationContext lifecycle (currently the end of the flow)
  *
  * @author Ikasan Development Team
  */
-@SuppressWarnings("unchecked")
-public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Producer>
+public interface FlowInvocationContextListener
 {
-    /** does this producer require the flowEvent or just the payload */
-    Boolean requiresFullEventForInvocation;
-
-    @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Producer> flowElement)
-    {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
-
-        Producer producer = flowElement.getFlowComponent();
-        if(requiresFullEventForInvocation == null)
-        {
-            try
-            {
-                // try with flowEvent and if successful mark this producer
-                producer.invoke(flowEvent);
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.ClassCastException e)
-            {
-                producer.invoke(flowEvent.getPayload());
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                producer.invoke(flowEvent);
-            }
-            else
-            {
-                producer.invoke(flowEvent.getPayload());
-            }
-        }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        // producer is last in the flow
-        return null;
-    }
+    /**
+     * Listener callback for when the flow ends processing
+     * @param flowInvocationContext the context
+     */
+    void endFlow(FlowInvocationContext flowInvocationContext);
 
 }
-

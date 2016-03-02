@@ -38,45 +38,78 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
+package org.ikasan.flow.event;
 
-import org.ikasan.flow.visitorPattern.InvalidFlowException;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
-import org.ikasan.spec.flow.*;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvocation;
 
 /**
- * A default implementation of the FlowElementInvoker for a singleRecipientRouter
+ * Simple factory for creating FlowElementInvocation objects
  *
  * @author Ikasan Development Team
  */
-@SuppressWarnings("unchecked")
-public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<SingleRecipientRouter>
+public class FlowElementInvocationFactory
 {
-    @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<SingleRecipientRouter> flowElement)
+
+    private FlowElementInvocationFactory(){}
+
+    /**
+     * Returns a new FlowElementInvocation object
+     * @return a new FlowElementInvocation object
+     */
+    public static FlowElementInvocation newInvocation()
     {
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        return new DefaultFlowElementInvocation();
+    }
 
-        SingleRecipientRouter router = flowElement.getFlowComponent();
-        String targetName = router.route(flowEvent.getPayload());
-        endFlowElementInvocation(flowElementInvocation, flowElement);
-        if (targetName == null)
-        {
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
-                    + "All Routers must result in at least one transition.");
+    /**
+     * Default implementation of the FlowElementInvocation
+     */
+    public static class DefaultFlowElementInvocation implements FlowElementInvocation
+    {
+        /** the start and end times (epoch) of the FlowElement invocation */
+        private volatile long startTime, endTime;
+
+        /** handle to the FlowElement that is invoked */
+        private FlowElement flowElement;
+
+        /** the FlowEvent IDENTIFIER */
+        private Object identifier;
+
+        @Override
+        public void beforeInvocation(FlowElement flowElement) {
+            startTime = System.currentTimeMillis();
+            this.flowElement = flowElement;
         }
 
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        final FlowElement nextFlowElement = flowElement.getTransition(targetName);
-        if (nextFlowElement == null)
-        {
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                    + "] contains a Router, but it does not have a transition mapped for that Router's target[" + targetName + "] "
-                    + "All Router targets must be mapped to transitions in their enclosing FlowElement");
+        @Override
+        public void afterInvocation(FlowElement flowElement) {
+            endTime = System.currentTimeMillis();
         }
 
-        return nextFlowElement;
+        @Override
+        public FlowElement getFlowElement() {
+            return flowElement;
+        }
+
+        @Override
+        public long getStartTimeMillis() {
+            return startTime;
+        }
+
+        @Override
+        public long getEndTimeMillis() {
+            return endTime;
+        }
+
+        @Override
+        public Object getIdentifier() {
+            return identifier;
+        }
+
+        @Override
+        public void setIdentifier(Object identifier) {
+            this.identifier = identifier;
+        }
     }
 }
-

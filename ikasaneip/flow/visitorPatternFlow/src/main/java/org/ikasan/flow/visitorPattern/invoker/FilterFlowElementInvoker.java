@@ -55,14 +55,16 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Filter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Filter filter = flowElement.getFlowComponent();
         if(filter.filter(flowEvent.getPayload()) == null)
         {
+            endFlowElementInvocation(flowElementInvocation, flowElement);
             return null;
         }
+        endFlowElementInvocation(flowElementInvocation, flowElement);
 
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 

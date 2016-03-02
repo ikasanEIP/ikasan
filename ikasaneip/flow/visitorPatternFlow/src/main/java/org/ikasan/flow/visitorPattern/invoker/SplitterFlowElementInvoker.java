@@ -61,8 +61,8 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Splitter splitter = flowElement.getFlowComponent();
         List payloads;
@@ -82,7 +82,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         }
         else
         {
-            if(requiresFullEventForInvocation.booleanValue())
+            if(requiresFullEventForInvocation)
             {
                 payloads = splitter.split(flowEvent);
             }
@@ -91,6 +91,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
                 payloads = splitter.split(flowEvent.getPayload());
             }
         }
+        endFlowElementInvocation(flowElementInvocation, flowElement);
 
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)

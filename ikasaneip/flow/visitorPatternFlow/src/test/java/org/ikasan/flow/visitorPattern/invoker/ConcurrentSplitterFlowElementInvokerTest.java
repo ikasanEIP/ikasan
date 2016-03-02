@@ -102,7 +102,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
             {
                 exactly(1).of(subFlowElement).getComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
 
                 exactly(1).of(subFlowElement).getFlowComponent();

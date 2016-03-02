@@ -62,8 +62,8 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         if(hasConverter == null)
         {
@@ -83,7 +83,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
         {
             flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
         }
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

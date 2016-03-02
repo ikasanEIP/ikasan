@@ -40,118 +40,128 @@
  */
 package org.ikasan.spec.flow;
 
-import java.util.List;
-
 import org.ikasan.spec.serialiser.SerialiserFactory;
+
+import java.util.List;
 
 /**
  * Interface representing a business path for a <code>FlowEvent<code>
- * 
+ * <p/>
  * Invocation represents the traversal of that business path.
- * 
+ *
  * @author Ikasan Development Team
  */
 public interface Flow
 {
     /**
      * Returns the name of this flow
-     * 
+     *
      * @return String name of this flow
      */
-    public String getName();
+    String getName();
 
     /**
      * Accessor for moduleName
-     * 
+     *
      * @return name of the module this flow exist for
      */
-    public String getModuleName();
+    String getModuleName();
 
     /**
      * Accessor for getting the flow elements
      * TODO - is this really needed ?
-     * 
+     *
      * @return list of flow elements
      */
-     public List<FlowElement<?>> getFlowElements();
+    List<FlowElement<?>> getFlowElements();
 
-     /**
-      * Accessor for getting the flow element by its given name.
-      * If the name does not exist then null is returned.
-      * If more than one element exists with this name then the first one 
-      * encountered is returned.
-      * 
-      * @return list of flow elements
-      */
-      public FlowElement<?> getFlowElement(String name);
-      
-      /**
-       * Method to get the configuration for the given flow. 
-       * 
-       * @return the flow configuration.
-       */
-      public FlowConfiguration getFlowConfiguration();
+    /**
+     * Accessor for getting the flow element by its given name.
+     * If the name does not exist then null is returned.
+     * If more than one element exists with this name then the first one
+     * encountered is returned.
+     *
+     * @return list of flow elements
+     */
+    FlowElement<?> getFlowElement(String name);
 
-      /**
-       * Setter for a listener for flow events
-       * @param flowEventListener
-       */
-       public void setFlowListener(FlowEventListener flowEventListener);
+    /**
+     * Method to get the configuration for the given flow.
+     *
+     * @return the flow configuration.
+     */
+    FlowConfiguration getFlowConfiguration();
+
+    /**
+     * Setter for a listener for flow events
+     *
+     * @param flowEventListener
+     */
+    void setFlowListener(FlowEventListener flowEventListener);
+
+    /**
+     * Setter for a List of listeners for the FlowInvocationContext
+     *
+     * @param flowInvocationContextListeners the listeners
+     */
+    void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners);
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation including starting the consumer.
      * For instance, this could include setting any flow component configurations,
      * or starting any flow managed resources.
      */
-    public void start();
+    void start();
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation, but immediately pause the consumer.
      * For instance, this could include setting any flow component configurations,
      * or starting any flow managed resources.
      */
-    public void startPause();
+    void startPause();
 
     /**
      * Invoke all stop operations for the flow that are required on shutdown of the invoking client.
      * For instance, this could include stopping any flow managed resources.
      */
-    public void stop();
+    void stop();
 
     /**
      * Invoke stop on the consumer component only. All other components will remain
      * initialised and running.
      */
-    public void pause();
+    void pause();
 
     /**
      * Invoke start on the consumer component only. All other components will remain
      * initialised and running.
      */
-    public void resume();
+    void resume();
 
     /**
      * Returns the current runtmie state of this flow.
      * String - runtime state
      */
-    public String getState();
- 
+    String getState();
+
     /**
      * Get the serialiser factory associated with this flow.
-     * 
+     *
      * @return
      */
-    public SerialiserFactory getSerialiserFactory();
+    SerialiserFactory getSerialiserFactory();
 
     /**
      * Is this flow in a running state
+     *
      * @return
      */
-    public boolean isRunning();
+    boolean isRunning();
 
     /**
      * Is this flow in a paused state
+     *
      * @return
      */
-    public boolean isPaused();
+    boolean isPaused();
 }

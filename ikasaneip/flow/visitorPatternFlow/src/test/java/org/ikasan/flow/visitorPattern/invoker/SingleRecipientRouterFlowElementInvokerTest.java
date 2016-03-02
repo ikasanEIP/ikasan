@@ -86,7 +86,7 @@ public class SingleRecipientRouterFlowElementInvokerTest
             {
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -118,7 +118,7 @@ public class SingleRecipientRouterFlowElementInvokerTest
             {
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -141,7 +141,7 @@ public class SingleRecipientRouterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_no_next_flow_element_for_single_route()
     {
-        final String route = new String("one");
+        final String route = "one";
 
         // expectations
         mockery.checking(new Expectations()
@@ -149,7 +149,7 @@ public class SingleRecipientRouterFlowElementInvokerTest
             {
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();

@@ -41,9 +41,8 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.apache.log4j.Logger;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.flow.event.FlowElementInvocationFactory;
+import org.ikasan.spec.flow.*;
 
 /**
  * An abstract implementation of the FlowElementInvoker
@@ -108,6 +107,33 @@ public abstract class AbstractFlowElementInvoker
     FlowElement getDefaultTransition(FlowElement flowElement)
     {
         return flowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+    }
+
+    /**
+     * Creates a new FlowElementInvocation and adds it the FlowInvocationContext
+     * @param flowInvocationContext the context
+     * @param flowElement the current flow element being invoked
+     * @param flowEvent the current flow event
+     * @return the new FlowElementInvocation
+     */
+    @SuppressWarnings("unchecked")
+    FlowElementInvocation beginFlowElementInvocation(FlowInvocationContext flowInvocationContext, FlowElement flowElement, FlowEvent flowEvent)
+    {
+        FlowElementInvocation flowElementInvocation = FlowElementInvocationFactory.newInvocation();
+        flowElementInvocation.setIdentifier(flowEvent.getIdentifier());
+        flowElementInvocation.beforeInvocation(flowElement);
+        flowInvocationContext.addInvocation(flowElementInvocation);
+        return flowElementInvocation;
+    }
+
+    /**
+     * Ends the invocation
+     * @param flowElementInvocation the invocation
+     * @param flowElement the current flow element being invoked
+     */
+    void endFlowElementInvocation(FlowElementInvocation flowElementInvocation, FlowElement flowElement)
+    {
+        flowElementInvocation.afterInvocation(flowElement);
     }
 }
 
