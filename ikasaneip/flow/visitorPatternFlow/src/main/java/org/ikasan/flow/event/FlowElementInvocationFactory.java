@@ -76,6 +76,9 @@ public class FlowElementInvocationFactory
         /** the FlowEvent IDENTIFIER */
         private Object identifier;
 
+        /** the FlowEvent IDENTIFIER */
+        private Object relatedIdentifier;
+
         @Override
         public void beforeInvocation(FlowElement flowElement) {
             startTime = System.currentTimeMillis();
@@ -110,6 +113,18 @@ public class FlowElementInvocationFactory
         @Override
         public void setIdentifier(Object identifier) {
             this.identifier = identifier;
+        }
+
+        @Override
+        public Object getRelatedIdentifier()
+        {
+            return relatedIdentifier;
+        }
+
+        @Override
+        public void setRelatedIdentifier(Object relatedIdentifier)
+        {
+            this.relatedIdentifier = relatedIdentifier;
         }
     }
 }

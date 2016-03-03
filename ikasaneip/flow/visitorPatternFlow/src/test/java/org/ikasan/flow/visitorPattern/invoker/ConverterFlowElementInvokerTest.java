@@ -81,6 +81,8 @@ public class ConverterFlowElementInvokerTest
             {
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
+                exactly(1).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -112,6 +114,8 @@ public class ConverterFlowElementInvokerTest
         {
             {
                 exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
@@ -146,6 +150,8 @@ public class ConverterFlowElementInvokerTest
         {
             {
                 exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);

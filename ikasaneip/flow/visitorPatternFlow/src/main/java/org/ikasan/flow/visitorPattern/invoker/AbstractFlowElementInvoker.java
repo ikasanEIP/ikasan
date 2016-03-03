@@ -121,6 +121,7 @@ public abstract class AbstractFlowElementInvoker
     {
         FlowElementInvocation flowElementInvocation = FlowElementInvocationFactory.newInvocation();
         flowElementInvocation.setIdentifier(flowEvent.getIdentifier());
+        flowElementInvocation.setRelatedIdentifier(flowEvent.getRelatedIdentifier());
         flowElementInvocation.beforeInvocation(flowElement);
         flowInvocationContext.addInvocation(flowElementInvocation);
         return flowElementInvocation;

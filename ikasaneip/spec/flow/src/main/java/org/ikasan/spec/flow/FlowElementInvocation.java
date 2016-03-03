@@ -89,4 +89,16 @@ public interface FlowElementInvocation<IDENTIFIER> {
      * @param identifier
      */
     void setIdentifier(IDENTIFIER identifier);
+
+    /**
+     * Returns the related identifier for the this invocation
+     * @return the IDENTIFIER
+     */
+    IDENTIFIER getRelatedIdentifier();
+
+    /**
+     * Sets the related identifier
+     * @param relatedIdentifier
+     */
+    void setRelatedIdentifier(IDENTIFIER relatedIdentifier);
 }
