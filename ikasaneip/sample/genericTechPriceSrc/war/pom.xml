@@ -51,7 +51,7 @@
   <parent>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-sample-genericTechPriceSrc-parent</artifactId>
-      <version>1.0.9-SNAPSHOT</version>
+      <version>1.0.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>sample-genericTechPriceSrc-war</artifactId>
