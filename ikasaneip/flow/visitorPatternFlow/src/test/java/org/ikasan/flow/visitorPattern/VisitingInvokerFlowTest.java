@@ -41,6 +41,7 @@
 package org.ikasan.flow.visitorPattern;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ikasan.flow.event.FlowEventFactory;
@@ -53,13 +54,7 @@ import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
@@ -193,6 +188,9 @@ public class VisitingInvokerFlowTest
 
     /** Mock serialiserFactory */
     final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "mockSerialiserFactory");
+
+    final FlowInvocationContextListener flowInvocationContextListener = mockery.mock(FlowInvocationContextListener.class, "flowInvocationContextListener");
+    final List<FlowInvocationContextListener> flowInvocationContextListeners = Collections.singletonList(flowInvocationContextListener);
 
     /** is recovering status */
     boolean isRecovering = false;
@@ -640,11 +638,6 @@ public class VisitingInvokerFlowTest
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
-        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
-        managedResourceFlowElements.add(managedResourceFlowElement1);
-        managedResourceFlowElements.add(managedResourceFlowElement2);
-        managedResourceFlowElements.add(managedResourceFlowElement3);
-
         // set the monitor and receive initial state callback
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -674,15 +667,6 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
-
-        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
-        managedResourceFlowElements.add(managedResourceFlowElement1);
-        managedResourceFlowElements.add(managedResourceFlowElement2);
-        managedResourceFlowElements.add(managedResourceFlowElement3);
-
-        final RuntimeException exception = new RuntimeException("test consumer failing to start");
-
-        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // set the monitor and receive initial state callback
         isRecovering = true;
@@ -2024,6 +2008,239 @@ public class VisitingInvokerFlowTest
         // test assertions
         mockery.assertIsSatisfied();
     }
+
+    /**
+     * Test successful flow invoke with a flow event with a context listener.
+     */
+    @Test
+    public void test_successful_flow_invoke_with_flowEvent_with_contextListener()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
+
+                // reload any marked dynamic dao
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                will(returnValue(null));
+
+                exactly(1).of(exclusionService).isBlackListed("identifier");
+                will(returnValue(false));
+
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
+
+                exactly(1).of(flowInvocationContextListener).endFlow(flowInvocationContext);
+
+                // in this test we do not need to cancel recovery
+                oneOf(recoveryManager).isRecovering();
+                will(returnValue(false));
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
+        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setFlowListener(flowEventListener);
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow invoke with a flow event with a context listener that is disabled.
+     */
+    @Test
+    public void test_successful_flow_invoke_with_flowEvent_with_contextListener_disabled()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
+
+                // reload any marked dynamic dao
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                will(returnValue(null));
+
+                exactly(1).of(exclusionService).isBlackListed("identifier");
+                will(returnValue(false));
+
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
+
+                // in this test we do not need to cancel recovery
+                oneOf(recoveryManager).isRecovering();
+                will(returnValue(false));
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
+        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
+        flow.stopContextListeners();
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setFlowListener(flowEventListener);
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow invoke with a flow event with a context listener that is specifically enabled.
+     */
+    @Test
+    public void test_successful_flow_invoke_with_flowEvent_with_contextListener_enabled()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always get the original exceptionLifeIdentifier
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
+
+                // reload any marked dynamic dao
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                will(returnValue(null));
+
+                exactly(1).of(exclusionService).isBlackListed("identifier");
+                will(returnValue(false));
+
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
+
+                exactly(1).of(flowInvocationContextListener).endFlow(flowInvocationContext);
+
+                // in this test we do not need to cancel recovery
+                oneOf(recoveryManager).isRecovering();
+                will(returnValue(false));
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
+        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
+        flow.stopContextListeners();
+        flow.startContextListeners();
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setFlowListener(flowEventListener);
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
 
     /**
      * Test failed flow invoke with a flow event, but dynamic dao failing.

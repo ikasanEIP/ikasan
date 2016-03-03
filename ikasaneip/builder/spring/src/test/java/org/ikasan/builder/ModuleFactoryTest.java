@@ -40,10 +40,9 @@
  */
 package org.ikasan.builder;
 
-import junit.framework.Assert;
-
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

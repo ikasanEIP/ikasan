@@ -164,4 +164,20 @@ public interface Flow
      * @return
      */
     boolean isPaused();
+
+    /**
+     * Start the context listeners
+     */
+    void startContextListeners();
+
+    /**
+     * Stop the context listeners
+     */
+    void stopContextListeners();
+
+    /**
+     * determine the context listener state
+     * @return true if the listeners are active/running, false if they are stopped/disabled
+     */
+    boolean areContextListenersRunning();
 }
