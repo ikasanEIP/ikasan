@@ -42,9 +42,7 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
-import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -53,7 +51,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Supports testing of the SequencerFlowElementInvoker
@@ -87,9 +84,9 @@ public class SequencerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -129,9 +126,9 @@ public class SequencerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -168,9 +165,9 @@ public class SequencerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -199,9 +196,9 @@ public class SequencerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -230,9 +227,9 @@ public class SequencerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
