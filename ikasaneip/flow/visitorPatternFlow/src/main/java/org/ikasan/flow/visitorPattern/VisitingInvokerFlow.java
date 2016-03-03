@@ -135,6 +135,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** List of listeners for the end of the FlowInvocation using the associated context */
     private List<FlowInvocationContextListener> flowInvocationContextListeners;
 
+    /** flag to control invocation of the context listeners at runtime, defaults to true */
+    protected volatile boolean invokeContextListeners = true;
+
 
     /**
      * Constructor
@@ -440,6 +443,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         return currentState.equals(PAUSED);
     }
 
+    @Override
+    public void startContextListeners()
+    {
+        invokeContextListeners = true;
+    }
+
+    @Override
+    public void stopContextListeners()
+    {
+        invokeContextListeners = false;
+    }
+
+    @Override
+    public boolean areContextListenersRunning()
+    {
+        return invokeContextListeners;
+    }
+
     /**
      * Start the consumer component.
      */
@@ -727,7 +748,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     protected void notifyFlowInvocationContextListeners(FlowInvocationContext flowInvocationContext)
     {
-        if (flowInvocationContextListeners != null)
+        if (flowInvocationContextListeners != null && invokeContextListeners)
         {
             for (FlowInvocationContextListener listener : flowInvocationContextListeners)
             {
