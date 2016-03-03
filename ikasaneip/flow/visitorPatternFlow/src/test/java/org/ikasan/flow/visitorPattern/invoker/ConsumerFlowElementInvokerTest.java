@@ -41,20 +41,13 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
-import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
-import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
-import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -86,9 +79,9 @@ public class ConsumerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(consumer));
@@ -112,9 +105,9 @@ public class ConsumerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -147,9 +140,9 @@ public class ConsumerFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(consumer));

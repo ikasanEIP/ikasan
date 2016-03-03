@@ -45,7 +45,6 @@ import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
@@ -62,8 +61,7 @@ public class BrokerFlowElementInvokerTest
     private Mockery mockery = new Mockery()
     {{
             setImposteriser(ClassImposteriser.INSTANCE);
-            setThreadingPolicy(new Synchroniser());
-    }};
+        }};
 
     private FlowEventListener flowEventListener = mockery.mock(FlowEventListener.class, "flowEventListener");
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
@@ -81,9 +79,10 @@ public class BrokerFlowElementInvokerTest
         {
             {
                 // first execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -101,9 +100,10 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 // second execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -136,9 +136,10 @@ public class BrokerFlowElementInvokerTest
         {
             {
                 // first execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -152,9 +153,11 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 // second execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();

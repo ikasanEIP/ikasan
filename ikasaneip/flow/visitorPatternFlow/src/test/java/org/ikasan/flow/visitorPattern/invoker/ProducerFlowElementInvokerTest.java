@@ -41,7 +41,6 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
@@ -80,9 +79,9 @@ public class ProducerFlowElementInvokerTest
         {
             {
                 // first execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -96,9 +95,9 @@ public class ProducerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 // second execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -127,9 +126,9 @@ public class ProducerFlowElementInvokerTest
         {
             {
                 // first execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -139,9 +138,9 @@ public class ProducerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 // second execution
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();

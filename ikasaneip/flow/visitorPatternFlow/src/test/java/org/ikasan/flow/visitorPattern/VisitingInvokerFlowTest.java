@@ -76,7 +76,7 @@ import org.junit.Test;
 
 /**
  * This test class supports the <code>VisitingInvokerFlow</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
@@ -87,8 +87,8 @@ public class VisitingInvokerFlowTest
      */
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }};
 
     /** Mock flowConfiguration */
     final FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class, "mockFlowConfiguration");
@@ -120,19 +120,19 @@ public class VisitingInvokerFlowTest
 
     /** Mock list of configured resource flow elements */
     final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements
-        = mockery.mock(List.class, "mockFlowElementConfiguredResources");
+            = mockery.mock(List.class, "mockFlowElementConfiguredResources");
 
     /** Mock configured resource flow elements */
     final FlowElement<ConfiguredResource> configuredResourceFlowElement
-        = mockery.mock(FlowElement.class, "mockFlowElementConfiguredResource");
+            = mockery.mock(FlowElement.class, "mockFlowElementConfiguredResource");
 
     /** Mock list of dynamic configured resource flow elements */
     final List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredResourceFlowElements
-        = mockery.mock(List.class, "mockFlowElementDynamicConfiguredResources");
+            = mockery.mock(List.class, "mockFlowElementDynamicConfiguredResources");
 
     /** Mock dynamic configured resource flow elements */
     final FlowElement<DynamicConfiguredResource> dynamicConfiguredResourceFlowElement
-        = mockery.mock(FlowElement.class, "mockFlowElementDynamicConfiguredResource");
+            = mockery.mock(FlowElement.class, "mockFlowElementDynamicConfiguredResource");
 
     /** Mock managed resource flow element 1 */
     final FlowElement<ManagedResource> managedResourceFlowElement1
@@ -144,11 +144,11 @@ public class VisitingInvokerFlowTest
 
     /** Mock managed resource flow element 2 */
     final FlowElement<ManagedResource> managedResourceFlowElement2
-    = mockery.mock(FlowElement.class, "mockFlowElementManagedResource2");
+            = mockery.mock(FlowElement.class, "mockFlowElementManagedResource2");
 
     /** Mock managed resource flow element 3 */
     final FlowElement<ManagedResource> managedResourceFlowElement3
-    = mockery.mock(FlowElement.class, "mockFlowElementManagedResource3");
+            = mockery.mock(FlowElement.class, "mockFlowElementManagedResource3");
 
     /** Mock managed resource flow element 1 */
     final FlowElement<ManagedResource> managedResourceFlowElementExclusion1
@@ -175,13 +175,13 @@ public class VisitingInvokerFlowTest
 
     /** Mock consumer */
     final Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = mockery.mock(Consumer.class, "mockConsumer");
-    
+
     /** Mock flow event */
     final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
 
     /** Mock monitor */
     final Monitor monitor = mockery.mock(Monitor.class, "mockMonitor");
-    
+
     /** Mock flow invocation context */
     final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "mockFlowInvocationContext");
 
@@ -190,7 +190,7 @@ public class VisitingInvokerFlowTest
 
     /** Mock exclusionService */
     final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
-    
+
     /** Mock serialiserFactory */
     final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "mockSerialiserFactory");
 
@@ -199,7 +199,7 @@ public class VisitingInvokerFlowTest
 
     /** is running status */
     boolean isRunning = false;
-    
+
     /** is unrecoverable status */
     boolean isUnrecoverable = false;
 
@@ -210,8 +210,8 @@ public class VisitingInvokerFlowTest
         isRunning = false;
         isUnrecoverable = false;
     }
-    
-	/**
+
+    /**
      * Test failed constructor due to null flow name.
      */
     @Test(expected = IllegalArgumentException.class)
@@ -283,8 +283,8 @@ public class VisitingInvokerFlowTest
     public void test_successful_flow_start_from_stopped()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
@@ -306,9 +306,9 @@ public class VisitingInvokerFlowTest
         {
             {
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load monitor configuration and notifiers
@@ -318,16 +318,16 @@ public class VisitingInvokerFlowTest
                 // load configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
-                
+
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
-                
+
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -364,14 +364,14 @@ public class VisitingInvokerFlowTest
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name3"));
@@ -381,12 +381,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name3"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name2"));
@@ -396,12 +396,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name2"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name1"));
@@ -411,23 +411,23 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name1"));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
-                
+
                 // check eventFactory for consumer
                 exactly(1).of(consumer).getEventFactory();
                 will(returnValue(flowEventFactory));
-                
+
                 // start the consumer
                 exactly(1).of(consumer).start();
             }
@@ -459,8 +459,8 @@ public class VisitingInvokerFlowTest
     public void test_successful_flow_start_from_stoppedInError()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
@@ -482,9 +482,9 @@ public class VisitingInvokerFlowTest
         {
             {
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load monitor configuration and notifiers
@@ -494,16 +494,16 @@ public class VisitingInvokerFlowTest
                 // load configuration
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
-                
+
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
-                
+
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -540,14 +540,14 @@ public class VisitingInvokerFlowTest
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
@@ -557,12 +557,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
@@ -572,12 +572,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
@@ -587,23 +587,23 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
-                
+
                 // check eventFactory for consumer
                 exactly(1).of(consumer).getEventFactory();
                 will(returnValue(flowEventFactory));
-                
+
                 // start the consumer
                 exactly(1).of(consumer).start();
             }
@@ -636,9 +636,14 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_start_due_to_consumer_already_running()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
 
         // set the monitor and receive initial state callback
         isRunning = true;
@@ -667,8 +672,17 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_start_due_to_consumer_already_running_in_recovery()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+
+        final RuntimeException exception = new RuntimeException("test consumer failing to start");
+
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // set the monitor and receive initial state callback
         isRecovering = true;
@@ -697,8 +711,8 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_start_due_to_configuration_failure()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
@@ -715,20 +729,20 @@ public class VisitingInvokerFlowTest
         {
             {
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
 
                 // get consumer flow element
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
-                
+
                 // get the flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement));
 
                 // load monitor configuration and notifiers
@@ -736,9 +750,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(notifiers));
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -762,10 +776,10 @@ public class VisitingInvokerFlowTest
                 // load configuration
                 exactly(2).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
-                
+
                 exactly(1).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
-                
+
                 exactly(1).of(flowConfiguration).configure(configuredResource);
                 will(throwException(exception));
             }
@@ -798,8 +812,8 @@ public class VisitingInvokerFlowTest
     public void test_success_flow_start_even_with_managedResource_start_failure_non_critical_resource()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
@@ -819,18 +833,18 @@ public class VisitingInvokerFlowTest
         {
             {
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // load monitor configuration and notifiers
                 exactly(1).of(monitor).getNotifiers();
                 will(returnValue(notifiers));
 
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
                 // configure business flow
                 exactly(2).of(configuredResource).getConfiguredResourceId();
@@ -842,9 +856,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -881,7 +895,7 @@ public class VisitingInvokerFlowTest
                 // get the the flow element managed resource
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
                 exactly(1).of(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
@@ -893,29 +907,29 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 will(throwException(new RuntimeException("test managed resource start failure")));
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
-                exactly(1).of(managedResource).isCriticalOnStartup();
+                oneOf(managedResource).isCriticalOnStartup();
                 will(returnValue(false));
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("managedResourceFlowElementName"));
                 inSequence(reverseOrder);
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
-                
+
                 // check eventFactory for consumer
                 exactly(1).of(consumer).getEventFactory();
                 will(returnValue(flowEventFactory));
-                
+
                 // start the consumer
                 exactly(1).of(consumer).start();
             }
@@ -948,12 +962,12 @@ public class VisitingInvokerFlowTest
     public void test_success_flow_start_even_with_managedResource_start_failure_critical_resource()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
-        
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // expectations
@@ -961,41 +975,41 @@ public class VisitingInvokerFlowTest
         {
             {
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
 
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load dao
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 // get the the flow element managed resource
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // start each managed resource from right to left (reverse order) in flow order
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 will(throwException(new RuntimeException("test managed resource start failure")));
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
-                exactly(1).of((FlowElement)managedResource).getFlowComponent();
+                oneOf((FlowElement) managedResource).getFlowComponent();
                 will(returnValue("name"));
-                exactly(1).of(managedResource).isCriticalOnStartup();
+                oneOf(managedResource).isCriticalOnStartup();
                 will(returnValue(true));
 
                 // stop each managed resource
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
             }
         });
 
@@ -1024,8 +1038,8 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_start_due_to_recoverable_consumer_failure()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
@@ -1049,14 +1063,14 @@ public class VisitingInvokerFlowTest
         {
             {
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load monitor dao and notifiers
@@ -1066,16 +1080,16 @@ public class VisitingInvokerFlowTest
                 // load dao
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
-                
+
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
-                
+
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -1109,12 +1123,12 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceExclusionFlowElements));
 
-                 // get the three flow element managed resources
+                // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
@@ -1124,12 +1138,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
@@ -1139,12 +1153,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
@@ -1154,23 +1168,23 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
-                
+
                 // check eventFactory for consumer
                 exactly(1).of(consumer).getEventFactory();
                 will(returnValue(flowEventFactory));
-                
+
                 // start the consumer
                 exactly(1).of(consumer).start();
                 will(throwException(exception));
@@ -1208,8 +1222,8 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_start_due_to_unrecoverable_consumer_failure()
     {
         // container for the complete flow
-        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<>();
@@ -1233,20 +1247,20 @@ public class VisitingInvokerFlowTest
         {
             {
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -1283,12 +1297,12 @@ public class VisitingInvokerFlowTest
                 // load dao
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
-                
+
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
-                
+
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 // get the exclusion flow element managed resources
                 exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceExclusionFlowElements));
@@ -1296,9 +1310,9 @@ public class VisitingInvokerFlowTest
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
@@ -1308,12 +1322,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
@@ -1323,12 +1337,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-                
+
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
@@ -1338,23 +1352,23 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-                                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
-                
+
                 // check eventFactory for consumer
                 exactly(1).of(consumer).getEventFactory();
                 will(returnValue(flowEventFactory));
-                
+
                 // start the consumer
                 exactly(1).of(consumer).start();
                 will(throwException(exception));
@@ -1395,42 +1409,42 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
-        
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // always check to see if recovery is in progress
                 // in this test case it isn't
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // nullify the listener for tech callbacks
                 exactly(1).of(consumer).setListener(null);
-                
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
-                
+
                 // get the three flow element managed resources
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // stop each managed resource from left to right in flow order
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("componentName1"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("componentName1"));
@@ -1439,10 +1453,10 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("componentName2"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("componentName2"));
@@ -1451,27 +1465,27 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("componentName3"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("componentName3"));
                 inSequence(reverseOrder);
 
                 // get the three exclusion flow element managed resources
-                exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
 
                 // stop each managed resource from left to right in flow order
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("componentName1"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("componentName1"));
@@ -1480,10 +1494,10 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("componentName2"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
                 exactly(1).of(managedResourceFlowElement2).getComponentName();
                 will(returnValue("componentName2"));
@@ -1492,10 +1506,10 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("componentName3"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
                 exactly(1).of(managedResourceFlowElement3).getComponentName();
                 will(returnValue("componentName3"));
@@ -1504,8 +1518,8 @@ public class VisitingInvokerFlowTest
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         isRunning = true;
@@ -1533,117 +1547,117 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
-        
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // always check to see if recovery is in progress
                 // in this test case it isn't
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // nullify the listener for tech callbacks
                 exactly(1).of(consumer).setListener(null);
-                
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
-                
+
                 // get the three flow element managed resources
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // stop each managed resource from left to right in flow order
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
                 // get the three exclusion flow element managed resources
-                exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
 
                 // stop each managed resource from left to right in flow order
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         isRunning = true;
@@ -1673,116 +1687,116 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
-        
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // always check to see if recovery is in progress
                 // in this test case it isn't
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // nullify the listener for tech callbacks
                 exactly(1).of(consumer).setListener(null);
-                
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
-                
+
                 // get the three flow element managed resources
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // stop each managed resource from left to right in flow order
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
                 // get the three exclusion flow element managed resources
-                exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
 
                 // stop each managed resource from left to right in flow order
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);            }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1810,117 +1824,117 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
-        
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // always check to see if recovery is in progress
                 // in this test case it isn't
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
-                
+
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
-                
+
                 // nullify the listener for tech callbacks
                 exactly(1).of(consumer).setListener(null);
-                
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
-                
+
                 // get the three flow element managed resources
-                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
+                oneOf(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
-                
+
                 // stop each managed resource from left to right in flow order
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
                 // get the three exclusion flow element managed resources
-                exactly(1).of(exclusionFlowConfiguration).getManagedResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
 
                 // stop each managed resource from left to right in flow order
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                oneOf(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getFlowComponent();
+                oneOf(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                oneOf(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
 
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getFlowComponent();
+                oneOf(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).stopManagedResource();
+                oneOf(managedResource).stopManagedResource();
                 inSequence(reverseOrder);
-                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                oneOf(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 inSequence(reverseOrder);
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         isUnrecoverable = true;
@@ -1951,10 +1965,14 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
+
                 // reload any marked dynamic dao
-                exactly(1).of(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
-                exactly(1).of(dynamicConfiguredResourceFlowElements).iterator();
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
@@ -1962,35 +1980,35 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
 
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
-                exactly(1).of(consumerFlowElement).getFlowElementInvoker();
+                oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
                 exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
-                exactly(1).of(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
-                exactly(1).of(dynamicConfiguredResourceFlowElements).iterator();
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
                 exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
-                
+
                 // in this test we do not need to cancel recovery
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2014,7 +2032,7 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_flowEvent_stoppingInError_due_to_dynamicConfiguration_failure()
     {
         final RuntimeException exception = new RuntimeException("test failed dynamic dao");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2023,10 +2041,13 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
                 // reload any marked dynamic dao
-                exactly(1).of(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
-                exactly(1).of(dynamicConfiguredResourceFlowElements).iterator();
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
@@ -2035,23 +2056,19 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowConfiguration).configure(configuredResource);
                 will(throwException(exception));
 
-                // add failed flow element name to the context
-                exactly(1).of(dynamicConfiguredResourceFlowElement).getComponentName();
-                will(returnValue("dynamicComponentName"));
-
                 exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
 
                 // pass the exception to the recovery manager
-                exactly(1).of(flowInvocationContext).getLastComponentName();
+                oneOf(flowInvocationContext).getLastComponentName();
                 will(returnValue("dynamicComponentName"));
-                exactly(1).of(recoveryManager).recover("dynamicComponentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover("dynamicComponentName", exception, flowEvent, "identifier");
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2076,7 +2093,7 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_flowEvent_resulting_in_stoppedInError()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2085,10 +2102,13 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
                 // reload any marked dynamic dao
-                exactly(1).of(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
-                exactly(1).of(dynamicConfiguredResourceFlowElements).iterator();
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
@@ -2100,25 +2120,25 @@ public class VisitingInvokerFlowTest
                 will(returnValue(false));
 
                 // invoke the flow elements
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
 
                 exactly(1).of(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
-                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
-                
+
                 // pass the exception to the recovery manager
-                exactly(1).of(flowInvocationContext).getLastComponentName();
+                oneOf(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2144,7 +2164,7 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_flowEvent_resulting_in_recovery()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2153,10 +2173,13 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
                 // reload any marked dynamic dao
-                exactly(1).of(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
-                exactly(1).of(dynamicConfiguredResourceFlowElements).iterator();
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
@@ -2168,25 +2191,25 @@ public class VisitingInvokerFlowTest
                 will(returnValue(false));
 
                 // invoke the flow elements
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
 
                 exactly(1).of(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
-                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
-                
+
                 // pass the exception to the recovery manager
-                exactly(1).of(flowInvocationContext).getLastComponentName();
+                oneOf(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2213,7 +2236,7 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_flowEvent_resulting_in_continuing_to_run()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -2222,10 +2245,13 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
+                exactly(1).of(flowInvocationContext).startFlow();
+                exactly(1).of(flowInvocationContext).endFlow();
+
                 // reload any marked dynamic dao
-                exactly(1).of(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
-                exactly(1).of(dynamicConfiguredResourceFlowElements).iterator();
+                oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
 
                 exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
@@ -2237,25 +2263,25 @@ public class VisitingInvokerFlowTest
                 will(returnValue(false));
 
                 // invoke the flow elements
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
 
                 exactly(1).of(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
 
-                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
+                oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
-                
+
                 // pass the exception to the recovery manager
-                exactly(1).of(flowInvocationContext).getLastComponentName();
+                oneOf(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
-                exactly(1).of(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2281,25 +2307,25 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_exception_resulting_in_continuing_to_run()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // get the context
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
-                exactly(1).of(consumerFlowElement).getComponentName();
+                oneOf(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
 
                 // pass the exception to the recovery manager
-                exactly(1).of(recoveryManager).recover("consumerName", exception);
+                oneOf(recoveryManager).recover("consumerName", exception);
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2324,25 +2350,25 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_exception_resulting_in_recovery()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // get the context
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
-                exactly(1).of(consumerFlowElement).getComponentName();
+                oneOf(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
 
                 // pass the exception to the recovery manager
-                exactly(1).of(recoveryManager).recover("consumerName", exception);
+                oneOf(recoveryManager).recover("consumerName", exception);
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2368,25 +2394,25 @@ public class VisitingInvokerFlowTest
     public void test_failed_flow_invoke_with_exception_resulting_in_stoppedInError()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
-        
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // get the context
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
-                exactly(1).of(consumerFlowElement).getComponentName();
+                oneOf(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
 
                 // pass the exception to the recovery manager
-                exactly(1).of(recoveryManager).recover("consumerName", exception);
+                oneOf(recoveryManager).recover("consumerName", exception);
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -2415,14 +2441,14 @@ public class VisitingInvokerFlowTest
         {
             {
                 // get all flow elements
-                exactly(1).of(flowConfiguration).getFlowElements();
+                oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(configuredResourceFlowElements));
             }
         });
 
         // container for the complete flow
-        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, recoveryManager, exclusionService);
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
+                flowConfiguration, recoveryManager, exclusionService);
 
         Assert.assertNotNull("there should be one flow elements on this flow", flow.getFlowElements());
 
@@ -2459,9 +2485,9 @@ public class VisitingInvokerFlowTest
         {
             {
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load monitor configuration and notifiers
@@ -2478,9 +2504,9 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -2515,7 +2541,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResourceExclusionFlowElements));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElementExclusion1).getFlowComponent();
+                oneOf(managedResourceFlowElementExclusion1).getFlowComponent();
                 will(returnValue(exclusionManagedResource));
                 exactly(3).of(managedResourceFlowElementExclusion1).getComponentName();
                 will(returnValue("exclusion component name1"));
@@ -2532,12 +2558,12 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResourceFlowElements));
 
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name2"));
@@ -2547,12 +2573,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name2"));
 
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
@@ -2622,9 +2648,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(notifiers));
 
                 // get the two flow element configured resources
-                exactly(1).of(flowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load flow configuration
@@ -2637,9 +2663,9 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 // get the two exclusion flow element configured resources
-                exactly(1).of(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
+                oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
-                exactly(1).of(configuredResourceFlowElements).iterator();
+                oneOf(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load exclusion flow configuration
@@ -2674,7 +2700,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResourceExclusionFlowElements));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElementExclusion1).getFlowComponent();
+                oneOf(managedResourceFlowElementExclusion1).getFlowComponent();
                 will(returnValue(exclusionManagedResource));
                 exactly(1).of(managedResourceFlowElementExclusion1).getComponentName();
                 will(returnValue("exclusion component name"));
@@ -2684,7 +2710,7 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(exclusionManagedResource).startManagedResource();
+                oneOf(exclusionManagedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElementExclusion1).getComponentName();
                 will(returnValue("exclusion component name"));
 
@@ -2694,12 +2720,12 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResourceFlowElements));
 
                 // clear recovery manager states
-                exactly(1).of(recoveryManager).initialise();
+                oneOf(recoveryManager).initialise();
                 // pass any managed resources to the recovery manager
-                exactly(1).of(recoveryManager).setManagedResources(with(any(List.class)));
+                oneOf(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // set the managed resource recovery manager instance on each managed resource
-                exactly(1).of(managedResourceFlowElement1).getFlowComponent();
+                oneOf(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 exactly(1).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
@@ -2709,12 +2735,12 @@ public class VisitingInvokerFlowTest
 
                 // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
-                exactly(1).of(managedResource).startManagedResource();
+                oneOf(managedResource).startManagedResource();
                 exactly(2).of(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
 
                 // get the consumer
-                exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
@@ -2764,28 +2790,28 @@ public class VisitingInvokerFlowTest
         {
             {
                 // set expectations for establishing state
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(isRecovering));
-                
+
                 if(!isRecovering)
                 {
-                    exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                    oneOf(flowConfiguration).getConsumerFlowElement();
                     will(returnValue(consumerFlowElement));
-                    exactly(1).of(consumerFlowElement).getFlowComponent();
+                    oneOf(consumerFlowElement).getFlowComponent();
                     will(returnValue(consumer));
-                    exactly(1).of(consumer).isRunning();
+                    oneOf(consumer).isRunning();
                     will(returnValue(isRunning));
                 }
-                
+
                 if(!isRecovering && !isRunning)
                 {
-                    exactly(1).of(recoveryManager).isUnrecoverable();
+                    oneOf(recoveryManager).isUnrecoverable();
                     will(returnValue(isUnrecoverable));
                 }
             }
         });
     }
-    
+
     /**
      * Set the getState expectations based on the incoming parameters.
      * @param isRecovering
@@ -2798,25 +2824,25 @@ public class VisitingInvokerFlowTest
         {
             {
                 // set expectations for establishing state
-                exactly(1).of(recoveryManager).isRecovering();
+                oneOf(recoveryManager).isRecovering();
                 will(returnValue(isRecovering));
-                
+
                 if(!isRecovering)
                 {
-                    exactly(1).of(flowConfiguration).getConsumerFlowElement();
+                    oneOf(flowConfiguration).getConsumerFlowElement();
                     will(returnValue(consumerFlowElement));
-                    exactly(1).of(consumerFlowElement).getFlowComponent();
+                    oneOf(consumerFlowElement).getFlowComponent();
                     will(returnValue(consumer));
-                    exactly(1).of(consumer).isRunning();
+                    oneOf(consumer).isRunning();
                     will(returnValue(isRunning));
                 }
             }
         });
     }
-    
+
     /**
      * Convenience method for setting monitor expectations.
-     * @param state
+     * @param state the state
      */
     private void setMonitorExpectations(final String state)
     {
@@ -2829,7 +2855,7 @@ public class VisitingInvokerFlowTest
             }
         });
     }
-    
+
     /**
      * Extended test class allowing return of a mocked flowInvocationContext.
      * @author Ikasan Developer Team
@@ -2839,11 +2865,11 @@ public class VisitingInvokerFlowTest
     {
 
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                RecoveryManager<FlowEvent<?,?>> recoveryManager, ExclusionService exclusionService)
+                                           RecoveryManager<FlowEvent<?,?>> recoveryManager, ExclusionService exclusionService)
         {
             super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         }
-     
+
         @Override
         protected FlowInvocationContext createFlowInvocationContext()
         {

@@ -91,18 +91,16 @@ public class ConcurrentSplitterFlowElementInvokerTest
         final List payloads = new ArrayList();
         payloads.add(payload);
 
-        final List<String> invokedComponents =  new ArrayList<>();
-        invokedComponents.add("componentName");
-
         asyncTask._flowEvent = flowEvent;
         asyncTask._flowInvocationContext = flowInvocationContext;
 
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(subFlowElement).getComponentName();
-                will(returnValue("componentName"));
-                //exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
 
                 exactly(1).of(subFlowElement).getFlowComponent();
