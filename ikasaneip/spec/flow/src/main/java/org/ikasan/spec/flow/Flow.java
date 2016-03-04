@@ -107,6 +107,13 @@ public interface Flow
     void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners);
 
     /**
+     * Getter for the List of listeners for the FlowInvocationContext
+     * @return the list
+     */
+    List<FlowInvocationContextListener> getFlowInvocationContextListeners();
+
+
+    /**
      * Invoke all start operations for the flow that are required prior to an event invocation including starting the consumer.
      * For instance, this could include setting any flow component configurations,
      * or starting any flow managed resources.
