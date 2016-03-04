@@ -1,21 +1,5 @@
 package org.ikasan.rest.module;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-
 import org.apache.log4j.Logger;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.spec.flow.Flow;
@@ -23,6 +7,15 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Module application implementing the REST contract
@@ -173,5 +166,65 @@ public class ModuleControlApplication extends IkasanRestApplication
 				
 		return results;
 	}
+
+    @SuppressWarnings("unchecked")
+    @GET
+    @Path("/contextListenersState/{moduleName}/{flowName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getContextListenersState(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName)
+    {
+        if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
+        {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+                    .entity("You are not authorised to access this resource.").build());
+        }
+
+        Module<Flow> module = moduleService.getModule(moduleName);
+        Flow flow = module.getFlow(flowName);
+
+        return flow.areContextListenersRunning() ? "running" : "stopped";
+    }
+
+    @PUT
+    @Path("/controlContextListenersState/{moduleName}/{flowName}")
+    @Consumes("application/octet-stream")
+    public Response controlContextListenersState(@Context SecurityContext context, @PathParam("moduleName") String moduleName,
+            @PathParam("flowName") String flowName, String action)
+    {
+        if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
+        {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+                    .entity("You are not authorised to access this resource.").build());
+        }
+
+        try
+        {
+            String user = "unknown";
+            if (context != null)
+            {
+                user = context.getUserPrincipal().getName();
+            }
+            if (action.equalsIgnoreCase("start"))
+            {
+                this.moduleService.startContextListeners(moduleName, flowName, user);
+            }
+            else if (action.equalsIgnoreCase("stop"))
+            {
+                this.moduleService.stopContextListeners(moduleName, flowName, user);
+            }
+            else
+            {
+                throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+                        .entity("Unknown context listener action [" + action + "].").build());
+            }
+        }
+        catch(Exception e)
+        {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+                    .entity(e.getMessage()).build());
+        }
+
+        return Response.ok("Context Listeners state changed successfully!").build();
+    }
 
 }

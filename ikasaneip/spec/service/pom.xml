@@ -83,6 +83,7 @@
     </build>
 
     <modules>
+       <module>housekeeping</module>
        <module>configuration</module>
        <module>deployment</module>
        <module>management</module>
@@ -93,5 +94,6 @@
        <module>exclusion</module>
        <module>resubmission</module>
 	   <module>hospital</module>
+       <module>history</module>
     </modules>
 </project>
