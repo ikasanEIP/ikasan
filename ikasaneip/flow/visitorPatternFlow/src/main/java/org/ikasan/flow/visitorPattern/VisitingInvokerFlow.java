@@ -40,10 +40,6 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -63,6 +59,10 @@ import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Default implementation of a Flow
@@ -967,5 +967,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
     {
         this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
+
+    @Override
+    public List<FlowInvocationContextListener> getFlowInvocationContextListeners()
+    {
+        return flowInvocationContextListeners;
     }
 }
