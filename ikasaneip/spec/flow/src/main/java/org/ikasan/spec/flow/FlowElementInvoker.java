@@ -59,6 +59,11 @@ public interface FlowElementInvoker<COMPONENT>
      * @param flowElement for invocation
      * @return FlowElement for subsequent execution
      */
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
+    FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
             FlowEvent flowEvent, FlowElement<COMPONENT> flowElement);
+
+    /**
+     * Override the calls to the context invocation
+     */
+    void setIgnoreContextInvocation(boolean ignoreContextInvocation);
 }

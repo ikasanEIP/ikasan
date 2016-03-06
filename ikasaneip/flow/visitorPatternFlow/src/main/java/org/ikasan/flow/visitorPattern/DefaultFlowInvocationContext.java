@@ -72,6 +72,9 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
     /** the epoch time the flow completed */
     private long flowEndTimeMillis;
 
+    /** this is the last invoked component only in the case the invoker is ignoring context invocations */
+    private String lastComponentName;
+
     /**
      * Accessor for the name of the last component invoked
      *
@@ -79,16 +82,24 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
      */
     public String getLastComponentName()
     {
-        String lastComponentName = null;
+        if (this.lastComponentName != null)
+        {
+            return this.lastComponentName;
+        }
+        String componentName = null;
         if (!invocations.isEmpty())
         {
-            lastComponentName = invocations.getLast().getFlowElement().getComponentName();
+            componentName = invocations.getLast().getFlowElement().getComponentName();
         }
 
-        return lastComponentName;
+        return componentName;
     }
-	
 
+    @Override
+    public void setLastComponentName(String componentName)
+    {
+        this.lastComponentName = componentName;
+    }
 
     @Override
     public void addInvocation(FlowElementInvocation flowElementInvocation) {

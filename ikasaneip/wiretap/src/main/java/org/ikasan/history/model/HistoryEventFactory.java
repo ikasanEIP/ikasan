@@ -38,31 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.history;
+package org.ikasan.history.model;
 
+import org.ikasan.spec.flow.FlowElementInvocation;
+import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.history.ComponentHistoryEvent;
+import org.ikasan.spec.history.MessageHistoryEvent;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ikasan MessageHistoryEvent Value Object.
+ * Factory for creating MessageHistoryEvents and ComponentHistoryEvents from FlowInvocationContext objects
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryEvent<ID>
+public class HistoryEventFactory
 {
-    String getModuleName();
 
-    String getFlowName();
+    public MessageHistoryEvent<String> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
+    {
+        return new MessageHistoryFlowEvent(moduleName, flowName,
+                                           getIdentifier(flowInvocationContext.getInvocations().get(0).getIdentifier()),
+                                           getIdentifier(flowInvocationContext.getInvocations().get(0).getRelatedIdentifier()),
+                                           newComponentEvents(flowInvocationContext),
+                                           flowInvocationContext.getFlowStartTimeMillis(), flowInvocationContext.getFlowEndTimeMillis(), 30); //TODO - move expiry to configurable aspect, where?
+    }
 
-    ID getLifeIdentifier();
+    List<ComponentHistoryEvent> newComponentEvents(FlowInvocationContext flowInvocationContext)
+    {
+        List<ComponentHistoryEvent> componentHistoryEvents = new ArrayList<>();
+        for (FlowElementInvocation flowElementInvocation : flowInvocationContext.getInvocations())
+        {
+            componentHistoryEvents.add(new ComponentHistoryFlowEvent(flowElementInvocation.getFlowElement().getComponentName(),
+                    flowElementInvocation.getStartTimeMillis(), flowElementInvocation.getEndTimeMillis()));
+        }
+        return componentHistoryEvents;
+    }
 
-    ID getRelatedLifeIdentifier();
-
-    List<? extends ComponentHistoryEvent> getComponentHistoryEvents();
-
-    long getStartTimeMillis();
-
-    long getEndTimeMillis();
-
-    long getExpiry();
-
+    String getIdentifier(Object object)
+    {
+        return object != null ? object.toString() : null;
+    }
 }

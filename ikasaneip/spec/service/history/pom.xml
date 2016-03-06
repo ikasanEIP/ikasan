@@ -54,13 +54,6 @@
 
     <artifactId>ikasan-spec-history</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Specification Message History Resource Contracts</name>
-    <description>The specification message history contracts for the Ikasan Enterprise Integration Platform</description>
-    <dependencies>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-housekeeping</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+    <name>Ikasan Specification Message History Service Contracts</name>
+    <description>The message history service contracts for the Ikasan Enterprise Integration Platform</description>
 </project>

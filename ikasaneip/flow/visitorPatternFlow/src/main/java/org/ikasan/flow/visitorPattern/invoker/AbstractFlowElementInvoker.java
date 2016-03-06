@@ -54,6 +54,8 @@ public abstract class AbstractFlowElementInvoker
     /** logger instance */
     private static final Logger logger = Logger.getLogger(AbstractFlowElementInvoker.class);
 
+    protected Boolean ignoreContextInvocation = false;
+
     /**
      * Helper method to notify listeners before a flow element is invoked
      *
@@ -114,11 +116,20 @@ public abstract class AbstractFlowElementInvoker
      * @param flowInvocationContext the context
      * @param flowElement the current flow element being invoked
      * @param flowEvent the current flow event
-     * @return the new FlowElementInvocation
+     * @return the new FlowElementInvocation, null if <code>ignoreContextInvocation</code> is true
      */
     @SuppressWarnings("unchecked")
     FlowElementInvocation beginFlowElementInvocation(FlowInvocationContext flowInvocationContext, FlowElement flowElement, FlowEvent flowEvent)
     {
+        if (ignoreContextInvocation)
+        {
+            // the last invoked component name is always needed in case the recovery manager is invoked
+            // whilst the invoker is ignoring the context invocation calls
+            flowInvocationContext.setLastComponentName(flowElement.getComponentName());
+            return null;
+        }
+        // blank out the last component, the invoker is now using context invocations
+        flowInvocationContext.setLastComponentName(null);
         FlowElementInvocation flowElementInvocation = FlowElementInvocationFactory.newInvocation();
         flowElementInvocation.setIdentifier(flowEvent.getIdentifier());
         flowElementInvocation.setRelatedIdentifier(flowEvent.getRelatedIdentifier());
@@ -128,13 +139,21 @@ public abstract class AbstractFlowElementInvoker
     }
 
     /**
-     * Ends the invocation
+     * Ends the invocation if present
      * @param flowElementInvocation the invocation
      * @param flowElement the current flow element being invoked
      */
     void endFlowElementInvocation(FlowElementInvocation flowElementInvocation, FlowElement flowElement)
     {
-        flowElementInvocation.afterInvocation(flowElement);
+        if (flowElementInvocation != null)
+        {
+            flowElementInvocation.afterInvocation(flowElement);
+        }
+    }
+
+    public void setIgnoreContextInvocation(boolean ignoreContextInvocation)
+    {
+        this.ignoreContextInvocation = ignoreContextInvocation;
     }
 }
 

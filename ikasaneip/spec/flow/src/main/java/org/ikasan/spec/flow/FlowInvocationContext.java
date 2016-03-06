@@ -85,6 +85,12 @@ public interface FlowInvocationContext
      */
 	String getLastComponentName();
 
+    /** allows the flow element invoker to set a last component name in the case where the flow
+     * or component is is ignoring context invocation calls
+     * @param componentName the componentName
+     */
+    void setLastComponentName(String componentName);
+
     /**
      * Get the List of invocation events
      * @return the List of invocations

@@ -38,31 +38,72 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.history;
+package org.ikasan.history.model;
 
-import java.util.List;
+import org.ikasan.spec.history.ComponentHistoryEvent;
 
 /**
- * Ikasan MessageHistoryEvent Value Object.
+ * Implementation of a ComponentHistoryEvent based on a Component in a Flow
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryEvent<ID>
+public class ComponentHistoryFlowEvent implements ComponentHistoryEvent
 {
-    String getModuleName();
+    String componentName;
+    long startTimeMillis, endTimeMillis, id;
 
-    String getFlowName();
+    /** ORM requirement... */
+    protected ComponentHistoryFlowEvent()
+    {
+    }
 
-    ID getLifeIdentifier();
+    public ComponentHistoryFlowEvent(String componentName, long startTimeMillis, long endTimeMillis)
+    {
+        this.componentName = componentName;
+        this.startTimeMillis = startTimeMillis;
+        this.endTimeMillis = endTimeMillis;
+    }
 
-    ID getRelatedLifeIdentifier();
+    @Override
+    public String getComponentName()
+    {
+        return componentName;
+    }
 
-    List<? extends ComponentHistoryEvent> getComponentHistoryEvents();
+    @Override
+    public long getStartTimeMillis()
+    {
+        return startTimeMillis;
+    }
 
-    long getStartTimeMillis();
+    @Override
+    public long getEndTimeMillis()
+    {
+        return endTimeMillis;
+    }
 
-    long getEndTimeMillis();
+    public void setComponentName(String componentName)
+    {
+        this.componentName = componentName;
+    }
 
-    long getExpiry();
+    public void setStartTimeMillis(long startTimeMillis)
+    {
+        this.startTimeMillis = startTimeMillis;
+    }
 
+    public void setEndTimeMillis(long endTimeMillis)
+    {
+        this.endTimeMillis = endTimeMillis;
+    }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
+    }
 }
