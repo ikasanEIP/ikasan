@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -44,47 +42,43 @@
  Author:  Ikasan Development Team
  
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-<hibernate-mapping>
+    <changeSet author="ikasan dev" id="createComponentMessageHistory" context="postBaseline">
+    	
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ComponentMessageHistory"/></not>
+		</preConditions>
 
-    <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
+        <createTable tableName="ComponentMessageHistory">
+        
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="ComponentMessageHistoryPk"/>
+            </column>
+            <column name="MessageHistoryId" type="${identity}"/>
 
-        <id name="id" type="long" column="Id">
-            <generator class="native" />
-        </id>
+            <column name="ComponentName" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
 
-        <property name="moduleName"
-                  type="java.lang.String"
-                  column="ModuleName"
-                  not-null="true" />
+            <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="EndTime" type="numeric(18)"/>
+            <column name="ComponentIndex" type="numeric(18)"/>
 
-        <property name="flowName"
-                  type="java.lang.String"
-                  column="FlowName"
-                  not-null="true" />
+        </createTable>
+        
+        <!-- The statement below is required by sybase to set the identity gap to 1. -->
+        <sql dbms="sybase">sp_chgattribute 'ComponentMessageHistory', 'identity_gap', 1</sql>
+        
+        <createIndex indexName="IX_ComponentMessageHistory_Id" tableName="ComponentMessageHistory" unique="false">
+            <column name="MessageHistoryId"/>
+        </createIndex>
 
-        <property name="lifeIdentifier"
-                  type="java.lang.String"
-                  column="Identifier"
-                  not-null="true" />
-
-        <property name="event"
-                  type="byte[]"
-                  column="Event"
-                  not-null="true" />
-
-        <property name="timestamp"
-                  type="long"
-                  column="Timestamp"
-                  not-null="true" />
-
-        <property name="errorUri"
-                  type="java.lang.String"
-                  column="ErrorUri"
-                  not-null="false" />
-    </class>
-
-</hibernate-mapping>
+    </changeSet>
+    
+</databaseChangeLog>

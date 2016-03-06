@@ -38,33 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.history;
+package org.ikasan.history.dao;
 
+import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.search.PagedSearchResult;
 
 import java.util.Date;
 import java.util.Set;
 
 /**
- * This Service allows <code>MessageHistoryEvent</code>s to be saved out at runtime for later
- * retrieval and inspection
- *
- * Paged search is also catered for
+ * DAO contract for accessing Message History data
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryService<EVENT, RESULT>
+public interface MessageHistoryDao
 {
-
     /**
-     * Save a flowEvent
-     * @param flowEvent the event
-     * @param moduleName the module name
-     * @param flowName the flow name
+     * Save a MessageHistoryEvent
+     * @param messageHistoryEvent the event
      */
-    void save(EVENT flowEvent, String moduleName, String flowName);
+    void save(MessageHistoryEvent messageHistoryEvent);
+
 
     /**
-     * Search for saved MessageHistoryEvents
+     * Search for MessageHistoryEvents
      * @param pageNo the current page number
      * @param pageSize the page size
      * @param orderBy columns to order by
@@ -76,24 +73,37 @@ public interface MessageHistoryService<EVENT, RESULT>
      * @param relatedLifeId a relatedLifeId to search for
      * @param fromDate the from datetime
      * @param toDate the to datetime
-     * @return a result set
+     * @return a paged result set of MessageHistoryEvent
      */
-    RESULT findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                    Set<String> moduleNames, String flowName, String componentName,
-                                    String lifeId, String relatedLifeId, Date fromDate, Date toDate);
+    PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                    Set<String> moduleNames, String flowName, String componentName,
+                                                                    String lifeId, String relatedLifeId, Date fromDate, Date toDate);
 
     /**
-     * Retrieve a MessageHistoryEvent via its lifeId or relatedLifeId
-     * This could return an event that spans multiple modules and flows, hence the paging aspect
+     * Retrieve a MessageHistoryEvent (or set of events from multiple Flows) using the lifeId or relatedLifeId
+     *
+     * This is a paged result since the response could contain many modules/flows/components
      * @param pageNo the current page number
      * @param pageSize the page size
      * @param orderBy columns to order by
      * @param orderAscending order ascending?
-     * @param lifeId a lifeId to search for
-     * @param lookupRelatedLifeId whether to look for a relatedId of the given lifeId
-     * @return a result set
+     * @param lifeId the lifeId to retrieve
+     * @param relatedLifeId an optional relatedLifeId to retrieve events that had the main lifeId mutated
+     * @return a paged result set of MessageHistoryEvent
      */
-    RESULT getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                  String lifeId, boolean lookupRelatedLifeId);
+    PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                  String lifeId, String relatedLifeId);
+
+    /**
+     * Delete all expired MessageHistoryEvents
+     */
+    void deleteAllExpired();
+
+    /**
+     * Method to state that there are housekeepable records available.
+     * @return true if so, false otherwise
+     */
+    boolean housekeepablesExist();
+
 
 }
