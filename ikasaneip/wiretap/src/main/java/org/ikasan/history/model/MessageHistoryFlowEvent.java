@@ -53,7 +53,7 @@ import java.util.List;
 public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
 {
     String moduleName, flowName, lifeIdentifier, relatedLifeIdentifier;
-    List<ComponentHistoryEvent> componentHistoryEvents;
+    List<? extends ComponentHistoryEvent> componentHistoryEvents;
     long startTimeMillis, endTimeMillis, expiry, id;
 
     /** Required by the ORM... */
@@ -61,9 +61,9 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
     {
     }
 
-    protected MessageHistoryFlowEvent(String moduleName, String flowName, String lifeIdentifier, String relatedLifeIdentifier,
-                                   List<ComponentHistoryEvent> componentHistoryEvents,
-                                   long startTimeMillis, long endTimeMillis, long expiry)
+    public MessageHistoryFlowEvent(String moduleName, String flowName, String lifeIdentifier, String relatedLifeIdentifier,
+            List<? extends ComponentHistoryEvent> componentHistoryEvents,
+            long startTimeMillis, long endTimeMillis, long expiry)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
@@ -100,7 +100,7 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
     }
 
     @Override
-    public List<ComponentHistoryEvent> getComponentHistoryEvents()
+    public List<? extends ComponentHistoryEvent> getComponentHistoryEvents()
     {
         return componentHistoryEvents;
     }

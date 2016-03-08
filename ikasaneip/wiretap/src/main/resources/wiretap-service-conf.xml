@@ -78,6 +78,10 @@
 		    </bean>
 		</constructor-arg>
 	</bean>
+
+    <bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
+        <constructor-arg index="0" ref="messageHistoryDao"/>
+    </bean>
 	
 	<bean id="wiretapDao"
 		class="org.ikasan.wiretap.dao.HibernateWiretapDao">
@@ -91,6 +95,11 @@
 		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
 	</bean>
 
+    <bean id="messageHistoryDao"
+          class="org.ikasan.history.dao.HibernateMessageHistoryDao">
+        <property name="sessionFactory" ref="wiretapHibernateSessionFactory"/>
+    </bean>
+
 	<bean id="wiretapHibernateSessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
@@ -98,6 +107,7 @@
 			<list>
 				<value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
 				<value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
+                <value>org/ikasan/history/model/History.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>

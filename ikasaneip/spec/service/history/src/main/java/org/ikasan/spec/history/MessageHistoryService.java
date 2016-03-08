@@ -71,7 +71,6 @@ public interface MessageHistoryService<EVENT, RESULT>
      * @param orderAscending order ascending?
      * @param moduleNames a set of module names to search for
      * @param flowName a flow name to search for
-     * @param componentName a component name to search for
      * @param lifeId a lifeId to search for
      * @param relatedLifeId a relatedLifeId to search for
      * @param fromDate the from datetime
@@ -79,7 +78,7 @@ public interface MessageHistoryService<EVENT, RESULT>
      * @return a result set
      */
     RESULT findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                    Set<String> moduleNames, String flowName, String componentName,
+                                    Set<String> moduleNames, String flowName,
                                     String lifeId, String relatedLifeId, Date fromDate, Date toDate);
 
     /**
