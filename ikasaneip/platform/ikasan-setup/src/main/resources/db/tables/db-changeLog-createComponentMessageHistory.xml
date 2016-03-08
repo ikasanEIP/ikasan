@@ -58,7 +58,7 @@
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
                 <constraints primaryKey="true" primaryKeyName="ComponentMessageHistoryPk"/>
             </column>
-            <column name="MessageHistoryId" type="${identity}"/>
+            <column name="MessageHistoryId" type="numeric(18)"/>
 
             <column name="ComponentName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
