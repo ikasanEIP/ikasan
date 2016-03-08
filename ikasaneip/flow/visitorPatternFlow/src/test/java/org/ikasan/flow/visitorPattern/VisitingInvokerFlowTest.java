@@ -40,10 +40,6 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -64,10 +60,15 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This test class supports the <code>VisitingInvokerFlow</code> class.
@@ -83,6 +84,7 @@ public class VisitingInvokerFlowTest
     private Mockery mockery = new Mockery()
     {{
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }};
 
     /** Mock flowConfiguration */

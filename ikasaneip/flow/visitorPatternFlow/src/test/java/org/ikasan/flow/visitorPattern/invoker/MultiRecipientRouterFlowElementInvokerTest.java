@@ -47,6 +47,7 @@ import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
@@ -65,6 +66,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     private Mockery mockery = new Mockery()
     {{
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
     }};
 
     private FlowEventListener flowEventListener = mockery.mock(FlowEventListener.class, "flowEventListener");
@@ -107,6 +109,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -145,6 +148,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -208,6 +212,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -265,6 +270,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -299,6 +305,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -334,6 +341,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -374,6 +382,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
