@@ -50,7 +50,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import javax.resource.ResourceException;
 import java.io.IOException;
@@ -130,6 +129,8 @@ public class SFTPManagedConnectionOpenSessionTest
                 will(returnValue("publickey,password,gssapi-with-mic"));
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
+                atLeast(1).of(connectionRequestInfo).getPreferredKeyExchangeAlgorithm();
+                will(returnValue(null));
             }
         });
 
@@ -175,6 +176,8 @@ public class SFTPManagedConnectionOpenSessionTest
                 will(returnValue("publickey,password,gssapi-with-mic"));
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
+                atLeast(1).of(connectionRequestInfo).getPreferredKeyExchangeAlgorithm();
+                will(returnValue("diffie-hellman-group1-sha1"));
             }
         });
 
