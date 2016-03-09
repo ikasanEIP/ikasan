@@ -40,20 +40,19 @@
  */
 package org.ikasan.filter.duplicate.dao;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Date;
 
 /**
  * Test class for {@link HibernateFilteredMessageDaoImpl} using an in memory
@@ -67,21 +66,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * classpath:/org/ikasan/filter/duplicate/dao/MessagePersistenceDaoInMemDBTest-context.xml
  */
 
-@SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/log4j.xml"
+        "/FilteredMessageDaoInMemDBTest-context.xml"
 })
 public class FilteredMessageDaoInMemDBTest
 {
-    @Resource
+    @Autowired
     private FilteredMessageDao duplicateFilterDao;
 
     /**
      * Test case: DAO must return null since filter entry was not found in database
      */
-    @Test 
+    @Test
     @DirtiesContext
     public void filter_entry_not_found_returns_null()
     {
@@ -96,7 +93,7 @@ public class FilteredMessageDaoInMemDBTest
      * Test case: save given filter entry. 
      * Test case: look for newly saved message; it must be found and must be the same!
      */
-    @Test 
+    @Test
     @DirtiesContext
     public void save_new_entry_find_returns_same_entry()
     {
@@ -122,21 +119,23 @@ public class FilteredMessageDaoInMemDBTest
     /**
      * Test case: bulk delete only expired messages found in persistence. Searching for
      * housekept entries will return null.
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    @Test 
+    @Test
     @DirtiesContext
     public void bulk_delete_expired_entries() throws InterruptedException
     {
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(one);
+        this.duplicateFilterDao.setHousekeepQuery("delete top _bs_ from MessageFilter where Expiry <= _ex_");   //sybase
 
         FilterEntry two = new DefaultFilterEntry("two".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(two);
 
         FilterEntry three = new DefaultFilterEntry("three".hashCode(), "bulk_delete_test", 1);
         this.duplicateFilterDao.save(three);
-        Thread.sleep(10l); // let time move on 
+        Thread.sleep(10l); // let time move on
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         this.duplicateFilterDao.deleteAllExpired();
 
         FilterEntry found = this.duplicateFilterDao.findMessage(one);
@@ -148,59 +147,58 @@ public class FilteredMessageDaoInMemDBTest
         found = this.duplicateFilterDao.findMessage(three);
         Assert.assertNotNull(found);
     }
-    
+
     /**
      * Test case: bulk delete only expired messages found in persistence. Searching for
      * housekept entries will return null.
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    @Test 
+    @Test
     @DirtiesContext
     public void bulk_batch_delete_expired_entries() throws InterruptedException
     {
-    	for(int i=0; i<19768; i++)
-    	{
-	        FilterEntry one = new DefaultFilterEntry(new Date().hashCode(), "bulk_delete_test" + i	, 0);
-	        this.duplicateFilterDao.save(one);
-    	}
+        for(int i=0; i<19768; i++)
+        {
+            FilterEntry one = new DefaultFilterEntry(new Date().hashCode(), "bulk_delete_test" + i	, 0);
+            this.duplicateFilterDao.save(one);
+        }
 
-        Thread.sleep(10l); // let time move on 
-        this.duplicateFilterDao.setBatchedHousekeep(true);
+        Thread.sleep(10l); // let time move on
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
         this.duplicateFilterDao.setTransactionBatchSize(20000);
-        
         this.duplicateFilterDao.deleteAllExpired();
-        
-        this.duplicateFilterDao.setBatchedHousekeep(false);
-        
-        Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
-        
-        for(int i=0; i<77; i++)
-    	{
-	        FilterEntry one = new DefaultFilterEntry(new Date().hashCode(), "bulk_delete_test" + i	, 0);
-	        this.duplicateFilterDao.save(one);
-    	}
 
-        Thread.sleep(10l); // let time move on 
-        this.duplicateFilterDao.setBatchedHousekeep(true);
-        
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
+
+        Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
+
+        for(int i=0; i<77; i++)
+        {
+            FilterEntry one = new DefaultFilterEntry(new Date().hashCode(), "bulk_delete_test" + i	, 0);
+            this.duplicateFilterDao.save(one);
+        }
+
+        Thread.sleep(10l); // let time move on
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
+
         this.duplicateFilterDao.deleteAllExpired();
-        
-        this.duplicateFilterDao.setBatchedHousekeep(false);
-        
+
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
+
         Assert.assertNull(this.duplicateFilterDao.findExpiredMessages());
     }
 
     /**
      * Test case: delete expired entries in batches of pre-set size. Searching for
      * housekept entries will return null.
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     @Test
     @DirtiesContext
     public void batch_delete_expired_entries() throws InterruptedException
     {
-        this.duplicateFilterDao.setBatchedHousekeep(true);
-        this.duplicateFilterDao.setBatchSize(1);
+        this.duplicateFilterDao.setBatchHousekeepDelete(false);
+        this.duplicateFilterDao.setHousekeepingBatchSize(1);
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "batch_delete_test", 0);
         this.duplicateFilterDao.save(one);
 
