@@ -45,8 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.Otherwise;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.When;
@@ -95,6 +93,7 @@ import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 
@@ -158,6 +157,9 @@ public class FlowBuilder
     
     /** the serialiser factory */
     SerialiserFactory serialiserFactory;
+    
+    /** the replayRecordService **/
+    ReplayRecordService replayRecordService;
 
     /**
 	 * Constructor
@@ -313,6 +315,14 @@ public class FlowBuilder
     }
 
     /**
+	 * @param replayRecordService the replayRecordService to set
+	 */
+	public void setReplayRecordService(ReplayRecordService replayRecordService) 
+	{
+		this.replayRecordService = replayRecordService;
+	}
+
+	/**
      * Setter for exception resolver to be registered with the recovery manager.
      * @param exceptionResolver
      */

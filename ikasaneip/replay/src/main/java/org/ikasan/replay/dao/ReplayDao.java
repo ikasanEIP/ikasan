@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.replay.dao;
 
+import java.util.Date;
 import java.util.List;
+
+import org.ikasan.replay.model.ReplayEvent;
 
 
 /**
- * ReplayService contract.
+ * Data Access interface for <code>ReplayEvent</code> instances
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT>
+public interface ReplayDao
 {
+	/**
+	 * Method to save or update a ReplayEvent.
+	 * 
+	 * @param replayEvent
+	 */
+	public void saveOrUpdate(ReplayEvent replayEvent);
+
+	
     /**
-     * Entry point for submission of an event.
-     * @param event
+     * Get a list or ReplayEvent depending upon search criteria.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param startDate
+     * @param endDate
+     * @return
      */
-    public void replay(List<EVENT> events);
+    public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate);
+  
 }

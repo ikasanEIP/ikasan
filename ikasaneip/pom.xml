@@ -946,6 +946,12 @@
                 <artifactId>ikasan-spec-hospital</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-replay</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
