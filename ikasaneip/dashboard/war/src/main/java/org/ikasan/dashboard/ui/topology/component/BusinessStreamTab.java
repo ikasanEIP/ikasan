@@ -443,13 +443,13 @@ public class BusinessStreamTab extends TopologyTab
     	
 //    	layout.addComponent(controlsLayout);
 //		layout.addComponent(this.businessStreamTable);
-		layout.addComponent(getNetwrokDiagram());
+		layout.addComponent(getNetworkDiagram());
 		
 		this.addComponent(layout);
 		this.setSizeFull();
 	}
 	
-	public DragAndDropWrapper getNetwrokDiagram() 
+	public DragAndDropWrapper getNetworkDiagram() 
 	{
 		Physics p = new Physics();
 		
@@ -567,60 +567,60 @@ public class BusinessStreamTab extends TopologyTab
         });
         
 
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-		executor.scheduleAtFixedRate(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				
-				UI.getCurrent().access(new Runnable() 
-				{
-		            @Override
-		            public void run() 
-		            {
-		            	VaadinSession.getCurrent().getLockInstance().lock();
-		        		try 
-		        		{
-		        			i++;
-		    				if(i%2 == 0)
-		    				{
-		    					Color c = new Color("#000000");
-		    					c.setColor("#000000");
-		    					edge1.setColor(c);
-		    					logger.info("Setting colour black +");
-		    					
-		    					c = new Color("#00FF00");
-		    					c.setColor("#00FF00");
-		    					node3.setColor(c);
-		    				}
-		    				else
-		    				{
-		    					Color c = new Color("#ff0000");
-		    					c.setColor("#ff0000");
-		    					edge1.setColor(c);
-		    					logger.info("Setting colour red +");
-		    					
-		    					c = new Color("#ff0000");
-		    					c.setColor("#ff0000");
-		    					node3.setColor(c);
-		    				}
-		    				
-		    				networkDiagram.updateEdge(edge1);
-		    				networkDiagram.updateNode(node3);
-		    				
-		        		} 
-		        		finally 
-		        		{
-		        			VaadinSession.getCurrent().getLockInstance().unlock();
-		        		}
-		            	
-		            	UI.getCurrent().push();	
-		            }
-		        });	
-				
-			}
-		}, 10, 10, TimeUnit.SECONDS);
+//        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+//		executor.scheduleAtFixedRate(new Runnable()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				
+//				UI.getCurrent().access(new Runnable() 
+//				{
+//		            @Override
+//		            public void run() 
+//		            {
+//		            	VaadinSession.getCurrent().getLockInstance().lock();
+//		        		try 
+//		        		{
+//		        			i++;
+//		    				if(i%2 == 0)
+//		    				{
+//		    					Color c = new Color("#000000");
+//		    					c.setColor("#000000");
+//		    					edge1.setColor(c);
+//		    					logger.info("Setting colour black +");
+//		    					
+//		    					c = new Color("#00FF00");
+//		    					c.setColor("#00FF00");
+//		    					node3.setColor(c);
+//		    				}
+//		    				else
+//		    				{
+//		    					Color c = new Color("#ff0000");
+//		    					c.setColor("#ff0000");
+//		    					edge1.setColor(c);
+//		    					logger.info("Setting colour red +");
+//		    					
+//		    					c = new Color("#ff0000");
+//		    					c.setColor("#ff0000");
+//		    					node3.setColor(c);
+//		    				}
+//		    				
+//		    				networkDiagram.updateEdge(edge1);
+//		    				networkDiagram.updateNode(node3);
+//		    				
+//		        		} 
+//		        		finally 
+//		        		{
+//		        			VaadinSession.getCurrent().getLockInstance().unlock();
+//		        		}
+//		            	
+//		            	UI.getCurrent().push();	
+//		            }
+//		        });	
+//				
+//			}
+//		}, 10, 10, TimeUnit.SECONDS);
         
         
         return layoutWrapper;
