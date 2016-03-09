@@ -40,17 +40,6 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.security.auth.Subject;
-
 import org.apache.log4j.Logger;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.journal.TransactionJournal;
@@ -59,6 +48,16 @@ import org.ikasan.connector.base.outbound.EISManagedConnectionFactory;
 import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filetransfer.CommonEnvironment;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
+import javax.security.auth.Subject;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is the factory class for obtaining physical connections to the SFTP EIS. The attributes are set by the
@@ -128,6 +127,8 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /** Journal for logging activity of this connector */
     private TransactionJournal transactionJournal = null;
+
+    private String preferredKeyExchangeAlgorithm = null;
 
     /**
      * Create the connection factory with no connection manager, e.g. This is the version called when not invoked by the
@@ -523,5 +524,13 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     public Integer getConnectionTimeout()
     {
         return this.connectionTimeout;
+    }
+
+    public String getPreferredKeyExchangeAlgorithm() {
+        return preferredKeyExchangeAlgorithm;
+    }
+
+    public void setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm) {
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
     }
 }

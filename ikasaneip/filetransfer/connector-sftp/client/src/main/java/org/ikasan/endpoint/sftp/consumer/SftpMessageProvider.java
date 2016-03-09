@@ -296,6 +296,7 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
         spec.setUsername(sftpConsumerConfiguration.getUsername());
         spec.setPassword(sftpConsumerConfiguration.getPassword());
         spec.setCleanupJournalOnComplete(sftpConsumerConfiguration.getCleanupJournalOnComplete());
+        spec.setPreferredKeyExchangeAlgorithm(sftpConsumerConfiguration.getPreferredKeyExchangeAlgorithm());
         return spec;
     }
 
