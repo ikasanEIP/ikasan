@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,61 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.replay.service;
 
-import java.util.List;
+import org.ikasan.replay.dao.ReplayDao;
+import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.replay.ReplayRecordService;
+import org.ikasan.spec.serialiser.Serialiser;
+
 
 
 /**
- * ReplayService contract.
+ * User and Authority service interface
  * 
  * @author Ikasan Development Team
+ * 
  */
-public interface ReplayService<EVENT>
+public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<String,?>>
 {
+	/** need a serialiser to serialise the incoming event payload of T */
+    private Serialiser<Object,byte[]> serialiser;
+    
+    /** the underlying dao **/
+    private ReplayDao replayDao;
+     
     /**
-     * Entry point for submission of an event.
-     * @param event
+     * Constructor
+     * 
+     * @param serialiser
+     * @param replayDao
      */
-    public void replay(List<EVENT> events);
+	public ReplayRecordServiceImpl(Serialiser<Object, byte[]> serialiser,
+			ReplayDao replayDao) 
+	{
+		super();
+		this.serialiser = serialiser;
+		if(this.serialiser == null)
+		{
+			throw new IllegalArgumentException("Serialiser cannot be null!");
+		}
+		this.replayDao = replayDao;
+		if(this.replayDao == null)
+		{
+			throw new IllegalArgumentException("ReplayDao cannot be null!");
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayRecordService#record(java.lang.Object)
+	 */
+	@Override
+	public void record(FlowEvent<String,?> event, String moduleName, String flowName) 
+	{
+        byte[] bytes = serialiser.serialise(event.getPayload());
+        ReplayEvent replayEvent = new ReplayEvent(event.getIdentifier(), bytes, moduleName, flowName);
+        
+        this.replayDao.saveOrUpdate(replayEvent);
+	}
 }

@@ -50,6 +50,7 @@ import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -98,7 +99,7 @@ public class ConsumerFlowElementInvokerTest
             }
         });
 
-        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
+        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker(null);
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
@@ -132,7 +133,7 @@ public class ConsumerFlowElementInvokerTest
             }
         });
 
-        FlowElementInvoker flowElementInvoker = new StubbedConsumerFlowElementInvoker();
+        FlowElementInvoker flowElementInvoker = new StubbedConsumerFlowElementInvoker(null);
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
@@ -161,7 +162,7 @@ public class ConsumerFlowElementInvokerTest
             }
         });
 
-        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
+        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker(null);
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
@@ -169,7 +170,13 @@ public class ConsumerFlowElementInvokerTest
 
     class StubbedConsumerFlowElementInvoker extends ConsumerFlowElementInvoker
     {
-        @Override
+        public StubbedConsumerFlowElementInvoker(ReplayRecordService replayRecordService) 
+        {
+			super(replayRecordService);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
         protected Converter getAsConverter(Consumer consumer)
         {
             return mockedConverter;

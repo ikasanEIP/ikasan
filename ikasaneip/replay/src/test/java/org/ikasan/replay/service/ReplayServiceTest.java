@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,25 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.replay.service;
 
-import java.util.List;
+import static org.junit.Assert.*;
 
+import org.junit.Test;
 
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT>
+public class ReplayServiceTest
 {
-    /**
-     * Entry point for submission of an event.
-     * @param event
-     */
-    public void replay(List<EVENT> events);
+
+	@Test
+	public void test_something()
+	{
+
+	}
+
+
 }

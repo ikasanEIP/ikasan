@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,41 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.replay.dao;
 
-import java.util.List;
+import javax.annotation.Resource;
 
+import org.ikasan.replay.model.ReplayEvent;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT>
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/replay-conf.xml",
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+        "/mock-components.xml"
+})
+public class HibernateReplayDaoTest
 {
-    /**
-     * Entry point for submission of an event.
-     * @param event
-     */
-    public void replay(List<EVENT> events);
+
+	@Resource ReplayDao replayDao;
+	
+	@Test
+	@DirtiesContext
+	public void testSaveReplayEvent_success()
+	{
+		ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName");
+		
+		this.replayDao.saveOrUpdate(replayEvent);
+	}
 }

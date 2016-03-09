@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,68 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.replay.dao;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.ikasan.replay.model.ReplayEvent;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
- * ReplayService contract.
+ * Hibernate implementation of <code>UserDao</code>
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT>
+public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 {
-    /**
-     * Entry point for submission of an event.
-     * @param event
-     */
-    public void replay(List<EVENT> events);
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayEvent)
+	 */
+	@Override
+	public void saveOrUpdate(ReplayEvent replayEvent) 
+	{
+		this.getHibernateTemplate().saveOrUpdate(replayEvent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#getReplayEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ReplayEvent> getReplayEvents(String moduleName,
+			String flowName, Date startDate, Date endDate) 
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayEvent.class);
+		
+		if(moduleName != null && moduleName.length() > 0)
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.length() > 0)
+		{
+			criteria.add(Restrictions.eq("flowName", flowName));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+		
+		criteria.addOrder(Order.asc("timestamp"));	
+		
+		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	
 }

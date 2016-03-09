@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,148 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.replay.model;
 
-import java.util.List;
-
+import java.util.Arrays;
+import java.util.Date;
 
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT>
+public class ReplayEvent
 {
-    /**
-     * Entry point for submission of an event.
-     * @param event
-     */
-    public void replay(List<EVENT> events);
+	private Long id;
+    private String moduleName;
+    private String flowName;
+	private String eventId;
+    private byte[] event;
+    private long timestamp;	
+	
+	/**
+	 * Default constructor for Hibernate
+	 */
+	@SuppressWarnings("unused")
+	private ReplayEvent()
+	{
+		
+	}
+
+	/**
+	 * Constructor 
+	 * 
+	 * @param id
+	 * @param errorUri
+	 * @param actionedBy
+	 * @param state
+	 * @param timestamp
+	 */
+	public ReplayEvent(String eventId, byte[] event, String moduleName, String flowName)
+	{
+		super();
+
+		this.eventId = eventId;
+		this.event = event;
+		this.moduleName = moduleName;
+		this.flowName = flowName;
+		this.timestamp = new Date().getTime();
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId()
+	{
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+
+	/**
+	 * @return the event
+	 */
+	public byte[] getEvent()
+	{
+		return event;
+	}
+	
+	/**
+	 * @param event the event to set
+	 */
+	public void setEvent(byte[] event)
+	{
+		this.event = event;
+	}
+
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName()
+	{
+		return moduleName;
+	}
+
+	/**
+	 * @param moduleName the moduleName to set
+	 */
+	public void setModuleName(String moduleName)
+	{
+		this.moduleName = moduleName;
+	}
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName()
+	{
+		return flowName;
+	}
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(String flowName)
+	{
+		this.flowName = flowName;
+	}
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp)
+	{
+		this.timestamp = timestamp;
+	}
+	
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp()
+	{
+		return timestamp;
+	}
+
+	/**
+	 * @return the eventId
+	 */
+	public String getEventId() {
+		return eventId;
+	}
+
+	/**
+	 * @param eventId the eventId to set
+	 */
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+
+	
 }
