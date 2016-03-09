@@ -45,7 +45,9 @@ import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Broadcaster implements Serializable {
+public class Broadcaster implements Serializable 
+{
+	
 	/**
 	 * 
 	 */
@@ -74,11 +76,18 @@ public class Broadcaster implements Serializable {
 	public static synchronized void broadcast(final Object message)
 	{
 		for (final BroadcastListener listener : listeners)
-			executorService.execute(new Runnable() {
+			executorService.execute(new Runnable()
+			{
 				@Override
-				public void run() {
+				public void run() 
+				{
 					listener.receiveBroadcast(message);
 				}
 			});
+	}
+	
+	public static void shutdown()
+	{
+		executorService.shutdown();
 	}
 }
