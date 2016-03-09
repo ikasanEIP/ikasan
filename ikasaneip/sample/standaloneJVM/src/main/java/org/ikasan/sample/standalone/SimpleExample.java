@@ -145,5 +145,10 @@ public class SimpleExample
         public void housekeep() {
 
         }
+
+        @Override
+        public boolean isBlackListEmpty() {
+            return false;
+        }
     }
 }

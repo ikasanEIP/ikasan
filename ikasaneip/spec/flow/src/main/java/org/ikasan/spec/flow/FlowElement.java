@@ -55,6 +55,9 @@ public interface FlowElement<COMPONENT>
     /** Name of the default transition for components that have a unique result */
     public static final String DEFAULT_TRANSITION_NAME = "default";
 
+    /** Name of the subFlow transition for components that have a unique result */
+    public static final String SUBFLOW_TRANSITION_NAME = "subFlow";
+
     /**
      * Accessor for the wrapped component.
      * 

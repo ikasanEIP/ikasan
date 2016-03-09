@@ -40,12 +40,7 @@
  */
 package org.ikasan.recovery.integrationTest;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
@@ -69,6 +64,10 @@ import org.junit.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Integration testing for Recovery Manager implementation.
@@ -567,6 +566,11 @@ public class ScheduledRecoveryManagerIntegrationTest
         @Override
         public void housekeep() {
 
+        }
+
+        @Override
+        public boolean isBlackListEmpty() {
+            return true;
         }
     }
 

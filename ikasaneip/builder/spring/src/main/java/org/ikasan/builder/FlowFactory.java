@@ -72,6 +72,8 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.List;
+
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.
  * @author Ikasan Development Team
@@ -312,8 +314,13 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
         }
 
-        // pass handle to the exclusion service to the excluded event flow if this is needed
-        injectExclusionService(exclusionFlowConfiguration, exclusionService);
+        // pass exclusion service handle to the main flow elements
+        injectExclusionService(flow.getFlowElements(), exclusionService);
+
+        // pass exclusion service handle to the excluded event flow if it exists
+        if (exclusionFlowConfiguration != null) {
+            injectExclusionService(exclusionFlowConfiguration.getFlowElements(), exclusionService);
+        }
 
         if(monitor != null && flow instanceof MonitorSubject)
         {
@@ -346,14 +353,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         return flow;
     }
 
-    private void injectExclusionService(ExclusionFlowConfiguration flow, ExclusionService exclusionService) {
+    private void injectExclusionService(List<FlowElement<?>> flowElements, ExclusionService exclusionService) {
 
-        // The exclusion flow is optionally configured so may be null
-        if (flow == null) {
-            return;
-        }
-
-        for (final FlowElement flowElement : flow.getFlowElements()) {
+        for (final FlowElement flowElement : flowElements) {
             if (flowElement.getFlowComponent() instanceof IsExclusionServiceAware) {
                 ((IsExclusionServiceAware)flowElement.getFlowComponent()).setExclusionService(exclusionService);
             }

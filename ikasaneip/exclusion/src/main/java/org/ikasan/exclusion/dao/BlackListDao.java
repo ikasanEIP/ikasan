@@ -83,4 +83,6 @@ public interface BlackListDao<IDENTIFIER,EVENT>
      * Support delete of expired exclusionEvents
      */
     public void deleteExpired();
+
+    public int count();
 }

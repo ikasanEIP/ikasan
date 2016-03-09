@@ -106,11 +106,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
         <!-- XML serialisation/deserialisation, used for testing -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -124,6 +119,13 @@
             <artifactId>log4j</artifactId>
             <scope>provided</scope>
         </dependency>
+		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 
         <!-- test -->
         <dependency>
