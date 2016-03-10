@@ -49,15 +49,11 @@
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-	<!-- bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
-		<constructor-arg ref="hospitalDao" />
-	</bean>
 
-	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
-		<constructor-arg ref="moduleContainer" />
-		<constructor-arg ref="hospitalDao" />
-		<constructor-arg ref="exclusionManagementService" />
-	</bean -->
+	<bean id="replayRecordService" class="org.ikasan.replay.service.ReplayRecordServiceImpl">
+		<constructor-arg ref="replayDao" />
+		<constructor-arg ref="ikasanSerialiserFactory" />
+	</bean>
 	
 	<bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">
 		<property name="sessionFactory" ref="replaySessionFactory" />

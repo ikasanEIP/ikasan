@@ -43,6 +43,10 @@ package org.ikasan.replay.dao;
 import javax.annotation.Resource;
 
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -63,9 +67,28 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/mock-components.xml"
 })
 public class HibernateReplayDaoTest
-{
-
+{	
+	/**
+     * Mockery for mocking concrete classes
+     */
+	@Resource Mockery mockery;
+	
 	@Resource ReplayDao replayDao;
+	
+	@Resource SerialiserFactory ikasanSerialiserFactory;
+	
+//	@Before
+//	public void setExpectations()
+//	{
+//		// expectations
+//        mockery.checking(new Expectations()
+//        {
+//            {
+//                // get each flow name
+//                one(ikasanSerialiserFactory).getDefaultSerialiser();
+//            }
+//        });
+//	}
 	
 	@Test
 	@DirtiesContext
@@ -73,6 +96,7 @@ public class HibernateReplayDaoTest
 	{
 		ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName");
 		
+        
 		this.replayDao.saveOrUpdate(replayEvent);
 	}
 }

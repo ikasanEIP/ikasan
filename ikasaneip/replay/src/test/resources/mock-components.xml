@@ -71,13 +71,14 @@
 			</list>
 		</property>
 	</bean>
+
 	
-	<bean id="exclusionManagementService"  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	<bean id="ikasanSerialiserFactory"  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetObject" ref="mockery" />
 		<property name="targetMethod" value="mock" />
 		<property name="arguments">
 			<list>
-				<value>org.ikasan.spec.exclusion.ExclusionManagementService</value>
+				<value>org.ikasan.spec.serialiser.SerialiserFactory</value>
 			</list>
 		</property>
 	</bean>

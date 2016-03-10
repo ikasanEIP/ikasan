@@ -392,7 +392,7 @@ public class FlowBuilder
                 throw new IllegalArgumentException("flowBuilder cannot be 'null'");
             }
             
-            this.flowElements.add(new FlowElementImpl(name, consumer, new ConsumerFlowElementInvoker()));
+            this.flowElements.add(new FlowElementImpl(name, consumer, new ConsumerFlowElementInvoker(replayRecordService)));
         }
 
 		public FlowConfigurationBuilder broker(String name, Broker broker) 
