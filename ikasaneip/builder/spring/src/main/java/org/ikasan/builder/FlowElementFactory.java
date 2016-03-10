@@ -62,6 +62,7 @@ import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -101,6 +102,9 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
     /** allow override of executor service */
     ExecutorService executorService;
+    
+    /** the replayRecordService **/
+    ReplayRecordService replayRecordService;
 
     /**
      * Setter for executor service override
@@ -182,6 +186,14 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     {
         this.configuration = configuration;
     }
+    
+    /**
+	 * @param replayRecordService the replayRecordService to set
+	 */
+	public void setReplayRecordService(ReplayRecordService replayRecordService) 
+	{
+		this.replayRecordService = replayRecordService;
+	}
 
     /*
      * (non-Javadoc)
@@ -247,7 +259,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     {
         if(component instanceof Consumer)
         {
-            return new ConsumerFlowElementInvoker();
+            return new ConsumerFlowElementInvoker(this.replayRecordService);
         }
         else if(component instanceof Translator)
         {

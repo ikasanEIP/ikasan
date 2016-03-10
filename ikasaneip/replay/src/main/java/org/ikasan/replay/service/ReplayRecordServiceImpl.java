@@ -44,7 +44,7 @@ import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.replay.ReplayRecordService;
-import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 
 
@@ -57,7 +57,7 @@ import org.ikasan.spec.serialiser.Serialiser;
 public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<String,?>>
 {
 	/** need a serialiser to serialise the incoming event payload of T */
-    private Serialiser<Object,byte[]> serialiser;
+    private SerialiserFactory serialiserFactory;
     
     /** the underlying dao **/
     private ReplayDao replayDao;
@@ -68,14 +68,14 @@ public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<St
      * @param serialiser
      * @param replayDao
      */
-	public ReplayRecordServiceImpl(Serialiser<Object, byte[]> serialiser,
+	public ReplayRecordServiceImpl(SerialiserFactory serialiserFactory,
 			ReplayDao replayDao) 
 	{
 		super();
-		this.serialiser = serialiser;
-		if(this.serialiser == null)
+		this.serialiserFactory = serialiserFactory;
+		if(serialiserFactory == null)
 		{
-			throw new IllegalArgumentException("Serialiser cannot be null!");
+			throw new IllegalArgumentException("SerialiserFactory cannot be null!");
 		}
 		this.replayDao = replayDao;
 		if(this.replayDao == null)
@@ -87,10 +87,11 @@ public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<St
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayRecordService#record(java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void record(FlowEvent<String,?> event, String moduleName, String flowName) 
 	{
-        byte[] bytes = serialiser.serialise(event.getPayload());
+        byte[] bytes = (byte[])this.serialiserFactory.getDefaultSerialiser().serialise(event.getPayload());
         ReplayEvent replayEvent = new ReplayEvent(event.getIdentifier(), bytes, moduleName, flowName);
         
         this.replayDao.saveOrUpdate(replayEvent);
