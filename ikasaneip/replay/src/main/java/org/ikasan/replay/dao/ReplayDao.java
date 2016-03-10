@@ -43,6 +43,8 @@ package org.ikasan.replay.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 
 
@@ -60,10 +62,23 @@ public interface ReplayDao
 	 * @param replayEvent
 	 */
 	public void saveOrUpdate(ReplayEvent replayEvent);
-
 	
+	/**
+	 * Method to save or update a ReplayAudit.
+	 * 
+	 * @param replayAudit
+	 */
+	public void saveOrUpdate(ReplayAudit replayAudit);
+	
+	/**
+	 * Method to save or update a ReplayAuditEvent.
+	 * 
+	 * @param replayAuditEvent
+	 */
+	public void saveOrUpdate(ReplayAuditEvent replayAuditEvent);
+
     /**
-     * Get a list or ReplayEvent depending upon search criteria.
+     * Get a list of ReplayEvent depending upon search criteria.
      * 
      * @param moduleName
      * @param flowName
@@ -72,5 +87,17 @@ public interface ReplayDao
      * @return
      */
     public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate);
+    
+    /**
+     * Get a list of ReplayAudit depending upon search criteria.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param user
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<ReplayAudit> getReplayAudits(String moduleName, String flowName, String user, Date startDate, Date endDate);
   
 }

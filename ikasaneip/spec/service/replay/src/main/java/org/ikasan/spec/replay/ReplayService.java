@@ -51,8 +51,9 @@ import java.util.List;
 public interface ReplayService<EVENT>
 {
     /**
-     * Entry point for submission of an event.
+     * Entry point for replay of a list of events.
+     * 
      * @param event
      */
-    public void replay(List<EVENT> events);
+    public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword);
 }

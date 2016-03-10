@@ -46,6 +46,8 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -57,6 +59,44 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 {
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ReplayAudit> getReplayAudits(String moduleName,
+			String flowName, String user, Date startDate, Date endDate) 
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAudit.class);
+		
+		if(moduleName != null && moduleName.length() > 0)
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.length() > 0)
+		{
+			criteria.add(Restrictions.eq("flowName", flowName));
+		}
+		
+		if(user != null && user.length() > 0)
+		{
+			criteria.add(Restrictions.eq("user", user));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+		
+		criteria.addOrder(Order.asc("timestamp"));	
+		
+		return (List<ReplayAudit>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayEvent)
@@ -99,6 +139,24 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		criteria.addOrder(Order.asc("timestamp"));	
 		
 		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayAudit)
+	 */
+	@Override
+	public void saveOrUpdate(ReplayAudit replayAudit) 
+	{
+		this.getHibernateTemplate().saveOrUpdate(replayAudit);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayAuditEvent)
+	 */
+	@Override
+	public void saveOrUpdate(ReplayAuditEvent replayAuditEvent) 
+	{
+		this.getHibernateTemplate().saveOrUpdate(replayAuditEvent);
 	}
 
 	

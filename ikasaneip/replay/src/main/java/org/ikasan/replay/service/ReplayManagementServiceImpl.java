@@ -40,13 +40,28 @@
  */
 package org.ikasan.replay.service;
 
+import java.sql.Date;
+import java.util.List;
+
+import org.ikasan.spec.replay.ReplayManagementService;
+
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl 
+public class ReplayManagementServiceImpl implements ReplayManagementService
 {
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(java.sql.Date, java.sql.Date)
+	 */
+	@Override
+	public List getReplayEvents(Date fromDate, Date toDate) 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
