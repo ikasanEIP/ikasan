@@ -1,10 +1,15 @@
 package org.ikasan.replay.model;
 
+import java.util.Set;
+
 public class ReplayAudit 
 {
 	private Long id;
 	private String user;
 	private String replayReason;
+	private String moduleName;
+	private String flowName;
+	private Set<ReplayAuditEvent> replayAuditEvents;
 	private long timestamp;
 
 	/**
@@ -31,8 +36,6 @@ public class ReplayAudit
 		this.replayReason = replayReason;
 		this.timestamp = timestamp;
 	}
-
-
 
 	/**
 	 * @return the id
@@ -82,6 +85,54 @@ public class ReplayAudit
 		this.replayReason = replayReason;
 	}
 	
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName() 
+	{
+		return moduleName;
+	}
+
+	/**
+	 * @param moduleName the moduleName to set
+	 */
+	public void setModuleName(String moduleName) 
+	{
+		this.moduleName = moduleName;
+	}
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName() 
+	{
+		return flowName;
+	}
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(String flowName) 
+	{
+		this.flowName = flowName;
+	}
+
+	/**
+	 * @return the replayAuditEvents
+	 */
+	public Set<ReplayAuditEvent> getReplayAuditEvents() 
+	{
+		return replayAuditEvents;
+	}
+
+	/**
+	 * @param replayAuditEvents the replayAuditEvents to set
+	 */
+	public void setReplayAuditEvents(Set<ReplayAuditEvent> replayAuditEvents) 
+	{
+		this.replayAuditEvents = replayAuditEvents;
+	}
+
 	/**
 	 * @return the timestamp
 	 */

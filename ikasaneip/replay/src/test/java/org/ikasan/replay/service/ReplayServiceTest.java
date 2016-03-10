@@ -40,23 +40,107 @@
  */
 package org.ikasan.replay.service;
 
-import static org.junit.Assert.*;
+import java.net.MalformedURLException;
 
+import javax.annotation.Resource;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.ikasan.replay.dao.ReplayDao;
+import org.ikasan.replay.model.ReplayEvent;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ReplayServiceTest
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/replay-conf.xml",
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+        "/mock-components.xml"
+})
+public class ReplayServiceTest extends JerseyTest
 {
 
-	@Test
-	public void test_something()
+	@Resource ReplayDao replayDao;
+	
+	@Before
+	public void addReplayEvents()
 	{
-
+		for(int i=0; i<100; i++)
+		{
+			ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName");
+			
+	        
+			this.replayDao.saveOrUpdate(replayEvent);
+		}
 	}
+	
+	@Path("rest/replay/{moduleName}/{flowName}/")
+    public static class HelloResource 
+    {
+        @PUT
+        public Response getHello(@PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName, byte[] data) 
+        {
+        	System.out.println(new String(data));
+        	System.out.println(moduleName);
+        	System.out.println(flowName);
+        	
+        	return Response.ok("Event resubmitted!").build();
+        }
+    }
+
+    @Override
+    protected Application configure() {
+        return new ResourceConfig(HelloResource.class).property("contextConfigLocation", "classpath:replay-conf.xml")
+        		.property("contextConfigLocation", "classpath:substitute-components.xml")
+        		.property("contextConfigLocation", "classpath:mock-components.xml")
+        		.property("contextConfigLocation", "classpath:hsqldb-config.xml");
+    }
+
+    @Test
+    public void test() throws MalformedURLException 
+    {
+//        Response response = target("hello").request().get();
+//        String hello = response.readEntity(String.class);
+//        Assert.assertEquals("Hello World!", hello);
+//        response.close();
+    	
+    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("", "");
+    	
+    	ClientConfig clientConfig = new ClientConfig();
+    	clientConfig.register(feature) ;
+    	
+    	Client client = ClientBuilder.newClient(clientConfig);
+    	
+    	System.out.println(super.getBaseUri().toURL() + "rest/replay");
+		
+		
+	    WebTarget webTarget = client.target(super.getBaseUri().toURL() + "rest/replay/moduleName/flowName");
+	    Response response = webTarget.request().put(Entity.entity("test data".getBytes(), MediaType.APPLICATION_OCTET_STREAM));
+    	
+	    System.out.println(response.getStatus());
+    }
 
 
 }

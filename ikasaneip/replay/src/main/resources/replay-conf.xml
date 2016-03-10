@@ -65,6 +65,8 @@
 		<property name="mappingResources">
 			<list>
 				<value>/org/ikasan/replay/model/ReplayEvent.hbm.xml</value>
+				<value>/org/ikasan/replay/model/ReplayAudit.hbm.xml</value>
+				<value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
