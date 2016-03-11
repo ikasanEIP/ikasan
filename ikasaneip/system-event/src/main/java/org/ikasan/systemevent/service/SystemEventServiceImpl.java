@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.dao.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEvent;
@@ -55,7 +56,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Ikasan Development Team
  * 
  */
-public class SystemEventServiceImpl implements SystemEventService, InitializingBean
+public class SystemEventServiceImpl implements SystemEventService, InitializingBean, HousekeeperService
 {
     private Logger logger = Logger.getLogger(SystemEventServiceImpl.class);
 
@@ -118,22 +119,6 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.ikasan.framework.systemevent.service.SystemFlowEventService#housekeep
-     * ()
-     */
-    public void housekeep()
-    {
-        long before = System.currentTimeMillis();
-        systemEventDao.deleteExpired();
-        long after = System.currentTimeMillis();
-        logger.info("housekeep completed in [" + (after - before) + "]ms");
-
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception
     {
@@ -141,6 +126,7 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
         {
             systemEventDao.setBatchHousekeepDelete(systemEventServiceConfiguration.isBatchHousekeepDelete());
             systemEventDao.setHousekeepingBatchSize(systemEventServiceConfiguration.getHousekeepingBatchSize());
+            systemEventDao.setTransactionBatchSize(systemEventServiceConfiguration.getTransactionBatchSize());
         }
     }
 
@@ -162,5 +148,26 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
 			Date timestampFrom, Date timestampTo)
 	{
 		return this.systemEventDao.listSystemEvents(subjects, actor, timestampFrom, timestampTo);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.management.HousekeeperService#houseKeepablesExist()
+	 */
+	@Override
+	public boolean housekeepablesExist()
+	{
+		return this.systemEventDao.housekeepablesExist();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.systemevent.service.SystemEventService#housekeep()
+	 */
+	@Override
+	public void housekeep()
+	{
+		long before = System.currentTimeMillis();
+        systemEventDao.deleteExpired();
+        long after = System.currentTimeMillis();
+        logger.info("housekeep completed in [" + (after - before) + "]ms");
 	}
 }

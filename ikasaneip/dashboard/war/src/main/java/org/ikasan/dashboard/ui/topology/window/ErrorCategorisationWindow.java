@@ -110,10 +110,7 @@ public class ErrorCategorisationWindow extends Window
 	 */
 	public ErrorCategorisationWindow(Server server, Module module, Flow flow, Component component,
 			ErrorCategorisationService errorCategorisationService)
-	{
-//		super("Error Categorisation");
-//		this.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
-		
+	{		
 		this.server = server;
 		this.module = module;
 		this.flow = flow;
@@ -664,6 +661,7 @@ public class ErrorCategorisationWindow extends Window
     	actionCombo.addItem(ErrorCategorisationLink.EXCLUDE_EVENT_ACTION);
 		actionCombo.addItem(ErrorCategorisationLink.RETRY_ACTION);
 		actionCombo.addItem(ErrorCategorisationLink.STOP_ACTION);
+		actionCombo.addItem(ErrorCategorisationLink.WARNING_ACTION);
 		
 		errorCategoryCombo.addItem(ErrorCategorisation.TRIVIAL);
 		errorCategoryCombo.setItemIcon(ErrorCategorisation.TRIVIAL, VaadinIcons.ARROW_DOWN);

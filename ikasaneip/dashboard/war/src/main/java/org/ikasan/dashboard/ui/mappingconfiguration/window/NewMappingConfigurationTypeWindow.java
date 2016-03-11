@@ -185,7 +185,7 @@ public class NewMappingConfigurationTypeWindow extends Window implements View
 
                     logger.error("An error occurred trying to save mapping configuration type!", e); 
                     
-                    Notification.show("Cauget exception trying to save a new Mapping Configuration Type!", sw.toString()
+                    Notification.show("Caught exception trying to save a new Mapping Configuration Type!", sw.toString()
                         , Notification.Type.ERROR_MESSAGE);
                 }
             }

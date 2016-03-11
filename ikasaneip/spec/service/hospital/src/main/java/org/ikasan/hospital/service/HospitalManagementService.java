@@ -49,7 +49,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface HospitalManagementService<ACTION>
+public interface HospitalManagementService<ACTION, ACTION_EXCLUSION_COUNT>
 {
 	/**
 	 * A method to return an ACTION based on the event uri.
@@ -68,4 +68,13 @@ public interface HospitalManagementService<ACTION>
 	 * @return
 	 */
 	public List<ACTION> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
+	
+    /**
+     * 
+     * @param moduleNames
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<ACTION_EXCLUSION_COUNT> getModuleActionedExclusionCount(List<String> moduleNames, Date startDate, Date endDate);
 }

@@ -99,4 +99,11 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public List<EVENT> find(List<String> moduleName, List<String> flowName, Date starteDate, Date endDate, IDENTIFIER identifier);
+    
+    /**
+     * Find the event based on it's URI
+     * @param errorUri
+     * @return
+     */
+    public EVENT find(String errorUri);
 }

@@ -40,8 +40,6 @@
  */
 package org.ikasan.topology.model;
 
-import java.util.Date;
-import java.util.Set;
 
 /**
  * 
@@ -51,15 +49,7 @@ import java.util.Set;
 public class FilterComponent
 {
 	private FilterComponentKey id;
-	private Component component;
-	private Integer order;
-	
-	/** The data time stamp when an instance was first created */
-    private Date createdDateTime;
-
-    /** The data time stamp when an instance was last updated */
-    private Date updatedDateTime;
-   
+	private Component component;	   
     
     @SuppressWarnings("unused")
 	private FilterComponent()
@@ -74,11 +64,7 @@ public class FilterComponent
 		this.id = id;
 		
     	long now = System.currentTimeMillis();
-		this.createdDateTime = new Date(now);
-        this.updatedDateTime = new Date(now);
     }
-
-	
 
 	/**
 	 * @return the id
@@ -88,8 +74,6 @@ public class FilterComponent
 		return id;
 	}
 
-
-
 	/**
 	 * @param id the id to set
 	 */
@@ -98,22 +82,6 @@ public class FilterComponent
 		this.id = id;
 	}
 
-
-	/**
-	 * @return the order
-	 */
-	public Integer getOrder()
-	{
-		return order;
-	}
-
-	/**
-	 * @param order the order to set
-	 */
-	public void setOrder(Integer order)
-	{
-		this.order = order;
-	}
 	
 	/**
 	 * @return the component
@@ -122,45 +90,13 @@ public class FilterComponent
 	{
 		return component;
 	}
-
+	
 	/**
 	 * @param component the component to set
 	 */
 	public void setComponent(Component component)
 	{
 		this.component = component;
-	}
-
-	/**
-	 * @return the createdDateTime
-	 */
-	public Date getCreatedDateTime()
-	{
-		return createdDateTime;
-	}
-
-	/**
-	 * @param createdDateTime the createdDateTime to set
-	 */
-	public void setCreatedDateTime(Date createdDateTime)
-	{
-		this.createdDateTime = createdDateTime;
-	}
-
-	/**
-	 * @return the updatedDateTime
-	 */
-	public Date getUpdatedDateTime()
-	{
-		return updatedDateTime;
-	}
-
-	/**
-	 * @param updatedDateTime the updatedDateTime to set
-	 */
-	public void setUpdatedDateTime(Date updatedDateTime)
-	{
-		this.updatedDateTime = updatedDateTime;
 	}
 
 	/* (non-Javadoc)
@@ -173,12 +109,7 @@ public class FilterComponent
 		int result = 1;
 		result = prime * result
 				+ ((component == null) ? 0 : component.hashCode());
-		result = prime * result
-				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((order == null) ? 0 : order.hashCode());
-		result = prime * result
-				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
 		return result;
 	}
 
@@ -201,30 +132,12 @@ public class FilterComponent
 				return false;
 		} else if (!component.equals(other.component))
 			return false;
-		if (createdDateTime == null)
-		{
-			if (other.createdDateTime != null)
-				return false;
-		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
 		if (id == null)
 		{
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (order == null)
-		{
-			if (other.order != null)
-				return false;
-		} else if (!order.equals(other.order))
-			return false;
-		if (updatedDateTime == null)
-		{
-			if (other.updatedDateTime != null)
-				return false;
-		} else if (!updatedDateTime.equals(other.updatedDateTime))
-			return false;
 		return true;
-	}	
+	}
 }

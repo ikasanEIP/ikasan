@@ -119,18 +119,15 @@ public interface ErrorCategorisationDao
 	public List<ErrorCategorisationLink> findAllErrorCategorisationLinks();
 
 	/**
-	 * Method to find categorised error occurrences based on filter criteria.
+	 * Method to the number of categorised error occurrences based on filter criteria.
 	 * 
 	 * @param moduleNames
 	 * @param flowNames
 	 * @param flowElementNames
-	 * @param errorCategory
-	 * @param action
-	 * @param exceptionClass
 	 * @param startDate
 	 * @param endDate
 	 * @return
 	 */
-	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
-			, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate);
+	public Long rowCount(List<String> moduleNames, List<String> flowNames, List<String> flowElementNames
+			, Date startDate, Date endDate);
 }

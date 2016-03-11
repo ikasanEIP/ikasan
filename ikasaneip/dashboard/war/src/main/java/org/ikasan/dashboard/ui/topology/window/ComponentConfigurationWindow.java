@@ -660,6 +660,13 @@ public class ComponentConfigurationWindow extends Window
 		final GridLayout mapLayout = new GridLayout(5, (valueMap.size() != 0 ? valueMap.size(): 1) + 1	);
 		mapLayout.setMargin(true);
 		mapLayout.setSpacing(true);
+		mapLayout.setWidth("100%");
+		
+		mapLayout.setColumnExpandRatio(0, 0.1f);
+		mapLayout.setColumnExpandRatio(1, 0.375f);
+		mapLayout.setColumnExpandRatio(2, 0.1f);
+		mapLayout.setColumnExpandRatio(3, 0.375f);
+		mapLayout.setColumnExpandRatio(4, 0.05f);
 		
 		int i=0;
 		
@@ -814,7 +821,7 @@ public class ComponentConfigurationWindow extends Window
 		final List<String> valueList = parameter.getValue();
 		
 		final GridLayout listLayout = new GridLayout(3, (valueList.size() != 0 ? valueList.size(): 1) + 1);
-		listLayout.setWidth("450px");
+		listLayout.setWidth("100%");
 		listLayout.setMargin(true);
 		listLayout.setSpacing(true);
 		

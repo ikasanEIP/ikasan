@@ -41,6 +41,7 @@
 package org.ikasan.dashboard.ui.monitor.component;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -122,7 +123,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 	private Server server;
 	private FilterTable filterTable;
 	private IndexedContainer cont;
-	private HashMap<String, String> stateMap;
+	private ConcurrentHashMap<String, String> stateMap;
 	private Label statusLabel = new Label();
 	
 	/** running state string constant */
@@ -440,6 +441,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
         cont.addContainerProperty("Module Name", String.class, null);
         cont.addContainerProperty("Flow Name", String.class, null);
         cont.addContainerProperty("Flow State", String.class, null);
+//        cont.addContainerProperty("Startup Control", String.class, null);
 
         return cont;
     }
@@ -459,7 +461,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
         }
     }
 	
-	public void populate(HashMap<String, String> stateMap)
+	public void populate(ConcurrentHashMap<String, String> stateMap)
 	{		
 		for(Module module: server.getModules())
 		{
@@ -487,6 +489,9 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 						item.getItemProperty("Module Name").setValue(flow.getModule().getName());
 						item.getItemProperty("Flow Name").setValue(flow.getName());
 						item.getItemProperty("Flow State").setValue(state);
+//						StartupControl startupControl = this.startupControlService.getStartupControl(flow.getModule().getName()
+//								, flow.getName());
+//						item.getItemProperty("Startup Control").setValue(startupControl.getStartupType().name());
 					}
 				}
 			}

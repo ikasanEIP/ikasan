@@ -67,4 +67,11 @@ public interface PlatformConfigurationService
 	 * @return
 	 */
 	public String getWebServicePassword();
+
+	/**
+	 * Returns the size of result sets returned for the dashboard.
+	 * 
+	 * @return
+	 */
+	public Integer getSearchResultSetSize();
 }
