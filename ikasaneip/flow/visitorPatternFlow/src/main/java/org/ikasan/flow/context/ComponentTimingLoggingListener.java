@@ -63,7 +63,7 @@ public class ComponentTimingLoggingListener implements FlowInvocationContextList
         {
             StringBuilder sb = new StringBuilder("Flow Invocation: ");
             List<FlowElementInvocation> invocations = flowInvocationContext.getInvocations();
-            Object identifier = invocations.get(invocations.size() - 1).getIdentifier();
+            Object identifier = invocations.get(invocations.size() - 1).getBeforeIdentifier();
             sb.append("ID [").append(identifier).append("] ");
             // log start and end epoch times
             sb.append("Start [").append(flowInvocationContext.getFlowStartTimeMillis()).append("] ");

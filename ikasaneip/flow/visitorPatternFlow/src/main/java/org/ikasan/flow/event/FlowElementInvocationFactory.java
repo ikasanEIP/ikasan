@@ -65,7 +65,7 @@ public class FlowElementInvocationFactory
     /**
      * Default implementation of the FlowElementInvocation
      */
-    public static class DefaultFlowElementInvocation implements FlowElementInvocation
+    public static class DefaultFlowElementInvocation implements FlowElementInvocation<Object>
     {
         /** the start and end times (epoch) of the FlowElement invocation */
         private volatile long startTime, endTime;
@@ -74,10 +74,16 @@ public class FlowElementInvocationFactory
         private FlowElement flowElement;
 
         /** the FlowEvent IDENTIFIER */
-        private Object identifier;
+        private Object beforeIdentifier;
 
         /** the FlowEvent IDENTIFIER */
-        private Object relatedIdentifier;
+        private Object beforeRelatedIdentifier;
+
+        /** the FlowEvent IDENTIFIER */
+        private Object afterIdentifier;
+
+        /** the FlowEvent IDENTIFIER */
+        private Object afterRelatedIdentifier;
 
         @Override
         public void beforeInvocation(FlowElement flowElement) {
@@ -106,25 +112,51 @@ public class FlowElementInvocationFactory
         }
 
         @Override
-        public Object getIdentifier() {
-            return identifier;
-        }
-
-        @Override
-        public void setIdentifier(Object identifier) {
-            this.identifier = identifier;
-        }
-
-        @Override
-        public Object getRelatedIdentifier()
+        public Object getBeforeIdentifier()
         {
-            return relatedIdentifier;
+            return beforeIdentifier;
         }
 
         @Override
-        public void setRelatedIdentifier(Object relatedIdentifier)
+        public void setBeforeIdentifier(Object identifier)
         {
-            this.relatedIdentifier = relatedIdentifier;
+            beforeIdentifier = identifier;
+        }
+
+        @Override
+        public Object getBeforeRelatedIdentifier()
+        {
+            return beforeRelatedIdentifier;
+        }
+
+        @Override
+        public void setBeforeRelatedIdentifier(Object relatedIdentifier)
+        {
+            beforeRelatedIdentifier = relatedIdentifier;
+        }
+
+        @Override
+        public Object getAfterIdentifier()
+        {
+            return afterIdentifier;
+        }
+
+        @Override
+        public void setAfterIdentifier(Object identifier)
+        {
+            afterIdentifier = identifier;
+        }
+
+        @Override
+        public Object getAfterRelatedIdentifier()
+        {
+            return afterRelatedIdentifier;
+        }
+
+        @Override
+        public void setAfterRelatedIdentifier(Object relatedIdentifier)
+        {
+            afterRelatedIdentifier = relatedIdentifier;
         }
     }
 }

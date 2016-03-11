@@ -49,6 +49,7 @@ import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -74,25 +75,28 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public void save(FlowInvocationContext flowInvocationContext, String moduleName, String flowName)
     {
-        MessageHistoryEvent<String> messageHistoryEvent = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
-        messageHistoryDao.save(messageHistoryEvent);
+        List<MessageHistoryEvent<String>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+        for (MessageHistoryEvent<String> messageHistoryEvent : messageHistoryEvents)
+        {
+            messageHistoryDao.save(messageHistoryEvent);
+        }
     }
 
     @Override
     public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                         Set<String> moduleNames, String flowName,
-                                                         String lifeId, String relatedLifeId, Date fromDate, Date toDate)
+                                                         Set<String> moduleNames, String flowName, String componentName,
+                                                         String eventId, String relatedEventId, Date fromDate, Date toDate)
     {
         return messageHistoryDao.findMessageHistoryEvents(pageNo, pageSize, orderBy, orderAscending,
-                                                          moduleNames, flowName,
-                                                          lifeId, relatedLifeId, fromDate, toDate);
+                                                          moduleNames, flowName, componentName,
+                                                          eventId, relatedEventId, fromDate, toDate);
     }
 
     @Override
     public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                       String lifeId, boolean lookupRelatedLifeId)
+                                                       String eventId, boolean lookupRelatedEventId)
     {
-        return messageHistoryDao.getMessageHistoryEvent(pageNo, pageSize, orderBy, orderAscending, lifeId, lookupRelatedLifeId ? lifeId : null);
+        return messageHistoryDao.getMessageHistoryEvent(pageNo, pageSize, orderBy, orderAscending, eventId, lookupRelatedEventId ? eventId : null);
     }
 
     @Override

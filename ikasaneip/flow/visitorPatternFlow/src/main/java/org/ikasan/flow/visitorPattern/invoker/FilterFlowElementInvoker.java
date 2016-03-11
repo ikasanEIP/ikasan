@@ -61,10 +61,10 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
         Filter filter = flowElement.getFlowComponent();
         if(filter.filter(flowEvent.getPayload()) == null)
         {
-            endFlowElementInvocation(flowElementInvocation, flowElement);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
             return null;
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 

@@ -91,7 +91,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
                 payloads = splitter.split(flowEvent.getPayload());
             }
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)

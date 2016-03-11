@@ -61,10 +61,16 @@
                   column="ModuleName"      not-null="true"/>
         <property name="flowName"          type="java.lang.String"
                   column="FlowName"        not-null="true"/>
-        <property name="lifeIdentifier"    type="java.lang.String"
-                  column="LifeIdentifier"  not-null="true"/>
-        <property name="relatedLifeIdentifier" type="java.lang.String"
-                  column="RelatedLifeIdentifier"/>
+        <property name="componentName"     type="java.lang.String"
+                  column="ComponentName"   not-null="true"/>
+        <property name="beforeEventIdentifier"    type="java.lang.String"
+                  column="BeforeEventIdentifier"  not-null="true"/>
+        <property name="beforeRelatedEventIdentifier" type="java.lang.String"
+                  column="BeforeRelatedEventIdentifier"/>
+        <property name="afterEventIdentifier"    type="java.lang.String"
+                  column="AfterEventIdentifier"  not-null="true"/>
+        <property name="afterRelatedEventIdentifier" type="java.lang.String"
+                  column="AfterRelatedEventIdentifier"/>
         <property name="startTimeMillis"   type="long"
                   column="StartTime"       not-null="true"/>
         <property name="endTimeMillis"     type="long"
@@ -72,25 +78,6 @@
         <property name="expiry"            type="long"
                   column="Expiry"          not-null="true"/> 
 
-        <list name="componentHistoryEvents" cascade="all" inverse="false" lazy="false">
-            <key column="MessageHistoryId"/>
-            <list-index column="ComponentIndex"/>
-            <one-to-many class="org.ikasan.history.model.ComponentHistoryFlowEvent"/>
-        </list>
-
-    </class>
-
-    <class name="org.ikasan.history.model.ComponentHistoryFlowEvent"
-           table="ComponentMessageHistory">
-        <id name="id" type="java.lang.Long" column="Id">
-            <generator class="identity"/>
-        </id>
-        <property name="componentName" type="java.lang.String"
-                  column="ComponentName" not-null="true"/>
-        <property name="startTimeMillis" type="long"
-                  column="StartTime"     not-null="true"/>
-        <property name="endTimeMillis"   type="long"
-                  column="EndTime"/>
     </class>
 
 </hibernate-mapping>

@@ -68,15 +68,16 @@ public interface MessageHistoryDao
      * @param orderAscending order ascending?
      * @param moduleNames a set of module names to search for
      * @param flowName a flow name to search for
-     * @param lifeId a lifeId to search for
-     * @param relatedLifeId a relatedLifeId to search for
+     * @param componentName a component name to search for
+     * @param eventId an eventId to search for
+     * @param relatedEventId a relatedEventId to search for
      * @param fromDate the from datetime
      * @param toDate the to datetime
      * @return a paged result set of MessageHistoryEvent
      */
     PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                                    Set<String> moduleNames, String flowName,
-                                                                    String lifeId, String relatedLifeId, Date fromDate, Date toDate);
+                                                                    Set<String> moduleNames, String flowName, String componentName,
+                                                                    String eventId, String relatedEventId, Date fromDate, Date toDate);
 
     /**
      * Retrieve a MessageHistoryEvent (or set of events from multiple Flows) using the lifeId or relatedLifeId
@@ -86,12 +87,12 @@ public interface MessageHistoryDao
      * @param pageSize the page size
      * @param orderBy columns to order by
      * @param orderAscending order ascending?
-     * @param lifeId the lifeId to retrieve
-     * @param relatedLifeId an optional relatedLifeId to retrieve events that had the main lifeId mutated
+     * @param eventId the eventId to retrieve
+     * @param relatedEventId an optional relatedEventId to retrieve events that had the main eventId mutated
      * @return a paged result set of MessageHistoryEvent
      */
     PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                                  String lifeId, String relatedLifeId);
+                                                                  String eventId, String relatedEventId);
 
     /**
      * Delete all expired MessageHistoryEvents

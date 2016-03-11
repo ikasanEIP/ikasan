@@ -89,9 +89,4 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
-    <!-- this creates the FK correctly with a delete cascade option -->
-    <jdbc:initialize-database data-source="ikasan.xads">
-        <jdbc:script location="classpath:overwriteComponentMessageHistory.sql" />
-    </jdbc:initialize-database>
-
 </beans>

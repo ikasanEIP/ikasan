@@ -152,7 +152,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             throw new SplitterException("FlowElement [" + flowElement.getComponentName() + "] contains a ConcurrentSplitter. "
                     + "ConcurrentSplitter must return at least one payload.");
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         // initialise futures task stats
         AtomicInteger count = new AtomicInteger(0);

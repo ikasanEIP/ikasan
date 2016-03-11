@@ -42,7 +42,6 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 
@@ -102,7 +101,7 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
                     + "All Routers must result in at least one transition.");
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         if (targetNames.size() == 1)

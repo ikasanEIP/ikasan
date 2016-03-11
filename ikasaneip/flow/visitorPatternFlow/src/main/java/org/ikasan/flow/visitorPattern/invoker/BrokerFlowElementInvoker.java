@@ -58,7 +58,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        FlowElementInvocation<Object> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Broker broker = flowElement.getFlowComponent();
         if(requiresFullEventForInvocation == null)
@@ -105,7 +105,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
                 flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
             }
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {

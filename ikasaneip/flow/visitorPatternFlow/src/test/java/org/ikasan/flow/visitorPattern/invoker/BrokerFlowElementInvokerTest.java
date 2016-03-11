@@ -81,9 +81,9 @@ public class BrokerFlowElementInvokerTest
         {
             {
                 // first execution
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowEvent).getRelatedIdentifier();
+                exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
@@ -105,9 +105,9 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 // second execution
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowEvent).getRelatedIdentifier();
+                exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
@@ -144,9 +144,9 @@ public class BrokerFlowElementInvokerTest
         {
             {
                 // first execution
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowEvent).getRelatedIdentifier();
+                exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
@@ -162,9 +162,9 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 // second execution
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowEvent).getRelatedIdentifier();
+                exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
 

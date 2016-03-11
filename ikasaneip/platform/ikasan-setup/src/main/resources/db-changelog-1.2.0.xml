@@ -10,10 +10,8 @@
 
     <!-- 1.2.0 table creation db/tables -->
 	<include file="db/tables/db-changeLog-createMessageHistory.xml" relativeToChangelogFile="true" />
-    <include file="db/tables/db-changeLog-createComponentMessageHistory.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.2.0 cardinality creation db/cardinality -->
-	<include file="db/cardinality/db-changeLog-createComponentMessageHistoryFk.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.2.0 data creation db/data -->
 
