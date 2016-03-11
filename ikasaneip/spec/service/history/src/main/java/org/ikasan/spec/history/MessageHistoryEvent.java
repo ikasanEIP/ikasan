@@ -40,8 +40,6 @@
  */
 package org.ikasan.spec.history;
 
-import java.util.List;
-
 /**
  * Ikasan MessageHistoryEvent Value Object.
  *
@@ -53,11 +51,15 @@ public interface MessageHistoryEvent<ID>
 
     String getFlowName();
 
-    ID getLifeIdentifier();
+    String getComponentName();
 
-    ID getRelatedLifeIdentifier();
+    ID getBeforeEventIdentifier();
 
-    List<? extends ComponentHistoryEvent> getComponentHistoryEvents();
+    ID getBeforeRelatedEventIdentifier();
+
+    ID getAfterEventIdentifier();
+
+    ID getAfterRelatedEventIdentifier();
 
     long getStartTimeMillis();
 

@@ -95,7 +95,7 @@ public class ComponentTimingLoggingListenerTest
                 exactly(1).of(flowInvocationContext).getFlowEndTimeMillis();
                 will(returnValue(123456790000L));
 
-                exactly(1).of(flowElementInvocation).getIdentifier();
+                exactly(1).of(flowElementInvocation).getBeforeIdentifier();
                 will(returnValue("id"));
                 exactly(1).of(flowElementInvocation).getFlowElement();
                 will(returnValue(flowElement));

@@ -60,7 +60,7 @@ public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElement
 
         SingleRecipientRouter router = flowElement.getFlowComponent();
         String targetName = router.route(flowEvent.getPayload());
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         if (targetName == null)
         {
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "

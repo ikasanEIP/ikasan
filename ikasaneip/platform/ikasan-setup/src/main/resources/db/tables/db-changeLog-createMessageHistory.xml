@@ -66,10 +66,18 @@
             <column name="FlowName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LifeIdentifier" type="VARCHAR(255)">
+            <column name="ComponentName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="RelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="BeforeEventIdentifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BeforeRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="AfterEventIdentifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AfterRelatedLifeIdentifier" type="VARCHAR(255)"/>
+
             <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
@@ -118,10 +126,18 @@
             <column name="FlowName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LifeId" type="VARCHAR(255)">
+            <column name="ComponentName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="RelatedLifeId" type="VARCHAR(255)"/>
+            <column name="BeforeEventIdentifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BeforeRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="AfterEventIdentifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AfterRelatedLifeIdentifier" type="VARCHAR(255)"/>
+
             <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
@@ -167,10 +183,17 @@
             <column name="FlowName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LifeId" type="VARCHAR(255)">
+            <column name="ComponentName" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="RelatedLifeId" type="VARCHAR(255)"/>
+            <column name="BeforeEventIdentifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BeforeRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="AfterEventIdentifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AfterRelatedLifeIdentifier" type="VARCHAR(255)"/>
             <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>

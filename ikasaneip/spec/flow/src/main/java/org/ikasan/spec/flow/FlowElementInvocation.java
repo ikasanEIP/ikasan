@@ -79,26 +79,50 @@ public interface FlowElementInvocation<IDENTIFIER> {
     long getEndTimeMillis();
 
     /**
-     * Returns the identifier for the this invocation
+     * Returns the identifier for before this invocation
      * @return the IDENTIFIER
      */
-    IDENTIFIER getIdentifier();
+    IDENTIFIER getBeforeIdentifier();
 
     /**
-     * Sets the identifier
+     * Sets the identifier before invocation
      * @param identifier
      */
-    void setIdentifier(IDENTIFIER identifier);
+    void setBeforeIdentifier(IDENTIFIER identifier);
 
     /**
-     * Returns the related identifier for the this invocation
+     * Returns the related identifier for before this invocation
      * @return the IDENTIFIER
      */
-    IDENTIFIER getRelatedIdentifier();
+    IDENTIFIER getBeforeRelatedIdentifier();
 
     /**
-     * Sets the related identifier
+     * Sets the related identifier after invocation
      * @param relatedIdentifier
      */
-    void setRelatedIdentifier(IDENTIFIER relatedIdentifier);
+    void setBeforeRelatedIdentifier(IDENTIFIER relatedIdentifier);
+
+    /**
+     * Returns the identifier for after this invocation
+     * @return the IDENTIFIER
+     */
+    IDENTIFIER getAfterIdentifier();
+
+    /**
+     * Sets the identifier before invocation
+     * @param identifier
+     */
+    void setAfterIdentifier(IDENTIFIER identifier);
+
+    /**
+     * Returns the related identifier for after this invocation
+     * @return the IDENTIFIER
+     */
+    IDENTIFIER getAfterRelatedIdentifier();
+
+    /**
+     * Sets the related identifier after invocation
+     * @param relatedIdentifier
+     */
+    void setAfterRelatedIdentifier(IDENTIFIER relatedIdentifier);
 }

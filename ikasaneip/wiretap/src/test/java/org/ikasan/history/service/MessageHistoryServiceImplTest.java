@@ -86,7 +86,7 @@ public class MessageHistoryServiceImplTest
     {
         mockery.checking(new Expectations(){{
             oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext);
-            will(returnValue(messageHistoryEvent));
+            will(returnValue(Collections.singletonList(messageHistoryEvent)));
             oneOf(messageHistoryDao).save(messageHistoryEvent);
         }});
         messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
@@ -121,11 +121,11 @@ public class MessageHistoryServiceImplTest
         mockery.checking(new Expectations()
         {{
                 oneOf(messageHistoryDao).findMessageHistoryEvents(0, 0, "orderBy", true, Collections.<String>emptySet(),
-                        "flowName", "lifeId", "relatedLifeId", new Date(0L), new Date(0L));
+                        "flowName", "componentName", "lifeId", "relatedLifeId", new Date(0L), new Date(0L));
                 will(returnValue(null));
             }});
         messageHistoryService.findMessageHistoryEvents(0, 0, "orderBy", true, Collections.<String>emptySet(),
-                "flowName", "lifeId", "relatedLifeId", new Date(0L), new Date(0L));
+                "flowName", "componentName", "lifeId", "relatedLifeId", new Date(0L), new Date(0L));
         mockery.assertIsSatisfied();
     }
 

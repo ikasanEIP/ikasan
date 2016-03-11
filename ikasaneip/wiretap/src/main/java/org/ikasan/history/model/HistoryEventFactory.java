@@ -42,39 +42,38 @@ package org.ikasan.history.model;
 
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.history.ComponentHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Factory for creating MessageHistoryEvents and ComponentHistoryEvents from FlowInvocationContext objects
+ * Factory for creating MessageHistoryEvents from FlowInvocationContext objects
  *
  * @author Ikasan Development Team
  */
 public class HistoryEventFactory
 {
 
-    public MessageHistoryEvent<String> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
+    public List<MessageHistoryEvent<String>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
     {
-        return new MessageHistoryFlowEvent(moduleName, flowName,
-                                           getIdentifier(flowInvocationContext.getInvocations().get(0).getIdentifier()),
-                                           getIdentifier(flowInvocationContext.getInvocations().get(0).getRelatedIdentifier()),
-                                           newComponentEvents(flowInvocationContext),
-                                           flowInvocationContext.getFlowStartTimeMillis(), flowInvocationContext.getFlowEndTimeMillis(), 30); //TODO - move expiry to configurable aspect, where?
+
+        List<MessageHistoryEvent<String>> messageHistoryEvents = new ArrayList<>();
+
+        for (FlowElementInvocation invocation : flowInvocationContext.getInvocations())
+        {
+            messageHistoryEvents.add(new MessageHistoryFlowEvent(moduleName, flowName,
+                    invocation.getFlowElement().getComponentName(),
+                    getIdentifier(invocation.getBeforeIdentifier()), getIdentifier(invocation.getBeforeRelatedIdentifier()),
+                    getIdentifier(invocation.getAfterIdentifier()), getIdentifier(invocation.getAfterRelatedIdentifier()),
+                    invocation.getStartTimeMillis(), invocation.getEndTimeMillis(),
+                    30));
+            //TODO - move expiry to configurable aspect, where?
+        }
+        return messageHistoryEvents;
     }
 
-    List<ComponentHistoryEvent> newComponentEvents(FlowInvocationContext flowInvocationContext)
-    {
-        List<ComponentHistoryEvent> componentHistoryEvents = new ArrayList<>();
-        for (FlowElementInvocation flowElementInvocation : flowInvocationContext.getInvocations())
-        {
-            componentHistoryEvents.add(new ComponentHistoryFlowEvent(flowElementInvocation.getFlowElement().getComponentName(),
-                    flowElementInvocation.getStartTimeMillis(), flowElementInvocation.getEndTimeMillis()));
-        }
-        return componentHistoryEvents;
-    }
+
 
     String getIdentifier(Object object)
     {

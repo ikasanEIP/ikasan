@@ -40,10 +40,7 @@
  */
 package org.ikasan.history.model;
 
-import org.ikasan.spec.history.ComponentHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
-
-import java.util.List;
 
 /**
  * Implementation of a MessageHistoryEvent based on a String lifeIdentifier from a Flow
@@ -52,8 +49,9 @@ import java.util.List;
  */
 public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
 {
-    String moduleName, flowName, lifeIdentifier, relatedLifeIdentifier;
-    List<? extends ComponentHistoryEvent> componentHistoryEvents;
+    String moduleName, flowName, componentName,
+            beforeEventIdentifier, beforeRelatedEventIdentifier,
+            afterEventIdentifier, afterRelatedEventIdentifier;
     long startTimeMillis, endTimeMillis, expiry, id;
 
     /** Required by the ORM... */
@@ -61,15 +59,15 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
     {
     }
 
-    public MessageHistoryFlowEvent(String moduleName, String flowName, String lifeIdentifier, String relatedLifeIdentifier,
-            List<? extends ComponentHistoryEvent> componentHistoryEvents,
-            long startTimeMillis, long endTimeMillis, long expiry)
+    public MessageHistoryFlowEvent(String moduleName, String flowName, String componentName, String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier, String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis, long expiry)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
-        this.lifeIdentifier = lifeIdentifier;
-        this.relatedLifeIdentifier = relatedLifeIdentifier;
-        this.componentHistoryEvents = componentHistoryEvents;
+        this.componentName = componentName;
+        this.beforeEventIdentifier = beforeEventIdentifier;
+        this.beforeRelatedEventIdentifier = beforeRelatedEventIdentifier;
+        this.afterEventIdentifier = afterEventIdentifier;
+        this.afterRelatedEventIdentifier = afterRelatedEventIdentifier;
         this.startTimeMillis = startTimeMillis;
         this.endTimeMillis = endTimeMillis;
         this.expiry = expiry;
@@ -88,21 +86,33 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
     }
 
     @Override
-    public String getLifeIdentifier()
+    public String getComponentName()
     {
-        return lifeIdentifier;
+        return componentName;
     }
 
     @Override
-    public String getRelatedLifeIdentifier()
+    public String getBeforeEventIdentifier()
     {
-        return relatedLifeIdentifier;
+        return beforeEventIdentifier;
     }
 
     @Override
-    public List<? extends ComponentHistoryEvent> getComponentHistoryEvents()
+    public String getBeforeRelatedEventIdentifier()
     {
-        return componentHistoryEvents;
+        return beforeRelatedEventIdentifier;
+    }
+
+    @Override
+    public String getAfterEventIdentifier()
+    {
+        return afterEventIdentifier;
+    }
+
+    @Override
+    public String getAfterRelatedEventIdentifier()
+    {
+        return afterRelatedEventIdentifier;
     }
 
     @Override
@@ -143,19 +153,29 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
         this.flowName = flowName;
     }
 
-    public void setLifeIdentifier(String lifeIdentifier)
+    public void setComponentName(String componentName)
     {
-        this.lifeIdentifier = lifeIdentifier;
+        this.componentName = componentName;
     }
 
-    public void setRelatedLifeIdentifier(String relatedLifeIdentifier)
+    public void setBeforeEventIdentifier(String beforeEventIdentifier)
     {
-        this.relatedLifeIdentifier = relatedLifeIdentifier;
+        this.beforeEventIdentifier = beforeEventIdentifier;
     }
 
-    public void setComponentHistoryEvents(List<ComponentHistoryEvent> componentHistoryEvents)
+    public void setBeforeRelatedEventIdentifier(String beforeRelatedEventIdentifier)
     {
-        this.componentHistoryEvents = componentHistoryEvents;
+        this.beforeRelatedEventIdentifier = beforeRelatedEventIdentifier;
+    }
+
+    public void setAfterEventIdentifier(String afterEventIdentifier)
+    {
+        this.afterEventIdentifier = afterEventIdentifier;
+    }
+
+    public void setAfterRelatedEventIdentifier(String afterRelatedEventIdentifier)
+    {
+        this.afterRelatedEventIdentifier = afterRelatedEventIdentifier;
     }
 
     public void setStartTimeMillis(long startTimeMillis)

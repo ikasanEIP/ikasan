@@ -40,7 +40,6 @@
  */
 package org.ikasan.history.dao;
 
-import org.ikasan.history.model.ComponentHistoryFlowEvent;
 import org.ikasan.history.model.MessageHistoryFlowEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -54,7 +53,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -76,11 +74,8 @@ public class HibernateMessageHistoryDaoTest
     @Before
     public void setup()
     {
-        MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "lifeId", "relatedLifeId",
-                Arrays.asList(
-                        new ComponentHistoryFlowEvent("componentName1", System.currentTimeMillis()-500L, System.currentTimeMillis()),
-                        new ComponentHistoryFlowEvent("componentName2", System.currentTimeMillis(), System.currentTimeMillis()+500L)),
-
+        MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
+                "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
 
         messageHistoryDao.save(event1);
@@ -102,28 +97,28 @@ public class HibernateMessageHistoryDaoTest
     @Test
     public void test_search_moduleName()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null);
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
     @Test
     public void test_search_flowName()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, "flowName", null, null, null, null);
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, "flowName", null, null, null, null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
     @Test
     public void test_search_lifeId()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, "lifeId", null, null, null);
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, "lifeId", null, null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
     @Test
     public void test_search_relatedLifeId()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, "relatedLifeId", null, null);
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, null, "relatedLifeId", null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
@@ -131,11 +126,8 @@ public class HibernateMessageHistoryDaoTest
     public void test_get_lifeId()
     {
         // add another event in that does not match
-        MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "lifeIdX", "relatedLifeIdY",
-                Arrays.asList(
-                        new ComponentHistoryFlowEvent("componentName1X", System.currentTimeMillis()-500L, System.currentTimeMillis()),
-                        new ComponentHistoryFlowEvent("componentName2X", System.currentTimeMillis(), System.currentTimeMillis()+500L)),
-
+        MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
+                "lifeIdX", "relatedLifeIdY", "lifeIdX", "relatedLifeIdY",
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
 
         messageHistoryDao.save(event2);
@@ -148,20 +140,14 @@ public class HibernateMessageHistoryDaoTest
     public void test_get_relatedLifeId()
     {
         // add another event in that does not match
-        MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "lifeIdX", "relatedLifeIdY",
-                Arrays.asList(
-                        new ComponentHistoryFlowEvent("componentName1X", System.currentTimeMillis()-500L, System.currentTimeMillis()),
-                        new ComponentHistoryFlowEvent("componentName2X", System.currentTimeMillis(), System.currentTimeMillis()+500L)),
-
+        MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
+                "lifeIdX", "relatedLifeIdY", "lifeIdX", "relatedLifeIdY",
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
         messageHistoryDao.save(event2);
 
         // add another event in that matches on the relatedId
-        MessageHistoryFlowEvent event3 = new MessageHistoryFlowEvent("moduleName", "flowName", "newModuleLifeId", "lifeId",
-                Arrays.asList(
-                        new ComponentHistoryFlowEvent("componentName1Y", System.currentTimeMillis()-500L, System.currentTimeMillis()),
-                        new ComponentHistoryFlowEvent("componentName2Z", System.currentTimeMillis(), System.currentTimeMillis()+500L)),
-
+        MessageHistoryFlowEvent event3 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
+                "newModuleLifeId", "lifeId", "newModuleLifeId", "lifeId",
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
         messageHistoryDao.save(event3);
 

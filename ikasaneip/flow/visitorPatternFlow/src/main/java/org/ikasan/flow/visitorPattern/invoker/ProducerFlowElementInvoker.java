@@ -86,7 +86,7 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
                 producer.invoke(flowEvent.getPayload());
             }
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement);
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // producer is last in the flow
         return null;

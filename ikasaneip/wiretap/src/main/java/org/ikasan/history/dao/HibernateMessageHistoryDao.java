@@ -65,11 +65,6 @@ import java.util.Set;
 public class HibernateMessageHistoryDao extends HibernateDaoSupport implements MessageHistoryDao
 {
 
-    private static final String EXPIRY = "expiry";
-
-    /** Hibernate query used for housekeeping expired wiretap events, note the Object name, not the table name since thats mapped by HBM config */
-    private static final String HOUSEKEEP_DELETE_QUERY = "delete MessageHistoryFlowEvent w where w.expiry <= :" + EXPIRY;
-
     @Override
     public void save(MessageHistoryEvent messageHistoryEvent)
     {
@@ -79,8 +74,8 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     @Override
     public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(final int pageNo, final int pageSize, final String orderBy,
                                                                            final boolean orderAscending, final Set<String> moduleNames,
-                                                                           final String flowName,
-                                                                           final String lifeId, final String relatedLifeId,
+                                                                           final String flowName, final String componentName,
+                                                                           final String eventId, final String relatedEventId,
                                                                            final Date fromDate, final Date toDate)
     {
         return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<MessageHistoryEvent>>()
@@ -133,13 +128,21 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     criteria.add(Restrictions.eq("flowName", flowName));
                 }
-                if (restrictionExists(lifeId))
+                if (restrictionExists(componentName))
                 {
-                    criteria.add(Restrictions.eq("lifeIdentifier", lifeId));
+                    criteria.add(Restrictions.eq("componentName", componentName));
                 }
-                if (restrictionExists(relatedLifeId))
+                if (restrictionExists(eventId))
                 {
-                    criteria.add(Restrictions.eq("relatedLifeIdentifier", relatedLifeId));
+                    criteria.add(Restrictions.or(
+                                    Restrictions.eq("beforeEventIdentifier", eventId),
+                                    Restrictions.eq("afterEventIdentifier", eventId) ));
+                }
+                if (restrictionExists(relatedEventId))
+                {
+                    criteria.add(Restrictions.or(
+                                    Restrictions.eq("beforeRelatedEventIdentifier", relatedEventId),
+                                    Restrictions.eq("afterRelatedEventIdentifier", relatedEventId)));
                 }
                 if (restrictionExists(fromDate))
                 {
@@ -156,7 +159,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
     @Override
     public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(final int pageNo, final int pageSize, final String orderBy,
-            final boolean orderAscending, final String lifeId, final String relatedLifeId)
+            final boolean orderAscending, final String eventId, final String relatedEventId)
     {
         return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<MessageHistoryEvent>>()
         {
@@ -200,15 +203,15 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             {
                 Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
 
-                if (restrictionExists(lifeId) && !restrictionExists(relatedLifeId))
+                if (restrictionExists(eventId) && !restrictionExists(relatedEventId))
                 {
-                    criteria.add(Restrictions.eq("lifeIdentifier", lifeId));
+                    criteria.add(Restrictions.eq("beforeEventIdentifier", eventId));
                 }
-                if (restrictionExists(relatedLifeId))
+                if (restrictionExists(relatedEventId))
                 {
                     criteria.add(Restrictions.or(
-                            Restrictions.eq("lifeIdentifier", lifeId),
-                            Restrictions.eq("relatedLifeIdentifier", relatedLifeId)));
+                            Restrictions.eq("beforeEventIdentifier", eventId),
+                            Restrictions.eq("beforeRelatedEventIdentifier", relatedEventId)));
                 }
                 return criteria;
             }
@@ -222,7 +225,6 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                // rely on the DELETE CASCADE option on the FK to remove from the child tables as well
                 String delete = "DELETE FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis();
                 session.createSQLQuery(delete).executeUpdate();
                 return null;

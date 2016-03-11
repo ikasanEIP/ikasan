@@ -71,28 +71,29 @@ public interface MessageHistoryService<EVENT, RESULT>
      * @param orderAscending order ascending?
      * @param moduleNames a set of module names to search for
      * @param flowName a flow name to search for
-     * @param lifeId a lifeId to search for
-     * @param relatedLifeId a relatedLifeId to search for
+     * @param componentName a component name to search for
+     * @param eventId an eventId to search for
+     * @param relatedEventId a relatedEventId to search for
      * @param fromDate the from datetime
      * @param toDate the to datetime
      * @return a result set
      */
     RESULT findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                    Set<String> moduleNames, String flowName,
-                                    String lifeId, String relatedLifeId, Date fromDate, Date toDate);
+                                    Set<String> moduleNames, String flowName, String componentName,
+                                    String eventId, String relatedEventId, Date fromDate, Date toDate);
 
     /**
-     * Retrieve a MessageHistoryEvent via its lifeId or relatedLifeId
+     * Retrieve a MessageHistoryEvent via its eventId or relatedEventId
      * This could return an event that spans multiple modules and flows, hence the paging aspect
      * @param pageNo the current page number
      * @param pageSize the page size
      * @param orderBy columns to order by
      * @param orderAscending order ascending?
-     * @param lifeId a lifeId to search for
-     * @param lookupRelatedLifeId whether to look for a relatedId of the given lifeId
+     * @param eventId an eventId to search for
+     * @param lookupRelatedEventId whether to look for a relatedId of the given eventId
      * @return a result set
      */
     RESULT getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                  String lifeId, boolean lookupRelatedLifeId);
+                                  String eventId, boolean lookupRelatedEventId);
 
 }
