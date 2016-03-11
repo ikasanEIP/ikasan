@@ -44,7 +44,6 @@ package org.ikasan.flow.visitorPattern;
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -102,22 +101,22 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
     }
 
     @Override
-    public void addInvocation(FlowElementInvocation flowElementInvocation) {
+    public void addElementInvocation(FlowElementInvocation flowElementInvocation) {
         invocations.add(flowElementInvocation);
     }
 
     @Override
-    public List<FlowElementInvocation> getInvocations() {
+    public List<FlowElementInvocation> getElementInvocations() {
         return invocations;
     }
 
     @Override
-    public void startFlow() {
+    public void startFlowInvocation() {
         this.flowStartTimeMillis = System.currentTimeMillis();
     }
 
     @Override
-    public void endFlow() {
+    public void endFlowInvocation() {
         this.flowEndTimeMillis = System.currentTimeMillis();
     }
 
@@ -134,7 +133,7 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
     @Override
 	public void combine(FlowInvocationContext flowInvocationContext)
 	{
-        invocations.addAll(flowInvocationContext.getInvocations());
+        invocations.addAll(flowInvocationContext.getElementInvocations());
 	}
 
 }

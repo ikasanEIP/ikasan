@@ -134,7 +134,7 @@ public abstract class AbstractFlowElementInvoker
         flowElementInvocation.setBeforeIdentifier(flowEvent.getIdentifier());
         flowElementInvocation.setBeforeRelatedIdentifier(flowEvent.getRelatedIdentifier());
         flowElementInvocation.beforeInvocation(flowElement);
-        flowInvocationContext.addInvocation(flowElementInvocation);
+        flowInvocationContext.addElementInvocation(flowElementInvocation);
         return flowElementInvocation;
     }
 

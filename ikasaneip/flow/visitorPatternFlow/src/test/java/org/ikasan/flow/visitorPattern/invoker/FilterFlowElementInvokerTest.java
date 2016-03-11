@@ -85,7 +85,7 @@ public class FilterFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -120,7 +120,7 @@ public class FilterFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -151,7 +151,7 @@ public class FilterFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 

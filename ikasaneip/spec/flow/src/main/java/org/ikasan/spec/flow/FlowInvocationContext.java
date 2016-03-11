@@ -54,18 +54,18 @@ public interface FlowInvocationContext
     /**
      * Indicate a flow has started
      */
-    void startFlow();
+    void startFlowInvocation();
 
     /**
      * Indicate the flow has completed
      */
-    void endFlow();
+    void endFlowInvocation();
 
     /**
      * Add an FlowElement invocation event
      * @param flowElementInvocation the invocation
      */
-    void addInvocation(FlowElementInvocation flowElementInvocation);
+    void addElementInvocation(FlowElementInvocation flowElementInvocation);
 
     /**
      * Get the epoch start time of this flow invocation
@@ -95,7 +95,7 @@ public interface FlowInvocationContext
      * Get the List of invocation events
      * @return the List of invocations
      */
-    List<FlowElementInvocation> getInvocations();
+    List<FlowElementInvocation> getElementInvocations();
 
 	/**
 	 * Combine the incoming flowInvocationContext into this instance
