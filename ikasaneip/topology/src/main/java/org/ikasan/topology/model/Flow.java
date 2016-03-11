@@ -50,7 +50,7 @@ import java.util.Set;
  */
 public class Flow
 {
-    private Long id;
+	private Long id;
     private String name;
     private String description;
     private String state;
@@ -250,6 +250,15 @@ public class Flow
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "Flow [id=" + id + ", name=" + name + ", description="
+				+ description + ", state=" + state + ", module=" + module.getId() + ", server = " + module.getServer().getId() 
+				+ ", components=" + components + ", order=" + order
+				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+				+ updatedDateTime + "]";
 	}
 
 }

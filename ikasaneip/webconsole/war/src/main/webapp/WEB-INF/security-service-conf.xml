@@ -168,7 +168,8 @@
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
 			expression="execution(* org.ikasan.spec.configuration.ConfigurationManagement.saveConfiguration(..)) ||
-						execution(* org.ikasan.spec.configuration.ConfigurationManagement.deleteConfiguration(..))" />
+						execution(* org.ikasan.spec.configuration.ConfigurationManagement.deleteConfiguration(..)) ||
+						execution(* org.ikasan.spec.configuration.ConfigurationService.update(..))" />
 		<aop:pointcut id="moduleServiceServiceMethods"
 			expression="execution(* org.ikasan.module.startup.dao.StartupControlDao.save(..))" />
 		<aop:pointcut id="hospitalServiceMethods"

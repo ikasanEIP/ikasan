@@ -47,16 +47,19 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.component.container.WiretapEventBeanQuery;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
@@ -67,46 +70,32 @@ import org.ikasan.topology.model.Module;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.tepi.filtertable.FilterTable;
-import org.vaadin.peter.contextmenu.ContextMenu;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedListener;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableFooterEvent;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableHeaderEvent;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuOpenedOnTableRowEvent;
+import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -124,11 +113,7 @@ public class WiretapTab extends TopologyTab
 	private FilterTable wiretapTable;
 	
 	private WiretapDao wiretapDao;
-	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	private Table components = new Table("Components");
-	
+
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	
@@ -140,22 +125,33 @@ public class WiretapTab extends TopologyTab
 	private float splitPosition;
 	private Unit splitUnit;
 	
-	private Container tableContainer;
+	private IndexedContainer tableContainer;
 	
 	private Label resultsLabel = new Label();
 	
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
-	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo)
+	private BeanQueryFactory<WiretapEventBeanQuery> queryFactory = new
+			BeanQueryFactory<WiretapEventBeanQuery>(WiretapEventBeanQuery.class);
+	
+	private PlatformConfigurationService platformConfigurationService;
+	
+	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo,
+			PlatformConfigurationService platformConfigurationService)
 	{
 		this.wiretapDao = wiretapDao;
 		this.businessStreamCombo = businessStreamCombo;
+		this.platformConfigurationService = platformConfigurationService;
 		
 		tableContainer = this.buildContainer();
 	}
 	
-	protected Container buildContainer() 
+	protected IndexedContainer buildContainer() 
 	{
+		Map<String,Object> queryConfiguration=new HashMap<String,Object>();
+		
+		queryFactory.setQueryConfiguration(queryConfiguration);
+			
 		IndexedContainer cont = new IndexedContainer();
 
 		cont.addContainerProperty("Module Name", String.class,  null);
@@ -169,7 +165,7 @@ public class WiretapTab extends TopologyTab
         return cont;
     }
 	
-	public Layout createWiretapLayout()
+	public void createLayout()
 	{	
 		this.wiretapTable = new FilterTable();
 		this.wiretapTable.setFilterBarVisible(true);
@@ -183,10 +179,11 @@ public class WiretapTab extends TopologyTab
 		this.wiretapTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
 		this.wiretapTable.setColumnExpandRatio("Timestamp", .1f);
 		this.wiretapTable.setColumnExpandRatio("", .05f);
-		this.wiretapTable.setContainerDataSource(tableContainer);
 		
 		this.wiretapTable.addStyleName("wordwrap-table");
 		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		
+		this.wiretapTable.setContainerDataSource(tableContainer);
 		
 		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
@@ -275,7 +272,10 @@ public class WiretapTab extends TopologyTab
             	
             	HashSet<String> componentNames = null;
             	
-            	if(components.getItemIds().size() > 0)
+            	
+            	if(components.getItemIds().size() > 0 
+            			&& modules.getItemIds().size() == 0
+            			&& flows.getItemIds().size() == 0)
             	{
             		componentNames = new HashSet<String>();
 	            	for(Object component: components.getItemIds())
@@ -297,23 +297,40 @@ public class WiretapTab extends TopologyTab
             		{
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
-            	}
-            	           	
-         
-            	// TODO Need to take a proper look at the wiretap search interface. We do not need to worry about paging search
-            	// results with Vaadin.
-            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
+            	}            	
+            	
+            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
             			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
             	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
             	{
             		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
             		
+            		searchResultsSizeLayout.removeAllComponents();
+                	resultsLabel = new Label("Number of records returned: 0 of 0");
+                	searchResultsSizeLayout.addComponent(resultsLabel);
+                	
             		return;
             	}
             	
             	searchResultsSizeLayout.removeAllComponents();
-            	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size());
+            	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size() + " of " + events.getResultSize());
+            	
+            	if(events.getResultSize() > platformConfigurationService.getSearchResultSetSize())
+            	{
+            		Notification notif = new Notification(
+            			    "Warning",
+            			    "The number of results returned by this search exceeds the configured search " +
+            			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
+            			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
+            			    Type.HUMANIZED_MESSAGE);
+            		notif.setDelayMsec(-1);
+            		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+            		notif.setPosition(Position.MIDDLE_CENTER);
+            		
+            		notif.show(Page.getCurrent());
+            	}
+
             	searchResultsSizeLayout.addComponent(resultsLabel);
             	
             	for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
@@ -338,11 +355,12 @@ public class WiretapTab extends TopologyTab
         			
         			Button popupButton = new Button();
         			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        			popupButton.setDescription("Open in new tab");
+        			popupButton.setDescription("Open in new window");
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
         			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
+        			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
         	        popupButton.addClickListener(new Button.ClickListener() 
@@ -374,216 +392,15 @@ public class WiretapTab extends TopologyTab
 		layout.setMargin(false);
 		layout.setHeight(270 , Unit.PIXELS);
 		
+		super.initialiseFilterTables();
+		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
+		listSelectLayout.addComponent(super.modules, 0, 0);
+		listSelectLayout.addComponent(super.flows, 1, 0);
+		listSelectLayout.addComponent(super.components, 2, 0);
 		
-		modules.setIcon(VaadinIcons.ARCHIVE);
-		modules.addContainerProperty("Module Name", String.class,  null);
-		modules.addContainerProperty("", Button.class,  null);
-		modules.setSizeFull();
-		modules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		modules.setDragMode(TableDragMode.ROW);
-		modules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.debug("Trying to drop: " + dropEvent);
-
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					logger.info("sourceContainer.getText(): "
-							+ module.getName());
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	modules.removeItem(module);
-			            }
-			        });
-					
-					modules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	flows.removeItem(flow);
-				            }
-				        });
-						
-						flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(VaadinIcons.TRASH);
-							deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-							deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	components.removeItem(component);
-					            }
-					        });
-							
-							components.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(modules, 0, 0);
-		
-		flows.setIcon(VaadinIcons.AUTOMATION);
-		flows.addContainerProperty("Flow Name", String.class,  null);
-		flows.addContainerProperty("", Button.class,  null);
-		flows.setSizeFull();
-		flows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		flows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	flows.removeItem(flow);
-			            }
-			        });
-					
-					flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	components.removeItem(component);
-				            }
-				        });
-						
-						components.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(flows, 1, 0);
-		
-		components.setIcon(VaadinIcons.COG);
-		components.setSizeFull();
-		components.addContainerProperty("Component Name", String.class,  null);
-		components.addContainerProperty("", Button.class,  null);
-		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		components.setSizeFull();
-		components.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		components.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	components.removeItem(component);
-			            }
-			        });
-					
-					components.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.components, 2, 0);
-
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
@@ -789,7 +606,8 @@ public class WiretapTab extends TopologyTab
 		wrapper.setComponentAlignment(filterButtonLayout, Alignment.MIDDLE_RIGHT);
 		wrapper.addComponent(vSplitPanel);
 		
-		return wrapper;
+		this.setSizeFull();
+		this.addComponent(wrapper);
 	}
 	
     
@@ -863,4 +681,15 @@ public class WiretapTab extends TopologyTab
         return out;
     }
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
+	 */
+	@Override
+	public void search()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }
+

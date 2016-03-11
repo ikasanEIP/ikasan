@@ -68,7 +68,7 @@
             <list>
             	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value=""/>
-                   <constructor-arg ref="landingViewPanel"/>
+                   <constructor-arg ref="emptyPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="landingView"/>
@@ -186,14 +186,10 @@
                    <constructor-arg value="platformConfigurationView"/>
                    <constructor-arg ref="platformConfigurationPanel"/>
                 </bean>
-                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="error-occurrence"/>
-                   <constructor-arg ref="errorOccurrenceDeepLinkPanel"/>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="notificationView"/>
+                   <constructor-arg ref="notificationPanel"/>
                 </bean>
-                <!-- bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="wiretap"/>
-                   <constructor-arg ref="wiretapDeepLinkPanel"/>
-                </bean -->
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
@@ -209,14 +205,29 @@
         <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
-     <!-- bean id="wiretapDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.WiretapDeepLinkPanel" scope="prototype">
-        <constructor-arg ref="wiretapDao"/>
+    <bean id="errorOccurrencesByFilterDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.ErrorOccurrencesByFilterDeepLinkPanel" scope="prototype">
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="errorReportingService"/>
         <constructor-arg ref="navigationPanel"/>
         <constructor-arg ref="authenticationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
         <constructor-arg ref="userService"/>
         <constructor-arg ref="platformConfigurationService"/>
-    </bean -->
+        <constructor-arg ref="topologyService"/>
+    </bean>
+    
+    <bean id="categorisedErrorByFilterDeepLinkPanel" class="org.ikasan.dashboard.ui.topology.panel.deeplink.CategorisedErrorsByFilterDeepLinkPanel" scope="prototype">
+        <constructor-arg ref="errorCategorisationService"/>
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="hospitalManagementService"/>
+        <constructor-arg ref="topologyService"/>
+        <constructor-arg ref="exclusionManagementService"/>
+        <constructor-arg ref="platformConfigurationService"/>
+        <constructor-arg ref="navigationPanel"/>
+        <constructor-arg ref="authenticationService"/>
+        <constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="userService"/>
+    </bean>
     
     <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
     <bean id="topLevelNavigator" class="org.springframework.aop.framework.ProxyFactoryBean" scope="session">
@@ -241,6 +252,9 @@
     <bean id="landingViewPanel" class="org.ikasan.dashboard.ui.framework.panel.LandingViewPanel" scope="session">
     	<constructor-arg ref="eventExclusionsTable"/>
     	<constructor-arg ref="flowStateTable"/>
+    	<constructor-arg ref="errorReportingManagementService"/>
+    	<constructor-arg ref="topologyService"/>
+    	<constructor-arg ref="hospitalManagementService"/>
     	<!-- constructor-arg ref="graphCache"/ -->
     </bean>
     
@@ -275,6 +289,7 @@
 	    </constructor-arg>
 	    <constructor-arg ref="systemEventService"/>
 	    <constructor-arg ref="userService"/>
+	    <constructor-arg ref="topologyService"/>
 	</bean>
 
     <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">

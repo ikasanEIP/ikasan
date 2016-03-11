@@ -19,7 +19,7 @@
  *    this list of conditions and the following disclaimer.
  *
  *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *    this list of conditions and the following disclaimer in the documentation 1
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
@@ -149,9 +149,11 @@ public class ErrorCategorisationServiceImpl implements
 	 */
 	@Override
 	public List<CategorisedErrorOccurrence> findCategorisedErrorOccurences(List<String> moduleNames, List<String> flowNames,
-			List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate)
+			List<String> flowElementNames, String action, String exceptionClass, String errorCategory, Date startDate, Date endDate,
+			int size)
 	{
-		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames, flowElementNames, startDate, endDate);
+		List<ErrorOccurrence> errorOccurrences = this.errorReportingService.find(moduleNames, flowNames
+				, flowElementNames, startDate, endDate, size);
 		
 		Map<CategorisedErrorKey, ErrorCategorisation> categorisedErrorMap = this.getErrorCategorisationMap();
 		
@@ -392,6 +394,10 @@ public class ErrorCategorisationServiceImpl implements
 		{
 			return ErrorCategorisationLink.RETRY_ACTION;
 		}
+		else if(errorOccurrence.getAction().startsWith(ErrorCategorisationLink.WARNING_ACTION))
+		{
+			return ErrorCategorisationLink.WARNING_ACTION;
+		}
 		
 		return "";
 	}
@@ -510,6 +516,17 @@ public class ErrorCategorisationServiceImpl implements
 					+ flowElementName + ", action=" + action
 					+ ", exceptionClass=" + exceptionClass + "]";
 		}	
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public Long rowCount(List<String> moduleNames, List<String> flowNames,
+			List<String> flowElementNames, Date startDate, Date endDate)
+	{
+		return this.errorCategorisationDao.rowCount(moduleNames, flowNames, flowElementNames, startDate, endDate);
 	}
 
 }

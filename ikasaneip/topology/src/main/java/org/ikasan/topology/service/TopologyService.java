@@ -41,12 +41,17 @@
 package org.ikasan.topology.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
+import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 
 import com.ikasan.topology.exception.DiscoveryException;
@@ -160,4 +165,97 @@ public interface TopologyService
 	 * Method to discovery and populate Ikasan topology
 	 */
 	public void discover(IkasanAuthentication authentication) throws DiscoveryException;
+
+	/**
+	 * 
+	 * @param name
+	 * @param description
+	 * @param flows
+	 */
+	public Filter createFilter(String name, String description, String createdBy, Set<Component> components);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Filter> getAllFilters();
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void saveFilter(Filter filter);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void deleteFilter(Filter filter);
+	
+	/**
+	 * 
+	 * @param roleFilter
+	 */
+	public void saveRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	public List<RoleFilter> getRoleFilters(List<Long> roleIds);
+	
+	/**
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	public RoleFilter getRoleFilterByFilterId(Long filterId);
+	
+	
+	/**
+	 * 
+	 * @param roleFilter
+	 */
+	public void deleteRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param filterId
+	 */
+	public void deleteFilterComponents(Long filterId);
+	
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Filter getFilterByName(String name);
+	
+	/**
+	 * 
+	 * @param notification
+	 */
+	public void save(Notification notification);
+	
+	/**
+	 * 
+	 * @param notification
+	 */
+	public void delete(Notification notification);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Notification getNotificationByName(String name);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public List<Notification> getAllNotifications();
 }

@@ -49,7 +49,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
-import org.ikasan.dashboard.ui.framework.validator.UrlStringValidator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -70,7 +69,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 

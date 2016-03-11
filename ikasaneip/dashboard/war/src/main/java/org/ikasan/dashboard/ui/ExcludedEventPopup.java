@@ -44,6 +44,7 @@ import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.topology.service.TopologyService;
 
@@ -73,8 +74,8 @@ public class ExcludedEventPopup extends UI
 		ExclusionEventAction exclusionEventAction
 	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
 		
-		HospitalManagementService<ExclusionEventAction> hospitalManagementService
- 			= (HospitalManagementService<ExclusionEventAction>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
+		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService
+ 			= (HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
  		
 		TopologyService topologyService
  			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");

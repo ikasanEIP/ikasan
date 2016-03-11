@@ -80,6 +80,18 @@
 		   <artifactId>aceeditor</artifactId>
 		</dependency>
 		
+		<dependency>
+		   <groupId>org.vaadin.addons.lazyquerycontainer</groupId>
+		   <artifactId>vaadin-lazyquerycontainer</artifactId>
+		   <version>7.4.0.1</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>pagedtable</artifactId>
+		   <version>0.6.5</version>
+		</dependency>
+		
 		<!-- dependency>
 		   <groupId>org.vaadin.highcharts</groupId>
 		   <artifactId>highcharts</artifactId>
@@ -137,6 +149,12 @@
 		   </exclusions>
 		</dependency -->
 	
+		<dependency>
+		   <groupId>org.vaadin.addon</groupId>
+		   <artifactId>visjs-addon</artifactId>
+		   <version>1.0.1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -243,10 +261,10 @@
 			<artifactId>ikasan-exclusion-service</artifactId>
 		</dependency>
 		
-		<!-- dependency>
+		<dependency>
 			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-serialiser</artifactId>
-		</dependency -->
+			<artifactId>ikasan-monitor</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -351,11 +369,18 @@
 		      <artifactId>xwiki-rendering-macro-toc</artifactId>
 		      <version>4.1.3</version>
 	    </dependency>
+	    
 	    <dependency>
 		      <groupId>org.xwiki.rendering</groupId>
 		      <artifactId>xwiki-rendering-macro-html</artifactId>
 		      <version>4.1.3</version>
 	    </dependency>
+	    
+	    <dependency>
+		   <groupId>com.vaadin.addon</groupId>
+		   <artifactId>vaadin-charts</artifactId>
+		   <version>2.1.3</version>
+		</dependency>
 		
 		<!-- Test dependencies-->
 		

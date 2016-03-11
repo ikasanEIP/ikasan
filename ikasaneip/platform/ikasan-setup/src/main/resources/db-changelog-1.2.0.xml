@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
+    
+    <!-- 1.2.0 table modifications -->
+	
+    <!-- 1.2.0 table alterations -->    
+	
+    <!-- 1.2.0 table creation -->    
+	<include file="db/tables/db-changeLog-createFilter.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createFilterComponent.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createRoleFilter.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createNotification.xml" relativeToChangelogFile="true" />
+	
+	<!-- 1.2.0 cardinality creation -->
+	<include file="db/cardinality/db-changeLog-createRoleFilterFk.xml" relativeToChangelogFile="true" />
+	<include file="db/cardinality/db-changeLog-createFilterComponentFk.xml" relativeToChangelogFile="true" />
+	
+	<!-- 1.2.0 data creation -->
+	
+	<!-- 1.2.0 index creation -->
+	<include file="db/index/db-changeLog-createIndexIkasanWiretapExpiry.xml" relativeToChangelogFile="true" />
+	
+</databaseChangeLog>

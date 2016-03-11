@@ -59,13 +59,9 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     /** event created date/time */
     private long eventTimestamp;
 
-    /**
-     * Silly requirement from the ORM-that-shall-not-be-named!!
-     */
-    @SuppressWarnings("unused")
-    protected WiretapFlowEvent()
+
+    public WiretapFlowEvent()
     {
-        // No implementation
     }
 
     public WiretapFlowEvent(final String moduleName, final String flowName, final String componentName,
