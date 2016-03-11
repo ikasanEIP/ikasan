@@ -87,7 +87,7 @@ public class ComponentTimingLoggingListenerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(3).of(flowInvocationContext).getInvocations();
+                exactly(3).of(flowInvocationContext).getElementInvocations();
                 will(returnValue(invocations));
 
                 exactly(1).of(flowInvocationContext).getFlowStartTimeMillis();

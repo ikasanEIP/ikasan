@@ -1951,8 +1951,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
 
                 // reload any marked dynamic dao
@@ -2025,8 +2025,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
 
                 // reload any marked dynamic dao
@@ -2102,8 +2102,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
 
                 // reload any marked dynamic dao
@@ -2178,8 +2178,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
 
                 // reload any marked dynamic dao
@@ -2260,8 +2260,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
                 // reload any marked dynamic dao
                 oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
@@ -2321,8 +2321,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
                 // reload any marked dynamic dao
                 oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
@@ -2392,8 +2392,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
                 // reload any marked dynamic dao
                 oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
@@ -2464,8 +2464,8 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowEvent).getIdentifier();
                 will(returnValue("identifier"));
 
-                exactly(1).of(flowInvocationContext).startFlow();
-                exactly(1).of(flowInvocationContext).endFlow();
+                exactly(1).of(flowInvocationContext).startFlowInvocation();
+                exactly(1).of(flowInvocationContext).endFlowInvocation();
 
                 // reload any marked dynamic dao
                 oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();

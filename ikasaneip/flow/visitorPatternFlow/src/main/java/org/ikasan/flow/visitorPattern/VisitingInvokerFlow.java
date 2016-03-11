@@ -598,7 +598,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public void invoke(FlowEvent<?,?> event)
     {
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
-        flowInvocationContext.startFlow();
+        flowInvocationContext.startFlowInvocation();
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
         Object originalEventLifeIdentifier = event.getIdentifier();
@@ -626,11 +626,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                     this.recoveryManager.cancel();
                 }
             }
-            flowInvocationContext.endFlow();
+            flowInvocationContext.endFlowInvocation();
         }
         catch(Throwable throwable)
         {
-            flowInvocationContext.endFlow();
+            flowInvocationContext.endFlowInvocation();
             this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event, originalEventLifeIdentifier);
         }
         finally
@@ -647,7 +647,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	public void invoke(Resubmission<FlowEvent<?,?>> event)
 	{
 		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
-        flowInvocationContext.startFlow();
+        flowInvocationContext.startFlowInvocation();
 
         try
         {
@@ -658,11 +658,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 this.recoveryManager.cancel();
             }
-            flowInvocationContext.endFlow();
+            flowInvocationContext.endFlowInvocation();
         }
         catch(Throwable throwable)
         {
-            flowInvocationContext.endFlow();
+            flowInvocationContext.endFlowInvocation();
             this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent(), event.getEvent().getIdentifier());
         }
         finally

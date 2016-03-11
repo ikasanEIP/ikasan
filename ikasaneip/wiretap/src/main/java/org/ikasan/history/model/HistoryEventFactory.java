@@ -60,7 +60,7 @@ public class HistoryEventFactory
 
         List<MessageHistoryEvent<String>> messageHistoryEvents = new ArrayList<>();
 
-        for (FlowElementInvocation invocation : flowInvocationContext.getInvocations())
+        for (FlowElementInvocation invocation : flowInvocationContext.getElementInvocations())
         {
             messageHistoryEvents.add(new MessageHistoryFlowEvent(moduleName, flowName,
                     invocation.getFlowElement().getComponentName(),
