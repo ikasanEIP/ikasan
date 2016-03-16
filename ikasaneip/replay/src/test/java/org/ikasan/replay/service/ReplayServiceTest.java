@@ -41,28 +41,32 @@
 package org.ikasan.replay.service;
 
 import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.ikasan.replay.dao.ReplayDao;
+import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayListener;
+import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -81,8 +85,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 })
 public class ReplayServiceTest extends JerseyTest
 {
+	/**
+     * Mockery for mocking concrete classes
+     */
+	@Resource Mockery mockery;
 
 	@Resource ReplayDao replayDao;
+	
+	@Resource ReplayService<ReplayEvent> replayService;
+	
+	@Resource SerialiserFactory ikasanSerialiserFactory;
+	
+	@Resource Serialiser<byte[], byte[]> serialiser;
 	
 	@Before
 	public void addReplayEvents()
@@ -97,10 +111,10 @@ public class ReplayServiceTest extends JerseyTest
 	}
 	
 	@Path("rest/replay/{moduleName}/{flowName}/")
-    public static class HelloResource 
+    public static class ReplayWSResource 
     {
         @PUT
-        public Response getHello(@PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName, byte[] data) 
+        public Response replay(@PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName, byte[] data) 
         {
         	System.out.println(new String(data));
         	System.out.println(moduleName);
@@ -111,35 +125,66 @@ public class ReplayServiceTest extends JerseyTest
     }
 
     @Override
-    protected Application configure() {
-        return new ResourceConfig(HelloResource.class).property("contextConfigLocation", "classpath:replay-conf.xml")
+    protected Application configure() 
+    {
+        return new ResourceConfig(ReplayWSResource.class).property("contextConfigLocation", "classpath:replay-conf.xml")
         		.property("contextConfigLocation", "classpath:substitute-components.xml")
         		.property("contextConfigLocation", "classpath:mock-components.xml")
         		.property("contextConfigLocation", "classpath:hsqldb-config.xml");
     }
 
     @Test
+    @DirtiesContext
     public void test() throws MalformedURLException 
+    {    
+    	// expectations
+    	mockery.checking(new Expectations()
+    	{
+    		{
+    			for(int i=0; i<100; i++)
+    			{
+	    			// get each flow name
+	    			one(ikasanSerialiserFactory).getDefaultSerialiser();
+	    			will(returnValue(serialiser));
+	    			one(serialiser).deserialise("event".getBytes());
+	    			will(returnValue("event".getBytes()));
+    			}
+    			
+    		}
+    	});
+    	
+    	ReplayListenerImpl listener = new ReplayListenerImpl();
+    	this.replayService.addReplayListener(listener);
+    	
+    	List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
+    			("moduleName", "flowName", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	
+    	this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
+    	
+    	
+    	List<ReplayAudit> replayAudits = this.replayDao.getReplayAudits(null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	
+    	Assert.assertTrue(replayAudits.size() == 1);
+    	
+    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	
+    	System.out.println("Count: " + listener.count);
+    	Assert.assertTrue(listener.count == 100);
+    }
+    
+    
+    class ReplayListenerImpl implements ReplayListener<ReplayEvent>
     {
-//        Response response = target("hello").request().get();
-//        String hello = response.readEntity(String.class);
-//        Assert.assertEquals("Hello World!", hello);
-//        response.close();
+    	public int count = 0;
+		/* (non-Javadoc)
+		 * @see org.ikasan.spec.replay.ReplayListener#onReplay(java.lang.Object)
+		 */
+		@Override
+		public void onReplay(ReplayEvent event) 
+		{
+			++count;
+		}
     	
-    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("", "");
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-    	System.out.println(super.getBaseUri().toURL() + "rest/replay");
-		
-		
-	    WebTarget webTarget = client.target(super.getBaseUri().toURL() + "rest/replay/moduleName/flowName");
-	    Response response = webTarget.request().put(Entity.entity("test data".getBytes(), MediaType.APPLICATION_OCTET_STREAM));
-    	
-	    System.out.println(response.getStatus());
     }
 
 

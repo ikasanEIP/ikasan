@@ -52,6 +52,7 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 	private ReplayAuditEventKey id;
 	private ReplayAudit replayAudit;
 	private ReplayEvent replayEvent;
+	private String result;
    
     
     @SuppressWarnings("unused")
@@ -65,10 +66,21 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
      * @param replayAudit
      * @param replayEvent
      */
-	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent) {
+	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, String result) {
 		super();
 		this.replayAudit = replayAudit;
+		if(this.replayAudit == null)
+		{
+			throw new IllegalArgumentException("ReplayAudit cannot be null!!");
+		}
 		this.replayEvent = replayEvent;
+		if(this.replayEvent == null)
+		{
+			throw new IllegalArgumentException("ReplayEvent cannot be null!!");
+		}
+		
+		this.id = new ReplayAuditEventKey(replayAudit.getId(), replayEvent.getId());
+		this.result = result;
 	}
 
 
@@ -126,22 +138,31 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 		this.replayEvent = replayEvent;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the result
 	 */
-	@Override
-	public String toString() {
-		return "ReplayAuditEvent [id=" + id + ", replayAudit=" + replayAudit
-				+ ", replayEvent=" + replayEvent + "]";
+	public String getResult() 
+	{
+		return result;
 	}
 
+
+	/**
+	 * @param result the result to set
+	 */
+	public void setResult(String result) 
+	{
+		this.result = result;
+	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public int hashCode() {
+	public int hashCode() 
+	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -149,6 +170,8 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 				+ ((replayAudit == null) ? 0 : replayAudit.hashCode());
 		result = prime * result
 				+ ((replayEvent == null) ? 0 : replayEvent.hashCode());
+		result = prime * result
+				+ ((this.result == null) ? 0 : this.result.hashCode());
 		return result;
 	}
 
@@ -157,7 +180,8 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) 
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -180,15 +204,30 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 				return false;
 		} else if (!replayEvent.equals(other.replayEvent))
 			return false;
+		if (result == null) {
+			if (other.result != null)
+				return false;
+		} else if (!result.equals(other.result))
+			return false;
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() 
+	{
+		return "ReplayAuditEvent [id=" + id + ", replayAudit=" + replayAudit
+				+ ", replayEvent=" + replayEvent + ", result=" + result + "]";
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(ReplayAuditEvent o) {
+	public int compareTo(ReplayAuditEvent o) 
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}

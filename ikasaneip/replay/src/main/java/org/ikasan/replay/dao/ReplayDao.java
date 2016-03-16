@@ -89,15 +89,27 @@ public interface ReplayDao
     public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate);
     
     /**
+     * Get a list of ReplayEvent depending upon search criteria.
+     * 
+     * @param moduleNames
+     * @param flowNames
+     * @param payloadContent
+     * @param eventId
+     * @param fromDate
+     * @param toDate
+     * @return
+     */
+    public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames,
+			String payloadContent, String eventId, Date fromDate, Date toDate);
+    
+    /**
      * Get a list of ReplayAudit depending upon search criteria.
      * 
-     * @param moduleName
-     * @param flowName
      * @param user
      * @param startDate
      * @param endDate
      * @return
      */
-    public List<ReplayAudit> getReplayAudits(String moduleName, String flowName, String user, Date startDate, Date endDate);
+    public List<ReplayAudit> getReplayAudits(String user, Date startDate, Date endDate);
   
 }

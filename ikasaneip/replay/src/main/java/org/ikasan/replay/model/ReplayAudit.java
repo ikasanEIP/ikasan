@@ -7,8 +7,7 @@ public class ReplayAudit
 	private Long id;
 	private String user;
 	private String replayReason;
-	private String moduleName;
-	private String flowName;
+	private String targetServer;
 	private Set<ReplayAuditEvent> replayAuditEvents;
 	private long timestamp;
 
@@ -21,20 +20,22 @@ public class ReplayAudit
 		
 	}
 	
-	
 	/**
 	 * Constructor
 	 * 
 	 * @param user
 	 * @param replayReason
-	 * @param timestamp
+	 * @param targetServer
+	 * @param moduleName
+	 * @param flowName
 	 */
-	public ReplayAudit(String user, String replayReason, long timestamp) 
+	public ReplayAudit(String user, String replayReason, String targetServer) 
 	{
 		super();
 		this.user = user;
 		this.replayReason = replayReason;
-		this.timestamp = timestamp;
+		this.targetServer = targetServer;
+		this.timestamp = System.currentTimeMillis();
 	}
 
 	/**
@@ -48,6 +49,7 @@ public class ReplayAudit
 	/**
 	 * @param id the id to set
 	 */
+	@SuppressWarnings("unused")
 	private void setId(Long id) 
 	{
 		this.id = id;
@@ -86,35 +88,20 @@ public class ReplayAudit
 	}
 	
 	/**
-	 * @return the moduleName
+	 * @return the targetServer
 	 */
-	public String getModuleName() 
+	public String getTargetServer() 
 	{
-		return moduleName;
+		return targetServer;
 	}
 
-	/**
-	 * @param moduleName the moduleName to set
-	 */
-	public void setModuleName(String moduleName) 
-	{
-		this.moduleName = moduleName;
-	}
 
 	/**
-	 * @return the flowName
+	 * @param targetServer the targetServer to set
 	 */
-	public String getFlowName() 
+	public void setTargetServer(String targetServer) 
 	{
-		return flowName;
-	}
-
-	/**
-	 * @param flowName the flowName to set
-	 */
-	public void setFlowName(String flowName) 
-	{
-		this.flowName = flowName;
+		this.targetServer = targetServer;
 	}
 
 	/**
@@ -144,7 +131,8 @@ public class ReplayAudit
 	/**
 	 * @param timestamp the timestamp to set
 	 */
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(long timestamp) 
+	{
 		this.timestamp = timestamp;
 	}	
 	

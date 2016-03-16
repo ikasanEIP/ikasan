@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -43,30 +41,49 @@
 
  Author:  Ikasan Development Team
  
- Purpose: BusinessStreamFlow table hibernate mapping file. * * *
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.ikasan.replay.model.ReplayAuditEvent"
-		table="ReplayAuditEvent">
-		
-		<composite-id name="id" class="org.ikasan.replay.model.ReplayAuditEventKey">
-	        <key-property name="replayAuditId" column="ReplayAuditId"/>
-	        <key-property name="replayEventId" column="ReplayEventId"/>
-    	</composite-id>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    
+    <changeSet author="ikasan dev" id="createReplayEvent" context="postBaseline">
     	
-    	<many-to-one name="replayAudit" class="org.ikasan.replay.model.ReplayAudit" 
-    		column="ReplayAuditId" not-null="true" insert="false" update="false" lazy="false"/>
-    	
-    	<many-to-one name="replayEvent" class="org.ikasan.replay.model.ReplayEvent" 
-    		column="ReplayEventId" not-null="true" insert="false" update="false" lazy="false"/>
-    	
-    	<property name="result"
-                  type="java.lang.String"
-                  column="Result"
-                  not-null="true" />
+    	<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ReplayEvent" /></not>
+		</preConditions>
 
-	</class>
-</hibernate-mapping>
+        <createTable tableName="ReplayEvent">
+        
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="ReplayEventPk"/>
+            </column>
+            <column name="ModuleName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FlowName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Identifier" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Event" type="IMAGE"/>
+            <column defaultValueNumeric="0" name="Timestamp" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        
+        <!-- The statement below is required by sybase to set the identity gap to 1. -->
+        <sql dbms="sybase">sp_chgattribute 'ReplayEvent', 'identity_gap', 1</sql>
+        
+        <createIndex indexName="ReplayEvent01u" tableName="ReplayEvent" unique="true">
+            <column name="Id"/>
+            <column name="ModuleName"/>
+            <column name="FlowName"/>
+            <column name="Identifier"/>
+        </createIndex>
+        
+    </changeSet>
+
+</databaseChangeLog>

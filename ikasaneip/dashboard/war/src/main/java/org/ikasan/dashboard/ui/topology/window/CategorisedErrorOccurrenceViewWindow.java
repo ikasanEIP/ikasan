@@ -61,9 +61,6 @@ import com.vaadin.ui.Window;
  */
 public class CategorisedErrorOccurrenceViewWindow extends Window
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private CategorisedErrorOccurrence categorisedErrorOccurrence;

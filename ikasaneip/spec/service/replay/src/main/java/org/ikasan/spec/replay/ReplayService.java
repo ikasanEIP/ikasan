@@ -50,10 +50,21 @@ import java.util.List;
  */
 public interface ReplayService<EVENT>
 {
+	/**
+	 * Add a replay listener.
+	 * 
+	 * @param listener
+	 */
+	public void addReplayListener(ReplayListener<EVENT> listener);
+
     /**
      * Entry point for replay of a list of events.
      * 
-     * @param event
+     * @param targetServer
+     * @param events
+     * @param authUser
+     * @param authPassword
+     * @param user
      */
-    public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword);
+    public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
 }

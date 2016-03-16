@@ -855,6 +855,7 @@
         <module>developer</module>
         <module>sample</module>
         <module>transaction</module>
+		<module>replay</module>
       </modules>
     </profile>
 
@@ -888,6 +889,7 @@
         <module>builder</module>
         <module>compatibility</module>
 		<module>filetransfer</module>
+		<module>replay</module>
       </modules>
     </profile>
     
@@ -1307,6 +1309,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-client-filetransfer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-replay</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
