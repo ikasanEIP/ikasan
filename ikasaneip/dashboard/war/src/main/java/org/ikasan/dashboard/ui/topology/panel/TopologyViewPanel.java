@@ -76,6 +76,7 @@ import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
 import org.ikasan.dashboard.ui.topology.component.FilterManagementTab;
+import org.ikasan.dashboard.ui.topology.component.ReplayTab;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
@@ -90,6 +91,8 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -97,6 +100,8 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.module.StartupControlService;
+import org.ikasan.spec.replay.ReplayManagementService;
+import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -259,6 +264,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
+	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
+	private ReplayService<ReplayEvent> replayService;
+	
 	
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -266,7 +274,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService, SecurityService securityService)
+			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService
+			 , ReplayService<ReplayEvent> replayService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -337,6 +346,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.securityService == null)
 		{
 			throw new IllegalArgumentException("securityService cannot be null!");
+		}
+		this.replayManagementService = replayManagementService;
+		if(this.replayManagementService == null)
+		{
+			throw new IllegalArgumentException("replayManagementService cannot be null!");
+		}
+		this.replayService = replayService;
+		if(this.securityService == null)
+		{
+			throw new IllegalArgumentException("replayService cannot be null!");
 		}
 		
 		init();
@@ -514,6 +533,20 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		filterManagementTab.createLayout();
 			
     		tabsheet.addTab(filterManagementTab, "Filters");
+    		
+    	}
+    	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_REPLAY_AUTHORITY)))
+    	{
+    		
+    		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService, 
+    				this.platformConfigurationService);
+
+    		replayTab.createLayout();
+			
+    		tabsheet.addTab(replayTab, "Replay");
     		
     	}
     	

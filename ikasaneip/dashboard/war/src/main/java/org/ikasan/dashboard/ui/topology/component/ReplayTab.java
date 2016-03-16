@@ -45,32 +45,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.topology.component.container.WiretapEventBeanQuery;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
+import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.replay.ReplayManagementService;
+import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
-import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
-import org.ikasan.wiretap.dao.WiretapDao;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.tepi.filtertable.FilterTable;
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Item;
@@ -88,7 +84,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -106,18 +101,20 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class WiretapTab extends TopologyTab
+public class ReplayTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(WiretapTab.class);
+	private Logger logger = Logger.getLogger(ReplayTab.class);
 	
-	private FilterTable wiretapTable;
+	private FilterTable replayEventsTable;
 	
-	private WiretapDao wiretapDao;
+	private ReplayManagementService<ReplayEvent, ReplayAudit>  replayManagementService;
+	
+	private ReplayService<ReplayEvent>  replayService;
+	
 
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	
-	private ComboBox businessStreamCombo;
 	private TextField eventId;
 	private TextField payloadContent;
 	
@@ -131,32 +128,24 @@ public class WiretapTab extends TopologyTab
 	
 	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
 	
-	private BeanQueryFactory<WiretapEventBeanQuery> queryFactory = new
-			BeanQueryFactory<WiretapEventBeanQuery>(WiretapEventBeanQuery.class);
-	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo,
+	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent> replayService,
 			PlatformConfigurationService platformConfigurationService)
 	{
-		this.wiretapDao = wiretapDao;
-		this.businessStreamCombo = businessStreamCombo;
+		this.replayManagementService = replayManagementService;
+		this.replayService = replayService;
 		this.platformConfigurationService = platformConfigurationService;
 		
 		tableContainer = this.buildContainer();
 	}
 	
 	protected IndexedContainer buildContainer() 
-	{
-		Map<String,Object> queryConfiguration=new HashMap<String,Object>();
-		
-		queryFactory.setQueryConfiguration(queryConfiguration);
-			
+	{			
 		IndexedContainer cont = new IndexedContainer();
 
 		cont.addContainerProperty("Module Name", String.class,  null);
 		cont.addContainerProperty("Flow Name", String.class,  null);
-		cont.addContainerProperty("Component Name", String.class,  null);
 		cont.addContainerProperty("Event Id / Payload Id", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
 		cont.addContainerProperty("", CheckBox.class,  null);
@@ -167,25 +156,25 @@ public class WiretapTab extends TopologyTab
 	
 	public void createLayout()
 	{	
-		this.wiretapTable = new FilterTable();
-		this.wiretapTable.setFilterBarVisible(true);
-		this.wiretapTable.setSizeFull();
-		this.wiretapTable.addStyleName(ValoTheme.TABLE_SMALL);
-		this.wiretapTable.addStyleName("ikasan");
+		this.replayEventsTable = new FilterTable();
+		this.replayEventsTable.setFilterBarVisible(true);
+		this.replayEventsTable.setSizeFull();
+		this.replayEventsTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.replayEventsTable.addStyleName("ikasan");
 		
-		this.wiretapTable.setColumnExpandRatio("Module Name", .14f);
-		this.wiretapTable.setColumnExpandRatio("Flow Name", .18f);
-		this.wiretapTable.setColumnExpandRatio("Component Name", .2f);
-		this.wiretapTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
-		this.wiretapTable.setColumnExpandRatio("Timestamp", .1f);
-		this.wiretapTable.setColumnExpandRatio("", .05f);
+		this.replayEventsTable.setColumnExpandRatio("Module Name", .14f);
+		this.replayEventsTable.setColumnExpandRatio("Flow Name", .18f);
+		this.replayEventsTable.setColumnExpandRatio("Component Name", .2f);
+		this.replayEventsTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
+		this.replayEventsTable.setColumnExpandRatio("Timestamp", .1f);
+		this.replayEventsTable.setColumnExpandRatio("", .05f);
 		
-		this.wiretapTable.addStyleName("wordwrap-table");
-		this.wiretapTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		this.replayEventsTable.addStyleName("wordwrap-table");
+		this.replayEventsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 		
-		this.wiretapTable.setContainerDataSource(tableContainer);
+		this.replayEventsTable.setContainerDataSource(tableContainer);
 		
-		this.wiretapTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+		this.replayEventsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
 		{
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
@@ -199,6 +188,8 @@ public class WiretapTab extends TopologyTab
 		    	}
 		    }
 		});
+		
+
 	   				
 		final Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -207,65 +198,37 @@ public class WiretapTab extends TopologyTab
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {           	
-            	wiretapTable.removeAllItems();
+            	replayEventsTable.removeAllItems();
 
-            	HashSet<String> modulesNames = null;
+            	List<String> moduleNames = null;
             	
             	if(modules.getItemIds().size() > 0)
             	{
-	            	modulesNames = new HashSet<String>();
+	            	moduleNames = new ArrayList<String>();
 	            	for(Object module: modules.getItemIds())
 	            	{
-	            		modulesNames.add(((Module)module).getName());
+	            		moduleNames.add(((Module)module).getName());
 	            	}
             	}
             	
-            	HashSet<String> flowNames = null;
+            	List<String> flowNames = null;
             	
             	if(flows.getItemIds().size() > 0)
             	{
-            		flowNames = new HashSet<String>();
+            		flowNames = new ArrayList<String>();
             		for(Object flow: flows.getItemIds())
                 	{
                 		flowNames.add(((Flow)flow).getName());
                 	}
             	}
-            	
-            	HashSet<String> componentNames = null;
-            	
-            	
-            	if(components.getItemIds().size() > 0 
-            			&& modules.getItemIds().size() == 0
-            			&& flows.getItemIds().size() == 0)
-            	{
-            		componentNames = new HashSet<String>();
-	            	for(Object component: components.getItemIds())
-	            	{
-	            		
-	            		componentNames.add("before " + ((Component)component).getName());
-	            		componentNames.add("after " + ((Component)component).getName());
-	            	}
-            	}
-            	
-            	if(modulesNames == null && flowNames == null && componentNames == null
-            			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
-            	{
-            		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
-            		
-            		modulesNames = new HashSet<String>();
-            		
-            		for(BusinessStreamFlow flow: businessStream.getFlows())
-            		{
-            			modulesNames.add(flow.getFlow().getModule().getName());
-            		}
-            	}            	
-            	
-            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
-            			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
-            	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
+            	List<ReplayEvent> replayEvents = replayManagementService
+            			.getReplayEvents(moduleNames, flowNames, payloadContent.getValue(), eventId.getValue(),
+            					fromDate.getValue(), toDate.getValue());
+            	
+            	if(replayEvents == null || replayEvents.size() == 0)
             	{
-            		Notification.show("The wiretap search returned no results!", Type.ERROR_MESSAGE);
+            		Notification.show("The replay event search returned no results!", Type.ERROR_MESSAGE);
             		
             		searchResultsSizeLayout.removeAllComponents();
                 	resultsLabel = new Label("Number of records returned: 0 of 0");
@@ -275,9 +238,9 @@ public class WiretapTab extends TopologyTab
             	}
             	
             	searchResultsSizeLayout.removeAllComponents();
-            	resultsLabel = new Label("Number of records returned: " + events.getPagedResults().size() + " of " + events.getResultSize());
+            	resultsLabel = new Label("Number of records returned: " + replayEvents.size() + " of " + replayEvents.size());
             	
-            	if(events.getResultSize() > platformConfigurationService.getSearchResultSetSize())
+            	if(replayEvents.size() > platformConfigurationService.getSearchResultSetSize())
             	{
             		Notification notif = new Notification(
             			    "Warning",
@@ -294,18 +257,17 @@ public class WiretapTab extends TopologyTab
 
             	searchResultsSizeLayout.addComponent(resultsLabel);
             	
-            	for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
+            	for(final ReplayEvent replayEvent: replayEvents)
             	{
-            		Date date = new Date(wiretapEvent.getTimestamp());
+            		Date date = new Date(replayEvent.getTimestamp());
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(date);
             	    
-            	    Item item = tableContainer.addItem(wiretapEvent);			            	    
+            	    Item item = tableContainer.addItem(replayEvent);			            	    
             	    
-            	    item.getItemProperty("Module Name").setValue(wiretapEvent.getModuleName());
-        			item.getItemProperty("Flow Name").setValue(wiretapEvent.getFlowName());
-        			item.getItemProperty("Component Name").setValue(wiretapEvent.getComponentName());
-        			item.getItemProperty("Event Id / Payload Id").setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
+            	    item.getItemProperty("Module Name").setValue(replayEvent.getModuleName());
+        			item.getItemProperty("Flow Name").setValue(replayEvent.getFlowName());
+        			item.getItemProperty("Event Id / Payload Id").setValue(replayEvent.getEventId());
         			item.getItemProperty("Timestamp").setValue(timestamp);
         			
         			CheckBox cb = new CheckBox();
@@ -328,7 +290,7 @@ public class WiretapTab extends TopologyTab
         	    	{
         	            public void buttonClick(ClickEvent event) 
         	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
+        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
         	            }
         	        });
         	        
@@ -355,13 +317,11 @@ public class WiretapTab extends TopologyTab
 		
 		super.initialiseFilterTables();
 		
-		GridLayout listSelectLayout = new GridLayout(3, 1);
+		GridLayout listSelectLayout = new GridLayout(2, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
 		listSelectLayout.addComponent(super.modules, 0, 0);
-		listSelectLayout.addComponent(super.flows, 1, 0);
-		listSelectLayout.addComponent(super.components, 2, 0);
-		
+		listSelectLayout.addComponent(super.flows, 1, 0);		
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
@@ -526,6 +486,28 @@ public class WiretapTab extends TopologyTab
             }
         });
 		
+		final Button replayButton = new Button();
+		replayButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		replayButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		replayButton.setIcon(VaadinIcons.RECYCLE);
+		replayButton.setImmediate(true);
+		replayButton.setDescription("Replay selected events.");
+		
+		BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayPopup.class);
+		popupOpener.setFeatures("height=600,width=900,resizable");
+        popupOpener.extend(replayButton);
+        
+        replayButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	 // todo add replay events            	 
+            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", new ArrayList<ReplayEvent>((Collection<ReplayEvent>) replayEventsTable.getItemIds()));
+         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+            }
+        });
+ 
 		Button downloadButton = new Button();
 		FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
         fd.extend(downloadButton);
@@ -540,7 +522,7 @@ public class WiretapTab extends TopologyTab
 		hl.addComponent(buttons);
 		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
 		
-		buttons.addComponent(selectAllButton);
+		buttons.addComponent(replayButton);
 		buttons.addComponent(downloadButton);
 		
 		GridLayout gl = new GridLayout(2, 1);
@@ -554,7 +536,7 @@ public class WiretapTab extends TopologyTab
 		gl.addComponent(hl);
 		
 		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.wiretapTable);
+		hErrorTable.addComponent(this.replayEventsTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
 		vSplitPanel.setSplitPosition(350, Unit.PIXELS);

@@ -265,6 +265,11 @@
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-monitor</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-replay</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>

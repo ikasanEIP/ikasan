@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.replay.model.ReplayAudit;
@@ -63,20 +64,9 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ReplayAudit> getReplayAudits(String moduleName,
-			String flowName, String user, Date startDate, Date endDate) 
+	public List<ReplayAudit> getReplayAudits(String user, Date startDate, Date endDate) 
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAudit.class);
-		
-		if(moduleName != null && moduleName.length() > 0)
-		{
-			criteria.add(Restrictions.eq("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.length() > 0)
-		{
-			criteria.add(Restrictions.eq("flowName", flowName));
-		}
 		
 		if(user != null && user.length() > 0)
 		{
@@ -135,6 +125,53 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		{
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
+		
+		criteria.addOrder(Order.asc("timestamp"));	
+		
+		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#getReplayEvents(java.util.List, java.util.List, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
+			List<String> flowNames, String payloadContent, String eventId,
+			Date fromDate, Date toDate) 
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayEvent.class);
+		
+		if(moduleNames != null && moduleNames.size() > 0)
+		{
+			criteria.add(Restrictions.in("moduleName", moduleNames));
+		}
+		
+		if(flowNames != null && flowNames.size() > 0)
+		{
+			criteria.add(Restrictions.eq("flowName", flowNames));
+		}
+		
+		if(fromDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", fromDate.getTime()));
+		}
+		
+		if(toDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", fromDate.getTime()));
+		}
+		
+		 if (eventId != null && eventId.length() > 0)
+         {
+             criteria.add(Restrictions.eq("eventId", eventId));
+         }
+		 
+         if (payloadContent != null && payloadContent.length() > 0)
+         {
+             criteria.add(Restrictions.like("event", payloadContent, MatchMode.ANYWHERE));
+         }
 		
 		criteria.addOrder(Order.asc("timestamp"));	
 		

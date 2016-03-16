@@ -67,7 +67,7 @@
                   not-null="true" />
 
 		<property name="eventId" 
-				  column="EventId" 
+				  column="Indentifier" 
 				  type="java.lang.String" 
 				  not-null="true"/>
 		          

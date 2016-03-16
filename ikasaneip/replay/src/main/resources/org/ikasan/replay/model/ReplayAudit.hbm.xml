@@ -65,17 +65,6 @@
                   type="java.lang.String"
                   column="Reason"
                   not-null="true" />
-		
-		<property name="moduleName"
-                  type="java.lang.String"
-                  column="ModuleName"
-                  not-null="true" />
-
-        <property name="flowName"
-                  type="java.lang.String"
-                  column="FlowName"
-                  not-null="true" />
-
 		          
 		<set name="replayAuditEvents" cascade="none" lazy="false" inverse="true" fetch="select">
          	<key column="ReplayAuditId"/>

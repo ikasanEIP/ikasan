@@ -40,9 +40,12 @@
  */
 package org.ikasan.replay.service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
+import org.ikasan.replay.dao.ReplayDao;
+import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 
 
@@ -51,17 +54,47 @@ import org.ikasan.spec.replay.ReplayManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl implements ReplayManagementService
+public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit>
 {
-
+	/** the underlying dao **/
+	private ReplayDao replayDao;
+	
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param replayDao
+	 */
+	public ReplayManagementServiceImpl(ReplayDao replayDao) 
+	{
+		super();
+		this.replayDao = replayDao;
+		if(this.replayDao == null)
+		{
+			throw new IllegalArgumentException("repalyDao cannot be null!");
+		}
+	}
+	
 	/* (non-Javadoc)
-	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(java.sql.Date, java.sql.Date)
+	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(java.util.List, java.util.List, java.lang.String, java.lang.String, java.sql.Date, java.sql.Date)
 	 */
 	@Override
-	public List getReplayEvents(Date fromDate, Date toDate) 
+	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
+			List<String> flowNames, String payloadContent, String eventId,
+			Date fromDate, Date toDate) 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.replayDao.getReplayEvents(moduleNames, flowNames, payloadContent, eventId, fromDate, toDate);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAudits(java.lang.String, java.sql.Date, java.sql.Date)
+	 */
+	@Override
+	public List<ReplayAudit> getReplayAudits(String user, Date startDate, Date endDate) 
+	{
+		return this.replayDao.getReplayAudits(user, startDate, endDate);
+	}
+
+	
 
 }
