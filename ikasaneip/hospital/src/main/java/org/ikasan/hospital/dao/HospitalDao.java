@@ -76,9 +76,21 @@ public interface HospitalDao
 	 * @param flowName
 	 * @param startDate
 	 * @param endDate
+	 * @param size
 	 * @return
 	 */
-	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
+	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size);
+	
+	/**
+	 * Helper method to return the row count based on the criteria.
+	 *  
+	 * @param moduleName
+	 * @param flowName
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+    public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
 	
     /**
      * 

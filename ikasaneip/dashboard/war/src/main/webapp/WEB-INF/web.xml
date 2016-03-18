@@ -33,7 +33,6 @@
         			 classpath:serialiser-service-conf.xml, 
         			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
-        			 classpath:hospital-conf.xml,
         			 classpath:module-service-conf.xml
         </param-value>
     </context-param>
