@@ -40,16 +40,16 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
+import org.apache.log4j.Logger;
+import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.base.outbound.EISConnectionFactoryImpl;
+
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionSpec;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
-
-import org.apache.log4j.Logger;
-import org.ikasan.connector.BaseFileTransferConnection;
-import org.ikasan.connector.base.outbound.EISConnectionFactoryImpl;
 
 /**
  * This class implements the ConnectionFactory for the SFTP resource
@@ -242,6 +242,7 @@ public class SFTPConnectionFactory extends EISConnectionFactoryImpl
             scri.setPollTime(sftpConnectionSpec.getPollTime());
             scri.setPreferredAuthentications(sftpConnectionSpec.getPreferredAuthentications());
             scri.setConnectionTimeout(sftpConnectionSpec.getConnectionTimeout());
+            scri.setPreferredKeyExchangeAlgorithm(sftpConnectionSpec.getPreferredKeyExchangeAlgorithm());
         }
         return scri;
     }

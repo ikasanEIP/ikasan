@@ -40,9 +40,9 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import java.util.ResourceBundle;
-
 import org.ikasan.connector.base.outbound.EISConnectionSpec;
+
+import java.util.ResourceBundle;
 
 /**
  * This is an class representing the connection specific application properties passed to the getConnection method.
@@ -90,6 +90,8 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     /** Default serial version uid */
     private static final long serialVersionUID = 1L;
 
+    private String preferredKeyExchangeAlgorithm = null;
+
     /**
      * Default Constructor
      */
@@ -128,6 +130,8 @@ public class SFTPConnectionSpec extends EISConnectionSpec
         {
             this.setPollTime(new Integer(prop));
         }
+        prop = bundle.getString(SFTPConnectionProperties.PREFERRED_DEX.toString());
+        this.setPreferredKeyExchangeAlgorithm(prop);
     }
 
     /**
@@ -351,6 +355,14 @@ public class SFTPConnectionSpec extends EISConnectionSpec
         return this.connectionTimeout;
     }
 
+    public String getPreferredKeyExchangeAlgorithm() {
+        return preferredKeyExchangeAlgorithm;
+    }
+
+    public void setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm) {
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
+    }
+
     /**
      * String representation of the ConnectionSpec
      */
@@ -368,6 +380,7 @@ public class SFTPConnectionSpec extends EISConnectionSpec
                 + "Poll time:                        [" + pollTime + "]\n" 
                 + "Private key file name:            [" + privateKeyFilename + "]\n"
                 + "Preferred authentication order:   [" + this.preferredAuthentications + "]\n"
+                + "Preferred key exchange algorithm:   [" + this.preferredKeyExchangeAlgorithm + "]\n"
                 + "Username:                         [" + username + "]";
         return specAsString;
     }

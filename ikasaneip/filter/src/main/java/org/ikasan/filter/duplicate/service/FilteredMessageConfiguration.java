@@ -52,28 +52,28 @@ import org.ikasan.filter.configuration.FilterConfiguration;
 public class FilteredMessageConfiguration extends FilterConfiguration
 {
     /** default housekeep batch size of 100 */
-    private int housekeepBatchSize = 100;
+    private int housekeepingBatchSize = 100;
 
     /** batched housekeeping - default true */
-    private boolean batchedHousekeep = true;
+    private boolean batchHousekeepDelete = true;
     
     /** default transaction size of 1000 */
     private int transactionBatchSize = 1000;
 
-    public int getHousekeepBatchSize() {
-        return housekeepBatchSize;
+    public int getHousekeepingBatchSize() {
+        return housekeepingBatchSize;
     }
 
-    public void setHousekeepBatchSize(int housekeepBatchSize) {
-        this.housekeepBatchSize = housekeepBatchSize;
+    public void setHousekeepingBatchSize(int housekeepingBatchSize) {
+        this.housekeepingBatchSize = housekeepingBatchSize;
     }
 
-    public boolean isBatchedHousekeep() {
-        return batchedHousekeep;
+    public boolean isBatchHousekeepDelete() {
+        return batchHousekeepDelete;
     }
 
-    public void setBatchedHousekeep(boolean batchedHousekeep) {
-        this.batchedHousekeep = batchedHousekeep;
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
+        this.batchHousekeepDelete = batchHousekeepDelete;
     }
 
 	/**

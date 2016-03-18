@@ -79,13 +79,13 @@ public interface FilteredMessageDao
      * Allow batching of housekeep tasks to be turned on/off
      * @param batchedHousekeep
      */
-    public void setBatchedHousekeep(boolean batchedHousekeep);
+    public void setBatchHousekeepDelete(boolean batchedHousekeep);
 
     /**
      * Allow the batch size to be overridden
      * @param batchSize
      */
-    public void setBatchSize(int batchSize);
+    public void setHousekeepingBatchSize(int batchSize);
     
     /**
      * Allow the transaction batch size to be overridden
@@ -106,4 +106,6 @@ public interface FilteredMessageDao
 	 * @return
 	 */
 	public List<FilterEntry> findExpiredMessages();
+
+    void setHousekeepQuery(String housekeepQuery);
 }
