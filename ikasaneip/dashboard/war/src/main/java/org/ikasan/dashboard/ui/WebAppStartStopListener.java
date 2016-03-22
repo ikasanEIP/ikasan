@@ -71,10 +71,10 @@ public class WebAppStartStopListener implements ServletContextListener
     // Our web app (Vaadin app) is shutting down.
     public void contextDestroyed ( ServletContextEvent servletContextEvent )
     {
-
     	logger.info( "Web app context destroyed." );  // INFO logging.
         TopologyStateCache.shutdown();
         NotifierServiceImpl.shutdown();
+        Broadcaster.shutdown();
     }
 
 }

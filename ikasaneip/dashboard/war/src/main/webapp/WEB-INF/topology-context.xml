@@ -54,6 +54,7 @@
         <constructor-arg ref="securityService"/>
         <constructor-arg ref="replayManagementService"/>
         <constructor-arg ref="replayService"/>
+        <constructor-arg ref="hospitalService"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">

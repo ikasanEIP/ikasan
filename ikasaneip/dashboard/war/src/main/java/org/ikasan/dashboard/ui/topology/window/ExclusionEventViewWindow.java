@@ -47,6 +47,8 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.ui.TextField;
@@ -70,12 +72,15 @@ public class ExclusionEventViewWindow extends Window
 	private ExclusionEventAction action;
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
+	private ErrorReportingManagementService errorReportingManagementService;
+	private HospitalService<byte[]> hospitalService;
 
 	/**
 	 * @param policy
 	 */
 	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
@@ -83,6 +88,8 @@ public class ExclusionEventViewWindow extends Window
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
+		this.errorReportingManagementService = errorReportingManagementService;
+		this.hospitalService = hospitalService;
 		
 		this.init();
 	}
@@ -95,8 +102,8 @@ public class ExclusionEventViewWindow extends Window
 		this.setHeight("90%");
 		this.setWidth("90%");
 		
-		ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, 
-				errorOccurrence, action, hospitalManagementService, topologyService);
+		ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, errorOccurrence, action, hospitalManagementService
+				, topologyService, errorReportingManagementService, hospitalService);
 			
 		this.setContent(panel);
 	}

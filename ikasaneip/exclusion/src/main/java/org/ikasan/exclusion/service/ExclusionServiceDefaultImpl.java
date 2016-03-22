@@ -168,6 +168,11 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
         this.blackListDao.deleteExpired();
     }
 
+    @Override
+    public boolean isBlackListEmpty() {
+        return blackListDao.count() < 1;
+    }
+
     /**
      * Factory method for creating new ExclusionEvent instances.
      * @param identifier

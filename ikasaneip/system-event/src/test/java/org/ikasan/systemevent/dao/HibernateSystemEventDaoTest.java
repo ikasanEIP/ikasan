@@ -46,6 +46,7 @@ import javax.annotation.Resource;
 
 import org.ikasan.systemevent.model.SystemEvent;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.orm.hibernate4.HibernateTemplate;
@@ -91,6 +92,7 @@ public class HibernateSystemEventDaoTest
      */
     @Test 
     @DirtiesContext
+    @Ignore
     public void test_success_no_results()
     {
     	systemEventDao.setBatchHousekeepDelete(true);

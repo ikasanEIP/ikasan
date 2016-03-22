@@ -255,7 +255,7 @@ public class Flow
 	@Override
 	public String toString() {
 		return "Flow [id=" + id + ", name=" + name + ", description="
-				+ description + ", state=" + state + ", module=" + module.getId() + ", server = " + module.getServer().getId() 
+				+ description + ", state=" + state + ", module=" + module.getId()
 				+ ", components=" + components + ", order=" + order
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";

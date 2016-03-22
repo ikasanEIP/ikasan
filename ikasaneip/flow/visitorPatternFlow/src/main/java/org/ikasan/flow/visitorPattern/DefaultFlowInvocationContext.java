@@ -41,10 +41,10 @@
  
 package org.ikasan.flow.visitorPattern;
 
+import org.ikasan.spec.flow.FlowInvocationContext;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.ikasan.spec.flow.FlowInvocationContext;
 
 /**
  * This class acts as a transfer object holding flow invocation time data relevent only
@@ -67,7 +67,7 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	/**
 	 * a stack of the names of all components invoked so far
 	 */
-	private List<String> invokedComponents = new ArrayList<String>();
+	private List<String> invokedComponents = new ArrayList<>();
 
 	/**
 	 * Accessor for the name of the last component invoked
@@ -87,7 +87,7 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	/**
 	 * Allows a new componentName to be added to the stack of invoked components
 	 * 
-	 * @param componentName
+	 * @param componentName the name
 	 */
 	public void addInvokedComponentName(String componentName)
 	{
@@ -101,16 +101,13 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	 */
 	public List<String> getInvokedComponents()
 	{
-		return new ArrayList<String>(invokedComponents);
+		return new ArrayList<>(invokedComponents);
 	}
 
 	@Override
 	public void combine(FlowInvocationContext flowInvocationContext)
 	{
-		for(String invokedComponent:flowInvocationContext.getInvokedComponents())
-		{
-			this.addInvokedComponentName(invokedComponent);
-		}
+		invokedComponents.addAll(flowInvocationContext.getInvokedComponents());
 	}
 
 }

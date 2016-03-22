@@ -93,6 +93,7 @@ import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.hospital.service.HospitalService;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -236,6 +237,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalService<byte[]> hospitalService;
 	private TopologyService topologyService;
 	
 	private StartupControlService startupControlService;
@@ -275,7 +277,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
 			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService
-			 , ReplayService<ReplayEvent> replayService)
+			 , ReplayService<ReplayEvent> replayService, HospitalService<byte[]> hospitalService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -301,6 +303,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.hospitalManagementService == null)
 		{
 			throw new IllegalArgumentException("hospitalManagementService cannot be null!");
+		}
+		this.hospitalService = hospitalService;
+		if(this.hospitalService == null)
+		{
+			throw new IllegalArgumentException("hospitalService cannot be null!");
 		}
 		this.systemEventService = systemEventService;
 		if(this.systemEventService == null)
@@ -482,9 +489,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
     	{
-    		final ExclusionsTab exclusionsTab = new ExclusionsTab(this.errorReportingService, 
+    		final ExclusionsTab exclusionsTab = new ExclusionsTab(this.errorReportingService, this.errorReportingManagementService,
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
-    				this.treeViewBusinessStreamCombo);
+    				this.treeViewBusinessStreamCombo, this.hospitalService);
     		
     		exclusionsTab.createLayout();
     		exclusionsTab.applyFilter();
@@ -500,7 +507,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{		
 			ActionedExclusionTab actionedExclusionTab = new ActionedExclusionTab
 					(this.exclusionManagementService, this.hospitalManagementService,
-							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo);
+							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo,
+							this.platformConfigurationService);
 			
 			actionedExclusionTab.createLayout();
 			actionedExclusionTab.applyFilter();
@@ -967,7 +975,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				Panel popupPanel = new Panel();
 				popupPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 				popupPanel.setHeight("300px");
-				popupPanel.setWidth("200px");
+				popupPanel.setWidth("300px");
 				
 				popupViewLayout.setImmediate(true);
 				popupPanel.setContent(popupViewLayout);
