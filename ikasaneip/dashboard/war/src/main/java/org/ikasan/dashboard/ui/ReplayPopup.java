@@ -2,7 +2,7 @@ package org.ikasan.dashboard.ui;
 
 import java.util.List;
 
-import org.ikasan.dashboard.ui.topology.panel.ReplayStatusPanel;
+import org.ikasan.dashboard.ui.replay.panel.ReplayStatusPanel;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayService;

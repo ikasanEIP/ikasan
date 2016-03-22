@@ -38,11 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.topology.panel;
+package org.ikasan.dashboard.ui.replay.panel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.replay.model.ReplayEvent;
@@ -52,14 +54,19 @@ import org.ikasan.spec.replay.ReplayService;
 import org.tepi.filtertable.FilterTable;
 
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.ProgressBar;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -79,6 +86,9 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
+	private ProgressBar bar = new ProgressBar(0.0f);
+	
+	private TextArea comments;
 	private ComboBox targetServerComboBox;
 	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
@@ -166,6 +176,80 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 		
 		this.targetServerComboBox.setWidth("80%");
 		formLayout.addComponent(this.targetServerComboBox, 1, 2);
+		
+		Label commentLabel = new Label("Comment:");
+		commentLabel.setSizeUndefined();
+		
+		formLayout.addComponent(commentLabel, 0, 3);
+		formLayout.setComponentAlignment(commentLabel, Alignment.TOP_RIGHT);
+		
+		comments = new TextArea();
+		comments.setWidth("80%");
+		comments.setRows(4);
+		comments.setRequired(true);
+		comments.addValidator(new StringLengthValidator(
+	            "You must supply a comment!", 1, 2048, false));
+		comments.setValidationVisible(false);         
+		comments.setRequiredError("A comment is required!");
+		comments.setNullSettingAllowed(false);
+		
+		formLayout.addComponent(comments, 1, 3);
+		
+		Button replayButton = new Button("Replay");
+		replayButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		replayButton.setImmediate(true);
+		replayButton.setDescription("Resubmit all exclusions.");
+		
+		replayButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	
+            	
+            	try 
+            	{
+            		comments.validate();
+                } 
+                catch (Exception e) 
+                {
+                	comments.setValidationVisible(true);                	
+                	comments.markAsDirty();
+                    return;
+                }
+                
+            	bar.setVisible(true);
+            	
+            	ExecutorService executorService = Executors
+            			.newSingleThreadExecutor();
+            	
+            	try
+            	{
+	            	executorService.execute(new Runnable()
+	    			{
+	    				@Override
+	    				public void run() 
+	    				{
+//	    					resubmitExcludedEvents();
+	    					bar.setVisible(false);
+	    				}
+	    			});
+            	}
+            	finally
+            	{
+            		executorService.shutdown();
+            	}
+            }
+        });
+		
+		formLayout.addComponent(replayButton, 0, 4, 1, 4);
+		formLayout.setComponentAlignment(replayButton, Alignment.MIDDLE_CENTER);
+		
+		this.bar.setWidth("40%");	
+		this.bar.setImmediate(true);
+		this.bar.setIndeterminate(true);
+		this.bar.setVisible(false);
+		
+		formLayout.addComponent(bar, 0, 5, 1, 5);
+		formLayout.setComponentAlignment(bar, Alignment.MIDDLE_CENTER);
 		
 		this.replayEventsTable = new FilterTable();
 		this.replayEventsTable.setFilterBarVisible(true);

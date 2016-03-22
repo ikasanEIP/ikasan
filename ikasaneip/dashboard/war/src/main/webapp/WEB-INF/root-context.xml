@@ -86,25 +86,17 @@
                    <constructor-arg value="mappingView"/>
                    <constructor-arg ref="mappingView"/>
                 </bean>
-                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="errorView"/>
-                   <constructor-arg ref="errorPanel"/>
-                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="userView"/>
                    <constructor-arg ref="userPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="replayView"/>
-                   <constructor-arg ref="replayPanel"/>
+                   <constructor-arg ref="replayViewPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="profileView"/>
                    <constructor-arg ref="profilePanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="hospitalView"/>
-                   <constructor-arg ref="hospitalPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="topologyView"/>

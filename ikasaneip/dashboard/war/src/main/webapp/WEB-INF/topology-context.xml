@@ -30,8 +30,6 @@
         </constructor-arg>
         <constructor-arg ref="hospitalViewComponentContainer"/>
     </bean>
-    
-    <bean id="topologyPanel" class="org.ikasan.dashboard.ui.service.hospital.panel.HospitalPanel" scope="session"/>
 
 	<bean id="topologyViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>

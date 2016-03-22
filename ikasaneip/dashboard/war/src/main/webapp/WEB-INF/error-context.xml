@@ -23,16 +23,10 @@
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="errorPanel"/>
-                   <constructor-arg ref="errorPanel"/>
-                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="errorViewComponentContainer"/>
     </bean>
-
-	<bean id="errorPanel" class="org.ikasan.dashboard.ui.service.error.panel.ErrorPanel" scope="session" />
 
 	<bean id="errorViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
