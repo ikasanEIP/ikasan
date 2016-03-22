@@ -56,7 +56,7 @@ public interface SystemEventDao {
 
 	/**
 	 * Persists a new system event
-	 * 
+	 *
 	 * @param systemEvent
 	 */
 	public void save(SystemEvent systemEvent);
@@ -64,7 +64,7 @@ public interface SystemEventDao {
 
 	/**
 	 * Performs a paged search for <code>SystemFlowEvent</code>s restricting by criteria fields as supplied
-	 * 
+	 *
 	 * @param pageNo - page control field - page no of results to return
 	 * @param pageSize - page control field - size of page
 	 * @param orderBy - page control - field to order by
@@ -74,24 +74,24 @@ public interface SystemEventDao {
 	 * @param timestampFrom - criteria field - filter for events with timestamp greater than this value
 	 * @param timestampTo - criteria field - filter for events with timestamp less than this value
 	 * @param actor - criteria field - filter for exact match on actor
-	 * 
+	 *
 	 * @return PagedSearchResult<SystemFlowEvent> - page friendly search result subset
 	 */
 	public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,String subject, String action,
 			Date timestampFrom, Date timestampTo, String actor);
-	
-	
+
+
 	/**
 	 * This method returns a list of SystemEvents based on subjects and actor within a certain date range.
-	 * 
+	 *
 	 * @param subject
 	 * @param actor
 	 * @param timestampFrom
 	 * @param timestampTo
 	 * @return
 	 */
-	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo); 
-	
+	public List<SystemEvent> listSystemEvents(List<String> subjects, String actor, Date timestampFrom, Date timestampTo);
+
 
 	/**
 	 * Deletes all expired system events
@@ -105,16 +105,18 @@ public interface SystemEventDao {
 	public Integer getHousekeepingBatchSize();
 
 	public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
-	
+
 	/**
 	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
-	 * 
-	 * @return true if there is at least 1 expired WiretapFlowEvent 
+	 *
+	 * @return true if there is at least 1 expired WiretapFlowEvent
 	 */
 	public boolean housekeepablesExist();
-	
+
 	/**
 	 * @param transactionBatchSize the transactionBatchSize to set
 	 */
 	public void setTransactionBatchSize(Integer transactionBatchSize);
+
+	void setHousekeepQuery(String housekeepQuery);
 }

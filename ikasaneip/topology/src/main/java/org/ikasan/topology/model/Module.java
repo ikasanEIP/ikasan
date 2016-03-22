@@ -287,12 +287,24 @@ public class Module implements Comparable<Module>
 	@Override
 	public String toString()
 	{
-		return "Module [id=" + id + ", name=" + name + ", description="
+		String returnString =  "Module [id=" + id + ", name=" + name + ", description="
 				+ description + ", contextRoot=" + contextRoot
-				+ ", diagramUrl=" + diagramUrl + ", version=" + version
-				+ ", server=" + server.getId() + " " +  server.getName() + ", flows=" + flows
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
+				+ ", diagramUrl=" + diagramUrl + ", version=" + version;
+				
+		if(server != null)
+		{
+			returnString += ", server=" + server.getId() + " " +  server.getName();
+		}
+		else
+		{
+			returnString += ", server=NULL";
+		}
+		
+		returnString +=  ", flows=" + flows
+		+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+		+ updatedDateTime + "]";
+	
+		return returnString;
 	}
 
     /**

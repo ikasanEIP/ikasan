@@ -829,8 +829,19 @@ public class CategorisedErrorTab extends TopologyTab
     	    Item item = container.addItem(categorisedErrorOccurrence);			            	    
 
     	    item.getItemProperty("Error Location").setValue(layout);
-			item.getItemProperty("Error Message").setValue(categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
-					+ " " + categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage());
+    	    
+    	    String errorMessage = categorisedErrorOccurrence.getErrorCategorisation().getErrorDescription()
+					+ " " + categorisedErrorOccurrence.getErrorOccurrence().getErrorMessage();
+    	    
+    	   if(errorMessage.length() > 500)
+			{
+				item.getItemProperty("Error Message").setValue(errorMessage.substring(0, 500));
+			}
+			else
+			{
+				item.getItemProperty("Error Message").setValue(errorMessage);
+			}
+			
 			item.getItemProperty("Timestamp").setValue(timestamp);
 			
 			HorizontalLayout commentLayout = new HorizontalLayout();

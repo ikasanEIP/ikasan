@@ -110,26 +110,26 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
         this.configuration = configuration;
 
         // set dependents
-        this.dao.setBatchedHousekeep(configuration.isBatchedHousekeep());
-        this.dao.setBatchSize(configuration.getHousekeepBatchSize());
+        this.dao.setBatchHousekeepDelete(configuration.isBatchHousekeepDelete());
+        this.dao.setHousekeepingBatchSize(configuration.getHousekeepingBatchSize());
         this.dao.setTransactionBatchSize(configuration.getTransactionBatchSize());
     }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.management.HousekeeperService#houseKeepablesExist()
-	 */
-	@Override
-	public boolean housekeepablesExist()
-	{
-		return this.dao.housekeepablesExist();
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.management.HousekeeperService#houseKeepablesExist()
+     */
+    @Override
+    public boolean housekeepablesExist()
+    {
+        return this.dao.housekeepablesExist();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#housekeep()
-	 */
-	@Override
-	public void housekeep()
-	{
-		this.dao.deleteAllExpired();
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#housekeep()
+     */
+    @Override
+    public void housekeep()
+    {
+        this.dao.deleteAllExpired();
+    }
 }
