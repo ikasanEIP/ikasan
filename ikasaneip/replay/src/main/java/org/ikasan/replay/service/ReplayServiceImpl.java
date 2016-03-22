@@ -28,13 +28,9 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent>
 	private Logger logger = Logger.getLogger(ReplayService.class);
 	
 	private ReplayDao replayDao;
-	
-	/** need a serialiser to serialise the incoming event payload of T */
-    private SerialiserFactory serialiserFactory;
     
     private List<ReplayListener<ReplayEvent>> replayListeners 
     	= new ArrayList<ReplayListener<ReplayEvent>>();
-    
     
 	/**
 	 * Constructor
@@ -42,11 +38,10 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent>
 	 * @param replayDao
 	 * @param serialiserFactory
 	 */
-	public ReplayServiceImpl(ReplayDao replayDao, SerialiserFactory serialiserFactory) 
+	public ReplayServiceImpl(ReplayDao replayDao) 
 	{
 		super();
 		this.replayDao = replayDao;
-		this.serialiserFactory = serialiserFactory;
 	}
 
 
@@ -75,7 +70,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent>
 	    	String url = targetServer 
 	    			+ "/"
 					+ event.getModuleName() 
-					+ "/rest/replay/"
+					+ "/rest/replay/eventReplay/"
 					+ event.getModuleName() 
 		    		+ "/"
 		    		+ event.getFlowName();
@@ -83,7 +78,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent>
 			logger.info("Replay Url: " + url);
 			
 		    WebTarget webTarget = client.target(url);
-		    Response response = webTarget.request().put(Entity.entity(this.serialiserFactory.getDefaultSerialiser().deserialise(event.getEvent())
+		    Response response = webTarget.request().put(Entity.entity(event.getEvent()
 		    		, MediaType.APPLICATION_OCTET_STREAM));
 		    
 		    ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, 

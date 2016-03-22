@@ -40,7 +40,6 @@
  */
 package org.ikasan.replay.model;
 
-import java.util.Arrays;
 import java.util.Date;
 
 /**

@@ -192,7 +192,6 @@
 	
 	<bean id="replayService" class="org.ikasan.replay.service.ReplayServiceImpl">
 		<constructor-arg ref="replayDao" />
-		<constructor-arg ref="ikasanSerialiserFactory" />
 	</bean>
 	
 	<bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">

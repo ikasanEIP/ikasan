@@ -214,7 +214,7 @@ public class Menu extends CssLayout
             public void buttonClick(final ClickEvent event) 
             {
             	loadTopLevelNavigator();
-            	UI.getCurrent().getNavigator().navigateTo("monitorView");
+            	UI.getCurrent().getNavigator().navigateTo("replayView");
             }
         });
         

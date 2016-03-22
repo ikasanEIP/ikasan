@@ -24,14 +24,26 @@
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="replayPanel"/>
-                   <constructor-arg ref="replayPanel"/>
+                   <constructor-arg ref="replayViewPanel"/>
                 </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="replayViewComponentContainer"/>
     </bean>
     
-    <bean id="replayPanel" class="org.ikasan.dashboard.ui.service.replay.panel.ReplayPanel" scope="session" />
+    <bean id="replayViewPanel" class="org.ikasan.dashboard.ui.replay.panel.ReplayViewPanel" scope="session">
+        <constructor-arg ref="topologyService" />
+        <constructor-arg ref="componentConfigurationWindow" />
+        <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="errorCategorisationService"/>
+        <constructor-arg ref="triggerManagementService"/>
+        <constructor-arg ref="topologyStateCache"/>
+        <constructor-arg ref="startupControlService"/>
+        <constructor-arg ref="platformConfigurationService"/>
+        <constructor-arg ref="securityService"/>
+        <constructor-arg ref="replayManagementService"/>
+        <constructor-arg ref="replayService"/>
+    </bean>
 
 	<bean id="replayViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>

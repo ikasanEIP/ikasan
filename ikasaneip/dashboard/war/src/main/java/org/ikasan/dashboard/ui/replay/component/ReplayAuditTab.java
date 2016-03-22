@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.ui.topology.component;
+package org.ikasan.dashboard.ui.replay.component;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,6 +57,7 @@ import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayEvent;
@@ -101,9 +102,9 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class ReplayTab extends TopologyTab
+public class ReplayAuditTab extends TopologyTab
 {
-	private Logger logger = Logger.getLogger(ReplayTab.class);
+	private Logger logger = Logger.getLogger(ReplayAuditTab.class);
 	
 	private FilterTable replayEventsTable;
 	
@@ -130,7 +131,7 @@ public class ReplayTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent> replayService,
+	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent> replayService,
 			PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
