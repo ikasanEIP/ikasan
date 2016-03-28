@@ -63,7 +63,15 @@
                 <constraints nullable="false"/>
             </column>
             
-            <column name="Result" type="VARCHAR(255)">
+            <column defaultValueNumeric="1" name="Success" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column name="ResultMessage" type="VARCHAR(2048)">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column defaultValueNumeric="0" name="Timestamp" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
             

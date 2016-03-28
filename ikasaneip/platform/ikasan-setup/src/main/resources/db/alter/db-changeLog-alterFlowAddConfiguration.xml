@@ -46,37 +46,21 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="ikasan dev" id="alterFlowAddConfiguration" context="postBaseline">
     
-    <changeSet author="ikasan dev" id="createReplayAudit" context="postBaseline">
-    	
     	<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="ReplayAudit" /></not>
+			<not><columnExists tableName="Flow" columnName="IsConfigurable"/></not>
+			<not><columnExists tableName="Flow" columnName="ConfigurationId"/></not>
 		</preConditions>
+	    
+	    <addColumn tableName="Flow">
+	        <column defaultValueNumeric="0" name="IsConfigurable" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ConfigurationId" type="VARCHAR(256)"/>
+	    </addColumn>           
 
-        <createTable tableName="ReplayAudit">
-        
-            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints primaryKey="true" primaryKeyName="ReplayAuditPk"/>
-            </column>
-            <column name="ReplayUser" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="Reason" type="VARCHAR(1024)">
-                <constraints nullable="false"/>
-            </column>
-            <column defaultValueNumeric="0" name="Timestamp" type="numeric(18)">
-                <constraints nullable="false"/>
-            </column>
-
-        </createTable>
-        
-        <!-- The statement below is required by sybase to set the identity gap to 1. -->
-        <sql dbms="sybase">sp_chgattribute 'ReplayAudit', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="ReplayAuditTimestampIdx" tableName="ReplayAudit" unique="false">
-            <column name="Timestamp"/>
-        </createIndex>
-        
     </changeSet>
 
 </databaseChangeLog>

@@ -137,6 +137,11 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security</artifactId>
          </dependency>
+		 
+		 <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-replay</artifactId>
+         </dependency>
         
         <!-- Hibernate ORM -->
         <dependency>

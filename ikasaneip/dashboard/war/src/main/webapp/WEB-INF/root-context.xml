@@ -8,17 +8,12 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/security 
         http://www.springframework.org/schema/security/spring-security-4.0.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd"
+        default-lazy-init="true">
 
     <context:annotation-config/>
     <context:component-scan base-package="org.ikasan.mapping.configuration.ui"/>
 
-    <!--  bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="classpath:/locales/messages"/>
-        <property name="fallbackToSystemLocale" value="false" />
-    </bean>
-
-    <bean class="ru.xpoft.vaadin.VaadinMessageSource" / -->
 
     <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="prototype">
         <constructor-arg ref="navigatorMap"/>

@@ -40,33 +40,49 @@
  */
 package org.ikasan.dashboard.ui.replay.panel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ReplayEventViewPopup;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
 import org.tepi.filtertable.FilterTable;
+import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -74,15 +90,17 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEvent>
+public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAuditEvent>
 {
+	private Logger logger = Logger.getLogger(ReplayStatusPanel.class);
+	
 	private List<ReplayEvent> replayEvents;
 	
 	private IndexedContainer tableContainer;
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayService<ReplayEvent> replayService;
+	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
@@ -91,8 +109,10 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 	private TextArea comments;
 	private ComboBox targetServerComboBox;
 	
+	private IkasanAuthentication authentication;
+	
 	public ReplayStatusPanel(List<ReplayEvent> replayEvents,
-			ReplayService<ReplayEvent> replayService,
+			ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
 			PlatformConfigurationService platformConfigurationService) 
 	{
 		super();
@@ -107,6 +127,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 		{
 			throw new IllegalArgumentException("replayService cannot be null!");
 		}
+		this.replayService.addReplayListener(this);
 		this.platformConfigurationService = platformConfigurationService;
 		if(this.platformConfigurationService == null)
 		{
@@ -120,11 +141,13 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 	{			
 		IndexedContainer cont = new IndexedContainer();
 
+		cont.addContainerProperty(" ", Label.class,  null);
 		cont.addContainerProperty("Module Name", String.class,  null);
 		cont.addContainerProperty("Flow Name", String.class,  null);
 		cont.addContainerProperty("Event Id / Payload Id", String.class,  null);
+		cont.addContainerProperty("Message", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
-		cont.addContainerProperty("", CheckBox.class,  null);
+		cont.addContainerProperty("", Button.class,  null);
 		
         return cont;
     }
@@ -132,6 +155,9 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 	public void init()
 	{
 		this.setSizeFull();
+		
+		authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
 		GridLayout formLayout = new GridLayout(2, 6);
 		formLayout.setSizeFull();
@@ -198,7 +224,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 		Button replayButton = new Button("Replay");
 		replayButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		replayButton.setImmediate(true);
-		replayButton.setDescription("Resubmit all exclusions.");
+		replayButton.setDescription("Replay events.");
 		
 		replayButton.addClickListener(new Button.ClickListener() 
         {
@@ -227,9 +253,26 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 	    			{
 	    				@Override
 	    				public void run() 
-	    				{
-//	    					resubmitExcludedEvents();
-	    					bar.setVisible(false);
+	    				{	    					
+	    					replayService.replay((String)targetServerComboBox.getValue(), replayEvents, authentication.getName(), 
+	    							(String)authentication.getCredentials(), authentication.getName(), comments.getValue());
+	    					
+	    					logger.info("Finished replaying events!");
+	    					
+	    					VaadinSession.getCurrent().getLockInstance().lock();
+		            		try 
+		            		{
+		            			bar.setVisible(false);
+		    					
+		    					Notification.show("Event replay complete.");
+		        				
+		            		} 
+		            		finally 
+		            		{
+		            			VaadinSession.getCurrent().getLockInstance().unlock();
+		            		}
+		                	
+		                	UI.getCurrent().push();	
 	    				}
 	    			});
             	}
@@ -259,9 +302,11 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 		
 		this.replayEventsTable.setColumnExpandRatio("Module Name", .14f);
 		this.replayEventsTable.setColumnExpandRatio("Flow Name", .18f);
-		this.replayEventsTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
+		this.replayEventsTable.setColumnExpandRatio("Event Id / Payload Id", .15f);
+		this.replayEventsTable.setColumnExpandRatio("Message", .33f);
 		this.replayEventsTable.setColumnExpandRatio("Timestamp", .1f);
 		this.replayEventsTable.setColumnExpandRatio("", .05f);
+		this.replayEventsTable.setColumnExpandRatio(" ", .05f);
 		
 		this.replayEventsTable.addStyleName("wordwrap-table");
 		this.replayEventsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
@@ -276,13 +321,48 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-//			    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
-//			    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
-//			    
-//			    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+		    		ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
+			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
+			    			, replayService, platformConfigurationService);
+			    
+			    	UI.getCurrent().addWindow(replayEventViewWindow);
 		    	}
 		    }
 		});
+		
+		for(final ReplayEvent replayEvent: replayEvents)
+    	{
+    		Date date = new Date(replayEvent.getTimestamp());
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+    	    String timestamp = format.format(date);
+    	    
+    	    Item item = tableContainer.addItem(replayEvent);			            	    
+    	    
+    	    item.getItemProperty("Module Name").setValue(replayEvent.getModuleName());
+			item.getItemProperty("Flow Name").setValue(replayEvent.getFlowName());
+			item.getItemProperty("Event Id / Payload Id").setValue(replayEvent.getEventId());
+			item.getItemProperty("Timestamp").setValue(timestamp);
+			
+			Button popupButton = new Button();
+			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			popupButton.setDescription("Open in new window");
+			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+			popupButton.setIcon(VaadinIcons.MODAL);
+			
+			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayEventViewPopup.class);
+			popupOpener.setFeatures("height=600,width=900,resizable");
+	        popupOpener.extend(popupButton);
+	        
+	        popupButton.addClickListener(new Button.ClickListener() 
+	    	{
+	            public void buttonClick(ClickEvent event) 
+	            {
+	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
+	            }
+	        });
+	        
+	        item.getItemProperty("").setValue(popupButton);
+    	}
 		
 		GridLayout layout = new GridLayout(1, 2);
 		layout.setWidth("100%");
@@ -329,9 +409,36 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayEve
 	 * @see org.ikasan.spec.replay.ReplayListener#onReplay(java.lang.Object)
 	 */
 	@Override
-	public void onReplay(ReplayEvent event) 
+	public void onReplay(final ReplayAuditEvent auditEvent) 
 	{
-		// TODO Auto-generated method stub
-		
+		UI.getCurrent().access(new Runnable() 
+		{
+            @Override
+            public void run() 
+            {
+            	VaadinSession.getCurrent().getLockInstance().lock();
+        		try 
+        		{
+        			Item item = tableContainer.getItem(auditEvent.getReplayEvent());
+        			
+        			if(auditEvent.isSuccess())
+        			{
+        				item.getItemProperty(" ").setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
+        			}
+        			else
+        			{
+        				item.getItemProperty(" ").setValue(new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML));
+        			}
+        			
+        			item.getItemProperty("Message").setValue(auditEvent.getResultMessage());     				
+        		} 
+        		finally 
+        		{
+        			VaadinSession.getCurrent().getLockInstance().unlock();
+        		}
+            	
+            	UI.getCurrent().push();	
+            }
+        });
 	}
 }

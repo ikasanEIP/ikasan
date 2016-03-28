@@ -58,7 +58,7 @@
 		
 		<property name="user"
                   type="java.lang.String"
-                  column="User"
+                  column="ReplayUser"
                   not-null="true" />
 
         <property name="replayReason"
@@ -66,7 +66,7 @@
                   column="Reason"
                   not-null="true" />
 		          
-		<set name="replayAuditEvents" cascade="none" lazy="false" inverse="true" fetch="select">
+		<set name="replayAuditEvents" cascade="none" lazy="false" inverse="true" fetch="select" order-by="timestamp desc">
          	<key column="ReplayAuditId"/>
          	<one-to-many class="org.ikasan.replay.model.ReplayAuditEvent"/>
       	</set>

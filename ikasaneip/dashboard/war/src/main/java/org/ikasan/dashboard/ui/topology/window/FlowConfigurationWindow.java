@@ -71,7 +71,7 @@ import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -98,16 +98,16 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author Ikasan Development Team
  *
  */
-public class ComponentConfigurationWindow extends AbstractConfigurationWindow
+public class FlowConfigurationWindow extends AbstractConfigurationWindow
 {
-	private Logger logger = Logger.getLogger(ComponentConfigurationWindow.class);
+	private Logger logger = Logger.getLogger(FlowConfigurationWindow.class);
 	
 	/**
 	 * @param configurationManagement
 	 */
-	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+	public FlowConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
-		super(configurationManagement, "Component Configuration");
+		super(configurationManagement, "Flow Configuration");
 		this.setIcon(VaadinIcons.COG_O);
 				
 		this.configurationManagement = configurationManagement;
@@ -116,22 +116,20 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 	}
 
     @SuppressWarnings("unchecked")
-	public void populate(Component component)
+	public void populate(Flow flow)
     {
-    	configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
+    	configuration = this.configurationManagement.getConfiguration(flow.getConfigurationId());
     	
     	if(configuration == null)
     	{
-    		Server server = component.getFlow().getModule().getServer();
+    		Server server = flow.getModule().getServer();
     		
     		String url = server.getUrl() + ":" + server.getPort()
-    				+ component.getFlow().getModule().getContextRoot()
+    				+ flow.getModule().getContextRoot()
     				+ "/rest/configuration/createConfiguration/"
-    	    		+ component.getFlow().getModule().getName() 
+    	    		+ flow.getModule().getName() 
     	    		+ "/"
-    	    		+ component.getFlow().getName()
-    	    		+ "/"
-    	    		+ component.getName();
+    	    		+ flow.getName();
     		
 
     		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -155,13 +153,13 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
     	    	response.bufferEntity();
     	        
     	        String responseMessage = response.readEntity(String.class);
-    	    	Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': " 
+    	    	Notification.show("An error was received trying to create configured resource '" + flow.getConfigurationId() + "': " 
     	    			+ responseMessage, Type.ERROR_MESSAGE);
     	    	
     	    	return;
     	    }
     	    
-    	    configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
+    	    configuration = this.configurationManagement.getConfiguration(flow.getConfigurationId());
     	}
     		
     	  	
@@ -276,9 +274,9 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
   
             	for(ConfigurationParameter parameter: parameters)
         		{
-            		TextArea textField = ComponentConfigurationWindow
+            		TextArea textField = FlowConfigurationWindow
             				.this.textFields.get(parameter.getName());
-            		TextArea descriptionTextField = ComponentConfigurationWindow
+            		TextArea descriptionTextField = FlowConfigurationWindow
             				.this.descriptionTextFields.get(parameter.getName());
             		
             		if(parameter != null && descriptionTextField != null)
@@ -375,7 +373,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
         			
         		}
             	
-            	ComponentConfigurationWindow.this.configurationManagement
+            	FlowConfigurationWindow.this.configurationManagement
             		.saveConfiguration(configuration);      
             	
             	Notification notification = new Notification(
@@ -394,7 +392,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             public void buttonClick(ClickEvent event) 
             {
             	DeleteConfigurationAction action = new DeleteConfigurationAction
-            			(configuration, configurationManagement, ComponentConfigurationWindow.this);
+            			(configuration, configurationManagement, FlowConfigurationWindow.this);
             	
             	IkasanMessageDialog dialog = new IkasanMessageDialog("Delete configuration", 
             			"Are you sure you would like to delete this configuration?", action);

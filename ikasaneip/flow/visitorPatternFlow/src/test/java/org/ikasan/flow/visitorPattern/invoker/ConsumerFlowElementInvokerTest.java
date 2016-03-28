@@ -99,7 +99,7 @@ public class ConsumerFlowElementInvokerTest
             }
         });
 
-        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker(null);
+        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
@@ -133,7 +133,7 @@ public class ConsumerFlowElementInvokerTest
             }
         });
 
-        FlowElementInvoker flowElementInvoker = new StubbedConsumerFlowElementInvoker(null);
+        FlowElementInvoker flowElementInvoker = new StubbedConsumerFlowElementInvoker();
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
@@ -162,7 +162,7 @@ public class ConsumerFlowElementInvokerTest
             }
         });
 
-        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker(null);
+        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
@@ -170,9 +170,9 @@ public class ConsumerFlowElementInvokerTest
 
     class StubbedConsumerFlowElementInvoker extends ConsumerFlowElementInvoker
     {
-        public StubbedConsumerFlowElementInvoker(ReplayRecordService replayRecordService) 
+        public StubbedConsumerFlowElementInvoker() 
         {
-			super(replayRecordService);
+			super();
 			// TODO Auto-generated constructor stub
 		}
 

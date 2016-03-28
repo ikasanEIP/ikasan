@@ -47,12 +47,14 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
+public class ReplayAuditEvent
 {
 	private ReplayAuditEventKey id;
 	private ReplayAudit replayAudit;
 	private ReplayEvent replayEvent;
-	private String result;
+	private boolean success;
+	private String resultMessage;
+	private long timestamp;
    
     
     @SuppressWarnings("unused")
@@ -66,7 +68,8 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
      * @param replayAudit
      * @param replayEvent
      */
-	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, String result) {
+	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, boolean success, String result, long timestamp) 
+	{
 		super();
 		this.replayAudit = replayAudit;
 		if(this.replayAudit == null)
@@ -80,9 +83,10 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 		}
 		
 		this.id = new ReplayAuditEventKey(replayAudit.getId(), replayEvent.getId());
-		this.result = result;
+		this.resultMessage = result;
+		this.success = success;
+		this.timestamp = timestamp;
 	}
-
 
 
 	/**
@@ -138,100 +142,52 @@ public class ReplayAuditEvent implements Comparable<ReplayAuditEvent>
 		this.replayEvent = replayEvent;
 	}
 
-	/**
-	 * @return the result
-	 */
-	public String getResult() 
-	{
-		return result;
-	}
-
+	
 
 	/**
-	 * @param result the result to set
+	 * @return the success
 	 */
-	public void setResult(String result) 
-	{
-		this.result = result;
+	public boolean isSuccess() {
+		return success;
+	}
+
+
+	/**
+	 * @param success the success to set
+	 */
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+
+	/**
+	 * @return the resultMessage
+	 */
+	public String getResultMessage() {
+		return resultMessage;
+	}
+
+
+	/**
+	 * @param resultMessage the resultMessage to set
+	 */
+	public void setResultMessage(String resultMessage) {
+		this.resultMessage = resultMessage;
 	}
 	
-	
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * @return the timestamp
 	 */
-	@Override
-	public int hashCode() 
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((replayAudit == null) ? 0 : replayAudit.hashCode());
-		result = prime * result
-				+ ((replayEvent == null) ? 0 : replayEvent.hashCode());
-		result = prime * result
-				+ ((this.result == null) ? 0 : this.result.hashCode());
-		return result;
+	public long getTimestamp() {
+		return timestamp;
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * @param timestamp the timestamp to set
 	 */
-	@Override
-	public boolean equals(Object obj) 
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ReplayAuditEvent other = (ReplayAuditEvent) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (replayAudit == null) {
-			if (other.replayAudit != null)
-				return false;
-		} else if (!replayAudit.equals(other.replayAudit))
-			return false;
-		if (replayEvent == null) {
-			if (other.replayEvent != null)
-				return false;
-		} else if (!replayEvent.equals(other.replayEvent))
-			return false;
-		if (result == null) {
-			if (other.result != null)
-				return false;
-		} else if (!result.equals(other.result))
-			return false;
-		return true;
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() 
-	{
-		return "ReplayAuditEvent [id=" + id + ", replayAudit=" + replayAudit
-				+ ", replayEvent=" + replayEvent + ", result=" + result + "]";
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(ReplayAuditEvent o) 
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	
 	
 }

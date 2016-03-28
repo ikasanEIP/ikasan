@@ -43,6 +43,7 @@
         <constructor-arg ref="securityService"/>
         <constructor-arg ref="replayManagementService"/>
         <constructor-arg ref="replayService"/>
+        <constructor-arg ref="flowConfigurationWindow"/>
     </bean>
 
 	<bean id="replayViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">

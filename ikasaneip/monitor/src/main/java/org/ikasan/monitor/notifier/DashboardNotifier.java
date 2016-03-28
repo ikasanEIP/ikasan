@@ -141,7 +141,7 @@ public class DashboardNotifier implements Notifier<String>
     	
     	try
 		{
-    		logger.info("this.platformConfigurationService: " + this.platformConfigurationService);	
+    		logger.debug("this.platformConfigurationService: " + this.platformConfigurationService);	
     		
     		// We are trying to get the database configuration resource first
     		if(this.platformConfigurationService != null)
@@ -149,7 +149,7 @@ public class DashboardNotifier implements Notifier<String>
 	            url = platformConfigurationService.getConfigurationValue("dashboardBaseUrl");
     		}
     		
-    		logger.info("url: " + url);	
+    		logger.debug("url: " + url);	
     		
     		// If we do not have a database persisted configuration value we will try to get the one from the file system/
     		if((url == null || url.length() == 0) && this.dashboardBaseUrl != null && this.dashboardBaseUrl.length() > 0)
@@ -165,7 +165,7 @@ public class DashboardNotifier implements Notifier<String>
     		
 			url = url + "/rest/topologyCache/updateCache/" + moduleName + "/" + flowName;
 			
-			logger.info("Attempting to call URL: " + url);	
+			logger.debug("Attempting to call URL: " + url);	
 		  	
 	    	ClientConfig clientConfig = new ClientConfig();
 	    	

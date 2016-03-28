@@ -84,6 +84,18 @@
          	<key column="FlowId"/>
          	<one-to-many class="org.ikasan.topology.model.Component" />
       	</set>
+      	
+      	<property name="configurable"
+                  type="java.lang.Boolean"
+                  column="IsConfigurable"
+                  not-null="true" 
+                  unique="false"/>
+                  
+        <property name="configurationId"
+                  type="java.lang.String"
+                  column="ConfigurationId"
+                  not-null="false" 
+                  unique="false"/>
 
         <property name="createdDateTime"
                   type="java.util.Date"

@@ -19,18 +19,17 @@ import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 
 
 
-public class ReplayServiceImpl implements ReplayService<ReplayEvent> 
+public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent> 
 {
 	private Logger logger = Logger.getLogger(ReplayService.class);
 	
 	private ReplayDao replayDao;
     
-    private List<ReplayListener<ReplayEvent>> replayListeners 
-    	= new ArrayList<ReplayListener<ReplayEvent>>();
+    private List<ReplayListener<ReplayAuditEvent>> replayListeners 
+    	= new ArrayList<ReplayListener<ReplayAuditEvent>>();
     
 	/**
 	 * Constructor
@@ -61,36 +60,49 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent>
     	Client client = ClientBuilder.newClient(clientConfig);
     
     	ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
-    	logger.info("Saving replayAudit: " + replayAudit);
+    	logger.debug("Saving replayAudit: " + replayAudit);
     	
     	this.replayDao.saveOrUpdate(replayAudit);
     	
     	for(ReplayEvent event: events)
     	{
+    		if(!targetServer.endsWith("/"))
+    		{
+    			targetServer += "/";
+    		}
+    		
 	    	String url = targetServer 
-	    			+ "/"
 					+ event.getModuleName() 
 					+ "/rest/replay/eventReplay/"
 					+ event.getModuleName() 
 		    		+ "/"
 		    		+ event.getFlowName();
 			
-			logger.info("Replay Url: " + url);
+			logger.debug("Replay Url: " + url);
 			
 		    WebTarget webTarget = client.target(url);
 		    Response response = webTarget.request().put(Entity.entity(event.getEvent()
 		    		, MediaType.APPLICATION_OCTET_STREAM));
 		    
-		    ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, 
-		    		response.getStatus() + " " +  response.readEntity(String.class));
+		    boolean success = true;
 		    
-		    logger.info("Saving replayAuditEvent: " + replayAuditEvent);
+		    if(response.getStatus()  != 200)
+    	    {
+    	    	success = false;
+    	    }
+		    
+		    ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
+		    		response.getStatus() + " " +  response.readEntity(String.class), System.currentTimeMillis());
+		    
+		    logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
 		    
 		    this.replayDao.saveOrUpdate(replayAuditEvent);
 		    
-		    for(ReplayListener<ReplayEvent> listener: this.replayListeners)
+		    replayAuditEvent.setReplayEvent(event);
+		    
+		    for(ReplayListener<ReplayAuditEvent> listener: this.replayListeners)
 		    {
-		    	listener.onReplay(event);
+		    	listener.onReplay(replayAuditEvent);
 		    }
     	}
 	}
@@ -99,7 +111,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent>
 	 * @see org.ikasan.spec.replay.ReplayService#addReplayListener(org.ikasan.spec.replay.ReplayListener)
 	 */
 	@Override
-	public void addReplayListener(ReplayListener<ReplayEvent> listener) 
+	public void addReplayListener(ReplayListener<ReplayAuditEvent> listener) 
 	{
 		this.replayListeners.add(listener);
 	}

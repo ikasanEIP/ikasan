@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,33 +38,43 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.dashboard.ui;
 
-import java.util.List;
+import org.ikasan.dashboard.ui.replay.panel.ReplayEventViewPanel;
+import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayService;
 
+import com.vaadin.annotations.Theme;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.UI;
 
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT, AUDIT_EVENT>
+@Theme("dashboard")
+public class ReplayEventViewPopup extends UI
 {
-	/**
-	 * Add a replay listener.
-	 * 
-	 * @param listener
+	/* (non-Javadoc)
+	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
 	 */
-	public void addReplayListener(ReplayListener<AUDIT_EVENT> listener);
+	@Override
+	protected void init(VaadinRequest request)
+	{		
+		ReplayEvent replayEvent 
+		 	= (ReplayEvent)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("replayEvent");
+		
+		ReplayService replayService = (ReplayService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("replayService");
+		 
+		PlatformConfigurationService platformConfigurationService 
+			= (PlatformConfigurationService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("platformConfigurationService");
+	        
+		ReplayEventViewPanel panel = new ReplayEventViewPanel(replayEvent, replayService, platformConfigurationService);
+		
+		this.setContent(panel);
+	}
 
-    /**
-     * Entry point for replay of a list of events.
-     * 
-     * @param targetServer
-     * @param events
-     * @param authUser
-     * @param authPassword
-     * @param user
-     */
-    public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
 }

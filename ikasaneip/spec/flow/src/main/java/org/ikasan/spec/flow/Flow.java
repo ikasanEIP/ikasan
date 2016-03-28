@@ -52,8 +52,8 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
  * @author Ikasan Development Team
  */
 public interface Flow
-{
-    /**
+{	
+	/**
      * Returns the name of this flow
      * 
      * @return String name of this flow
@@ -103,7 +103,7 @@ public interface Flow
      * For instance, this could include setting any flow component configurations,
      * or starting any flow managed resources.
      */
-    public void start();
+     public void start();
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation, but immediately pause the consumer.

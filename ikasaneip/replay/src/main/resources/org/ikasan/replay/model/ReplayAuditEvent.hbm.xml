@@ -63,10 +63,20 @@
     	<many-to-one name="replayEvent" class="org.ikasan.replay.model.ReplayEvent" 
     		column="ReplayEventId" not-null="true" insert="false" update="false" lazy="false"/>
     	
-    	<property name="result"
-                  type="java.lang.String"
-                  column="Result"
+    	<property name="success"
+                  type="boolean"
+                  column="Success"
                   not-null="true" />
+                  
+    	<property name="resultMessage"
+                  type="java.lang.String"
+                  column="ResultMessage"
+                  not-null="true" />
+                  
+        <property name="timestamp" 
+				  column="Timestamp" 
+				  type="long" 
+				  not-null="true"/>
 
 	</class>
 </hibernate-mapping>

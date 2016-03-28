@@ -64,20 +64,16 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
     /** handle to any internal converter for this consumer */
     Converter converter;
     
-    /** the replayRecordService **/
-    ReplayRecordService replayRecordService;
     
-    
-
+    	
     /**
      * Constructor
      * 
      * @param replayRecordService
      */
-    public ConsumerFlowElementInvoker(ReplayRecordService replayRecordService) 
+    public ConsumerFlowElementInvoker() 
     {
 		super();
-		this.replayRecordService = replayRecordService;
 	}
 
 	@Override
@@ -113,12 +109,6 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
         {
             throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
                     + "] contains a Consumer, but it has no default transition! " + "Consumers should never be the last component in a flow");
-        }
-
-        // record the event so that it can be replayed if necessary.
-        if(this.replayRecordService != null)
-        {
-        	this.replayRecordService.record(flowEvent, moduleName, flowName);
         }
 
         return flowElement;

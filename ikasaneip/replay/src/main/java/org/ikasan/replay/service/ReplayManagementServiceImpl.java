@@ -80,19 +80,20 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	 */
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
-			List<String> flowNames, String payloadContent, String eventId,
+			List<String> flowNames, String eventId,
 			Date fromDate, Date toDate) 
 	{
-		return this.replayDao.getReplayEvents(moduleNames, flowNames, payloadContent, eventId, fromDate, toDate);
+		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, fromDate, toDate);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAudits(java.lang.String, java.sql.Date, java.sql.Date)
 	 */
 	@Override
-	public List<ReplayAudit> getReplayAudits(String user, Date startDate, Date endDate) 
+	public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
+			String eventId, String user, Date startDate, Date endDate) 
 	{
-		return this.replayDao.getReplayAudits(user, startDate, endDate);
+		return this.replayDao.getReplayAudits(moduleNames, flowNames, eventId, user, startDate, endDate);
 	}
 
 	

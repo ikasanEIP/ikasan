@@ -612,7 +612,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     {
         Long numberOfResults = this.dao.getNumberOfMappingConfigurations(clientName, mappingConfigurationType, sourceContextName, targetContextName);
 
-        logger.info("Number of results returned = " + numberOfResults);
+        logger.debug("Number of results returned = " + numberOfResults);
 
         if(numberOfResults > 0)
         {

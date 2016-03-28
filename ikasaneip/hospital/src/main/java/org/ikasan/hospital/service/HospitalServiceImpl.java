@@ -141,7 +141,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 			
 		Object deserialisedEvent = serialiser.deserialise(event);
 		
-		logger.info("deserialisedEvent " + deserialisedEvent);
+		logger.debug("deserialisedEvent " + deserialisedEvent);
 		
 		resubmissionService.submit(deserialisedEvent);
 		

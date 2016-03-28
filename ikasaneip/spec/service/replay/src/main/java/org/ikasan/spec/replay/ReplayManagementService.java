@@ -10,22 +10,25 @@ public interface ReplayManagementService<EVENT, AUDIT>
 	 *  
 	 * @param moduleNames
 	 * @param flowNames
-	 * @param payloadContent
 	 * @param eventId
 	 * @param fromDate
 	 * @param toDate
 	 * @return
 	 */
 	public List<EVENT> getReplayEvents(List<String> moduleNames, List<String> flowNames,
-			String payloadContent, String eventId, Date fromDate, Date toDate);
+			String eventId, Date fromDate, Date toDate);
 	
 	/**
-     * Get a list of audits depending upon search criteria.
-     * 
+     *  Get a list of ReplayAudit depending upon search criteria.
+     *  
+     * @param moduleNames
+     * @param flowNames
+     * @param eventId
      * @param user
      * @param startDate
      * @param endDate
      * @return
      */
-    public List<AUDIT> getReplayAudits(String user, Date startDate, Date endDate);
+    public List<AUDIT> getReplayAudits(List<String> moduleNames, List<String> flowNames,
+			String eventId, String user, Date startDate, Date endDate);
 }

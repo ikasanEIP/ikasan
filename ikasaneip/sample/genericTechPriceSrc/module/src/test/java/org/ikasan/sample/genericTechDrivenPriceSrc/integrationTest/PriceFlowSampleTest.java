@@ -71,6 +71,7 @@ import org.ikasan.platform.IkasanEIPTest;
         "/substitute-components.xml",
         "/ikasan-transaction-conf.xml",
         "/module-conf.xml",
+        "/replay-service-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-conf.xml"
         })

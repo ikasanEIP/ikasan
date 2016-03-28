@@ -89,10 +89,10 @@ public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<St
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void record(FlowEvent<String,?> event, String moduleName, String flowName) 
+	public void record(FlowEvent<String,?> event, String moduleName, String flowName, int timeToLiveDays) 
 	{
         byte[] bytes = (byte[])this.serialiserFactory.getDefaultSerialiser().serialise(event.getPayload());
-        ReplayEvent replayEvent = new ReplayEvent(event.getIdentifier(), bytes, moduleName, flowName);
+        ReplayEvent replayEvent = new ReplayEvent(event.getIdentifier(), bytes, moduleName, flowName, timeToLiveDays);
         
         this.replayDao.saveOrUpdate(replayEvent);
 	}
