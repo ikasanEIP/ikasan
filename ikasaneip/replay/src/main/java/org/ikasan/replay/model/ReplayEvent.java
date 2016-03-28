@@ -40,6 +40,7 @@
  */
 package org.ikasan.replay.model;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -54,7 +55,8 @@ public class ReplayEvent
     private String flowName;
 	private String eventId;
     private byte[] event;
-    private long timestamp;	
+    private long timestamp;
+    private long expiry;
 	
 	/**
 	 * Default constructor for Hibernate
@@ -74,7 +76,7 @@ public class ReplayEvent
 	 * @param state
 	 * @param timestamp
 	 */
-	public ReplayEvent(String eventId, byte[] event, String moduleName, String flowName)
+	public ReplayEvent(String eventId, byte[] event, String moduleName, String flowName, int timeToLiveDays)
 	{
 		super();
 
@@ -83,6 +85,7 @@ public class ReplayEvent
 		this.moduleName = moduleName;
 		this.flowName = flowName;
 		this.timestamp = new Date().getTime();
+		this.expiry = new Date().getTime() + (timeToLiveDays * 60 * 60 * 24 * 1000);
 	}
 
 	/**
@@ -169,16 +172,83 @@ public class ReplayEvent
 	/**
 	 * @return the eventId
 	 */
-	public String getEventId() {
+	public String getEventId() 
+	{
 		return eventId;
 	}
 
 	/**
 	 * @param eventId the eventId to set
 	 */
-	public void setEventId(String eventId) {
+	public void setEventId(String eventId)
+	{
 		this.eventId = eventId;
 	}
 
+	/**
+	 * @return the expiry
+	 */
+	public long getExpiry()
+	{
+		return expiry;
+	}
+
+	/**
+	 * @param expiry the expiry to set
+	 */
+	public void setExpiry(long expiry) 
+	{
+		this.expiry = expiry;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() 
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((eventId == null) ? 0 : eventId.hashCode());
+		result = prime * result
+				+ ((flowName == null) ? 0 : flowName.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((moduleName == null) ? 0 : moduleName.hashCode());
+		result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) 
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReplayEvent other = (ReplayEvent) obj;
+		if (!id.equals(other.id))
+			return false;
+		
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() 
+	{
+		return "ReplayEvent [id=" + id + ", moduleName=" + moduleName
+				+ ", flowName=" + flowName + ", eventId=" + eventId
+				+ ", event=" + Arrays.toString(event) + ", timestamp="
+				+ timestamp + "]";
+	}
 	
 }

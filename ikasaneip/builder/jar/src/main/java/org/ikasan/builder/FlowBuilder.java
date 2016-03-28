@@ -317,9 +317,11 @@ public class FlowBuilder
     /**
 	 * @param replayRecordService the replayRecordService to set
 	 */
-	public void setReplayRecordService(ReplayRecordService replayRecordService) 
+	public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService) 
 	{
 		this.replayRecordService = replayRecordService;
+		
+		return this;
 	}
 
 	/**
@@ -392,7 +394,8 @@ public class FlowBuilder
                 throw new IllegalArgumentException("flowBuilder cannot be 'null'");
             }
             
-            this.flowElements.add(new FlowElementImpl(name, consumer, new ConsumerFlowElementInvoker(replayRecordService)));
+            ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
+            this.flowElements.add(new FlowElementImpl(name, consumer, invoker));
         }
 
 		public FlowConfigurationBuilder broker(String name, Broker broker) 
@@ -874,12 +877,12 @@ public class FlowBuilder
                     recoveryManager.setResolver(exceptionResolver);
                 }
 
-                FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService, resubmissionService);
+                FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService, resubmissionService, replayRecordService);
 
                 ExclusionFlowConfiguration exclusionFlowConfiguration = null;
                 if(exclusionFlowHeadElement != null)
                 {
-                    exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService);
+                    exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService, replayRecordService);
                 }
 
                 Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);

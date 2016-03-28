@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,33 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.dashboard.ui.replay.window;
 
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
+import org.ikasan.replay.model.ReplayAudit;
 
+import com.vaadin.ui.Window;
 
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT, AUDIT_EVENT>
+public class ReplayAuditViewWindow extends Window
 {
-	/**
-	 * Add a replay listener.
-	 * 
-	 * @param listener
-	 */
-	public void addReplayListener(ReplayListener<AUDIT_EVENT> listener);
+	private Logger logger = Logger.getLogger(ReplayAuditViewWindow.class);
 
-    /**
-     * Entry point for replay of a list of events.
-     * 
-     * @param targetServer
-     * @param events
-     * @param authUser
-     * @param authPassword
-     * @param user
-     */
-    public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
+	private static final long serialVersionUID = -3347325521531925322L;
+	
+	private ReplayAudit replayAudit;
+	
+
+	/**
+	 * @param policy
+	 */
+	public ReplayAuditViewWindow(ReplayAudit replayAudit)
+	{
+		super();
+		this.replayAudit = replayAudit;
+		
+		this.init();
+	}
+
+
+	public void init()
+	{
+		this.setModal(true);
+		this.setResizable(false);
+		this.setHeight("90%");
+		this.setWidth("90%");
+		
+		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(this.replayAudit);		
+		
+		this.setContent(panel);
+	}
+
 }

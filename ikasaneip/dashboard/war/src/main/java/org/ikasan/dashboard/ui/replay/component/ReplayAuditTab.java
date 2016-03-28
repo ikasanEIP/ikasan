@@ -57,9 +57,11 @@ import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.replay.window.ReplayAuditViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayManagementService;
@@ -110,14 +112,14 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private ReplayManagementService<ReplayEvent, ReplayAudit>  replayManagementService;
 	
-	private ReplayService<ReplayEvent>  replayService;
+	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
 	
 
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	
 	private TextField eventId;
-	private TextField payloadContent;
+	private TextField user;
 	
 	
 	private float splitPosition;
@@ -131,7 +133,7 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent> replayService,
+	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
 			PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
@@ -145,12 +147,11 @@ public class ReplayAuditTab extends TopologyTab
 	{			
 		IndexedContainer cont = new IndexedContainer();
 
-		cont.addContainerProperty("Module Name", String.class,  null);
-		cont.addContainerProperty("Flow Name", String.class,  null);
-		cont.addContainerProperty("Event Id / Payload Id", String.class,  null);
+		cont.addContainerProperty("User", String.class,  null);
+		cont.addContainerProperty("Reason", String.class,  null);
+		cont.addContainerProperty("# Events Replayed", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
-		cont.addContainerProperty("", CheckBox.class,  null);
-		cont.addContainerProperty(" ", Button.class,  null);
+		cont.addContainerProperty("", Button.class,  null);
 		
         return cont;
     }
@@ -163,10 +164,9 @@ public class ReplayAuditTab extends TopologyTab
 		this.replayEventsTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.replayEventsTable.addStyleName("ikasan");
 		
-		this.replayEventsTable.setColumnExpandRatio("Module Name", .14f);
-		this.replayEventsTable.setColumnExpandRatio("Flow Name", .18f);
-		this.replayEventsTable.setColumnExpandRatio("Component Name", .2f);
-		this.replayEventsTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
+		this.replayEventsTable.setColumnExpandRatio("User", .14f);
+		this.replayEventsTable.setColumnExpandRatio("Reason", .18f);
+		this.replayEventsTable.setColumnExpandRatio("# Events Replayed", .2f);
 		this.replayEventsTable.setColumnExpandRatio("Timestamp", .1f);
 		this.replayEventsTable.setColumnExpandRatio("", .05f);
 		
@@ -182,10 +182,10 @@ public class ReplayAuditTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-			    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
-			    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
+		    		ReplayAudit replayAudit = (ReplayAudit)itemClickEvent.getItemId();
+		    		ReplayAuditViewWindow replayAuditViewWindow = new ReplayAuditViewWindow(replayAudit);
 			    
-			    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+			    	UI.getCurrent().addWindow(replayAuditViewWindow);
 		    	}
 		    }
 		});
@@ -223,11 +223,10 @@ public class ReplayAuditTab extends TopologyTab
                 	}
             	}
 
-            	List<ReplayEvent> replayEvents = replayManagementService
-            			.getReplayEvents(moduleNames, flowNames, payloadContent.getValue(), eventId.getValue(),
-            					fromDate.getValue(), toDate.getValue());
+            	List<ReplayAudit> replayAudits = replayManagementService
+            			.getReplayAudits(moduleNames, flowNames, eventId.getValue(), user.getValue(), fromDate.getValue(), toDate.getValue());
             	
-            	if(replayEvents == null || replayEvents.size() == 0)
+            	if(replayAudits == null || replayAudits.size() == 0)
             	{
             		Notification.show("The replay event search returned no results!", Type.ERROR_MESSAGE);
             		
@@ -239,9 +238,9 @@ public class ReplayAuditTab extends TopologyTab
             	}
             	
             	searchResultsSizeLayout.removeAllComponents();
-            	resultsLabel = new Label("Number of records returned: " + replayEvents.size() + " of " + replayEvents.size());
+            	resultsLabel = new Label("Number of records returned: " + replayAudits.size() + " of " + replayAudits.size());
             	
-            	if(replayEvents.size() > platformConfigurationService.getSearchResultSetSize())
+            	if(replayAudits.size() > platformConfigurationService.getSearchResultSetSize())
             	{
             		Notification notif = new Notification(
             			    "Warning",
@@ -258,24 +257,18 @@ public class ReplayAuditTab extends TopologyTab
 
             	searchResultsSizeLayout.addComponent(resultsLabel);
             	
-            	for(final ReplayEvent replayEvent: replayEvents)
+            	for(final ReplayAudit replayAudit: replayAudits)
             	{
-            		Date date = new Date(replayEvent.getTimestamp());
+            		Date date = new Date(replayAudit.getTimestamp());
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(date);
             	    
-            	    Item item = tableContainer.addItem(replayEvent);			            	    
+            	    Item item = tableContainer.addItem(replayAudit);			            	    
             	    
-            	    item.getItemProperty("Module Name").setValue(replayEvent.getModuleName());
-        			item.getItemProperty("Flow Name").setValue(replayEvent.getFlowName());
-        			item.getItemProperty("Event Id / Payload Id").setValue(replayEvent.getEventId());
+            	    item.getItemProperty("User").setValue(replayAudit.getUser());
+        			item.getItemProperty("Reason").setValue(replayAudit.getReplayReason());
+        			item.getItemProperty("# Events Replayed").setValue(Integer.toString(replayAudit.getReplayAuditEvents().size()));
         			item.getItemProperty("Timestamp").setValue(timestamp);
-        			
-        			CheckBox cb = new CheckBox();
-        			cb.setImmediate(true);
-        			cb.setDescription("Select in order to add to bulk download.");
-        			
-        			item.getItemProperty("").setValue(cb);
         			
         			Button popupButton = new Button();
         			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -291,11 +284,11 @@ public class ReplayAuditTab extends TopologyTab
         	    	{
         	            public void buttonClick(ClickEvent event) 
         	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvent", (ReplayEvent)replayEvent);
+        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayAudit", (ReplayAudit)replayAudit);
         	            }
         	        });
         	        
-        	        item.getItemProperty(" ").setValue(popupButton);
+        	        item.getItemProperty("").setValue(popupButton);
             	}
             }
         });
@@ -341,14 +334,14 @@ public class ReplayAuditTab extends TopologyTab
 		
 		this.eventId = new TextField("Event Id");
 		this.eventId.setWidth("80%");
-		this.payloadContent = new TextField("Payload Content");
-		this.payloadContent.setWidth("80%");
+		this.user = new TextField("User");
+		this.user.setWidth("80%");
 		
 		this.eventId.setNullSettingAllowed(true);
-		this.payloadContent.setNullSettingAllowed(true);
+		this.user.setNullSettingAllowed(true);
 		
 		dateSelectLayout.addComponent(this.eventId, 1, 0);
-		dateSelectLayout.addComponent(this.payloadContent, 1, 1);
+		dateSelectLayout.addComponent(this.user, 1, 1);
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
@@ -443,88 +436,11 @@ public class ReplayAuditTab extends TopologyTab
 		GridLayout buttons = new GridLayout(3, 1);
 		buttons.setWidth("80px");
 		
-		final Button selectAllButton = new Button();
-		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
-		selectAllButton.setImmediate(true);
-		selectAllButton.setDescription("Select / deselect all records below.");
-		
-		selectAllButton.addClickListener(new Button.ClickListener() 
-        {
-            public void buttonClick(ClickEvent event) 
-            {	
-            	Collection<WiretapEvent<String>> items = (Collection<WiretapEvent<String>>)tableContainer.getItemIds();
-            	
-            	Resource r = selectAllButton.getIcon();
-            	
-            	if(r.equals(VaadinIcons.CHECK_SQUARE_O))
-            	{
-            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
-            		
-            		for(WiretapEvent<String> eo: items)
-                	{
-                		Item item = tableContainer.getItem(eo);
-                		
-                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-                		
-                		cb.setValue(true);
-                	}
-            	}
-            	else
-            	{
-            		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
-            		
-            		for(WiretapEvent<String> eo: items)
-                	{
-                		Item item = tableContainer.getItem(eo);
-                		
-                		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-                		
-                		cb.setValue(false);
-                	}
-            	}
-            }
-        });
-		
-		final Button replayButton = new Button();
-		replayButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		replayButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		replayButton.setIcon(VaadinIcons.RECYCLE);
-		replayButton.setImmediate(true);
-		replayButton.setDescription("Replay selected events.");
-		
-		BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayPopup.class);
-		popupOpener.setFeatures("height=600,width=900,resizable");
-        popupOpener.extend(replayButton);
-        
-        replayButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	 // todo add replay events            	 
-            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", new ArrayList<ReplayEvent>((Collection<ReplayEvent>) replayEventsTable.getItemIds()));
-         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
-         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
-            }
-        });
- 
-		Button downloadButton = new Button();
-		FileDownloader fd = new FileDownloader(this.getPayloadDownloadStream());
-        fd.extend(downloadButton);
-
-        downloadButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
-        downloadButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        downloadButton.setDescription("Download the payloads");
-        downloadButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
 		hl.addComponent(buttons);
 		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
-		
-		buttons.addComponent(replayButton);
-		buttons.addComponent(downloadButton);
 		
 		GridLayout gl = new GridLayout(2, 1);
 		gl.setWidth("100%");

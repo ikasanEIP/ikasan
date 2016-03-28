@@ -49,18 +49,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.ReplayPopup;
-import org.ikasan.dashboard.ui.WiretapPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
-import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.tepi.filtertable.FilterTable;
@@ -104,15 +104,13 @@ public class ReplayTab extends TopologyTab
 	
 	private ReplayManagementService<ReplayEvent, ReplayAudit>  replayManagementService;
 	
-	private ReplayService<ReplayEvent>  replayService;
+	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
 	
 
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	
-	private TextField eventId;
-	private TextField payloadContent;
-	
+	private TextField eventId;	
 	
 	private float splitPosition;
 	private Unit splitUnit;
@@ -125,7 +123,7 @@ public class ReplayTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent> replayService,
+	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
 			PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
@@ -176,10 +174,11 @@ public class ReplayTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-			    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
-			    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
+			    	ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
+			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
+			    			, replayService, platformConfigurationService);
 			    
-			    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+			    	UI.getCurrent().addWindow(replayEventViewWindow);
 		    	}
 		    }
 		});
@@ -218,7 +217,7 @@ public class ReplayTab extends TopologyTab
             	}
 
             	List<ReplayEvent> replayEvents = replayManagementService
-            			.getReplayEvents(moduleNames, flowNames, payloadContent.getValue(), eventId.getValue(),
+            			.getReplayEvents(moduleNames, flowNames, eventId.getValue(),
             					fromDate.getValue(), toDate.getValue());
             	
             	if(replayEvents == null || replayEvents.size() == 0)
@@ -277,7 +276,7 @@ public class ReplayTab extends TopologyTab
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
-        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayEventViewPopup.class);
         			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
@@ -335,15 +334,10 @@ public class ReplayTab extends TopologyTab
 		
 		this.eventId = new TextField("Event Id");
 		this.eventId.setWidth("80%");
-		this.payloadContent = new TextField("Payload Content");
-		this.payloadContent.setWidth("80%");
 		
 		this.eventId.setNullSettingAllowed(true);
-		this.payloadContent.setNullSettingAllowed(true);
 		
-		dateSelectLayout.addComponent(this.eventId, 1, 0);
-		dateSelectLayout.addComponent(this.payloadContent, 1, 1);
-				
+		dateSelectLayout.addComponent(this.eventId, 1, 0);				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
 		vSplitPanel.setHeight("95%");

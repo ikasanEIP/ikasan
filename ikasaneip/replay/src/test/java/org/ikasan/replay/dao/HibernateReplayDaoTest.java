@@ -44,9 +44,7 @@ import javax.annotation.Resource;
 
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -61,7 +59,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/replay-conf.xml",
+        "/replay-service-conf.xml",
         "/hsqldb-config.xml",
         "/substitute-components.xml",
         "/mock-components.xml"
@@ -77,26 +75,13 @@ public class HibernateReplayDaoTest
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	
-//	@Before
-//	public void setExpectations()
-//	{
-//		// expectations
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                // get each flow name
-//                one(ikasanSerialiserFactory).getDefaultSerialiser();
-//            }
-//        });
-//	}
-	
 	@Test
 	@DirtiesContext
 	public void testSaveReplayEvent_success()
 	{
-		ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName");
+		ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName", 30);
 		
-        
+      
 		this.replayDao.saveOrUpdate(replayEvent);
 	}
 }

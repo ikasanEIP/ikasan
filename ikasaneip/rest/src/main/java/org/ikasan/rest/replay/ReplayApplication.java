@@ -49,7 +49,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
-import org.ikasan.hospital.service.HospitalService;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
@@ -96,7 +95,7 @@ public class ReplayApplication extends IkasanRestApplication
 	 * @return
 	 */
 	@PUT
-	@Path("/eventReplay/{moduleName}/{flowName}/{errorUri}")
+	@Path("/eventReplay/{moduleName}/{flowName}")
 	@Consumes("application/octet-stream")	
 	public Response replay(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
 			byte[] event)

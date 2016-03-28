@@ -3,10 +3,9 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
-    
-    <!-- 1.2.0 table modifications -->
-	
-    <!-- 1.2.0 table alterations -->    
+    	
+    <!-- 1.2.0 table alterations -->   
+    <include file="db/alter/db-changeLog-alterFlowAddConfiguration.xml" relativeToChangelogFile="true" /> 
 	
     <!-- 1.2.0 table creation -->    
 	<include file="db/tables/db-changeLog-createFilter.xml" relativeToChangelogFile="true" />
@@ -20,6 +19,7 @@
 	<!-- 1.2.0 cardinality creation -->
 	<include file="db/cardinality/db-changeLog-createRoleFilterFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createFilterComponentFk.xml" relativeToChangelogFile="true" />
+	<include file="db/cardinality/db-changeLog-createReplayAuditEventFk.xml" relativeToChangelogFile="true" />
 	
 	<!-- 1.2.0 data creation -->
 	

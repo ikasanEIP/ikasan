@@ -8,6 +8,7 @@ public interface ReplayRecordService<EVENT>
 	 * @param event
 	 * @param moduleName
 	 * @param flowname
+	 * @param timeToLiveDays
 	 */
-	public void record(EVENT event, String moduleName, String flowname);
+	public void record(EVENT event, String moduleName, String flowname, int timeToLiveDays);
 }

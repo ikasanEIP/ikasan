@@ -45,13 +45,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.replay.model.ReplayEvent;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -59,10 +61,13 @@ import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -86,15 +91,23 @@ public class ReplayEventViewPanel extends Panel
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ReplayEvent replayEvent;
-	
+	private ReplayService replayService;
+	private PlatformConfigurationService platformConfigurationService;
 
 	/**
-	 * @param policy
+	 * Constructor
+	 *  
+	 * @param replayEvent
+	 * @param replayService
+	 * @param platformConfigurationService
 	 */
-	public ReplayEventViewPanel(ReplayEvent wiretapEvent)
+	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService replayService,
+			PlatformConfigurationService platformConfigurationService)
 	{
 		super();
-		this.replayEvent = wiretapEvent;
+		this.replayEvent = replayEvent;
+		this.replayService = replayService;
+		this.platformConfigurationService = platformConfigurationService;
 		
 		this.init();
 	}
@@ -108,19 +121,19 @@ public class ReplayEventViewPanel extends Panel
 		layout.setSizeFull();
 		layout.setMargin(true);
 		
-		layout.addComponent( createWiretapDetailsPanel());
+		layout.addComponent( createReplayEventDetailsPanel());
 		
 		
 		this.setContent(layout);
 	}
 
-	protected Panel createWiretapDetailsPanel()
+	protected Panel createReplayEventDetailsPanel()
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
 		errorOccurrenceDetailsPanel.setSizeFull();
 		errorOccurrenceDetailsPanel.setStyleName("dashboard");
 		
-		GridLayout layout = new GridLayout(2, 6);
+		GridLayout layout = new GridLayout(2, 7);
 		layout.setSizeFull();
 		layout.setSpacing(true);
 		layout.setColumnExpandRatio(0, 0.2f);
@@ -184,6 +197,28 @@ public class ReplayEventViewPanel extends Panel
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
+		
+		final Button replayButton = new Button("Replay");
+		
+		BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayPopup.class);
+		popupOpener.setFeatures("height=600,width=900,resizable");
+        popupOpener.extend(replayButton);
+        
+        replayButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	 ArrayList<ReplayEvent> replayEvents = new ArrayList<ReplayEvent>();  
+            	 replayEvents.add(replayEvent);
+            	
+            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", replayEvents);
+         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayService", replayService);
+         		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
+            }
+        });
+        
+        layout.addComponent(replayButton, 0, 6, 1, 6);
+		layout.setComponentAlignment(replayButton, Alignment.MIDDLE_CENTER);
 		
 		GridLayout wrapperLayout = new GridLayout(2, 4);
 		wrapperLayout.setWidth("100%");

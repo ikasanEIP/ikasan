@@ -342,13 +342,15 @@ public class TopologyServiceImpl implements TopologyService
 					Flow dbFlow = this.topologyDao.getFlowByServerIdModuleIdAndFlowname
 						(server.getId(), module.getId(), flow.getName());
 					
-					logger.info("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
+					logger.debug("Loading dbFlow using: serverId= " + server.getId() + " moduleId = " + module.getId()
 							+ " flow name = " + flow.getName());
-					logger.info("Loaded dbFlow: " + dbFlow);
+					logger.debug("Loaded dbFlow: " + dbFlow);
 					
 					if(dbFlow != null)
 					{
 						dbFlow.setOrder(flow.getOrder());
+						dbFlow.setConfigurable(flow.isConfigurable());
+						dbFlow.setConfigurationId(flow.getConfigurationId());
 						flow = dbFlow;
 					}
 					

@@ -69,11 +69,13 @@ import org.ikasan.dashboard.ui.replay.component.ReplayTab;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
+import org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -167,6 +169,10 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION };
+    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE };
     private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
@@ -202,15 +208,18 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
 	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
-	private ReplayService<ReplayEvent> replayService;
+	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
 	
+	private boolean initialised = false;
+	
+	private FlowConfigurationWindow flowConfigurationWindow;	
 	
 	
 	public ReplayViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService, 
 			 TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
 			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			 ReplayAudit> replayManagementService, ReplayService<ReplayEvent> replayService)
+			 ReplayAudit> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -267,8 +276,12 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("replayService cannot be null!");
 		}
-		
-		init();
+		this.flowConfigurationWindow = flowConfigurationWindow;
+		if(this.flowConfigurationWindow == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationWindow cannot be null!");
+		}
+
 	}
 
 	protected void init()
@@ -400,57 +413,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
  		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
  		layout.addComponent(roleManagementLabel, 0, 0);
  		
- 		List<Server> servers = ReplayViewPanel.this.topologyService.getAllServers();
-		
-		for(Server server: servers)
-		{
-			Set<Module> modules = server.getModules();
-			
-			ReplayViewPanel.this.moduleTree.addItem(server);
-			ReplayViewPanel.this.moduleTree.setItemCaption(server, server.getName());
-			ReplayViewPanel.this.moduleTree.setChildrenAllowed(server, true);
-			ReplayViewPanel.this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
-
-	        for(Module module: modules)
-	        {
-	        	ReplayViewPanel.this.moduleTree.addItem(module);
-	        	ReplayViewPanel.this.moduleTree.setItemCaption(module, module.getName());
-	        	ReplayViewPanel.this.moduleTree.setParent(module, server);
-	        	ReplayViewPanel.this.moduleTree.setChildrenAllowed(module, true);
-	        	ReplayViewPanel.this.moduleTree.setItemIcon(module, VaadinIcons.ARCHIVE);
-	            
-	            Set<Flow> flows = module.getFlows();
-	
-	            for(Flow flow: flows)
-	            {
-	            	ReplayViewPanel.this.moduleTree.addItem(flow);
-	            	ReplayViewPanel.this.moduleTree.setItemCaption(flow, flow.getName());
-	            	ReplayViewPanel.this.moduleTree.setParent(flow, module);
-	            	ReplayViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
-	                            	            	                	            	
-	            	ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
-	                
-	                Set<Component> components = flow.getComponents();
-	
-	                for(Component component: components)
-	                {
-	                	ReplayViewPanel.this.moduleTree.addItem(component);
-	                	ReplayViewPanel.this.moduleTree.setParent(component, flow);
-	                	ReplayViewPanel.this.moduleTree.setItemCaption(component, component.getName());
-	                	ReplayViewPanel.this.moduleTree.setChildrenAllowed(component, false);
-	                	
-	                	if(component.isConfigurable())
-	                	{
-	                		ReplayViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG);
-	                	}
-	                	else
-	                	{
-	                		ReplayViewPanel.this.moduleTree.setItemIcon(component, VaadinIcons.COG_O);
-	                	}
-	                }
-	            }
-	        }
-		}
+ 		this.refreshTree();
 		
 		layout.addComponent(this.moduleTree);
 
@@ -467,6 +430,12 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
+		if(!this.initialised)
+		{
+			init();
+			this.initialised = true;
+		}
+		
 		EventBus eventBus = ((IkasanUI)UI.getCurrent()).getEventBus();   
     	eventBus.register(this);
     	
@@ -475,15 +444,11 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	protected void refresh()
 	{
-		logger.debug("Start refresh!");
 		if(this.tabsheet == null)
 		{
-			logger.debug("createTabSheet!");
 			this.refreshTree();
 			this.createTabSheet();
 		}
-    	
-    	logger.debug("End refresh!");
 	}
 	
 	protected void refreshTree()
@@ -493,17 +458,17 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		logger.debug("authentication = " + authentication);
+		logger.debug("Authentication = " + authentication);
 		
 		if(authentication != null)
 		{
-			logger.debug("authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
-			logger.debug("authentication has topology authority " + authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY));
+			logger.debug("Authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
+			logger.debug("Authentication has topology authority " + authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY));
 		}
 		
 		List<Server> servers = this.topologyService.getAllServers();
 		
-		logger.debug("trying to load tree for " + servers.size());
+		logger.debug("Trying to load tree for " + servers.size());
 		
 		for(Server server: servers)
 		{	
@@ -533,7 +498,14 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
                     this.moduleTree.setParent(flow, module);
 	                this.moduleTree.setChildrenAllowed(flow, true);
 	    			
-	                ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+	                if(flow.isConfigurable())
+                	{
+	            		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+                	}
+                	else
+                	{
+                		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+                	}
 	                
 	                Set<Component> components = flow.getComponents();
 	                
@@ -612,9 +584,6 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	    return true;
 	}
 	
-
-	
-	
 	/* (non-Javadoc)
 	 * @see com.vaadin.event.Action.Handler#getActions(java.lang.Object, java.lang.Object)
 	 */
@@ -634,7 +603,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		
 		if(authentication != null)
 		{
-			logger.debug("authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
+			logger.debug("Authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
 		}
 
 		if(target instanceof Server)
@@ -656,25 +625,49 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 			Flow flow = ((Flow)target);
 			
 			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
-			if(state != null && state.equals(RUNNING))
+			if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 			{
-				return this.flowActionsStarted;
-			}
-			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-			{
-				return this.flowActionsStarted;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsStartedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsStarted;
+				}
 			}
 			else if (state != null &&(state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR)))
 			{
-				return this.flowActionsStopped;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsStoppedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsStopped;
+				}
 			}
 			else if (state != null && state.equals(PAUSED))
 			{
-				return this.flowActionsPaused;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsPausedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsPaused;
+				}
 			}
 			else
 			{
-				return this.flowActions;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsConfigurable;
+				}
+				else
+				{
+					return this.flowActions;
+				}
 			}
         }
 		else if(target instanceof Component)
@@ -727,12 +720,12 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
         		this.componentConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.componentConfigurationWindow);
         	}
-        	if(action.equals(WIRETAP))
+        	else if(action.equals(WIRETAP))
         	{
         		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target
         			, triggerManagementService));
         	}
-        	if(action.equals(ERROR_CATEGORISATION))
+        	else if(action.equals(ERROR_CATEGORISATION))
         	{
         		Component component = (Component)target;
         		
@@ -744,40 +737,30 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
         {
         	Flow flow = ((Flow)target);
         	
-	        if(action.equals(START))
+        	if(action.equals(CONFIGURE))
+        	{
+        		this.flowConfigurationWindow.populate(flow);
+        		UI.getCurrent().addWindow(this.flowConfigurationWindow);
+        	}
+        	else if(action.equals(START))
 	        {
-	     		if(this.actionFlow(flow, "start"))
-	     		{
-	     			ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
-	     		}
+        		this.actionFlow(flow, "start");
 	        }
 	        else if(action.equals(STOP))
 	        {
-	        	if(this.actionFlow(flow, "stop"))
-	        	{
-	        		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
-	        	}
+	        	this.actionFlow(flow, "stop");
 	        }
 	        else if(action.equals(PAUSE))
 	        {
-	        	if(this.actionFlow(flow, "pause"))
-	        	{
-	        		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
-	        	}
+	        	this.actionFlow(flow, "pause");
 	        }
 	        else if(action.equals(RESUME))
 	        {
-	        	if(this.actionFlow(flow, "resume"))
-	        	{
-	        		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
-	        	}
+	        	this.actionFlow(flow, "resume");
 	        }
 	        else if(action.equals(START_PAUSE))
-	        {       	
-	        	if(this.actionFlow(flow, "startPause"))
-	        	{
-	        		ReplayViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
-	        	}
+	        {   
+	        	this.actionFlow(flow, "startPause");
 	        }
 	        else if(action.equals(STARTUP_CONTROL))
 	        {       	

@@ -71,6 +71,9 @@
             <column defaultValueNumeric="0" name="Timestamp" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
+            <column defaultValueNumeric="0" name="Expiry" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
 
         </createTable>
         

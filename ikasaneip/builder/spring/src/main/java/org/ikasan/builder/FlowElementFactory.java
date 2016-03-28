@@ -46,8 +46,19 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.DefaultReplicationFactory;
-import org.ikasan.flow.visitorPattern.*;
-import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConcurrentSplitterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.FilterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration;
+import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.SequencerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.SingleRecipientRouterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.SplitterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -88,10 +99,10 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     /** flow element single transition */
     FlowElement<?> transition;
     
-    /** identifier if the cmoponent supported ConfiguredResource */
+    /** identifier if the component supported ConfiguredResource */
     String configuredResourceId;
     
-    /** identifier if the cmoponent supported ConfiguredResource */
+    /** The configuration */
     CONFIGURATION configuration;
 
     /** allow FE's to have their invoker behaviour configured */
@@ -102,9 +113,6 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
     /** allow override of executor service */
     ExecutorService executorService;
-    
-    /** the replayRecordService **/
-    ReplayRecordService replayRecordService;
 
     /**
      * Setter for executor service override
@@ -186,14 +194,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     {
         this.configuration = configuration;
     }
-    
-    /**
-	 * @param replayRecordService the replayRecordService to set
-	 */
-	public void setReplayRecordService(ReplayRecordService replayRecordService) 
-	{
-		this.replayRecordService = replayRecordService;
-	}
+
 
     /*
      * (non-Javadoc)
@@ -259,7 +260,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     {
         if(component instanceof Consumer)
         {
-            return new ConsumerFlowElementInvoker(this.replayRecordService);
+            return new ConsumerFlowElementInvoker();
         }
         else if(component instanceof Translator)
         {

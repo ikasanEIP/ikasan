@@ -81,5 +81,10 @@
 				  type="long" 
 				  not-null="true"/>
 		
+		<property name="expiry" 
+				  column="Expiry" 
+				  type="long" 
+				  not-null="true"/>
+		
 	</class>
 </hibernate-mapping>

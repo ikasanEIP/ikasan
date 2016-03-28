@@ -48,6 +48,7 @@ import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedService;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
@@ -73,6 +74,7 @@ public interface FlowConfiguration
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
     public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
     public ResubmissionService getResubmissionService();
+    public ReplayRecordService getReplayRecordService();
 
     /**
      * Provision for the configuration of anything passed as a configuredResource

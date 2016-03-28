@@ -43,6 +43,7 @@ package org.ikasan.replay.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -64,7 +65,8 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ReplayAudit> getReplayAudits(String user, Date startDate, Date endDate) 
+	public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
+			String eventId, String user, Date startDate, Date endDate) 
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAudit.class);
 		
@@ -82,8 +84,35 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		{
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
+				
+		if((moduleNames != null && moduleNames.size() > 0) ||
+				(flowNames != null && flowNames.size() > 0) ||
+				(eventId != null && eventId.length() > 0))
+		{
+			DetachedCriteria nestedCriteria = criteria.createCriteria("replayAuditEvents").createCriteria("replayEvent");
+			
+			if(moduleNames != null && moduleNames.size() > 0)
+			{
+				nestedCriteria
+					.add(Restrictions.in("moduleName", moduleNames));
+			}
+			
+			if(flowNames != null && flowNames.size() > 0)
+			{
+				nestedCriteria
+					.add(Restrictions.in("flowName", flowNames));
+			}
+			
+			if (eventId != null && eventId.length() > 0)
+		    {
+				nestedCriteria
+					.add(Restrictions.eq("eventId", eventId));
+		    }
+		}	
 		
 		criteria.addOrder(Order.asc("timestamp"));	
+		
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		return (List<ReplayAudit>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
@@ -138,7 +167,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	 */
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
-			List<String> flowNames, String payloadContent, String eventId,
+			List<String> flowNames, String eventId,
 			Date fromDate, Date toDate) 
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayEvent.class);
@@ -150,7 +179,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		
 		if(flowNames != null && flowNames.size() > 0)
 		{
-			criteria.add(Restrictions.eq("flowName", flowNames));
+			criteria.add(Restrictions.in("flowName", flowNames));
 		}
 		
 		if(fromDate != null)
@@ -160,18 +189,14 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		
 		if(toDate != null)
 		{
-			criteria.add(Restrictions.lt("timestamp", fromDate.getTime()));
+			criteria.add(Restrictions.lt("timestamp", toDate.getTime()));
 		}
 		
-		 if (eventId != null && eventId.length() > 0)
-         {
-             criteria.add(Restrictions.eq("eventId", eventId));
-         }
+		if (eventId != null && eventId.length() > 0)
+	    {
+	       criteria.add(Restrictions.eq("eventId", eventId));
+	    }
 		 
-         if (payloadContent != null && payloadContent.length() > 0)
-         {
-             criteria.add(Restrictions.like("event", payloadContent, MatchMode.ANYWHERE));
-         }
 		
 		criteria.addOrder(Order.asc("timestamp"));	
 		
