@@ -51,8 +51,6 @@
         <constructor-arg ref="errorReportingManagementService"/>
         <constructor-arg ref="platformConfigurationService"/>
         <constructor-arg ref="securityService"/>
-        <constructor-arg ref="replayManagementService"/>
-        <constructor-arg ref="replayService"/>
         <constructor-arg ref="hospitalService"/>
         <constructor-arg ref="flowConfigurationWindow"/>
     </bean>

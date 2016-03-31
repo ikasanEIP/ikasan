@@ -69,7 +69,6 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
-import org.ikasan.dashboard.ui.replay.component.ReplayTab;
 import org.ikasan.dashboard.ui.topology.component.ActionedErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
 import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
@@ -93,9 +92,6 @@ import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.hospital.service.HospitalService;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -103,8 +99,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.module.StartupControlService;
-import org.ikasan.spec.replay.ReplayManagementService;
-import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -273,8 +267,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
-	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
+//	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
+//	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
 	
 	
 	
@@ -283,8 +277,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService
-			 , ReplayService<ReplayEvent, ReplayAuditEvent> replayService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow)
+			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -360,16 +353,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.securityService == null)
 		{
 			throw new IllegalArgumentException("securityService cannot be null!");
-		}
-		this.replayManagementService = replayManagementService;
-		if(this.replayManagementService == null)
-		{
-			throw new IllegalArgumentException("replayManagementService cannot be null!");
-		}
-		this.replayService = replayService;
-		if(this.securityService == null)
-		{
-			throw new IllegalArgumentException("replayService cannot be null!");
 		}
 		this.flowConfigurationWindow = flowConfigurationWindow;
 		if(this.flowConfigurationWindow == null)
@@ -557,19 +540,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		
     	}
     	
-    	if(authentication != null 
-    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_REPLAY_AUTHORITY)))
-    	{
-    		
-    		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService, 
-    				this.platformConfigurationService);
-
-    		replayTab.createLayout();
-			
-    		tabsheet.addTab(replayTab, "Replay");
-    		
-    	}
     	
     	tabsheet.addSelectedTabChangeListener(new SelectedTabChangeListener() 
     	{

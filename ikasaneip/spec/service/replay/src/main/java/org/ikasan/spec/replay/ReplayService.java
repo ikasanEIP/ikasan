@@ -67,4 +67,16 @@ public interface ReplayService<EVENT, AUDIT_EVENT>
      * @param user
      */
     public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
+    
+    /**
+     * Method to cancel the replay.
+     */
+    public void cancel();
+
+    /**
+     * Has the replay been cancelled?
+     * 
+     * @return
+     */
+    public boolean isCancelled();
 }

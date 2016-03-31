@@ -65,6 +65,11 @@
                   type="java.lang.String"
                   column="Reason"
                   not-null="true" />
+                  
+        <property name="targetServer"
+                  type="java.lang.String"
+                  column="TargetServer"
+                  not-null="true" />
 		          
 		<set name="replayAuditEvents" cascade="none" lazy="false" inverse="true" fetch="select" order-by="timestamp desc">
          	<key column="ReplayAuditId"/>

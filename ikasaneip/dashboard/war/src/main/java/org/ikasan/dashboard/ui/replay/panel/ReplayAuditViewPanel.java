@@ -41,23 +41,13 @@
 package org.ikasan.dashboard.ui.replay.panel;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.replay.window.ReplayAuditViewWindow;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.replay.ReplayListener;
-import org.ikasan.spec.replay.ReplayService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -65,19 +55,15 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -173,10 +159,23 @@ public class ReplayAuditViewPanel extends Panel
 		userTf.setValue(this.replayAudit.getUser());
 		userTf.setReadOnly(true);
 		
+		Label targetServerLabel = new Label("Target Server:");
+		targetServerLabel.setSizeUndefined();
+		
+		formLayout.addComponent(targetServerLabel, 0, 3);
+		formLayout.setComponentAlignment(targetServerLabel, Alignment.MIDDLE_RIGHT);
+		
+		TextField targetServerTf = new TextField();
+		
+		targetServerTf.setWidth("80%");
+		formLayout.addComponent(targetServerTf, 1, 3);
+		targetServerTf.setValue(this.replayAudit.getTargetServer());
+		targetServerTf.setReadOnly(true);
+		
 		Label commentLabel = new Label("Comment:");
 		commentLabel.setSizeUndefined();
 		
-		formLayout.addComponent(commentLabel, 0, 3);
+		formLayout.addComponent(commentLabel, 0, 4);
 		formLayout.setComponentAlignment(commentLabel, Alignment.TOP_RIGHT);
 		
 		comments = new TextArea();
@@ -185,7 +184,7 @@ public class ReplayAuditViewPanel extends Panel
 		comments.setValue(this.replayAudit.getReplayReason());
 		comments.setReadOnly(true);
 		
-		formLayout.addComponent(comments, 1, 3);
+		formLayout.addComponent(comments, 1, 4);
 			
 		this.replayAuditTable = new FilterTable();
 		this.replayAuditTable.setFilterBarVisible(true);
@@ -213,10 +212,7 @@ public class ReplayAuditViewPanel extends Panel
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-//		    		ReplayAudit replayAudit = (ReplayAudit)itemClickEvent.getItemId();
-//		    		ReplayAuditViewWindow replayAuditViewWindow = new ReplayAuditViewWindow(replayAudit);
-//			    
-//			    	UI.getCurrent().addWindow(replayAuditViewWindow);
+
 		    	}
 		    }
 		});

@@ -64,6 +64,7 @@ import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ItemClickEvent;
@@ -170,6 +171,14 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		formLayout.addComponent(wiretapDetailsLabel);
 		
 		
+		this.bar.setWidth("40%");	
+		this.bar.setImmediate(true);
+		this.bar.setIndeterminate(true);
+		this.bar.setVisible(false);
+		
+		formLayout.addComponent(bar);
+		formLayout.setComponentAlignment(bar, Alignment.MIDDLE_LEFT);
+		
 		Label moduleCountLabel = new Label("Number of events to replay:");
 		moduleCountLabel.setSizeUndefined();
 		
@@ -201,6 +210,9 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		this.initialiseTargetServerCombo();
 		
 		this.targetServerComboBox.setWidth("80%");
+		this.targetServerComboBox.setRequired(true);
+		this.targetServerComboBox.setRequiredError("A target server is required!");
+		targetServerComboBox.setValidationVisible(false);
 		formLayout.addComponent(this.targetServerComboBox, 1, 2);
 		
 		Label commentLabel = new Label("Comment:");
@@ -221,10 +233,24 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		
 		formLayout.addComponent(comments, 1, 3);
 		
-		Button replayButton = new Button("Replay");
+		GridLayout buttonsLayout = new GridLayout(2, 1);
+		
+		final Button replayButton = new Button("Replay");
 		replayButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		replayButton.setImmediate(true);
 		replayButton.setDescription("Replay events.");
+		
+		final Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		cancelButton.setImmediate(true);
+		cancelButton.setDescription("Cancel replay action!");
+		cancelButton.setVisible(false);
+		
+		buttonsLayout.addComponent(replayButton);
+		buttonsLayout.addComponent(cancelButton);
+		
+		final ExecutorService executorService = Executors
+    			.newSingleThreadExecutor();
 		
 		replayButton.addClickListener(new Button.ClickListener() 
         {
@@ -234,18 +260,19 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
             	try 
             	{
             		comments.validate();
+            		targetServerComboBox.validate();
                 } 
                 catch (Exception e) 
                 {
-                	comments.setValidationVisible(true);                	
+                	comments.setValidationVisible(true);       
+                	targetServerComboBox.setValidationVisible(true);
                 	comments.markAsDirty();
                     return;
                 }
                 
             	bar.setVisible(true);
-            	
-            	ExecutorService executorService = Executors
-            			.newSingleThreadExecutor();
+            	replayButton.setVisible(false);
+            	cancelButton.setVisible(true);
             	
             	try
             	{
@@ -264,7 +291,10 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		            		{
 		            			bar.setVisible(false);
 		    					
-		    					Notification.show("Event replay complete.");
+		            			if(!replayService.isCancelled())
+		            			{
+		            				Notification.show("Event replay complete.");
+		            			}
 		        				
 		            		} 
 		            		finally 
@@ -283,16 +313,25 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
             }
         });
 		
-		formLayout.addComponent(replayButton, 0, 4, 1, 4);
-		formLayout.setComponentAlignment(replayButton, Alignment.MIDDLE_CENTER);
+		cancelButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	replayService.cancel();
+            	
+            	executorService.shutdown();
+            	
+            	bar.setVisible(false);
+            	cancelButton.setVisible(false);
+				
+				Notification.show("Replay cancelled!");
+            }
+        });
+            
 		
-		this.bar.setWidth("40%");	
-		this.bar.setImmediate(true);
-		this.bar.setIndeterminate(true);
-		this.bar.setVisible(false);
+		formLayout.addComponent(buttonsLayout, 0, 4, 1, 4);
+		formLayout.setComponentAlignment(buttonsLayout, Alignment.MIDDLE_CENTER);
 		
-		formLayout.addComponent(bar, 0, 5, 1, 5);
-		formLayout.setComponentAlignment(bar, Alignment.MIDDLE_CENTER);
 		
 		this.replayEventsTable = new FilterTable();
 		this.replayEventsTable.setFilterBarVisible(true);
@@ -421,16 +460,29 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
         		{
         			Item item = tableContainer.getItem(auditEvent.getReplayEvent());
         			
-        			if(auditEvent.isSuccess())
+        			if(item != null)
         			{
-        				item.getItemProperty(" ").setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
+	        			if(auditEvent.isSuccess())
+	        			{
+	        				Property property = item.getItemProperty(" ");
+	        				
+	        				if(property != null)
+	        				{
+	        					property.setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
+	        				}
+	        			}
+	        			else
+	        			{
+	        				Property property = item.getItemProperty(" ");
+	        				
+	        				if(property != null)
+	        				{
+	        					property.setValue(new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML));
+	        				}
+	        			}
+	        			
+	        			item.getItemProperty("Message").setValue(auditEvent.getResultMessage());     	
         			}
-        			else
-        			{
-        				item.getItemProperty(" ").setValue(new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML));
-        			}
-        			
-        			item.getItemProperty("Message").setValue(auditEvent.getResultMessage());     				
         		} 
         		finally 
         		{

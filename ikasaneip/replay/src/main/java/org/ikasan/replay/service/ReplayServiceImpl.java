@@ -27,6 +27,8 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	private Logger logger = Logger.getLogger(ReplayService.class);
 	
 	private ReplayDao replayDao;
+	
+	private boolean cancel = false;
     
     private List<ReplayListener<ReplayAuditEvent>> replayListeners 
     	= new ArrayList<ReplayListener<ReplayAuditEvent>>();
@@ -52,6 +54,8 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	public void replay(String targetServer, List<ReplayEvent> events,
 			String authUser, String authPassword, String user, String replayReason) 
 	{
+		cancel = false;
+		
 		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authUser, authPassword);
     	
     	ClientConfig clientConfig = new ClientConfig();
@@ -66,6 +70,12 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     	
     	for(ReplayEvent event: events)
     	{
+    		if(cancel == true)
+    		{
+    			// stop processing if cancel is true
+    			return;
+    		}
+
     		if(!targetServer.endsWith("/"))
     		{
     			targetServer += "/";
@@ -92,7 +102,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     	    }
 		    
 		    ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
-		    		response.getStatus() + " " +  response.readEntity(String.class), System.currentTimeMillis());
+		    		response.readEntity(String.class), System.currentTimeMillis());
 		    
 		    logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
 		    
@@ -114,6 +124,28 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	public void addReplayListener(ReplayListener<ReplayAuditEvent> listener) 
 	{
 		this.replayListeners.add(listener);
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayService#cancel()
+	 */
+	@Override
+	public void cancel() 
+	{
+		cancel = true;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayService#isCancelled()
+	 */
+	@Override
+	public boolean isCancelled() 
+	{
+		return cancel;
 	}
 
 }
