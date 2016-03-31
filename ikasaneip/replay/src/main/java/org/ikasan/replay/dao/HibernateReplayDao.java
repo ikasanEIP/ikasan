@@ -110,7 +110,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		    }
 		}	
 		
-		criteria.addOrder(Order.asc("timestamp"));	
+		criteria.addOrder(Order.desc("timestamp"));	
 		
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -155,7 +155,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
 		
-		criteria.addOrder(Order.asc("timestamp"));	
+		criteria.addOrder(Order.desc("timestamp"));	
 		
 		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
@@ -198,7 +198,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	    }
 		 
 		
-		criteria.addOrder(Order.asc("timestamp"));	
+		criteria.addOrder(Order.desc("timestamp"));	
 		
 		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
