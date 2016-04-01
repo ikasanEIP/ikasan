@@ -53,13 +53,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.ReplayPopup;
-import org.ikasan.dashboard.ui.WiretapPopup;
+import org.ikasan.dashboard.ui.ReplayAuditViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayAuditViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
-import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
@@ -76,9 +74,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
@@ -276,7 +272,7 @@ public class ReplayAuditTab extends TopologyTab
         			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
-        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapPopup.class);
+        			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ReplayAuditViewPopup.class);
         			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
