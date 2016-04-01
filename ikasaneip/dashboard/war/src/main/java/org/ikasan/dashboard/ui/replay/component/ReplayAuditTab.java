@@ -145,6 +145,7 @@ public class ReplayAuditTab extends TopologyTab
 
 		cont.addContainerProperty("User", String.class,  null);
 		cont.addContainerProperty("Reason", String.class,  null);
+		cont.addContainerProperty("Target Server", String.class,  null);
 		cont.addContainerProperty("# Events Replayed", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
 		cont.addContainerProperty("", Button.class,  null);
@@ -162,7 +163,8 @@ public class ReplayAuditTab extends TopologyTab
 		
 		this.replayEventsTable.setColumnExpandRatio("User", .14f);
 		this.replayEventsTable.setColumnExpandRatio("Reason", .18f);
-		this.replayEventsTable.setColumnExpandRatio("# Events Replayed", .2f);
+		this.replayEventsTable.setColumnExpandRatio("Target Server", .18f);
+		this.replayEventsTable.setColumnExpandRatio("# Events Replayed", .12f);
 		this.replayEventsTable.setColumnExpandRatio("Timestamp", .1f);
 		this.replayEventsTable.setColumnExpandRatio("", .05f);
 		
@@ -264,6 +266,7 @@ public class ReplayAuditTab extends TopologyTab
             	    
             	    item.getItemProperty("User").setValue(replayAudit.getUser());
         			item.getItemProperty("Reason").setValue(replayAudit.getReplayReason());
+        			item.getItemProperty("Target Server").setValue(replayAudit.getTargetServer());
         			item.getItemProperty("# Events Replayed").setValue(replayManagementService
         					.getNumberReplayAuditEventsByAuditId(replayAudit.getId()).toString());
         			item.getItemProperty("Timestamp").setValue(timestamp);
