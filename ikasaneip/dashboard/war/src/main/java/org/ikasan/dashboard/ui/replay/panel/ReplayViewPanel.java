@@ -207,7 +207,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService;
 	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
 	
 	private boolean initialised = false;
@@ -219,7 +219,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 			 SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService, 
 			 TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
 			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			 ReplayAudit> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService, FlowConfigurationWindow flowConfigurationWindow)
+			 ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)

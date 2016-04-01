@@ -71,11 +71,6 @@
                   column="TargetServer"
                   not-null="true" />
 		          
-		<set name="replayAuditEvents" cascade="none" lazy="false" inverse="true" fetch="select" order-by="timestamp desc">
-         	<key column="ReplayAuditId"/>
-         	<one-to-many class="org.ikasan.replay.model.ReplayAuditEvent"/>
-      	</set>
-		          
 		<property name="timestamp" 
 				  column="Timestamp" 
 				  type="long" 

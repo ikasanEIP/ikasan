@@ -42,12 +42,15 @@ package org.ikasan.dashboard.ui.replay.panel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayManagementService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -81,8 +84,9 @@ public class ReplayAuditViewPanel extends Panel
 	
 	private TextArea comments;
 	
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
 	
-	public ReplayAuditViewPanel(ReplayAudit replayAudit) 
+	public ReplayAuditViewPanel(ReplayAudit replayAudit, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService) 
 	{
 		super();
 		
@@ -90,6 +94,11 @@ public class ReplayAuditViewPanel extends Panel
 		if(this.replayAudit == null)
 		{
 			throw new IllegalArgumentException("replayAudit cannot be null!");
+		}
+		this.replayManagementService = replayManagementService;
+		if(this.replayManagementService == null)
+		{
+			throw new IllegalArgumentException("replayManagementService cannot be null!");
 		}
 		
 		init();
@@ -132,9 +141,9 @@ public class ReplayAuditViewPanel extends Panel
 		
 		TextField moduleCount = new TextField();
 		
-		if(this.replayAudit != null && this.replayAudit.getReplayAuditEvents() != null)
+		if(this.replayAudit != null)
 		{
-			moduleCount.setValue(Integer.toString(this.replayAudit.getReplayAuditEvents().size()));
+			moduleCount.setValue(this.replayManagementService.getNumberReplayAuditEventsByAuditId(replayAudit.getId()).toString());
 		}
 		else
 		{
@@ -217,7 +226,9 @@ public class ReplayAuditViewPanel extends Panel
 		    }
 		});
 		
-		for(final ReplayAuditEvent replayEvent: replayAudit.getReplayAuditEvents())
+		List<ReplayAuditEvent> auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId());
+		
+		for(final ReplayAuditEvent replayEvent: auditEvents)
     	{
     		Date date = new Date(replayEvent.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

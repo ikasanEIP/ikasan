@@ -1,6 +1,5 @@
 package org.ikasan.replay.model;
 
-import java.util.Set;
 
 public class ReplayAudit 
 {
@@ -8,7 +7,6 @@ public class ReplayAudit
 	private String user;
 	private String replayReason;
 	private String targetServer;
-	private Set<ReplayAuditEvent> replayAuditEvents;
 	private long timestamp;
 
 	/**
@@ -104,21 +102,21 @@ public class ReplayAudit
 		this.targetServer = targetServer;
 	}
 
-	/**
-	 * @return the replayAuditEvents
-	 */
-	public Set<ReplayAuditEvent> getReplayAuditEvents() 
-	{
-		return replayAuditEvents;
-	}
+//	/**
+//	 * @return the replayAuditEvents
+//	 */
+//	public Set<ReplayAuditEvent> getReplayAuditEvents() 
+//	{
+//		return replayAuditEvents;
+//	}
 
-	/**
-	 * @param replayAuditEvents the replayAuditEvents to set
-	 */
-	public void setReplayAuditEvents(Set<ReplayAuditEvent> replayAuditEvents) 
-	{
-		this.replayAuditEvents = replayAuditEvents;
-	}
+//	/**
+//	 * @param replayAuditEvents the replayAuditEvents to set
+//	 */
+//	public void setReplayAuditEvents(Set<ReplayAuditEvent> replayAuditEvents) 
+//	{
+//		this.replayAuditEvents = replayAuditEvents;
+//	}
 
 	/**
 	 * @return the timestamp
@@ -145,10 +143,6 @@ public class ReplayAudit
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime
-				* result
-				+ ((replayAuditEvents == null) ? 0 : replayAuditEvents
-						.hashCode());
 		result = prime * result
 				+ ((replayReason == null) ? 0 : replayReason.hashCode());
 		result = prime * result
@@ -175,11 +169,6 @@ public class ReplayAudit
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (replayAuditEvents == null) {
-			if (other.replayAuditEvents != null)
-				return false;
-		} else if (!replayAuditEvents.equals(other.replayAuditEvents))
 			return false;
 		if (replayReason == null) {
 			if (other.replayReason != null)
@@ -209,7 +198,7 @@ public class ReplayAudit
 	{
 		return "ReplayAudit [id=" + id + ", user=" + user + ", replayReason="
 				+ replayReason + ", targetServer=" + targetServer
-				+ ", replayAuditEvents=" + replayAuditEvents + ", timestamp="
+				 + ", timestamp="
 				+ timestamp + "]";
 	}	
 	

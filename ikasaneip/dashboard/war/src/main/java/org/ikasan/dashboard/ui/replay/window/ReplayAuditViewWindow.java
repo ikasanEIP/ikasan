@@ -43,6 +43,9 @@ package org.ikasan.dashboard.ui.replay.window;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
 import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayManagementService;
 
 import com.vaadin.ui.Window;
 
@@ -59,14 +62,17 @@ public class ReplayAuditViewWindow extends Window
 	
 	private ReplayAudit replayAudit;
 	
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
+	
 
 	/**
 	 * @param policy
 	 */
-	public ReplayAuditViewWindow(ReplayAudit replayAudit)
+	public ReplayAuditViewWindow(ReplayAudit replayAudit, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService)
 	{
 		super();
 		this.replayAudit = replayAudit;
+		this.replayManagementService = replayManagementService;
 		
 		this.init();
 	}
@@ -79,7 +85,7 @@ public class ReplayAuditViewWindow extends Window
 		this.setHeight("90%");
 		this.setWidth("90%");
 		
-		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(this.replayAudit);		
+		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(this.replayAudit, replayManagementService);		
 		
 		this.setContent(panel);
 	}

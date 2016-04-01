@@ -70,10 +70,6 @@
     <servlet>
         <servlet-name>Ikasan Dashboard</servlet-name>
         <servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
-        <!-- init-param>
-            <param-name>beanName</param-name>
-            <param-value>ikasanUI</param-value>
-        </init-param -->
         <init-param>
             <param-name>UIProvider</param-name>
             <param-value>org.ikasan.dashboard.ui.DashboardUIProvider</param-value>
@@ -94,14 +90,6 @@
 	      <param-name>legacyPropertyToString</param-name>
 	      <param-value>true</param-value>
 	    </init-param>
-	    <!-- init-param>
-		   <param-name>org.atmosphere.useWebSocketAndServlet3</param-name>
-		   <param-value>true</param-value>
-		</init-param>
-		<init-param>
-		   <param-name>org.atmosphere.cpr.asyncSupport</param-name>
-		   <param-value>org.atmosphere.container.Servlet30CometSupport</param-value>
-		</init-param -->
         <async-supported>true</async-supported>
     </servlet>
     

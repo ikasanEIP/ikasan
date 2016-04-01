@@ -42,6 +42,9 @@ package org.ikasan.dashboard.ui;
 
 import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
 import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
+import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayManagementService;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
@@ -64,8 +67,12 @@ public class ReplayAuditViewPopup extends UI
 	{		
 		ReplayAudit replayAudit 
 		 	= (ReplayAudit)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("replayAudit");
+		
+		ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService
+			= (ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>)VaadinService.getCurrentRequest()
+			.getWrappedSession().getAttribute("replayManagementService");
 	        
-		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(replayAudit);
+		ReplayAuditViewPanel panel = new ReplayAuditViewPanel(replayAudit, replayManagementService);
 		
 		this.setContent(panel);
 	}

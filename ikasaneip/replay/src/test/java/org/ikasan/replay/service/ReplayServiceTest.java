@@ -170,7 +170,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	ReplayAudit replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
@@ -178,7 +181,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
@@ -186,7 +192,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
@@ -194,7 +203,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
@@ -202,7 +214,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     
@@ -210,7 +225,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
@@ -218,7 +236,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
@@ -226,7 +247,10 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
-    	Assert.assertTrue(replayAudits.get(0).getReplayAuditEvents().size() == 100);
+    	replayAudit = replayAudits.get(0);
+    	replayAudit = this.replayDao.getReplayAuditById(replayAudit.getId());
+    	
+    	Assert.assertTrue(this.replayDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     }
