@@ -114,5 +114,28 @@ public interface ReplayDao
      */
     public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
 			String eventId, String user, Date startDate, Date endDate);
-  
+ 
+    /**
+     * Get a ReplayAudit by its id.
+     * 
+     * @param id
+     * @return
+     */
+    public ReplayAudit getReplayAuditById(Long id);
+    
+    /**
+     * Get a ReplayAudit by its id.
+     * 
+     * @param id
+     * @return
+     */
+    public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id);
+    
+    /**
+     * Get a ReplayAudit by its id.
+     * 
+     * @param id
+     * @return
+     */
+    public Long getNumberReplayAuditEventsByAuditId(Long id);
 }

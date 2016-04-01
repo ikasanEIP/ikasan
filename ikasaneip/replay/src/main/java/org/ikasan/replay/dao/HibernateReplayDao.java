@@ -44,13 +44,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
@@ -61,60 +66,108 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 {
+	public static final String MODULE_NAME = "moduleName";
+	public static final String FLOW_NAME = "flowame";
+	public static final String USER = "user";
+	public static final String START_DATE = "startDate";
+	public static final String END_DATE = "endDate";
+	public static final String EVENT_ID = "eventId";
+	
+	public static final String REPLAY_AUDIT_QUERY = "select DISTINCT ra from ReplayAudit ra, ReplayAuditEvent rae, ReplayEvent re "
+			+ "where "
+			+ "ra.id = rae.id.replayAuditId "
+			+ "and rae.id.replayEventId = re.id ";
+	
+	public static final String MODULE_NAME_PREDICATE =  " and re.moduleName IN :" + MODULE_NAME;
+	public static final String FLOW_NAME_PREDICATE =  " and re.flowName IN :" + FLOW_NAME;
+	public static final String USER_PREDICATE =  " and ra.user = :" + USER;
+	public static final String START_DATE_PREDICATE =  " and ra.timestamp > :" + START_DATE;
+	public static final String END_DATE_PREDICATE =  " and ra.timestamp < :" + END_DATE;
+	public static final String EVENT_ID_PREDICATE =  " and re.eventId = :" + EVENT_ID;
+	public static final String ORDER_BY =  " order by ra.timestamp desc";
+	
 	/* (non-Javadoc)
 	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
-			String eventId, String user, Date startDate, Date endDate) 
+	public List<ReplayAudit> getReplayAudits(final List<String> moduleNames, final List<String> flowNames,
+			final String eventId, final String user, final Date startDate, final Date endDate) 
 	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAudit.class);
-		
-		if(user != null && user.length() > 0)
-		{
-			criteria.add(Restrictions.eq("user", user));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
-				
-		if((moduleNames != null && moduleNames.size() > 0) ||
-				(flowNames != null && flowNames.size() > 0) ||
-				(eventId != null && eventId.length() > 0))
-		{
-			DetachedCriteria nestedCriteria = criteria.createCriteria("replayAuditEvents").createCriteria("replayEvent");
-			
-			if(moduleNames != null && moduleNames.size() > 0)
-			{
-				nestedCriteria
-					.add(Restrictions.in("moduleName", moduleNames));
-			}
-			
-			if(flowNames != null && flowNames.size() > 0)
-			{
-				nestedCriteria
-					.add(Restrictions.in("flowName", flowNames));
-			}
-			
-			if (eventId != null && eventId.length() > 0)
-		    {
-				nestedCriteria
-					.add(Restrictions.eq("eventId", eventId));
-		    }
-		}	
-		
-		criteria.addOrder(Order.desc("timestamp"));	
-		
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
-		return (List<ReplayAudit>)this.getHibernateTemplate().findByCriteria(criteria);
+		return (List<ReplayAudit>)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+            	StringBuffer queryStringBuffer = new StringBuffer(REPLAY_AUDIT_QUERY); 
+            	if(user != null && user.length() > 0)
+        		{
+            		queryStringBuffer.append(USER_PREDICATE);
+        		}
+        		
+        		if(startDate != null)
+        		{
+        			queryStringBuffer.append(START_DATE_PREDICATE);
+        		}
+        		
+        		if(endDate != null)
+        		{
+        			queryStringBuffer.append(END_DATE_PREDICATE);
+        		}
+        		
+        		if(moduleNames != null && moduleNames.size() > 0)
+    			{
+        			queryStringBuffer.append(MODULE_NAME_PREDICATE);
+    			}
+    			
+    			if(flowNames != null && flowNames.size() > 0)
+    			{
+    				queryStringBuffer.append(FLOW_NAME_PREDICATE);
+    			}
+    			
+    			if (eventId != null && eventId.length() > 0)
+    		    {
+    				queryStringBuffer.append(EVENT_ID_PREDICATE);
+    		    }
+    			
+    			queryStringBuffer.append(ORDER_BY);
+        				        		
+                Query query = session.createQuery(queryStringBuffer.toString());
+                
+                if(user != null && user.length() > 0)
+        		{
+            		query.setParameter(USER, user);
+        		}
+        		
+        		if(startDate != null)
+        		{
+        			query.setParameter(START_DATE, startDate.getTime());
+        		}
+        		
+        		if(endDate != null)
+        		{
+        			query.setParameter(END_DATE, endDate.getTime());
+        		}
+        		
+        		if(moduleNames != null && moduleNames.size() > 0)
+    			{
+        			query.setParameterList(MODULE_NAME, moduleNames);
+    			}
+    			
+    			if(flowNames != null && flowNames.size() > 0)
+    			{
+    				query.setParameterList(FLOW_NAME, flowNames);
+    			}
+    			
+    			if (eventId != null && eventId.length() > 0)
+    		    {
+    				query.setParameter(EVENT_ID, eventId);
+    		    }
+
+
+                return (List<ReplayAudit>)query.list();
+            }
+        });
 	}
 
 	/* (non-Javadoc)
@@ -219,6 +272,59 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public void saveOrUpdate(ReplayAuditEvent replayAuditEvent) 
 	{
 		this.getHibernateTemplate().saveOrUpdate(replayAuditEvent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAuditById(java.lang.Long)
+	 */
+	@Override
+	public ReplayAudit getReplayAuditById(Long id) 
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAudit.class);
+		
+		criteria.add(Restrictions.eq("id", id));
+		
+		return (ReplayAudit)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAuditEventsByAuditId(java.lang.Long)
+	 */
+	@Override
+	public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id) 
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ReplayAuditEvent.class);
+
+		criteria.add(Restrictions.eq("id.replayAuditId", id));
+		
+		
+		return (List<ReplayAuditEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.replay.dao.ReplayDao#getNumberReplayAuditEventsByAuditId(java.lang.Long)
+	 */
+	@Override
+	public Long getNumberReplayAuditEventsByAuditId(final Long id) 
+	{
+		return (Long) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(ReplayAuditEvent.class);
+                criteria.add(Restrictions.eq("id.replayAuditId", id));
+                criteria.setProjection(Projections.rowCount());
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
+
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+
+                return rowCount;
+            }
+        });
 	}
 
 	

@@ -106,7 +106,7 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit>  replayManagementService;
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
 	
 	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
 	
@@ -129,7 +129,7 @@ public class ReplayAuditTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
+	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
 			PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
@@ -178,8 +178,9 @@ public class ReplayAuditTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-		    		ReplayAudit replayAudit = (ReplayAudit)itemClickEvent.getItemId();
-		    		ReplayAuditViewWindow replayAuditViewWindow = new ReplayAuditViewWindow(replayAudit);
+		    		ReplayAudit replayAudit = (ReplayAudit)itemClickEvent.getItemId();		    				    		
+		    		
+		    		ReplayAuditViewWindow replayAuditViewWindow = new ReplayAuditViewWindow(replayAudit, replayManagementService);
 			    
 			    	UI.getCurrent().addWindow(replayAuditViewWindow);
 		    	}
@@ -263,7 +264,8 @@ public class ReplayAuditTab extends TopologyTab
             	    
             	    item.getItemProperty("User").setValue(replayAudit.getUser());
         			item.getItemProperty("Reason").setValue(replayAudit.getReplayReason());
-        			item.getItemProperty("# Events Replayed").setValue(Integer.toString(replayAudit.getReplayAuditEvents().size()));
+        			item.getItemProperty("# Events Replayed").setValue(replayManagementService
+        					.getNumberReplayAuditEventsByAuditId(replayAudit.getId()).toString());
         			item.getItemProperty("Timestamp").setValue(timestamp);
         			
         			Button popupButton = new Button();
@@ -280,7 +282,9 @@ public class ReplayAuditTab extends TopologyTab
         	    	{
         	            public void buttonClick(ClickEvent event) 
         	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayAudit", (ReplayAudit)replayAudit);
+        	            	
+        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayAudit", replayAudit);
+        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayManagementService", replayManagementService);
         	            }
         	        });
         	        

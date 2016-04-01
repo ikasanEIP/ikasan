@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
+import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 
@@ -54,7 +55,7 @@ import org.ikasan.spec.replay.ReplayManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit>
+public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>
 {
 	/** the underlying dao **/
 	private ReplayDao replayDao;
@@ -94,6 +95,33 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 			String eventId, String user, Date startDate, Date endDate) 
 	{
 		return this.replayDao.getReplayAudits(moduleNames, flowNames, eventId, user, startDate, endDate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAuditById(java.lang.Long)
+	 */
+	@Override
+	public ReplayAudit getReplayAuditById(Long id) 
+	{
+		return this.replayDao.getReplayAuditById(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayAuditEventsByAuditId(java.lang.Long)
+	 */
+	@Override
+	public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id) 
+	{
+		return this.replayDao.getReplayAuditEventsByAuditId(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayManagementService#getNumberReplayAuditEventsByAuditId(java.lang.Long)
+	 */
+	@Override
+	public Long getNumberReplayAuditEventsByAuditId(Long id) 
+	{
+		return this.replayDao.getNumberReplayAuditEventsByAuditId(id);
 	}
 
 	

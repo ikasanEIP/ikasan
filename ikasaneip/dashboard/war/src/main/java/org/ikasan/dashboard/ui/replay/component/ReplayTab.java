@@ -102,7 +102,7 @@ public class ReplayTab extends TopologyTab
 	
 	private FilterTable replayEventsTable;
 	
-	private ReplayManagementService<ReplayEvent, ReplayAudit>  replayManagementService;
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
 	
 	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
 	
@@ -123,7 +123,7 @@ public class ReplayTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
+	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
 			PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
