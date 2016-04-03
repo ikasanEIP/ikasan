@@ -41,6 +41,7 @@
  
 package org.ikasan.flow.visitorPattern;
 
+import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
 
@@ -73,6 +74,9 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 
     /** this is the last invoked component only in the case the invoker is ignoring context invocations */
     private String lastComponentName;
+
+    /** the last action for this context */
+    private FinalAction finalAction;
 
     /**
      * Accessor for the name of the last component invoked
@@ -136,4 +140,15 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
         invocations.addAll(flowInvocationContext.getElementInvocations());
 	}
 
+    @Override
+    public void setFinalAction(FinalAction exceptionAction)
+    {
+        finalAction = exceptionAction;
+    }
+
+    @Override
+    public FinalAction getFinalAction()
+    {
+        return finalAction;
+    }
 }

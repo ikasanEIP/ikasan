@@ -2279,9 +2279,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(false));
 
                 // pass the exception to the recovery manager
-                oneOf(flowInvocationContext).getLastComponentName();
-                will(returnValue("dynamicComponentName"));
-                oneOf(recoveryManager).recover("dynamicComponentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
             }
         });
 
@@ -2349,9 +2347,7 @@ public class VisitingInvokerFlowTest
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
-                oneOf(flowInvocationContext).getLastComponentName();
-                will(returnValue("componentName"));
-                oneOf(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
             }
         });
 
@@ -2420,9 +2416,7 @@ public class VisitingInvokerFlowTest
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
-                oneOf(flowInvocationContext).getLastComponentName();
-                will(returnValue("componentName"));
-                oneOf(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
             }
         });
 
@@ -2492,9 +2486,7 @@ public class VisitingInvokerFlowTest
                 will(throwException(exception));
 
                 // pass the exception to the recovery manager
-                oneOf(flowInvocationContext).getLastComponentName();
-                will(returnValue("componentName"));
-                oneOf(recoveryManager).recover("componentName", exception, flowEvent, "identifier");
+                oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
             }
         });
 
@@ -3084,7 +3076,7 @@ public class VisitingInvokerFlowTest
     {
 
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                                           RecoveryManager<FlowEvent<?,?>> recoveryManager, ExclusionService exclusionService)
+                                           RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager, ExclusionService exclusionService)
         {
             super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         }

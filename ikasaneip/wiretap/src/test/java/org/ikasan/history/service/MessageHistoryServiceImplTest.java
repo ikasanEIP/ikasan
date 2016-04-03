@@ -42,6 +42,7 @@ package org.ikasan.history.service;
 
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.HistoryEventFactory;
+import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.jmock.Expectations;
@@ -82,12 +83,67 @@ public class MessageHistoryServiceImplTest
     }
 
     @Test
-    public void test_save()
+    public void test_save_with_null_final_action()
     {
         mockery.checking(new Expectations(){{
             oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext);
             will(returnValue(Collections.singletonList(messageHistoryEvent)));
             oneOf(messageHistoryDao).save(messageHistoryEvent);
+            oneOf(flowInvocationContext).getFinalAction();
+            will(returnValue(null));
+        }});
+        messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_save_with_publish_final_action()
+    {
+        mockery.checking(new Expectations(){{
+            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext);
+            will(returnValue(Collections.singletonList(messageHistoryEvent)));
+            oneOf(messageHistoryDao).save(messageHistoryEvent);
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.PUBLISH));
+        }});
+        messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_save_with_ignore_final_action()
+    {
+        mockery.checking(new Expectations(){{
+            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext);
+            will(returnValue(Collections.singletonList(messageHistoryEvent)));
+            oneOf(messageHistoryDao).save(messageHistoryEvent);
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.IGNORE));
+        }});
+        messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_save_with_exclude_final_action()
+    {
+        mockery.checking(new Expectations(){{
+            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext);
+            will(returnValue(Collections.singletonList(messageHistoryEvent)));
+            oneOf(messageHistoryDao).save(messageHistoryEvent);
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.EXCLUDE));
+        }});
+        messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_save_with_rollback_final_action()
+    {
+        mockery.checking(new Expectations(){{
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.ROLLBACK));
         }});
         messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
         mockery.assertIsSatisfied();

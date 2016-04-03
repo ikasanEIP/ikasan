@@ -102,4 +102,12 @@ public interface FlowInvocationContext
 	 * @param flowInvocationContext the FlowInvocationContext to combine into this instance
 	 */
 	void combine(FlowInvocationContext flowInvocationContext);
+
+    /**
+     * Set the final action for this event context
+     * @param action the action
+     */
+    void setFinalAction(FinalAction action);
+
+    FinalAction getFinalAction();
 }

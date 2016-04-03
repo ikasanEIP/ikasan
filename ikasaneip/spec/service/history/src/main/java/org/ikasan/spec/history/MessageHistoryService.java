@@ -56,12 +56,12 @@ public interface MessageHistoryService<EVENT, RESULT>
 {
 
     /**
-     * Save a flowEvent
-     * @param flowEvent the event
+     * Save an event
+     * @param event the event
      * @param moduleName the module name
      * @param flowName the flow name
      */
-    void save(EVENT flowEvent, String moduleName, String flowName);
+    void save(EVENT event, String moduleName, String flowName);
 
     /**
      * Search for saved MessageHistoryEvents
