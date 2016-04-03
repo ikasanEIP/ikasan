@@ -166,7 +166,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             FlowEvent asyncFlowEvent;
             if(payload instanceof FlowEvent)
             {
-                asyncFlowEvent =  new FlowEventFactory().newEvent(((FlowEvent)payload).getIdentifier(), (FlowEvent)((FlowEvent) payload).getPayload());
+                asyncFlowEvent =  new FlowEventFactory().newEvent(((FlowEvent)payload).getIdentifier(), ((FlowEvent) payload).getPayload());
             }
             else
             {
