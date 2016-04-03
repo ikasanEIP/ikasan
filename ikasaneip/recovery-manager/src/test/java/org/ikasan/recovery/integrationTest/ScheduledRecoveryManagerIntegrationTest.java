@@ -40,7 +40,6 @@
  */
 package org.ikasan.recovery.integrationTest;
 
-import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
@@ -58,7 +57,14 @@ import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.FinalAction;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobKey;
@@ -74,10 +80,22 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings("unchecked")
 public class ScheduledRecoveryManagerIntegrationTest
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManagerIntegrationTest.class);
+
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
+        }
+    };
 
     /** scheduler for recovery manager */
     private Scheduler scheduler;
@@ -106,6 +124,8 @@ public class ScheduledRecoveryManagerIntegrationTest
     /** error reporting service */
     private ErrorReportingService errorReportingService;
 
+    private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
+
     @Before
     public void setUp()
     {
@@ -115,6 +135,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         this.recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
         this.exclusionService = new StubbedExclusionService();
         this.errorReportingService = new StubbedErrorReportingService();
+
     }
 
     /**
@@ -170,7 +191,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         ExceptionAction stopAction = StopAction.instance();
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
         MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, stopAction);
-        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+        List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
 
@@ -208,12 +229,20 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_resolver_to_excludeAction()
     {
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowInvocationContext).getLastComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.EXCLUDE);
+            }});
         //
         // create an exception resolver
         ExceptionAction excludeEventAction = ExcludeEventAction.instance();
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
         MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, excludeEventAction);
-        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+        List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
 
@@ -229,7 +258,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         try
         {
-            recoveryManager.recover(componentName, new Exception(), new String(), new String());
+            recoveryManager.recover(flowInvocationContext, new Exception(), "", "");
         }
         catch (Exception e)
         {
@@ -258,7 +287,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         ExceptionAction retryAction = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
         MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, retryAction);
-        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+        List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
 
@@ -357,7 +386,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
         MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, retryActionB);
         
-        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+        List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcherA);
         matchers.add(matcherB);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
@@ -411,7 +440,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         // wait for scheduler callback to restart the consumer
-        while(!consumer.isRunning()){pause(100);};
+        while(!consumer.isRunning()){pause(100);}
         
         //
         // third retry action
@@ -432,7 +461,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         // wait for scheduler callback to restart the consumer
-        while(!consumer.isRunning()){pause(100);};
+        while(!consumer.isRunning()){pause(100);}
         
         //
         // forth retry action
@@ -473,7 +502,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
         MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, stopAction);
         
-        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+        List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcherA);
         matchers.add(matcherB);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
@@ -506,7 +535,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         // wait for scheduler callback to restart the consumer
-        while(!consumer.isRunning()){pause(100);};
+        while(!consumer.isRunning()){pause(100);}
         
         //
         // second retry action

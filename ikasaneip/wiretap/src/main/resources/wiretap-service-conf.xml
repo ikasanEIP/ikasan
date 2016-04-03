@@ -97,17 +97,27 @@
 
     <bean id="messageHistoryDao"
           class="org.ikasan.history.dao.HibernateMessageHistoryDao">
-        <property name="sessionFactory" ref="wiretapHibernateSessionFactory"/>
+        <property name="sessionFactory" ref="messageHistoryNonXaHibernateSessionFactory"/>
     </bean>
 
-	<bean id="wiretapHibernateSessionFactory"
+	<bean id="messageHistoryNonXaHibernateSessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/history/model/History.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="wiretapHibernateSessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>
-				<value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
+                <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
 				<value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
-                <value>org/ikasan/history/model/History.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>

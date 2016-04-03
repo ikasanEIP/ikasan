@@ -106,7 +106,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     private Monitor monitor;
 
     /** stateful recovery manager implementation */
-    private RecoveryManager<FlowEvent<?,?>> recoveryManager;
+    private RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager;
     
     /** startup failure flag */
     private boolean flowInitialisationFailure = false;
@@ -148,7 +148,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                               RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager,
                                ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this(name, moduleName, flowConfiguration, null, recoveryManager, exclusionService, serialiserFactory);
@@ -164,7 +164,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
-                               RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager,
                                ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this.name = name;
@@ -631,7 +631,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         catch(Throwable throwable)
         {
             flowInvocationContext.endFlowInvocation();
-            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event, originalEventLifeIdentifier);
+            this.recoveryManager.recover(flowInvocationContext, throwable, event, originalEventLifeIdentifier);
         }
         finally
         {
@@ -663,7 +663,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         catch(Throwable throwable)
         {
             flowInvocationContext.endFlowInvocation();
-            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent(), event.getEvent().getIdentifier());
+            this.recoveryManager.recover(flowInvocationContext, throwable, event.getEvent(), event.getEvent().getIdentifier());
         }
         finally
         {
@@ -755,10 +755,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 try
                 {
                     listener.endFlow(flowInvocationContext);
-                }
-                catch (RuntimeException e)
+                } catch (RuntimeException e)
                 {
-                    logger.error("Unable to invoke FlowInvocationContextListener, continuing", e);
+                    logger.warn("Unable to invoke FlowInvocationContextListener, continuing", e);
                 }
             }
         }
