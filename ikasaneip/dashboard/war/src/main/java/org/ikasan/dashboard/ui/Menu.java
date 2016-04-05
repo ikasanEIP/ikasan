@@ -208,6 +208,22 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(monitoringMenuItem);
         this.menuComponents.put(monitoringMenuItem, SecurityConstants.VIEW_MONITORING_AUTHORITY);
         
+        final Button replayMenuItem = new Button("Replay", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	loadTopLevelNavigator();
+            	UI.getCurrent().getNavigator().navigateTo("replayView");
+            }
+        });
+        
+        replayMenuItem.setHtmlContentAllowed(true);
+        replayMenuItem.setPrimaryStyleName("valo-menu-item");
+        replayMenuItem.setIcon(VaadinIcons.RECYCLE);
+        menuItemsLayout.addComponent(replayMenuItem);
+        this.menuComponents.put(replayMenuItem, SecurityConstants.VIEW_REPLAY_AUTHORITY);
+        
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");

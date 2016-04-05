@@ -43,7 +43,12 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.flow.*;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.replay.ReplayRecordService;
 
 /**
  * A default implementation of the FlowElementInvoker for a consumer
@@ -58,8 +63,20 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 
     /** handle to any internal converter for this consumer */
     Converter converter;
+    
+    
+    	
+    /**
+     * Constructor
+     * 
+     * @param replayRecordService
+     */
+    public ConsumerFlowElementInvoker() 
+    {
+		super();
+	}
 
-    @Override
+	@Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
@@ -93,6 +110,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
             throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
                     + "] contains a Consumer, but it has no default transition! " + "Consumers should never be the last component in a flow");
         }
+
         return flowElement;
     }
 

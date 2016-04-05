@@ -199,45 +199,6 @@ public class WiretapTab extends TopologyTab
 		    	}
 		    }
 		});
-		
-//		final Action open = new Action("Open", VaadinIcons.OPEN_BOOK);
-//		final Action openInNewTab = new Action("Open in new Tab", VaadinIcons.MODAL);
-//	    final Action download = new Action("Download", VaadinIcons.DOWNLOAD);
-//	    this.wiretapTable.addActionHandler(new Action.Handler() 
-//	    {
-//
-//	        @Override
-//	        public Action[] getActions(Object target, Object sender)
-//	        {
-//	        	return new Action[] {open, openInNewTab, download};
-//	        }
-//
-//			@Override
-//			public void handleAction(Action action, Object sender, Object target)
-//			{
-//				WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)target;
-//				
-//				if(action.equals(open))
-//				{
-//					WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
-//				    
-//			    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
-//				}
-//				if(action.equals(openInNewTab))
-//				{
-//					BrowserWindowOpener popupOpener = new BrowserWindowOpener(WiretapDeepLinkUI.class);
-//					VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);					 
-//        	        popupOpener.extend(wiretapTable);
-//        	        
-//				}
-//				if(action.equals(download))
-//				{
-//					FileDownloader fd = new FileDownloader(getPayloadDownloadStream());
-//			        fd.extend(wiretapTable);
-//				}
-//				
-//			}
-//	    });
 	   				
 		final Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);

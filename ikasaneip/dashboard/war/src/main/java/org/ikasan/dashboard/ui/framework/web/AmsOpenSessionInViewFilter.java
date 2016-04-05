@@ -48,7 +48,8 @@ import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
  * @author Ikasan Development Team
  *
  */
-public class AmsOpenSessionInViewFilter extends OpenSessionInViewFilter {
+public class AmsOpenSessionInViewFilter extends OpenSessionInViewFilter 
+{
     private Logger logger = Logger.getLogger(AmsOpenSessionInViewFilter.class);
 
 }

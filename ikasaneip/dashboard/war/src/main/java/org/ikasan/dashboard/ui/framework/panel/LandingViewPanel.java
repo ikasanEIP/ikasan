@@ -117,6 +117,8 @@ public class LandingViewPanel extends Panel implements View
     
     private VerticalLayout chartLayout = new VerticalLayout();
     
+    private boolean initialised = false;
+    
     /**
      * Constructor
      * 
@@ -154,7 +156,7 @@ public class LandingViewPanel extends Panel implements View
 			throw new IllegalArgumentException("hospitalManagementService cannot be null!");
 		}
         
-        init();
+//        init();
     }
 
     protected void init()
@@ -168,7 +170,6 @@ public class LandingViewPanel extends Panel implements View
         
         this.chartLayout.setSizeFull();
         
-//        this.chartLayout.addComponent(buildErrorsChart());
 		this.chartLayout.addComponent(buildExclusionsChart());
         
         verticalLayout.addComponent(this.chartLayout);
@@ -507,7 +508,13 @@ public class LandingViewPanel extends Panel implements View
      */
     @Override
     public void enter(ViewChangeEvent event)
-    {    	
+    {   
+    	if(!this.initialised)
+		{
+			init();
+			this.initialised = true;
+		}
+    	
     	if( (FilterMap)VaadinService.getCurrentRequest().getWrappedSession()
 	    		.getAttribute(DashboardSessionValueConstants.FILTERS) != null)
     	{

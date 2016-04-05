@@ -42,16 +42,6 @@
     <bean id="xpathKeyLocationQueryProcessor" 
         class="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"/>
     
-	 <bean id="ikasan.xads"
-                class="org.springframework.jndi.JndiObjectFactoryBean">
-     	<property name="jndiName" value="java:/datasource/ikasan/xads" />
-     </bean>
-
-    <bean id="ikasan.ds"
-            class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="java:/datasource/ikasan/ds" />
-    </bean>
-    
     <bean id="mappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="mappingConfigurationDao"/>
         <constructor-arg ref="keyLocationQueryProcessorFactory"/>
@@ -196,6 +186,18 @@
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
     
+    <bean id="replayManagementService" class="org.ikasan.replay.service.ReplayManagementServiceImpl">
+		<constructor-arg ref="replayDao" />
+	</bean>
+	
+	<bean id="replayService" class="org.ikasan.replay.service.ReplayServiceImpl">
+		<constructor-arg ref="replayDao" />
+	</bean>
+	
+	<bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+	
     <bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
 		<constructor-arg ref="hospitalDao" />
 	</bean>
@@ -258,6 +260,9 @@
                <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
                <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
                <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
+               <value>/org/ikasan/replay/model/ReplayEvent.hbm.xml</value>
+			   <value>/org/ikasan/replay/model/ReplayAudit.hbm.xml</value>
+			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
            </list>
         </property>
@@ -265,5 +270,15 @@
     </bean>
     
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+    
+    <bean id="ikasan.xads"
+                class="org.springframework.jndi.JndiObjectFactoryBean">
+     	<property name="jndiName" value="java:/datasource/ikasan/xads" />
+     </bean>
+
+    <bean id="ikasan.ds"
+            class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="java:/datasource/ikasan/ds" />
+    </bean>
 
 </beans>

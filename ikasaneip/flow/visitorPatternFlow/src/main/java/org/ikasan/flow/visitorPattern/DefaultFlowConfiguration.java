@@ -44,6 +44,8 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.replay.ReplayRecordService;
+import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
@@ -61,9 +63,9 @@ public class DefaultFlowConfiguration extends AbstractFlowConfiguration implemen
      * @param resubmisionService
      */
     public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService
-    		, ResubmissionService resubmisionService)
+    		, ResubmissionService resubmisionService, ReplayRecordService replayRecordService)
     {
-        super(consumerFlowElement, configurationService, resubmisionService);
+        super(consumerFlowElement, configurationService, resubmisionService, replayRecordService);
 
         // TODO - remove as this should already be checked elsewhere
         if(consumerFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME) == null)

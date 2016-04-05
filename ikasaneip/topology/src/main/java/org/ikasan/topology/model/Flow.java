@@ -57,6 +57,8 @@ public class Flow
     private Module module;
     private Set<Component> components = new HashSet<Component>();
     private int order;
+    private boolean configurable = false;
+    private String configurationId;
 
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -230,6 +232,38 @@ public class Flow
 		this.order = order;
 	}
 
+	/**
+	 * @return the isConfigurable
+	 */
+	public boolean isConfigurable() 
+	{
+		return configurable;
+	}
+
+	/**
+	 * @param isConfigurable the isConfigurable to set
+	 */
+	public void setConfigurable(boolean isConfigurable) 
+	{
+		this.configurable = isConfigurable;
+	}
+	
+	/**
+	 * @return the configurationId
+	 */
+	public String getConfigurationId() 
+	{
+		return configurationId;
+	}
+
+	/**
+	 * @param configurationId the configurationId to set
+	 */
+	public void setConfigurationId(String configurationId) 
+	{
+		this.configurationId = configurationId;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -254,11 +288,22 @@ public class Flow
 	
 	@Override
 	public String toString() {
-		return "Flow [id=" + id + ", name=" + name + ", description="
-				+ description + ", state=" + state + ", module=" + module.getId()
-				+ ", components=" + components + ", order=" + order
+		String returnString = "Flow [id=" + id + ", name=" + name + ", description="
+				+ description + ", state=" + state;
+		
+		if(this.module != null)
+		{
+			returnString += ", module=" + module.getId();
+		}
+		else
+		{
+			returnString += ", module=NULL";
+		}
+		
+		returnString += ", components=" + components + ", order=" + order
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";
+		
+		return returnString;
 	}
-
 }

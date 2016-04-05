@@ -1,0 +1,591 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Ikasan Replay Service 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ikasan-replay ---
+[INFO] Deleting /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ ikasan-replay ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (regex-property) @ ikasan-replay ---
+[INFO] Setting property 'dashed.project.version' to '1-2-0-SNAPSHOT'.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (activamq-regex-property) @ ikasan-replay ---
+[INFO] Setting property 'dashed.version.activemq' to '5-12-1'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ ikasan-replay ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ ikasan-replay ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 9 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/classes
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/src/main/java/org/ikasan/replay/dao/HibernateReplayDao.java: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/src/main/java/org/ikasan/replay/dao/HibernateReplayDao.java uses unchecked or unsafe operations.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/src/main/java/org/ikasan/replay/dao/HibernateReplayDao.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ ikasan-replay ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ ikasan-replay ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 2 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/test-classes
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/src/test/java/org/ikasan/replay/service/ReplayServiceTest.java: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/src/test/java/org/ikasan/replay/service/ReplayServiceTest.java uses or overrides a deprecated API.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/src/test/java/org/ikasan/replay/service/ReplayServiceTest.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ ikasan-replay ---
+[INFO] Surefire report directory: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.ikasan.replay.service.ReplayServiceTest
+1    [main] DEBUG org.jboss.logging  - Logging Provider: org.jboss.logging.Log4jLoggerProvider
+Mar 26, 2016 10:10:13 AM org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory$GrizzlyTestContainer <init>
+INFO: Creating GrizzlyTestContainer configured at the base URI http://localhost:9998/
+Mar 26, 2016 10:10:14 AM org.glassfish.grizzly.http.server.NetworkListener start
+INFO: Started listener bound to [localhost:9998]
+Mar 26, 2016 10:10:14 AM org.glassfish.grizzly.http.server.HttpServer start
+INFO: [HttpServer] Started.
+4494 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAudit: org.ikasan.replay.model.ReplayAudit@71668a01
+4501 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4828 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=1], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@24d040fc, success=true, resultMessage=200 Event resubmitted!]
+4845 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4855 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=2], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4269f8e3, success=true, resultMessage=200 Event resubmitted!]
+4859 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4867 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=3], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3b532125, success=true, resultMessage=200 Event resubmitted!]
+4871 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4878 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=4], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4ea52290, success=true, resultMessage=200 Event resubmitted!]
+4882 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4890 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=5], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3b804446, success=true, resultMessage=200 Event resubmitted!]
+4893 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4901 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=6], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@62026e2e, success=true, resultMessage=200 Event resubmitted!]
+4905 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4913 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=7], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@d8fc047, success=true, resultMessage=200 Event resubmitted!]
+4917 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4925 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=8], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@58987c45, success=true, resultMessage=200 Event resubmitted!]
+4930 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4938 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=9], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@306c374, success=true, resultMessage=200 Event resubmitted!]
+4941 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4949 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=10], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3109f639, success=true, resultMessage=200 Event resubmitted!]
+4953 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4960 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=11], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@5043156, success=true, resultMessage=200 Event resubmitted!]
+4963 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4970 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=12], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@564307ac, success=true, resultMessage=200 Event resubmitted!]
+4974 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4981 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=13], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4aacd972, success=true, resultMessage=200 Event resubmitted!]
+4984 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+4991 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=14], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@19f7f1ab, success=true, resultMessage=200 Event resubmitted!]
+4994 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5001 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=15], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@e66f6c0, success=true, resultMessage=200 Event resubmitted!]
+5005 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5012 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=16], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@9d1bea3, success=true, resultMessage=200 Event resubmitted!]
+5016 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5023 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=17], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@293ac45e, success=true, resultMessage=200 Event resubmitted!]
+5027 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5034 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=18], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@51320c77, success=true, resultMessage=200 Event resubmitted!]
+5038 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5045 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=19], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2cd08246, success=true, resultMessage=200 Event resubmitted!]
+5048 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5056 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=20], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2d18d8a6, success=true, resultMessage=200 Event resubmitted!]
+5059 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5066 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=21], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3a37916b, success=true, resultMessage=200 Event resubmitted!]
+5069 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5076 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=22], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@162c25a9, success=true, resultMessage=200 Event resubmitted!]
+5080 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5087 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=23], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2c5c859e, success=true, resultMessage=200 Event resubmitted!]
+5090 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5097 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=24], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@6e485ed2, success=true, resultMessage=200 Event resubmitted!]
+5101 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5107 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=25], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@5149658e, success=true, resultMessage=200 Event resubmitted!]
+5111 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5118 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=26], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@29aa7753, success=true, resultMessage=200 Event resubmitted!]
+5121 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5128 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=27], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@767fff83, success=true, resultMessage=200 Event resubmitted!]
+5131 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5137 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=28], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4d602e3c, success=true, resultMessage=200 Event resubmitted!]
+5140 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5147 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=29], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@657b8cd3, success=true, resultMessage=200 Event resubmitted!]
+5150 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5156 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=30], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@125aa4b2, success=true, resultMessage=200 Event resubmitted!]
+5160 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5166 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=31], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@7cf2ab87, success=true, resultMessage=200 Event resubmitted!]
+5169 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5175 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=32], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@1fdb6c27, success=true, resultMessage=200 Event resubmitted!]
+5178 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5184 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=33], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@7e9984c7, success=true, resultMessage=200 Event resubmitted!]
+5187 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5193 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=34], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@10dc65c0, success=true, resultMessage=200 Event resubmitted!]
+5196 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5202 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=35], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@759c28e5, success=true, resultMessage=200 Event resubmitted!]
+5205 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5211 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=36], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@5f410eb5, success=true, resultMessage=200 Event resubmitted!]
+5214 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5220 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=37], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@282cbdee, success=true, resultMessage=200 Event resubmitted!]
+5223 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5229 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=38], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@116968dd, success=true, resultMessage=200 Event resubmitted!]
+5232 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5238 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=39], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@1f638e19, success=true, resultMessage=200 Event resubmitted!]
+5241 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5247 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=40], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@41061b68, success=true, resultMessage=200 Event resubmitted!]
+5250 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5256 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=41], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@77f16a31, success=true, resultMessage=200 Event resubmitted!]
+5259 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5265 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=42], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@a72f47c, success=true, resultMessage=200 Event resubmitted!]
+5267 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5273 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=43], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@110fe40, success=true, resultMessage=200 Event resubmitted!]
+5276 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5282 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=44], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2a41c4c, success=true, resultMessage=200 Event resubmitted!]
+5285 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5291 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=45], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@643dc2ee, success=true, resultMessage=200 Event resubmitted!]
+5294 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5300 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=46], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@12c8caac, success=true, resultMessage=200 Event resubmitted!]
+5632 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5640 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=47], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3c71ebd6, success=true, resultMessage=200 Event resubmitted!]
+5643 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5651 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=48], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@5b324d9a, success=true, resultMessage=200 Event resubmitted!]
+5654 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5660 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=49], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4384e83c, success=true, resultMessage=200 Event resubmitted!]
+5663 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5671 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=50], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4aaaddc5, success=true, resultMessage=200 Event resubmitted!]
+5674 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5681 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=51], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@17c5d6cf, success=true, resultMessage=200 Event resubmitted!]
+5683 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5689 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=52], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3d99bc3a, success=true, resultMessage=200 Event resubmitted!]
+5692 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5698 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=53], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3814a36e, success=true, resultMessage=200 Event resubmitted!]
+5700 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5706 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=54], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@52f5a785, success=true, resultMessage=200 Event resubmitted!]
+5709 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5715 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=55], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@7dc9374f, success=true, resultMessage=200 Event resubmitted!]
+5718 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5723 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=56], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@254e640d, success=true, resultMessage=200 Event resubmitted!]
+5726 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5732 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=57], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3d8aa49d, success=true, resultMessage=200 Event resubmitted!]
+5734 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5740 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=58], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@593d5efb, success=true, resultMessage=200 Event resubmitted!]
+5743 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5748 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=59], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@4c26de82, success=true, resultMessage=200 Event resubmitted!]
+5751 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5757 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=60], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@bda4fdd, success=true, resultMessage=200 Event resubmitted!]
+5759 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5765 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=61], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@29b13c3f, success=true, resultMessage=200 Event resubmitted!]
+5767 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5773 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=62], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@32ea617b, success=true, resultMessage=200 Event resubmitted!]
+5775 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5780 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=63], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@39a5ec5a, success=true, resultMessage=200 Event resubmitted!]
+5783 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5788 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=64], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3c402647, success=true, resultMessage=200 Event resubmitted!]
+5791 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5796 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=65], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@17911e38, success=true, resultMessage=200 Event resubmitted!]
+5799 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5804 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=66], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@3856fa9e, success=true, resultMessage=200 Event resubmitted!]
+5807 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5813 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=67], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@565fb7f7, success=true, resultMessage=200 Event resubmitted!]
+5815 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5821 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=68], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2626e56e, success=true, resultMessage=200 Event resubmitted!]
+5823 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5829 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=69], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@43a0ac53, success=true, resultMessage=200 Event resubmitted!]
+5831 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5837 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=70], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@69919fd4, success=true, resultMessage=200 Event resubmitted!]
+5839 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5844 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=71], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@57944d71, success=true, resultMessage=200 Event resubmitted!]
+5847 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5852 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=72], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@496862a2, success=true, resultMessage=200 Event resubmitted!]
+5855 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5860 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=73], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@64239f54, success=true, resultMessage=200 Event resubmitted!]
+5863 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5868 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=74], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@5eb17728, success=true, resultMessage=200 Event resubmitted!]
+5871 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5877 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=75], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@550613a9, success=true, resultMessage=200 Event resubmitted!]
+5879 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5884 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=76], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@1f4e7db, success=true, resultMessage=200 Event resubmitted!]
+5887 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5892 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=77], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@75a1dbdd, success=true, resultMessage=200 Event resubmitted!]
+5895 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5900 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=78], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@5569c680, success=true, resultMessage=200 Event resubmitted!]
+5903 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5908 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=79], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@1367294f, success=true, resultMessage=200 Event resubmitted!]
+5910 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5916 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=80], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@59c90b7c, success=true, resultMessage=200 Event resubmitted!]
+5918 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5923 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=81], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@1e1127f1, success=true, resultMessage=200 Event resubmitted!]
+5926 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5931 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=82], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@78554ea2, success=true, resultMessage=200 Event resubmitted!]
+5934 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5939 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=83], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@289dab66, success=true, resultMessage=200 Event resubmitted!]
+5942 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5947 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=84], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@75fca5f, success=true, resultMessage=200 Event resubmitted!]
+5949 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5954 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=85], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@21df26c1, success=true, resultMessage=200 Event resubmitted!]
+5957 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5962 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=86], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@41695a46, success=true, resultMessage=200 Event resubmitted!]
+5964 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5970 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=87], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@6ba5cb36, success=true, resultMessage=200 Event resubmitted!]
+5972 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5977 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=88], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@51c07d70, success=true, resultMessage=200 Event resubmitted!]
+5980 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5985 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=89], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@346b6dfe, success=true, resultMessage=200 Event resubmitted!]
+5987 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+5993 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=90], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@79025994, success=true, resultMessage=200 Event resubmitted!]
+5995 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6000 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=91], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@947419d, success=true, resultMessage=200 Event resubmitted!]
+6003 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6008 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=92], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2524af2d, success=true, resultMessage=200 Event resubmitted!]
+6011 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6016 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=93], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@b68c668, success=true, resultMessage=200 Event resubmitted!]
+6018 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6024 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=94], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@bb9dbb2, success=true, resultMessage=200 Event resubmitted!]
+6026 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6032 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=95], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@57068921, success=true, resultMessage=200 Event resubmitted!]
+6034 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6039 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=96], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@6e150229, success=true, resultMessage=200 Event resubmitted!]
+6042 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6048 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=97], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@25410a35, success=true, resultMessage=200 Event resubmitted!]
+6050 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6056 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=98], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@510530ae, success=true, resultMessage=200 Event resubmitted!]
+6058 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6064 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=99], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@2bbf1910, success=true, resultMessage=200 Event resubmitted!]
+6066 [main] INFO  org.ikasan.spec.replay.ReplayService  - Replay Url: http://localhost:9998/moduleName/rest/replay/eventReplay/moduleName/flowName
+event
+moduleName
+flowName
+6072 [main] INFO  org.ikasan.spec.replay.ReplayService  - Saving replayAuditEvent: ReplayAuditEvent [id=ReplayAuditEventKey [replayAuditId=1, replayEventId=100], replayAudit=org.ikasan.replay.model.ReplayAudit@71668a01, replayEvent=org.ikasan.replay.model.ReplayEvent@f067fe0, success=true, resultMessage=200 Event resubmitted!]
+Count: 100
+Mar 26, 2016 10:10:16 AM org.glassfish.grizzly.http.server.NetworkListener shutdownNow
+INFO: Stopped listener bound to [localhost:9998]
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.953 sec
+Running org.ikasan.replay.dao.HibernateReplayDaoTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.563 sec
+
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ ikasan-replay ---
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/ikasan-replay-1.2.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ ikasan-replay ---
+[INFO] org already added, skipping
+[INFO] org/ikasan already added, skipping
+[INFO] org/ikasan/replay already added, skipping
+[INFO] org/ikasan/replay/model already added, skipping
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/ikasan-replay-1.2.0-SNAPSHOT-sources.jar
+[INFO] org already added, skipping
+[INFO] org/ikasan already added, skipping
+[INFO] org/ikasan/replay already added, skipping
+[INFO] org/ikasan/replay/model already added, skipping
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ ikasan-replay ---
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/ikasan-replay-1.2.0-SNAPSHOT.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-replay/1.2.0-SNAPSHOT/ikasan-replay-1.2.0-SNAPSHOT.jar
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/pom.xml to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-replay/1.2.0-SNAPSHOT/ikasan-replay-1.2.0-SNAPSHOT.pom
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/replay/target/ikasan-replay-1.2.0-SNAPSHOT-sources.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-replay/1.2.0-SNAPSHOT/ikasan-replay-1.2.0-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14.363 s
+[INFO] Finished at: 2016-03-26T10:10:18+00:00
+[INFO] Final Memory: 27M/430M
+[INFO] ------------------------------------------------------------------------

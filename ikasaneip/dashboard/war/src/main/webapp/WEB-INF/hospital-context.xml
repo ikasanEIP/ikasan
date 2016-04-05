@@ -22,16 +22,10 @@
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
-                   <constructor-arg value="hospitalPanel"/>
-                   <constructor-arg ref="hospitalPanel"/>
-                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="hospitalViewComponentContainer"/>
     </bean>
-    
-    <bean id="hospitalPanel" class="org.ikasan.dashboard.ui.service.hospital.panel.HospitalPanel" scope="session" />
 
 	<bean id="hospitalViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
