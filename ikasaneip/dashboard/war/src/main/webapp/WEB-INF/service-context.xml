@@ -195,6 +195,20 @@
     <bean id="errorManagementDao" class="org.ikasan.error.reporting.dao.HibernateErrorManagementDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
+    
+    <bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
+		<constructor-arg ref="hospitalDao" />
+	</bean>
+
+	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
+		<constructor-arg ref="moduleContainer" />
+		<constructor-arg ref="hospitalDao" />
+		<constructor-arg ref="exclusionManagementService" />
+	</bean>
+	
+	<bean id="hospitalDao" class="org.ikasan.hospital.dao.HibernateHospitalDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -244,6 +258,7 @@
                <value>org/ikasan/error/reporting/model/Note.hbm.xml</value>
                <value>org/ikasan/error/reporting/model/ErrorOccurrenceLink.hbm.xml</value>
                <value>org/ikasan/error/reporting/model/ErrorOccurrenceNote.hbm.xml</value>
+               <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

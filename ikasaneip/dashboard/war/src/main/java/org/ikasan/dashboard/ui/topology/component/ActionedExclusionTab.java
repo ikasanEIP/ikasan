@@ -40,21 +40,35 @@
  */
 package org.ikasan.dashboard.ui.topology.component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ActionedExcludedEventPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ActionedExclusionEventViewWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
+import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.model.BusinessStream;
@@ -63,22 +77,35 @@ import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
@@ -95,11 +122,7 @@ public class ActionedExclusionTab extends TopologyTab
 {
 	private Logger logger = Logger.getLogger(ActionedExclusionTab.class);
 	
-	private Table actionedExclusionsTable;
-	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	private Table components = new Table("Components");
+	private FilterTable actionedExclusionsTable;
 	
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -114,37 +137,74 @@ public class ActionedExclusionTab extends TopologyTab
 	private ErrorReportingService errorReportingService;
 	private TopologyService topologyService;
 	
+	private IndexedContainer container = null;
+	
+	private PlatformConfigurationService platformConfigurationService;
+	
+	private HorizontalLayout searchResultsSizeLayout = new HorizontalLayout();
+	
+	private Label resultsLabel = new Label();
+	
+	private String jiraClipboard;
+	
 	
 	public ActionedExclusionTab(ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,ErrorReportingService errorReportingService,
-			TopologyService topologyService, ComboBox businessStreamCombo)
+			TopologyService topologyService, ComboBox businessStreamCombo, PlatformConfigurationService platformConfigurationService)
 	{
 		this.exclusionManagementService = exclusionManagementService;
 		this.hospitalManagementService = hospitalManagementService;
 		this.errorReportingService = errorReportingService;
 		this.topologyService = topologyService;
 		this.businessStreamCombo = businessStreamCombo;
+		this.platformConfigurationService = platformConfigurationService;
 	}
 	
-	public void createLayout()
+	protected IndexedContainer buildContainer() 
 	{
-		this.actionedExclusionsTable = new Table();
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Module Name", String.class,  null);
+		cont.addContainerProperty("Flow Name", String.class,  null);
+		cont.addContainerProperty("Error URI", String.class,  null);
+		cont.addContainerProperty("Action", String.class,  null);
+		cont.addContainerProperty("Actioned By", String.class,  null);
+		cont.addContainerProperty("Timestamp", String.class,  null);
+		cont.addContainerProperty("", Button.class,  null);
+		
+        return cont;
+    }
+	
+	public void createLayout()
+	{	
+		this.container = this.buildContainer();
+		
+		this.actionedExclusionsTable = new FilterTable();
+		this.actionedExclusionsTable.setFilterBarVisible(true);
 		this.actionedExclusionsTable.setSizeFull();
 		this.actionedExclusionsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		this.actionedExclusionsTable.addContainerProperty("Module Name", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Flow Name", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Action", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Actioned By", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("Timestamp", String.class,  null);
-		this.actionedExclusionsTable.addContainerProperty("", Button.class,  null);
+		this.actionedExclusionsTable.setContainerDataSource(container);
+		this.actionedExclusionsTable.setColumnExpandRatio("Module Name", .18f);
+		this.actionedExclusionsTable.setColumnExpandRatio("Flow Name", .18f);
+		this.actionedExclusionsTable.setColumnExpandRatio("Error URI", .18f);
+		this.actionedExclusionsTable.setColumnExpandRatio("Action", .10f);
+		this.actionedExclusionsTable.setColumnExpandRatio("Actioned By", .10f);
+		this.actionedExclusionsTable.setColumnExpandRatio("Timestamp", .1f);
+		this.actionedExclusionsTable.setColumnExpandRatio(" ", .05f);
 		
-		this.actionedExclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		this.actionedExclusionsTable.addStyleName("wordwrap-table");
+		this.actionedExclusionsTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.actionedExclusionsTable.addStyleName("ikasan");
+		
+		
+		this.actionedExclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+		{
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) 
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-			    	ExclusionEventAction exclusionEventAction = (ExclusionEventAction)itemClickEvent.getItemId();
+		    		ExclusionEventAction exclusionEventAction = (ExclusionEventAction)itemClickEvent.getItemId();
 			    	
 			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEventAction.getErrorUri());
 			    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEventAction.getErrorUri());
@@ -213,13 +273,37 @@ public class ActionedExclusionTab extends TopologyTab
             		}
             	}
             	
-         
+            	logger.info("Trying to search for ExclusionEventAction");
             	List<ExclusionEventAction> exclusionEventActions = hospitalManagementService.getActionedExclusions
-            			(modulesNames, flowNames, fromDate.getValue(), toDate.getValue());
+            			(modulesNames, flowNames, fromDate.getValue(), toDate.getValue(), platformConfigurationService.getSearchResultSetSize());
+            	
+            	logger.info("Results ExclusionEventAction: " + exclusionEventActions.size());
 
             	if(exclusionEventActions == null || exclusionEventActions.size() == 0)
             	{
             		Notification.show("The actioned exclusions search returned no results!", Type.ERROR_MESSAGE);
+            	}
+            	
+            	Long resultSize = hospitalManagementService.actionedExclusionsRowCount(modulesNames, 
+            			flowNames, fromDate.getValue(), toDate.getValue());
+            	
+            	searchResultsSizeLayout.removeAllComponents();
+            	resultsLabel = new Label("Number of records returned: " + exclusionEventActions.size() + " of " + resultSize);
+            	searchResultsSizeLayout.addComponent(resultsLabel);
+            	
+            	if(resultSize > platformConfigurationService.getSearchResultSetSize())
+            	{
+            		Notification notif = new Notification(
+            			    "Warning",
+            			    "The number of results returned by this search exceeds the configured search " +
+            			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
+            			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
+            			    Type.HUMANIZED_MESSAGE);
+            		notif.setDelayMsec(-1);
+            		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+            		notif.setPosition(Position.MIDDLE_CENTER);
+            		
+            		notif.show(Page.getCurrent());
             	}
             	
             	for(final ExclusionEventAction exclusionEventAction: exclusionEventActions)
@@ -228,6 +312,15 @@ public class ActionedExclusionTab extends TopologyTab
             		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             	    String timestamp = format.format(date);
             	    
+            	    Item item = container.addItem(exclusionEventAction);	
+            	    
+            	    item.getItemProperty("Module Name").setValue(exclusionEventAction.getModuleName());
+        			item.getItemProperty("Flow Name").setValue(exclusionEventAction.getFlowName());
+        			item.getItemProperty("Error URI").setValue(exclusionEventAction.getErrorUri());
+        			item.getItemProperty("Action").setValue(exclusionEventAction.getAction());
+        			item.getItemProperty("Actioned By").setValue(exclusionEventAction.getActionedBy());
+        			item.getItemProperty("Timestamp").setValue(timestamp);
+            	    
             	    Button popupButton = new Button();
         			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         			popupButton.setDescription("Open in new tab");
@@ -235,6 +328,7 @@ public class ActionedExclusionTab extends TopologyTab
         			popupButton.setIcon(VaadinIcons.MODAL);
         			
         			BrowserWindowOpener popupOpener = new BrowserWindowOpener(ActionedExcludedEventPopup.class);
+        			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
         	        popupButton.addClickListener(new Button.ClickListener() 
@@ -253,8 +347,7 @@ public class ActionedExclusionTab extends TopologyTab
         	            }
         	        });
             	    
-            	    actionedExclusionsTable.addItem(new Object[]{exclusionEventAction.getModuleName(), exclusionEventAction.getFlowName()
-            				, exclusionEventAction.getAction(), exclusionEventAction.getActionedBy(), timestamp, popupButton}, exclusionEventAction);
+        	        item.getItemProperty("").setValue(popupButton);
             	}
             }
         });
@@ -385,8 +478,91 @@ public class ActionedExclusionTab extends TopologyTab
 		
 		vSplitPanel.setFirstComponent(filterPanel);
 		
-		CssLayout hErrorTable = new CssLayout();
-		hErrorTable.setSizeFull();
+		GridLayout buttons = new GridLayout(2, 1);
+		buttons.setWidth("50px");
+		
+		
+		
+		Button jiraButton = new Button();
+		jiraButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		jiraButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		jiraButton.setIcon(AtlassianIcons.JIRA);
+		jiraButton.setImmediate(true);
+		jiraButton.setDescription("Export JIRA table");
+		
+		jiraButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {	     
+            	StringBuffer sb = new StringBuffer();
+		    	
+		    	for(Object property: container.getContainerPropertyIds())
+		    	{
+		    		if(container.getType(property) == String.class)
+		    		{
+		    			sb.append("||").append(property);
+		    		}
+		    	}
+		    	sb.append("||\n");
+		    	
+		    	
+		    	for(Object actionedExclusion: container.getItemIds())
+		    	{
+		    		Item item = container.getItem(actionedExclusion);
+		    		
+		    		
+		    		for(Object propertyId: container.getContainerPropertyIds())
+			    	{		    			
+		    			if(container.getType(propertyId) == String.class)
+			    		{
+		    				Property property = item.getItemProperty(propertyId);
+		    				
+		    				sb.append("|").append(property.getValue());
+			    		}
+			    	}
+		    		
+		    		sb.append("|\n");
+		    	}
+		    	
+		    	jiraClipboard = sb.toString();
+            	
+            	TextWindow tw = new TextWindow("Jira Table", jiraClipboard);
+                
+                UI.getCurrent().addWindow(tw);
+            }
+        });
+		
+		Button excelButton = new Button();
+		excelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		excelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		excelButton.setIcon(FontAwesome.FILE_EXCEL_O);
+		excelButton.setImmediate(true);
+		excelButton.setDescription("Export Excel table");
+		
+		FileDownloader fd = new FileDownloader(this.getExcelDownloadStream());
+        fd.extend(excelButton);
+		
+		buttons.addComponent(jiraButton);
+		buttons.addComponent(excelButton);
+		
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setWidth("100%");
+		hl.addComponent(buttons);
+		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
+		
+		searchResultsSizeLayout.setWidth("100%");
+		searchResultsSizeLayout.addComponent(this.resultsLabel);
+		searchResultsSizeLayout.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
+		
+		GridLayout gl = new GridLayout(2, 1);
+		gl.setWidth("100%");
+		
+		gl.addComponent(searchResultsSizeLayout);
+		gl.addComponent(hl);
+		
+		GridLayout hErrorTable = new GridLayout();
+		hErrorTable.setWidth("100%");
+		hErrorTable.addComponent(gl);
 		hErrorTable.addComponent(this.actionedExclusionsTable);
 		
 		vSplitPanel.setSecondComponent(hErrorTable);
@@ -404,6 +580,99 @@ public class ActionedExclusionTab extends TopologyTab
 		this.addComponent(wrapper);
 	}
 
+	/**
+     * Helper method to get the stream associated with the export of the file.
+     * 
+     * @return the StreamResource associated with the export.
+     */
+    private StreamResource getExcelDownloadStream() 
+    {
+		StreamResource.StreamSource source = new StreamResource.StreamSource() 
+		{
+		    public InputStream getStream() 
+		    {
+		    	ByteArrayOutputStream stream = null;
+		    	
+		        try
+		        {
+		            stream = getExcelStream();
+		        }
+		        catch (IOException e)
+		        {
+		        	logger.error(e.getMessage(), e);
+		        }
+		        
+		        InputStream input = new ByteArrayInputStream(stream.toByteArray());
+		        return input;
+		    }
+		};
+            
+	    StreamResource resource = new StreamResource ( source,"errors.csv");
+	    return resource;
+    }
+    
+    /**
+     * Helper method to get the ByteArrayOutputStream associated with the export.
+     * 
+     * @return
+     * @throws IOException
+     */
+    private ByteArrayOutputStream getExcelStream() throws IOException
+    {
+    	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+    	
+    	StringBuffer sb = new StringBuffer();
+    	
+    	for(Object property: container.getContainerPropertyIds())
+    	{
+    		if(container.getType(property) == String.class
+    				|| container.getType(property) == byte[].class)
+    		{
+    			sb.append(property).append(",");
+    		}
+    	}
+    	
+    	sb.append("\r\n");
+    	
+    	
+    	for(Object actionedExclusion: container.getItemIds())
+    	{
+    		Item item = container.getItem(actionedExclusion);
+    		
+    		
+    		for(Object propertyId: container.getContainerPropertyIds())
+	    	{		    			
+    			if(container.getType(propertyId) == String.class)
+	    		{
+    				Property property = item.getItemProperty(propertyId);
+    				
+    				String csvCell = (String)property.getValue();
+    				
+    				if(csvCell != null && csvCell.contains("\""))
+    				{
+    					csvCell = csvCell.replaceAll("\"", "\"\"");
+    				}
+    				
+    				// Max length of a CSV cell in EXCEL
+    				if(csvCell != null && csvCell.length() > 32760)
+    				{
+    					csvCell = csvCell.substring(0, 32759);
+    				}
+    					
+    				sb.append("\"").append(csvCell).append("\",");
+	    		}
+	    	}
+    		
+  
+    		
+    		sb.append("\r\n");
+    	}
+    	
+    	out.write(sb.toString().getBytes());
+        
+        return out;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
 	 */

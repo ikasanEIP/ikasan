@@ -63,19 +63,23 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.ExcludedEventPopup;
+import org.ikasan.dashboard.ui.ResubmitIgnorePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.TextWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.dashboard.ui.topology.panel.ResubmitIgnoreStatusPanel;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.hospital.service.HospitalService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.model.BusinessStream;
@@ -134,6 +138,7 @@ public class ExclusionsTab extends TopologyTab
 	private Unit splitUnit;
 	
 	private ErrorReportingService errorReportingService;
+	private ErrorReportingManagementService errorReportingManagementService;
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
@@ -144,15 +149,19 @@ public class ExclusionsTab extends TopologyTab
 	
 	private Label resultsLabel = new Label();
 	
+	private HospitalService<byte[]> hospitalService;
 	
-	public ExclusionsTab(ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo)
+	
+	public ExclusionsTab(ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo, HospitalService<byte[]> hospitalService)
 	{
 		this.errorReportingService = errorReportingService;
+		this.errorReportingManagementService = errorReportingManagementService;
 		this.exclusionManagementService = exclusionManagementService;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
 		this.businessStreamCombo = businessStreamCombo;
+		this.hospitalService = hospitalService;
 	}
 	
 	protected IndexedContainer buildContainer() 
@@ -209,12 +218,14 @@ public class ExclusionsTab extends TopologyTab
 			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
 			    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
 			    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence
-			    			, action, hospitalManagementService, topologyService);
+			    			, action, hospitalManagementService, topologyService, errorReportingManagementService, hospitalService);
 			    
 			    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    	}
 		    }
 		});
+		
+		final Button selectAllButton = new Button();
 		
 		Button searchButton = new Button("Search");
 		searchButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -223,6 +234,7 @@ public class ExclusionsTab extends TopologyTab
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
             	refreshExcludedEventsTable();
             }
         });
@@ -361,7 +373,7 @@ public class ExclusionsTab extends TopologyTab
 		GridLayout buttons = new GridLayout(6, 1);
 		buttons.setWidth("150px");				
 		
-		final Button selectAllButton = new Button();
+		
 		selectAllButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		selectAllButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
@@ -407,127 +419,42 @@ public class ExclusionsTab extends TopologyTab
 		
 		buttons.addComponent(selectAllButton);
 		
-		Button replaySelectedButton = new Button();
-		replaySelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		replaySelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		replaySelectedButton.setIcon(VaadinIcons.PLAY);
-		replaySelectedButton.setImmediate(true);
-		replaySelectedButton.setDescription("Replay all the below selected exclusioned events.");
+		Button resubmitSelectedButton = new Button();
+		resubmitSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		resubmitSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		resubmitSelectedButton.setIcon(VaadinIcons.PLAY);
+		resubmitSelectedButton.setImmediate(true);
+		resubmitSelectedButton.setDescription("Resubmit all the below selected exclusioned events.");
 		
-		replaySelectedButton.addClickListener(new Button.ClickListener() 
-        {
+		BrowserWindowOpener resubmitPopupOpener = new BrowserWindowOpener(ResubmitIgnorePopup.class);
+		resubmitPopupOpener.setFeatures("height=600,width=900,resizable");
+		resubmitPopupOpener.extend(resubmitSelectedButton);
+        
+        resubmitSelectedButton.addClickListener(new Button.ClickListener() 
+    	{
             public void buttonClick(ClickEvent event) 
-            {	            	
-            	Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();       	
-            	
-            	final List<ExclusionEvent> myItems = new ArrayList<ExclusionEvent>(items);
-            	
-            	// We need to sort so that we can resubmit the oldest events first!
-            	Comparator<ExclusionEvent> comparator = new Comparator<ExclusionEvent>() 
-            	{
-            	    public int compare(ExclusionEvent c1, ExclusionEvent c2) 
-            	    {
-            	        if (c2.getTimestamp() < c1.getTimestamp())
-            	        {
-            	        	return 1;
-            	        }
-            	        else if (c1.getTimestamp() < c2.getTimestamp())
-            	        {
-            	        	return -1;
-            	        }
-            	        else
-            	        {
-            	        	return 0;
-            	        }
-            	    }
-            	};
-
-            	Collections.sort(myItems, comparator);
-            	
-            	for(ExclusionEvent eo: items)
-            	{
-            		logger.info("timestamp:" + eo.getTimestamp());
-            		
-            		Item item = container.getItem(eo);
-            		
-            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-            		
-            		if(cb.getValue() == false)
-            		{
-            			myItems.remove(eo);
-            		}
-            	}
-            	
-            	if(myItems.size() == 0)
-            	{
-            		Notification.show("You need to select some excluded events to replay.", Type.ERROR_MESSAGE);
-            	}
-            	else
-            	{
-            		
-            		for(ExclusionEvent exclusionEvent: myItems)
-            		{
-            		
-	            		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	            	        	.getAttribute(DashboardSessionValueConstants.USER);
-	                	
-	                	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-	                	
-	                	ClientConfig clientConfig = new ClientConfig();
-	                	clientConfig.register(feature) ;
-	                	
-	                	Client client = ClientBuilder.newClient(clientConfig);
-	                	
-	                	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
-	                	
-	                	if(module == null)
-	                	{
-	                		Notification.show("Unable to find server information for module we are attempting to re-submit to: " + exclusionEvent.getModuleName() 
-	                				, Type.ERROR_MESSAGE);
-	                		
-	                		return;
-	                	}
-	                	
-	                	Server server = module.getServer();
-	            		
-	            		String url = server.getUrl() + ":" + server.getPort()
-	            				+ module.getContextRoot() 
-	            				+ "/rest/resubmission/resubmit/"
-	            	    		+ exclusionEvent.getModuleName() 
-	            	    		+ "/"
-	            	    		+ exclusionEvent.getFlowName()
-	            	    		+ "/"
-	            	    		+ exclusionEvent.getErrorUri();
-	            		
-	            		logger.debug("Resubmission Url: " + url);
-	            		
-	            	    WebTarget webTarget = client.target(url);
-	            	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
-	            	    
-	            	    if(response.getStatus()  != 200)
-	            	    {
-	            	    	response.bufferEntity();
-	            	        
-	            	        String responseMessage = response.readEntity(String.class);
-	            	        
-	            	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
-	            	        
-	            	    	Notification.show("An error was received trying to resubmit event: " 
-	            	    			+ responseMessage, Type.ERROR_MESSAGE);
-	            	    	return;
-	            	    }
-	            	    else
-	            	    {
-	            	    	container.removeItem(exclusionEvent);
-	            	    	Notification.show("Events resumitted successfully.");
-	            	    }
-            		}
-            	}
+            {
+            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEvents", getResubmissionEvents());
+     	    	
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportingService", errorReportingService);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportingManagementService", errorReportingManagementService);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionManagementService", exclusionManagementService);
+     	 		
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("container", container);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("action", ResubmitIgnoreStatusPanel.RESUBMIT);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("hospitalService", hospitalService);
             }
         });
 		
-		buttons.addComponent(replaySelectedButton);
-		
+		buttons.addComponent(resubmitSelectedButton);
+        
+        
 		Button ignoreSelectedButton = new Button();
 		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -535,94 +462,33 @@ public class ExclusionsTab extends TopologyTab
 		ignoreSelectedButton.setImmediate(true);
 		ignoreSelectedButton.setDescription("Ignore all the below selected exclusioned events.");
 		
-		ignoreSelectedButton.addClickListener(new Button.ClickListener() 
-        {
+		BrowserWindowOpener ignoreOpener = new BrowserWindowOpener(ResubmitIgnorePopup.class);
+		ignoreOpener.setFeatures("height=600,width=900,resizable");
+        ignoreOpener.extend(ignoreSelectedButton);
+        
+        ignoreSelectedButton.addClickListener(new Button.ClickListener() 
+    	{
             public void buttonClick(ClickEvent event) 
-            {	            	
-            	Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();
-            	
-            	final Collection<ExclusionEvent> myItems = new ArrayList<ExclusionEvent>(items);
-            	
-            	for(ExclusionEvent eo: items)
-            	{
-            		Item item = container.getItem(eo);
-            		
-            		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
-            		
-            		if(cb.getValue() == false)
-            		{
-            			myItems.remove(eo);
-            		}
-            	}
-            	
-            	if(myItems.size() == 0)
-            	{
-            		Notification.show("You need to select some excluded events to ignore.", Type.ERROR_MESSAGE);
-            	}
-            	else
-            	{
-            		
-            		for(ExclusionEvent exclusionEvent: myItems)
-            		{
-            		
-	            		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	            	        	.getAttribute(DashboardSessionValueConstants.USER);
-	                	
-	                	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-	                	
-	                	ClientConfig clientConfig = new ClientConfig();
-	                	clientConfig.register(feature) ;
-	                	
-	                	Client client = ClientBuilder.newClient(clientConfig);
-	                	
-	                	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
-	                	
-	                	if(module == null)
-	                	{
-	                		Notification.show("Unable to find server information for module we are attempting to re-submit to: " + exclusionEvent.getModuleName() 
-	                				, Type.ERROR_MESSAGE);
-	                		
-	                		return;
-	                	}
-	                	
-	                	Server server = module.getServer();
-	            		
-	                	String url = server.getUrl() + ":" + server.getPort()
-	            				+ module.getContextRoot() 
-	            				+ "/rest/resubmission/ignore/"
-	            				+ exclusionEvent.getModuleName() 
-	            	    		+ "/"
-	            	    		+ exclusionEvent.getFlowName()
-	            	    		+ "/"
-	            	    		+ exclusionEvent.getErrorUri();
-	            		
-	            		logger.debug("Ignore Url: " + url);
-	            		
-	            	    WebTarget webTarget = client.target(url);
-	            	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
-	            	    
-	            	    if(response.getStatus()  != 200)
-	            	    {
-	            	    	response.bufferEntity();
-	            	        
-	            	        String responseMessage = response.readEntity(String.class);
-	            	        
-	            	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
-	            	        
-	            	    	Notification.show("An error was received trying to resubmit event: " 
-	            	    			+ responseMessage, Type.ERROR_MESSAGE);
-	            	    	
-	            	    	return;
-	            	    }
-	            	    else
-	            	    {
-	            	    	container.removeItem(exclusionEvent);
-	            	    	Notification.show("Events ignored successfully.");
-	            	    }
-            		}
-            	}
+            {
+            	VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionEvents", getResubmissionEvents());
+     	    	
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportingService", errorReportingService);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportingManagementService", errorReportingManagementService);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("exclusionManagementService", exclusionManagementService);
+     	 		
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("container", container);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("action", ResubmitIgnoreStatusPanel.IGNORE);
+     			
+     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("hospitalService", hospitalService);
             }
         });
+		
+
 		
 		buttons.addComponent(ignoreSelectedButton);
 		
@@ -637,47 +503,7 @@ public class ExclusionsTab extends TopologyTab
         {
             public void buttonClick(ClickEvent event) 
             {	     
-            	StringBuffer sb = new StringBuffer();
-		    	
-		    	for(Object property: container.getContainerPropertyIds())
-		    	{
-		    		if(container.getType(property) == String.class)
-		    		{
-		    			sb.append("||").append(property);
-		    		}
-		    	}
-		    	sb.append("||\n");
-		    	
-		    	
-		    	for(Object errorOccurrence: container.getItemIds())
-		    	{
-		    		Item item = container.getItem(errorOccurrence);
-		    		
-		    		
-		    		for(Object propertyId: container.getContainerPropertyIds())
-			    	{		    			
-		    			if(container.getType(propertyId) == String.class)
-			    		{
-		    				Property property = item.getItemProperty(propertyId);
-		    				
-		    				if(((String)property.getValue()).length() > 300)
-		    				{
-		    					sb.append("|").append("{code}").append((String)property.getValue()).append("{code}");
-		    				}
-		    				else
-		    				{
-		    					sb.append("|").append(property.getValue());
-		    				}
-			    		}
-			    	}
-		    		
-		    		sb.append("|\n");
-		    	}
-		    	
-            	
-            	TextWindow tw = new TextWindow("Jira Table", sb.toString());
-                
-                UI.getCurrent().addWindow(tw);
+            	createJiraTable();
             }
         });
 
@@ -726,6 +552,9 @@ public class ExclusionsTab extends TopologyTab
 		this.setSizeFull();
 	}
 	
+	/**
+	 * Helper method to refresh the excluded events table.
+	 */
 	public void refreshExcludedEventsTable()
 	{
 		exclusionsTable.removeAllItems();
@@ -793,7 +622,14 @@ public class ExclusionsTab extends TopologyTab
 			
 			if(errorOccurrence != null && errorOccurrence.getErrorMessage() != null)
 			{
-				item.getItemProperty("Error Message").setValue(new String(errorOccurrence.getErrorMessage()));
+				if(errorOccurrence.getErrorMessage().length() > 500)
+				{
+					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage().substring(0, 500));
+				}
+				else
+				{
+					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
+				}
 			}
 			
 			item.getItemProperty("Timestamp").setValue(timestamp);
@@ -823,6 +659,10 @@ public class ExclusionsTab extends TopologyTab
 	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("hospitalManagementService", hospitalManagementService);
 	     	 		
 	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("topologyService", topologyService);
+	     			
+	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("errorReportingManagementService", errorReportingManagementService);
+	     			
+	     			VaadinService.getCurrentRequest().getWrappedSession().setAttribute("hospitalService", hospitalService);
 	            }
 	        });
 	        
@@ -840,6 +680,191 @@ public class ExclusionsTab extends TopologyTab
 	        
 	        item.getItemProperty(" ").setValue(popupButton);    	    	    	    
     	}
+	}
+	
+	/**
+	 * Helper method to create a jira table and open a window
+	 * displaying it. The window can then be cut and paste from.
+	 */
+	protected void createJiraTable()
+	{
+		StringBuffer sb = new StringBuffer();
+    	
+    	for(Object property: container.getContainerPropertyIds())
+    	{
+    		if(container.getType(property) == String.class)
+    		{
+    			sb.append("||").append(property);
+    		}
+    	}
+    	sb.append("||\n");
+    	
+    	
+    	for(Object errorOccurrence: container.getItemIds())
+    	{
+    		Item item = container.getItem(errorOccurrence);
+    		
+    		
+    		for(Object propertyId: container.getContainerPropertyIds())
+	    	{		    			
+    			if(container.getType(propertyId) == String.class)
+	    		{
+    				Property property = item.getItemProperty(propertyId);
+    				
+    				if(((String)property.getValue()).length() > 300)
+    				{
+    					sb.append("|").append("{code}").append((String)property.getValue()).append("{code}");
+    				}
+    				else
+    				{
+    					sb.append("|").append(property.getValue());
+    				}
+	    		}
+	    	}
+    		
+    		sb.append("|\n");
+    	}
+    	
+    	
+    	TextWindow tw = new TextWindow("Jira Table", sb.toString());
+        
+        UI.getCurrent().addWindow(tw);
+	}
+	
+	/**
+	 * Helper method to ignore all selected excluded events.
+	 */
+	protected void ignoreExcludedEvents()
+	{
+		Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();
+    	
+    	final Collection<ExclusionEvent> myItems = new ArrayList<ExclusionEvent>(items);
+    	
+    	for(ExclusionEvent eo: items)
+    	{
+    		Item item = container.getItem(eo);
+    		
+    		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+    		
+    		if(cb.getValue() == false)
+    		{
+    			myItems.remove(eo);
+    		}
+    	}
+    	
+    	if(myItems.size() == 0)
+    	{
+    		Notification.show("You need to select some excluded events to ignore.", Type.ERROR_MESSAGE);
+    	}
+    	else
+    	{
+    		
+    		for(ExclusionEvent exclusionEvent: myItems)
+    		{
+    		
+        		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+        	        	.getAttribute(DashboardSessionValueConstants.USER);
+            	
+            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+            	
+            	ClientConfig clientConfig = new ClientConfig();
+            	clientConfig.register(feature) ;
+            	
+            	Client client = ClientBuilder.newClient(clientConfig);
+            	
+            	Module module = topologyService.getModuleByName(exclusionEvent.getModuleName());
+            	
+            	if(module == null)
+            	{
+            		Notification.show("Unable to find server information for module we are attempting to re-submit to: " + exclusionEvent.getModuleName() 
+            				, Type.ERROR_MESSAGE);
+            		
+            		return;
+            	}
+            	
+            	Server server = module.getServer();
+        		
+            	String url = server.getUrl() + ":" + server.getPort()
+        				+ module.getContextRoot() 
+        				+ "/rest/resubmission/ignore/"
+        				+ exclusionEvent.getModuleName() 
+        	    		+ "/"
+        	    		+ exclusionEvent.getFlowName()
+        	    		+ "/"
+        	    		+ exclusionEvent.getErrorUri();
+        		
+        		logger.debug("Ignore Url: " + url);
+        		
+        	    WebTarget webTarget = client.target(url);
+        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
+        	    
+        	    if(response.getStatus()  != 200)
+        	    {
+        	    	response.bufferEntity();
+        	        
+        	        String responseMessage = response.readEntity(String.class);
+        	        
+        	        logger.error("An error was received trying to resubmit event: " + responseMessage); 
+        	        
+        	    	Notification.show("An error was received trying to resubmit event: " 
+        	    			+ responseMessage, Type.ERROR_MESSAGE);
+        	    	
+        	    	return;
+        	    }
+        	    else
+        	    {
+        	    	container.removeItem(exclusionEvent);
+        	    }
+    		}
+    		
+    		Notification.show("Events ignored successfully.");
+    	}
+	}
+	
+	/**
+	 * Helper method to resubmit all selected excluded events.
+	 */
+	protected List<ExclusionEvent> getResubmissionEvents()
+	{
+		Collection<ExclusionEvent> items = (Collection<ExclusionEvent>)container.getItemIds();       	
+    	
+    	final List<ExclusionEvent> myItems = new ArrayList<ExclusionEvent>(items);
+    	
+    	// We need to sort so that we can resubmit the oldest events first!
+    	Comparator<ExclusionEvent> comparator = new Comparator<ExclusionEvent>() 
+    	{
+    	    public int compare(ExclusionEvent c1, ExclusionEvent c2) 
+    	    {
+    	        if (c2.getTimestamp() < c1.getTimestamp())
+    	        {
+    	        	return 1;
+    	        }
+    	        else if (c1.getTimestamp() < c2.getTimestamp())
+    	        {
+    	        	return -1;
+    	        }
+    	        else
+    	        {
+    	        	return 0;
+    	        }
+    	    }
+    	};
+
+    	Collections.sort(myItems, comparator);
+    	
+    	for(ExclusionEvent eo: items)
+    	{
+    		Item item = container.getItem(eo);
+    		
+    		CheckBox cb = (CheckBox)item.getItemProperty("").getValue();
+    		
+    		if(cb.getValue() == false)
+    		{
+    			myItems.remove(eo);
+    		}
+    	}
+    	
+    	return myItems;
 	}
 	
 	/**
