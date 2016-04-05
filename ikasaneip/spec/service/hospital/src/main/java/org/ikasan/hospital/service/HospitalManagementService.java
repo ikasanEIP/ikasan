@@ -65,9 +65,10 @@ public interface HospitalManagementService<ACTION, ACTION_EXCLUSION_COUNT>
 	 * @param flowName
 	 * @param startDate
 	 * @param endDate
+	 * @param size
 	 * @return
 	 */
-	public List<ACTION> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
+	public List<ACTION> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size);
 	
     /**
      * 
@@ -77,4 +78,15 @@ public interface HospitalManagementService<ACTION, ACTION_EXCLUSION_COUNT>
      * @return
      */
     public List<ACTION_EXCLUSION_COUNT> getModuleActionedExclusionCount(List<String> moduleNames, Date startDate, Date endDate);
+    
+    /**
+	 * Helper method to return the row count based on the criteria.
+	 *  
+	 * @param moduleName
+	 * @param flowName
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+    public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
 }
