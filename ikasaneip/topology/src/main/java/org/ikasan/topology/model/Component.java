@@ -243,11 +243,24 @@ public class Component
 	 */
 	@Override
 	public String toString() {
-		return "Component [id=" + id + ", name=" + name + ", description="
+		String returnString =  "Component [id=" + id + ", name=" + name + ", description="
 				+ description + ", configurable=" + configurable
-				+ ", configurationId=" + configurationId + ", flow=" + flow.getName()
-				+ ", order=" + order + ", createdDateTime=" + createdDateTime
+				+ ", configurationId=" + configurationId;
+		
+		if(this.flow != null)
+		{
+			returnString += ", flow=" + flow.getName();
+		}
+		else
+		{
+			returnString += ", flow=NULL";
+		}
+		
+		returnString += ", order=" + order + ", createdDateTime=" + createdDateTime
 				+ ", updatedDateTime=" + updatedDateTime + "]";
+	
+		
+		return returnString;
 	}
 	
 	

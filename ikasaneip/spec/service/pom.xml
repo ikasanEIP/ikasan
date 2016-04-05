@@ -93,5 +93,6 @@
        <module>exclusion</module>
        <module>resubmission</module>
 	   <module>hospital</module>
+	   <module>replay</module>
     </modules>
 </project>

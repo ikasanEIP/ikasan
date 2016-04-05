@@ -133,6 +133,8 @@ public class ResubmitIgnoreStatusPanel extends Panel
 	
 	private HospitalService<byte[]> hospitalService;	
 	
+	private boolean cancelled = false;
+	
 	public ResubmitIgnoreStatusPanel(List<ExclusionEvent> replayEvents,
 			TopologyService topologyService, ErrorReportingService errorReportingService,
 			ErrorReportingManagementService errorReportingManagementService, 
@@ -267,10 +269,24 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		
 		formLayout.addComponent(comments, 1, 2);
 		
-		Button resubmitButton = new Button("Resubmit");
+		final Button resubmitButton = new Button("Resubmit");
 		resubmitButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		resubmitButton.setImmediate(true);
 		resubmitButton.setDescription("Resubmit all exclusions.");
+		
+		final Button ignoreButton = new Button("Ignore");
+		ignoreButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		ignoreButton.setImmediate(true);
+		ignoreButton.setDescription("Ignore all exclusions.");
+		
+		final Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		cancelButton.setImmediate(true);
+		cancelButton.setDescription("Cancel action!");
+		cancelButton.setVisible(false);
+		
+		final ExecutorService executorService = Executors
+    			.newSingleThreadExecutor();
 		
 		resubmitButton.addClickListener(new Button.ClickListener() 
         {
@@ -289,10 +305,10 @@ public class ResubmitIgnoreStatusPanel extends Panel
                 }
                 
             	bar.setVisible(true);
-            	
-            	ExecutorService executorService = Executors
-            			.newSingleThreadExecutor();
-            	
+            	resubmitButton.setVisible(false);
+            	ignoreButton.setVisible(false);
+            	cancelButton.setVisible(true);
+            	            	
             	try
             	{
 	            	executorService.execute(new Runnable()
@@ -312,11 +328,6 @@ public class ResubmitIgnoreStatusPanel extends Panel
             }
         });
 		
-		Button ignoreButton = new Button("Ignore");
-		ignoreButton.addStyleName(ValoTheme.BUTTON_SMALL);
-		ignoreButton.setImmediate(true);
-		ignoreButton.setDescription("Ignore all exclusions.");
-		
 		ignoreButton.addClickListener(new Button.ClickListener() 
         {
             public void buttonClick(ClickEvent event) 
@@ -333,10 +344,10 @@ public class ResubmitIgnoreStatusPanel extends Panel
                 }
             	
             	bar.setVisible(true);
-            	
-            	ExecutorService executorService = Executors
-            			.newSingleThreadExecutor();
-            	
+            	resubmitButton.setVisible(false);
+            	ignoreButton.setVisible(false);
+            	cancelButton.setVisible(true);
+            	            	
             	try
             	{
 	            	executorService.execute(new Runnable()
@@ -356,15 +367,39 @@ public class ResubmitIgnoreStatusPanel extends Panel
             }
         });
 		
+		cancelButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	cancelled = true;
+            	
+            	executorService.shutdown();
+            	
+            	bar.setVisible(false);
+            	cancelButton.setVisible(false);
+				
+				Notification.show("Action cancelled!");
+            }
+        });
+		
 		if(this.action.equals(RESUBMIT))
 		{
-			formLayout.addComponent(resubmitButton, 0, 3, 1, 3);
-			formLayout.setComponentAlignment(resubmitButton, Alignment.MIDDLE_CENTER);
+			
+			GridLayout buttonsLayout = new GridLayout(2, 1);
+			buttonsLayout.addComponent(resubmitButton);
+			buttonsLayout.addComponent(cancelButton);
+			
+			formLayout.addComponent(buttonsLayout, 0, 3, 1, 3);
+			formLayout.setComponentAlignment(buttonsLayout, Alignment.MIDDLE_CENTER);
 		}
 		else
 		{
-			formLayout.addComponent(ignoreButton, 0, 3, 1, 3);
-			formLayout.setComponentAlignment(ignoreButton, Alignment.MIDDLE_CENTER);
+			GridLayout buttonsLayout = new GridLayout(2, 1);
+			buttonsLayout.addComponent(ignoreButton);
+			buttonsLayout.addComponent(cancelButton);
+			
+			formLayout.addComponent(buttonsLayout, 0, 3, 1, 3);
+			formLayout.setComponentAlignment(buttonsLayout, Alignment.MIDDLE_CENTER);
 		}
 		
 		this.bar.setWidth("40%");	
@@ -448,9 +483,17 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		List<String> uris = new ArrayList<String>();
 		
 		count = 0;
+		
+		cancelled = false;
 
 		for(final ExclusionEvent exclusionEvent: this.exclusionEvents)
 		{
+			if(cancelled)
+			{
+				Notification.show("Events ignore cancelled.");
+				return;
+			}
+			
 			// We want to make sure that the event is still available and has not been ignored or resubmitted already.
 			if(this.exclusionManagementService.find(exclusionEvent.getErrorUri()) != null)
 			{	
@@ -541,8 +584,16 @@ public class ResubmitIgnoreStatusPanel extends Panel
 
 		count = 0;
 		
+		cancelled = false;
+		
 		for(final ExclusionEvent exclusionEvent: this.exclusionEvents)
 		{
+			if(cancelled)
+			{
+				Notification.show("Events resubmit cancelled.");
+				return;
+			}
+			
 			// We want to make sure that the event is still available and has not been ignored or resubmitted already.
 			if(this.exclusionManagementService.find(exclusionEvent.getErrorUri()) != null)
 			{	 

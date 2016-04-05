@@ -286,7 +286,7 @@ public class ExclusionEventViewPanel extends Panel
 		comments.setRequiredError("A comment is required!");
 		comments.setNullSettingAllowed(false);
 		
-		layout.addComponent(comments, 3, 4, 3, 6);
+		layout.addComponent(comments, 3, 4, 3, 5);
 		
 		final Button resubmitButton = new Button("Re-submit");
 		final Button ignoreButton = new Button("Ignore");
@@ -531,7 +531,7 @@ public class ExclusionEventViewPanel extends Panel
 		
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(240, Unit.PIXELS);
+		formLayout.setHeight(280, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);

@@ -97,7 +97,7 @@ public class ResubmissionApplication extends IkasanRestApplication
 		
 		try
 		{
-			logger.info("re-submitting event " + errorUri);
+			logger.debug("Re-submitting event " + errorUri);
 			this.hospitalService.resubmit(moduleName, flowName, errorUri, event, context.getUserPrincipal());
 		}
 		catch (Exception e)
@@ -134,7 +134,7 @@ public class ResubmissionApplication extends IkasanRestApplication
 		
 		try
 		{
-			logger.info("ignoring event " + errorUri);
+			logger.debug("Ignoring event " + errorUri);
 			this.hospitalService.ignore(moduleName, flowName, errorUri, event, context.getUserPrincipal());
 		}
 		catch (Exception e)

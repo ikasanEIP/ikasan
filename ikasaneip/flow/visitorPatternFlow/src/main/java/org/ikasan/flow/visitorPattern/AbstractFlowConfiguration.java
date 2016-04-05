@@ -50,6 +50,7 @@ import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedService;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
@@ -57,7 +58,7 @@ import org.ikasan.spec.resubmission.ResubmissionService;
  * 
  * @author Ikasan Development Team
  */
-public class AbstractFlowConfiguration
+public abstract class AbstractFlowConfiguration
 {
     /** handle on the lead flow element */
     protected FlowElement leadFlowElement;
@@ -86,6 +87,9 @@ public class AbstractFlowConfiguration
     
     /** handle to the re-submission service */
     protected ResubmissionService resubmissionService;
+    
+    /** handle to the replay service */
+    protected ReplayRecordService replayRecordService;
 
     /**
      * Constructor
@@ -95,7 +99,7 @@ public class AbstractFlowConfiguration
      * @param resubmisionService
      */
     public AbstractFlowConfiguration(FlowElement leadFlowElement, ConfigurationService configurationService,
-    		ResubmissionService resubmisionService)
+    		ResubmissionService resubmisionService, ReplayRecordService replayRecordService)
     {
         this.leadFlowElement = leadFlowElement;
         if(leadFlowElement == null)
@@ -111,6 +115,9 @@ public class AbstractFlowConfiguration
         
         // It is possible that the re-submission service is NULL.
         this.resubmissionService = resubmisionService;
+        
+        // It is possible that the replayRecordService is NULL.
+        this.replayRecordService = replayRecordService;
         
         for(FlowElement flowElement:getFlowElements())
         {
@@ -205,6 +212,14 @@ public class AbstractFlowConfiguration
 	public ResubmissionService getResubmissionService()
 	{
 		return resubmissionService;
+	}
+
+	/**
+	 * @return the replayRecordService
+	 */
+	public ReplayRecordService getReplayRecordService() 
+	{
+		return replayRecordService;
 	}
 
 }

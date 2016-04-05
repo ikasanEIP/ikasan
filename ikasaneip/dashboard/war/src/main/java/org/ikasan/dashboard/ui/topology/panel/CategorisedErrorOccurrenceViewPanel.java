@@ -628,7 +628,10 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		{
 			ExclusionEvent exclusionEvent = this.exclusionManagementService.find(this.categorisedErrorOccurrence.getErrorOccurrence().getUri());
 			AceEditor originalMessageEditor = new AceEditor();
-			originalMessageEditor.setValue(new String(exclusionEvent.getEvent()));
+			if(exclusionEvent != null)
+			{
+				originalMessageEditor.setValue(new String(exclusionEvent.getEvent()));
+			}
 			originalMessageEditor.setReadOnly(true);
 			originalMessageEditor.setMode(AceMode.xml);
 			originalMessageEditor.setTheme(AceTheme.textmate);

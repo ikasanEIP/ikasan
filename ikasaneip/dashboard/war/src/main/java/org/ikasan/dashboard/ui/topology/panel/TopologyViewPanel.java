@@ -82,6 +82,7 @@ import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.dashboard.ui.topology.util.FilterUtil;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
+import org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
@@ -210,6 +211,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION };
+    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE };
     private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
@@ -217,6 +222,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private Panel topologyTreePanel;
 	private Tree moduleTree;
 	private ComponentConfigurationWindow componentConfigurationWindow;
+	private FlowConfigurationWindow flowConfigurationWindow;
 
 	private Panel tabsheetPanel;
 
@@ -261,6 +267,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 	
+//	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
+//	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
+	
 	
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -268,7 +277,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService)
+			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -345,6 +354,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("securityService cannot be null!");
 		}
+		this.flowConfigurationWindow = flowConfigurationWindow;
+		if(this.flowConfigurationWindow == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationWindow cannot be null!");
+		}
+		
 		
 		init();
 	}
@@ -355,7 +370,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.tabsheetPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.tabsheetPanel.setSizeFull();
 		
-		this.createModuleTreePanel();
+		this.createTopologyTreePanel();
 		
 		this.setWidth("100%");
 		this.setHeight("100%");
@@ -525,6 +540,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		
     	}
     	
+    	
     	tabsheet.addSelectedTabChangeListener(new SelectedTabChangeListener() 
     	{
 		    @Override
@@ -546,7 +562,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.tabsheetPanel.setContent(tabsheet);
 	}
 
-	protected void createModuleTreePanel()
+	protected void createTopologyTreePanel()
 	{
 		this.topologyTreePanel = new Panel();
 		this.topologyTreePanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -668,8 +684,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setItemCaption(flow, flow.getName());
                 	            	TopologyViewPanel.this.moduleTree.setParent(flow, module);
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
-                	                            	            	                	            	
-                	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+                	                            	            	                	            	                	            	
+                	            	if(flow.isConfigurable())
+            	                	{
+                	            		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+            	                	}
+            	                	else
+            	                	{
+            	                		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+            	                	}
                 	                
                 	                Set<Component> components = flow.getComponents();
                 	
@@ -728,7 +751,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		                moduleTree.setParent(flow, module);
             		                moduleTree.setChildrenAllowed(flow, true);
             		                
-            		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+            		                if(flow.isConfigurable())
+            	                	{
+                	            		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+            	                	}
+            	                	else
+            	                	{
+            	                		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+            	                	}
             		                
             		                Set<Component> components = flow.getComponents();
             		
@@ -779,7 +809,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	                        moduleTree.setParent(flow, module);
 	    	                moduleTree.setChildrenAllowed(flow, true);
 	    	                
-	    	                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+	    	                if(flow.isConfigurable())
+    	                	{
+        	            		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+    	                	}
+    	                	else
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+    	                	}
 	    	                
 	    	                Set<Component> components = flow.getComponents();
 	    	
@@ -1139,7 +1176,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
 			List<Server> servers = this.topologyService.getAllServers();
 			
-			logger.debug("trying to load tree for " + servers.size());
+			logger.debug("Trying to load tree for " + servers.size());
 			
 			for(Server server: servers)
 			{	
@@ -1401,25 +1438,49 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			Flow flow = ((Flow)target);
 			
 			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
-			if(state != null && state.equals(RUNNING))
+			if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 			{
-				return this.flowActionsStarted;
-			}
-			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-			{
-				return this.flowActionsStarted;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsStartedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsStarted;
+				}
 			}
 			else if (state != null &&(state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR)))
 			{
-				return this.flowActionsStopped;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsStoppedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsStopped;
+				}
 			}
 			else if (state != null && state.equals(PAUSED))
 			{
-				return this.flowActionsPaused;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsPausedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsPaused;
+				}
 			}
 			else
 			{
-				return this.flowActions;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsConfigurable;
+				}
+				else
+				{
+					return this.flowActions;
+				}
 			}
         }
 		else if(target instanceof Component)
@@ -1472,12 +1533,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		this.componentConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.componentConfigurationWindow);
         	}
-        	if(action.equals(WIRETAP))
+        	else if(action.equals(WIRETAP))
         	{
         		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target
         			, triggerManagementService));
         	}
-        	if(action.equals(ERROR_CATEGORISATION))
+        	else if(action.equals(ERROR_CATEGORISATION))
         	{
         		Component component = (Component)target;
         		
@@ -1489,7 +1550,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         {
         	Flow flow = ((Flow)target);
         	
-	        if(action.equals(START))
+        	if(action.equals(CONFIGURE))
+        	{
+        		this.flowConfigurationWindow.populate(flow);
+        		UI.getCurrent().addWindow(this.flowConfigurationWindow);
+        	}
+        	else if(action.equals(START))
 	        {
 	     		if(this.actionFlow(flow, "start"))
 	     		{
