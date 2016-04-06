@@ -106,7 +106,7 @@ public class NotifierServiceImpl implements NotifierService
 		
 		if(notifications == null || notifications.size() == 0)
 		{
-			logger.info("No notifications to perform!");
+			logger.debug("No notifications to perform!");
 		}
 		else
 		{
@@ -130,7 +130,7 @@ public class NotifierServiceImpl implements NotifierService
 					}
 					else
 					{
-						logger.info("No need to notify for notification: " + notification);
+						logger.debug("No need to notify for notification: " + notification);
 					}
 				}
 				catch(Exception e)
@@ -157,7 +157,7 @@ public class NotifierServiceImpl implements NotifierService
 		}
 		catch (Exception e) 
 		{
-			logger.info("Unable to set notification interval from platform configuration using configutation name: notificationIntervalMinutes." +
+			logger.warn("Unable to set notification interval from platform configuration using configutation name: notificationIntervalMinutes." +
 					" Using default value of " + this.notificationIntervalMinutes + " minutes.");
 		}
 		

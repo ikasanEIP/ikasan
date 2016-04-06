@@ -340,7 +340,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             } 
             catch (RuntimeException e) 
             {
-              logger.info("Failed connector: " + connector.getClass().getSimpleName());
+              logger.debug("Failed connector: " + connector.getClass().getSimpleName());
               throw e;
             }
           }

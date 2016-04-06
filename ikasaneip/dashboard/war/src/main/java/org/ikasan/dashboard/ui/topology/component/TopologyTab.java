@@ -167,7 +167,7 @@ public abstract class TopologyTab extends VerticalLayout
 				{
 					final Module module = (Module) t
 							.getItemId();
-					logger.info("sourceContainer.getText(): "
+					logger.debug("sourceContainer.getText(): "
 							+ module.getName());
 					
 					addModule(module);

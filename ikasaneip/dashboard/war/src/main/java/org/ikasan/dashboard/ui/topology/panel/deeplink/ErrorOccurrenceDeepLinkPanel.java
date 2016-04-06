@@ -123,7 +123,7 @@ public class ErrorOccurrenceDeepLinkPanel extends UI
     		return;
 		}
 		
-		logger.info("errorOccurrence: " + errorOccurrence);
+		logger.debug("errorOccurrence: " + errorOccurrence);
 		
 		if((IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
  	        	.getAttribute(DashboardSessionValueConstants.USER) == null)

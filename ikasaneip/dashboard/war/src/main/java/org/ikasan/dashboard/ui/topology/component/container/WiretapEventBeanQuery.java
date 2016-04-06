@@ -93,7 +93,7 @@ public class WiretapEventBeanQuery extends AbstractBeanQuery<WiretapEvent>
 	@Override
 	protected WiretapEvent constructBean()
 	{
-		logger.info("Construct bean!");
+		logger.debug("Construct bean!");
 		
 		return new WiretapFlowEvent();
 	}
@@ -104,7 +104,7 @@ public class WiretapEventBeanQuery extends AbstractBeanQuery<WiretapEvent>
 	@Override
 	protected List<WiretapEvent> loadBeans(int startIndex, int count1)
 	{
-		logger.info("Load beans! " + startIndex + " " + count1);
+		logger.debug("Load beans! " + startIndex + " " + count1);
 		
 		HashSet<String> moduleNames = (HashSet<String>)super.getQueryConfiguration().get(MODULE_NAMES);
 		HashSet<String> flowNames = (HashSet<String>)super.getQueryConfiguration().get(FLOW_NAMES);
@@ -133,14 +133,14 @@ public class WiretapEventBeanQuery extends AbstractBeanQuery<WiretapEvent>
 //    	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(pageNo, count1, "timestamp", false, moduleNames
 //    			, flowNames, componentNames, eventId, null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 		
-		logger.info("Loaded from dao" + events.getResultSize());
+		logger.debug("Loaded from dao" + events.getResultSize());
 		
 		for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
     	{
 			wiretapEvents.add(wiretapEvent);
     	}
 
-		logger.info("Loaded " + wiretapEvents.size());
+		logger.debug("Loaded " + wiretapEvents.size());
 		
 		return wiretapEvents;
 	}
@@ -162,7 +162,7 @@ public class WiretapEventBeanQuery extends AbstractBeanQuery<WiretapEvent>
 	@Override
 	public int size()
 	{
-		logger.info("Size! ");
+		logger.debug("Size! ");
 		return 15000;
 	}
 
