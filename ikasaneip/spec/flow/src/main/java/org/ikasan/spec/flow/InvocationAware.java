@@ -9,12 +9,18 @@ public interface InvocationAware<ID, METRIC>
 {
     /**
      * Sets the flow element invocation
+     *
+     * Typically the aware component would create a short lived reference this flowElementInvocation
+     *
      * @param flowElementInvocation the invocation
      */
     void setFlowElementInvocation(FlowElementInvocation<ID, METRIC> flowElementInvocation);
 
     /**
-     * Sets the flow element invocation
+     * Unsets the flow element invocation
+     *
+     * Typically the aware component would null any reference it held to this flowElementInvocation
+     *
      * @param flowElementInvocation the invocation
      */
     void unsetFlowElementInvocation(FlowElementInvocation<ID, METRIC> flowElementInvocation);

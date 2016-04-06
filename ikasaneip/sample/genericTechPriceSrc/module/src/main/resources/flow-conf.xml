@@ -10,9 +10,14 @@
     <bean id="priceConverterFlow" class="org.ikasan.builder.FlowFactory">
         <property name="moduleName"         value="genericTech-priceSrc" />
         <property name="name"               value="priceConverter" />
-        <property name="description"        value="Recieves a price and converts it to a standard format and logs it." />
+        <property name="description"        value="Receives a price and converts it to a standard format and logs it." />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="consumer"           ref="priceConsumerFlowElement" />
+        <property name="flowInvocationContextListeners">
+            <list>
+                <ref bean="contextLoggingListener"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="priceConsumerFlowElement"     class="org.ikasan.builder.FlowElementFactory">
@@ -31,5 +36,6 @@
         <property name="name"               value="Price Publisher"/>
         <property name="component"          ref="priceProducer"/>
     </bean>
-    
+
+    <bean id="contextLoggingListener"       class="org.ikasan.flow.context.ComponentTimingLoggingListener"/>
 </beans>
