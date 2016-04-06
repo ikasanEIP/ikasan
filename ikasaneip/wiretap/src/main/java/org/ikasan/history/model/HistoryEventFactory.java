@@ -46,6 +46,7 @@ import org.ikasan.spec.history.MessageHistoryEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Factory for creating MessageHistoryEvents from FlowInvocationContext objects
@@ -64,19 +65,14 @@ public class HistoryEventFactory
         {
             messageHistoryEvents.add(new MessageHistoryFlowEvent(moduleName, flowName,
                     invocation.getFlowElement().getComponentName(),
-                    getIdentifier(invocation.getBeforeIdentifier()), getIdentifier(invocation.getBeforeRelatedIdentifier()),
-                    getIdentifier(invocation.getAfterIdentifier()), getIdentifier(invocation.getAfterRelatedIdentifier()),
+                    Objects.toString(invocation.getBeforeIdentifier(), null),
+                    Objects.toString(invocation.getBeforeRelatedIdentifier(), null),
+                    Objects.toString(invocation.getAfterIdentifier(), null),
+                    Objects.toString(invocation.getAfterRelatedIdentifier(), null),
                     invocation.getStartTimeMillis(), invocation.getEndTimeMillis(),
                     30));
             //TODO - move expiry to configurable aspect, where?
         }
         return messageHistoryEvents;
-    }
-
-
-
-    String getIdentifier(Object object)
-    {
-        return object != null ? object.toString() : null;
     }
 }

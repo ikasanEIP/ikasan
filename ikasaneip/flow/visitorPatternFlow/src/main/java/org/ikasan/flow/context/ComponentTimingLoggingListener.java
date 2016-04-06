@@ -73,7 +73,15 @@ public class ComponentTimingLoggingListener implements FlowInvocationContextList
             {
                 // log each element timing
                 sb.append("[Element [").append(invocation.getFlowElement().getComponentName()).append("]");
-                sb.append(" Time [").append(invocation.getEndTimeMillis() - invocation.getStartTimeMillis()).append("ms]] ");
+                sb.append(" Time [").append(invocation.getEndTimeMillis() - invocation.getStartTimeMillis()).append("ms]");
+                if (invocation.getCustomMetrics() instanceof List)
+                {
+                    for (Object customMetric : (List)invocation.getCustomMetrics())
+                    {
+                        sb.append(" CustomMetric [").append(customMetric).append("]");
+                    }
+                }
+                sb.append("] ");
             }
             logger.info(sb.toString());
         }

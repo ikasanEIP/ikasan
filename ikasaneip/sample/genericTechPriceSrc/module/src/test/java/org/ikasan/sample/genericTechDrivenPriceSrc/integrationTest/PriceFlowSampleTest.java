@@ -40,23 +40,25 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ConsumerEventComparator;
 import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ConverterEventComparator;
 import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ProducerEventComparator;
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.FlowObserver;
+import org.ikasan.testharness.flow.FlowSubject;
+import org.ikasan.testharness.flow.FlowTestHarness;
+import org.ikasan.testharness.flow.FlowTestHarnessImpl;
+import org.ikasan.testharness.flow.expectation.model.*;
+import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.ikasan.platform.IkasanEIPTest;
+
+import javax.annotation.Resource;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
@@ -89,6 +91,9 @@ public class PriceFlowSampleTest extends IkasanEIPTest
     @Resource
     Module<Flow> module;
 
+    @Resource
+    FlowSubject testHarnessFlowEventListener;
+
     @Before
     public void setup()
     {
@@ -96,17 +101,21 @@ public class PriceFlowSampleTest extends IkasanEIPTest
         this.consumerEventComparator = new ConsumerEventComparator();
         this.converterEventComparator = new ConverterEventComparator();
         this.producerEventComparator = new ProducerEventComparator();
+        this.testHarnessFlowEventListener.removeAllObservers();
+
     }
 
     @Test
     public void test_flow_consumer_translator_producer()
     {
-        final PriceTechMessage priceTechConsumerMessage = new PriceTechMessage("abc", 10, 10);
-        final StringBuilder priceTechConverterMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
-        final StringBuilder priceTechProducerMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
-
-        List<PriceTechMessage> priceTechMessages = new ArrayList<PriceTechMessage>();
-        priceTechMessages.add(priceTechConsumerMessage);
+        FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
+        {{
+                expectation(new ConsumerComponent("Price Consumer"), "Price Consumer");
+                expectation(new ConverterComponent("Price Converter"), "Price Converter");
+                expectation(new ProducerComponent("Price Publisher"), "Price Publisher");
+        }});
+        testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
+        testHarnessFlowEventListener.setIgnoreEventCapture(true);
 
         for(Flow flow:module.getFlows())
         {
@@ -126,7 +135,7 @@ public class PriceFlowSampleTest extends IkasanEIPTest
         {
             flow.stop();
         }
-
+        flowTestHarness.assertIsSatisfied();
     }
 
 }

@@ -48,7 +48,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface FlowInvocationContext<METRIC>
+public interface FlowInvocationContext
 {
 
     /**
