@@ -113,7 +113,7 @@ public class WiretapCustomQuery implements Query
 	@Override
 	public List<Item> loadItems(int startIndex, int count1)
 	{
-		logger.info("Load beans! " + startIndex + " " + count1);
+		logger.debug("Load beans! " + startIndex + " " + count1);
 		
 		HashSet<String> moduleNames = (HashSet<String>)queryConfiguration.get(MODULE_NAMES);
 		HashSet<String> flowNames = (HashSet<String>)queryConfiguration.get(FLOW_NAMES);
@@ -142,7 +142,7 @@ public class WiretapCustomQuery implements Query
 //    	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(pageNo, count1, "timestamp", false, moduleNames
 //    			, flowNames, componentNames, eventId, null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 		
-		logger.info("Loaded from dao" + events.getResultSize());
+		logger.debug("Loaded from dao" + events.getResultSize());
 		
 //		for(final WiretapEvent<String> wiretapEvent: events.getPagedResults())
 //    	{
@@ -189,7 +189,7 @@ public class WiretapCustomQuery implements Query
 			wiretapEvents.add(wiretapEvent);
     	}
 
-		logger.info("Loaded " + wiretapEvents.size());
+		logger.debug("Loaded " + wiretapEvents.size());
 		
 		return null;
 	}

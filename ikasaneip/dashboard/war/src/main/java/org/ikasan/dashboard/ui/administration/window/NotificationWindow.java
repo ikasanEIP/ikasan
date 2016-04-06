@@ -203,7 +203,7 @@ public class NotificationWindow extends Window
 			{
 				this.filterCombo.setValue(filter);
 				
-				logger.info("Setting filter to: " + filter.getName());
+				logger.debug("Setting filter to: " + filter.getName());
 			}
 		}		
 		
@@ -351,7 +351,7 @@ public class NotificationWindow extends Window
                 
                 NotificationWindow.this.topologyService.save(notification);
             	
-            	logger.info("Notification: " + notification);
+            	logger.debug("Notification: " + notification);
                 
             	com.vaadin.ui.Notification.show("Notification Saved!");
 
