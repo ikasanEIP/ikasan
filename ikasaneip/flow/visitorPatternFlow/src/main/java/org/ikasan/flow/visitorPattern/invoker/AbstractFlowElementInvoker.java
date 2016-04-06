@@ -119,7 +119,7 @@ public abstract class AbstractFlowElementInvoker
      * @return the new FlowElementInvocation, null if <code>ignoreContextInvocation</code> is true
      */
     @SuppressWarnings("unchecked")
-    FlowElementInvocation<Object> beginFlowElementInvocation(FlowInvocationContext flowInvocationContext, FlowElement flowElement, FlowEvent flowEvent)
+    FlowElementInvocation<Object, ?> beginFlowElementInvocation(FlowInvocationContext flowInvocationContext, FlowElement flowElement, FlowEvent flowEvent)
     {
         if (ignoreContextInvocation)
         {
@@ -130,7 +130,7 @@ public abstract class AbstractFlowElementInvoker
         }
         // blank out the last component, the invoker is now using context invocations
         flowInvocationContext.setLastComponentName(null);
-        FlowElementInvocation<Object> flowElementInvocation = FlowElementInvocationFactory.newInvocation();
+        FlowElementInvocation<Object, ?> flowElementInvocation = FlowElementInvocationFactory.newInvocation();
         flowElementInvocation.setBeforeIdentifier(flowEvent.getIdentifier());
         flowElementInvocation.setBeforeRelatedIdentifier(flowEvent.getRelatedIdentifier());
         flowElementInvocation.beforeInvocation(flowElement);
@@ -143,7 +143,7 @@ public abstract class AbstractFlowElementInvoker
      * @param flowElementInvocation the invocation
      * @param flowElement the current flow element being invoked
      */
-    void endFlowElementInvocation(FlowElementInvocation<Object> flowElementInvocation, FlowElement flowElement, FlowEvent flowEvent)
+    void endFlowElementInvocation(FlowElementInvocation<Object, ?> flowElementInvocation, FlowElement flowElement, FlowEvent flowEvent)
     {
         if (flowElementInvocation != null)
         {
@@ -157,5 +157,22 @@ public abstract class AbstractFlowElementInvoker
     {
         this.ignoreContextInvocation = ignoreContextInvocation;
     }
+
+    void setInvocationOnComponent(FlowElementInvocation flowElementInvocation, Object component)
+    {
+        if (component instanceof InvocationAware)
+        {
+            ((InvocationAware) component).setFlowElementInvocation(flowElementInvocation);
+        }
+    }
+
+    void unsetInvocationOnComponent(FlowElementInvocation flowElementInvocation, Object component)
+    {
+        if (component instanceof InvocationAware)
+        {
+            ((InvocationAware) component).unsetFlowElementInvocation(flowElementInvocation);
+        }
+    }
+
 }
 

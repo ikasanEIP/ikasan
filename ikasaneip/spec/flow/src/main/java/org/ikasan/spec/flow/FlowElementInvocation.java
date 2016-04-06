@@ -46,7 +46,7 @@ package org.ikasan.spec.flow;
  * @author Ikasan Development Team
  *
  */
-public interface FlowElementInvocation<IDENTIFIER> {
+public interface FlowElementInvocation<IDENTIFIER, METRIC> {
 
     /**
      * Called before the FlowElement is invoked by the FlowElementInvoker
@@ -125,4 +125,9 @@ public interface FlowElementInvocation<IDENTIFIER> {
      * @param relatedIdentifier
      */
     void setAfterRelatedIdentifier(IDENTIFIER relatedIdentifier);
+
+
+    void addCustomMetric(String name, String value);
+
+    METRIC getCustomMetrics();
 }

@@ -58,52 +58,60 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation<Object> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        FlowElementInvocation<Object,?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Broker broker = flowElement.getFlowComponent();
-        if(requiresFullEventForInvocation == null)
+        setInvocationOnComponent(flowElementInvocation, broker);
+        // we must unset the context whatever happens, so try/finally
+        try
         {
-            try
+            if (requiresFullEventForInvocation == null)
             {
-                // try with flowEvent and if successful mark this producer
-                // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
-                Object o = broker.invoke(flowEvent);
-                if (o instanceof FlowEvent)
+                try
                 {
-                    flowEvent.replace((FlowEvent) o);
+                    // try with flowEvent and if successful mark this producer
+                    // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                    Object o = broker.invoke(flowEvent);
+                    if (o instanceof FlowEvent)
+                    {
+                        flowEvent.replace((FlowEvent) o);
+                    }
+                    else
+                    {
+                        flowEvent.setPayload(o);
+                    }
+                    requiresFullEventForInvocation = Boolean.TRUE;
                 }
-                else
+                catch (java.lang.ClassCastException e)
                 {
-                    flowEvent.setPayload(o);
-                }
-
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.ClassCastException e)
-            {
-                flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
-                Object o = broker.invoke(flowEvent);
-                if (o instanceof FlowEvent)
-                {
-                    flowEvent.replace((FlowEvent) o);
-                }
-                else
-                {
-                    flowEvent.setPayload(o);
+                    flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
+                    requiresFullEventForInvocation = Boolean.FALSE;
                 }
             }
             else
             {
-                flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
+                if (requiresFullEventForInvocation)
+                {
+                    // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                    Object o = broker.invoke(flowEvent);
+                    if (o instanceof FlowEvent)
+                    {
+                        flowEvent.replace((FlowEvent) o);
+                    }
+                    else
+                    {
+                        flowEvent.setPayload(o);
+                    }
+                }
+                else
+                {
+                    flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
+                }
             }
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, broker);
         }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         FlowElement nextFlowElement = getDefaultTransition(flowElement);

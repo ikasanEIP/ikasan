@@ -58,34 +58,44 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Producer> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Producer producer = flowElement.getFlowComponent();
-        if(requiresFullEventForInvocation == null)
+        setInvocationOnComponent(flowElementInvocation, producer);
+        // we must unset the context whatever happens, so try/finally
+        try
         {
-            try
+            if(requiresFullEventForInvocation == null)
             {
-                // try with flowEvent and if successful mark this producer
-                producer.invoke(flowEvent);
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.ClassCastException e)
-            {
-                producer.invoke(flowEvent.getPayload());
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                producer.invoke(flowEvent);
+                try
+                {
+                    // try with flowEvent and if successful mark this producer
+                    producer.invoke(flowEvent);
+                    requiresFullEventForInvocation = Boolean.TRUE;
+                }
+                catch(java.lang.ClassCastException e)
+                {
+                    producer.invoke(flowEvent.getPayload());
+                    requiresFullEventForInvocation = Boolean.FALSE;
+                }
             }
             else
             {
-                producer.invoke(flowEvent.getPayload());
+                if(requiresFullEventForInvocation)
+                {
+                    producer.invoke(flowEvent);
+                }
+                else
+                {
+                    producer.invoke(flowEvent.getPayload());
+                }
             }
         }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, producer);
+        }
+
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // producer is last in the flow

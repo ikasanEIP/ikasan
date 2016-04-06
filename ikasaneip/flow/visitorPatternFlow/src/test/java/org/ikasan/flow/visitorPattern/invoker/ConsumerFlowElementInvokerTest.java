@@ -71,6 +71,12 @@ public class ConsumerFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Consumer consumer = mockery.mock(Consumer.class, "consumer");
     private Converter mockedConverter = mockery.mock(Converter.class, "converter");
+
+    // this is to test the InvocationAware aspect (note we invoke on the converter since the consumer is never 'invoked')
+    interface ConsumerConverterInvocationAware extends Converter, InvocationAware {}
+    private ConsumerConverterInvocationAware consumerConverterInvocationAware = mockery.mock(ConsumerConverterInvocationAware.class, "consumerConverterInvocationAware");
+
+
     private Object payload = mockery.mock(Object.class, "payload");
 
     @Test
@@ -140,6 +146,46 @@ public class ConsumerFlowElementInvokerTest
     }
 
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_consumer_flowElementInvoker_with_converter_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(consumer));
+
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(consumerConverterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(consumerConverterInvocationAware).convert(payload);
+                will(returnValue(payload));
+                exactly(1).of(consumerConverterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new StubbedConsumerAwareFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
     @Test(expected = InvalidFlowException.class)
     @SuppressWarnings("unchecked")
     public void test_consumer_flowElementInvoker_invalid_transition()
@@ -177,6 +223,15 @@ public class ConsumerFlowElementInvokerTest
         protected Converter getAsConverter(Consumer consumer)
         {
             return mockedConverter;
+        }
+    }
+
+    class StubbedConsumerAwareFlowElementInvoker extends ConsumerFlowElementInvoker
+    {
+        @Override
+        protected Converter getAsConverter(Consumer consumer)
+        {
+            return consumerConverterInvocationAware;
         }
     }
 }

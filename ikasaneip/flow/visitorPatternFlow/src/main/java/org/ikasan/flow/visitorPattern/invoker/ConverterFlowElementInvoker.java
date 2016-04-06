@@ -59,56 +59,63 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Converter> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        FlowElementInvocation<Object,?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Converter converter = flowElement.getFlowComponent();
-
-        if(requiresFullEventForInvocation == null)
+        setInvocationOnComponent(flowElementInvocation, converter);
+        // we must unset the context whatever happens, so try/finally
+        try
         {
-            try
+            if (requiresFullEventForInvocation == null)
             {
-                // try with flowEvent and if successful mark this producer
-                // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
-                converter.getClass().getMethod("convert", FlowEvent.class);
-                Object o = converter.convert(flowEvent);
-                if (o instanceof FlowEvent)
+                try
                 {
-                    FlowEvent converterFlowEvent = (FlowEvent)o;
-                    flowEvent.setPayload(converterFlowEvent.getPayload());
+                    // try with flowEvent and if successful mark this producer
+                    // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
+                    converter.getClass().getMethod("convert", FlowEvent.class);
+                    Object o = converter.convert(flowEvent);
+                    if (o instanceof FlowEvent)
+                    {
+                        FlowEvent converterFlowEvent = (FlowEvent) o;
+                        flowEvent.setPayload(converterFlowEvent.getPayload());
+                    }
+                    else
+                    {
+                        flowEvent.setPayload(o);
+                    }
+                    requiresFullEventForInvocation = Boolean.TRUE;
                 }
-                else
+                catch (java.lang.NoSuchMethodException e)
                 {
-                    flowEvent.setPayload(o);
-                }
-
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.NoSuchMethodException e)
-            {
-                flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
-                Object o = converter.convert(flowEvent);
-                if (o instanceof FlowEvent)
-                {
-                    FlowEvent converterFlowEvent = (FlowEvent)o;
-                    flowEvent.setPayload(converterFlowEvent.getPayload());
-                }
-                else
-                {
-                    flowEvent.setPayload(o);
+                    flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+                    requiresFullEventForInvocation = Boolean.FALSE;
                 }
             }
             else
             {
-                flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+                if (requiresFullEventForInvocation)
+                {
+                    // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                    Object o = converter.convert(flowEvent);
+                    if (o instanceof FlowEvent)
+                    {
+                        FlowEvent converterFlowEvent = (FlowEvent) o;
+                        flowEvent.setPayload(converterFlowEvent.getPayload());
+                    }
+                    else
+                    {
+                        flowEvent.setPayload(o);
+                    }
+                }
+                else
+                {
+                    flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+                }
             }
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, converter);
         }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

@@ -71,6 +71,11 @@ public class TranslatorFlowElementInvokerTest
     private Translator translator = mockery.mock(Translator.class, "translator");
     private Object payload = mockery.mock(Object.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface TranslatorInvocationAware extends Translator, InvocationAware {}
+    private TranslatorInvocationAware translatorInvocationAware = mockery.mock(TranslatorInvocationAware.class, "translatorInvocationAware");
+
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_translator_flowElementInvoker()
@@ -92,6 +97,42 @@ public class TranslatorFlowElementInvokerTest
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(translator).translate(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new TranslatorFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_translator_flowElementInvoker_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(translatorInvocationAware));
+                exactly(1).of(translatorInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(translatorInvocationAware).translate(payload);
+                exactly(1).of(translatorInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);

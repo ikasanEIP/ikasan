@@ -56,13 +56,22 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Filter> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Filter filter = flowElement.getFlowComponent();
-        if(filter.filter(flowEvent.getPayload()) == null)
+        setInvocationOnComponent(flowElementInvocation, filter);
+        // we must unset the context whatever happens, so try/finally
+        try
         {
-            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
-            return null;
+            if (filter.filter(flowEvent.getPayload()) == null)
+            {
+                endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
+                return null;
+            }
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, filter);
         }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 

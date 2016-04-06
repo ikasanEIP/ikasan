@@ -79,6 +79,11 @@ public class MultiRecipientRouterFlowElementInvokerTest
     private Map payload = mockery.mock(Map.class, "payload");
     private MultiRecipientRouterConfiguration invokerConfiguration = mockery.mock(MultiRecipientRouterConfiguration.class, "invokerConfiguration");
 
+    // this is to test the InvocationAware aspect
+    interface MultiRecipientRouteInvocationAware extends MultiRecipientRouter, InvocationAware {}
+    private MultiRecipientRouteInvocationAware mrrInvocationAware = mockery.mock(MultiRecipientRouteInvocationAware.class, "mrrInvocationAware");
+
+
     @Test(expected = IllegalArgumentException.class)
     @SuppressWarnings("unchecked")
     public void test_failed_constructor_null_replicationFactory()
@@ -157,6 +162,73 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
                 will(returnValue(routes));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition("one");
+                will(returnValue(flowElement));
+                exactly(1).of(invokerConfiguration).isCloneEventPerRoute();
+                will(returnValue(true));
+                exactly(1).of(replicationFactory).replicate(flowEvent);
+                will(returnValue(flowEvent));
+                exactly(1).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(flowElement));
+                exactly(1).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
+
+                exactly(1).of(flowElement).getTransition("two");
+                will(returnValue(flowElement));
+                exactly(1).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(invokerConfiguration).isCloneEventPerRoute();
+                will(returnValue(true));
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(flowElement));
+                exactly(1).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_router_flowElementInvoker_multiple_targets_invocation_aware()
+    {
+        final List<String> routes = new ArrayList<>();
+        routes.add("one");
+        routes.add("two");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(mrrInvocationAware));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+
+                exactly(1).of(mrrInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(mrrInvocationAware).route(payload);
+                will(returnValue(routes));
+                exactly(1).of(mrrInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition("one");

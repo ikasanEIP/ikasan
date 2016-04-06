@@ -73,6 +73,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
     private SingleRecipientRouter router = mockery.mock(SingleRecipientRouter.class, "singleRecipientRouter");
     private Map payload = mockery.mock(Map.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface SingleRecipientRouterInvocationAware extends SingleRecipientRouter, InvocationAware {}
+    private SingleRecipientRouterInvocationAware singleRecipientRouterInvocationAware = mockery.mock(SingleRecipientRouterInvocationAware.class, "singleRecipientRouterInvocationAware");
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_single_target()
@@ -97,6 +101,45 @@ public class SingleRecipientRouterFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
                 will(returnValue(route));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition("one");
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_router_flowElementInvoker_single_target_invocation_aware()
+    {
+        final String route = "one";
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(singleRecipientRouterInvocationAware));
+                exactly(1).of(singleRecipientRouterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(singleRecipientRouterInvocationAware).route(payload);
+                will(returnValue(route));
+                exactly(1).of(singleRecipientRouterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition("one");

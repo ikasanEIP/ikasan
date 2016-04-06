@@ -73,6 +73,11 @@ public class FilterFlowElementInvokerTest
     private Filter filter = mockery.mock(Filter.class, "filter");
     private Map payload = mockery.mock(Map.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface FilterInvocationAware extends Filter, InvocationAware {}
+    private FilterInvocationAware filterInvocationAware = mockery.mock(FilterInvocationAware.class, "filterInvocationAware");
+
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_filter_flowElementInvoker_not_filtered()
@@ -130,6 +135,77 @@ public class FilterFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(filter).filter(payload);
                 will(returnValue(null));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_filter_flowElementInvoker_not_filtered_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(filterInvocationAware));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(filterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(filterInvocationAware).filter(payload);
+                will(returnValue(payload));
+                exactly(1).of(filterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new FilterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_filter_flowElementInvoker_filtered_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(filterInvocationAware));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(filterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(filterInvocationAware).filter(payload);
+                will(returnValue(null));
+                exactly(1).of(filterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
             }
         });
 

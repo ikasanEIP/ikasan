@@ -72,6 +72,10 @@ public class ProducerFlowElementInvokerTest
     private Producer producer = mockery.mock(Producer.class, "producer");
     private Map payload = mockery.mock(Map.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface ProducerInvocationAware extends Producer, InvocationAware {}
+    private ProducerInvocationAware producerInvocationAware = mockery.mock(ProducerInvocationAware.class, "producerInvocationAware");
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_producer_flowElementInvoker_payloadOnly()
@@ -96,6 +100,61 @@ public class ProducerFlowElementInvokerTest
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(producer).invoke(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                // second execution
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(producer));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(producer).invoke(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new ProducerFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_producer_flowElementInvoker_payloadOnly_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // first execution
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(producerInvocationAware));
+                exactly(1).of(producerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(producerInvocationAware).invoke(flowEvent);
+                will(throwException(new ClassCastException()));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(producerInvocationAware).invoke(payload);
+                exactly(1).of(producerInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
