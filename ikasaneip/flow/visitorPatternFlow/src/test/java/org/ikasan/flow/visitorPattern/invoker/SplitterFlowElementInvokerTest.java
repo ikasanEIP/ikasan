@@ -76,6 +76,10 @@ public class SplitterFlowElementInvokerTest
     private Splitter splitter = mockery.mock(Splitter.class, "splitter");
     private Object payload = mockery.mock(Object.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface SplitterInvocationAware extends Splitter, InvocationAware {}
+    private SplitterInvocationAware splitterInvocationAware = mockery.mock(SplitterInvocationAware.class, "splitterInvocationAware");
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_splitter_flowElementInvoker_no_split()
@@ -167,6 +171,57 @@ public class SplitterFlowElementInvokerTest
 
         mockery.assertIsSatisfied();
     }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_splitter_flowElementInvoker_multiple_splits_existingFlowEvent_invocation_aware()
+    {
+        final List payloads = new ArrayList();
+        payloads.add(payload);
+        payloads.add(payload);
+        payloads.add(payload);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(splitterInvocationAware));
+                exactly(1).of(splitterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(splitterInvocationAware).split(flowEvent);
+                will(throwException(new ClassCastException()));
+                exactly(1).of(splitterInvocationAware).split(payload);
+                will(returnValue(payloads));
+                exactly(1).of(splitterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+
+                exactly(3).of(flowEvent).setPayload(payload);
+                exactly(3).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(3).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(3).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
 
     @Test
     @SuppressWarnings("unchecked")

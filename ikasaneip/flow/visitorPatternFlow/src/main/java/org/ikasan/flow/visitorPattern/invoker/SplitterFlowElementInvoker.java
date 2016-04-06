@@ -65,31 +65,41 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Splitter splitter = flowElement.getFlowComponent();
+        setInvocationOnComponent(flowElementInvocation, splitter);
+        // we must unset the context whatever happens, so try/finally
         List payloads;
-        if(requiresFullEventForInvocation == null)
+        try
         {
-            try
+
+            if (requiresFullEventForInvocation == null)
             {
-                // try with flowEvent and if successful mark this component
-                payloads = splitter.split(flowEvent);
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.ClassCastException e)
-            {
-                payloads = splitter.split(flowEvent.getPayload());
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                payloads = splitter.split(flowEvent);
+                try
+                {
+                    // try with flowEvent and if successful mark this component
+                    payloads = splitter.split(flowEvent);
+                    requiresFullEventForInvocation = Boolean.TRUE;
+                }
+                catch (java.lang.ClassCastException e)
+                {
+                    payloads = splitter.split(flowEvent.getPayload());
+                    requiresFullEventForInvocation = Boolean.FALSE;
+                }
             }
             else
             {
-                payloads = splitter.split(flowEvent.getPayload());
+                if (requiresFullEventForInvocation)
+                {
+                    payloads = splitter.split(flowEvent);
+                }
+                else
+                {
+                    payloads = splitter.split(flowEvent.getPayload());
+                }
             }
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, splitter);
         }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 

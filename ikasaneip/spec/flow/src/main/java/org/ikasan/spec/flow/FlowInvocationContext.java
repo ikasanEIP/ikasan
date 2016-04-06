@@ -48,7 +48,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface FlowInvocationContext
+public interface FlowInvocationContext<METRIC>
 {
 
     /**
@@ -110,4 +110,5 @@ public interface FlowInvocationContext
     void setFinalAction(FinalAction action);
 
     FinalAction getFinalAction();
+
 }

@@ -59,7 +59,16 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker imp
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Translator translator = flowElement.getFlowComponent();
-        translator.translate(flowEvent.getPayload());
+        setInvocationOnComponent(flowElementInvocation, translator);
+        // we must unset the context whatever happens, so try/finally
+        try
+        {
+            translator.translate(flowEvent.getPayload());
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, translator);
+        }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element

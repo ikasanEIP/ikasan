@@ -81,6 +81,12 @@ public class ConcurrentSplitterFlowElementInvokerTest
     private FlowElementInvoker mainFlowElementInvoker = mockery.mock(FlowElementInvoker.class, "mainFlowElementInvoker");
 
     private Splitter splitter = mockery.mock(Splitter.class, "splitter");
+
+    // this is to test the InvocationAware aspect
+    interface SplitterInvocationAware extends Splitter, InvocationAware {}
+    private SplitterInvocationAware splitterInvocationAware = mockery.mock(SplitterInvocationAware.class, "splitterInvocationAware");
+
+
     private Object payload = mockery.mock(Object.class, "payload");
     private ConcurrentSplitterFlowElementInvoker.SplitFlowElement asyncTask = mockery.mock(ConcurrentSplitterFlowElementInvoker.SplitFlowElement.class, "mockAsyncTask");
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -117,6 +123,74 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
                 exactly(1).of(splitter).split(payload);
                 will(returnValue(payloads));
+
+                exactly(1).of(subFlowElement).getTransition(FlowElement.SUBFLOW_TRANSITION_NAME);
+                will(returnValue(subFlowElement));
+
+                exactly(1).of(asyncTask).call();
+                will(returnValue(asyncTask));
+
+                exactly(1).of(subFlowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(mainFlowElement));
+
+                exactly(1).of(mainFlowElement).getFlowElementInvoker();
+                will(returnValue(mainFlowElementInvoker));
+                exactly(1).of(mainFlowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, mainFlowElement);
+                will(returnValue(null));
+
+                exactly(1).of(flowEvent).setPayload(payload);
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+                exactly(1).of(flowEventListener).afterFlowElement(with(any(String.class)), with(any(String.class)), with(any(FlowElement.class)), with(any(FlowEvent.class)));
+
+                exactly(1).of(flowInvocationContext).combine(flowInvocationContext);
+
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new StubbedConcurrentSplitterFlowElementInvoker(executorService, 1, null);
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
+        mockery.assertIsSatisfied();
+    }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution_invocation_aware() throws Exception {
+        final List payloads = new ArrayList();
+        payloads.add(payload);
+
+        asyncTask._flowEvent = flowEvent;
+        asyncTask._flowInvocationContext = flowInvocationContext;
+
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", subFlowElement, flowEvent);
+
+                exactly(1).of(subFlowElement).getFlowComponent();
+                will(returnValue(splitterInvocationAware));
+
+                exactly(1).of(splitterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(splitterInvocationAware).split(flowEvent);
+                will(throwException(new ClassCastException()));
+                exactly(2).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("id"));
+
+                exactly(1).of(splitterInvocationAware).split(payload);
+                will(returnValue(payloads));
+
+                exactly(1).of(splitterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
 
                 exactly(1).of(subFlowElement).getTransition(FlowElement.SUBFLOW_TRANSITION_NAME);
                 will(returnValue(subFlowElement));

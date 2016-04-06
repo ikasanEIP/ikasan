@@ -65,6 +65,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
+
         if(hasConverter == null)
         {
             Consumer consumer = flowElement.getFlowComponent();
@@ -81,7 +82,18 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 
         if(hasConverter)
         {
-            flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+            // note set on the converter since thats the handle we have - its the same underlying object as the consumer
+            setInvocationOnComponent(flowElementInvocation, converter);
+            try
+            {
+                flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+            }
+            finally
+            {
+                // note the unset on the converter, its really the only part of the consumer we 'invoke'
+                unsetInvocationOnComponent(flowElementInvocation, converter);
+            }
+
         }
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);

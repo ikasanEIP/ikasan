@@ -43,6 +43,11 @@ package org.ikasan.flow.event;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvocation;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Simple factory for creating FlowElementInvocation objects
  *
@@ -65,7 +70,7 @@ public class FlowElementInvocationFactory
     /**
      * Default implementation of the FlowElementInvocation
      */
-    public static class DefaultFlowElementInvocation implements FlowElementInvocation<Object>
+    public static class DefaultFlowElementInvocation implements FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>>
     {
         /** the start and end times (epoch) of the FlowElement invocation */
         private volatile long startTime, endTime;
@@ -84,6 +89,11 @@ public class FlowElementInvocationFactory
 
         /** the FlowEvent IDENTIFIER */
         private Object afterRelatedIdentifier;
+
+        /** custom metrics of any name/value */
+        private List<AbstractMap.SimpleImmutableEntry<String, String>> customMetrics
+                = Collections.synchronizedList(new ArrayList<AbstractMap.SimpleImmutableEntry<String, String>>());;
+
 
         @Override
         public void beforeInvocation(FlowElement flowElement) {
@@ -157,6 +167,18 @@ public class FlowElementInvocationFactory
         public void setAfterRelatedIdentifier(Object relatedIdentifier)
         {
             afterRelatedIdentifier = relatedIdentifier;
+        }
+
+        @Override
+        public void addCustomMetric(String name, String value)
+        {
+            customMetrics.add(new AbstractMap.SimpleImmutableEntry<>(name, value));
+        }
+
+        @Override
+        public List<AbstractMap.SimpleImmutableEntry<String, String>> getCustomMetrics()
+        {
+            return customMetrics;
         }
     }
 }

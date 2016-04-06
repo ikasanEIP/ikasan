@@ -92,10 +92,20 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<MultiRecipientRouter> flowElement)
     {
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+        FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         MultiRecipientRouter router = flowElement.getFlowComponent();
-        List<String> targetNames = router.route(flowEvent.getPayload());
+        setInvocationOnComponent(flowElementInvocation, router);
+        // we must unset the context whatever happens, so try/finally
+        List<String> targetNames;
+        try
+        {
+            targetNames = router.route(flowEvent.getPayload());
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, router);
+        }
         if (targetNames == null || targetNames.size() == 0)
         {
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "

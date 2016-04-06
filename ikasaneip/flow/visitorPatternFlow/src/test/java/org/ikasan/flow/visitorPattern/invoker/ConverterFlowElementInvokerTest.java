@@ -71,6 +71,11 @@ public class ConverterFlowElementInvokerTest
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private Object payload = mockery.mock(Object.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface ConverterInvocationAware extends Converter, InvocationAware {}
+    private ConverterInvocationAware converterInvocationAware = mockery.mock(ConverterInvocationAware.class, "converterInvocationAware");
+
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_converter_flowElementInvoker_with_flowEvent()
@@ -141,6 +146,89 @@ public class ConverterFlowElementInvokerTest
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_converter_flowElementInvoker_with_payload_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(converterInvocationAware));
+
+                exactly(1).of(converterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(converterInvocationAware).convert(payload);
+                will(returnValue(payload));
+                exactly(1).of(converterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test(expected = TransformationException.class)
+    @SuppressWarnings("unchecked")
+    public void test_converter_flowElementInvoker_with_payload_invocation_aware_exception_thrown()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(converterInvocationAware));
+
+                exactly(1).of(converterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(converterInvocationAware).convert(payload);
+                will(throwException(new TransformationException("bad transformation")));
+
+                // event though exception thrown we still expect to unset the FlowElementInvocation
+                exactly(1).of(converterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+        try
+        {
+            flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        }
+        catch (Exception ex)
+        {
+            mockery.assertIsSatisfied();
+            throw ex;
+        }
     }
 
     @Test(expected = InvalidFlowException.class)

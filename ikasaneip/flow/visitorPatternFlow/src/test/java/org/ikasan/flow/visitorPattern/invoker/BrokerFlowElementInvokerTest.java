@@ -72,6 +72,10 @@ public class BrokerFlowElementInvokerTest
     private Broker broker = mockery.mock(Broker.class, "broker");
     private Map payload = mockery.mock(Map.class, "payload");
 
+    // this is to test the InvocationAware aspect
+    interface BrokerInvocationAware extends Broker, InvocationAware {}
+    private BrokerInvocationAware brokerInvocationAware = mockery.mock(BrokerInvocationAware.class, "brokerInvocationAware");
+
     @Test
     @SuppressWarnings("unchecked")
     public void test_broker_flowElementInvoker_payloadOnly()
@@ -134,6 +138,79 @@ public class BrokerFlowElementInvokerTest
 
         mockery.assertIsSatisfied();
     }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_broker_flowElementInvoker_payload_invocation_aware()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // first execution
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(brokerInvocationAware));
+                exactly(1).of(brokerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(brokerInvocationAware).invoke(flowEvent);
+                will(throwException(new ClassCastException()));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(brokerInvocationAware).invoke(payload);
+                will(returnValue(payload));
+                exactly(1).of(brokerInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(null));
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                // second execution
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(brokerInvocationAware));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+
+                exactly(1).of(brokerInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(brokerInvocationAware).invoke(payload);
+                will(returnValue(payload));
+                exactly(1).of(brokerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(1).of(flowEvent).setPayload(payload);
+
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(null));
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+
 
     @Test
     @SuppressWarnings("unchecked")
