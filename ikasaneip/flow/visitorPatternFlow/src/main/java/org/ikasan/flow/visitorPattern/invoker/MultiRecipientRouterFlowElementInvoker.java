@@ -42,7 +42,6 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 
@@ -92,16 +91,27 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<MultiRecipientRouter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation<Object, ?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         MultiRecipientRouter router = flowElement.getFlowComponent();
-        List<String> targetNames = router.route(flowEvent.getPayload());
+        setInvocationOnComponent(flowElementInvocation, router);
+        // we must unset the context whatever happens, so try/finally
+        List<String> targetNames;
+        try
+        {
+            targetNames = router.route(flowEvent.getPayload());
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, router);
+        }
         if (targetNames == null || targetNames.size() == 0)
         {
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
                     + "All Routers must result in at least one transition.");
         }
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         if (targetNames.size() == 1)

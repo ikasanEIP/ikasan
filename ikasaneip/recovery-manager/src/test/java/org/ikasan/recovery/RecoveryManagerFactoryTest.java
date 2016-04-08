@@ -40,15 +40,15 @@
  */
 package org.ikasan.recovery;
 
-import junit.framework.Assert;
-
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -67,14 +67,12 @@ public class RecoveryManagerFactoryTest
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
     
     /** Mock consumer flowElement */
     final Consumer<?,?> consumer = mockery.mock(Consumer.class, "mockConsumer");
-
-    /** Mock exception resolver */
-    final ExceptionResolver exceptionResolver = mockery.mock(ExceptionResolver.class, "mockExceptionResolver");
 
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");

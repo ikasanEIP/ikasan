@@ -15,7 +15,8 @@
 	<include file="db/tables/db-changeLog-createReplayEvent.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createReplayAudit.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createReplayAuditEvent.xml" relativeToChangelogFile="true" />
-	
+	<include file="db/tables/db-changeLog-createMessageHistory.xml" relativeToChangelogFile="true" />
+
 	<!-- 1.2.0 cardinality creation -->
 	<include file="db/cardinality/db-changeLog-createRoleFilterFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createFilterComponentFk.xml" relativeToChangelogFile="true" />

@@ -41,9 +41,8 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.apache.log4j.Logger;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.flow.event.FlowElementInvocationFactory;
+import org.ikasan.spec.flow.*;
 
 /**
  * An abstract implementation of the FlowElementInvoker
@@ -54,6 +53,8 @@ public abstract class AbstractFlowElementInvoker
 {
     /** logger instance */
     private static final Logger logger = Logger.getLogger(AbstractFlowElementInvoker.class);
+
+    protected Boolean ignoreContextInvocation = false;
 
     /**
      * Helper method to notify listeners before a flow element is invoked
@@ -109,5 +110,69 @@ public abstract class AbstractFlowElementInvoker
     {
         return flowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
     }
+
+    /**
+     * Creates a new FlowElementInvocation and adds it the FlowInvocationContext
+     * @param flowInvocationContext the context
+     * @param flowElement the current flow element being invoked
+     * @param flowEvent the current flow event
+     * @return the new FlowElementInvocation, null if <code>ignoreContextInvocation</code> is true
+     */
+    @SuppressWarnings("unchecked")
+    FlowElementInvocation<Object, ?> beginFlowElementInvocation(FlowInvocationContext flowInvocationContext, FlowElement flowElement, FlowEvent flowEvent)
+    {
+        if (ignoreContextInvocation)
+        {
+            // the last invoked component name is always needed in case the recovery manager is invoked
+            // whilst the invoker is ignoring the context invocation calls
+            flowInvocationContext.setLastComponentName(flowElement.getComponentName());
+            return null;
+        }
+        // blank out the last component, the invoker is now using context invocations
+        flowInvocationContext.setLastComponentName(null);
+        FlowElementInvocation<Object, ?> flowElementInvocation = FlowElementInvocationFactory.newInvocation();
+        flowElementInvocation.setBeforeIdentifier(flowEvent.getIdentifier());
+        flowElementInvocation.setBeforeRelatedIdentifier(flowEvent.getRelatedIdentifier());
+        flowElementInvocation.beforeInvocation(flowElement);
+        flowInvocationContext.addElementInvocation(flowElementInvocation);
+        return flowElementInvocation;
+    }
+
+    /**
+     * Ends the invocation if present
+     * @param flowElementInvocation the invocation
+     * @param flowElement the current flow element being invoked
+     */
+    void endFlowElementInvocation(FlowElementInvocation<Object, ?> flowElementInvocation, FlowElement flowElement, FlowEvent flowEvent)
+    {
+        if (flowElementInvocation != null)
+        {
+            flowElementInvocation.afterInvocation(flowElement);
+            flowElementInvocation.setAfterIdentifier(flowEvent.getIdentifier());
+            flowElementInvocation.setAfterRelatedIdentifier(flowEvent.getRelatedIdentifier());
+        }
+    }
+
+    public void setIgnoreContextInvocation(boolean ignoreContextInvocation)
+    {
+        this.ignoreContextInvocation = ignoreContextInvocation;
+    }
+
+    void setInvocationOnComponent(FlowElementInvocation flowElementInvocation, Object component)
+    {
+        if (component instanceof InvocationAware)
+        {
+            ((InvocationAware) component).setFlowElementInvocation(flowElementInvocation);
+        }
+    }
+
+    void unsetInvocationOnComponent(FlowElementInvocation flowElementInvocation, Object component)
+    {
+        if (component instanceof InvocationAware)
+        {
+            ((InvocationAware) component).unsetFlowElementInvocation(flowElementInvocation);
+        }
+    }
+
 }
 

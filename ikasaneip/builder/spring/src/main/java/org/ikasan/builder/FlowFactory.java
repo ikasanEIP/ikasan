@@ -61,10 +61,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -125,6 +122,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     ConfigurationService configurationService;
 
     SerialiserFactory ikasanSerialiserFactory;
+
+    /** List of FlowInvocationListener */
+    List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     /** flow monitor */
     Monitor monitor;
@@ -277,10 +277,19 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
    		this.flowPersistentConfiguration = flowPersistentConfiguration;
    	}
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
+    /**
+     * set the List of FlowInvocationListener
+     * @param flowInvocationContextListeners the list of listeners
      */
+    public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
+
+    /*
+         * (non-Javadoc)
+         * @see org.springframework.beans.factory.FactoryBean#getObject()
+         */
     @Override
     public Flow getObject()
     {
@@ -366,6 +375,8 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
             ((MonitorSubject)flow).setMonitor(monitor);
         }
+
+        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
             + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()

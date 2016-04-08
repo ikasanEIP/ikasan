@@ -61,36 +61,47 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Splitter splitter = flowElement.getFlowComponent();
+        setInvocationOnComponent(flowElementInvocation, splitter);
+        // we must unset the context whatever happens, so try/finally
         List payloads;
-        if(requiresFullEventForInvocation == null)
+        try
         {
-            try
+
+            if (requiresFullEventForInvocation == null)
             {
-                // try with flowEvent and if successful mark this component
-                payloads = splitter.split(flowEvent);
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(java.lang.ClassCastException e)
-            {
-                payloads = splitter.split(flowEvent.getPayload());
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation.booleanValue())
-            {
-                payloads = splitter.split(flowEvent);
+                try
+                {
+                    // try with flowEvent and if successful mark this component
+                    payloads = splitter.split(flowEvent);
+                    requiresFullEventForInvocation = Boolean.TRUE;
+                }
+                catch (java.lang.ClassCastException e)
+                {
+                    payloads = splitter.split(flowEvent.getPayload());
+                    requiresFullEventForInvocation = Boolean.FALSE;
+                }
             }
             else
             {
-                payloads = splitter.split(flowEvent.getPayload());
+                if (requiresFullEventForInvocation)
+                {
+                    payloads = splitter.split(flowEvent);
+                }
+                else
+                {
+                    payloads = splitter.split(flowEvent.getPayload());
+                }
             }
         }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, splitter);
+        }
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)

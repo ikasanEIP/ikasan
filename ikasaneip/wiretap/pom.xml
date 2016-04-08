@@ -88,6 +88,17 @@
              <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-history</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-housekeeping</artifactId>
+        </dependency>
+
+
         <!-- required for unit tests -->
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -148,7 +159,19 @@
 		    <artifactId>aspectjweaver</artifactId>
 		    <scope>test</scope>
 		</dependency>
-		
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 		<dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

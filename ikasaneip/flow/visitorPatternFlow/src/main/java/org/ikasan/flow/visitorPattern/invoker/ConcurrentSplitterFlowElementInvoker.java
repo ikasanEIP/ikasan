@@ -101,8 +101,9 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, final FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation<Object,?> flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         FlowElement nextSubFlowElement = getSubFlowTransition(flowElement);
         if (nextSubFlowElement == null)
@@ -120,30 +121,39 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
 
         Splitter splitter = flowElement.getFlowComponent();
         List payloads;
-        if(requiresFullEventForInvocation == null)
+        setInvocationOnComponent(flowElementInvocation, splitter);
+        // we must unset the context whatever happens, so try/finally
+        try
         {
-            try
+            if (requiresFullEventForInvocation == null)
             {
-                // try with flowEvent and if successful mark this component
-                payloads = splitter.split(flowEvent);
-                requiresFullEventForInvocation = Boolean.TRUE;
-            }
-            catch(ClassCastException e)
-            {
-                payloads = splitter.split(flowEvent.getPayload());
-                requiresFullEventForInvocation = Boolean.FALSE;
-            }
-        }
-        else
-        {
-            if(requiresFullEventForInvocation)
-            {
-                payloads = splitter.split(flowEvent);
+                try
+                {
+                    // try with flowEvent and if successful mark this component
+                    payloads = splitter.split(flowEvent);
+                    requiresFullEventForInvocation = Boolean.TRUE;
+                }
+                catch (ClassCastException e)
+                {
+                    payloads = splitter.split(flowEvent.getPayload());
+                    requiresFullEventForInvocation = Boolean.FALSE;
+                }
             }
             else
             {
-                payloads = splitter.split(flowEvent.getPayload());
+                if (requiresFullEventForInvocation)
+                {
+                    payloads = splitter.split(flowEvent);
+                }
+                else
+                {
+                    payloads = splitter.split(flowEvent.getPayload());
+                }
             }
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, splitter);
         }
 
         if (payloads == null || payloads.size() == 0)
@@ -151,6 +161,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             throw new SplitterException("FlowElement [" + flowElement.getComponentName() + "] contains a ConcurrentSplitter. "
                     + "ConcurrentSplitter must return at least one payload.");
         }
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         // initialise futures task stats
         AtomicInteger count = new AtomicInteger(0);
@@ -164,7 +175,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             FlowEvent asyncFlowEvent;
             if(payload instanceof FlowEvent)
             {
-                asyncFlowEvent =  new FlowEventFactory().newEvent(((FlowEvent)payload).getIdentifier(), (FlowEvent)((FlowEvent) payload).getPayload());
+                asyncFlowEvent =  new FlowEventFactory().newEvent(((FlowEvent)payload).getIdentifier(), ((FlowEvent) payload).getPayload());
             }
             else
             {

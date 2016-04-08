@@ -43,6 +43,8 @@ package org.ikasan.sample.genericTechDrivenPriceSrc.component.converter;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.flow.FlowElementInvocation;
+import org.ikasan.spec.flow.InvocationAware;
 
 /**
  * Implementation of a converter to convert price tech message into a
@@ -50,8 +52,10 @@ import org.ikasan.spec.component.transformation.TransformationException;
  * 
  * @author Ikasan Development Team
  */
-public class PriceConverter implements Converter<PriceTechMessage,StringBuilder>
+public class PriceConverter<ID, METRIC> implements Converter<PriceTechMessage,StringBuilder>, InvocationAware<ID,METRIC>
 {
+    private FlowElementInvocation<?,?> flowElementInvocation;
+
     public StringBuilder convert(PriceTechMessage price) throws TransformationException
     {
         StringBuilder sb = new StringBuilder();
@@ -63,7 +67,29 @@ public class PriceConverter implements Converter<PriceTechMessage,StringBuilder>
         sb.append(price.getSpread());
         sb.append(" at = ");
         sb.append(price.getTime());
-        
+
+        if (flowElementInvocation != null)
+        {
+            flowElementInvocation.addCustomMetric("CUSTOM", "value");
+        }
+
         return sb;
+    }
+
+    /**
+     * Sets the flow element invocation
+     *
+     * @param flowElementInvocation the invocation
+     */
+    @Override
+    public void setFlowElementInvocation(FlowElementInvocation<ID, METRIC> flowElementInvocation)
+    {
+        this.flowElementInvocation = flowElementInvocation;
+    }
+
+    @Override
+    public void unsetFlowElementInvocation(FlowElementInvocation<ID, METRIC> flowElementInvocation)
+    {
+        this.flowElementInvocation = null;
     }
 }

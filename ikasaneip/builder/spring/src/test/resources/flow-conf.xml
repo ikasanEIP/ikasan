@@ -54,6 +54,7 @@
         <property name="monitor"            ref="monitor" />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="consumer"           ref="consumerFlowElement" />
+        <property name="flowInvocationContextListeners" ref="invocationContextListeners"/>
     </bean>
 
     <bean id="flowWithExclusionFlow" class="org.ikasan.builder.FlowFactory">
