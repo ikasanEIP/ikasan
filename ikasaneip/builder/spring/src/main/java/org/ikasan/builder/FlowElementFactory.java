@@ -40,25 +40,10 @@
  */
 package org.ikasan.builder;
 
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
-import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConcurrentSplitterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.FilterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SequencerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SingleRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SplitterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -73,8 +58,11 @@ import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.replay.ReplayRecordService;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Spring based Factory Bean for the creation of FlowElements.
