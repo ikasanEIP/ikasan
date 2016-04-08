@@ -56,20 +56,8 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
-import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
-import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
-import org.ikasan.flow.visitorPattern.FlowElementImpl;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SequencerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SingleRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.*;
+import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -86,10 +74,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -102,6 +87,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings(value={"unchecked","javadoc"})
 public class FlowBuilder 
 {
     /** logger */
@@ -161,7 +147,11 @@ public class FlowBuilder
     /** the replayRecordService **/
     ReplayRecordService replayRecordService;
 
-    /**
+	/** List of FlowInvocationListener */
+	List<FlowInvocationContextListener> flowInvocationContextListeners;
+
+
+	/**
 	 * Constructor
 	 * 
 	 * @param name
@@ -288,13 +278,40 @@ public class FlowBuilder
     }
     
     /**
-	 * @param ikasanSerialiserFactory the ikasanSerialiserFactory to set
+	 * @param serialiserFactory the ikasanSerialiserFactory to set
 	 */
 	public FlowBuilder withSerialiserFactory(SerialiserFactory serialiserFactory)
 	{
 		this.serialiserFactory = serialiserFactory;
 		return this;
 	}
+
+    /**
+     * Add in a FlowInvocationContextListener
+     * @param flowInvocationContextListener
+     * @return the current builder
+     */
+    public FlowBuilder withFlowInvocationContextListener(FlowInvocationContextListener flowInvocationContextListener)
+    {
+        if (flowInvocationContextListeners == null)
+        {
+            flowInvocationContextListeners = new ArrayList<>();
+        }
+        flowInvocationContextListeners.add(flowInvocationContextListener);
+        return this;
+    }
+
+    /**
+     * Set the full list of FlowInvocationContextListeners
+     * @param flowInvocationContextListeners
+     * @return the current builder
+     */
+    public FlowBuilder withFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+        return this;
+    }
+
 
     /**
      * Setter for monitor
@@ -307,7 +324,7 @@ public class FlowBuilder
     
     /**
      * Setter for re-submission service
-     * @param monitor
+     * @param resubmissionService
      */
     public void setResubmissionService(ResubmissionService resubmissionService)
     {
@@ -371,7 +388,7 @@ public class FlowBuilder
 		FlowBuilder flowBuilder;
 		
 		// flow elements being configured
-		List<FlowElement> flowElements = new ArrayList<FlowElement>();
+		List<FlowElement> flowElements = new ArrayList<>();
 
 		// last element specified
 		FlowElement lastFlowElement;
@@ -757,7 +774,7 @@ public class FlowBuilder
 			{
 				int count = flowElements.size();
 				FlowElement nextFlowElement = null;
-				Map<String, FlowElement> transitions = new HashMap<String, FlowElement>();
+				Map<String, FlowElement> transitions = new HashMap<>();
 
 				while (count > 0) 
 				{
@@ -790,7 +807,7 @@ public class FlowBuilder
 						nextFlowElement = new FlowElementImpl(
 								flowElement.getComponentName(),
 								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<String,FlowElement>(transitions) );
+                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
 						transitions.clear();
 					}
                     else if (flowElement.getFlowComponent() instanceof MultiRecipientRouter)
@@ -798,7 +815,7 @@ public class FlowBuilder
                         nextFlowElement = new FlowElementImpl(
                                 flowElement.getComponentName(),
                                 flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<String,FlowElement>(transitions) );
+                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
                         transitions.clear();
                     }
                     else if (flowElement.getFlowComponent() instanceof SingleRecipientRouter)
@@ -806,7 +823,7 @@ public class FlowBuilder
                         nextFlowElement = new FlowElementImpl(
                                 flowElement.getComponentName(),
                                 flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<String,FlowElement>(transitions) );
+                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
                         transitions.clear();
                     }
                     else if (flowElement.getFlowComponent() instanceof Sequencer)
@@ -814,7 +831,7 @@ public class FlowBuilder
 						nextFlowElement = new FlowElementImpl(
 								flowElement.getComponentName(),
 								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<String,FlowElement>(transitions) );
+                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
 						transitions.clear();
 					}
 					else if (flowElement.getFlowComponent() instanceof Producer) 
@@ -867,8 +884,7 @@ public class FlowBuilder
 							.getRecoveryManager(
 									name,
 									moduleName,
-									((FlowElement<Consumer>) nextFlowElement)
-											.getFlowComponent(),
+									((FlowElement<Consumer>) nextFlowElement).getFlowComponent(),
                                     exclusionService, errorReportingService);
 				}
 
@@ -913,6 +929,8 @@ public class FlowBuilder
 
                     ((MonitorSubject)flow).setMonitor(monitor);
                 }
+
+                flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
                 logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
                         + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()

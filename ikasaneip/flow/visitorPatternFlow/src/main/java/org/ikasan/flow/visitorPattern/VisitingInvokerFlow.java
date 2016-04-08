@@ -40,10 +40,6 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
@@ -56,12 +52,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
@@ -70,11 +61,16 @@ import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Default implementation of a Flow
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings(value={"unchecked", "javadoc"})
 public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware, ConfiguredResource<FlowPersistentConfiguration>
 {
 	/** logger instance */
@@ -111,7 +107,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     private Monitor monitor;
 
     /** stateful recovery manager implementation */
-    private RecoveryManager<FlowEvent<?,?>> recoveryManager;
+    private RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager;
     
     /** startup failure flag */
     private boolean flowInitialisationFailure = false;
@@ -137,6 +133,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** serialiserFactory handle */
     private SerialiserFactory serialiserFactory;
 
+    /** List of listeners for the end of the FlowInvocation using the associated context */
+    private List<FlowInvocationContextListener> flowInvocationContextListeners;
+
+    /** flag to control invocation of the context listeners at runtime, defaults to true */
+    protected volatile boolean invokeContextListeners = true;
+
+
     /** persistent flow configuration */
     private FlowPersistentConfiguration flowPersistentConfiguration = new FlowPersistentConfiguration();
     
@@ -152,7 +155,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                               RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager,
                                ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this(name, moduleName, flowConfiguration, null, recoveryManager, exclusionService, serialiserFactory);
@@ -168,7 +171,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
-                               RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager,
                                ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this.name = name;
@@ -438,12 +441,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public boolean isRunning()
     {
         String currentState = this.getState();
-        if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
-        {
-            return true;
-        }
+        return currentState.equals(RECOVERING) || currentState.equals(RUNNING);
 
-        return false;
     }
 
     /**
@@ -456,6 +455,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         return currentState.equals(PAUSED);
     }
 
+    @Override
+    public void startContextListeners()
+    {
+        invokeContextListeners = true;
+    }
+
+    @Override
+    public void stopContextListeners()
+    {
+        invokeContextListeners = false;
+    }
+
+    @Override
+    public boolean areContextListenersRunning()
+    {
+        return invokeContextListeners;
+    }
+
     /**
      * Start the consumer component.
      */
@@ -466,7 +483,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         // start the consumer
         Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = consumerFlowElement.getFlowComponent();
-        consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
+        consumer.setListener(this);
 
         // if event factory has not been set on the consumer then set the default
         if(consumer.getEventFactory() == null)
@@ -593,6 +610,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public void invoke(FlowEvent<?,?> event)
     {
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+        flowInvocationContext.startFlowInvocation();
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
         Object originalEventLifeIdentifier = event.getIdentifier();
@@ -612,9 +630,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
             else
             {
-                configureDynamicConfiguredResources(flowInvocationContext);
+                configureDynamicConfiguredResources();
                 invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
-                updateDynamicConfiguredResources(flowInvocationContext);
+                updateDynamicConfiguredResources();
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
@@ -627,13 +645,16 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 			this.name, this.flowPersistentConfiguration.getRecordedEventTimeToLive());
                 }
             }
+            flowInvocationContext.endFlowInvocation();
         }
         catch(Throwable throwable)
         {
-            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event, originalEventLifeIdentifier);
+            flowInvocationContext.endFlowInvocation();
+            this.recoveryManager.recover(flowInvocationContext, throwable, event, originalEventLifeIdentifier);
         }
         finally
         {
+            this.notifyFlowInvocationContextListeners(flowInvocationContext);
             this.notifyMonitor();
         }
     }
@@ -645,56 +666,44 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	public void invoke(Resubmission<FlowEvent<?,?>> event)
 	{
 		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+        flowInvocationContext.startFlowInvocation();
 
         try
         {
-            configureDynamicConfiguredResources(flowInvocationContext);
+            configureDynamicConfiguredResources();
             invoke(moduleName, name, flowInvocationContext, event.getEvent(), this.flowConfiguration.getConsumerFlowElement());
-            updateDynamicConfiguredResources(flowInvocationContext);
+            updateDynamicConfiguredResources();
             if(this.recoveryManager.isRecovering())
             {
                 this.recoveryManager.cancel();
             }
+            flowInvocationContext.endFlowInvocation();
         }
         catch(Throwable throwable)
         {
-            this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent(), event.getEvent().getIdentifier());
+            flowInvocationContext.endFlowInvocation();
+            this.recoveryManager.recover(flowInvocationContext, throwable, event.getEvent(), event.getEvent().getIdentifier());
         }
         finally
         {
+            this.notifyFlowInvocationContextListeners(flowInvocationContext);
             this.notifyMonitor();
         }
 	}
 
-	private void configureDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+	private void configureDynamicConfiguredResources()
     {
         for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
         {
-            try
-            {
-                this.flowConfiguration.configure(flowElement.getFlowComponent());
-            }
-            catch(RuntimeException e)
-            {
-                flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-                throw e;
-            }
+            this.flowConfiguration.configure(flowElement.getFlowComponent());
         }
     }
     
-    private void updateDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+    private void updateDynamicConfiguredResources()
     {
         for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
         {
-            try
-            {
-                this.flowConfiguration.update(flowElement.getFlowComponent());
-            }
-            catch(RuntimeException e)
-            {
-                flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-                throw e;
-            }
+            this.flowConfiguration.update(flowElement.getFlowComponent());
         }
     }
 
@@ -752,6 +761,28 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
         }
     }
+
+    /**
+     * Notify any FlowInvocationContextListeners that the flow has completed
+     */
+    protected void notifyFlowInvocationContextListeners(FlowInvocationContext flowInvocationContext)
+    {
+        if (flowInvocationContextListeners != null && invokeContextListeners)
+        {
+            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
+            {
+                try
+                {
+                    listener.endFlow(flowInvocationContext);
+                } catch (RuntimeException e)
+                {
+                    logger.warn("Unable to invoke FlowInvocationContextListener, continuing", e);
+                }
+            }
+        }
+
+    }
+
 
     /**
      * Set the flow monitor
@@ -847,7 +878,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected class ManagedResourceRecoveryManagerFactory
     {
         // cache of managed resource recovery managers
-        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<String,ManagedResourceRecoveryManager>();
+        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<>();
         
         /**
          * Get the named managed resource recovery manager
@@ -986,4 +1017,15 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 		this.configuredResourceId = id;
 	}
 
+    @Override
+    public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
+
+    @Override
+    public List<FlowInvocationContextListener> getFlowInvocationContextListeners()
+    {
+        return flowInvocationContextListeners;
+    }
 }

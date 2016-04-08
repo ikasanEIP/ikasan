@@ -48,8 +48,11 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.*;
 
@@ -67,7 +70,7 @@ import static org.quartz.TriggerKey.triggerKey;
  * @author Ikasan Development Team
  */
 @DisallowConcurrentExecution
-public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, Job
+public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver, FlowInvocationContext>, Job
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
@@ -375,8 +378,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
-     * Execute recovery based on the specified component name, exception, event and event identifier.
-     * @param componentName
+     * Execute recovery based on the specified flowInvocationContext, exception, event and event identifier.
+     * @param flowInvocationContext
      * @param throwable
      * @param event
      * @param identifier
@@ -384,22 +387,41 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * @param <TID>
      */
     @Override
-    public <T,TID> void recover(String componentName, Throwable throwable, T event, TID identifier)
+    @SuppressWarnings("unchecked")
+    public <T,TID> void recover(FlowInvocationContext flowInvocationContext, Throwable throwable, T event, TID identifier)
     {
-        ExceptionAction action = resolveAction(componentName, throwable);
+        String lastComponentName = flowInvocationContext.getLastComponentName();
+        ExceptionAction action = resolveAction(lastComponentName, throwable);
+        flowInvocationContext.setFinalAction(getFinalAction(action));
         if(action instanceof IgnoreAction)
         {
             return;
         }
 
-        String errorUri = this.errorReportingService.notify(componentName, event, throwable, action.toString());
+        String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable, action.toString());
         if(action instanceof ExcludeEventAction)
         {
             this.exclusionService.addBlacklisted(identifier, errorUri);
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 
-        this.recover(action, componentName, throwable);
+        this.recover(action, lastComponentName, throwable);
+    }
+
+    protected FinalAction getFinalAction(ExceptionAction exceptionAction)
+    {
+        if (exceptionAction instanceof ExcludeEventAction)
+        {
+            return FinalAction.EXCLUDE;
+        }
+        else if (exceptionAction instanceof IgnoreAction)
+        {
+            return FinalAction.IGNORE;
+        }
+        else
+        {
+            return FinalAction.ROLLBACK;
+        }
     }
 
     /**

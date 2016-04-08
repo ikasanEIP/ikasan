@@ -57,11 +57,23 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Sequencer> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
         Sequencer sequencer = flowElement.getFlowComponent();
-        List payloads = sequencer.sequence(flowEvent.getPayload());
+        setInvocationOnComponent(flowElementInvocation, sequencer);
+        // we must unset the context whatever happens, so try/finally
+        List payloads;
+        try
+        {
+            payloads = sequencer.sequence(flowEvent.getPayload());
+        }
+        finally
+        {
+            unsetInvocationOnComponent(flowElementInvocation, sequencer);
+        }
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
+
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {

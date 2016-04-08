@@ -45,7 +45,7 @@ package org.ikasan.spec.recovery;
  * 
  * @author Ikasan Development Teams
  */
-public interface RecoveryManager<RESOLVER>
+public interface RecoveryManager<RESOLVER, CONTEXT>
 {
     /**
      * Set a resolver which translates the incoming exception and component name
@@ -69,15 +69,15 @@ public interface RecoveryManager<RESOLVER>
     public RESOLVER getResolver();
 
     /**
-     * Start or continue a recovery based on the passed CRITERIA
-     * @param component
+     * Start or continue a recovery based on the passed CONTEXT
+     * @param context
      * @param throwable
      * @param event
      * @param identifier
      * @param <EVENT>
      * @param <IDENTIFIER>
      */
-    public <EVENT,IDENTIFIER> void recover(String component, Throwable throwable, EVENT event, IDENTIFIER identifier);
+    public <EVENT,IDENTIFIER> void recover(CONTEXT context, Throwable throwable, EVENT event, IDENTIFIER identifier);
 
     /**
      * Start or continue a recovery based on the passed CRITERIA.

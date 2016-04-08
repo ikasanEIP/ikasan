@@ -56,7 +56,7 @@ public interface ModuleService
      * 
      * @return List of all accessible <code>Module</code>s
      */
-    public List<Module> getModules();
+    List<Module> getModules();
 
     /**
      * Resolves a specified <code>Module</code> by name
@@ -65,7 +65,7 @@ public interface ModuleService
      * 
      * @return <code>Module</code> named by moduleName
      */
-    public Module getModule(String moduleName);
+    Module getModule(String moduleName);
 
     /**
      * Attempts to stop a <code>Flow</code>
@@ -75,7 +75,7 @@ public interface ModuleService
      * @param actor 
      * 
      */
-    public void stopFlow(final String moduleName, final String flowName, final String actor);
+    void stopFlow(final String moduleName, final String flowName, final String actor);
 
     /**
      * Attempts to start a <code>Flow</code>
@@ -84,7 +84,7 @@ public interface ModuleService
      * @param flowName 
      * @param actor
      */
-    public void startFlow(String moduleName, String flowName, String actor);
+    void startFlow(String moduleName, String flowName, String actor);
 
     /**
      * Attempts to start a <code>Flow</code>, but will immediately pause the consumer.
@@ -93,7 +93,7 @@ public interface ModuleService
      * @param flowName
      * @param actor
      */
-    public void startPauseFlow(String moduleName, String flowName, String actor);
+    void startPauseFlow(String moduleName, String flowName, String actor);
 
     /**
      * Attempts to pause a <code>Flow</code>
@@ -102,7 +102,7 @@ public interface ModuleService
      * @param flowName
      * @param actor
      */
-    public void pauseFlow(String moduleName, String flowName, String actor);
+    void pauseFlow(String moduleName, String flowName, String actor);
 
     /**
      * Attempts to resume a <code>Flow</code>
@@ -111,7 +111,7 @@ public interface ModuleService
      * @param flowName
      * @param actor
      */
-    public void resumeFlow(String moduleName, String flowName, String actor);
+    void resumeFlow(String moduleName, String flowName, String actor);
 
     /**
      * Set the startup type for the given module and flow
@@ -122,7 +122,7 @@ public interface ModuleService
      * @param comment
      * @param actor
      */
-    public void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
+    void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
 
     /**
      * Get the startup control for the given module and flow
@@ -130,5 +130,21 @@ public interface ModuleService
      * @param moduleName
      * @param flowName 
      */
-    public StartupControl getStartupControl(String moduleName, String flowName);
+    StartupControl getStartupControl(String moduleName, String flowName);
+
+    /**
+     * Stop the context listeners from being invoked on a given module/flow
+     * @param moduleName the module name
+     * @param flowName the flow name
+     * @param actor the actor invoking this request
+     */
+    void stopContextListeners(String moduleName, String flowName, String actor);
+
+    /**
+     * Start the context listeners on a given module/flow
+     * @param moduleName the module name
+     * @param flowName the flow name
+     * @param actor the actor invoking this request
+     */
+    void startContextListeners(String moduleName, String flowName, String actor);
 }

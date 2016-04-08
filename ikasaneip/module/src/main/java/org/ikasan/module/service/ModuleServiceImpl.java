@@ -40,18 +40,14 @@
  */
 package org.ikasan.module.service;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
-import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.spec.module.ModuleService;
-import org.ikasan.spec.module.StartupControl;
-import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.*;
 import org.ikasan.systemevent.service.SystemEventService;
+
+import java.util.List;
 
 /**
  * Default implementation of <code>ModuleService</code>
@@ -67,29 +63,33 @@ public class ModuleServiceImpl implements ModuleService
     private SystemEventService systemEventService;
 
     /**
-     * constant for logging an incomming initiator start request
+     * constant for logging an incoming initiator start request
      */
     public static final String INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION = "Flow start requested";
     /**
-     * constant for logging an incomming initiator pause request
+     * constant for logging an incoming initiator pause request
      */
     public static final String INITIATOR_START_PAUSE_REQUEST_SYSTEM_EVENT_ACTION = "Flow start/pause requested";
     /**
-     * constant for logging an incomming initiator pause request
+     * constant for logging an incoming initiator pause request
      */
     public static final String INITIATOR_PAUSE_REQUEST_SYSTEM_EVENT_ACTION = "Flow pause requested";
     /**
-     * constant for logging an incomming initiator resume request
+     * constant for logging an incoming initiator resume request
      */
     public static final String INITIATOR_RESUME_REQUEST_SYSTEM_EVENT_ACTION = "Flow resume requested";
     /**
-     * constant for logging an incomming initiator stop request
+     * constant for logging an incoming initiator stop request
      */
 	public static final String INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION = "Flow stop requested";
     /**
      * constant for logging a request to change initiator startup type
      */
 	public static final String INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION = "Flow StartupType set to: ";
+
+    public static final String STOP_CONTEXT_LISTENERS_ACTION = "Flow context listeners stop requested";
+
+    public static final String START_CONTEXT_LISTENERS_ACTION = "Flow context listeners start requested";
 
     /**
      * Logger instance
@@ -254,14 +254,12 @@ public class ModuleServiceImpl implements ModuleService
     	}
     	else
     	{
-
             StartupControl flowStartupControl = this.startupControlDao.getStartupControl(moduleName, flowName);
             if(StartupType.DISABLED.equals(flowStartupControl.getStartupType()))
             {
                 throw new IllegalStateException("flow [" + flowName + "] module [" 
                     + moduleName + "] is disabled so cannot be started.");
             }
-
             flow.start();
     	}
     }
@@ -308,5 +306,39 @@ public class ModuleServiceImpl implements ModuleService
         this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION + startupControl.getStartupType().name(),  actor);
     }
 
+    @Override
+    public void stopContextListeners(String moduleName, String flowName, String actor)
+    {
+        //log the request
+        this.systemEventService.logSystemEvent(moduleName+"."+flowName, STOP_CONTEXT_LISTENERS_ACTION,  actor);
+        this.logger.info("stopContextListeners : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+        Flow flow = this.resolveFlow(moduleName, flowName);
+        if(flow == null)
+        {
+            // TODO - throw exception ?
+            logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+        }
+        else
+        {
+            flow.stopContextListeners();
+        }
+    }
 
+    @Override
+    public void startContextListeners(String moduleName, String flowName, String actor)
+    {
+        //log the request
+        this.systemEventService.logSystemEvent(moduleName+"."+flowName, START_CONTEXT_LISTENERS_ACTION,  actor);
+        this.logger.info("startContextListeners : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+        Flow flow = this.resolveFlow(moduleName, flowName);
+        if(flow == null)
+        {
+            // TODO - throw exception ?
+            logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+        }
+        else
+        {
+            flow.startContextListeners();
+        }
+    }
 }

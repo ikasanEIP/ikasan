@@ -43,12 +43,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.replay.ReplayRecordService;
+import org.ikasan.spec.flow.*;
 
 /**
  * A default implementation of the FlowElementInvoker for a consumer
@@ -68,8 +63,6 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
     	
     /**
      * Constructor
-     * 
-     * @param replayRecordService
      */
     public ConsumerFlowElementInvoker() 
     {
@@ -79,8 +72,9 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 	@Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
+
 
         if(hasConverter == null)
         {
@@ -98,9 +92,20 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
 
         if(hasConverter)
         {
-            flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
-        }
+            // note set on the converter since thats the handle we have - its the same underlying object as the consumer
+            setInvocationOnComponent(flowElementInvocation, converter);
+            try
+            {
+                flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+            }
+            finally
+            {
+                // note the unset on the converter, its really the only part of the consumer we 'invoke'
+                unsetInvocationOnComponent(flowElementInvocation, converter);
+            }
 
+        }
+        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

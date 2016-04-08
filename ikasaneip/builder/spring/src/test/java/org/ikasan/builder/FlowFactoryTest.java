@@ -42,8 +42,6 @@ package org.ikasan.builder;
 
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.ikasan.builder.sample.SampleExclusionServiceAwareConverter;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -55,6 +53,7 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;

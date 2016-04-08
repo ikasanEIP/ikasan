@@ -40,20 +40,24 @@
  */
 package org.ikasan.recovery;
 
-import junit.framework.Assert;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.*;
 
@@ -74,6 +78,7 @@ public class ScheduledRecoveryManagerTest
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
     
@@ -88,9 +93,6 @@ public class ScheduledRecoveryManagerTest
 
     /** Mock scheduledJobFactory */
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
-
-    /** Mock job */
-    final Job job = mockery.mock(Job.class, "mockJob");
 
     /** Mock recovery job detail */
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
@@ -124,6 +126,9 @@ public class ScheduledRecoveryManagerTest
 
     /** Mock flowEvent */
     final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
+
+    /** Mock flowInvocationContext*/
+    final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
     /**
      * Test failed constructor due to null scheduler.
@@ -254,6 +259,11 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flowInvocationContext).getLastComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.EXCLUDE);
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(excludeEventAction));
@@ -272,7 +282,7 @@ public class ScheduledRecoveryManagerTest
 
         try
         {
-            recoveryManager.recover("componentName", exception, flowEvent, "identifier");
+            recoveryManager.recover(flowInvocationContext, exception, flowEvent, "identifier");
         }
         catch(RuntimeException e)
         {

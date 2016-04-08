@@ -40,25 +40,10 @@
  */
 package org.ikasan.builder;
 
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
-import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConcurrentSplitterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.FilterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SequencerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SingleRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SplitterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -73,8 +58,11 @@ import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.replay.ReplayRecordService;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Spring based Factory Bean for the creation of FlowElements.
@@ -113,6 +101,9 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
     /** allow override of executor service */
     ExecutorService executorService;
+
+    /** allow turning off context listeners at the component level */
+    Boolean ignoreContextInvocation = false;
 
     /**
      * Setter for executor service override
@@ -195,6 +186,10 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         this.configuration = configuration;
     }
 
+    public void setIgnoreContextInvocation(Boolean ignoreContextInvocation)
+    {
+        this.ignoreContextInvocation = ignoreContextInvocation;
+    }
 
     /*
      * (non-Javadoc)
@@ -253,30 +248,31 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
     /**
      * Get the correct instance of an invoker based on the component type.
-     * @param component
-     * @return
+     * @param component the component
+     * @return a FlowElementInvoker for the given component type
      */
     protected FlowElementInvoker getFlowElementInvoker(COMPONENT component)
     {
+        FlowElementInvoker<?> flowElementInvoker;
         if(component instanceof Consumer)
         {
-            return new ConsumerFlowElementInvoker();
+            flowElementInvoker = new ConsumerFlowElementInvoker();
         }
         else if(component instanceof Translator)
         {
-            return new TranslatorFlowElementInvoker();
+            flowElementInvoker = new TranslatorFlowElementInvoker();
         }
         else if(component instanceof Converter)
         {
-            return new ConverterFlowElementInvoker();
+            flowElementInvoker = new ConverterFlowElementInvoker();
         }
         else if(component instanceof Producer)
         {
-            return new ProducerFlowElementInvoker();
+            flowElementInvoker = new ProducerFlowElementInvoker();
         }
         else if(component instanceof Broker)
         {
-            return new BrokerFlowElementInvoker();
+            flowElementInvoker = new BrokerFlowElementInvoker();
         }
         else if(component instanceof Router)
         {
@@ -292,7 +288,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
                 }
             }
 
-            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
+            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof MultiRecipientRouter)
         {
@@ -308,37 +304,41 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
                 }
             }
 
-            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
+            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof SingleRecipientRouter)
         {
-            return new SingleRecipientRouterFlowElementInvoker();
+            flowElementInvoker = new SingleRecipientRouterFlowElementInvoker();
         }
         else if(component instanceof Sequencer)
         {
-            return new SequencerFlowElementInvoker();
+            flowElementInvoker = new SequencerFlowElementInvoker();
         }
         else if(component instanceof Splitter)
         {
             if(executorService != null)
             {
-                return new ConcurrentSplitterFlowElementInvoker(executorService);
+                flowElementInvoker = new ConcurrentSplitterFlowElementInvoker(executorService);
             }
-
-            if(concurrentThreads > 0)
+            else if(concurrentThreads > 0)
             {
-                return new ConcurrentSplitterFlowElementInvoker( Executors.newFixedThreadPool(this.concurrentThreads) );
+                flowElementInvoker = new ConcurrentSplitterFlowElementInvoker( Executors.newFixedThreadPool(this.concurrentThreads) );
             }
-
-            return new SplitterFlowElementInvoker();
+            else
+            {
+                flowElementInvoker = new SplitterFlowElementInvoker();
+            }
         }
         else if(component instanceof Filter)
         {
-            return new FilterFlowElementInvoker();
+            flowElementInvoker = new FilterFlowElementInvoker();
         }
         else
         {
             throw new RuntimeException("Unknown FlowComponent type[" + component.getClass() + "]");
         }
+        flowElementInvoker.setIgnoreContextInvocation(ignoreContextInvocation);
+
+        return flowElementInvoker;
     }
 }
