@@ -49,7 +49,7 @@ import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Link;
+import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
@@ -58,7 +58,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote>
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>
 {
 	private static Logger logger = Logger.getLogger(ErrorReportingManagementServiceImpl.class);
 	
@@ -260,6 +260,25 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	public void setBatchSize(int batchSize)
 	{
 		this.batchSize = batchSize;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getModuleErrorCount(java.util.List)
+	 */
+	@Override
+	public List<ModuleErrorCount> getModuleErrorCount(List<String> moduleNames,  boolean excluded, boolean actioned, Date startDate, Date endDate)
+	{
+		ArrayList<ModuleErrorCount> errorCounts = new ArrayList<ModuleErrorCount>();
+		
+		for(String moduleName: moduleNames)
+		{
+			ModuleErrorCount errorCount = new ModuleErrorCount(moduleName,
+					this.errorManagementDao.getNumberOfModuleErrors(moduleName, excluded, actioned, startDate, endDate));
+			
+			errorCounts.add(errorCount);
+		}
+		
+		return errorCounts;
 	}
 
 }

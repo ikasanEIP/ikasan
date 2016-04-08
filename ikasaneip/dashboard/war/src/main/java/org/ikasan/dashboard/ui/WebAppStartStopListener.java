@@ -44,6 +44,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.notification.NotifierServiceImpl;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 
 /**
@@ -54,23 +56,25 @@ import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
  */
 public class WebAppStartStopListener implements ServletContextListener
 {
+	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
+	
     // Our web app (Vaadin app) is starting up.
     public void contextInitialized ( ServletContextEvent servletContextEvent )
     {
-        // In this example, we do not need the ServletContex. But FYI, you may find it useful.
         ServletContext ctx = servletContextEvent.getServletContext();
-        System.out.println( "Web app context initialized." );   // INFO logging.
-        System.out.println( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
-        System.out.println( "TRACE Server Info : " + ctx.getServerInfo() );
+        logger.info( "Web app context initialized." ); 
+        logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
+        logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
 
     }
 
     // Our web app (Vaadin app) is shutting down.
     public void contextDestroyed ( ServletContextEvent servletContextEvent )
     {
-
-        System.out.println( "Web app context destroyed." );  // INFO logging.
+    	logger.info( "Web app context destroyed." );  // INFO logging.
         TopologyStateCache.shutdown();
+        NotifierServiceImpl.shutdown();
+        Broadcaster.shutdown();
     }
 
 }

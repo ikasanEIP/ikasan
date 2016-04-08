@@ -41,6 +41,7 @@
 package org.ikasan.flow.visitorPattern;
 
 import org.apache.log4j.Logger;
+import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -70,9 +71,9 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 @SuppressWarnings(value={"unchecked", "javadoc"})
-public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware
+public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware, ConfiguredResource<FlowPersistentConfiguration>
 {
-    /** logger instance */
+	/** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
     
     /** running state string constant */
@@ -139,6 +140,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected volatile boolean invokeContextListeners = true;
 
 
+    /** persistent flow configuration */
+    private FlowPersistentConfiguration flowPersistentConfiguration = new FlowPersistentConfiguration();
+    
+    /** configured resource id */
+    private String configuredResourceId;
+
     /**
      * Constructor
      * @param name
@@ -204,6 +211,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
         }
+        
+        this.configuredResourceId = this.moduleName + "-" + this.name;
     }
 
     /**
@@ -334,6 +343,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
+            
+            // configure the flow itself
+            this.flowConfiguration.configure(this);
 
             // register the errorReportingService with those components requiring it
             for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
@@ -624,6 +636,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
+                }
+                
+                // record the event so that it can be replayed if necessary.
+                if(this.getFlowConfiguration().getReplayRecordService() != null && this.flowPersistentConfiguration.getIsRecording())
+                {
+                	this.getFlowConfiguration().getReplayRecordService().record(event, this.moduleName, 
+                			this.name, this.flowPersistentConfiguration.getRecordedEventTimeToLive());
                 }
             }
             flowInvocationContext.endFlowInvocation();
@@ -960,6 +979,42 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	public SerialiserFactory getSerialiserFactory()
 	{
 		return this.serialiserFactory;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.Configured#getConfiguration()
+	 */
+	@Override
+	public FlowPersistentConfiguration getConfiguration() 
+	{
+		return this.flowPersistentConfiguration;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.Configured#setConfiguration(java.lang.Object)
+	 */
+	@Override
+	public void setConfiguration(FlowPersistentConfiguration configuration)
+	{
+		this.flowPersistentConfiguration = configuration;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfiguredResource#getConfiguredResourceId()
+	 */
+	@Override
+	public String getConfiguredResourceId() 
+	{
+		return this.configuredResourceId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
+	 */
+	@Override
+	public void setConfiguredResourceId(String id) 
+	{
+		this.configuredResourceId = id;
 	}
 
     @Override

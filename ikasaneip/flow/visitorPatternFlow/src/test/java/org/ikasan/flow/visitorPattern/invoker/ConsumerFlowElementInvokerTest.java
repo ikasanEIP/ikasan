@@ -45,6 +45,7 @@ import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.*;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -219,7 +220,13 @@ public class ConsumerFlowElementInvokerTest
 
     class StubbedConsumerFlowElementInvoker extends ConsumerFlowElementInvoker
     {
-        @Override
+        public StubbedConsumerFlowElementInvoker() 
+        {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
         protected Converter getAsConverter(Consumer consumer)
         {
             return mockedConverter;

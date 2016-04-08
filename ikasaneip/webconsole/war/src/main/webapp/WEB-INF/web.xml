@@ -50,6 +50,7 @@
             classpath:configuration-service-conf.xml
             classpath:hospital-conf.xml
             classpath:rest-service-conf.xml
+            classpath:replay-service-conf.xml
             /WEB-INF/security-service-conf.xml
         </param-value>
 	</context-param>
@@ -127,14 +128,9 @@
 				org.ikasan.rest.module;
 				org.ikasan.rest.wiretap;
 				org.ikasan.rest.security;
+				org.ikasan.rest.replay;
 			</param-value>
 		</init-param>
-		<!-- init-param> <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name> 
-			<param-value>org.ikasan.rest.security.SecurityFilter</param-value> </init-param -->
-		<!-- init-param>
-			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-			<param-value>true</param-value>
-		</init-param -->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 

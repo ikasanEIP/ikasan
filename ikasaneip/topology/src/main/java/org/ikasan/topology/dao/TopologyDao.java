@@ -48,6 +48,7 @@ import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Filter;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.Server;
 
@@ -235,5 +236,70 @@ public interface TopologyDao
 	 * @param roleId
 	 * @return
 	 */
-	public RoleFilter getRoleFilterByRoleId(Long roleId);
+	public List<RoleFilter> getRoleFiltersByRoleId(List<Long> roleIds);
+
+	
+	/**
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	public RoleFilter getRoleFilterByFilterId(Long roleId);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void deleteFilter(Filter filter);
+	
+	/**
+	 * 
+	 * @param filter
+	 */
+	public void deleteRoleFilter(RoleFilter roleFilter);
+	
+	/**
+	 * 
+	 * @param filterId
+	 */
+	public void deleteFilterComponentsByFilterId(Long filterId);
+	
+	/**
+	 * 
+	 * @param componentId
+	 */
+	public void deleteFilterComponentsByComponentId(Long componentId);
+	
+	/**
+	 * 
+	 * @param componentId
+	 */
+	public void deleteBusinessStreamFlowByFlowId(Long flowId);
+	
+	/**
+	 * 
+	 * @param notification
+	 */
+	public void save(Notification notification);
+	
+	/**
+	 * 
+	 * @param notification
+	 */
+	public void delete(Notification notification);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Notification getNotificationByName(String name);
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public List<Notification> getAllNotifications();
+
 }

@@ -73,6 +73,7 @@ import javax.annotation.Resource;
         "/module-service-conf.xml",
         "/wiretap-service-conf.xml",
         "/exception-conf.xml",
+        "/replay-service-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })
 public class ModuleFactoryTest

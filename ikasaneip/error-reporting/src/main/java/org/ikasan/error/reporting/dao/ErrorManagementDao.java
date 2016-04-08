@@ -147,4 +147,11 @@ public interface ErrorManagementDao
      * @return
      */
     public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions();
+    
+    /**
+     * 
+     * @param moduleName
+     * @return
+     */
+    public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate);
 }

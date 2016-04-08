@@ -84,6 +84,7 @@ import javax.annotation.Resource;
         "/systemevent-service-conf.xml",
         "/module-service-conf.xml",
         "/wiretap-service-conf.xml",
+        "/replay-service-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })

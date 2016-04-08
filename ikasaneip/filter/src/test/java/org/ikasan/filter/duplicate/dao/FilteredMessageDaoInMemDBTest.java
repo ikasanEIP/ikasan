@@ -61,13 +61,15 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 /*
  * Application context will be loaded from location:
  * classpath:/org/ikasan/filter/duplicate/dao/MessagePersistenceDaoInMemDBTest-context.xml
  */
 
-@ContextConfiguration
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/FilteredMessageDaoInMemDBTest-context.xml"
+})
 public class FilteredMessageDaoInMemDBTest
 {
     @Autowired

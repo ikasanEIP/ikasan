@@ -47,8 +47,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.topology.service.TopologyService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
@@ -56,7 +56,6 @@ import org.vaadin.aceeditor.AceTheme;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
@@ -66,8 +65,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -88,14 +85,14 @@ public class ActionedExclusionEventViewPanel extends Panel
 	private TextField roleDescription;
 	private ErrorOccurrence errorOccurrence;
 	private ExclusionEventAction action;
-	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
 
 	/**
 	 * @param policy
 	 */
 	public ActionedExclusionEventViewPanel(ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService)
 	{
 		super();
 		this.errorOccurrence = errorOccurrence;

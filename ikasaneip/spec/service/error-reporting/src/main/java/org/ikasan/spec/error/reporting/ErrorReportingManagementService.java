@@ -50,7 +50,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCCURRENCE_NOTE>
+public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCCURRENCE_NOTE, MODULE_ERROR_COUNT>
 {
     /** one year default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
@@ -137,5 +137,11 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCC
 	 * @return
 	 */
 	public List<ERROR_OCCURRENCE_NOTE> getErrorOccurrenceNotesByErrorUri(String errorUri);
-
+	
+	/**
+	 * 
+	 * @param moduleName
+	 * @return
+	 */
+	public List<MODULE_ERROR_COUNT> getModuleErrorCount(List<String> moduleNames,  boolean excluded, boolean actioned, Date startDate, Date endDate);
 }

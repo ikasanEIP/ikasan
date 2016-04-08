@@ -8,7 +8,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/security 
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
+        default-lazy-init="true">
 
 	<bean id="topologyNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
 		<constructor-arg value="topology"/>
@@ -30,8 +31,6 @@
         </constructor-arg>
         <constructor-arg ref="hospitalViewComponentContainer"/>
     </bean>
-    
-    <bean id="topologyPanel" class="org.ikasan.dashboard.ui.service.hospital.panel.HospitalPanel" scope="session"/>
 
 	<bean id="topologyViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
@@ -51,6 +50,9 @@
         <constructor-arg ref="errorReportingService"/>
         <constructor-arg ref="errorReportingManagementService"/>
         <constructor-arg ref="platformConfigurationService"/>
+        <constructor-arg ref="securityService"/>
+        <constructor-arg ref="hospitalService"/>
+        <constructor-arg ref="flowConfigurationWindow"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">
@@ -63,6 +65,10 @@
     
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+    </bean>
+    
+    <bean id="flowConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
     </bean>
 

@@ -40,53 +40,18 @@
  */
 package org.ikasan.connector.sftp.net;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.BindException;
-import java.net.SocketImplFactory;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import javax.resource.ResourceException;
-
+import com.jcraft.jsch.*;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferUtils;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandGetException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandMkdirException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandPutException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandPwdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandRenameException;
-import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
-import org.ikasan.connector.basefiletransfer.net.ClientException;
-import org.ikasan.connector.basefiletransfer.net.ClientFilenameFormatter;
-import org.ikasan.connector.basefiletransfer.net.ClientFixedFilenameFormatter;
-import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
-import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
-import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
-import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException;
-import com.jcraft.jsch.SftpProgressMonitor;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
+import org.ikasan.connector.basefiletransfer.net.*;
+
+import javax.resource.ResourceException;
+import java.io.*;
+import java.net.BindException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 /**
  * <p>
@@ -171,6 +136,8 @@ public class SFTPClient implements FileTransferClient
     /** Preferred authentication order */
     private String preferredAuthentications;
 
+    private String preferredKeyExchangeAlgorithm;
+
     /**
      * SFTPClient constructor where all parameters are provided by the user
      *
@@ -192,7 +159,8 @@ public class SFTPClient implements FileTransferClient
      */
     public SFTPClient(File prvKey, File knownHosts, String username, String password, String remoteHostname,
             int remotePort, String localHostname,
-            Integer maxRetryAttempts, String preferredAuthentications, Integer connectionTimeout)
+            Integer maxRetryAttempts, String preferredAuthentications, Integer connectionTimeout,
+            String preferredKeyExchangeAlgorithm )
     {
         super();
         this.prvKey = prvKey;
@@ -206,6 +174,8 @@ public class SFTPClient implements FileTransferClient
         this.lfs = System.getProperty("file.separator");
         this.tfs = new String("/");
         this.maxRetryAttempts = maxRetryAttempts;
+        this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
+
         if (localHostname != null && localHostname.length() > 0)
         {
             this.localHostname = localHostname;
@@ -416,6 +386,12 @@ public class SFTPClient implements FileTransferClient
                 JSch.setConfig("StrictHostKeyChecking", "no");
                 this.session = jsch.getSession(this.username, this.remoteHostname, this.remotePort);
                 session.setPassword(password);
+            }
+
+            if (this.preferredKeyExchangeAlgorithm != null && !this.preferredKeyExchangeAlgorithm.equals("")) {
+                java.util.Properties config = new java.util.Properties();
+                config.put("kex", this.preferredKeyExchangeAlgorithm);
+                session.setConfig(config);
             }
 
             this.session.setServerAliveInterval(this.connectionTimeout);

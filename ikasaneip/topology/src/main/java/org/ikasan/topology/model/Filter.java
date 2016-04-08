@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.model;
 
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -52,9 +53,41 @@ public class Filter
 	private Long id;
 	private String name;
 	private String description;
+	private String createdBy;
 	private Set<FilterComponent> components;
 	
-	public Filter()
+	/** The data time stamp when an instance was first created */
+    private Date createdDateTime;
+
+    /** The data time stamp when an instance was last updated */
+    private Date updatedDateTime;
+	
+    
+    
+	/**
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @param createdBy
+	 * @param components
+	 * @param createdDateTime
+	 * @param updatedDateTime
+	 */
+	public Filter(String name, String description, String createdBy)
+	{
+		super();
+
+		this.name = name;
+		this.description = description;
+		this.createdBy = createdBy;
+		
+		long now = System.currentTimeMillis();
+		
+		this.createdDateTime = new Date(now);
+		this.updatedDateTime = new Date(now);
+	}
+
+	private Filter()
 	{
 		
 	}
@@ -121,6 +154,54 @@ public class Filter
 	public void setComponents(Set<FilterComponent> components)
 	{
 		this.components = components;
+	}
+
+	/**
+	 * @return the createdBy
+	 */
+	public String getCreatedBy()
+	{
+		return createdBy;
+	}
+
+	/**
+	 * @param createdBy the createdBy to set
+	 */
+	public void setCreatedBy(String createdBy)
+	{
+		this.createdBy = createdBy;
+	}
+
+	/**
+	 * @return the createdDateTime
+	 */
+	public Date getCreatedDateTime()
+	{
+		return createdDateTime;
+	}
+
+	/**
+	 * @param createdDateTime the createdDateTime to set
+	 */
+	public void setCreatedDateTime(Date createdDateTime)
+	{
+		this.createdDateTime = createdDateTime;
+	}
+
+	/**
+	 * @return the updatedDateTime
+	 */
+	public Date getUpdatedDateTime()
+	{
+		return updatedDateTime;
+	}
+
+	/**
+	 * @param updatedDateTime the updatedDateTime to set
+	 */
+	public void setUpdatedDateTime(Date updatedDateTime)
+	{
+		this.updatedDateTime = updatedDateTime;
 	}
 
 	/* (non-Javadoc)

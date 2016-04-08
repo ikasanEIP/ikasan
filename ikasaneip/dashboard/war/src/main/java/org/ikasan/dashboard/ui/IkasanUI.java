@@ -40,11 +40,9 @@
  */
 package org.ikasan.dashboard.ui;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
@@ -67,10 +65,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinResponse;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.communication.PushMode;
@@ -223,7 +218,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 
         if(getPage().getUriFragment() == null || (getPage().getUriFragment() != null && !getPage().getUriFragment().equals("!error-occurrence")))
     	{
-        	UI.getCurrent().getNavigator().navigateTo("landingView"); 
+        	UI.getCurrent().getNavigator().navigateTo("emptyPanel"); 
     	}
 
         this.navigationPanel.setVisible(true);
@@ -292,7 +287,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             public void run() 
             {
             	logger.debug("Broadcasting new FlowStateEvent");
-            	eventBus.post(new FlowStateEvent((HashMap<String, String>)message));
+            	eventBus.post(new FlowStateEvent((ConcurrentHashMap<String, String>)message));
             }
         });	
 	}
@@ -345,7 +340,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
             } 
             catch (RuntimeException e) 
             {
-              logger.info("Failed connector: " + connector.getClass().getSimpleName());
+              logger.debug("Failed connector: " + connector.getClass().getSimpleName());
               throw e;
             }
           }

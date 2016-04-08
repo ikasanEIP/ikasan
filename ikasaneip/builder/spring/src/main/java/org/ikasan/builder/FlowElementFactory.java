@@ -46,8 +46,19 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.DefaultReplicationFactory;
-import org.ikasan.flow.visitorPattern.*;
-import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConcurrentSplitterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.FilterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration;
+import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.SequencerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.SingleRecipientRouterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.SplitterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -62,6 +73,7 @@ import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -87,10 +99,10 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     /** flow element single transition */
     FlowElement<?> transition;
     
-    /** identifier if the cmoponent supported ConfiguredResource */
+    /** identifier if the component supported ConfiguredResource */
     String configuredResourceId;
     
-    /** identifier if the cmoponent supported ConfiguredResource */
+    /** The configuration */
     CONFIGURATION configuration;
 
     /** allow FE's to have their invoker behaviour configured */
@@ -192,9 +204,9 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     }
 
     /*
-         * (non-Javadoc)
-         * @see org.springframework.beans.factory.FactoryBean#getObject()
-         */
+     * (non-Javadoc)
+     * @see org.springframework.beans.factory.FactoryBean#getObject()
+     */
     public FlowElement<?> getObject()
     {
         // configure component as required

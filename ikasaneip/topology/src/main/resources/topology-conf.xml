@@ -79,6 +79,7 @@
 				<value>/org/ikasan/topology/model/Filter.hbm.xml</value>
 				<value>/org/ikasan/topology/model/FilterComponent.hbm.xml</value>
 				<value>/org/ikasan/topology/model/RoleFilter.hbm.xml</value>
+				<value>/org/ikasan/topology/model/Notification.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
@@ -108,6 +109,7 @@
 				<value>/org/ikasan/topology/model/Filter.hbm.xml</value>
 				<value>/org/ikasan/topology/model/FilterComponent.hbm.xml</value>
 				<value>/org/ikasan/topology/model/RoleFilter.hbm.xml</value>
+				<value>/org/ikasan/topology/model/Notification.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />

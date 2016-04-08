@@ -208,6 +208,22 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(monitoringMenuItem);
         this.menuComponents.put(monitoringMenuItem, SecurityConstants.VIEW_MONITORING_AUTHORITY);
         
+        final Button replayMenuItem = new Button("Replay", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	loadTopLevelNavigator();
+            	UI.getCurrent().getNavigator().navigateTo("replayView");
+            }
+        });
+        
+        replayMenuItem.setHtmlContentAllowed(true);
+        replayMenuItem.setPrimaryStyleName("valo-menu-item");
+        replayMenuItem.setIcon(VaadinIcons.RECYCLE);
+        menuItemsLayout.addComponent(replayMenuItem);
+        this.menuComponents.put(replayMenuItem, SecurityConstants.VIEW_REPLAY_AUTHORITY);
+        
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
         label.addStyleName("h4");
@@ -317,6 +333,23 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(platformConfigItem);
         
         this.menuComponents.put(platformConfigItem, SecurityConstants.ALL_AUTHORITY);
+        
+        final Button notificationItem = new Button("Notifications", new ClickListener() 
+        {
+            @Override
+            public void buttonClick(final ClickEvent event) 
+            {
+            	loadTopLevelNavigator();
+            	UI.getCurrent().getNavigator().navigateTo("notificationView");
+            }
+        });
+        
+        notificationItem.setHtmlContentAllowed(true);
+        notificationItem.setPrimaryStyleName("valo-menu-item");
+        notificationItem.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
+        menuItemsLayout.addComponent(notificationItem);
+        
+        this.menuComponents.put(notificationItem, SecurityConstants.ALL_AUTHORITY);
 
     }
 	

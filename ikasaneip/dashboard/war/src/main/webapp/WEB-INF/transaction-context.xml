@@ -41,7 +41,15 @@
                 expression="execution(* org.ikasan.error.reporting.service.*.*(..))"/>
         <aop:pointcut id="startupControlServiceMethods"
                 expression="execution(* org.ikasan.module.service.StartupControlService*.*(..))"/>
+        <aop:pointcut id="hospitalServiceMethods"
+                expression="execution(* org.ikasan.hospital.service.HospitalService.*(..))"/>
+        <aop:pointcut id="hospitalManagementServiceMethods"
+                expression="execution(* org.ikasan.hospital.service.HospitalManagementService.*(..))"/>
+        <aop:pointcut id="replayServiceMethods"
+                expression="execution(* org.ikasan.replay.service.*.*(..))"/>
 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalManagementServiceMethods"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalServiceMethods"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="errorCategorisationServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
@@ -53,6 +61,7 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="startupControlServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="replayServiceMethods"/>
         
     </aop:config>
 

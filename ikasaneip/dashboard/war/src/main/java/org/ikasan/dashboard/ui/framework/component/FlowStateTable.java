@@ -42,6 +42,7 @@ package org.ikasan.dashboard.ui.framework.component;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.IkasanUI;
@@ -82,7 +83,7 @@ public class FlowStateTable extends DashboardTable
     private static String PAUSED = "paused";
     
 	private TopologyService topologyService;
-	private HashMap<String, String> stateMap;
+	private ConcurrentHashMap<String, String> stateMap;
 	
 	/**
 	 * Constructor
@@ -173,7 +174,7 @@ public class FlowStateTable extends DashboardTable
     	eventBus.register(this);
 	}
 	
-	public void populate(HashMap<String, String> stateMap)
+	public void populate(ConcurrentHashMap<String, String> stateMap)
 	{
 		this.stateMap = stateMap;
 		this.removeAllItems();

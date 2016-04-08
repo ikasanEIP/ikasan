@@ -95,5 +95,6 @@
        <module>resubmission</module>
 	   <module>hospital</module>
        <module>history</module>
+	   <module>replay</module>
     </modules>
 </project>

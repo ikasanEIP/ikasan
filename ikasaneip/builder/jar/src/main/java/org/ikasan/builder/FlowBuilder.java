@@ -40,6 +40,11 @@
  */
 package org.ikasan.builder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.Otherwise;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.When;
@@ -73,13 +78,9 @@ import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A simple Flow builder.
@@ -142,6 +143,9 @@ public class FlowBuilder
     
     /** the serialiser factory */
     SerialiserFactory serialiserFactory;
+    
+    /** the replayRecordService **/
+    ReplayRecordService replayRecordService;
 
 	/** List of FlowInvocationListener */
 	List<FlowInvocationContextListener> flowInvocationContextListeners;
@@ -328,6 +332,16 @@ public class FlowBuilder
     }
 
     /**
+	 * @param replayRecordService the replayRecordService to set
+	 */
+	public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService) 
+	{
+		this.replayRecordService = replayRecordService;
+		
+		return this;
+	}
+
+	/**
      * Setter for exception resolver to be registered with the recovery manager.
      * @param exceptionResolver
      */
@@ -397,7 +411,8 @@ public class FlowBuilder
                 throw new IllegalArgumentException("flowBuilder cannot be 'null'");
             }
             
-            this.flowElements.add(new FlowElementImpl(name, consumer, new ConsumerFlowElementInvoker()));
+            ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
+            this.flowElements.add(new FlowElementImpl(name, consumer, invoker));
         }
 
 		public FlowConfigurationBuilder broker(String name, Broker broker) 
@@ -878,12 +893,12 @@ public class FlowBuilder
                     recoveryManager.setResolver(exceptionResolver);
                 }
 
-                FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService, resubmissionService);
+                FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService, resubmissionService, replayRecordService);
 
                 ExclusionFlowConfiguration exclusionFlowConfiguration = null;
                 if(exclusionFlowHeadElement != null)
                 {
-                    exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService);
+                    exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService, replayRecordService);
                 }
 
                 Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
