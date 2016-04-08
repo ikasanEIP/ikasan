@@ -106,6 +106,9 @@ public class ComponentTimingLoggingListenerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
 
+                exactly(1).of(flowElementInvocation).getCustomMetrics();
+                will(returnValue(null));
+
                 exactly(1).of(logger).info("Flow Invocation: ID [id] Start [123456789000] End [123456790000] [Element [componentName] Time [1000ms]] ");
 
             }
