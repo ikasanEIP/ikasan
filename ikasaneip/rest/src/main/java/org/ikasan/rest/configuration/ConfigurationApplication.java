@@ -97,4 +97,55 @@ private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
 		
 		return Response.ok("Configuration created!").build();
 	}
+	
+	/**
+	 * TODO: work out how to get annotation security working.
+	 * 
+	 * @param context
+	 * @param moduleName
+	 * @param flowName
+	 * @return
+	 */
+	@GET
+	@Path("/createConfiguration/{moduleName}/{flowName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createFlowConfiguration(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName)
+	{
+		if(!context.isUserInRole("WebServiceAdmin") && !context.isUserInRole("ALL"))
+		{
+			throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).type("text/plain")
+	                .entity("You are not authorised to access this resource.").build());
+		}
+		
+		Module<Flow> module = moduleContainer.getModule(moduleName);
+		
+		Flow flow = module.getFlow(flowName);
+		
+		Configuration configuration = null;
+		
+		if(flow instanceof ConfiguredResource)
+		{
+			ConfiguredResource configuredResource = (ConfiguredResource)flow;
+			
+			configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+			
+			if(configuration == null)
+			{
+				configuration = this.configurationManagement.createConfiguration(configuredResource);
+				this.configurationManagement.saveConfiguration(configuration);
+			}
+			else
+			{
+				throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).type("text/plain")
+	                .entity("This configuration alread exists!").build());
+			}
+		}
+		else
+		{
+			throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).type("text/plain")
+	                .entity("This component is not configurable!").build());
+		}
+		
+		return Response.ok("Configuration created!").build();
+	}
 }

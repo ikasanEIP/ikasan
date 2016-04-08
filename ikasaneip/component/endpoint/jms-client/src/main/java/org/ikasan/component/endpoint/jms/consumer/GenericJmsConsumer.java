@@ -386,7 +386,7 @@ public class GenericJmsConsumer
 	@Override
 	public void submit(Message event)
 	{
-		logger.info("attempting to submit event: " + event);
+		logger.debug("attempting to submit event: " + event);
 
 		if (this.eventListener == null)
         {

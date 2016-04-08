@@ -66,7 +66,7 @@ package org.ikasan.mapping.helper;
 
      public static String format(String unformattedXml) {
          try {
-             logger.info("Attempting to format: " + unformattedXml);
+             logger.debug("Attempting to format: " + unformattedXml);
              final Document document = parseXmlFile(unformattedXml);
 
              OutputFormat format = new OutputFormat(document);

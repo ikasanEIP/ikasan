@@ -118,7 +118,31 @@ public class MapErrorReportingServiceDao<T>
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName,
 			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate)
+			Date startDate, Date endDate, int size)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public Long rowCount(List<String> moduleName, List<String> flowName,
+			List<String> flowElementname, Date startDate, Date endDate)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+	 */
+	@Override
+	public List<ErrorOccurrence> find(List<String> moduleName,
+			List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate, String action, String exceptionClass,
+			int size)
 	{
 		// TODO Auto-generated method stub
 		return null;

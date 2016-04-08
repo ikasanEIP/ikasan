@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.dao;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +53,7 @@ import org.ikasan.topology.model.FilterComponent;
 import org.ikasan.topology.model.FilterComponentKey;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
 import org.ikasan.topology.model.RoleFilter;
 import org.ikasan.topology.model.RoleFilterKey;
 import org.ikasan.topology.model.Server;
@@ -59,6 +61,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -238,9 +241,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testSaveFilter()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -273,9 +274,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testGetFilterByName()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -309,9 +308,7 @@ public class HibernateTopologyDaoTest
 	@DirtiesContext
 	public void testGetAllFilters()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -334,9 +331,7 @@ public class HibernateTopologyDaoTest
 		
 		this.xaTopologyDao.saveFilter(filter);
 		
-		filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		filter = new Filter("testFilter2", "testFilterDescription", "me");
 		
 		flows = this.xaTopologyDao.getAllFlows();
 		
@@ -367,12 +362,10 @@ public class HibernateTopologyDaoTest
 	}
 	
 	@Test
-	@DirtiesContext
+	@DirtiesContext	
 	public void testSaveRoleFilter()
 	{
-		Filter filter = new Filter();
-		filter.setName("testFilter");
-		filter.setDescription("testFilter description");
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
 		
 		List<Flow> flows = this.xaTopologyDao.getAllFlows();
 		
@@ -382,9 +375,101 @@ public class HibernateTopologyDaoTest
 		
 		this.xaTopologyDao.saveRoleFilter(rf);
 		
-
-		Assert.assertTrue(this.xaTopologyDao.getRoleFilterByRoleId(new Long(1)) != null);
+		List<Long> roleIds = new ArrayList<Long>();
+		roleIds.add(new Long(1));
 		
-		Assert.assertTrue(this.xaTopologyDao.getRoleFilterByRoleId(new Long(1)).getFilter().getName().equals("testFilter"));
+		Assert.assertTrue(this.xaTopologyDao.getRoleFiltersByRoleId(roleIds) != null);
+		
+		Assert.assertTrue(this.xaTopologyDao.getRoleFiltersByRoleId(roleIds).get(0).getFilter().getName().equals("testFilter"));
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testSaveNotification()
+	{
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		Notification notification = new Notification();
+		notification.setName("testNotification");
+		notification.setContext("context");
+		notification.setFilter(filter);
+		
+		this.xaTopologyDao.save(notification);
+		
+		Notification found = this.xaTopologyDao.getNotificationByName("testNotification");
+		
+		Assert.assertTrue(found != null);
+		
+		Assert.assertTrue(found.getName().equals(notification.getName()));
+		
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testSaveNotification_duplicate_filter()
+	{
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		
+		Notification notification = new Notification();
+		notification.setName("testNotification");
+		notification.setContext("context");
+		notification.setFilter(filter);
+		
+		this.xaTopologyDao.save(notification);
+		
+		notification = new Notification();
+		notification.setName("testNotification2");
+		notification.setContext("context");
+		notification.setFilter(filter);
+		
+		this.xaTopologyDao.save(notification);
+		
+		Notification found = this.xaTopologyDao.getNotificationByName("testNotification");
+		
+		Assert.assertTrue(found != null);	
+		
+		Assert.assertTrue(this.xaTopologyDao.getAllNotifications().size() == 2);	
+	}
+	
+	@Test (expected = DataIntegrityViolationException.class)
+	@DirtiesContext
+	public void testSaveNotification_exception_duplicate_name()
+	{
+		Filter filter = new Filter("testFilter", "testFilterDescription", "me");
+		
+		List<Flow> flows = this.xaTopologyDao.getAllFlows();
+		
+		this.xaTopologyDao.saveFilter(filter);
+		
+		
+		Notification notification = new Notification();
+		notification.setName("testNotification");
+		notification.setContext("context");
+		notification.setFilter(filter);
+		
+		this.xaTopologyDao.save(notification);
+		
+		notification = new Notification();
+		notification.setName("testNotification");
+		notification.setContext("context");
+		notification.setFilter(filter);
+		
+		this.xaTopologyDao.save(notification);
+		
+		Notification found = this.xaTopologyDao.getNotificationByName("testNotification");
+		
+		Assert.assertTrue(found != null);
+		
+		Assert.assertTrue(found.getName().equals(notification.getName()));
+		
 	}
 }

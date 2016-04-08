@@ -49,8 +49,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ErrorOccurrencePopup;
@@ -59,7 +57,6 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.TextWindow;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
@@ -69,7 +66,6 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
@@ -81,24 +77,20 @@ import org.vaadin.teemu.VaadinIcons;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
@@ -110,8 +102,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
@@ -128,11 +118,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 	private Logger logger = Logger.getLogger(ErrorOccurrenceTab.class);
 	
 	private FilterTable errorOccurenceTable;
-	
-	private Table errorOccurenceModules = new Table("Modules");
-	private Table errorOccurenceFlows = new Table("Flows");
-	private Table errorOccurenceComponents = new Table("Components");
-	
+
 	private PopupDateField errorFromDate;
 	private PopupDateField errorToDate;
 	
@@ -191,8 +177,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
@@ -203,7 +189,7 @@ public class ErrorOccurrenceTab extends TopologyTab
         return cont;
     }
 	
-	public Layout createCategorisedErrorLayout()
+	public void createLayout()
 	{		
 		container = buildContainer();
 		this.errorOccurenceTable = new FilterTable();
@@ -266,9 +252,9 @@ public class ErrorOccurrenceTab extends TopologyTab
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	errorOccurenceModules.removeAllItems();
-            	errorOccurenceFlows.removeAllItems();
-            	errorOccurenceComponents.removeAllItems();
+            	modules.removeAllItems();
+            	flows.removeAllItems();
+            	components.removeAllItems();
             }
         });
 
@@ -276,211 +262,15 @@ public class ErrorOccurrenceTab extends TopologyTab
 		layout.setMargin(false);
 		layout.setHeight(270 , Unit.PIXELS);
 		
+		super.initialiseFilterTables();
+		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSpacing(true);
 		listSelectLayout.setSizeFull();
-		
-		errorOccurenceModules.setIcon(VaadinIcons.ARCHIVE);
-		errorOccurenceModules.addContainerProperty("Module Name", String.class,  null);
-		errorOccurenceModules.addContainerProperty("", Button.class,  null);
-		errorOccurenceModules.setSizeFull();
-		errorOccurenceModules.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceModules.setDragMode(TableDragMode.ROW);
-		errorOccurenceModules.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Module)
-				{
-					final Module module = (Module) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceModules.removeItem(module);
-			            }
-			        });
-					
-					errorOccurenceModules.addItem(new Object[]{module.getName(), deleteButton}, module);
-
-					for(final Flow flow: module.getFlows())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	errorOccurenceFlows.removeItem(flow);
-				            }
-				        });
-						
-						errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-						for(final Component component: flow.getComponents())
-						{
-							deleteButton = new Button();
-							deleteButton.setIcon(VaadinIcons.TRASH);
-							deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-							deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-							
-							// Add the delete functionality to each role that is added
-							deleteButton.addClickListener(new Button.ClickListener() 
-					        {
-					            public void buttonClick(ClickEvent event) 
-					            {		
-					            	errorOccurenceComponents.removeItem(component);
-					            }
-					        });
-							
-							errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						}
-					}
-				}
+		listSelectLayout.addComponent(super.modules, 0, 0);
+		listSelectLayout.addComponent(super.flows, 1, 0);
+		listSelectLayout.addComponent(super.components, 2, 0);
 				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		listSelectLayout.addComponent(errorOccurenceModules, 0, 0);
-		
-		errorOccurenceFlows.setIcon(VaadinIcons.AUTOMATION);
-		errorOccurenceFlows.addContainerProperty("Flow Name", String.class,  null);
-		errorOccurenceFlows.addContainerProperty("", Button.class,  null);
-		errorOccurenceFlows.setSizeFull();
-		errorOccurenceFlows.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceFlows.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Flow)
-				{
-					final Flow flow = (Flow) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceFlows.removeItem(flow);
-			            }
-			        });
-					
-					errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-						
-					for(final Component component: flow.getComponents())
-					{
-						deleteButton = new Button();
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						
-						// Add the delete functionality to each role that is added
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {		
-				            	errorOccurenceComponents.removeItem(component);
-				            }
-				        });
-						
-						errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-					}
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-
-		listSelectLayout.addComponent(errorOccurenceFlows, 1, 0);
-		
-		errorOccurenceComponents.setIcon(VaadinIcons.COG);
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.addContainerProperty("Component Name", String.class,  null);
-		errorOccurenceComponents.addContainerProperty("", Button.class,  null);
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		errorOccurenceComponents.setSizeFull();
-		errorOccurenceComponents.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		errorOccurenceComponents.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
-	                        .getTransferable();
-			
-				if(t.getItemId() instanceof Component)
-				{
-					final Component component = (Component) t
-							.getItemId();
-					
-					Button deleteButton = new Button();
-					deleteButton.setIcon(VaadinIcons.TRASH);
-					deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	errorOccurenceComponents.removeItem(component);
-			            }
-			        });
-					
-					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
-						
-				}
-				
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		listSelectLayout.addComponent(this.errorOccurenceComponents, 2, 0);
-		
 		GridLayout dateSelectLayout = new GridLayout(2, 1);
 
 		dateSelectLayout.setSizeFull();
@@ -833,8 +623,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
+				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 		{	
 			buttons.addComponent(selectAllButton);
 			buttons.addComponent(closeSelectedButton);
@@ -875,7 +665,8 @@ public class ErrorOccurrenceTab extends TopologyTab
 		wrapper.setComponentAlignment(filterButtonLayout, Alignment.MIDDLE_RIGHT);
 		wrapper.addComponent(vSplitPanel);
 		
-		return wrapper;
+		this.setSizeFull();
+		this.addComponent(wrapper);
 	}
 	
 	/**
@@ -984,13 +775,16 @@ public class ErrorOccurrenceTab extends TopologyTab
 	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
 	{
 		errorOccurenceTable.removeAllItems();
+		
+		container = buildContainer();
+		this.errorOccurenceTable.setContainerDataSource(container);
 
     	ArrayList<String> modulesNames = null;
     	
-    	if(errorOccurenceModules.getItemIds().size() > 0)
+    	if(modules.getItemIds().size() > 0)
     	{
         	modulesNames = new ArrayList<String>();
-        	for(Object module: errorOccurenceModules.getItemIds())
+        	for(Object module: modules.getItemIds())
         	{
         		modulesNames.add(((Module)module).getName());
         	}
@@ -998,10 +792,10 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	ArrayList<String> flowNames = null;
     	
-    	if(errorOccurenceFlows.getItemIds().size() > 0)
+    	if(flows.getItemIds().size() > 0)
     	{
     		flowNames = new ArrayList<String>();
-    		for(Object flow: errorOccurenceFlows.getItemIds())
+    		for(Object flow: flows.getItemIds())
         	{
         		flowNames.add(((Flow)flow).getName());
         	}
@@ -1009,16 +803,18 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	ArrayList<String> componentNames = null;
     	
-    	if(errorOccurenceComponents.getItemIds().size() > 0)
+    	if(components.getItemIds().size() > 0 
+    			&& modules.getItemIds().size() == 0
+    			&& flows.getItemIds().size() == 0)
     	{
     		componentNames = new ArrayList<String>();
-        	for(Object component: errorOccurenceComponents.getItemIds())
+        	for(Object component: components.getItemIds())
         	{
         		componentNames.add(((Component)component).getName());
         	}
     	}
     	
-    	if(modulesNames == null && flowNames == null && componentNames == null
+    	if(modulesNames == null && flowNames == null && componentNames == null && businessStreamCombo != null
     			&& !((BusinessStream)businessStreamCombo.getValue()).getName().equals("All"))
     	{
     		BusinessStream businessStream = ((BusinessStream)businessStreamCombo.getValue());
@@ -1032,7 +828,8 @@ public class ErrorOccurrenceTab extends TopologyTab
     	}
     	
 		List<ErrorOccurrence> errorOccurences = errorReportingService
-    			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+    			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue(),
+    					platformConfigurationService.getSearchResultSetSize());
     	
     	if((errorOccurences == null || errorOccurences.size() == 0) && showError)
     	{
@@ -1041,9 +838,26 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
+    	Long resultSize = errorReportingService.rowCount(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+    	
     	searchResultsSizeLayout.removeAllComponents();
-    	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size());
+    	this.resultsLabel = new Label("Number of records returned: " + errorOccurences.size() + " of " + resultSize);
     	searchResultsSizeLayout.addComponent(this.resultsLabel);
+    	
+    	if(resultSize > platformConfigurationService.getSearchResultSetSize())
+    	{
+    		Notification notif = new Notification(
+    			    "Warning",
+    			    "The number of results returned by this search exceeds the configured search " +
+    			    "result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
+    			    "You can narrow the search with a filter or by being more accurate with the date and time range. ",
+    			    Type.HUMANIZED_MESSAGE);
+    		notif.setDelayMsec(-1);
+    		notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+    		notif.setPosition(Position.MIDDLE_CENTER);
+    		
+    		notif.show(Page.getCurrent());
+    	}
     	
     	for(final ErrorOccurrence errorOccurrence: errorOccurences)
     	{
@@ -1098,11 +912,12 @@ public class ErrorOccurrenceTab extends TopologyTab
 			
 			Button popupButton = new Button();
 			popupButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-			popupButton.setDescription("Open in new tab");
+			popupButton.setDescription("Open in new window");
 			popupButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			popupButton.setIcon(VaadinIcons.MODAL);
 
 	        BrowserWindowOpener popupOpener = new BrowserWindowOpener(ErrorOccurrencePopup.class);
+	        popupOpener.setFeatures("height=600,width=900,resizable");
 	        popupOpener.extend(popupButton);
 	        
 	        popupButton.addClickListener(new Button.ClickListener() 
@@ -1159,8 +974,18 @@ public class ErrorOccurrenceTab extends TopologyTab
 	{
 		StringBuffer dashboardUrl = new StringBuffer(baseUrl);
 		
-		dashboardUrl.append("/?errorUri=").append(errorOccurrence.getUri()).append("#!error-occurrence");
+		dashboardUrl.append("/?errorUri=").append(errorOccurrence.getUri()).append("&ui=errorOccurrence");
 		
 		return dashboardUrl.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.dashboard.ui.topology.component.TopologyTab#search()
+	 */
+	@Override
+	public void search()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

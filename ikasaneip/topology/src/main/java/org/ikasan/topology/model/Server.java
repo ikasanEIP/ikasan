@@ -42,6 +42,7 @@ package org.ikasan.topology.model;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class Server
 	private String name = "";
 	private String description = "";
 	private String url  = "";
-	private Integer port = new Integer(0);
+	private Integer port = 0;
 	private Set<Module> modules;
 	
 	/** The data time stamp when an instance was first created */
@@ -156,7 +157,7 @@ public class Server
 	 */
 	public void setModules(Set<Module> modules)
 	{
-		this.modules = modules;
+		this.modules = new TreeSet<>(modules);
 	}
 
 	/**
@@ -231,4 +232,11 @@ public class Server
 		this.port = port;
 	}
 
+	@Override
+	public String toString() {
+		return "Server [id=" + id + ", name=" + name + ", description="
+				+ description + ", url=" + url + ", port=" + port
+				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+				+ updatedDateTime + "]";
+	}
 }

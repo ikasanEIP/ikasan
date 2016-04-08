@@ -364,9 +364,9 @@ public class ErrorOccurrenceViewPanel extends Panel
 			return "";
 		}
 		
-		StringBuffer dashboardUrl = new StringBuffer(this.platformConfigurationService.getConfigurationValue("dashboardBaseUrl"));
+		StringBuffer dashboardUrl = new StringBuffer(dashboardBaseUrl);
 		
-		dashboardUrl.append("/?errorUri=").append(this.errorOccurrence.getUri()).append("#!error-occurrence");
+		dashboardUrl.append("/?errorUri=").append(errorOccurrence.getUri()).append("&ui=errorOccurrence");
 		
 		return dashboardUrl.toString();
 	}

@@ -118,6 +118,16 @@ public class DiscoveryApplication extends IkasanRestApplication
 			org.ikasan.topology.model.Flow topologyFlow = new org.ikasan.topology.model.Flow(flow.getName(), "description", topologyModule);
 			topologyFlow.setOrder(flowOrder++);
 			
+			if(flow instanceof ConfiguredResource)
+			{
+				topologyFlow.setConfigurationId(((ConfiguredResource)flow).getConfiguredResourceId());
+				topologyFlow.setConfigurable(true);
+			}
+			else
+			{
+				topologyFlow.setConfigurable(false);
+			}
+			
 			flows.add(topologyFlow);
 			
 			Set<org.ikasan.topology.model.Component> components 

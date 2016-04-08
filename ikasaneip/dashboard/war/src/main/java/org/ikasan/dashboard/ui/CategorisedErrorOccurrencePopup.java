@@ -42,9 +42,16 @@ package org.ikasan.dashboard.ui;
 
 import org.ikasan.dashboard.ui.topology.panel.CategorisedErrorOccurrenceViewPanel;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
+import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Container;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
@@ -68,9 +75,20 @@ public class CategorisedErrorOccurrencePopup extends UI
 
 		 ErrorReportingManagementService errorReportingManagementService 
 		 	= (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorReportManagementService");
+		 
+		 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService 
+		 	= (HospitalManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
+			
+		 TopologyService topologyService = (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
+			
+		 ExclusionManagementService<ExclusionEvent, String> exclusionManagementService 
+		 	= (ExclusionManagementService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionManagementService");
+		 
+		 Container container = (Container)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("container");
 	        
 		 CategorisedErrorOccurrenceViewPanel panel 
-			= new CategorisedErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService);
+			= new CategorisedErrorOccurrenceViewPanel(errorOccurrence, errorReportingManagementService,
+					hospitalManagementService, topologyService, exclusionManagementService, container);
 		
 		this.setContent(panel);
 	}

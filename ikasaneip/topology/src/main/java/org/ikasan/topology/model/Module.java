@@ -50,7 +50,7 @@ import java.util.Set;
  * @author Ikasan Development Team
  *
  */
-public class Module
+public class Module implements Comparable<Module>
 {
 
     private Long id;
@@ -287,12 +287,38 @@ public class Module
 	@Override
 	public String toString()
 	{
-		return "Module [id=" + id + ", name=" + name + ", description="
+		String returnString =  "Module [id=" + id + ", name=" + name + ", description="
 				+ description + ", contextRoot=" + contextRoot
-				+ ", diagramUrl=" + diagramUrl + ", version=" + version
-				+ ", server=" + server.getName() + ", flows=" + flows
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
+				+ ", diagramUrl=" + diagramUrl + ", version=" + version;
+				
+		if(server != null)
+		{
+			returnString += ", server=" + server.getId() + " " +  server.getName();
+		}
+		else
+		{
+			returnString += ", server=NULL";
+		}
+		
+		returnString +=  ", flows=" + flows
+		+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+		+ updatedDateTime + "]";
+	
+		return returnString;
 	}
-    
+
+    /**
+     * Natural ordering on the name of the module
+     * @param that the other Module to compare against
+     * @return a negative integer, zero, or a positive integer as this object
+     *          is less than, equal to, or greater than the specified object.
+     */
+	@Override
+	public int compareTo(Module that)
+	{
+		return (this.name != null
+                && that != null
+                && that.name != null)
+                    ? this.name.compareTo(that.name) : -1;
+	}
 }

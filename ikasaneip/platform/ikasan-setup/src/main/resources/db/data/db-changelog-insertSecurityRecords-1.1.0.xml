@@ -35,6 +35,10 @@
 
 	<changeSet author="ikasan dev" id="insertSecurityRecords-1.1.0" context="postBaseline">
 			
+		<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from SecurityPolicy where Name = 'ActionErrors'</sqlCheck>
+        </preConditions>
+        
 		<insert tableName="SecurityPolicy">
 			<column name="Name" value="ActionErrors" />
 			<column name="Description" value="A policy to allow users to action errors" />

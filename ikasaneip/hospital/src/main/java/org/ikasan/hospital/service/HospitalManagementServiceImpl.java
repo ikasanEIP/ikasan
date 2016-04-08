@@ -40,12 +40,13 @@
  */
 package org.ikasan.hospital.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
-import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 
 /**
  * 
@@ -53,9 +54,8 @@ import org.ikasan.spec.module.ModuleContainer;
  *
  */
 public class HospitalManagementServiceImpl implements
-		HospitalManagementService<ExclusionEventAction>
+		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>
 {
-
 	private HospitalDao hospitalDao;
 
 	/**
@@ -77,8 +77,7 @@ public class HospitalManagementServiceImpl implements
 	 * @see org.ikasan.hospital.service.HospitalManagementService#getExclusionEventActionByErrorUri(java.lang.String)
 	 */
 	@Override
-	public ExclusionEventAction getExclusionEventActionByErrorUri(
-			String errorUri)
+	public ExclusionEventAction getExclusionEventActionByErrorUri(String errorUri)
 	{
 		return hospitalDao.getExclusionEventActionByErrorUri(errorUri);
 	}
@@ -87,12 +86,36 @@ public class HospitalManagementServiceImpl implements
 	 * @see org.ikasan.hospital.service.HospitalManagementService#getActionedExclusions(java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ExclusionEventAction> getActionedExclusions(
-			List<String> moduleName, List<String> flowName, Date startDate,
-			Date endDate)
+	public List<ExclusionEventAction> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size)
 	{
-		return this.hospitalDao.getActionedExclusions(moduleName, flowName, startDate, endDate);
+		return this.hospitalDao.getActionedExclusions(moduleName, flowName, startDate, endDate, size);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagementService#getModuleErrorCount(java.util.List)
+	 */
+	@Override
+	public List<ModuleActionedExclusionCount> getModuleActionedExclusionCount(List<String> moduleNames, Date startDate, Date endDate)
+	{
+		ArrayList<ModuleActionedExclusionCount> errorCounts = new ArrayList<ModuleActionedExclusionCount>();
+		
+		for(String moduleName: moduleNames)
+		{
+			ModuleActionedExclusionCount errorCount = new ModuleActionedExclusionCount(moduleName,
+					this.hospitalDao.getNumberOfModuleActionedExclusions(moduleName, startDate, endDate));
+			
+			errorCounts.add(errorCount);
+		}
+		
+		return errorCounts;
+	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.service.HospitalManagementService#actionedExclusionsRowCount(java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate) 
+	{
+		return this.hospitalDao.actionedExclusionsRowCount(moduleName, flowName, startDate, endDate);
+	}
 }

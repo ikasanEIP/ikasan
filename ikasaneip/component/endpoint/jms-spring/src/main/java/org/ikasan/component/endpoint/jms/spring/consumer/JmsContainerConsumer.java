@@ -206,7 +206,7 @@ public class JmsContainerConsumer
 	@Override
 	public void submit(Message event)
 	{
-		logger.info("attempting to submit event: " + event);
+		logger.debug("attempting to submit event: " + event);
 
         try
         {

@@ -44,10 +44,15 @@ import org.ikasan.dashboard.ui.topology.panel.ExclusionEventViewPanel;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Container;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
@@ -73,14 +78,20 @@ public class ExcludedEventPopup extends UI
 		ExclusionEventAction exclusionEventAction
 	 		= (ExclusionEventAction)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("exclusionEventAction");
 		
-		HospitalManagementService<ExclusionEventAction> hospitalManagementService
- 			= (HospitalManagementService<ExclusionEventAction>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
+		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService
+ 			= (HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalManagementService");
  		
 		TopologyService topologyService
  			= (TopologyService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("topologyService");
+		
+		ErrorReportingManagementService errorReportingManagementService = (ErrorReportingManagementService)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute("errorReportingManagementService");
+		
+		
+		HospitalService hospitalService = (HospitalService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("hospitalService");
 	        
 		 ExclusionEventViewPanel panel = new ExclusionEventViewPanel(exclusionEvent, errorOccurrence, exclusionEventAction,
-					hospitalManagementService,  topologyService);
+					hospitalManagementService,  topologyService, errorReportingManagementService, hospitalService);
 		
 		this.setContent(panel);
 	}

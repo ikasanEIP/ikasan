@@ -41,6 +41,7 @@
 package org.ikasan.dashboard.ui.topology.panel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.ws.rs.client.Client;
@@ -59,9 +60,11 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.hospital.service.HospitalService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
@@ -71,24 +74,23 @@ import org.vaadin.aceeditor.AceTheme;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.VaadinService;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -109,14 +111,18 @@ public class ExclusionEventViewPanel extends Panel
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
 	private ExclusionEventAction action;
-	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
+	private ErrorReportingManagementService errorReportingManagementService;
+	private HospitalService<byte[]> hospitalService;
+	private TextArea comments;
 
 	/**
 	 * @param policy
 	 */
 	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction> hospitalManagementService, TopologyService topologyService)
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
@@ -124,6 +130,8 @@ public class ExclusionEventViewPanel extends Panel
 		this.action = action;
 		this.hospitalManagementService = hospitalManagementService;
 		this.topologyService = topologyService;
+		this.errorReportingManagementService = errorReportingManagementService;
+		this.hospitalService = hospitalService;
 		
 		this.init();
 	}
@@ -263,6 +271,23 @@ public class ExclusionEventViewPanel extends Panel
 		tf8.setWidth("80%");
 		layout.addComponent(tf8, 3, 3);
 		
+		label = new Label("Comments:"); 
+		label.setSizeUndefined();
+		layout.addComponent(label, 2, 4);
+		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+		
+		comments = new TextArea();
+		comments.setWidth("80%");
+		comments.setRows(4);
+		comments.setRequired(true);
+		comments.addValidator(new StringLengthValidator(
+	            "You must supply a comment!", 1, 2048, false));
+		comments.setValidationVisible(false);         
+		comments.setRequiredError("A comment is required!");
+		comments.setNullSettingAllowed(false);
+		
+		layout.addComponent(comments, 3, 4, 3, 5);
+		
 		final Button resubmitButton = new Button("Re-submit");
 		final Button ignoreButton = new Button("Ignore");
 		
@@ -271,6 +296,17 @@ public class ExclusionEventViewPanel extends Panel
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	try 
+            	{
+            		comments.validate();
+                } 
+                catch (Exception e) 
+                {
+                	comments.setValidationVisible(true);                	
+                	comments.markAsDirty();
+                    return;
+                }
+            	
             	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
         	        	.getAttribute(DashboardSessionValueConstants.USER);
             	
@@ -334,6 +370,11 @@ public class ExclusionEventViewPanel extends Panel
         			tf6.setReadOnly(true);
         			tf7.setReadOnly(true);
         			tf8.setReadOnly(true);
+        			
+        			ArrayList<String> uris = new ArrayList<String>();
+        			uris.add(exclusionEvent.getErrorUri());
+        			
+        			errorReportingManagementService.close(uris, comments.getValue(), authentication.getName());
         	    }
             }
         });
@@ -343,6 +384,17 @@ public class ExclusionEventViewPanel extends Panel
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	try 
+            	{
+            		comments.validate();
+                } 
+                catch (Exception e) 
+                {
+                	comments.setValidationVisible(true);                	
+                	comments.markAsDirty();
+                    return;
+                }
+            	
             	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
         	        	.getAttribute(DashboardSessionValueConstants.USER);
             	
@@ -365,51 +417,28 @@ public class ExclusionEventViewPanel extends Panel
             		return;
             	}
             	
-            	Server server = module.getServer();
-        		
-        		String url = server.getUrl() + ":" + server.getPort()
-        				+ module.getContextRoot() 
-        				+ "/rest/resubmission/ignore/"
-        				+ exclusionEvent.getModuleName() 
-        	    		+ "/"
-        	    		+ exclusionEvent.getFlowName()
-        	    		+ "/"
-        	    		+ exclusionEvent.getErrorUri();
-        		
-        		logger.debug("Ignore Url: " + url);
-        		
-        	    WebTarget webTarget = client.target(url);
-        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
+            	hospitalService.ignore(module.getName(), exclusionEvent.getFlowName(), exclusionEvent.getErrorUri()
+	        			, exclusionEvent.getEvent(), authentication);
         	    
-        	    if(response.getStatus()  != 200)
-        	    {
-        	    	response.bufferEntity();
-        	        
-        	        String responseMessage = response.readEntity(String.class);
-        	        
-        	        logger.error("An error was received trying to resubmit event: " 
-        	    			+ responseMessage);
-        	        
-        	    	Notification.show("An error was received trying to resubmit event: " 
-        	    			+ responseMessage, Type.ERROR_MESSAGE);
-        	    }
-        	    else
-        	    {
-        	    	Notification.show("Event ignored successfully.");
-        	    	resubmitButton.setVisible(false);
-        	    	ignoreButton.setVisible(false);
-        	    	
-        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
-        	    	tf6.setReadOnly(false);
-        			tf7.setReadOnly(false);
-        			tf8.setReadOnly(false);
-        	    	tf6.setValue(action.getAction());
-        			tf7.setValue(action.getActionedBy());
-        			tf8.setValue(new Date(action.getTimestamp()).toString());
-        			tf6.setReadOnly(true);
-        			tf7.setReadOnly(true);
-        			tf8.setReadOnly(true);
-        	    }
+    	    	Notification.show("Event ignored successfully.");
+    	    	resubmitButton.setVisible(false);
+    	    	ignoreButton.setVisible(false);
+    	    	
+    	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+    	    	tf6.setReadOnly(false);
+    			tf7.setReadOnly(false);
+    			tf8.setReadOnly(false);
+    	    	tf6.setValue(action.getAction());
+    			tf7.setValue(action.getActionedBy());
+    			tf8.setValue(new Date(action.getTimestamp()).toString());
+    			tf6.setReadOnly(true);
+    			tf7.setReadOnly(true);
+    			tf8.setReadOnly(true);
+    			
+    			ArrayList<String> uris = new ArrayList<String>();
+    			uris.add(exclusionEvent.getErrorUri());
+    			
+    			errorReportingManagementService.close(uris, comments.getValue(), authentication.getName());
             }
         });
 		
@@ -502,7 +531,7 @@ public class ExclusionEventViewPanel extends Panel
 		
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(240, Unit.PIXELS);
+		formLayout.setHeight(280, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);

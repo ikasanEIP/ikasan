@@ -266,10 +266,10 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(linkButton);
         toolBarLayout.setExpandRatio(linkButton, 0.865f);
 
-        this.editButton.setIcon(VaadinIcons.EDIT);
+        this.editButton.setCaption("Edit");
         this.editButton.setDescription("Edit the mapping configuration");
-        this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.editButton.addStyleName(ValoTheme.BUTTON_SMALL);
+//        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.editButton.setVisible(false);
         this.editButton.addClickListener(new Button.ClickListener() 
         {
@@ -283,10 +283,12 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.editButton);
         toolBarLayout.setExpandRatio(this.editButton, 0.045f);
 
-        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
-        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
+        this.saveButton.setCaption("Save");
         this.saveButton.setDescription("Save the mapping configuration");
-        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
+//        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.saveButton.setVisible(false);
         this.saveButton.addClickListener(new Button.ClickListener() 
         {
@@ -321,13 +323,15 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        toolBarLayout.addComponent(this.saveButton);
-        toolBarLayout.setExpandRatio(this.saveButton, 0.045f);
+//        toolBarLayout.addComponent(this.saveButton);
+//        toolBarLayout.setExpandRatio(this.saveButton, 0.045f);
 
-        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
-        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
+        this.cancelButton.setCaption("Cancel");
         this.cancelButton.setDescription("Cancel the current edit");
-        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+//        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickListener(new Button.ClickListener() 
         {
@@ -354,8 +358,8 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-        toolBarLayout.addComponent(this.cancelButton);
-        toolBarLayout.setExpandRatio(this.cancelButton, 0.045f);
+//        toolBarLayout.addComponent(this.cancelButton);
+//        toolBarLayout.setExpandRatio(this.cancelButton, 0.045f);
 
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
         fd.extend(exportMappingConfigurationButton);
@@ -372,6 +376,19 @@ public class MappingConfigurationPanel extends Panel implements View
         
         contentLayout.addComponent(toolBarLayout);
         contentLayout.addComponent(createMappingConfigurationForm());
+        
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setSpacing(true);
+        buttonLayout.setWidth("85px");
+        buttonLayout.addComponent(this.editButton);
+        buttonLayout.setComponentAlignment(this.editButton, Alignment.MIDDLE_CENTER);
+        buttonLayout.addComponent(this.saveButton);
+        buttonLayout.setComponentAlignment(this.saveButton, Alignment.MIDDLE_CENTER);
+        buttonLayout.addComponent(this.cancelButton);
+        buttonLayout.setComponentAlignment(this.cancelButton, Alignment.MIDDLE_CENTER);
+        
+        contentLayout.addComponent(buttonLayout);
+        contentLayout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(contentLayout
             , createTableLayout(false));
@@ -388,7 +405,7 @@ public class MappingConfigurationPanel extends Panel implements View
         queryParamsPanel.setContent(paramQueriesLayout);
         this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
-        vpanel.setSplitPosition(325, Unit.PIXELS);
+        vpanel.setSplitPosition(350, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }

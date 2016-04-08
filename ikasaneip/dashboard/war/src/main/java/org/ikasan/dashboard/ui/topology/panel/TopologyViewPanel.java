@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -74,16 +75,24 @@ import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
+import org.ikasan.dashboard.ui.topology.component.FilterManagementTab;
+import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
+import org.ikasan.dashboard.ui.topology.util.FilterMap;
+import org.ikasan.dashboard.ui.topology.util.FilterUtil;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
+import org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -109,6 +118,7 @@ import com.google.common.eventbus.Subscribe;
 import com.ikasan.topology.exception.DiscoveryException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
@@ -116,8 +126,10 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -128,7 +140,12 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.PopupView.Content;
+import com.vaadin.ui.PopupView.PopupVisibilityEvent;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
@@ -159,6 +176,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     /** paused state string constant */
     private static String PAUSED = "paused";
     
+    public static final String BUSINESS_STREAM_TAB = "businessStream";
+    public static final String WIRETAP_TAB = "wiretap";
+    public static final String ERROR_OCCURRENCE_TAB = "errorOccurrence";
+    public static final String ACTIONED_ERROR_TAB = "actionErrorOccurrence";
+    public static final String EVENT_EXCLUSION_TAB = "eventExclusion";
+    public static final String ACTIONED_EVENT_EXCLUSION_TAB = "actionedEventExclusion";
+    public static final String CATEGORISED_ERROR_TAB = "categorisedError";
+    
 	/**
 	 * 
 	 */
@@ -186,6 +211,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION };
     private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION };
+    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE };
     private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
@@ -193,6 +222,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private Panel topologyTreePanel;
 	private Tree moduleTree;
 	private ComponentConfigurationWindow componentConfigurationWindow;
+	private FlowConfigurationWindow flowConfigurationWindow;
 
 	private Panel tabsheetPanel;
 
@@ -207,7 +237,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private PopupDateField systemEventToDate;
 	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
+	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
+	private HospitalService<byte[]> hospitalService;
 	private TopologyService topologyService;
 	
 	private StartupControlService startupControlService;
@@ -219,8 +250,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private SystemEventService systemEventService;
 	private ErrorCategorisationService errorCategorisationService;
 	private TriggerManagementService triggerManagementService;
+	private SecurityService securityService;
 	
-	private HashMap<String, String> flowStates = new HashMap<String, String>();
+	private ConcurrentHashMap<String, String> flowStates = new ConcurrentHashMap<String, String>();
 	
 	private TopologyStateCache topologyCache;
 	
@@ -228,12 +260,24 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
+	private VerticalLayout popupViewLayout = new VerticalLayout();
+	private PopupView filtersPopup = new PopupView("Filters", popupViewLayout);
+	
+	private TopologyTab currentTab;
+	
+	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
+	
+//	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
+//	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
+	
+	
+	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			 HospitalManagementService<ExclusionEventAction> hospitalManagementService, SystemEventService systemEventService,
+			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService)
+			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -259,6 +303,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.hospitalManagementService == null)
 		{
 			throw new IllegalArgumentException("hospitalManagementService cannot be null!");
+		}
+		this.hospitalService = hospitalService;
+		if(this.hospitalService == null)
+		{
+			throw new IllegalArgumentException("hospitalService cannot be null!");
 		}
 		this.systemEventService = systemEventService;
 		if(this.systemEventService == null)
@@ -300,6 +349,17 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
 		}
+		this.securityService = securityService;
+		if(this.securityService == null)
+		{
+			throw new IllegalArgumentException("securityService cannot be null!");
+		}
+		this.flowConfigurationWindow = flowConfigurationWindow;
+		if(this.flowConfigurationWindow == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationWindow cannot be null!");
+		}
+		
 		
 		init();
 	}
@@ -310,7 +370,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.tabsheetPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.tabsheetPanel.setSizeFull();
 		
-		this.createModuleTreePanel();
+		this.createTopologyTreePanel();
 		
 		this.setWidth("100%");
 		this.setHeight("100%");
@@ -348,90 +408,115 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_BUSINESS_STREAM_AUTHORITY)))
-    	{
-			VerticalLayout tab1 = new VerticalLayout();
-			tab1.setSizeFull();
-			
+    	{			
 			BusinessStreamTab businessStreamTab = new BusinessStreamTab(this.topologyService
 					, this.businessStreamCombo);
 			
-			tab1.addComponent(businessStreamTab.createBusinessStreamLayout());
-			tabsheet.addTab(tab1, "Business Stream");
+			businessStreamTab.createLayout();
+			
+			tabsheet.addTab(businessStreamTab, "Business Stream");
+			
+			tabComponentMap.put(BUSINESS_STREAM_TAB, businessStreamTab);
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_WIRETAP_AUTHORITY)))
     	{
-    		VerticalLayout tab2 = new VerticalLayout();
-    		tab2.setSizeFull();
-    		
-    		WiretapTab wiretapTab = new WiretapTab
-					(this.wiretapDao, this.treeViewBusinessStreamCombo);
-			tab2.addComponent(wiretapTab.createWiretapLayout());
+       		WiretapTab wiretapTab = new WiretapTab
+					(this.wiretapDao, this.treeViewBusinessStreamCombo, this.platformConfigurationService);
+       		wiretapTab.createLayout();
+       		wiretapTab.applyFilter();
 			
-    		tabsheet.addTab(tab2, "Wiretaps");
+    		tabsheet.addTab(wiretapTab, "Wiretaps");
+    		
+    		tabComponentMap.put(WIRETAP_TAB, wiretapTab);
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ERRORS_AUTHORITY)))
-    	{
-    		VerticalLayout tab3 = new VerticalLayout();
-    		tab3.setSizeFull();
-    		
+    	{    		
     		ErrorOccurrenceTab errorOccurrenceTab = new ErrorOccurrenceTab
 					(this.errorReportingService, this.treeViewBusinessStreamCombo
 							, this.errorReportingManagementService, this.platformConfigurationService);
-			tab3.addComponent(errorOccurrenceTab.createCategorisedErrorLayout());
+    		errorOccurrenceTab.createLayout();
+			errorOccurrenceTab.applyFilter();
 			
-    		tabsheet.addTab(tab3, "Errors");
+    		tabsheet.addTab(errorOccurrenceTab, "Errors");
+    	
+    		tabComponentMap.put(ERROR_OCCURRENCE_TAB, errorOccurrenceTab);
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ERRORS_AUTHORITY)))
-    	{
-    		VerticalLayout tab3 = new VerticalLayout();
-    		tab3.setSizeFull();
-    		
+    	{    		
     		ActionedErrorOccurrenceTab actionedErrorOccurrenceTab = new ActionedErrorOccurrenceTab
 					(this.errorReportingService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
-			tab3.addComponent(actionedErrorOccurrenceTab.createCategorisedErrorLayout());
 			
-    		tabsheet.addTab(tab3, "Actioned Errors");
+    		actionedErrorOccurrenceTab.createLayout();
+    		actionedErrorOccurrenceTab.applyFilter();
+    		
+    		tabsheet.addTab(actionedErrorOccurrenceTab, "Actioned Errors");
+    		
+    		tabComponentMap.put(ACTIONED_ERROR_TAB, actionedErrorOccurrenceTab);
+    	}
+    	
+    	if(authentication != null 
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
+    	{
+			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
+					(this.errorCategorisationService, this.errorReportingManagementService,
+							this.hospitalManagementService, this.topologyService, this.exclusionManagementService,
+							this.platformConfigurationService, true);
+			
+			categorisedErrorTab.createLayout();
+			categorisedErrorTab.resetSearchDates();
+			categorisedErrorTab.applyFilter();
+			
+			tabsheet.addTab(categorisedErrorTab, "Categorised Errors");
+			
+			tabComponentMap.put(CATEGORISED_ERROR_TAB, categorisedErrorTab);
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_EXCLUSION_AUTHORITY)))
     	{
-    		final VerticalLayout tab4 = new VerticalLayout();
-    		tab4.setSizeFull();
-    		final ExclusionsTab actionedExclusionsTab = new ExclusionsTab(this.errorReportingService, 
+    		final ExclusionsTab exclusionsTab = new ExclusionsTab(this.errorReportingService, this.errorReportingManagementService,
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService, 
-    				this.treeViewBusinessStreamCombo);
+    				this.treeViewBusinessStreamCombo, this.hospitalService);
     		
-    		tab4.addComponent(actionedExclusionsTab.createLayout());
-    		tabsheet.addTab(tab4, "Exclusions");
+    		exclusionsTab.createLayout();
+    		exclusionsTab.applyFilter();
+    		
+    		tabsheet.addTab(exclusionsTab, "Exclusions");
+    		
+    		tabComponentMap.put(EVENT_EXCLUSION_TAB, exclusionsTab);
     	}
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
     					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ACTIONED_EXCLUSIONS_AUTHORITY)))
     	{		
-	    	final VerticalLayout tab5 = new VerticalLayout();
-			tab5.setSizeFull();
 			ActionedExclusionTab actionedExclusionTab = new ActionedExclusionTab
 					(this.exclusionManagementService, this.hospitalManagementService,
-							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo);
-			tab5.addComponent(actionedExclusionTab.createLayout());
-			tabsheet.addTab(tab5, "Actioned Exclusions");
+							this.errorReportingService, this.topologyService, this.treeViewBusinessStreamCombo,
+							this.platformConfigurationService);
+			
+			actionedExclusionTab.createLayout();
+			actionedExclusionTab.applyFilter();
+			
+			tabsheet.addTab(actionedExclusionTab, "Actioned Exclusions");
+			
+			tabComponentMap.put(ACTIONED_EVENT_EXCLUSION_TAB, actionedExclusionTab);
     	}
 		
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_ACTIONED_EXCLUSIONS_AUTHORITY)))
+    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_SYSTEM_EVENT_AUTHORITY)))
     	{		
     		final VerticalLayout tab6 = new VerticalLayout();
     		tab6.setSizeFull();
@@ -439,22 +524,45 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     		tabsheet.addTab(tab6, "System Events");
     	}
 				
+    	
+    	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_CATEGORISED_ERRORS_AUTHORITY)))
+    					|| authentication.hasGrantedAuthority(SecurityConstants.MANAGE_FILTERS_AUTHORITY)))
     	{
-			final VerticalLayout tab8 = new VerticalLayout();
-			tab8.setSizeFull();
-			CategorisedErrorTab categorisedErrorTab = new CategorisedErrorTab
-					(this.errorCategorisationService, this.treeViewBusinessStreamCombo, this.errorReportingManagementService);
-			tab8.addComponent(categorisedErrorTab.createCategorisedErrorLayout());
-			tabsheet.addTab(tab8, "Categorised Errors");
+    		
+    		final FilterManagementTab filterManagementTab = new FilterManagementTab
+					(this.topologyService, this.securityService);
+
+    		filterManagementTab.createLayout();
+			
+    		tabsheet.addTab(filterManagementTab, "Filters");
+    		
     	}
+    	
+    	
+    	tabsheet.addSelectedTabChangeListener(new SelectedTabChangeListener() 
+    	{
+		    @Override
+		    public void selectedTabChange(SelectedTabChangeEvent event) 
+		    {
+		    	if(event.getTabSheet().getSelectedTab() instanceof TopologyTab)
+		    	{
+		    		currentTab = (TopologyTab)event.getTabSheet().getSelectedTab();
+		    		currentTab.applyFilter();
+		    	}
+		    	
+		        if(event.getTabSheet().getSelectedTab() instanceof FilterManagementTab)
+		        {
+		        	((FilterManagementTab)event.getTabSheet().getSelectedTab()).refresh();
+		        }
+		    }
+		});
 
 		this.tabsheetPanel.setContent(tabsheet);
 	}
 
-	protected void createModuleTreePanel()
+	protected void createTopologyTreePanel()
 	{
 		this.topologyTreePanel = new Panel();
 		this.topologyTreePanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -504,15 +612,30 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			}
 		});
 		
-		
 		GridLayout layout = new GridLayout(1, 4);
+		layout.setSpacing(true);
+		layout.setWidth("100%");
 		
 		Label roleManagementLabel = new Label("Topology");
  		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
  		layout.addComponent(roleManagementLabel, 0, 0);
+		
+ 		filtersPopup.addPopupVisibilityListener(new PopupView.PopupVisibilityListener()
+		{		
+			@Override
+			public void popupVisibilityChange(PopupVisibilityEvent event)
+			{
+				if (!event.isPopupVisible()) 
+				{
+		           	if(currentTab != null)
+		           	{
+		           		currentTab.applyFilter();
+		           	}
+		        }
+			}
+		});
  		
-		layout.setSpacing(true);
-		layout.setWidth("100%");
+		layout.addComponent(filtersPopup);
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
 				
@@ -561,8 +684,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
                 	            	TopologyViewPanel.this.moduleTree.setItemCaption(flow, flow.getName());
                 	            	TopologyViewPanel.this.moduleTree.setParent(flow, module);
                 	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
-                	                            	            	                	            	
-                	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+                	                            	            	                	            	                	            	
+                	            	if(flow.isConfigurable())
+            	                	{
+                	            		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+            	                	}
+            	                	else
+            	                	{
+            	                		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+            	                	}
                 	                
                 	                Set<Component> components = flow.getComponents();
                 	
@@ -621,7 +751,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		                moduleTree.setParent(flow, module);
             		                moduleTree.setChildrenAllowed(flow, true);
             		                
-            		                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+            		                if(flow.isConfigurable())
+            	                	{
+                	            		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+            	                	}
+            	                	else
+            	                	{
+            	                		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+            	                	}
             		                
             		                Set<Component> components = flow.getComponents();
             		
@@ -672,7 +809,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	                        moduleTree.setParent(flow, module);
 	    	                moduleTree.setChildrenAllowed(flow, true);
 	    	                
-	    	                TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.AUTOMATION);
+	    	                if(flow.isConfigurable())
+    	                	{
+        	            		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE);
+    	                	}
+    	                	else
+    	                	{
+    	                		TopologyViewPanel.this.moduleTree.setItemIcon(flow, VaadinIcons.ELLIPSIS_CIRCLE_O);
+    	                	}
 	    	                
 	    	                Set<Component> components = flow.getComponents();
 	    	
@@ -775,6 +919,83 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.addComponent(this.moduleTree);
 
 		this.topologyTreePanel.setContent(layout);
+	}
+	
+	protected void createFilterPopupContent()
+	{
+		FilterMap filterMap = (FilterMap)VaadinService.getCurrentRequest().getWrappedSession()
+    		.getAttribute(DashboardSessionValueConstants.FILTERS);
+		
+		if(filterMap.getFilters().size() == 0)
+		{
+			popupViewLayout = new VerticalLayout();
+			popupViewLayout.setMargin(true);
+			popupViewLayout.setSpacing(true);
+			popupViewLayout.setWidth("100%");
+			
+			Label manageFilters = new Label("Manage Filters");
+			manageFilters.addStyleName(ValoTheme.LABEL_BOLD);
+			manageFilters.addStyleName(ValoTheme.LABEL_LARGE);
+			popupViewLayout.addComponent(manageFilters);
+
+			Label filterName = new Label("No filters available!");
+			
+			popupViewLayout.addComponent(filterName);
+		}
+		else
+		{
+			popupViewLayout = new VerticalLayout();
+			popupViewLayout.setMargin(true);
+			popupViewLayout.setSpacing(true);
+			popupViewLayout.setWidth("100%");
+			
+			Label manageFilters = new Label("Manage Filters");
+			manageFilters.addStyleName(ValoTheme.LABEL_BOLD);
+			manageFilters.addStyleName(ValoTheme.LABEL_LARGE);
+			popupViewLayout.addComponent(manageFilters);
+			
+			int i=1;
+			
+			for(FilterUtil filterUtil: filterMap.getFilters())
+			{
+				BeanItem<FilterUtil> filterItem = new BeanItem<FilterUtil>(filterUtil);
+				
+				CheckBox filterSelected = new CheckBox(filterUtil.getFilter().getName());
+				filterSelected.setPropertyDataSource(filterItem.getItemProperty("selected"));
+				
+				popupViewLayout.addComponent(filterSelected);
+				
+				i++;
+			}
+		}
+		
+		this.filtersPopup.setImmediate(true);
+		this.filtersPopup.setContent(new Content()
+		{
+			
+			@Override
+			public com.vaadin.ui.Component getPopupComponent()
+			{
+				Panel popupPanel = new Panel();
+				popupPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+				popupPanel.setHeight("300px");
+				popupPanel.setWidth("300px");
+				
+				popupViewLayout.setImmediate(true);
+				popupPanel.setContent(popupViewLayout);
+				popupPanel.setImmediate(true);
+				
+				return popupPanel;
+			}
+			
+			@Override
+			public String getMinimizedValueAsHTML()
+			{
+				return "Filters";
+			}
+		});
+		
+		this.filtersPopup.markAsDirty();
 	}
 
 	
@@ -881,12 +1102,57 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	protected void refresh()
 	{
+		logger.debug("Start refresh!");
 		if(this.tabsheet == null)
 		{
+			logger.debug("createTabSheet!");
+			this.refreshTree();
 			this.createTabSheet();
 		}
 		
-		this.refreshTree();
+//		logger.debug("refreshTree!");
+//		this.refreshTree();
+		
+		logger.debug("createFilterPopupContent!");
+		createFilterPopupContent();
+		
+    	String tab = (String)VaadinSession.getCurrent().getAttribute("tab");
+    	
+    	logger.debug("Got tab: " + tab);
+    	
+    	if(tab != null)
+    	{
+	    	AbstractComponent tabComponent = this.tabComponentMap.get(tab);
+	    	
+	    	logger.debug("Got tabComponent: " + tabComponent);
+	    	
+	    	if(tabComponent != null)
+	    	{
+	    		Module module = (Module)VaadinSession.getCurrent().getAttribute("module");
+	    		
+	    		VaadinSession.getCurrent().setAttribute("tab", null);
+	    		VaadinSession.getCurrent().setAttribute("module", null);
+	    		
+	    		if(tabComponent instanceof TopologyTab)
+	    		{
+	    			logger.debug("applyModuleFilter!");
+	    			((TopologyTab)tabComponent).applyModuleFilter(module);
+	    			logger.debug("search!");
+	    			((TopologyTab)tabComponent).search();
+	    			logger.debug("resetSearchDates!");
+	    			((TopologyTab)tabComponent).resetSearchDates();
+	    			logger.debug("applyFilter!");
+	    			((TopologyTab)tabComponent).applyFilter();
+	    		}
+	    		
+	    		this.tabsheet.setSelectedTab(tabComponent);
+	    	}
+    	}
+    	
+    	VaadinSession.getCurrent().setAttribute("tab", null);
+    	VaadinSession.getCurrent().setAttribute("module", null);
+    	
+    	logger.debug("End refresh!");
 	}
 	
 	protected void refreshTree()
@@ -910,7 +1176,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
 			List<Server> servers = this.topologyService.getAllServers();
 			
-			logger.debug("trying to load tree for " + servers.size());
+			logger.debug("Trying to load tree for " + servers.size());
 			
 			for(Server server: servers)
 			{	
@@ -1172,25 +1438,49 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			Flow flow = ((Flow)target);
 			
 			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
-			if(state != null && state.equals(RUNNING))
+			if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
 			{
-				return this.flowActionsStarted;
-			}
-			else if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-			{
-				return this.flowActionsStarted;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsStartedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsStarted;
+				}
 			}
 			else if (state != null &&(state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR)))
 			{
-				return this.flowActionsStopped;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsStoppedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsStopped;
+				}
 			}
 			else if (state != null && state.equals(PAUSED))
 			{
-				return this.flowActionsPaused;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsPausedConfigurable;
+				}
+				else
+				{
+					return this.flowActionsPaused;
+				}
 			}
 			else
 			{
-				return this.flowActions;
+				if(flow.isConfigurable())
+				{
+					return this.flowActionsConfigurable;
+				}
+				else
+				{
+					return this.flowActions;
+				}
 			}
         }
 		else if(target instanceof Component)
@@ -1243,12 +1533,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		this.componentConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.componentConfigurationWindow);
         	}
-        	if(action.equals(WIRETAP))
+        	else if(action.equals(WIRETAP))
         	{
         		UI.getCurrent().addWindow(new WiretapConfigurationWindow((Component)target
         			, triggerManagementService));
         	}
-        	if(action.equals(ERROR_CATEGORISATION))
+        	else if(action.equals(ERROR_CATEGORISATION))
         	{
         		Component component = (Component)target;
         		
@@ -1260,7 +1550,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         {
         	Flow flow = ((Flow)target);
         	
-	        if(action.equals(START))
+        	if(action.equals(CONFIGURE))
+        	{
+        		this.flowConfigurationWindow.populate(flow);
+        		UI.getCurrent().addWindow(this.flowConfigurationWindow);
+        	}
+        	else if(action.equals(START))
 	        {
 	     		if(this.actionFlow(flow, "start"))
 	     		{
@@ -1382,109 +1677,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             }
         });	
 	}
-	
-	
-	// Graph stuff below was in as a demo. Just commenting out for now.
 
-//    private SimpleGraphRepositoryImpl graphRepo;
-//    private GraphExplorer<?, ?> graph;
-//    private CssLayout layout;
-//	
-//
-//    public Layout initGraph() {
-//    	graphRepo = createGraphRepository();    	
-//    	VerticalLayout content = new VerticalLayout();
-//    	layout = new CssLayout();
-//    	layout.setSizeFull();
-//    	ComboBox select = createLayoutSelect();
-//    	content.addComponent(select);
-//    	content.addComponent(layout);
-//    	content.setExpandRatio(layout, 1);
-//    	content.setSizeFull();
-//    	refreshGraph();
-//    	
-//    	return content;
-//    }
-//    
-//    private SimpleGraphRepositoryImpl createGraphRepository() {
-//    	SimpleGraphRepositoryImpl repo = new SimpleGraphRepositoryImpl();
-//    	repo.addNode("node1", "Node 1").setIcon(VaadinIcons.COG);
-//    	repo.setHomeNodeId("node1");
-//    	
-//    	repo.addNode("node2", "Node 2").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node3", "Node 3").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node4", "Node 4").setIcon(VaadinIcons.COG);
-//
-//    	repo.addNode("node10", "Node 10").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node11", "Node 11").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node12", "Node 12").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node13", "Node 13").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node14", "Node 14").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node15", "Node 15").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node16", "Node 16").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node17", "Node 17").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node18", "Node 18").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node19", "Node 19").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node20", "Node 20").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node21", "Node 21").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node22", "Node 22").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node23", "Node 23").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node24", "Node 24").setIcon(VaadinIcons.COG);
-//    	repo.addNode("node25", "Node 25").setIcon(VaadinIcons.COG);
-//
-//    	repo.joinNodes("node1", "node2", "edge12", "Edge 1-2");
-//    	repo.joinNodes("node1", "node3", "edge13", "Edge 1-3");
-//    	repo.joinNodes("node3", "node4", "edge34", "Edge 3-4");
-//
-//    	repo.joinNodes("node2", "node10", "edge210", "Edge type A");
-//    	repo.joinNodes("node2", "node11", "edge211", "Edge type A");
-//    	repo.joinNodes("node2", "node12", "edge212", "Edge type A");
-//    	repo.joinNodes("node2", "node13", "edge213", "Edge type A");
-//    	repo.joinNodes("node2", "node14", "edge214", "Edge type A");
-//    	repo.joinNodes("node2", "node15", "edge215", "Edge type A");
-//    	repo.joinNodes("node2", "node16", "edge216", "Edge type A");
-//    	repo.joinNodes("node2", "node17", "edge217", "Edge type A");
-//    	repo.joinNodes("node2", "node18", "edge218", "Edge type A");
-//    	repo.joinNodes("node2", "node19", "edge219", "Edge type A");
-//    	repo.joinNodes("node2", "node20", "edge220", "Edge type A");
-//    	repo.joinNodes("node2", "node21", "edge221", "Edge type A");
-//    	repo.joinNodes("node2", "node22", "edge222", "Edge type B");
-//    	repo.joinNodes("node2", "node23", "edge223", "Edge type B");
-//    	repo.joinNodes("node2", "node24", "edge224", "Edge type B");
-//    	repo.joinNodes("node2", "node25", "edge225", "Edge type C");
-//    	
-//    	return repo;
-//    }
-//
-//    private ComboBox createLayoutSelect() {
-//    	final ComboBox select = new ComboBox("Select layout algorithm");
-//    	select.addItem("FR");
-//    	select.addItem("Circle");
-//    	select.addItem("ISOM");
-//    	select.addValueChangeListener(new ValueChangeListener() {
-//			
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public void valueChange(ValueChangeEvent event) {
-//				if ("FR".equals(select.getValue())) {
-//					graph.setLayoutEngine(new JungFRLayoutEngine());
-//				} else if ("Circle".equals(select.getValue())) {
-//					graph.setLayoutEngine(new JungCircleLayoutEngine());					
-//				} if ("ISOM".equals(select.getValue())) {
-//					graph.setLayoutEngine(new JungISOMLayoutEngine());
-//				}
-//				refreshGraph();
-//			}
-//		});
-//    	return select;
-//    }
-//    
-//    private void refreshGraph() {
-//    	layout.removeAllComponents();
-//        graph = new GraphExplorer<NodeImpl, ArcImpl>(graphRepo);
-//        graph.setSizeFull();
-//        layout.addComponent(graph);
-//    }
 }
 

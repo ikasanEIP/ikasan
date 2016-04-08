@@ -40,8 +40,6 @@
  */
 package org.ikasan.dashboard.ui.topology.panel.deeplink;
 
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
@@ -56,13 +54,12 @@ import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
+import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Theme;
+import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
@@ -72,7 +69,10 @@ import com.vaadin.ui.Window.CloseEvent;
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceDeepLinkPanel extends Panel implements View
+@Theme("dashboard")
+@SuppressWarnings("serial")
+@PreserveOnRefresh
+public class ErrorOccurrenceDeepLinkPanel extends UI
 {
 	private Logger logger = Logger.getLogger(ErrorOccurrenceDeepLinkPanel.class);
 	
@@ -103,25 +103,14 @@ public class ErrorOccurrenceDeepLinkPanel extends Panel implements View
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+	 * @see com.vaadin.ui.UI#init(com.vaadin.server.VaadinRequest)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event)
+	protected void init(VaadinRequest request)
 	{
-		logger.info("query: " + Page.getCurrent().getLocation().getQuery());
+		logger.debug("query: " + request.getParameter("errorUri"));
 		
-		String errorUri = Page.getCurrent().getLocation().getQuery();
-		
-		if(errorUri == null || errorUri.length() == 0 || !errorUri.contains("errorUri="))
-		{
-			UI.getCurrent().getNavigator().navigateTo("landingView"); 
-    		
-    		Notification.show("The error URL is not formed correctly.", Type.ERROR_MESSAGE);
-    		
-    		return;
-		}
-		
-		errorUri = errorUri.substring(errorUri.indexOf('=') + 1, errorUri.length());
+		String errorUri = request.getParameter("errorUri");
 		
 		ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(errorUri);
 		
@@ -134,7 +123,7 @@ public class ErrorOccurrenceDeepLinkPanel extends Panel implements View
     		return;
 		}
 		
-		logger.info("errorOccurrence: " + errorOccurrence);
+		logger.debug("errorOccurrence: " + errorOccurrence);
 		
 		if((IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
  	        	.getAttribute(DashboardSessionValueConstants.USER) == null)
@@ -165,8 +154,6 @@ public class ErrorOccurrenceDeepLinkPanel extends Panel implements View
 					this.platformConfigurationService);
 		
 		this.setContent(panel);
-	}
-	
-	
+	}	
 	
 }

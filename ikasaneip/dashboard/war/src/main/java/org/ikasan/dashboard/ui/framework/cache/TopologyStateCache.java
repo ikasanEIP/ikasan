@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui.framework.cache;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +71,7 @@ public class TopologyStateCache
 	private Logger logger = Logger.getLogger(TopologyStateCache.class);
 	
 	private TopologyService topologyService;
-	private HashMap<String, String> stateMap;
+	private ConcurrentHashMap<String, String> stateMap;
 	
 	private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	private TopologyCacheRefreshTask task = new TopologyCacheRefreshTask();
@@ -97,7 +98,7 @@ public class TopologyStateCache
 			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
 		}
 		
-		stateMap = new HashMap<String, String>();	
+		stateMap = new ConcurrentHashMap<String, String>();	
 		
 		executor.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
 	}
@@ -125,7 +126,7 @@ public class TopologyStateCache
 	
 	protected void update()
 	{
-		stateMap = new HashMap<String, String>();
+		stateMap = new ConcurrentHashMap<String, String>();
 				
 		logger.debug("Synchronising topology state cache.");
 		
@@ -215,7 +216,7 @@ public class TopologyStateCache
 	/**
 	 * @return the stateMap
 	 */
-	public HashMap<String, String> getStateMap()
+	public ConcurrentHashMap<String, String> getStateMap()
 	{
 		return stateMap;
 	}

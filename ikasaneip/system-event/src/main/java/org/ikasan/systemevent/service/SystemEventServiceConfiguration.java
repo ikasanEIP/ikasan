@@ -55,6 +55,9 @@ public class SystemEventServiceConfiguration
      * Boolean to determine if system events are deleted in batches during housekeeping
      */
     private boolean batchHousekeepDelete;
+    
+    /** default transaction size of 1000 */
+    private int transactionBatchSize = 1000;
 
 
     /* Getters and setters */
@@ -77,4 +80,20 @@ public class SystemEventServiceConfiguration
     {
         this.batchHousekeepDelete = batchHousekeepDelete;
     }
+
+	/**
+	 * @return the transactionBatchSize
+	 */
+	public int getTransactionBatchSize()
+	{
+		return transactionBatchSize;
+	}
+
+	/**
+	 * @param transactionBatchSize the transactionBatchSize to set
+	 */
+	public void setTransactionBatchSize(int transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
 }

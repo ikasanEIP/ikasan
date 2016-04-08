@@ -95,4 +95,11 @@ public interface ExclusionManagementService<ENTITY, IDENTIFIER>
      * @return
      */
     public void delete(String errorUri);
+    
+    /**
+    * Find the event based on it's URI
+    * @param errorUri
+    * @return
+    */
+   public ENTITY find(String errorUri);
 }

@@ -59,10 +59,16 @@
 		<property name="name" 
 				  column="Name" 
 				  type="java.lang.String" 
-				  not-null="true"/>
+				  not-null="true"
+				  unique="true"/>
 
 		<property name="description" 
 				  column="Description" 
+				  type="java.lang.String" 
+				  not-null="true"/>
+				  
+		<property name="createdBy" 
+				  column="CreatedBy" 
 				  type="java.lang.String" 
 				  not-null="true"/>
 	    
@@ -71,7 +77,7 @@
 		    <one-to-many class="org.ikasan.topology.model.FilterComponent"/>
 		</set>
 		
-		<!-- property name="createdDateTime"
+		<property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="true" />
@@ -79,6 +85,6 @@
         <property name="updatedDateTime"
                   type="java.util.Date"
                   column="UpdatedDateTime"
-                  not-null="true" / -->
+                  not-null="true" />
     </class>
 </hibernate-mapping>

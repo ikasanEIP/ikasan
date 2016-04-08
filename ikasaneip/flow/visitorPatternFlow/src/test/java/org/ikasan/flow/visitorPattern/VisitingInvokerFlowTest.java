@@ -56,6 +56,7 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -104,6 +105,8 @@ public class VisitingInvokerFlowTest
 
     /** Mock recoveryManager */
     final ErrorReportingService errorReportingService = mockery.mock(ErrorReportingService.class, "mockErrorReportingService");
+    
+    final ReplayRecordService replayRecordService = mockery.mock(ReplayRecordService.class, "mockReplayRecordService");
 
     /** Mock managedResourceRecoveryManagerFactory */
     final ManagedResourceRecoveryManagerFactory managedResourceRecoveryManagerFactory = mockery.mock(ManagedResourceRecoveryManagerFactory.class, "mockManagedResourceRecoveryManagerFactory");
@@ -338,6 +341,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -514,6 +519,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -855,6 +862,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -1086,6 +1095,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -1257,6 +1268,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -2046,6 +2059,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(flowElementInvoker));
                 oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
+                
+                one(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
 
                 exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
@@ -2728,6 +2744,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -2872,6 +2890,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
@@ -2887,6 +2906,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
+                
+                exactly(1).of(flowConfiguration).configure(flow);
 
                 // inject errorReportingService to those needing it on the business flow
                 exactly(1).of(flowConfiguration).getErrorReportingServiceAwareFlowElements();

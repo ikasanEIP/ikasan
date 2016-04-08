@@ -41,14 +41,13 @@
 package org.ikasan.error.reporting.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.error.reporting.model.Link;
 import org.ikasan.error.reporting.model.Note;
 import org.junit.Assert;
 import org.junit.Test;
@@ -167,6 +166,26 @@ public class HibernateErrorManagementDaoTest
     	eoList = this.errorManagementDao.findErrorOccurrences(uris);
     	
     	Assert.assertTrue(eoList.size() == 2);
+    }
+    
+    /**
+     * Test save of errorOccurrence
+     */
+    @DirtiesContext
+    @Test
+    public void test_count_error_occurrence_for_module()
+    {
+    	ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrence eo1 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	ErrorOccurrence eo2 = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+    	
+    	this.errorReportingServiceDao.save(eo);
+    	this.errorReportingServiceDao.save(eo1);
+    	this.errorReportingServiceDao.save(eo2);
+    	
+    	System.out.println(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)));
+    	
+    	Assert.assertTrue(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)) == 3);
     }
     
 }

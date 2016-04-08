@@ -238,4 +238,31 @@ public class Component
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String returnString =  "Component [id=" + id + ", name=" + name + ", description="
+				+ description + ", configurable=" + configurable
+				+ ", configurationId=" + configurationId;
+		
+		if(this.flow != null)
+		{
+			returnString += ", flow=" + flow.getName();
+		}
+		else
+		{
+			returnString += ", flow=NULL";
+		}
+		
+		returnString += ", order=" + order + ", createdDateTime=" + createdDateTime
+				+ ", updatedDateTime=" + updatedDateTime + "]";
+	
+		
+		return returnString;
+	}
+	
+	
+
 }

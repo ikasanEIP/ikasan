@@ -44,6 +44,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.springframework.dao.support.DataAccessUtils;
@@ -89,7 +91,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	@Override
 	public List<ExclusionEventAction> getActionedExclusions(
 			List<String> moduleName, List<String> flowName, Date startDate,
-			Date endDate)
+			Date endDate, int size)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
 		
@@ -113,7 +115,74 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
        
-		return (List<ExclusionEventAction>) this.getHibernateTemplate().findByCriteria(criteria);
+		criteria.addOrder(Order.desc("timestamp"));
+		
+		return (List<ExclusionEventAction>) this.getHibernateTemplate().findByCriteria(criteria, 0, size);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.dao.HospitalDao#actionedExclusionsRowCount(java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate)
+	{
+
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
+		
+		if(moduleName != null && moduleName.size() > 0)
+		{
+			criteria.add(Restrictions.in("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.size() > 0)
+		{
+			criteria.add(Restrictions.in("flowName", flowName));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+
+		criteria.setProjection(Projections.projectionList()
+                .add(Projections.count("moduleName")));
+
+		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNumberOfModuleActionedExclusions(java.lang.String, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public Long getNumberOfModuleActionedExclusions(String moduleName,
+			Date startDate, Date endDate)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
+		
+		if(moduleName != null)
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+		}
+		
+		criteria.setProjection(Projections.projectionList()
+		                    .add(Projections.count("moduleName")));
+		
+		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
     
 }
