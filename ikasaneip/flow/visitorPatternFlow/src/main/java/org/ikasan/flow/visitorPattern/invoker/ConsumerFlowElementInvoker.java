@@ -43,12 +43,7 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.replay.ReplayRecordService;
+import org.ikasan.spec.flow.*;
 
 /**
  * A default implementation of the FlowElementInvoker for a consumer
@@ -68,8 +63,6 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
     	
     /**
      * Constructor
-     * 
-     * @param replayRecordService
      */
     public ConsumerFlowElementInvoker() 
     {
