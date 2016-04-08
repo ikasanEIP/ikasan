@@ -1977,6 +1977,9 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
+
                 exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
 
                 oneOf(flowConfiguration).getConsumerFlowElement();
@@ -2060,7 +2063,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
                 
-                one(flowConfiguration).getReplayRecordService();
+                oneOf(flowConfiguration).getReplayRecordService();
                 will(returnValue(replayRecordService));
 
                 exactly(1).of(exclusionService).isBlackListed("identifier");
@@ -2120,18 +2123,18 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowInvocationContext).startFlowInvocation();
                 exactly(1).of(flowInvocationContext).endFlowInvocation();
-
-
                 // reload any marked dynamic dao
                 oneOf(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 oneOf(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
-
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
 
                 exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
+
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
 
                 oneOf(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -2206,6 +2209,9 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
                 will(returnValue(dynamicConfiguredResource));
+
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
 
                 exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
 
