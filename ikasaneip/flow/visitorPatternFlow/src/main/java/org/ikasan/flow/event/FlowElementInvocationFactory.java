@@ -92,7 +92,7 @@ public class FlowElementInvocationFactory
 
         /** custom metrics of any name/value */
         private List<AbstractMap.SimpleImmutableEntry<String, String>> customMetrics
-                = Collections.synchronizedList(new ArrayList<AbstractMap.SimpleImmutableEntry<String, String>>());;
+                = Collections.synchronizedList(new ArrayList<AbstractMap.SimpleImmutableEntry<String, String>>());
 
 
         @Override

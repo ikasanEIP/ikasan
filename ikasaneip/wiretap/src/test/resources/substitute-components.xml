@@ -74,6 +74,12 @@
 
     <bean id="messageHistoryDao" class="org.ikasan.history.dao.HibernateMessageHistoryDao">
         <property name="sessionFactory" ref="wiretapHibernateSessionFactory"/>
+        <property name="messageHistoryHousekeepQuery" value="delete top _bs_ from MessageHistory where Expiry &lt;= _ex_"></property>
+        <property name="metricHousekeepQuery" value="delete from Metric where MessageHistoryId in (select top _bs_ Id from MessageHistory where Expiry &lt;= _ex_)"></property>
+        <property name="batchHousekeepDelete" value="true"></property>
+        <property name="housekeepingBatchSize" value="500"></property>
+        <property name="transactionBatchSize" value="5000"></property>
+        
     </bean>
 
     <bean id="wiretapHibernateSessionFactory"
@@ -84,6 +90,7 @@
                 <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
                 <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
                 <value>org/ikasan/history/model/History.hbm.xml</value>
+                <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
