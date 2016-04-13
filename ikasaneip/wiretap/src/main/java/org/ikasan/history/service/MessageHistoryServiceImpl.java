@@ -40,7 +40,12 @@
  */
 package org.ikasan.history.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.ikasan.history.dao.MessageHistoryDao;
+import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
 import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -48,10 +53,6 @@ import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Implementation of the MessageHistoryService with Housekeeping
@@ -78,8 +79,8 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     {
         if (flowInvocationContext.getFinalAction() == null || shouldSaveAction(flowInvocationContext.getFinalAction()))
         {
-            List<MessageHistoryEvent<String>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
-            for (MessageHistoryEvent<String> messageHistoryEvent : messageHistoryEvents)
+            List<MessageHistoryEvent<String, CustomMetric>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+            for (MessageHistoryEvent<String, CustomMetric> messageHistoryEvent : messageHistoryEvents)
             {
                 messageHistoryDao.save(messageHistoryEvent);
             }

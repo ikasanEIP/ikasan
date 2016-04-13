@@ -40,12 +40,14 @@
  */
 package org.ikasan.spec.history;
 
+import java.util.Set;
+
 /**
  * Ikasan MessageHistoryEvent Value Object.
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryEvent<ID>
+public interface MessageHistoryEvent<ID, METRIC>
 {
     String getModuleName();
 
@@ -66,5 +68,9 @@ public interface MessageHistoryEvent<ID>
     long getEndTimeMillis();
 
     long getExpiry();
+    
+    Set<METRIC> getMetrics();
+    
+    void setMetrics(Set<METRIC> metrics);
 
 }
