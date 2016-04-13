@@ -40,13 +40,16 @@
  */
 package org.ikasan.history.model;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Factory for creating MessageHistoryEvents from FlowInvocationContext objects
@@ -56,12 +59,13 @@ import java.util.Objects;
 public class HistoryEventFactory
 {
 
-    public List<MessageHistoryEvent<String>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
+    public List<MessageHistoryEvent<String, CustomMetric>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
     {
 
-        List<MessageHistoryEvent<String>> messageHistoryEvents = new ArrayList<>();
+        List<MessageHistoryEvent<String, CustomMetric>> messageHistoryEvents 
+        	= new ArrayList<MessageHistoryEvent<String, CustomMetric>>();
 
-        for (FlowElementInvocation invocation : flowInvocationContext.getElementInvocations())
+        for ( FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation : flowInvocationContext.getElementInvocations())
         {
             messageHistoryEvents.add(new MessageHistoryFlowEvent(moduleName, flowName,
                     invocation.getFlowElement().getComponentName(),
@@ -70,9 +74,23 @@ public class HistoryEventFactory
                     Objects.toString(invocation.getAfterIdentifier(), null),
                     Objects.toString(invocation.getAfterRelatedIdentifier(), null),
                     invocation.getStartTimeMillis(), invocation.getEndTimeMillis(),
-                    30));
+                    30, getMetrics(invocation)));
             //TODO - move expiry to configurable aspect, where?
         }
         return messageHistoryEvents;
+    }
+    
+    private Set<CustomMetric> getMetrics(FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation)
+    {
+    	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+    	
+    	for(AbstractMap.SimpleImmutableEntry<String, String> nvp: invocation.getCustomMetrics())
+    	{
+    		CustomMetric cm = new CustomMetric();
+    		cm.setName(nvp.getKey());
+    		cm.setValue(nvp.getValue());
+    	}
+    	
+    	return metrics;
     }
 }

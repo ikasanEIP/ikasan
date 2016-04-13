@@ -40,6 +40,13 @@
  */
 package org.ikasan.history.dao;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
+import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.MessageHistoryFlowEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -51,9 +58,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.Collections;
 
 /**
  * Test cases for the HibernateMessageHistoryDao
@@ -74,9 +78,17 @@ public class HibernateMessageHistoryDaoTest
     @Before
     public void setup()
     {
+    	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+    	metrics.add(new CustomMetric("name", "value"));
+    	metrics.add(new CustomMetric("name", "value"));
+    	metrics.add(new CustomMetric("name", "value"));
+    	metrics.add(new CustomMetric("name", "value"));
+    	metrics.add(new CustomMetric("name", "value"));
+    	metrics.add(new CustomMetric("name", "value"));
+    	
         MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, metrics);
 
         messageHistoryDao.save(event1);
     }
@@ -99,6 +111,7 @@ public class HibernateMessageHistoryDaoTest
     {
         PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
+        Assert.assertTrue(results.getPagedResults().get(0).getMetrics().size() == 6);
     }
 
     @Test
@@ -128,7 +141,7 @@ public class HibernateMessageHistoryDaoTest
         // add another event in that does not match
         MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "lifeIdX", "relatedLifeIdY", "lifeIdX", "relatedLifeIdY",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, null);
 
         messageHistoryDao.save(event2);
 
@@ -142,22 +155,58 @@ public class HibernateMessageHistoryDaoTest
         // add another event in that does not match
         MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "lifeIdX", "relatedLifeIdY", "lifeIdX", "relatedLifeIdY",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, null);
         messageHistoryDao.save(event2);
 
         // add another event in that matches on the relatedId
         MessageHistoryFlowEvent event3 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "newModuleLifeId", "lifeId", "newModuleLifeId", "lifeId",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, null);
         messageHistoryDao.save(event3);
 
         PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId", "lifeId");
         Assert.assertTrue(results.getPagedResults().size() == 2);
     }
+    
+    @Test
+    public void bulkDeleteTest()
+    {
+    	for(int i=0; i<10000; i++)
+    	{
+	    	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+	    	metrics.add(new CustomMetric("name", "value"));
+	    	
+	        MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
+	                "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
+	                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, metrics);
+	
+	        messageHistoryDao.save(event1);
+    	}
+    	
+    	PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+    
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 messageHistoryDao.deleteAllExpired();
+    	 
+    	 results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+         Assert.assertTrue(results.getPagedResults().size() == 0);
+    }
 
     @After
-    public void tear_down(){
+    public void tear_down()
+    {
         messageHistoryDao.deleteAllExpired();
+        
     }
 
 }

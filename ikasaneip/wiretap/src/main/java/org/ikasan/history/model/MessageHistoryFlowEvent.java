@@ -40,6 +40,8 @@
  */
 package org.ikasan.history.model;
 
+import java.util.Set;
+
 import org.ikasan.spec.history.MessageHistoryEvent;
 
 /**
@@ -47,19 +49,24 @@ import org.ikasan.spec.history.MessageHistoryEvent;
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
+public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric>
 {
-    String moduleName, flowName, componentName,
+    private String moduleName, flowName, componentName,
             beforeEventIdentifier, beforeRelatedEventIdentifier,
             afterEventIdentifier, afterRelatedEventIdentifier;
-    long startTimeMillis, endTimeMillis, expiry, id;
+    private long startTimeMillis, endTimeMillis, expiry, id;
+    
+    private Set<CustomMetric> metrics;
 
     /** Required by the ORM... */
     protected MessageHistoryFlowEvent()
     {
     }
 
-    public MessageHistoryFlowEvent(String moduleName, String flowName, String componentName, String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier, String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis, long expiry)
+    public MessageHistoryFlowEvent(String moduleName, String flowName, String componentName, 
+    		String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier, 
+    		String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis, long expiry,
+    		Set<CustomMetric> metrics)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
@@ -71,6 +78,7 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
         this.startTimeMillis = startTimeMillis;
         this.endTimeMillis = endTimeMillis;
         this.expiry = expiry;
+        this.metrics = metrics;
     }
 
     @Override
@@ -138,7 +146,8 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
         return id;
     }
 
-    public void setId(long id)
+    @SuppressWarnings("unused")
+	private void setId(long id)
     {
         this.id = id;
     }
@@ -192,4 +201,22 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String>
     {
         this.expiry = expiry;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.history.MessageHistoryEvent#getMetrics()
+	 */
+	@Override
+	public Set<CustomMetric> getMetrics() 
+	{
+		return this.metrics;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.history.MessageHistoryEvent#setMetrics(java.util.Set)
+	 */
+	@Override
+	public void setMetrics(Set<CustomMetric> metrics) 
+	{
+		this.metrics = metrics;
+	}
 }
