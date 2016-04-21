@@ -395,7 +395,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      *  Loops, checking for housekeepable items. If they exist, it identifies a batch
      *  and attempts to delete that batch
      */
-    private void batchHousekeepDelete() {
+    private void batchHousekeepDelete() 
+    {
         logger.info("Wiretap batched housekeeper called");
 
         int numberDeleted = 0;
@@ -420,7 +421,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
             });
         }
-
     }
 
 
@@ -450,8 +450,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             }
         });
     }
-
-
 
     public boolean isBatchHousekeepDelete()
     {
@@ -489,7 +487,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
         this.transactionBatchSize = transactionBatchSize;
     }
 
-    @Override public void setHousekeepQuery(String housekeepQuery)
+    @Override 
+    public void setHousekeepQuery(String housekeepQuery)
     {
         this.housekeepQuery = housekeepQuery;
     }

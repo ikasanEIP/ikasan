@@ -42,6 +42,8 @@ package org.ikasan.history.dao;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -64,6 +66,19 @@ import java.util.Set;
  */
 public class HibernateMessageHistoryDao extends HibernateDaoSupport implements MessageHistoryDao
 {
+	/** Use batch housekeeping mode? */
+    private boolean batchHousekeepDelete = false;
+
+    /** Batch size used when in batching housekeep */
+    private Integer housekeepingBatchSize = 1000;
+
+    /** Batch size used when in a single transaction */
+    private Integer transactionBatchSize = 5000;
+
+    private String messageHistoryHousekeepQuery = null;
+    
+    private String metricHousekeepQuery = null;
+    
 
     @Override
     public void save(MessageHistoryEvent messageHistoryEvent)
@@ -220,16 +235,75 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
     @Override
     public void deleteAllExpired()
-    {
-        getHibernateTemplate().execute(new HibernateCallback<Object>()
+    {        
+        if (batchHousekeepDelete && this.metricHousekeepQuery != null
+        		&& this.messageHistoryHousekeepQuery != null)
         {
-            public Object doInHibernate(Session session) throws HibernateException
+        	 batchHousekeepDelete();
+        }
+        else
+        {
+        	if (batchHousekeepDelete && (this.metricHousekeepQuery == null
+            		|| this.messageHistoryHousekeepQuery == null))
+        	{
+        		logger.warn("Housing keeping was set to batch mode but either the message " +
+        				"history house keep query or the metric house keep query are null. " +
+        				"Housekeeping will not be performed in batch mode.");
+        	}
+        		
+            getHibernateTemplate().execute(new HibernateCallback<Object>()
+	        {
+	            public Object doInHibernate(Session session) throws HibernateException
+	            {
+	            	String deleteMetrics = "DELETE FROM Metric WHERE MessageHistoryId in " +
+	            			"(SELECT Id FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis() + ")";
+	            	session.createSQLQuery(deleteMetrics).executeUpdate();
+	            	 
+	                String delete = "DELETE FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis();
+	                session.createSQLQuery(delete).executeUpdate();
+	                return null;
+	            }
+	        });
+        }
+    }
+    
+    /**
+     * Housekeep using batching.
+     *
+     *  Loops, checking for housekeepable items. If they exist, it identifies a batch
+     *  and attempts to delete that batch
+     */
+    private void batchHousekeepDelete() 
+    {
+        logger.info("Message History batched housekeeper called");
+
+        int numberDeleted = 0;
+
+        while(housekeepablesExist() && numberDeleted < this.transactionBatchSize)
+        {
+
+            numberDeleted += this.housekeepingBatchSize;
+
+            getHibernateTemplate().execute(new HibernateCallback<Object>()
             {
-                String delete = "DELETE FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis();
-                session.createSQLQuery(delete).executeUpdate();
-                return null;
-            }
-        });
+                public Object doInHibernate(Session session) throws HibernateException
+                {
+	            	session.createSQLQuery(metricHousekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
+                            .replace("_ex_", String.valueOf(System.currentTimeMillis()))).executeUpdate();
+                	
+	            	
+                    String formattedQuery = messageHistoryHousekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
+                            .replace("_ex_", String.valueOf(System.currentTimeMillis()));
+                    
+
+                    SQLQuery query = session.createSQLQuery(formattedQuery);
+
+                    query.executeUpdate();
+
+                    return null;
+                }
+            });
+        }
     }
 
     @Override
@@ -267,4 +341,84 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
         // can have a restriction applied
         return restrictionValue != null && !"".equals(restrictionValue);
     }
+
+	/**
+	 * @return the batchHousekeepDelete
+	 */
+	public boolean isBatchHousekeepDelete() 
+	{
+		return batchHousekeepDelete;
+	}
+
+	/**
+	 * @param batchHousekeepDelete the batchHousekeepDelete to set
+	 */
+	public void setBatchHousekeepDelete(boolean batchHousekeepDelete) 
+	{
+		this.batchHousekeepDelete = batchHousekeepDelete;
+	}
+
+	/**
+	 * @return the housekeepingBatchSize
+	 */
+	public Integer getHousekeepingBatchSize() 
+	{
+		return housekeepingBatchSize;
+	}
+
+	/**
+	 * @param housekeepingBatchSize the housekeepingBatchSize to set
+	 */
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize) 
+	{
+		this.housekeepingBatchSize = housekeepingBatchSize;
+	}
+
+	/**
+	 * @return the transactionBatchSize
+	 */
+	public Integer getTransactionBatchSize() 
+	{
+		return transactionBatchSize;
+	}
+
+	/**
+	 * @param transactionBatchSize the transactionBatchSize to set
+	 */
+	public void setTransactionBatchSize(Integer transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}	
+
+	/**
+	 * @return the metricHousekeepQuery
+	 */
+	public String getMetricHousekeepQuery() 
+	{
+		return metricHousekeepQuery;
+	}
+
+	/**
+	 * @param metricHousekeepQuery the metricHousekeepQuery to set
+	 */
+	public void setMetricHousekeepQuery(String metricHousekeepQuery) 
+	{
+		this.metricHousekeepQuery = metricHousekeepQuery;
+	}
+
+	/**
+	 * @return the messageHistoryHousekeepQuery
+	 */
+	public String getMessageHistoryHousekeepQuery()
+	{
+		return messageHistoryHousekeepQuery;
+	}
+
+	/**
+	 * @param messageHistoryHousekeepQuery the messageHistoryHousekeepQuery to set
+	 */
+	public void setMessageHistoryHousekeepQuery(String messageHistoryHousekeepQuery) 
+	{
+		this.messageHistoryHousekeepQuery = messageHistoryHousekeepQuery;
+	}
 }

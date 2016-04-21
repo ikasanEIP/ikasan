@@ -72,11 +72,11 @@
             <column name="BeforeEventIdentifier" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="BeforeRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="BeforeRelatedEventIdentifier" type="VARCHAR(255)"/>
             <column name="AfterEventIdentifier" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="AfterRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="AfterRelatedEventIdentifier" type="VARCHAR(255)"/>
 
             <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
                 <constraints nullable="false"/>
@@ -132,11 +132,11 @@
             <column name="BeforeEventIdentifier" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="BeforeRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="BeforeRelatedEventIdentifier" type="VARCHAR(255)"/>
             <column name="AfterEventIdentifier" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="AfterRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="AfterRelatedEventIdentifier" type="VARCHAR(255)"/>
 
             <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
                 <constraints nullable="false"/>
@@ -189,11 +189,11 @@
             <column name="BeforeEventIdentifier" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="BeforeRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="BeforeRelatedEventIdentifier" type="VARCHAR(255)"/>
             <column name="AfterEventIdentifier" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="AfterRelatedLifeIdentifier" type="VARCHAR(255)"/>
+            <column name="AfterRelatedEventIdentifier" type="VARCHAR(255)"/>
             <column defaultValueNumeric="0" name="StartTime" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
