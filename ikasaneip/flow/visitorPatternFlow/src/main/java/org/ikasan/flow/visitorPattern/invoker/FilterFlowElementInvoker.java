@@ -66,6 +66,11 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
             if (filter.filter(flowEvent.getPayload()) == null)
             {
                 endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
+                if (flowInvocationContext.getFinalAction() == null
+                        || flowInvocationContext.getFinalAction() != FinalAction.PUBLISH)
+                {
+                    flowInvocationContext.setFinalAction(FinalAction.FILTER);
+                }
                 return null;
             }
         }
