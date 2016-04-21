@@ -40,19 +40,18 @@
  */
 package org.ikasan.history.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
-import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of the MessageHistoryService with Housekeeping
@@ -77,13 +76,10 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public void save(FlowInvocationContext flowInvocationContext, String moduleName, String flowName)
     {
-        if (flowInvocationContext.getFinalAction() == null || shouldSaveAction(flowInvocationContext.getFinalAction()))
+        List<MessageHistoryEvent<String, CustomMetric>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+        for (MessageHistoryEvent<String, CustomMetric> messageHistoryEvent : messageHistoryEvents)
         {
-            List<MessageHistoryEvent<String, CustomMetric>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
-            for (MessageHistoryEvent<String, CustomMetric> messageHistoryEvent : messageHistoryEvents)
-            {
-                messageHistoryDao.save(messageHistoryEvent);
-            }
+            messageHistoryDao.save(messageHistoryEvent);
         }
     }
 
@@ -120,26 +116,5 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     protected void setHistoryEventFactory(HistoryEventFactory historyEventFactory)
     {
         this.historyEventFactory = historyEventFactory;
-    }
-
-    /**
-     * Determines whether the flow invocation context should be saved
-     *
-     * If the event is rolled back (either stop or retry actions) the event should not be saved
-     * @param finalAction the action
-     * @return true if PUBLISH, FILTER, IGNORE or EXCLUDE, false otherwise
-     */
-    protected boolean shouldSaveAction(FinalAction finalAction)
-    {
-        switch (finalAction)
-        {
-            case PUBLISH:
-            case FILTER:
-            case IGNORE:
-            case EXCLUDE:
-                return true;
-            default:
-                return false;
-        }
     }
 }
