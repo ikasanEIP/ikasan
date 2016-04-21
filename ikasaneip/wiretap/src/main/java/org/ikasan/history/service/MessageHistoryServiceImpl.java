@@ -42,7 +42,6 @@ package org.ikasan.history.service;
 
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.HistoryEventFactory;
-import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryService;
@@ -76,14 +75,12 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public void save(FlowInvocationContext flowInvocationContext, String moduleName, String flowName)
     {
-        if (flowInvocationContext.getFinalAction() == null || shouldSaveAction(flowInvocationContext.getFinalAction()))
+        List<MessageHistoryEvent<String>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+        for (MessageHistoryEvent<String> messageHistoryEvent : messageHistoryEvents)
         {
-            List<MessageHistoryEvent<String>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
-            for (MessageHistoryEvent<String> messageHistoryEvent : messageHistoryEvents)
-            {
-                messageHistoryDao.save(messageHistoryEvent);
-            }
+            messageHistoryDao.save(messageHistoryEvent);
         }
+
     }
 
     @Override
@@ -121,24 +118,5 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
         this.historyEventFactory = historyEventFactory;
     }
 
-    /**
-     * Determines whether the flow invocation context should be saved
-     *
-     * If the event is rolled back (either stop or retry actions) the event should not be saved
-     * @param finalAction the action
-     * @return true if PUBLISH, FILTER, IGNORE or EXCLUDE, false otherwise
-     */
-    protected boolean shouldSaveAction(FinalAction finalAction)
-    {
-        switch (finalAction)
-        {
-            case PUBLISH:
-            case FILTER:
-            case IGNORE:
-            case EXCLUDE:
-                return true;
-            default:
-                return false;
-        }
-    }
+
 }
