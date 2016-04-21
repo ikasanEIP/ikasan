@@ -3,7 +3,7 @@ package org.ikasan.history.model;
 public class CustomMetric 
 {
 	private Long id;
-	private Long messageHistoryFlowEventId;
+	private MessageHistoryFlowEvent messageHistoryFlowEvent;
 	private String name;
 	private String value;
 	
@@ -46,17 +46,17 @@ public class CustomMetric
 	/**
 	 * @return the messageHistoryFlowEventId
 	 */
-	public Long getMessageHistoryFlowEventId()
+	public MessageHistoryFlowEvent getMessageHistoryFlowEvent()
 	{
-		return messageHistoryFlowEventId;
+		return messageHistoryFlowEvent;
 	}
 	
 	/**
 	 * @param messageHistoryFlowEventId the messageHistoryFlowEventId to set
 	 */
-	public void setMessageHistoryFlowEventId(Long messageHistoryFlowEventId) 
+	public void setMessageHistoryFlowEvent(MessageHistoryFlowEvent messageHistoryFlowEvent) 
 	{
-		this.messageHistoryFlowEventId = messageHistoryFlowEventId;
+		this.messageHistoryFlowEvent = messageHistoryFlowEvent;
 	}
 	
 	/**

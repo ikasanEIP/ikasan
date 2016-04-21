@@ -65,8 +65,7 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
 
     public MessageHistoryFlowEvent(String moduleName, String flowName, String componentName, 
     		String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier, 
-    		String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis, long expiry,
-    		Set<CustomMetric> metrics)
+    		String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis, long expiry)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
@@ -78,7 +77,6 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         this.startTimeMillis = startTimeMillis;
         this.endTimeMillis = endTimeMillis;
         this.expiry = expiry;
-        this.metrics = metrics;
     }
 
     @Override
