@@ -92,7 +92,7 @@ public class MessageHistoryContextListenerTest<T>
     public void test_successful_endFlow_publish()
     {
         mockery.checking(new Expectations(){{
-            oneOf(flowInvocationContext).getFinalAction();
+            exactly(2).of(flowInvocationContext).getFinalAction();
             will(returnValue(FinalAction.PUBLISH));
             oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
         }});
@@ -118,7 +118,7 @@ public class MessageHistoryContextListenerTest<T>
     public void test_successful_endFlow_withLogException()
     {
         mockery.checking(new Expectations(){{
-            oneOf(flowInvocationContext).getFinalAction();
+            exactly(2).of(flowInvocationContext).getFinalAction();
             will(returnValue(FinalAction.PUBLISH));
             oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
             will(throwException(new RuntimeException()));
@@ -132,7 +132,7 @@ public class MessageHistoryContextListenerTest<T>
     public void test_successful_endFlow_withRethrowException()
     {
         mockery.checking(new Expectations(){{
-            oneOf(flowInvocationContext).getFinalAction();
+            exactly(2).of(flowInvocationContext).getFinalAction();
             will(returnValue(FinalAction.PUBLISH));
             oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
             will(throwException(new RuntimeException()));
