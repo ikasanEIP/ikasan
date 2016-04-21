@@ -89,6 +89,8 @@ public class HistoryEventFactory
     		CustomMetric cm = new CustomMetric();
     		cm.setName(nvp.getKey());
     		cm.setValue(nvp.getValue());
+    		
+    		metrics.add(cm);
     	}
     	
     	return metrics;
