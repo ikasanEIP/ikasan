@@ -67,20 +67,25 @@ public class HistoryEventFactory
 
         for ( FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation : flowInvocationContext.getElementInvocations())
         {
-            messageHistoryEvents.add(new MessageHistoryFlowEvent(moduleName, flowName,
+        	MessageHistoryFlowEvent event = new MessageHistoryFlowEvent(moduleName, flowName,
                     invocation.getFlowElement().getComponentName(),
                     Objects.toString(invocation.getBeforeIdentifier(), null),
                     Objects.toString(invocation.getBeforeRelatedIdentifier(), null),
                     Objects.toString(invocation.getAfterIdentifier(), null),
                     Objects.toString(invocation.getAfterRelatedIdentifier(), null),
                     invocation.getStartTimeMillis(), invocation.getEndTimeMillis(),
-                    30, getMetrics(invocation)));
-            //TODO - move expiry to configurable aspect, where?
+                    30);
+        	//TODO - move expiry to configurable aspect, where?
+        	
+        	event.setMetrics(this.getMetrics(invocation, event));
+        	
+            messageHistoryEvents.add(event);            
         }
         return messageHistoryEvents;
     }
     
-    private Set<CustomMetric> getMetrics(FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation)
+    private Set<CustomMetric> getMetrics(FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation,
+    		MessageHistoryFlowEvent event)
     {
     	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
     	
@@ -89,6 +94,7 @@ public class HistoryEventFactory
     		CustomMetric cm = new CustomMetric();
     		cm.setName(nvp.getKey());
     		cm.setValue(nvp.getValue());
+    		cm.setMessageHistoryFlowEvent(event);
     		
     		metrics.add(cm);
     	}

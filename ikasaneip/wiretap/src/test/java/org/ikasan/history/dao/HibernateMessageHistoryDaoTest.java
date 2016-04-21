@@ -78,17 +78,21 @@ public class HibernateMessageHistoryDaoTest
     @Before
     public void setup()
     {
-    	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
-    	metrics.add(new CustomMetric("name", "value"));
-    	metrics.add(new CustomMetric("name", "value"));
-    	metrics.add(new CustomMetric("name", "value"));
-    	metrics.add(new CustomMetric("name", "value"));
-    	metrics.add(new CustomMetric("name", "value"));
-    	metrics.add(new CustomMetric("name", "value"));
     	
         MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, metrics);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+        
+        Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+        
+        for(int i=0; i<6; i++)
+        {
+        	CustomMetric cm = new CustomMetric("name", "value");
+        	cm.setMessageHistoryFlowEvent(event1);
+        	metrics.add(cm);
+        }
+        
+        event1.setMetrics(metrics);
 
         messageHistoryDao.save(event1);
     }
@@ -141,7 +145,7 @@ public class HibernateMessageHistoryDaoTest
         // add another event in that does not match
         MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "lifeIdX", "relatedLifeIdY", "lifeIdX", "relatedLifeIdY",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, null);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
 
         messageHistoryDao.save(event2);
 
@@ -155,13 +159,13 @@ public class HibernateMessageHistoryDaoTest
         // add another event in that does not match
         MessageHistoryFlowEvent event2 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "lifeIdX", "relatedLifeIdY", "lifeIdX", "relatedLifeIdY",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, null);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
         messageHistoryDao.save(event2);
 
         // add another event in that matches on the relatedId
         MessageHistoryFlowEvent event3 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
                 "newModuleLifeId", "lifeId", "newModuleLifeId", "lifeId",
-                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, null);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
         messageHistoryDao.save(event3);
 
         PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId", "lifeId");
@@ -172,13 +176,18 @@ public class HibernateMessageHistoryDaoTest
     public void bulkDeleteTest()
     {
     	for(int i=0; i<10000; i++)
-    	{
-	    	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
-	    	metrics.add(new CustomMetric("name", "value"));
-	    	
+    	{	    	
 	        MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
 	                "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
-	                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L, metrics);
+	                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+	        
+	        Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+	        CustomMetric cm = new CustomMetric("name", "value");
+	        cm.setMessageHistoryFlowEvent(event1);
+	        
+	    	metrics.add(cm);
+	        
+	        event1.setMetrics(metrics);
 	
 	        messageHistoryDao.save(event1);
     	}
