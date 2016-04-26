@@ -91,6 +91,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.PUBLISH);
 
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -115,6 +116,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.PUBLISH);
 
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -155,6 +157,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.PUBLISH);
 
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -182,6 +185,7 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.PUBLISH);
 
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
@@ -227,6 +231,8 @@ public class BrokerFlowElementInvokerTest
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.PUBLISH);
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -244,8 +250,9 @@ public class BrokerFlowElementInvokerTest
                 exactly(2).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.PUBLISH);
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -263,6 +270,46 @@ public class BrokerFlowElementInvokerTest
 
         FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_broker_flowElementInvoker_flowEvent_with_transition()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // first execution
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(broker));
+                exactly(1).of(broker).invoke(flowEvent);
+                will(returnValue(flowEvent));
+                exactly(1).of(flowEvent).replace(flowEvent);
+
+                // transition is itself for purposes of testing
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new BrokerFlowElementInvoker();
         flowElementInvoker.invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
         mockery.assertIsSatisfied();

@@ -96,6 +96,8 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
             unsetInvocationOnComponent(flowElementInvocation, producer);
         }
 
+        // TODO - what should be the final action if we have a DevNull Producer?!
+        flowInvocationContext.setFinalAction(FinalAction.PUBLISH);
         endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // producer is last in the flow

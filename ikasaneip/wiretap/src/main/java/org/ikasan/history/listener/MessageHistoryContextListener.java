@@ -43,6 +43,7 @@ package org.ikasan.history.listener;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.flow.FlowInvocationContextListener;
+import org.ikasan.spec.flow.FlowInvocationContextWriteStrategy;
 import org.ikasan.spec.history.MessageHistoryService;
 
 /**
@@ -59,6 +60,10 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
 
     /** the module and flow name */
     protected String moduleName, flowName;
+
+    /** a default write strategy for the FlowInvocationContext */
+    protected FlowInvocationContextWriteStrategy writeStrategy = new DefaultFlowInvocationContextWriteStrategy();
+
 
     /** boolean to determine whether to rethrow any caught exceptions thrown by the underlying service, defaults to false */
     protected boolean rethrowServiceExceptions = false;
@@ -87,7 +92,11 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     {
         try
         {
-            messageHistoryService.save(flowInvocationContext, moduleName, flowName);
+            // only write if our strategy says so
+            if (writeStrategy.shouldWrite(flowInvocationContext))
+            {
+                messageHistoryService.save(flowInvocationContext, moduleName, flowName);
+            }
         }
         catch (RuntimeException re)
         {
@@ -102,5 +111,50 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     public void setRethrowServiceExceptions(boolean rethrowServiceExceptions)
     {
         this.rethrowServiceExceptions = rethrowServiceExceptions;
+    }
+
+
+    public FlowInvocationContextWriteStrategy getWriteStrategy()
+    {
+        return writeStrategy;
+    }
+
+    public void setWriteStrategy(FlowInvocationContextWriteStrategy writeStrategy)
+    {
+        this.writeStrategy = writeStrategy;
+    }
+
+
+    /**
+     * A default WriteStrategy for the invocation context.
+     *
+     * The following states are written (i.e. shouldWrite returns true):
+     *   PUBLISH
+     *   FILTER
+     *   IGNORE
+     *   EXCLUDE
+     *   null
+     * All other states return false
+     */
+    public static class DefaultFlowInvocationContextWriteStrategy implements FlowInvocationContextWriteStrategy
+    {
+        @Override
+        public boolean shouldWrite(FlowInvocationContext flowInvocationContext)
+        {
+            if (flowInvocationContext != null && flowInvocationContext.getFinalAction() != null)
+            {
+                switch (flowInvocationContext.getFinalAction())
+                {
+                case PUBLISH:
+                case FILTER:
+                case IGNORE:
+                case EXCLUDE:
+                    return true;
+                default:
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
