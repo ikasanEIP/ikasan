@@ -173,8 +173,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
             for(String beanName:applicationContext.getBeanDefinitionNames())
             {
-                try {
-                    logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                try
+                {
+
+                    if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract())
+                    {
+                        logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                    }
                 }
                 catch(RuntimeException e)
                 {

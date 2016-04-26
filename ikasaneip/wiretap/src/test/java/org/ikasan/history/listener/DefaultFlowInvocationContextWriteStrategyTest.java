@@ -42,21 +42,22 @@ package org.ikasan.history.listener;
 
 import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.flow.FlowInvocationContextListener;
-import org.ikasan.spec.history.MessageHistoryService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Test cases for MessageHistoryContextListener
+ * Test cases for DefaultFlowInvocationContextWriteStrategy
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryContextListenerTest<T>
+public class DefaultFlowInvocationContextWriteStrategyTest
 {
+    MessageHistoryContextListener.DefaultFlowInvocationContextWriteStrategy strategy = new MessageHistoryContextListener.DefaultFlowInvocationContextWriteStrategy();
+
     private final Mockery mockery = new Mockery()
     {
         {
@@ -65,81 +66,72 @@ public class MessageHistoryContextListenerTest<T>
         }
     };
 
-    @SuppressWarnings("unchecked")
-    MessageHistoryService<FlowInvocationContext, T> messageHistoryService = mockery.mock(MessageHistoryService.class);
-
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_service()
-    {
-        new MessageHistoryContextListener<>(null, "moduleName", "flowName");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_moduleName()
-    {
-        new MessageHistoryContextListener<>(messageHistoryService, null, "flowName");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_flowName()
-    {
-        new MessageHistoryContextListener<>(messageHistoryService, "moduleName", null);
-    }
-
     @Test
-    public void test_successful_endFlow_publish()
-    {
-        mockery.checking(new Expectations(){{
-            exactly(2).of(flowInvocationContext).getFinalAction();
-            will(returnValue(FinalAction.PUBLISH));
-            oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
-        }});
-        FlowInvocationContextListener listener = new MessageHistoryContextListener<>(messageHistoryService, "moduleName", "flowName");
-        listener.endFlow(flowInvocationContext);
-        mockery.assertIsSatisfied();
-    }
-
-    @Test
-    public void test_successful_endFlow_null_action()
+    public void test_null()
     {
         mockery.checking(new Expectations(){{
             oneOf(flowInvocationContext).getFinalAction();
             will(returnValue(null));
-            oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
         }});
-        FlowInvocationContextListener listener = new MessageHistoryContextListener<>(messageHistoryService, "moduleName", "flowName");
-        listener.endFlow(flowInvocationContext);
+        Assert.assertTrue(strategy.shouldWrite(flowInvocationContext));
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_endFlow_withLogException()
+    public void test_publish()
     {
         mockery.checking(new Expectations(){{
             exactly(2).of(flowInvocationContext).getFinalAction();
             will(returnValue(FinalAction.PUBLISH));
-            oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
-            will(throwException(new RuntimeException()));
         }});
-        FlowInvocationContextListener listener = new MessageHistoryContextListener<>(messageHistoryService, "moduleName", "flowName");
-        listener.endFlow(flowInvocationContext);
+        Assert.assertTrue(strategy.shouldWrite(flowInvocationContext));
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test_successful_endFlow_withRethrowException()
+    @Test
+    public void test_ignore()
     {
         mockery.checking(new Expectations(){{
             exactly(2).of(flowInvocationContext).getFinalAction();
-            will(returnValue(FinalAction.PUBLISH));
-            oneOf(messageHistoryService).save(flowInvocationContext, "moduleName", "flowName");
-            will(throwException(new RuntimeException()));
+            will(returnValue(FinalAction.IGNORE));
         }});
-        MessageHistoryContextListener listener = new MessageHistoryContextListener<>(messageHistoryService, "moduleName", "flowName");
-        listener.setRethrowServiceExceptions(true);
-        listener.endFlow(flowInvocationContext);
+        Assert.assertTrue(strategy.shouldWrite(flowInvocationContext));
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void test_exclude()
+    {
+        mockery.checking(new Expectations(){{
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.EXCLUDE));
+        }});
+        Assert.assertTrue(strategy.shouldWrite(flowInvocationContext));
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_filter()
+    {
+        mockery.checking(new Expectations(){{
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.FILTER));
+        }});
+        Assert.assertTrue(strategy.shouldWrite(flowInvocationContext));
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_rollback()
+    {
+        mockery.checking(new Expectations(){{
+            exactly(2).of(flowInvocationContext).getFinalAction();
+            will(returnValue(FinalAction.ROLLBACK));
+        }});
+        Assert.assertFalse(strategy.shouldWrite(flowInvocationContext));
+        mockery.assertIsSatisfied();
+    }
+
 }
