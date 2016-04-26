@@ -29,5 +29,6 @@
 	
 	<!-- 1.2.0 index creation -->
 	<include file="db/index/db-changeLog-createIndexIkasanWiretapExpiry.xml" relativeToChangelogFile="true" />
+	<include file="db/index/db-changeLog-createIndexIMetricMessageHistoryId.xml" relativeToChangelogFile="true" />
 	
 </databaseChangeLog>
