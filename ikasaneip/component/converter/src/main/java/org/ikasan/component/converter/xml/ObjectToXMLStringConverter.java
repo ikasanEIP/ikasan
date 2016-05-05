@@ -204,11 +204,11 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
             e.setFailedEvent(failedXml);
             if(this.xmlConfiguration.isRouteOnValidationException())
             {
-                logger.info("Failed XML Validation on[" + failedXml + "]", e);
+                logger.info(e.getValidationEvent().getMessage() + " Source[" + failedXml + "]", e);
                 return e;
             }
 
-            throw new TransformationException("Failed XML Validation on[" + failedXml + "]", e);
+            throw new TransformationException(e.getValidationEvent().getMessage() + " Source[" + failedXml + "]", e);
         }
         catch (JAXBException e)
         {
