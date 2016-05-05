@@ -151,12 +151,16 @@ public class ObjectToXMLStringConverterTest
         /** class on test */
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(Example.class);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
-        
-        String xml = (String)objectToXML.convert(example);
 
-        // compare
-        Diff diff = new Diff(expectedXML, xml);
-        assertTrue(diff.toString(), diff.similar());
+        try
+        {
+            objectToXML.convert(example);
+        }
+        catch(TransformationException e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**
