@@ -52,7 +52,6 @@ import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -293,6 +292,12 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     @Override
     public Flow getObject()
     {
+        // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
+        if(resubmissionService == null && this.consumer instanceof ResubmissionService)
+        {
+            resubmissionService = (ResubmissionService)this.consumer;
+        }
+
         final FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(this.consumer, this.configurationService, this.resubmissionService, this.replayRecordService);
 
         if(exclusionService == null)
@@ -379,6 +384,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
+            + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
             + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
             + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
             + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
