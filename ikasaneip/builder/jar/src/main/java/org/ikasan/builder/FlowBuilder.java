@@ -857,6 +857,12 @@ public class FlowBuilder
 							.getDefaultConfigurationService();
 				}
 
+                // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
+                if(resubmissionService == null && nextFlowElement instanceof ResubmissionService)
+                {
+                    resubmissionService = (ResubmissionService)nextFlowElement;
+                }
+
                 if (exclusionService == null)
                 {
                     if(exclusionServiceFactory == null)
@@ -933,6 +939,7 @@ public class FlowBuilder
                 flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
                 logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
+                        + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
                         + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
                         + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
                         + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
