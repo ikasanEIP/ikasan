@@ -49,7 +49,7 @@ import org.ikasan.spec.deployment.DeploymentInfoService;
 
 /**
  * Implementation of the DeploymentInfoService. 
- * @author jeffmitchell
+ * @author Ikasan Development Team
  */
 public class DeploymentInfoServiceDefaultImpl implements DeploymentInfoService
 {
