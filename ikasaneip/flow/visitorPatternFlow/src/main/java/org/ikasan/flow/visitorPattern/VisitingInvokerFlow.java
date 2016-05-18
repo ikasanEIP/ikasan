@@ -631,18 +631,19 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             else
             {
                 configureDynamicConfiguredResources();
-                invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
-                updateDynamicConfiguredResources();
-                if(this.recoveryManager.isRecovering())
-                {
-                    this.recoveryManager.cancel();
-                }
                 
                 // record the event so that it can be replayed if necessary.
                 if(this.getFlowConfiguration().getReplayRecordService() != null && this.flowPersistentConfiguration.getIsRecording())
                 {
                 	this.getFlowConfiguration().getReplayRecordService().record(event, this.moduleName, 
                 			this.name, this.flowPersistentConfiguration.getRecordedEventTimeToLive());
+                }
+                
+                invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
+                updateDynamicConfiguredResources();
+                if(this.recoveryManager.isRecovering())
+                {
+                    this.recoveryManager.cancel();
                 }
             }
             flowInvocationContext.endFlowInvocation();
