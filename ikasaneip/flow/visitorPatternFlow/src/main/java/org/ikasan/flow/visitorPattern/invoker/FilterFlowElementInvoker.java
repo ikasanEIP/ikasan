@@ -77,8 +77,8 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
         finally
         {
             unsetInvocationOnComponent(flowElementInvocation, filter);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
