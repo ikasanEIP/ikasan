@@ -116,8 +116,8 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
         finally
         {
             unsetInvocationOnComponent(flowElementInvocation, converter);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

@@ -121,9 +121,9 @@ public class FilterFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(2).of(flowEvent).getIdentifier();
+                exactly(3).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
+                exactly(3).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
@@ -156,9 +156,9 @@ public class FilterFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(2).of(flowEvent).getIdentifier();
+                exactly(3).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
+                exactly(3).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);
@@ -227,9 +227,9 @@ public class FilterFlowElementInvokerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(2).of(flowEvent).getIdentifier();
+                exactly(3).of(flowEvent).getIdentifier();
                 will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
+                exactly(3).of(flowEvent).getRelatedIdentifier();
                 will(returnValue(payload));
                 exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(flowInvocationContext).setLastComponentName(null);

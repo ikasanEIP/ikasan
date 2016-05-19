@@ -68,8 +68,8 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker imp
         finally
         {
             unsetInvocationOnComponent(flowElementInvocation, translator);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
