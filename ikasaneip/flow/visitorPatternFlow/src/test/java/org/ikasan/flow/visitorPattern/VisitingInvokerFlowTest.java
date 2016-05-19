@@ -2354,6 +2354,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
+                
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
 
                 exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
@@ -2423,6 +2426,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
+                
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
 
                 exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
@@ -2493,6 +2499,9 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
+                
+                oneOf(flowConfiguration).getReplayRecordService();
+                will(returnValue(replayRecordService));
 
                 exactly(1).of(exclusionService).isBlackListed("identifier");
                 will(returnValue(false));
