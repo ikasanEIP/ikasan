@@ -71,8 +71,8 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
         finally
         {
             unsetInvocationOnComponent(flowElementInvocation, sequencer);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)

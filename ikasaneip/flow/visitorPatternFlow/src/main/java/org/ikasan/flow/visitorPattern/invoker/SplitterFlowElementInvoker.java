@@ -100,8 +100,8 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         finally
         {
             unsetInvocationOnComponent(flowElementInvocation, splitter);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
 
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
