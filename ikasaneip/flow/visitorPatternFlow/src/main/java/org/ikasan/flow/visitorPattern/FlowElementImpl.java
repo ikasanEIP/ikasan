@@ -40,10 +40,11 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvoker;
 
-import org.ikasan.spec.flow.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Simple implementation of <code>FlowElement</code>
@@ -116,7 +117,7 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
      */
     private static Map<String, FlowElement> createTransitionMap(FlowElement defaultTransition)
     {
-        Map<String, FlowElement> defaultTransitions = new HashMap<String, FlowElement>();
+        Map<String, FlowElement> defaultTransitions = new LinkedHashMap<>();
         defaultTransitions.put(DEFAULT_TRANSITION_NAME, defaultTransition);
         return defaultTransitions;
     }
@@ -212,7 +213,7 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
 
     public Map<String, FlowElement> getTransitions()
     {
-        Map<String, FlowElement> result = new HashMap<String, FlowElement>();
+        Map<String, FlowElement> result = new LinkedHashMap<>();
         if (transitions != null)
         {
             result.putAll(transitions);
