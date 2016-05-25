@@ -46,6 +46,8 @@ import org.junit.Test;
 import org.quartz.*;
 
 import java.text.ParseException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -55,18 +57,17 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * 
  * @author Ikasan Development Team
  */
+
+//TODO - do we really need this test class? it looks to be checking the functionality of the DisallowConcurrentExecution annotation on Quartz
+
 public class SchedulerCallbackExecutionTest
 {
-    /** caching scheduled job factory instance on test */
-    private ScheduledJobFactory scheduledJobFactory;
-
-    private boolean callbackInvoked;
+    protected CountDownLatch latch;
     
     @Before
     public void setup()
     {
-        this.scheduledJobFactory = new CachingScheduledJobFactory();
-        this.callbackInvoked = false;
+        this.latch = new CountDownLatch(1);
     }
     
     /**
@@ -81,19 +82,12 @@ public class SchedulerCallbackExecutionTest
         Scheduler scheduler = SchedulerFactory.getInstance().getScheduler();
         
         ConcurrentCallbackJob job = new ConcurrentCallbackJob(6000);
-        Assert.assertFalse(this.callbackInvoked);
-        
         JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, ConcurrentCallbackJob.class, "name", "group");
-        Trigger trigger = newTrigger().withIdentity("name", "group").withSchedule(cronSchedule("0/5 * * * * ?")).build();
+        Trigger trigger = newTrigger().withIdentity("name", "group").withSchedule(cronSchedule("0/1 * * * * ?")).build();
         scheduler.scheduleJob(jobDetail, trigger);
-        Assert.assertFalse("no callbacks should have occurred yet", this.callbackInvoked);
-
-        Thread.sleep(6000);
-        Assert.assertTrue("a callback should have occurred", this.callbackInvoked);
-
-        this.callbackInvoked = false;
-        Thread.sleep(6000);
-        Assert.assertTrue("another callback should have occurred", this.callbackInvoked);
+        Assert.assertTrue("a callback should have occurred", latch.await(5, TimeUnit.SECONDS));
+        latch = new CountDownLatch(1);
+        Assert.assertTrue("another callback should have occurred", latch.await(3, TimeUnit.SECONDS));
     }
 
     /**
@@ -108,19 +102,13 @@ public class SchedulerCallbackExecutionTest
         Scheduler scheduler = SchedulerFactory.getInstance().getScheduler();
         
         NonConcurrentCallbackJob job = new NonConcurrentCallbackJob(15000);
-        Assert.assertFalse(this.callbackInvoked);
-        
+
         JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, NonConcurrentCallbackJob.class, "name2", "group");
-        Trigger trigger = newTrigger().withIdentity("name2", "group").withSchedule(cronSchedule("0/5 * * * * ?")).build();
+        Trigger trigger = newTrigger().withIdentity("name2", "group").withSchedule(cronSchedule("0/1 * * * * ?")).build();
         scheduler.scheduleJob(jobDetail, trigger);
-        Assert.assertFalse("no callbacks should have occurred yet", this.callbackInvoked);
-
-        Thread.sleep(6000);
-        Assert.assertTrue("a callback should have occurred", this.callbackInvoked);
-
-        this.callbackInvoked = false;
-        Thread.sleep(6000);
-        Assert.assertFalse("no further callbacks should have occurred", this.callbackInvoked);
+        Assert.assertTrue("a callback should have occurred", latch.await(5, TimeUnit.SECONDS));
+        latch = new CountDownLatch(1);
+        Assert.assertFalse("no further callbacks should have occurred", latch.await(3, TimeUnit.SECONDS));
     }
 
     /**
@@ -139,7 +127,7 @@ public class SchedulerCallbackExecutionTest
     	
     	public void execute(JobExecutionContext context) throws JobExecutionException
         {
-            callbackInvoked = true;
+            latch.countDown();
             try
             {
             	Thread.sleep(sleep);
