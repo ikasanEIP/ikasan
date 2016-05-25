@@ -105,19 +105,20 @@ public class ErrorReportingManagementServiceImplTest {
     @Test
     @DirtiesContext
     public void test_close_error_occurrences() {
-        errorReportingManagementService.close(uris, "this is a not", "username");
 
-        List<String> moduleNames = new ArrayList<String>();
+        errorReportingManagementService.close(uris, "this is a note", "username");
+
+        List<String> moduleNames = new ArrayList<>();
         moduleNames.add("moduleName");
 
-        List<String> flowNames = new ArrayList<String>();
+        List<String> flowNames = new ArrayList<>();
         flowNames.add("flowName");
 
-        List<String> componentNames = new ArrayList<String>();
-        componentNames.add("componentName");
+        List<String> flowElementNames = new ArrayList<>();
+        flowElementNames.add("flowElementName");
 
-        int numberOfErrorsFound = errorReportingServiceDao.find(moduleNames, flowNames, componentNames, null, null, 1000).size();
-        Assert.assertTrue("Expected 1 error item, got " + numberOfErrorsFound, numberOfErrorsFound == 1);
+        int numberOfErrorsFound = errorReportingServiceDao.find(moduleNames, flowNames, flowElementNames, null, null, 1000).size();
+        Assert.assertTrue("Expected 0 errors after closing them all, got " + numberOfErrorsFound, numberOfErrorsFound == 0);
     }
 
 
