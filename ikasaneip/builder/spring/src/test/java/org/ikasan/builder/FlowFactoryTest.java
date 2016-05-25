@@ -52,7 +52,6 @@ import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -102,7 +101,6 @@ public class FlowFactoryTest
     /**
      * Test successful flow creation.
      */
-    @Ignore
     @Test
     @DirtiesContext
     public void test_successful_flowCreation()
