@@ -1,46 +1,44 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
 package org.ikasan.builder;
-
-import java.util.List;
 
 import org.ikasan.builder.sample.SampleExclusionServiceAwareConverter;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -62,16 +60,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * This test class supports the <code>FlowFactory</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = { 
-        "/flow-conf.xml", 
+@ContextConfiguration(locations = {
+        "/flow-conf.xml",
         "/sample-component-conf.xml",
         "/recoveryManager-service-conf.xml",
         "/substitute-components.xml",
@@ -88,7 +87,7 @@ import javax.annotation.Resource;
         "/replay-service-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-datasource-conf.xml"
-        })
+})
 public class FlowFactoryTest
 {
     @Resource
@@ -111,7 +110,7 @@ public class FlowFactoryTest
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
         List<FlowElement<?>> flowElements = flow.getFlowElements();
-        Assert.assertNotNull("Flow elements should total 9", flowElements.size() == 9);
+        Assert.assertTrue("Flow elements should total 11", flowElements.size() == 11);
 
         FlowElement fe = flowElements.get(0);
         Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
@@ -144,25 +143,37 @@ public class FlowFactoryTest
         Assert.assertTrue("flow element should have 2 routable transitions", fe.getTransitions().size() == 2);
 
         fe = flowElements.get(5);
-        Assert.assertTrue("flow element name should be 'sequencer'", "sequencerA".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element name should be 'sequencerA'", "sequencerA".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Sequencer", fe.getFlowComponent() instanceof Sequencer);
         Assert.assertTrue("flow element invoker should be an instance of SequencerFlowElementInvoker", fe.getFlowElementInvoker() instanceof SequencerFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 2);
 
         fe = flowElements.get(6);
-        Assert.assertTrue("flow element name should be 'sequencer'", "sequencerB".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element name should be 'sequencerB'", "sequencerB".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Sequencer", fe.getFlowComponent() instanceof Sequencer);
         Assert.assertTrue("flow element invoker should be an instance of SequencerFlowElementInvoker", fe.getFlowElementInvoker() instanceof SequencerFlowElementInvoker);
         Assert.assertTrue("flow element should have 2 sequenced transitions", fe.getTransitions().size() == 2);
 
         fe = flowElements.get(7);
-        Assert.assertTrue("flow element name should be 'producer'", "producerB".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element name should be 'producerA'", "producerA".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
 
         fe = flowElements.get(8);
-        Assert.assertTrue("flow element name should be 'producer'", "producerA".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element name should be 'producerB'", "producerB".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        fe = flowElements.get(9);
+        Assert.assertTrue("flow element name should be 'producerA'", "producerA".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+
+        fe = flowElements.get(10);
+        Assert.assertTrue("flow element name should be 'producerB'", "producerB".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
