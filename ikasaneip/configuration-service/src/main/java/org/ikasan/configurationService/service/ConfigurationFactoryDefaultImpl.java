@@ -117,8 +117,10 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
             TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
 
             for (Map.Entry<String, Object> entry : orderedProperties.entrySet()) {
+
                 String name = entry.getKey();
                 Object value = entry.getValue();
+                System.out.println("Name: [" + name + "] value: [" + value + "]");
 
                 // TODO - is there a cleaner way of ignoring the class property ?
                 if (!"class".equals(name)) {

@@ -102,7 +102,6 @@ public class ErrorReportingManagementServiceImplTest {
 
     }
 
-    @Ignore
     @Test
     @DirtiesContext
     public void test_close_error_occurrences() {
@@ -117,7 +116,8 @@ public class ErrorReportingManagementServiceImplTest {
         List<String> componentNames = new ArrayList<String>();
         componentNames.add("componentName");
 
-        Assert.assertTrue(errorReportingServiceDao.find(moduleNames, flowNames, componentNames, null, null, 1000).size() == 1);
+        int numberOfErrorsFound = errorReportingServiceDao.find(moduleNames, flowNames, componentNames, null, null, 1000).size();
+        Assert.assertTrue("Expected 1 error item, got " + numberOfErrorsFound, numberOfErrorsFound == 1);
     }
 
 

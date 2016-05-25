@@ -48,46 +48,41 @@ import org.ikasan.spec.configuration.Masked;
  * Sample configuration class for testing
  * Ikasan Development Team.
  */
-public class SampleConfigurationMaskFieldNotString
-{
-	private String one;
-    
+public class SampleConfigurationMaskFieldNotString {
+    private String one;
+
     private String maskedString;
-    
+
     @Masked
-    private Map<String,String>map;
+    private Map<String, String> map;
 
     public Map<String, String> getMap() {
-		return map;
-	}
+        return map;
+    }
 
-	public void setMap(Map<String, String> map) {
-		this.map = map;
-	}
+    public void setMap(Map<String, String> map) {
+        this.map = map;
+    }
 
-	public String getOne()
-    {
+    public String getOne() {
         return one;
     }
 
-    public void setOne(String one)
-    {
+    public void setOne(String one) {
         this.one = one;
     }
 
-	/**
-	 * @return the maskedString
-	 */
-	public String getMaskedString()
-	{
-		return maskedString;
-	}
+    /**
+     * @return the maskedString
+     */
+    public String getMaskedString() {
+        return maskedString;
+    }
 
-	/**
-	 * @param maskedString the maskedString to set
-	 */
-	public void setMaskedString(String maskedString)
-	{
-		this.maskedString = maskedString;
-	}
+    /**
+     * @param maskedString the maskedString to set
+     */
+    public void setMaskedString(String maskedString) {
+        this.maskedString = maskedString;
+    }
 }
