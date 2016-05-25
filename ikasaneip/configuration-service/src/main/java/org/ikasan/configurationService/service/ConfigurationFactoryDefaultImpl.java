@@ -112,15 +112,14 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
 
         try {
             Map<String, Object> properties = PropertyUtils.describe(runtimeConfiguration);
-            // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and Java 8
-            // requires implicit ordering
+            // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several
+            // tests require implicit ordering (and it's not a bad thing to have ordering anyhow)
             TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
 
             for (Map.Entry<String, Object> entry : orderedProperties.entrySet()) {
 
                 String name = entry.getKey();
                 Object value = entry.getValue();
-                System.out.println("Name: [" + name + "] value: [" + value + "]");
 
                 // TODO - is there a cleaner way of ignoring the class property ?
                 if (!"class".equals(name)) {
