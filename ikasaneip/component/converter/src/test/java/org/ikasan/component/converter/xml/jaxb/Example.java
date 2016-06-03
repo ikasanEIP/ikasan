@@ -8,12 +8,8 @@
 
 package org.ikasan.component.converter.xml.jaxb;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,8 +51,10 @@ public class Example {
         this.two = two;
     }
 
+    @XmlJavaTypeAdapter(DoSomethingXmlAdapter.class)
     @XmlElement(required = true)
     protected String one;
+    @XmlJavaTypeAdapter(DoSomethingXmlAdapter.class)
     @XmlElement(required = true)
     protected String two;
 
