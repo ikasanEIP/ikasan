@@ -126,8 +126,30 @@ public interface FlowElementInvocation<IDENTIFIER, METRIC> {
      */
     void setAfterRelatedIdentifier(IDENTIFIER relatedIdentifier);
 
-
+    /**
+     * Add a custom metric
+     * 
+     * @param name
+     * @param value
+     */
     void addCustomMetric(String name, String value);
 
+    /**
+     * Get the custom metrics.
+     * 
+     * @return
+     */
     METRIC getCustomMetrics();
+  
+//    /**
+//     * Add a snapped event to the context
+//     * 
+//     * @param event
+//     */
+//    void addSnappedEvent(FlowEvent event);
+//    
+//    /**
+//     * Get the snapped event
+//     */
+//    FlowEvent getSnappedEvent();
 }

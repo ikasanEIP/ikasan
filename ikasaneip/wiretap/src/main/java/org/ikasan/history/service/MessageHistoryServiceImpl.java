@@ -40,37 +40,48 @@
  */
 package org.ikasan.history.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.wiretap.model.WiretapEventFactory;
 
 /**
  * Implementation of the MessageHistoryService with Housekeeping
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, PagedSearchResult<MessageHistoryEvent>>, HousekeeperService
+public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>>, HousekeeperService
 {
     protected MessageHistoryDao messageHistoryDao;
 
     protected HistoryEventFactory historyEventFactory = new HistoryEventFactory();
+    
+    /** The wiretap event factory */
+    private WiretapEventFactory wiretapEventFactory;
 
-    public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao)
+    public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao, WiretapEventFactory wiretapEventFactory)
     {
         if (messageHistoryDao == null)
         {
             throw new IllegalArgumentException("messageHistoryDao cannot be null");
         }
         this.messageHistoryDao = messageHistoryDao;
+        if (wiretapEventFactory == null)
+        {
+            throw new IllegalArgumentException("wiretapEventFactory cannot be null");
+        }
+        this.wiretapEventFactory = wiretapEventFactory;
     }
 
     @Override
@@ -117,4 +128,16 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     {
         this.historyEventFactory = historyEventFactory;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.history.MessageHistoryService#snapMetricEvent(java.lang.Object, java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
+	 */
+	@Override
+	public void snapMetricEvent(FlowEvent event, String componentName,
+			String moduleName, String flowName, Long timeToLive) 
+	{
+		long expiry = System.currentTimeMillis() + (timeToLive * 60000);
+        WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
+        this.messageHistoryDao.save(wiretapEvent);
+	}
 }

@@ -41,11 +41,12 @@
  
 package org.ikasan.flow.visitorPattern;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
-
-import java.util.*;
 
 /**
  * This class acts as a transfer object holding flow invocation time data relevant only
@@ -76,6 +77,8 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 
     /** the last action for this context */
     private FinalAction finalAction;
+        
+    
 
     /**
      * Accessor for the name of the last component invoked

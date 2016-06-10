@@ -83,6 +83,7 @@ import org.ikasan.dashboard.ui.topology.util.FilterUtil;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
 import org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow;
+import org.ikasan.dashboard.ui.topology.window.FlowElementConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ServerWindow;
 import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
@@ -195,6 +196,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action STOP = new Action("Stop");
     private final Action VIEW_DIAGRAM = new Action("View Diagram");
     private final Action CONFIGURE = new Action("Configure");
+    private final Action CONFIGURE_METRICS = new Action("Configure Metrics");
     private final Action PAUSE = new Action("Pause");
     private final Action START_PAUSE = new Action("Start/Pause");
     private final Action RESUME = new Action("Resume");
@@ -215,14 +217,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
     private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
     private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE };
-    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
-    private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActionsConfigurable = new Action[] { CONFIGURE, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActions = new Action[] { CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] actionsEmpty = new Action[]{};
 
 	private Panel topologyTreePanel;
 	private Tree moduleTree;
 	private ComponentConfigurationWindow componentConfigurationWindow;
 	private FlowConfigurationWindow flowConfigurationWindow;
+	private FlowElementConfigurationWindow flowElementConfigurationWindow;
 
 	private Panel tabsheetPanel;
 
@@ -266,10 +269,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TopologyTab currentTab;
 	
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
-	
-//	private ReplayManagementService<ReplayEvent, ReplayAudit> replayManagementService;
-//	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
-	
+
 	
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -277,7 +277,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow)
+			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,
+			 FlowElementConfigurationWindow flowElementConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -358,6 +359,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.flowConfigurationWindow == null)
 		{
 			throw new IllegalArgumentException("flowConfigurationWindow cannot be null!");
+		}
+		this.flowElementConfigurationWindow = flowElementConfigurationWindow;
+		if(this.flowElementConfigurationWindow == null)
+		{
+			throw new IllegalArgumentException("flowElementConfigurationWindow cannot be null!");
 		}
 		
 		
@@ -639,7 +645,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		
 		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
 				
-		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() {
+		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() 
+		{
             public void valueChange(ValueChangeEvent event) 
             {
                 if(event.getProperty() != null && event.getProperty().getValue() != null)
@@ -1532,6 +1539,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         	{
         		this.componentConfigurationWindow.populate(((Component)target));
         		UI.getCurrent().addWindow(this.componentConfigurationWindow);
+        	}
+        	if(action.equals(CONFIGURE_METRICS))
+        	{
+        		this.flowElementConfigurationWindow.populate(((Component)target));
+        		UI.getCurrent().addWindow(this.flowElementConfigurationWindow);
         	}
         	else if(action.equals(WIRETAP))
         	{

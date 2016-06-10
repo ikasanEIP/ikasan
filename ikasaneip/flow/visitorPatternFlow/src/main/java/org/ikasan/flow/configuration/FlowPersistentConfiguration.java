@@ -44,6 +44,10 @@ public class FlowPersistentConfiguration
 {
 	private Boolean isRecording = false;	
 	private Integer recordedEventTimeToLiveDays = 30;
+	private Boolean ignoreContextInvocation = false;
+	private Integer metricsTimeToLiveDays = 30;
+	
+	private Boolean invokeContextListeners = true;
 
 	/**
 	 * 
@@ -79,6 +83,38 @@ public class FlowPersistentConfiguration
 	public Integer getRecordedEventTimeToLive() 
 	{
 		return this.recordedEventTimeToLiveDays;
+	}
+
+	/**
+	 * @return the ignoreContextInvocation
+	 */
+	public Boolean getIgnoreContextInvocation() 
+	{
+		return ignoreContextInvocation;
+	}
+
+	/**
+	 * @param ignoreContextInvocation the ignoreContextInvocation to set
+	 */
+	public void setIgnoreContextInvocation(Boolean ignoreContextInvocation) 
+	{
+		this.ignoreContextInvocation = ignoreContextInvocation;
+	}
+
+	/**
+	 * @return the metricsTimeToLiveDays
+	 */
+	public Integer getMetricsTimeToLiveDays() 
+	{
+		return metricsTimeToLiveDays;
+	}
+
+	/**
+	 * @param metricsTimeToLiveDays the metricsTimeToLiveDays to set
+	 */
+	public void setMetricsTimeToLiveDays(Integer metricsTimeToLiveDays) 
+	{
+		this.metricsTimeToLiveDays = metricsTimeToLiveDays;
 	}
 
 }
