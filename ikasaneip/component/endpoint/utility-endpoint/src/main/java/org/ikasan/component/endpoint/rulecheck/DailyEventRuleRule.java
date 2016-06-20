@@ -66,7 +66,7 @@ public class DailyEventRuleRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends Rule
                 "Checking if we have seen a valid event on [ " + today + "] comparing it to recorded of [" + configuration
                         .getLastDateProcessed() + "]");
         if (!today.equals(configuration.getLastDateProcessed()))
-            errorReportingService.notify(ruleName, dailyEventRuleStrategy.createBreachException(today));
+            errorReportingService.notify(ruleName, dailyEventRuleStrategy.createBreachException(today), "Warning");
     }
 
     private String today()
