@@ -103,7 +103,7 @@ public class DailyEventRuleRuleTest
         configuration.setLastDateProcessed("");
         context.checking(new Expectations(){
             {
-                oneOf(errorReportingService).notify(RULENAME, BREACH_EXCEPTION);
+                oneOf(errorReportingService).notify(RULENAME, BREACH_EXCEPTION, "Warning");
             }
         });
         rule.check(null);
