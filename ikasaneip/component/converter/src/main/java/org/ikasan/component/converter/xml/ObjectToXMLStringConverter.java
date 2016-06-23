@@ -40,19 +40,6 @@
  */
 package org.ikasan.component.converter.xml;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.XMLConstants;
-import javax.xml.bind.*;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.apache.log4j.Logger;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
@@ -66,6 +53,23 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Marshall the incoming Object into an XML String.
@@ -100,6 +104,9 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
 
     /** determines if the configuration has changed and requires reloading */
     private boolean requiresConfigurationReload;
+
+    /** Map of Class to XmlAdapter instance to override the XmlAdapter on the underlying marshaller */
+    private Map<Class, XmlAdapter> xmlAdapterMap;
 
     /**
      * Constructor
@@ -186,6 +193,22 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
             else
             {
                 marshaller.setSchema(null);
+            }
+
+            if (this.xmlAdapterMap != null)
+            {
+                for (Map.Entry<Class, XmlAdapter> entry : this.xmlAdapterMap.entrySet())
+                {
+                    try
+                    {
+                        marshaller.setAdapter(entry.getKey(), entry.getValue());
+                    }
+                    catch (UnsupportedOperationException ex)
+                    {
+                        logger.warn("Setting of XmlAdapter is not support by this JAXB Marshaller, ignoring", ex);
+                        break;
+                    }
+                }
             }
 
             marshaller.setEventHandler(new XmlValidationEventHandler());
@@ -455,7 +478,14 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
             return null;
         }
     }
-    
 
+    public Map<Class, XmlAdapter> getXmlAdapterMap()
+    {
+        return xmlAdapterMap;
+    }
 
+    public void setXmlAdapterMap(Map<Class, XmlAdapter> xmlAdapterMap)
+    {
+        this.xmlAdapterMap = xmlAdapterMap;
+    }
 }

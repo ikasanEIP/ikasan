@@ -40,36 +40,36 @@
  */
 package org.ikasan.component.converter.xml;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.xml.bind.JAXBException;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceConstants;
 import org.custommonkey.xmlunit.DifferenceListener;
+import org.ikasan.component.converter.xml.jaxb.DoSomethingXmlAdapter;
 import org.ikasan.component.converter.xml.jaxb.Example;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Functional unit test cases for <code>ObjectToXMLStringConverter</code>.
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings("unchecked")
 public class ObjectToXMLStringConverterTest
 {
    /**
@@ -79,11 +79,14 @@ public class ObjectToXMLStringConverterTest
    {
        {
            setImposteriser(ClassImposteriser.INSTANCE);
+           setThreadingPolicy(new Synchroniser());
        }
    };
 
     /** mocked marshaller */
     final XmlConfiguration mockedXmlConfiguration = mockery.mock(XmlConfiguration.class, "mockedXmlConfiguration");
+
+    final XmlAdapter xmlAdapter = mockery.mock(XmlAdapter.class, "mockedXmlAdapter");
 
     /**
      * Failed constructor test
@@ -104,7 +107,7 @@ public class ObjectToXMLStringConverterTest
     public void test_successful_example_to_xml_with_validation_valid_msgs() throws SAXException, IOException, JAXBException
     {
         XmlConfiguration xmlConfiguration = new XmlConfiguration();
-        xmlConfiguration.setSchemaLocation("http://mizuho.com/domain example.xsd");
+        xmlConfiguration.setSchemaLocation("http://foo.com/domain example.xsd");
         xmlConfiguration.setSchema("example.xsd");
         xmlConfiguration.setValidate(true);
         
@@ -140,12 +143,11 @@ public class ObjectToXMLStringConverterTest
     public void test_successful_example_to_xml_with_validation_invalid_msg() throws SAXException, IOException, JAXBException
     {
         XmlConfiguration xmlConfiguration = new XmlConfiguration();
-        xmlConfiguration.setSchemaLocation("http://mizuho.com/domain example.xsd");
+        xmlConfiguration.setSchemaLocation("http://foo.com/domain example.xsd");
         xmlConfiguration.setSchema("example.xsd");
         xmlConfiguration.setValidate(true);
         
         ExampleEventFactory eventFactory = new ExampleEventFactory();
-        final String expectedXML = eventFactory.getXmlEvent();
         final Example example = eventFactory.getObjectEvent();
         
         /** class on test */
@@ -158,7 +160,7 @@ public class ObjectToXMLStringConverterTest
         }
         catch(TransformationException e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
             throw e;
         }
     }
@@ -173,7 +175,7 @@ public class ObjectToXMLStringConverterTest
     public void test_successful_example_to_xml_with_no_validation_valid_msg() throws SAXException, IOException, JAXBException
     {
         XmlConfiguration xmlConfiguration = new XmlConfiguration();
-        xmlConfiguration.setSchemaLocation("http://mizuho.com/domain example.xsd");
+        xmlConfiguration.setSchemaLocation("http://foo.com/domain example.xsd");
         xmlConfiguration.setSchema("example.xsd");
         xmlConfiguration.setValidate(false);
         
@@ -184,11 +186,40 @@ public class ObjectToXMLStringConverterTest
         example.setTwo("2");
         
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
         
+        String xml = (String)objectToXML.convert(example);
+
+        // compare
+        Diff diff = new Diff(expectedXML, xml);
+        assertTrue(diff.toString(), diff.similar());
+    }
+
+    @Test
+    public void test_successful_example_to_xml_with_adapter_override() throws Exception
+    {
+        XmlConfiguration xmlConfiguration = new XmlConfiguration();
+        xmlConfiguration.setSchemaLocation("http://ikasan.com/domain example.xsd");
+        xmlConfiguration.setSchema("example.xsd");
+        xmlConfiguration.setValidate(false);
+
+        ExampleEventFactory eventFactory = new ExampleEventFactory();
+        final String expectedXML = eventFactory.getXmlAdapted();
+        final Example example = eventFactory.getObjectEvent();
+        example.setOne("ONE");
+        example.setTwo("TWO");
+
+        /** class on test */
+        List<Class> classes = new ArrayList<>();
+        classes.add(Example.class);
+        ObjectToXMLStringConverter objectToXML = new ObjectToXMLStringConverter(classes);
+        objectToXML.setConfiguration(xmlConfiguration);
+        Map<Class, XmlAdapter> adapterMap = new HashMap<>();
+        adapterMap.put(DoSomethingXmlAdapter.class, new DoSomethingXmlAdapter(true));
+        objectToXML.setXmlAdapterMap(adapterMap);
         String xml = (String)objectToXML.convert(example);
 
         // compare
@@ -206,7 +237,7 @@ public class ObjectToXMLStringConverterTest
     public void test_successful_example_to_xml_with_no_validation_invalid_msg() throws SAXException, IOException, JAXBException
     {
         XmlConfiguration xmlConfiguration = new XmlConfiguration();
-        xmlConfiguration.setSchemaLocation("http://mizuho.com/domain example.xsd");
+        xmlConfiguration.setSchemaLocation("http://foo.com/domain example.xsd");
         xmlConfiguration.setSchema("example.xsd");
         xmlConfiguration.setValidate(false);
 
@@ -215,7 +246,7 @@ public class ObjectToXMLStringConverterTest
         final Example example = eventFactory.getObjectEvent();
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
@@ -226,6 +257,7 @@ public class ObjectToXMLStringConverterTest
         Diff diff = new Diff(expectedXML, xml);
         assertTrue(diff.toString(), diff.similar());
     }
+
 
     /**
      * Successful marshalling from example to XML.
@@ -249,7 +281,7 @@ public class ObjectToXMLStringConverterTest
         });
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
@@ -284,7 +316,7 @@ public class ObjectToXMLStringConverterTest
         });
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
@@ -319,7 +351,7 @@ public class ObjectToXMLStringConverterTest
         });
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
@@ -356,7 +388,7 @@ public class ObjectToXMLStringConverterTest
         });
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
@@ -391,7 +423,7 @@ public class ObjectToXMLStringConverterTest
         });
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
@@ -426,7 +458,7 @@ public class ObjectToXMLStringConverterTest
         });
 
         /** class on test */
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         classes.add(Example.class);
         Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(mockedXmlConfiguration);
@@ -443,19 +475,16 @@ public class ObjectToXMLStringConverterTest
      */
     private class IgnoreNamedElementsDifferenceListener implements DifferenceListener
     {
-        private Set<String> blackList = new HashSet<String>();
+        private Set<String> blackList = new HashSet<>();
 
         /**
          * Constructor
          * 
-         * @param elementNames
+         * @param elementNames the element names
          */
         public IgnoreNamedElementsDifferenceListener(String... elementNames)
         {
-            for (String name : elementNames)
-            {
-                blackList.add(name);
-            }
+            blackList.addAll(Arrays.asList(elementNames));
         }
 
         /*
