@@ -47,6 +47,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.*;
@@ -69,6 +70,7 @@ public class CallbackMessageProviderImplTest
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
 
