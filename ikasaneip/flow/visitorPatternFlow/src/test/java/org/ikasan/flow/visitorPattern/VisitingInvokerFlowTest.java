@@ -47,6 +47,7 @@ import java.util.List;
 import javassist.bytecode.Descriptor.Iterator;
 
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
+import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -2149,6 +2150,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
+        ((FlowPersistentConfiguration)flow.getConfiguration()).setInvokeContextListeners(true);
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         isRunning = true;
@@ -2323,6 +2325,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
+        ((FlowPersistentConfiguration)flow.getConfiguration()).setInvokeContextListeners(true);
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
         flow.stopContextListeners();
         flow.startContextListeners();

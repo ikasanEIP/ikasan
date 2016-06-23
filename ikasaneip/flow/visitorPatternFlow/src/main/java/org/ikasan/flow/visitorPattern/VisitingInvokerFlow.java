@@ -349,6 +349,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             
             // configure the flow itself
             this.flowConfiguration.configure(this);
+            
+            this.invokeContextListeners = this.flowPersistentConfiguration.getInvokeContextListeners();
 
             // register the errorReportingService with those components requiring it
             for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
@@ -812,9 +814,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * Notify any FlowInvocationContextListeners that the flow has completed
      */
     protected void notifyFlowInvocationContextListenersEndFlow(FlowInvocationContext flowInvocationContext)
-    {
-    	logger.info("!!**!! flowPersistentConfiguration.getIgnoreContextInvocation() = " + flowPersistentConfiguration.getIgnoreContextInvocation());
-        if (flowInvocationContextListeners != null && this.invokeContextListeners && !flowPersistentConfiguration.getIgnoreContextInvocation())
+    {    	
+        if (flowInvocationContextListeners != null && this.invokeContextListeners)
         {
             for (FlowInvocationContextListener listener : flowInvocationContextListeners)
             {
@@ -836,9 +837,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     protected void notifyFlowInvocationContextListenersSnapEvent(FlowElement flowElement, FlowEvent flowEvent)
     {
-    	if(((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent())
+    	if(((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent() &&
+    			((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics())
     	{
-	        if (flowInvocationContextListeners != null && this.invokeContextListeners && !flowPersistentConfiguration.getIgnoreContextInvocation())
+	        if (flowInvocationContextListeners != null && this.invokeContextListeners)
 	        {
 	            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
 	            {

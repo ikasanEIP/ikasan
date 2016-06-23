@@ -157,8 +157,10 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
     	    	response.bufferEntity();
     	        
     	        String responseMessage = response.readEntity(String.class);
-    	    	Notification.show("An error was received trying to create configured resource '" + configurationId + "': " 
-    	    			+ responseMessage, Type.ERROR_MESSAGE);
+    	    	Notification.show("This integration module does not support metrics configuration. It must be built on a version of Ikasan 1.2.1 or higher."
+						, Type.ERROR_MESSAGE);
+
+				close();
     	    	
     	    	return;
     	    }
