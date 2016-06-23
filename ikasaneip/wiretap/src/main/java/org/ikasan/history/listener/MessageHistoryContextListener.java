@@ -147,7 +147,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
             {
                 switch (flowInvocationContext.getFinalAction())
                 {
-                case PUBLISH:
+				case PUBLISH:
                 case FILTER:
                 case IGNORE:
                 case EXCLUDE:
