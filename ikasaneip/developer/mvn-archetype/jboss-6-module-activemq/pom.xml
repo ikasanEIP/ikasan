@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-mvn-archetype</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>jboss6-module-activemq-maven-plugin</artifactId>
