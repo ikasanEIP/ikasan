@@ -1,5 +1,5 @@
  /*
- * $Id$
+  * $Id$
  * $URL$
  *
  * ====================================================================
@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.vaadin.server.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -53,6 +54,7 @@ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -62,12 +64,6 @@ import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.ClientConnector;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
@@ -216,9 +212,19 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         
         this.navigationPanel.setMenuComponents(menu.getMenuComponents());
 
+        IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(DashboardSessionValueConstants.USER);
+
         if(getPage().getUriFragment() == null || (getPage().getUriFragment() != null && !getPage().getUriFragment().equals("!error-occurrence")))
     	{
-        	UI.getCurrent().getNavigator().navigateTo("emptyPanel"); 
+            if(authentication != null)
+            {
+                UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+            }
+            else
+            {
+                UI.getCurrent().getNavigator().navigateTo("loginPanel");
+            }
     	}
 
         this.navigationPanel.setVisible(true);
@@ -258,14 +264,16 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
                  }
              }
          });
-    	 
-         showMenuButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-         showMenuButton.addStyleName(ValoTheme.BUTTON_SMALL);
-         showMenuButton.setIcon(FontAwesome.LIST);
-         showMenuButton.setPrimaryStyleName("valo-menu-item");
-         menu.setStyleName("valo-menu-visible");
+
+        menu.setVisible(false);
+
+        showMenuButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        showMenuButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        showMenuButton.setIcon(FontAwesome.LIST);
+        showMenuButton.setPrimaryStyleName("valo-menu-item");
+        menu.setStyleName("valo-menu-visible");
          
-         return showMenuButton;
+        return showMenuButton;
     }
     
     public void loadTopLevelNavigator()

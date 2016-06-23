@@ -40,19 +40,20 @@
  */
 package org.ikasan.history.service;
 
+import java.util.Collections;
+import java.util.Date;
+
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.HistoryEventFactory;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Date;
 
 /**
  * Test cases for MessageHistoryService
@@ -69,11 +70,12 @@ public class MessageHistoryServiceImplTest
     };
 
     MessageHistoryDao messageHistoryDao = mockery.mock(MessageHistoryDao.class);
+    WiretapEventFactory wiretapEventFactory = mockery.mock(WiretapEventFactory.class);
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
     HistoryEventFactory historyEventFactory = mockery.mock(HistoryEventFactory.class);
     MessageHistoryEvent messageHistoryEvent = mockery.mock(MessageHistoryEvent.class);
 
-    MessageHistoryServiceImpl messageHistoryService = new MessageHistoryServiceImpl(messageHistoryDao);
+    MessageHistoryServiceImpl messageHistoryService = new MessageHistoryServiceImpl(messageHistoryDao, wiretapEventFactory);
 
     @Before
     public void setup()
