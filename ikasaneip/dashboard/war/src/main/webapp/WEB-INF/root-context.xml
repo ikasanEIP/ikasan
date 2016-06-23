@@ -66,6 +66,10 @@
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="loginPanel"/>
+                    <constructor-arg ref="loginPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="landingView"/>
                    <constructor-arg ref="landingViewPanel"/>
                 </bean>
@@ -245,6 +249,15 @@
     	<!-- constructor-arg ref="graphCache"/ -->
     </bean>
     
+    <bean id="loginPanel" class="org.ikasan.dashboard.ui.framework.panel.LoginPanel" scope="session">
+    	<constructor-arg ref="authenticationService"/>
+		<constructor-arg ref="adminUserVisibilityGroup"/>
+		<constructor-arg ref="navigationPanel"/>
+		<constructor-arg ref="userService"/>
+		<constructor-arg ref="bannerImageLogin"/>
+		<constructor-arg ref="bannerLabelLogin"/>
+    </bean>
+    
     <!-- bean id="graphCache" class="org.ikasan.dashboard.ui.framework.cache.GraphCache" scope="singleton">
     	<constructor-arg ref="errorReportingService"/>
     </bean -->
@@ -304,12 +317,21 @@
         <constructor-arg ref="bannerImageResource"/>
     </bean>
     
+     <bean id="bannerImageLogin" class="com.vaadin.ui.Image" scope="session">
+    	<constructor-arg value=""/>
+        <constructor-arg ref="bannerImageResource"/>
+    </bean>
+    
     <bean id="bannerImageResource" class="com.vaadin.server.ThemeResource" scope="session">
         <constructor-arg value="images/Ikasan_Logo_Transp.png"/>
     </bean>
     
     <bean id="bannerLabel" class="com.vaadin.ui.Label" scope="session">
         <constructor-arg value="Enterprise Integration Platform"/>
+    </bean>
+    
+    <bean id="bannerLabelLogin" class="com.vaadin.ui.Label" scope="session">
+        <constructor-arg value="Ikasan Enterprise Integration Platform"/>
     </bean>
     
     <bean id="showMenuButton" class="com.vaadin.ui.Button" scope="session">

@@ -41,7 +41,7 @@
 package org.ikasan.spec.flow;
 
 /**
- * Listener contract for the FlowInvocationContext lifecycle (currently the end of the flow)
+ * Listener contract for the FlowInvocationContext life cycle (currently the end of the flow)
  *
  * @author Ikasan Development Team
  */
@@ -52,5 +52,13 @@ public interface FlowInvocationContextListener
      * @param flowInvocationContext the context
      */
     void endFlow(FlowInvocationContext flowInvocationContext);
-
+    
+    
+    /**
+     * Snap the event and any point in the life cycle.
+     * 
+     * @param flowElement
+     * @param event
+     */
+    void snapEvent(FlowElement flowElement, FlowEvent event);
 }

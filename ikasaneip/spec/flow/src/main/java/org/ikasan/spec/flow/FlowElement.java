@@ -42,6 +42,8 @@ package org.ikasan.spec.flow;
 
 import java.util.Map;
 
+import org.ikasan.spec.configuration.ConfiguredResource;
+
 /**
  * FlowElement represents a particular unique usage of an operational component within a flow.
  * <code>FlowElement</code>s wrap components, providing them with a context specific name. They also
@@ -50,7 +52,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public interface FlowElement<COMPONENT>
+public interface FlowElement<COMPONENT> extends ConfiguredResource<FlowElementConfiguration>
 {
     /** Name of the default transition for components that have a unique result */
     public static final String DEFAULT_TRANSITION_NAME = "default";

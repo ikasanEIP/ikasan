@@ -44,6 +44,7 @@ public class FlowPersistentConfiguration
 {
 	private Boolean isRecording = false;	
 	private Integer recordedEventTimeToLiveDays = 30;
+	private Boolean invokeContextListeners = false;
 
 	/**
 	 * 
@@ -80,5 +81,24 @@ public class FlowPersistentConfiguration
 	{
 		return this.recordedEventTimeToLiveDays;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getInvokeContextListeners()
+	{
+		return invokeContextListeners;
+	}
+
+	/**
+	 * 
+	 * @param invokeContextListeners
+	 */
+	public void setInvokeContextListeners(Boolean invokeContextListeners)
+	{
+		this.invokeContextListeners = invokeContextListeners;
+	}
+
 
 }

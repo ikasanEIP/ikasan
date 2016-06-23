@@ -41,6 +41,8 @@
 package org.ikasan.history.listener;
 
 import org.apache.log4j.Logger;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.flow.FlowInvocationContextListener;
 import org.ikasan.spec.flow.FlowInvocationContextWriteStrategy;
@@ -56,7 +58,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     private static final Logger logger = Logger.getLogger(MessageHistoryContextListener.class);
 
     /** the delegate service used to save the flowInvocationContext */
-    protected MessageHistoryService<FlowInvocationContext, T> messageHistoryService;
+    protected MessageHistoryService<FlowInvocationContext, FlowEvent, T> messageHistoryService;
 
     /** the module and flow name */
     protected String moduleName, flowName;
@@ -68,7 +70,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     /** boolean to determine whether to rethrow any caught exceptions thrown by the underlying service, defaults to false */
     protected boolean rethrowServiceExceptions = false;
 
-    public MessageHistoryContextListener(MessageHistoryService<FlowInvocationContext, T> messageHistoryService, String moduleName, String flowName)
+    public MessageHistoryContextListener(MessageHistoryService<FlowInvocationContext, FlowEvent, T> messageHistoryService, String moduleName, String flowName)
     {
         if (messageHistoryService == null)
         {
@@ -145,7 +147,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
             {
                 switch (flowInvocationContext.getFinalAction())
                 {
-                case PUBLISH:
+				case PUBLISH:
                 case FILTER:
                 case IGNORE:
                 case EXCLUDE:
@@ -157,4 +159,14 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
             return true;
         }
     }
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.flow.FlowInvocationContextListener#snapEvent(org.ikasan.spec.flow.FlowInvocationContext, org.ikasan.spec.flow.FlowEvent)
+	 */
+	@Override
+	public void snapEvent(FlowElement flowElement, FlowEvent event) 
+	{
+		this.messageHistoryService.snapMetricEvent(event, flowElement.getComponentName(), this.moduleName, this.flowName, new Long(0));	
+	}
 }
