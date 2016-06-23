@@ -40,9 +40,6 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
@@ -50,9 +47,13 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.*;
+
+import java.text.ParseException;
+import java.util.Date;
 
 
 /**
@@ -69,6 +70,7 @@ public class ScheduledConsumerTest
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
 
