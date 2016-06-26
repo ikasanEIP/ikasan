@@ -41,7 +41,9 @@
 package org.ikasan.flow.context;
 
 import org.apache.log4j.Logger;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvocation;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.flow.FlowInvocationContextListener;
 
@@ -87,4 +89,13 @@ public class ComponentTimingLoggingListener implements FlowInvocationContextList
         }
 
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.flow.FlowInvocationContextListener#snapEvent(org.ikasan.spec.flow.FlowElement, org.ikasan.spec.flow.FlowEvent, long)
+	 */
+	@Override
+	public void snapEvent(FlowElement flowElement, FlowEvent event) 
+	{
+		// No implementation provided for this at them moment as events will fill log files.
+	}
 }

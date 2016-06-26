@@ -50,6 +50,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -85,6 +86,12 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     {
         getHibernateTemplate().save(messageHistoryEvent);
     }
+    
+	@Override
+	public void save(WiretapEvent wiretapEvent) 
+	{
+		getHibernateTemplate().save(wiretapEvent);
+	}
 
     @Override
     public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(final int pageNo, final int pageSize, final String orderBy,

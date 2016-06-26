@@ -404,8 +404,10 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     private void injectExclusionService(List<FlowElement<?>> flowElements, ExclusionService exclusionService) 
     {
 
-        for (final FlowElement flowElement : flowElements) {
-            if (flowElement.getFlowComponent() instanceof IsExclusionServiceAware) {
+        for (final FlowElement flowElement : flowElements) 
+        {
+            if (flowElement.getFlowComponent() instanceof IsExclusionServiceAware) 
+            {
                 ((IsExclusionServiceAware)flowElement.getFlowComponent()).setExclusionService(exclusionService);
             }
         }

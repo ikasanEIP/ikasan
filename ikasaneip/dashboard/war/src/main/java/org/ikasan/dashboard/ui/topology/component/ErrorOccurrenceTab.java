@@ -711,15 +711,12 @@ public class ErrorOccurrenceTab extends TopologyTab
     	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
     	
     	StringBuffer sb = new StringBuffer();
-    	
-    	for(Object property: container.getContainerPropertyIds())
-    	{
-    		if(container.getType(property) == String.class)
-    		{
-    			sb.append(property).append(",");
-    		}
-    	}
-    	
+
+    	sb.append("Module Name").append(",");
+    	sb.append("Flow Name").append(",");
+    	sb.append("Component Name").append(",");
+    	sb.append("Error Message").append(",");
+    	sb.append("Timesamp").append(",");
     	sb.append("Error Url").append("\r\n");
     	
     	
@@ -732,33 +729,20 @@ public class ErrorOccurrenceTab extends TopologyTab
 		}
     	
     	for(Object errorOccurrence: container.getItemIds())
-    	{
-    		Item item = container.getItem(errorOccurrence);
+    	{    		
+    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getModuleName()).append("\",");
+    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getFlowName()).append("\",");
+    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getFlowElementName()).append("\",");
+    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getErrorMessage().length() > 32760 ?
+    				((ErrorOccurrence)errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"").substring(0, 32759) :
+    					((ErrorOccurrence)errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"")).append("\",");
     		
-    		
-    		for(Object propertyId: container.getContainerPropertyIds())
-	    	{		    			
-    			if(container.getType(propertyId) == String.class)
-	    		{
-    				Property property = item.getItemProperty(propertyId);
-    				
-    				String csvCell = (String)property.getValue();
-    				
-    				if(csvCell != null && csvCell.contains("\""))
-    				{
-    					csvCell = csvCell.replaceAll("\"", "\"\"");
-    				}
-    				
-    				// Max length of a CSV cell in EXCEL
-    				if(csvCell != null && csvCell.length() > 32760)
-    				{
-    					csvCell = csvCell.substring(0, 32759);
-    				}
-    					
-    				sb.append("\"").append(csvCell).append("\",");
-	    		}
-	    	}
-    		
+    		Date date = new Date(((ErrorOccurrence)errorOccurrence).getTimestamp());
+    		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+    	    String timestamp = format.format(date);
+    	    
+    	    sb.append("\"").append(timestamp).append("\",");
+    	    
     		if(dashboardUrl != null)
     		{
     			sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrence)errorOccurrence)).append("\"");

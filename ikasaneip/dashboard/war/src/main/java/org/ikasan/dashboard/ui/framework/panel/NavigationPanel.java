@@ -173,26 +173,6 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		this.layout.addStyleName("valo-menuitems");
 
 
-		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
-				this, userService);
-
-		this.loginButton = new Button("Login");
-		this.loginButton.setPrimaryStyleName("valo-menu-item");
-		this.loginButton.setHtmlContentAllowed(true);
-		this.loginButton.addClickListener(new ClickListener()
-		{
-			@Override
-			public void buttonClick(ClickEvent event)
-			{
-				UI.getCurrent().addWindow(dialog);
-			}
-		});
-		
-		this.layout.addComponent(this.loginButton, 2, 0);
-		this.layout.setComponentAlignment(this.loginButton,
-				Alignment.MIDDLE_RIGHT);
-
-
 		logoutButton = new Button("Sign out");
 		this.logoutButton.setPrimaryStyleName("valo-menu-item");
 		this.logoutButton.setHtmlContentAllowed(true);
@@ -305,6 +285,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		if(this.menu != null)
 		{
 			this.menu.setLoggedIn();
+			menu.setVisible(true);
 		}
 		
 		systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_LOGIN_CONSTANTS, 
@@ -391,6 +372,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	public void reset()
 	{
 		currentView = null;
+		menu.setVisible(false);
 	}
 
 	/**

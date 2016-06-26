@@ -40,11 +40,12 @@
  */
 package org.ikasan.history.dao;
 
-import org.ikasan.spec.history.MessageHistoryEvent;
-import org.ikasan.spec.search.PagedSearchResult;
-
 import java.util.Date;
 import java.util.Set;
+
+import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * DAO contract for accessing Message History data
@@ -58,6 +59,12 @@ public interface MessageHistoryDao
      * @param messageHistoryEvent the event
      */
     void save(MessageHistoryEvent messageHistoryEvent);
+    
+    /**
+     * Save a MetricEvent
+     * @param wiretapEvent the event
+     */
+    void save(WiretapEvent wiretapEvent);
 
 
     /**

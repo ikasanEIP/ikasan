@@ -52,7 +52,7 @@ import java.util.Set;
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryService<EVENT, RESULT>
+public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT>
 {
 
     /**
@@ -62,6 +62,17 @@ public interface MessageHistoryService<EVENT, RESULT>
      * @param flowName the flow name
      */
     void save(EVENT event, String moduleName, String flowName);
+    
+    /**
+     * Wiretap an FlowEvent
+     * 
+     * @param event - FlowEvent to be wiretapped
+     * @param componentName - The component this FlowEvent is currently in
+     * @param moduleName - The module this FlowEvent is currently in
+     * @param flowName - The Flow this FlowEvent is currently in
+     * @param timeToLive - Time to live for the wiretap
+     */
+    public void snapMetricEvent(FLOW_EVENT event, String componentName, String moduleName, String flowName, Long timeToLive);
 
     /**
      * Search for saved MessageHistoryEvents

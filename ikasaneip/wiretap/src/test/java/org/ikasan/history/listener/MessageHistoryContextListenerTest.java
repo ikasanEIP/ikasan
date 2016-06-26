@@ -41,6 +41,7 @@
 package org.ikasan.history.listener;
 
 import org.ikasan.spec.flow.FinalAction;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.flow.FlowInvocationContextListener;
 import org.ikasan.spec.history.MessageHistoryService;
@@ -66,7 +67,7 @@ public class MessageHistoryContextListenerTest<T>
     };
 
     @SuppressWarnings("unchecked")
-    MessageHistoryService<FlowInvocationContext, T> messageHistoryService = mockery.mock(MessageHistoryService.class);
+    MessageHistoryService<FlowInvocationContext, FlowEvent, T> messageHistoryService = mockery.mock(MessageHistoryService.class);
 
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
 

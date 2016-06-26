@@ -57,6 +57,10 @@ public class ScheduledConsumerConfiguration
     /** Determines whether consumer will be eagerly executing after successful run */
     private boolean isEager = false;
 
+    /** a valid optional timezone to set on the scheduled job
+     *  a default of blank or null will use the JVM's timezone */
+    private String timezone;
+
     public String getCronExpression()
     {
         return cronExpression;
@@ -83,5 +87,15 @@ public class ScheduledConsumerConfiguration
     public boolean isIgnoreMisfire()
     {
         return this.ignoreMisfire;
+    }
+
+    public String getTimezone()
+    {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone)
+    {
+        this.timezone = timezone;
     }
 }
