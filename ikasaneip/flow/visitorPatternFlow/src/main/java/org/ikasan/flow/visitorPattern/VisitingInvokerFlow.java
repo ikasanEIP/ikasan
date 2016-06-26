@@ -344,8 +344,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
             
+            // configure the flow elements
+            configureFlowElements(this.flowConfiguration.getFlowElements());
+            
             // configure the flow itself
             this.flowConfiguration.configure(this);
+            
+            this.invokeContextListeners = this.flowPersistentConfiguration.getInvokeContextListeners();
 
             // register the errorReportingService with those components requiring it
             for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
@@ -387,6 +392,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
 
             this.flowConfiguration.configure(flowElement.getFlowComponent());
+        }
+    }
+    
+    /**
+     * Configure the given list of configured flowElements
+     * @param flowElements
+     */
+    private void configureFlowElements(List<FlowElement<?>> flowElements)
+    {
+        for(FlowElement<?> flowElement:flowElements)
+        {
+            // set the default configured resource id if none previously set.
+            if(flowElement.getConfiguredResourceId() == null)
+            {
+                flowElement.setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName() + "_element");
+            }
+
+            this.flowConfiguration.configure(flowElement);
         }
     }
 
@@ -655,7 +678,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         finally
         {
-            this.notifyFlowInvocationContextListeners(flowInvocationContext);
+            this.notifyFlowInvocationContextListenersEndFlow(flowInvocationContext);
             this.notifyMonitor();
         }
     }
@@ -687,7 +710,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         finally
         {
-            this.notifyFlowInvocationContextListeners(flowInvocationContext);
+            this.notifyFlowInvocationContextListenersEndFlow(flowInvocationContext);
             this.notifyMonitor();
         }
 	}
@@ -715,7 +738,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             try
             {
+               	
+            	notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+            	flowElementCaptureMetrics(flowElement);
                 flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                
             }
             catch (ClassCastException e)
             {
@@ -762,26 +789,72 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
         }
     }
+    
+    protected void flowElementCaptureMetrics(FlowElement flowElement)
+    {
+    	try
+    	{
+	    	if(flowElement.getConfiguration() != null)
+	    	{
+	    		flowElement.getFlowElementInvoker().setIgnoreContextInvocation(!((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics());
+	    	}
+	    	else
+	    	{
+	    		flowElement.getFlowElementInvoker().setIgnoreContextInvocation(true);
+	    	}
+    	} 
+        catch (RuntimeException e)
+        {
+        	flowElement.getFlowElementInvoker().setIgnoreContextInvocation(true);
+            logger.warn("Unable to set the ignore context invocation on flow element, defaulting to true and continuing", e);
+        }
+    }
 
     /**
      * Notify any FlowInvocationContextListeners that the flow has completed
      */
-    protected void notifyFlowInvocationContextListeners(FlowInvocationContext flowInvocationContext)
-    {
-        if (flowInvocationContextListeners != null && invokeContextListeners)
+    protected void notifyFlowInvocationContextListenersEndFlow(FlowInvocationContext flowInvocationContext)
+    {    	
+        if (flowInvocationContextListeners != null && this.invokeContextListeners)
         {
             for (FlowInvocationContextListener listener : flowInvocationContextListeners)
             {
                 try
                 {
                     listener.endFlow(flowInvocationContext);
-                } catch (RuntimeException e)
+                } 
+                catch (RuntimeException e)
                 {
                     logger.warn("Unable to invoke FlowInvocationContextListener, continuing", e);
                 }
             }
         }
 
+    }
+    
+    /**
+     * Notify any FlowInvocationContextListeners that to snap an event
+     */
+    protected void notifyFlowInvocationContextListenersSnapEvent(FlowElement flowElement, FlowEvent flowEvent)
+    {
+    	if(((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent() &&
+    			((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics())
+    	{
+	        if (flowInvocationContextListeners != null && this.invokeContextListeners)
+	        {
+	            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
+	            {
+	                try
+	                {
+	                    listener.snapEvent(flowElement, flowEvent);
+	                } 
+	                catch (RuntimeException e)
+	                {
+	                    logger.warn("Unable to invoke FlowInvocationContextListener snap event, continuing", e);
+	                }
+	            }
+	        }
+    	}
     }
 
 
