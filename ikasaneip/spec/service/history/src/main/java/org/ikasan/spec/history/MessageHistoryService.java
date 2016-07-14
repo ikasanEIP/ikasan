@@ -42,6 +42,7 @@ package org.ikasan.spec.history;
 
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -106,5 +107,13 @@ public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT>
      */
     RESULT getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
                                   String eventId, boolean lookupRelatedEventId);
+
+    /**
+     * This method performs a destructive read of MessageHistoryEvents
+     *
+     * @param transactionBatchSize
+     * @return the events that have been destructively read.
+     */
+    public List<EVENT> destructiveReadMessageHistoryEvents(int transactionBatchSize);
 
 }

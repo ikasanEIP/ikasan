@@ -76,10 +76,18 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     private String housekeepQuery;
 
 
+    @Override
+    public List<FilterEntry> findMessages(String clientId)
+        {
+            DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
+            criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, clientId));
+            return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
+    }
+
     /*
-     * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.model.FilterEntry)
-     */
+         * (non-Javadoc)
+         * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.model.FilterEntry)
+         */
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
     {
@@ -95,6 +103,12 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         {
             return foundMessages.get(0);
         }
+    }
+
+    @Override
+    public void saveOrUpdate(FilterEntry message)
+    {
+        this.getHibernateTemplate().saveOrUpdate(message);
     }
 
     /*

@@ -47,8 +47,7 @@ import java.util.Set;
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryEvent<ID, METRIC>
-{
+public interface MessageHistoryEvent<ID, METRIC, EVENT> {
     String getModuleName();
 
     String getFlowName();
@@ -68,9 +67,12 @@ public interface MessageHistoryEvent<ID, METRIC>
     long getEndTimeMillis();
 
     long getExpiry();
-    
+
     Set<METRIC> getMetrics();
-    
+
     void setMetrics(Set<METRIC> metrics);
 
+    public EVENT getWiretapFlowEvent();
+
+    public void setWiretapFlowEvent(EVENT wiretapFlowEvent);
 }

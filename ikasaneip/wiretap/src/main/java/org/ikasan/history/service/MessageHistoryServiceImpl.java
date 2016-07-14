@@ -55,6 +55,7 @@ import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapEventFactory;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 
 /**
  * Implementation of the MessageHistoryService with Housekeeping
@@ -87,8 +88,8 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public void save(FlowInvocationContext flowInvocationContext, String moduleName, String flowName)
     {
-        List<MessageHistoryEvent<String, CustomMetric>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
-        for (MessageHistoryEvent<String, CustomMetric> messageHistoryEvent : messageHistoryEvents)
+        List<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+        for (MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent > messageHistoryEvent : messageHistoryEvents)
         {
             messageHistoryDao.save(messageHistoryEvent);
         }
@@ -109,6 +110,12 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
                                                        String eventId, boolean lookupRelatedEventId)
     {
         return messageHistoryDao.getMessageHistoryEvent(pageNo, pageSize, orderBy, orderAscending, eventId, lookupRelatedEventId ? eventId : null);
+    }
+
+    @Override
+    public List<FlowInvocationContext> destructiveReadMessageHistoryEvents(int transactionBatchSize)
+    {
+        return null;
     }
 
     @Override

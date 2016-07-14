@@ -42,6 +42,7 @@ package org.ikasan.history.dao;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -50,6 +51,7 @@ import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.MessageHistoryFlowEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -94,7 +96,12 @@ public class HibernateMessageHistoryDaoTest
         
         event1.setMetrics(metrics);
 
+        WiretapFlowEvent wiretapEvent = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+                "lifeId", "relatedLifeId", System.currentTimeMillis(), "payload", 30L);
+
+        messageHistoryDao.save(wiretapEvent);
         messageHistoryDao.save(event1);
+
     }
 
     @Test
@@ -115,6 +122,7 @@ public class HibernateMessageHistoryDaoTest
     {
         PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
+        Assert.assertTrue(results.getPagedResults().get(0).getMetrics().size() == 6);
         Assert.assertTrue(results.getPagedResults().get(0).getMetrics().size() == 6);
     }
 
@@ -177,38 +185,93 @@ public class HibernateMessageHistoryDaoTest
     {
     	for(int i=0; i<10000; i++)
     	{	    	
-	        MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName", "componentName",
-	                "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
+	        MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName" , "componentName",
+	                "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
 	                System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
 	        
 	        Set<CustomMetric> metrics = new HashSet<CustomMetric>();
 	        CustomMetric cm = new CustomMetric("name", "value");
 	        cm.setMessageHistoryFlowEvent(event1);
+
 	        
 	    	metrics.add(cm);
 	        
 	        event1.setMetrics(metrics);
-	
+
+            WiretapFlowEvent wiretapEvent = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+
+            messageHistoryDao.save(wiretapEvent);
 	        messageHistoryDao.save(event1);
     	}
+
+        List<MessageHistoryEvent> events =  messageHistoryDao.getHousekeepableRecords(500);
+
+        Assert.assertTrue(events.size() == 500);
+
+        for(MessageHistoryEvent event: events)
+        {
+            Assert.assertTrue(event.getWiretapFlowEvent() != null);
+        }
+
     	
     	PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-    
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 messageHistoryDao.deleteAllExpired();
-    	 
-    	 results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-         Assert.assertTrue(results.getPagedResults().size() == 0);
+
+        messageHistoryDao.deleteHousekeepableRecords(events);
+
+        System.out.println("Starting to delete records: " + System.currentTimeMillis());
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHousekeepableRecords(500);
+        messageHistoryDao.deleteHousekeepableRecords(events);
+
+        System.out.println("Completed deleting records: " + System.currentTimeMillis());
+
+    	results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+
+        Assert.assertTrue(results.getPagedResults().size() == 0);
     }
 
     @After

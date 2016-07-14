@@ -43,13 +43,14 @@ package org.ikasan.history.model;
 import java.util.Set;
 
 import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 
 /**
  * Implementation of a MessageHistoryEvent based on a String lifeIdentifier from a Flow
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric>
+public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>
 {
     private String moduleName, flowName, componentName,
             beforeEventIdentifier, beforeRelatedEventIdentifier,
@@ -57,6 +58,8 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
     private long startTimeMillis, endTimeMillis, expiry, id;
     
     private Set<CustomMetric> metrics;
+
+    private WiretapFlowEvent wiretapFlowEvent;
 
     /** Required by the ORM... */
     protected MessageHistoryFlowEvent()
@@ -217,4 +220,14 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
 	{
 		this.metrics = metrics;
 	}
+
+    public WiretapFlowEvent getWiretapFlowEvent()
+    {
+        return wiretapFlowEvent;
+    }
+
+    public void setWiretapFlowEvent(WiretapFlowEvent wiretapFlowEvent)
+    {
+        this.wiretapFlowEvent = wiretapFlowEvent;
+    }
 }
