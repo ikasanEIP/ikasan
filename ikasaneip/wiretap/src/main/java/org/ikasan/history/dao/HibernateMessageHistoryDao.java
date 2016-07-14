@@ -52,9 +52,11 @@ import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -334,6 +336,53 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 return rowCount > 0;
             }
         });
+    }
+
+    @Override
+    public List<MessageHistoryEvent> getHousekeepableRecords(final int transactionBatchSize)
+    {
+        return (List<MessageHistoryEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                criteria.setMaxResults(transactionBatchSize);
+                criteria.addOrder(Order.asc("startTimeMillis"));
+
+                List<MessageHistoryEvent> messageHistoryEvents = criteria.list();
+
+                for(MessageHistoryEvent messageHistoryEvent: messageHistoryEvents)
+                {
+                    criteria = session.createCriteria(WiretapFlowEvent.class);
+                    criteria.add(Restrictions.eq("moduleName", messageHistoryEvent.getModuleName()));
+                    criteria.add(Restrictions.eq("flowName", messageHistoryEvent.getFlowName()));
+                    criteria.add(Restrictions.eq("componentName", messageHistoryEvent.getComponentName()));
+                    criteria.add(Restrictions.eq("eventId", messageHistoryEvent.getBeforeEventIdentifier()));
+
+                    Object wiretapEvent = criteria.uniqueResult();
+                    if(wiretapEvent != null)
+                    {
+                        messageHistoryEvent.setWiretapFlowEvent((WiretapFlowEvent)wiretapEvent);
+                    }
+                }
+
+                return messageHistoryEvents;
+            }
+        });
+
+    }
+
+    @Override
+    public void deleteHousekeepableRecords(List<MessageHistoryEvent> events)
+    {
+        for(MessageHistoryEvent event: events)
+        {
+            if(event.getWiretapFlowEvent() != null)
+            {
+                getHibernateTemplate().delete(event.getWiretapFlowEvent());
+            }
+            getHibernateTemplate().delete(event);
+        }
     }
 
     /**

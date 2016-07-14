@@ -71,31 +71,9 @@
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
-	
-    <bean id="duplicateFilterDao"
-        class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="sessionFactory"
-        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="mappingResources">
-            <list>
-                <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
-            </props>
-        </property>
-    </bean>
 
     <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-        id="dataSource">
+        id="ikasan.xads">
         <property name="driverClassName">
             <value>org.hsqldb.jdbcDriver</value>
         </property>
