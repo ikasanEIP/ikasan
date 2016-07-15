@@ -44,6 +44,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
@@ -109,23 +110,23 @@ public class MappingConfigurationExportHelper
         exportString.append(EXPORT_DATE_TIME_END_TAG);
 
         exportString.append(CLIENT_START_TAG);
-        exportString.append(mappingConfiguration.getConfigurationServiceClient().getName());
+        exportString.append(StringEscapeUtils.escapeXml(mappingConfiguration.getConfigurationServiceClient().getName()));
         exportString.append(CLIENT_END_TAG);
 
         exportString.append(TYPE_START_TAG);
-        exportString.append(mappingConfiguration.getConfigurationType().getName());
+        exportString.append(StringEscapeUtils.escapeXml(mappingConfiguration.getConfigurationType().getName()));
         exportString.append(TYPE_END_TAG);
 
         exportString.append(SOURCE_CONTEXT_START_TAG);
-        exportString.append(mappingConfiguration.getSourceContext().getName());
+        exportString.append(StringEscapeUtils.escapeXml(mappingConfiguration.getSourceContext().getName()));
         exportString.append(SOURCE_CONTEXT_END_TAG);
 
         exportString.append(TARGET_CONTEXT_START_TAG);
-        exportString.append(mappingConfiguration.getTargetContext().getName());
+        exportString.append(StringEscapeUtils.escapeXml(mappingConfiguration.getTargetContext().getName()));
         exportString.append(TARGET_CONTEXT_END_TAG);
 
         exportString.append(DESCRIPTION_START_TAG);
-        exportString.append(mappingConfiguration.getDescription());
+        exportString.append(StringEscapeUtils.escapeXml(mappingConfiguration.getDescription()));
         exportString.append(DESCRIPTION_END_TAG);
 
         exportString.append(NUMBER_OF_SOURCE_PARAMS_START_TAG);
