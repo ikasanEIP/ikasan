@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
@@ -118,12 +119,12 @@ public class MappingConfigurationValuesExportHelper
 
             for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
             {
-                exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG).append(value.getSourceSystemValue())
+                exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG).append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
                 .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
             }
 
             exportString.append(SOURCE_CONFIGURATION_VALUES_END_TAG).append(TARGET_CONFIGURATION_VALUE_START_TAG)
-            .append(mappingConfigurationValue.getTargetConfigurationValue().getTargetSystemValue())
+            .append(StringEscapeUtils.escapeXml(mappingConfigurationValue.getTargetConfigurationValue().getTargetSystemValue()))
             .append(TARGET_CONFIGURATION_VALUE_END_TAG).append(MAPPING_CONFIGURATION_END_TAG);
         }
 
