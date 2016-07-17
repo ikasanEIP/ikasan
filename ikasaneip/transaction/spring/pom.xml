@@ -45,12 +45,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-transaction</artifactId>
-        <version>1.2.2</version>
+        <version>1.2.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-transaction-spring</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3-SNAPSHOT</version>
     <name>Ikasan Transaction Spring</name>
     <description>Ikasan Transaction extensions to support Spring transaction wrapper</description>
 
