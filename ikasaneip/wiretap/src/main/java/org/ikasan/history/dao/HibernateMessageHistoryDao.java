@@ -48,6 +48,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.history.model.CustomMetric;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -339,7 +340,29 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     }
 
     @Override
-    public List<MessageHistoryEvent> getHousekeepableRecords(final int transactionBatchSize)
+    public boolean harvestableRecordsExist()
+    {
+        return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                criteria.setProjection(Projections.rowCount());
+
+                Long rowCount = 0L;
+                List<Long> rowCountList = criteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+                logger.info(rowCount+", MessageHistory harvestable records exist");
+                return rowCount > 0;
+            }
+        });
+    }
+
+    @Override
+    public List<MessageHistoryEvent> getHarvestableRecordsRecords(final int transactionBatchSize)
     {
         return (List<MessageHistoryEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
@@ -358,11 +381,12 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                     criteria.add(Restrictions.eq("flowName", messageHistoryEvent.getFlowName()));
                     criteria.add(Restrictions.eq("componentName", messageHistoryEvent.getComponentName()));
                     criteria.add(Restrictions.eq("eventId", messageHistoryEvent.getBeforeEventIdentifier()));
+                    criteria.addOrder(Order.asc("timestamp"));
 
-                    Object wiretapEvent = criteria.uniqueResult();
-                    if(wiretapEvent != null)
+                    List<WiretapFlowEvent> wiretapEvents = criteria.list();
+                    if(wiretapEvents != null && wiretapEvents.size() > 0)
                     {
-                        messageHistoryEvent.setWiretapFlowEvent((WiretapFlowEvent)wiretapEvent);
+                        messageHistoryEvent.setWiretapFlowEvent(wiretapEvents.get(0));
                     }
                 }
 
@@ -373,7 +397,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     }
 
     @Override
-    public void deleteHousekeepableRecords(List<MessageHistoryEvent> events)
+    public void deleteHarvestableRecords(List<MessageHistoryEvent> events)
     {
         for(MessageHistoryEvent event: events)
         {
@@ -381,6 +405,12 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             {
                 getHibernateTemplate().delete(event.getWiretapFlowEvent());
             }
+
+            for(CustomMetric metric: (Set<CustomMetric>)event.getMetrics())
+            {
+                getHibernateTemplate().delete(metric);    
+            }
+
             getHibernateTemplate().delete(event);
         }
     }

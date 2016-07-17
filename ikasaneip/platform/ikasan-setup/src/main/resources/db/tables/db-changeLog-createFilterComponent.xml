@@ -47,17 +47,17 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
     
-    <changeSet author="ikasan dev" id="createFilterComponentLinkTable" context="postBaseline">
+    <changeSet author="ikasan dev" id="createFilterComponent" context="postBaseline">
     
     	<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="FilterComponent" /></not>
 		</preConditions>
 
         <createTable tableName="FilterComponent">
-            <column name="FilterId" type="${identity}">
+            <column name="FilterId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ComponentId" type="${identity}">
+            <column name="ComponentId" type="numeric(18)">
                 <constraints nullable="false"/>
             </column>
 		</createTable>

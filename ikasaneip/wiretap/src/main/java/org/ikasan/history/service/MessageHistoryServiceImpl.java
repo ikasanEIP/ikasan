@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.ikasan.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
@@ -62,7 +63,8 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>>, HousekeeperService
+public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
+        , HousekeeperService, HarvestService<MessageHistoryEvent>
 {
     protected MessageHistoryDao messageHistoryDao;
 
@@ -111,11 +113,33 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     {
         return messageHistoryDao.getMessageHistoryEvent(pageNo, pageSize, orderBy, orderAscending, eventId, lookupRelatedEventId ? eventId : null);
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.spec.history.MessageHistoryService#snapMetricEvent(java.lang.Object, java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
+	 */
+    @Override
+    public void snapMetricEvent(FlowEvent event, String componentName,
+                                String moduleName, String flowName, Long timeToLive)
+    {
+        long expiry = System.currentTimeMillis() + (timeToLive * 60000);
+        WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
+        this.messageHistoryDao.save(wiretapEvent);
+    }
 
     @Override
-    public List<FlowInvocationContext> destructiveReadMessageHistoryEvents(int transactionBatchSize)
+    public List<MessageHistoryEvent> harvest(int transactionBatchSize)
     {
-        return null;
+        List<MessageHistoryEvent> events = this.messageHistoryDao.getHarvestableRecordsRecords(transactionBatchSize);
+
+        this.messageHistoryDao.deleteHarvestableRecords(events);
+
+        return events;
+    }
+
+    @Override
+    public boolean harvestableRecordsExist()
+    {
+        return this.messageHistoryDao.harvestableRecordsExist();
     }
 
     @Override
@@ -135,16 +159,4 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     {
         this.historyEventFactory = historyEventFactory;
     }
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.history.MessageHistoryService#snapMetricEvent(java.lang.Object, java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
-	 */
-	@Override
-	public void snapMetricEvent(FlowEvent event, String componentName,
-			String moduleName, String flowName, Long timeToLive) 
-	{
-		long expiry = System.currentTimeMillis() + (timeToLive * 60000);
-        WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
-        this.messageHistoryDao.save(wiretapEvent);
-	}
 }

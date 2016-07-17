@@ -120,12 +120,18 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<MessageHistoryEvent> getHousekeepableRecords(int transactionBatchSize);
+    public List<MessageHistoryEvent> getHarvestableRecordsRecords(int transactionBatchSize);
 
     /**
      * Delete the events in the list.
      *
      * @param events
      */
-    public void deleteHousekeepableRecords(List<MessageHistoryEvent> events);
+    public void deleteHarvestableRecords(List<MessageHistoryEvent> events);
+
+    /**
+     * Method to state that there are harvestable records available.
+     * @return true if so, false otherwise
+     */
+    public boolean harvestableRecordsExist();
 }
