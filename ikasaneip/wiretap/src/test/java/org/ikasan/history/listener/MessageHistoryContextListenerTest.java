@@ -50,6 +50,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.ikasan.spec.history.MessageHistoryEvent;
 
 /**
  * Test cases for MessageHistoryContextListener
@@ -67,7 +68,7 @@ public class MessageHistoryContextListenerTest<T>
     };
 
     @SuppressWarnings("unchecked")
-    MessageHistoryService<FlowInvocationContext, FlowEvent, T> messageHistoryService = mockery.mock(MessageHistoryService.class);
+    MessageHistoryService messageHistoryService = mockery.mock(MessageHistoryService.class);
 
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
 

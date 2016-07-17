@@ -126,6 +126,7 @@ public class JmsTemplateProducer<T>
     @Override
     public void startManagedResource()
     {
+        System.out.println("Applying configuration: " + configuration);
         try
         {
             // get connection factory
@@ -224,7 +225,7 @@ public class JmsTemplateProducer<T>
     @Override
     public void stopManagedResource()
     {
-        // nothing to stop
+        this.jmsTemplate.setDefaultDestination(null);
     }
 
     @Override
