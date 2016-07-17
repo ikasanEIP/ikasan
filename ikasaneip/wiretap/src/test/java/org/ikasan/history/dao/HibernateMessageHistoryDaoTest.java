@@ -205,7 +205,7 @@ public class HibernateMessageHistoryDaoTest
 	        messageHistoryDao.save(event1);
     	}
 
-        List<MessageHistoryEvent> events =  messageHistoryDao.getHousekeepableRecords(500);
+        List<MessageHistoryEvent> events =  messageHistoryDao.getHarvestableRecordsRecords(500);
 
         Assert.assertTrue(events.size() == 500);
 
@@ -217,55 +217,55 @@ public class HibernateMessageHistoryDaoTest
     	
     	PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
 
-        messageHistoryDao.deleteHousekeepableRecords(events);
+        messageHistoryDao.deleteHarvestableRecords(events);
 
         System.out.println("Starting to delete records: " + System.currentTimeMillis());
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
-        events =  messageHistoryDao.getHousekeepableRecords(500);
-        messageHistoryDao.deleteHousekeepableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
+        events =  messageHistoryDao.getHarvestableRecordsRecords(500);
+        messageHistoryDao.deleteHarvestableRecords(events);
 
         System.out.println("Completed deleting records: " + System.currentTimeMillis());
 

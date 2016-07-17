@@ -53,7 +53,7 @@ import java.util.Set;
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT>
+public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT, HISTORY_EVENT>
 {
 
     /**
@@ -107,13 +107,5 @@ public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT>
      */
     RESULT getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
                                   String eventId, boolean lookupRelatedEventId);
-
-    /**
-     * This method performs a destructive read of MessageHistoryEvents
-     *
-     * @param transactionBatchSize
-     * @return the events that have been destructively read.
-     */
-    public List<EVENT> destructiveReadMessageHistoryEvents(int transactionBatchSize);
 
 }
