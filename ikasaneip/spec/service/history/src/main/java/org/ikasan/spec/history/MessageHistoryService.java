@@ -42,6 +42,7 @@ package org.ikasan.spec.history;
 
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,7 +53,7 @@ import java.util.Set;
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT>
+public interface MessageHistoryService<EVENT, FLOW_EVENT, RESULT, HISTORY_EVENT>
 {
 
     /**

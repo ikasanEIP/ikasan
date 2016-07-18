@@ -52,7 +52,7 @@ public class NotificationContentProducerConfiguration
 	private String body;
 	private String recipients;
 	private String notificationName;
-	private Long lastEmailSentTimeStamp;
+	private Long lastEmailSentTimeStamp = new Long(0);
 	
 	/**
 	 * @return the subject

@@ -5,21 +5,34 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
-        <constructor-arg>
-            <bean class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
-                <property name="sessionFactory">
-                    <bean class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-                        <property name="dataSource" ref="ikasan.xads" />
-                        <property name="mappingResources">
-                            <list>
-                                <value>org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
-                            </list>
-                        </property>
-                        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-                    </bean>
-                </property>
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="duplicateFilterDao"/>
+    </bean>
+
+    <!-- As this service is stateful managing a cache per client id, it is defined as scope = prototype -->
+    <bean id="entityAgeFilterService" class="org.ikasan.filter.duplicate.service.DefaultEntityAgeFilterService" scope="prototype">
+        <constructor-arg ref="duplicateFilterDao"/>
+    </bean>
+
+    <bean id="duplicateFilterDao"
+          class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+            </props>
+        </property>
     </bean>
 
 </beans>

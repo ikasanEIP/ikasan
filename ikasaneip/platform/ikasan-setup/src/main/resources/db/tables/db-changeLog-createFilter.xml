@@ -47,7 +47,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-     <changeSet author="ikasan dev" id="createFilter" context="postBaseline">
+     <changeSet author="ikasan dev" id="createFilterTable" context="postBaseline">
      	
      	<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="Filter" /></not>
@@ -55,7 +55,7 @@
 		
         <createTable tableName="Filter">
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints primaryKey="true" primaryKeyName="Flow_723842962"/>
+                <constraints primaryKey="true" primaryKeyName="FilterPk"/>
             </column>
             
             <column name="Name" type="VARCHAR(255)">

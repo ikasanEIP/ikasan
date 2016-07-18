@@ -69,7 +69,8 @@ import java.io.InputStream;
  *
  * @author Ikasan Development Team
  */
-public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, ManagedResource, ConfiguredResource<XMLValidatorConfiguration> {
+public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, ManagedResource, ConfiguredResource<XMLValidatorConfiguration>
+{
     /**
      * Logger instance
      */

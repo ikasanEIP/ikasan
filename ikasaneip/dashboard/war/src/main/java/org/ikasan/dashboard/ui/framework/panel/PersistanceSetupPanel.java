@@ -125,11 +125,21 @@ public class PersistanceSetupPanel extends Panel implements View
     
     protected void createOptionsView()
     {
-    	GridLayout layout = new GridLayout(2, 8);
+    	GridLayout layout = new GridLayout(2, 9);
         layout.setWidth("100%");
         layout.setHeight("100%");
         layout.setMargin(true);
         layout.setSpacing(true);
+
+		Button returnToLoginScreenButton = new Button("Return to login");
+		returnToLoginScreenButton.addStyleName(ValoTheme.BUTTON_LINK);
+		returnToLoginScreenButton.addClickListener(new Button.ClickListener()
+		{
+			public void buttonClick(ClickEvent event)
+			{
+				UI.getCurrent().getNavigator().navigateTo("loginPanel");
+			}
+		});
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.addStyleName(ValoTheme.LABEL_HUGE);
@@ -255,16 +265,17 @@ public class PersistanceSetupPanel extends Panel implements View
         });
        
 
-		this.updateIcons();			
+		this.updateIcons();
 
-        layout.addComponent(ikasanWelcomeLabel1, 0, 0, 1, 0);
-        layout.addComponent(ikasanWelcomeLabel2, 0, 1, 1, 1);
-        layout.addComponent(ikasanWelcomeLabel3, 0, 2);
-        layout.addComponent(fullInstallStatusButton, 1, 2);
-        layout.addComponent(ikasanWelcomeLabel4, 0, 3);
-        layout.addComponent(upgradeInstallStatusButton, 1, 3);
-        layout.addComponent(ikasanWelcomeLabel5, 0, 4);
-        layout.addComponent(fileTransferStatusButton, 1, 4);
+		layout.addComponent(returnToLoginScreenButton, 0, 0, 1, 0);
+        layout.addComponent(ikasanWelcomeLabel1, 0, 1, 1, 1);
+        layout.addComponent(ikasanWelcomeLabel2, 0, 2, 1, 2);
+        layout.addComponent(ikasanWelcomeLabel3, 0, 3);
+        layout.addComponent(fullInstallStatusButton, 1, 3);
+        layout.addComponent(ikasanWelcomeLabel4, 0, 4);
+        layout.addComponent(upgradeInstallStatusButton, 1, 4);
+        layout.addComponent(ikasanWelcomeLabel5, 0, 5);
+        layout.addComponent(fileTransferStatusButton, 1, 5);
         
         layout.addComponent(persistanceStoreTypeCombo);
         persistanceStoreTypeCombo.setHeight("30px");
@@ -388,7 +399,7 @@ public class PersistanceSetupPanel extends Panel implements View
             }
         });
 
-        layout.addComponent(button, 0, 6, 1, 6);
+        layout.addComponent(button, 0, 7, 1, 7);
         layout.setComponentAlignment(button, Alignment.MIDDLE_CENTER);
 
         this.setContent(layout);
