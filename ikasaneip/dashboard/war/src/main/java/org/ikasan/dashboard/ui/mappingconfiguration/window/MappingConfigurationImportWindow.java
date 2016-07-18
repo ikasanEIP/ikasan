@@ -52,6 +52,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -60,6 +61,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationVa
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
@@ -320,7 +322,19 @@ public class MappingConfigurationImportWindow extends Window
         {
             MappingConfigurationDocumentHelper helper = new MappingConfigurationDocumentHelper();
 
-            this.mappingConfiguration = helper.getMappingConfiguration(receiver.file.toByteArray());
+            try
+            {
+                this.mappingConfiguration = helper.getMappingConfiguration(receiver.file.toByteArray());
+            }
+            catch(MappingConfigurationImportException e)
+            {
+                Notification.show("An error has occurred importing a mapping configuration!\n",
+                        e.getMessage(),
+                        Notification.Type.ERROR_MESSAGE);
+
+                return;
+            }
+
             this.mappingConfigurationValues = helper.getMappingConfigurationValues(receiver.file.toByteArray());
             this.keyLocationQueries = helper.getKeyLocationQueries(receiver.file.toByteArray());
     
@@ -391,8 +405,20 @@ public class MappingConfigurationImportWindow extends Window
                 , Notification.Type.ERROR_MESSAGE);
         }
         else
-        {    
-            Long id = this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+        {
+            Long id = null;
+            try
+            {
+                id = this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+            }
+            catch(Exception e)
+            {
+                Notification.show("An error has occurred imporint a mapping configuration!\n",
+                        " It appears that the mapping configuration you are importing already exists.",
+                        Notification.Type.ERROR_MESSAGE);
+
+                return;
+            }
 
             for(MappingConfigurationValue mappingConfigurationValue: this.mappingConfigurationValues)
             {

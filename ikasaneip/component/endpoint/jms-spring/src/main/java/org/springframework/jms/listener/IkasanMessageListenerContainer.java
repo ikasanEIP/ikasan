@@ -58,7 +58,7 @@ import javax.jms.*;
 public class IkasanMessageListenerContainer extends DefaultMessageListenerContainer implements MessageProvider, Configured<SpringMessageConsumerConfiguration>, IsExclusionServiceAware
 {
     /** configuration instance */
-    SpringMessageConsumerConfiguration configuration;
+    private SpringMessageConsumerConfiguration configuration;
     private ExclusionService exclusionService;
 
     /**
@@ -68,9 +68,6 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
     {
         super();
         setAutoStartup(false);
-        setMaxConcurrentConsumers(1);
-        setConcurrentConsumers(1);
-        setCacheLevel(CACHE_CONNECTION);
     }
 
     /**
@@ -137,6 +134,9 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         // get other stuff
         setPubSubDomain(configuration.getPubSubDomain());
         setDurableSubscriptionName(configuration.getDurableSubscriptionName());
+        setConcurrentConsumers(configuration.getConcurrentConsumers());
+        setMaxConcurrentConsumers(configuration.getMaxConcurrentConsumers());
+        setCacheLevel(configuration.getCacheLevel());
 
         if(configuration.getDurable() != null)
         {

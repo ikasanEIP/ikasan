@@ -49,6 +49,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -66,7 +67,7 @@ public class XmlFormatter
     /** Logger instance */
     private static Logger logger = Logger.getLogger(XmlFormatter.class);
 
-    public static String format(String unformattedXml) 
+    public static String format(String unformattedXml)
     {
         try 
         {
@@ -101,10 +102,12 @@ public class XmlFormatter
         catch (ParserConfigurationException e) 
         {
             throw new RuntimeException(e);
-        } catch (SAXException e)
+        }
+        catch (SAXException e)
         {
             throw new RuntimeException(e);
-        } catch (IOException e) 
+        }
+        catch (IOException e)
         {
             throw new RuntimeException(e);
         }

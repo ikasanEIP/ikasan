@@ -68,7 +68,8 @@ import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml"
+        "/FilteredMessageDaoInMemDBTest-context.xml",
+        "/filter-service-conf.xml"
 })
 public class FilteredMessageDaoInMemDBTest
 {

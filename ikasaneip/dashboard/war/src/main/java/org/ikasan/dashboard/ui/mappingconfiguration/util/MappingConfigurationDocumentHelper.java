@@ -90,7 +90,7 @@ public class MappingConfigurationDocumentHelper
      * @throws XPathExpressionException 
      */
     public MappingConfiguration getMappingConfiguration(byte[] fileContents) throws SAXException
-        , IOException, ParserConfigurationException, XPathExpressionException
+        , IOException, ParserConfigurationException, XPathExpressionException, MappingConfigurationImportException
     {
         DocumentBuilderFactory builderFactory =
                 DocumentBuilderFactory.newInstance();
@@ -106,6 +106,39 @@ public class MappingConfigurationDocumentHelper
         String targetContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.TARGET_CONTEXT_XPATH, document, XPathConstants.STRING);
         String description = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.DESCRIPTION_XPATH, document, XPathConstants.STRING);
         String numberOfParams = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.NUMBER_OF_SOURCE_PARAMS_XPATH, document, XPathConstants.STRING);
+
+        StringBuffer errorMessage = new StringBuffer();
+
+        if(client == null || client.isEmpty())
+        {
+            errorMessage.append("Mapping Configuration Client is missing\n");
+        }
+
+        if(type == null || type.isEmpty())
+        {
+            errorMessage.append("Mapping Configuration Type is missing\n");
+        }
+
+        if(sourceContext == null || sourceContext.isEmpty())
+        {
+            errorMessage.append("Mapping Configuration Source Context is missing\n");
+        }
+
+        if(description == null || description.isEmpty())
+        {
+            errorMessage.append("Mapping Configuration Description is missing\n");
+        }
+
+        if(numberOfParams == null || numberOfParams.isEmpty())
+        {
+            errorMessage.append("Mapping Configuration Number of Parameters is missing\n");
+        }
+
+        if(errorMessage.length() > 0)
+        {
+            throw new MappingConfigurationImportException("An error has occurred trying to imprt a Mapping Configuration\n"
+                + errorMessage.toString());
+        }
 
         ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
         configurationServiceClient.setName(client);
