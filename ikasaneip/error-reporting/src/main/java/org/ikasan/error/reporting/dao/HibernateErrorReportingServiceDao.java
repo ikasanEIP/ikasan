@@ -241,7 +241,6 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 				}
 				
 				criteria.add(Restrictions.isNull("userAction"));
-				criteria.addOrder(Order.desc("expiry")); 
 				criteria.setProjection(Projections.rowCount());
 			    Long rowCount = new Long(0);
 			    List<Long> rowCountList = criteria.list();
