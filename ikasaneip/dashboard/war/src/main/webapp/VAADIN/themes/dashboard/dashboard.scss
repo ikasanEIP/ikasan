@@ -136,9 +136,20 @@ $v-font-weight: 400;
 		vertical-align: top;
 	}
 
+	.v-table-cell-content-ikasan-blue-small {
+		font-size: 11px;
+		background-color: rgba(0, 0, 255, 0.2);
+		font-size: 9px;
+		vertical-align: top;
+	}
+
 
 	.v-table-row-ikasan-red-small:hover, .v-table-row-odd-ikasan-red-small:hover {
 	    background: rgba(255, 0, 0, 0.3);
+	}
+
+	.v-table-row-ikasan-blue-small:hover, .v-table-row-odd-ikasan-blue-small:hover {
+		background: rgba(0, 0, 255, 0.3);
 	}
 
 	.v-table-cell-content-ikasan-orange-small {
@@ -207,6 +218,10 @@ $v-font-weight: 400;
 	
 	.v-tree-node-caption-indigoicon {
 		color: indigo;
+	}
+
+	.v-tree-node-caption-blueicon {
+		color: blue;
 	}
 	
 	.v-monitor-caption-greenicon {
