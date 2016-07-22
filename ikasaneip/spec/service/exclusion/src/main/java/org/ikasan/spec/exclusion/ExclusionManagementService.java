@@ -42,6 +42,7 @@ package org.ikasan.spec.exclusion;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -52,7 +53,7 @@ import java.util.List;
 public interface ExclusionManagementService<ENTITY, IDENTIFIER>
 {
 	/**
-	 * Find and exclusion event entity.
+	 * Find all exclusion event entities based on criteria.
 	 * 
 	 * @param moduleName
 	 * @param flowName
@@ -60,20 +61,43 @@ public interface ExclusionManagementService<ENTITY, IDENTIFIER>
 	 * @return
 	 */
     public ENTITY find(String moduleName, String flowName, IDENTIFIER identifier);
+
+	/**
+	 * Count all exclusion event entities based on criteria.
+	 *
+	 * @param moduleName
+	 * @param flowName
+	 * @param identifier
+	 * @return
+	 */
+	public long count(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, IDENTIFIER identifier);
     
     /**
-     * Find a list of event entities based on criteria.
+     * Find all exclusion event entities based on criteria. Restricted by size
      * 
      * @param moduleName
      * @param flowName
-     * @param starteDate
      * @param endDate
      * @param identifier
+	 * @param size
      * @return
      */
-    public List<ENTITY> find(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, IDENTIFIER identifier);
+    public List<ENTITY> find(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, IDENTIFIER identifier, int size);
 
-    /**
+	/**
+	 * Find a list of event entities based on criteria.
+	 *
+	 * @param moduleName
+	 * @param flowName
+	 * @param starteDate
+	 * @param endDate
+	 * @param identifier
+	 * @return
+	 */
+	public List<ENTITY> find(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, IDENTIFIER identifier);
+
+
+	/**
 	 * Find all exclusion event entities.
 	 * 
 	 * @return

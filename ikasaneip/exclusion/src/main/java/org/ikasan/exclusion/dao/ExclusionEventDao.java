@@ -80,6 +80,20 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public EVENT find(String moduleName, String flowName, IDENTIFIER identifier);
+
+    /**
+     * Get the row count for the given criteria.
+     *
+     * @param moduleName
+     * @param flowName
+     * @param startDate
+     * @param endDate
+     * @param identifier
+     * @return
+     */
+    public Long rowCount(final List<String> moduleName,
+                         final List<String> flowName, final Date startDate, final Date endDate,
+                         final String identifier);
     
     /**
      * Find all excluded events
@@ -96,9 +110,10 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @param starteDate
      * @param endDate
      * @param identifier
+     * @param size
      * @return
      */
-    public List<EVENT> find(List<String> moduleName, List<String> flowName, Date starteDate, Date endDate, IDENTIFIER identifier);
+    public List<EVENT> find(List<String> moduleName, List<String> flowName, Date starteDate, Date endDate, IDENTIFIER identifier, int size);
     
     /**
      * Find the event based on it's URI
