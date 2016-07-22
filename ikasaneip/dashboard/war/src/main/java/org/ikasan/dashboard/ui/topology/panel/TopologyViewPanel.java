@@ -496,7 +496,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
     		final ExclusionsTab exclusionsTab = new ExclusionsTab(this.errorReportingService, this.errorReportingManagementService,
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService,
-    				this.treeViewBusinessStreamCombo, this.hospitalService);
+    				this.treeViewBusinessStreamCombo, this.hospitalService, this.platformConfigurationService);
 
     		exclusionsTab.createLayout();
     		exclusionsTab.applyFilter();

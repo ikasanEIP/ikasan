@@ -43,11 +43,13 @@ package org.ikasan.exclusion.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.springframework.dao.support.DataAccessUtils;
@@ -144,7 +146,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	@Override
 	public List<ExclusionEvent> find(List<String> moduleName,
 			List<String> flowName, Date startDate, Date endDate,
-			String identifier)
+			String identifier, int size)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
 		
@@ -173,10 +175,73 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
 		}
 		
-		criteria.addOrder(Order.desc("timestamp"));	
-		
-		return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+		criteria.addOrder(Order.desc("timestamp"));
+
+		if(size > 0)
+        {
+            return (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria, 0, size);
+        }
+        else
+        {
+            return (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria);
+        }
 	}
+
+    /* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, int)
+	 */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Long rowCount(final List<String> moduleName,
+                         final List<String> flowName, final Date startDate, final Date endDate,
+                         final String identifier)
+    {
+        return (Long) getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+
+                if(moduleName != null && moduleName.size() > 0)
+                {
+                    criteria.add(Restrictions.in("moduleName", moduleName));
+                }
+
+                if(flowName != null && flowName.size() > 0)
+                {
+                    criteria.add(Restrictions.in("flowName", flowName));
+                }
+
+                if(identifier != null && identifier.length() > 0)
+                {
+                    criteria.add(Restrictions.eq("identifier", identifier));
+                }
+
+                if(startDate != null)
+                {
+                    criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+                }
+
+                if(endDate != null)
+                {
+                    criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+                }
+
+                criteria.addOrder(Order.desc("timestamp"));
+
+                criteria.setProjection(Projections.rowCount());
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+
+                return rowCount;
+            }
+        });
+    }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.lang.String)

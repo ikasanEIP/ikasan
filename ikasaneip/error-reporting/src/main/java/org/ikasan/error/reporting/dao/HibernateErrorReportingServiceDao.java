@@ -40,6 +40,7 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -52,16 +53,14 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Hibernate specific implementation of the ErrorReportingServiceDao.
  * @author Ikasan Development Team
  */
 public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
-        implements ErrorReportingServiceDao<ErrorOccurrence<byte[]>>
+        implements ErrorReportingServiceDao<ErrorOccurrence<byte[]>, String>
 {
     /** default batch size */
     private static Integer housekeepingBatchSize = Integer.valueOf(100);
@@ -84,10 +83,33 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
         return results.get(0);
 
     }
-    
-    /* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.lang.String, java.lang.String, java.lang.String)
-	 */
+
+	@Override
+	public Map<String, ErrorOccurrence<byte[]>> find(List<String> uris)
+	{
+		Map<String, ErrorOccurrence<byte[]>> results = new HashMap<String, ErrorOccurrence<byte[]>>();
+
+		List<List<String>> partitions = Lists.partition(uris, 300);
+
+		for(List<String> partition: partitions)
+		{
+			DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+			criteria.add(Restrictions.in("uri", partition));
+
+			List<ErrorOccurrence> queryResults = (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria);
+
+			for(ErrorOccurrence errorOccurrence: queryResults)
+			{
+				results.put(errorOccurrence.getUri(), errorOccurrence);
+			}
+		}
+
+		return results;
+	}
+
+	/* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.lang.String, java.lang.String, java.lang.String)
+     */
 	@Override
 	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
 			Date startDate, Date endDate, int size)
