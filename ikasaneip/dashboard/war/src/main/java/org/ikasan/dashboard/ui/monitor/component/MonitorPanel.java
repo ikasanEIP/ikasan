@@ -381,10 +381,10 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 				Flow flow = (Flow)itemId;
 				
 				String state = stateMap.get(flow.getModule().getName() + "-" + flow.getName());
-				
-				if (propertyId == null) 
+
+				if (propertyId == null)
 				{
-			
+
 					if(state != null && state.equals(RUNNING))
 	    			{
 						return "ikasan-green-small";
@@ -395,7 +395,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
 	    			}
 	    			else if (state != null && state.equals(STOPPED))
 	    			{
-	    				return "ikasan-red-small";
+	    				return "ikasan-blue-small";
 	    			}
 	    			else if (state != null && state.equals(STOPPED_IN_ERROR))
 	    			{
@@ -417,7 +417,7 @@ public class MonitorPanel extends Panel implements View, Action.Handler
     			}
     			else if (state != null && state.equals(STOPPED))
     			{
-    				return "ikasan-red-small";
+    				return "ikasan-blue-small";
     			}
     			else if (state != null && state.equals(STOPPED_IN_ERROR))
     			{

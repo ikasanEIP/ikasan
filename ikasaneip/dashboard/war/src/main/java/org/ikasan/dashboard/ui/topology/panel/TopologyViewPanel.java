@@ -605,7 +605,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    			}
 	    			else if (state != null && state.equals(STOPPED))
 	    			{
-	    				return "redicon";
+	    				return "blueicon";
 	    			}
 	    			else if (state != null && state.equals(STOPPED_IN_ERROR))
 	    			{
