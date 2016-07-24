@@ -118,16 +118,16 @@ public class HibernateExclusionEventDaoTest
         moduleNames.add("moduleName1");
         moduleNames.add("moduleName2");
         
-        Assert.assertTrue("Should be found size == 2", exclusionEventDao.find(moduleNames, null, null, null, null).size() == 2);
+        Assert.assertTrue("Should be found size == 2", exclusionEventDao.find(moduleNames, null, null, null, null, 100).size() == 2);
         
         ArrayList<String> flowNames = new ArrayList<String>();
         flowNames.add("flowName1");
         
-        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, null).size());
+        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, null, 100).size());
         
-        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier1").size());
+        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier1", 100).size());
         
-        Assert.assertEquals("Should be found size == 0", 0, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier2").size());
+        Assert.assertEquals("Should be found size == 0", 0, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier2", 100).size());
 
     }
 

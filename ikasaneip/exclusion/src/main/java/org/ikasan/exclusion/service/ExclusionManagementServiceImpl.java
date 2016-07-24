@@ -42,6 +42,7 @@ package org.ikasan.exclusion.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.exclusion.model.ExclusionEvent;
@@ -73,6 +74,18 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 			String identifier)
 	{
 		return this.exclusionEventDao.find(moduleName, flowName, identifier);
+	}
+
+	@Override
+	public long count(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, String identifier)
+	{
+		return this.exclusionEventDao.rowCount(moduleName,flowName, startDate, endDate, identifier);
+	}
+
+	@Override
+	public List<ExclusionEvent> find(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, String identifier, int size)
+	{
+		return this.exclusionEventDao.find(moduleName, flowName, startDate, endDate, identifier, size);
 	}
 
 	/* (non-Javadoc)
@@ -110,7 +123,7 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 			List<String> flowName, Date startDate, Date endDate,
 			String identifier)
 	{
-		return this.exclusionEventDao.find(moduleName, flowName, startDate, endDate, identifier);
+		return this.exclusionEventDao.find(moduleName, flowName, startDate, endDate, identifier, -1);
 	}
 
 	/* (non-Javadoc)

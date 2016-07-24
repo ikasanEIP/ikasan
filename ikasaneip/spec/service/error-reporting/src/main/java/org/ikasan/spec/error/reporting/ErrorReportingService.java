@@ -43,6 +43,7 @@ package org.ikasan.spec.error.reporting;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This contract represents a platform level service for the heavyweight logging of
@@ -63,6 +64,14 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
      * @return EVENT for this uri
      */
     public ERROR_REPORTING_EVENT find(String uri);
+
+    /**
+     * Find a map of error reporting event instances from the incoming uris.
+     *
+     * @param uris
+     * @return EVENT
+     */
+    public Map<String, ERROR_REPORTING_EVENT> find(List<String> uris);
     
     /**
      * Find an error reporting events based on a list of moduleName, flowName and flowElementName
