@@ -64,6 +64,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of a Flow
@@ -75,6 +76,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 {
 	/** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
+
+    /** thread states */
+    private static Boolean ACTIVE = true;
+    private static Boolean INACTIVE = false;
     
     /** running state string constant */
     private static String RUNNING = "running";
@@ -146,6 +151,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** configured resource id */
     private String configuredResourceId;
 
+    /** map to keep track of active threads */
+    private ConcurrentHashMap<Long, Boolean> activeThreads = new ConcurrentHashMap<Long, Boolean>();
+
+    /** we don't want to wait for ever for the flow to stop. Default 30 seconds */
+    private long stopWaitTimeout = 30000;
+
     /**
      * Constructor
      * @param name
@@ -213,6 +224,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         
         this.configuredResourceId = this.moduleName + "-" + this.name;
+    }
+
+    /**
+     * Get the stop wait timeout
+     * @return
+     */
+    public long getStopWaitTimeout()
+    {
+        return stopWaitTimeout;
+    }
+
+    /**
+     * Set the stop wait timeout
+     * @param stopWaitTimeout
+     */
+    public void setStopWaitTimeout(long stopWaitTimeout)
+    {
+        this.stopWaitTimeout = stopWaitTimeout;
     }
 
     /**
@@ -564,7 +593,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         startManagedResourceFlowElements(flowElements);
     }
 
-    private void startManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements) {
+    private void startManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements)
+    {
         for(int index=flowElements.size()-1; index >= 0; index--)
         {
             FlowElement<ManagedResource> flowElement = flowElements.get(index);
@@ -598,6 +628,70 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     }
 
     /**
+     * Set the current threads state
+     *
+     * @param state
+     */
+    private void setThreadState(boolean state)
+    {
+        this.activeThreads.put(Thread.currentThread().getId(), state);
+    }
+
+    /**
+     * Determine if all threads are inactive
+     *
+     * @return
+     * @throws InterruptedException
+     */
+    private boolean allThreadInactive()
+    {
+        long currentTimeMillis = System.currentTimeMillis();
+
+        logger.info("Checking if threads are inactive.");
+
+        while(true)
+        {
+            boolean allInactive = true;
+            for(Long key: this.activeThreads.keySet())
+            {
+                boolean active = this.activeThreads.get(key);
+
+                logger.debug("Thread [" + key + "] is active [" + active + "]");
+
+                if(active)
+                {
+                    allInactive = false;
+                }
+            }
+
+            if(allInactive)
+            {
+                logger.info("All threads are inactive.");
+                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                return true;
+            }
+            else if(System.currentTimeMillis() - currentTimeMillis > this.stopWaitTimeout)
+            {
+                logger.info("Timed out waiting for threads to complete.");
+                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                return true;
+            }
+            else
+            {
+                try
+                {
+                    Thread.sleep(500);
+                    logger.debug("Sleeping waiting for threads to complete.");
+                }
+                catch (InterruptedException e)
+                {
+                    logger.error("Could not put thread to sleep when trying to determine if all threads are inactive.", e);
+                }
+            }
+        }
+    }
+
+    /**
      * Stop this flow
      */
     public void stop()
@@ -615,9 +709,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             // stop consumer and remove the listener
             Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
             consumer.stop();
-            consumer.setListener(null);
 
-            stopManagedResources();
+            if(this.allThreadInactive())
+            {
+                consumer.setListener(null);
+                stopManagedResources();
+            }
+
             logger.info("Stopped Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
@@ -632,6 +730,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public void invoke(FlowEvent<?,?> event)
     {
+        this.setThreadState(ACTIVE);
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
         flowInvocationContext.startFlowInvocation();
 
@@ -680,6 +779,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             this.notifyFlowInvocationContextListenersEndFlow(flowInvocationContext);
             this.notifyMonitor();
+            this.setThreadState(INACTIVE);
         }
     }
     
