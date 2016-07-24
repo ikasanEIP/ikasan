@@ -112,8 +112,8 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
         finally
         {
             unsetInvocationOnComponent(flowElementInvocation, broker);
+            endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         }
-        endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {

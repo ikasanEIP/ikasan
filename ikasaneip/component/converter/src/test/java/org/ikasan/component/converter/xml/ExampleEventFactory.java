@@ -52,6 +52,8 @@ public class ExampleEventFactory
 
     final String xmlInvalidJaxb = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>1</one><two>2</two><three>3</three></example>";
 
+    final String xmlAdapted = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://ikasan.org/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>one</one><two>two</two></example>";
+
     public String getXmlEvent()
     {
         return this.xml;
@@ -75,5 +77,10 @@ public class ExampleEventFactory
     public String getXmlInvalidJaxb()
     {
         return xmlInvalidJaxb;
+    }
+
+    public String getXmlAdapted()
+    {
+        return xmlAdapted;
     }
 }

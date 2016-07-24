@@ -40,24 +40,12 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.TriggerKey.triggerKey;
-
-import java.text.ParseException;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.event.ForceTransactionRollbackException;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.event.*;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
@@ -65,12 +53,22 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.quartz.*;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.util.TimeZone;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.TriggerKey.triggerKey;
+
 /**
  * This test class supports the <code>Consumer</code> class.
  *
  * @author Ikasan Development Team
  */
 @DisallowConcurrentExecution
+@SuppressWarnings("unchecked")
 public class ScheduledConsumer<T>
         implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ResubmissionService<T>
 {
@@ -133,7 +131,7 @@ public class ScheduledConsumer<T>
     /**
      * Constructor
      *
-     * @param scheduler
+     * @param scheduler the Quartz Scheduler
      */
     public ScheduledConsumer(Scheduler scheduler)
     {
@@ -161,11 +159,7 @@ public class ScheduledConsumer<T>
                     + "] module [" + jobkey.getGroup()
                     + "] starting at [" + scheduledDate + "]");
         }
-        catch (SchedulerException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (ParseException e)
+        catch (SchedulerException | ParseException e)
         {
             throw new RuntimeException(e);
         }
@@ -204,11 +198,7 @@ public class ScheduledConsumer<T>
                 return false;
             }
             JobKey jobKey = jobDetail.getKey();
-            if (this.scheduler.checkExists(jobKey))
-            {
-                return true;
-            }
-            return false;
+            return this.scheduler.checkExists(jobKey);
         }
         catch (SchedulerException e)
         {
@@ -219,7 +209,7 @@ public class ScheduledConsumer<T>
     /**
      * Callback from the scheduler.
      *
-     * @param context
+     * @param context the JobExecutionContext
      */
     public void execute(JobExecutionContext context)
     {
@@ -248,7 +238,7 @@ public class ScheduledConsumer<T>
 
     /**
      * Invoke the eventListener with the incoming mes
-     * @param message
+     * @param message the message
      */
     public void invoke(T message)
     {
@@ -271,7 +261,7 @@ public class ScheduledConsumer<T>
         {
             // We need to restart the business schedule PRIOR to cancelling the recovery
             // otherwise the change in state on cancelling recovery reports the
-            // consumer as stopped as the business schedule isnt active.
+            // consumer as stopped as the business schedule isn't active.
             // Starting it before the cancel should not cause any issues
             // as we only allow one quartz callback at a time and so will get
             // blocked until this recovery schedule has completed.
@@ -294,7 +284,7 @@ public class ScheduledConsumer<T>
     /**
      * Quick workaround to determine if this consumer has been stopped as part of a pause
      * rather than stopped as part of a complete flow stop.
-     * @return
+     * @return true if the event listener is paused
      */
     protected boolean isPaused()
     {
@@ -302,7 +292,6 @@ public class ScheduledConsumer<T>
         {
             return ((Flow)eventListener).isPaused();
         }
-
         return false;
     }
 
@@ -351,14 +340,13 @@ public class ScheduledConsumer<T>
      * Override this is you want control over the flow event created by this
      * consumer
      *
-     * @param message
-     * @return
+     * @param message the message
+     * @return a FlowEvent created from the message
      */
     protected FlowEvent<?, ?> createFlowEvent(T message)
     {
-        FlowEvent<?, ?> flowEvent = this.flowEventFactory
+        return this.flowEventFactory
                 .newEvent(this.managedEventIdentifierService.getEventIdentifier(message), message);
-        return flowEvent;
     }
 
     /**
@@ -374,7 +362,7 @@ public class ScheduledConsumer<T>
                 withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount()).
                 build();
 
-        Date scheduledDate = null;
+        Date scheduledDate;
         if(this.scheduler.checkExists(triggerKey))
         {
             scheduledDate = scheduler.rescheduleJob(triggerKey, trigger);
@@ -417,8 +405,6 @@ public class ScheduledConsumer<T>
 
     /**
      * Set the consumer event listener
-     *
-     * @param eventListener
      */
     public void setListener(EventListener eventListener)
     {
@@ -464,14 +450,19 @@ public class ScheduledConsumer<T>
      */
     protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
     {
-        if(this.consumerConfiguration.isIgnoreMisfire())
-        {
-            return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing())
-                    .build();
-        }
+        TriggerBuilder triggerBuilder = newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup());
 
-        return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression))
-                .build();
+        CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
+        if (this.consumerConfiguration.isIgnoreMisfire())
+        {
+            cronScheduleBuilder.withMisfireHandlingInstructionDoNothing();
+        }
+        if (this.consumerConfiguration.getTimezone() != null && this.consumerConfiguration.getTimezone().length() > 0)
+        {
+            cronScheduleBuilder.inTimeZone(TimeZone.getTimeZone(this.consumerConfiguration.getTimezone()));
+        }
+        triggerBuilder.withSchedule(cronScheduleBuilder);
+        return triggerBuilder.build();
     }
 
     /* (non-Javadoc)

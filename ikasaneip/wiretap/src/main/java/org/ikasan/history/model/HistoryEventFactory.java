@@ -50,6 +50,7 @@ import java.util.Set;
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 
 /**
  * Factory for creating MessageHistoryEvents from FlowInvocationContext objects
@@ -59,11 +60,11 @@ import org.ikasan.spec.history.MessageHistoryEvent;
 public class HistoryEventFactory
 {
 
-    public List<MessageHistoryEvent<String, CustomMetric>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
+    public List<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
     {
 
-        List<MessageHistoryEvent<String, CustomMetric>> messageHistoryEvents 
-        	= new ArrayList<MessageHistoryEvent<String, CustomMetric>>();
+        List<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>> messageHistoryEvents
+        	= new ArrayList<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>>();
 
         for ( FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation : flowInvocationContext.getElementInvocations())
         {

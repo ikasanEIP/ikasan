@@ -40,11 +40,13 @@
  */
 package org.ikasan.history.dao;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
-
-import java.util.Date;
-import java.util.Set;
+import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * DAO contract for accessing Message History data
@@ -57,7 +59,13 @@ public interface MessageHistoryDao
      * Save a MessageHistoryEvent
      * @param messageHistoryEvent the event
      */
-    void save(MessageHistoryEvent messageHistoryEvent);
+    public void save(MessageHistoryEvent messageHistoryEvent);
+    
+    /**
+     * Save a MetricEvent
+     * @param wiretapEvent the event
+     */
+    public void save(WiretapEvent wiretapEvent);
 
 
     /**
@@ -75,7 +83,7 @@ public interface MessageHistoryDao
      * @param toDate the to datetime
      * @return a paged result set of MessageHistoryEvent
      */
-    PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+    public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
                                                                     Set<String> moduleNames, String flowName, String componentName,
                                                                     String eventId, String relatedEventId, Date fromDate, Date toDate);
 
@@ -91,19 +99,39 @@ public interface MessageHistoryDao
      * @param relatedEventId an optional relatedEventId to retrieve events that had the main eventId mutated
      * @return a paged result set of MessageHistoryEvent
      */
-    PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+    public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
                                                                   String eventId, String relatedEventId);
 
     /**
      * Delete all expired MessageHistoryEvents
      */
-    void deleteAllExpired();
+    public void deleteAllExpired();
 
     /**
      * Method to state that there are housekeepable records available.
      * @return true if so, false otherwise
      */
-    boolean housekeepablesExist();
+    public boolean housekeepablesExist();
 
 
+    /**
+     * Get the events that are ready to be house kept.
+     *
+     * @param transactionBatchSize
+     * @return
+     */
+    public List<MessageHistoryEvent> getHarvestableRecordsRecords(int transactionBatchSize);
+
+    /**
+     * Delete the events in the list.
+     *
+     * @param events
+     */
+    public void deleteHarvestableRecords(List<MessageHistoryEvent> events);
+
+    /**
+     * Method to state that there are harvestable records available.
+     * @return true if so, false otherwise
+     */
+    public boolean harvestableRecordsExist();
 }

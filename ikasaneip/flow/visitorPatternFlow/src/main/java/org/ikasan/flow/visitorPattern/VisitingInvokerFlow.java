@@ -64,6 +64,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of a Flow
@@ -75,6 +76,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 {
 	/** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
+
+    /** thread states */
+    private static Boolean ACTIVE = true;
+    private static Boolean INACTIVE = false;
     
     /** running state string constant */
     private static String RUNNING = "running";
@@ -146,6 +151,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** configured resource id */
     private String configuredResourceId;
 
+    /** map to keep track of active threads */
+    private ConcurrentHashMap<Long, Boolean> activeThreads = new ConcurrentHashMap<Long, Boolean>();
+
+    /** we don't want to wait for ever for the flow to stop. Default 30 seconds */
+    private long stopWaitTimeout = 30000;
+
     /**
      * Constructor
      * @param name
@@ -213,6 +224,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         
         this.configuredResourceId = this.moduleName + "-" + this.name;
+    }
+
+    /**
+     * Get the stop wait timeout
+     * @return
+     */
+    public long getStopWaitTimeout()
+    {
+        return stopWaitTimeout;
+    }
+
+    /**
+     * Set the stop wait timeout
+     * @param stopWaitTimeout
+     */
+    public void setStopWaitTimeout(long stopWaitTimeout)
+    {
+        this.stopWaitTimeout = stopWaitTimeout;
     }
 
     /**
@@ -344,8 +373,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
             
+            // configure the flow elements
+            configureFlowElements(this.flowConfiguration.getFlowElements());
+            
             // configure the flow itself
             this.flowConfiguration.configure(this);
+            
+            this.invokeContextListeners = this.flowPersistentConfiguration.getInvokeContextListeners();
 
             // register the errorReportingService with those components requiring it
             for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
@@ -387,6 +421,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
 
             this.flowConfiguration.configure(flowElement.getFlowComponent());
+        }
+    }
+    
+    /**
+     * Configure the given list of configured flowElements
+     * @param flowElements
+     */
+    private void configureFlowElements(List<FlowElement<?>> flowElements)
+    {
+        for(FlowElement<?> flowElement:flowElements)
+        {
+            // set the default configured resource id if none previously set.
+            if(flowElement.getConfiguredResourceId() == null)
+            {
+                flowElement.setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName() + "_element");
+            }
+
+            this.flowConfiguration.configure(flowElement);
         }
     }
 
@@ -541,7 +593,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         startManagedResourceFlowElements(flowElements);
     }
 
-    private void startManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements) {
+    private void startManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements)
+    {
         for(int index=flowElements.size()-1; index >= 0; index--)
         {
             FlowElement<ManagedResource> flowElement = flowElements.get(index);
@@ -575,6 +628,70 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     }
 
     /**
+     * Set the current threads state
+     *
+     * @param state
+     */
+    private void setThreadState(boolean state)
+    {
+        this.activeThreads.put(Thread.currentThread().getId(), state);
+    }
+
+    /**
+     * Determine if all threads are inactive
+     *
+     * @return
+     * @throws InterruptedException
+     */
+    private boolean allThreadInactive()
+    {
+        long currentTimeMillis = System.currentTimeMillis();
+
+        logger.info("Checking if threads are inactive.");
+
+        while(true)
+        {
+            boolean allInactive = true;
+            for(Long key: this.activeThreads.keySet())
+            {
+                boolean active = this.activeThreads.get(key);
+
+                logger.debug("Thread [" + key + "] is active [" + active + "]");
+
+                if(active)
+                {
+                    allInactive = false;
+                }
+            }
+
+            if(allInactive)
+            {
+                logger.info("All threads are inactive.");
+                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                return true;
+            }
+            else if(System.currentTimeMillis() - currentTimeMillis > this.stopWaitTimeout)
+            {
+                logger.info("Timed out waiting for threads to complete.");
+                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                return true;
+            }
+            else
+            {
+                try
+                {
+                    Thread.sleep(500);
+                    logger.debug("Sleeping waiting for threads to complete.");
+                }
+                catch (InterruptedException e)
+                {
+                    logger.error("Could not put thread to sleep when trying to determine if all threads are inactive.", e);
+                }
+            }
+        }
+    }
+
+    /**
      * Stop this flow
      */
     public void stop()
@@ -592,9 +709,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             // stop consumer and remove the listener
             Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
             consumer.stop();
-            consumer.setListener(null);
 
-            stopManagedResources();
+            if(this.allThreadInactive())
+            {
+                consumer.setListener(null);
+                stopManagedResources();
+            }
+
             logger.info("Stopped Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
@@ -609,6 +730,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public void invoke(FlowEvent<?,?> event)
     {
+        this.setThreadState(ACTIVE);
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
         flowInvocationContext.startFlowInvocation();
 
@@ -631,18 +753,19 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             else
             {
                 configureDynamicConfiguredResources();
-                invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
-                updateDynamicConfiguredResources();
-                if(this.recoveryManager.isRecovering())
-                {
-                    this.recoveryManager.cancel();
-                }
                 
                 // record the event so that it can be replayed if necessary.
                 if(this.getFlowConfiguration().getReplayRecordService() != null && this.flowPersistentConfiguration.getIsRecording())
                 {
                 	this.getFlowConfiguration().getReplayRecordService().record(event, this.moduleName, 
                 			this.name, this.flowPersistentConfiguration.getRecordedEventTimeToLive());
+                }
+                
+                invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
+                updateDynamicConfiguredResources();
+                if(this.recoveryManager.isRecovering())
+                {
+                    this.recoveryManager.cancel();
                 }
             }
             flowInvocationContext.endFlowInvocation();
@@ -654,8 +777,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         finally
         {
-            this.notifyFlowInvocationContextListeners(flowInvocationContext);
+            this.notifyFlowInvocationContextListenersEndFlow(flowInvocationContext);
             this.notifyMonitor();
+            this.setThreadState(INACTIVE);
         }
     }
     
@@ -686,7 +810,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         finally
         {
-            this.notifyFlowInvocationContextListeners(flowInvocationContext);
+            this.notifyFlowInvocationContextListenersEndFlow(flowInvocationContext);
             this.notifyMonitor();
         }
 	}
@@ -714,7 +838,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             try
             {
+               	
+            	notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+            	flowElementCaptureMetrics(flowElement);
                 flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                
             }
             catch (ClassCastException e)
             {
@@ -761,26 +889,72 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
         }
     }
+    
+    protected void flowElementCaptureMetrics(FlowElement flowElement)
+    {
+    	try
+    	{
+	    	if(flowElement.getConfiguration() != null)
+	    	{
+	    		flowElement.getFlowElementInvoker().setIgnoreContextInvocation(!((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics());
+	    	}
+	    	else
+	    	{
+	    		flowElement.getFlowElementInvoker().setIgnoreContextInvocation(true);
+	    	}
+    	} 
+        catch (RuntimeException e)
+        {
+        	flowElement.getFlowElementInvoker().setIgnoreContextInvocation(true);
+            logger.warn("Unable to set the ignore context invocation on flow element, defaulting to true and continuing", e);
+        }
+    }
 
     /**
      * Notify any FlowInvocationContextListeners that the flow has completed
      */
-    protected void notifyFlowInvocationContextListeners(FlowInvocationContext flowInvocationContext)
-    {
-        if (flowInvocationContextListeners != null && invokeContextListeners)
+    protected void notifyFlowInvocationContextListenersEndFlow(FlowInvocationContext flowInvocationContext)
+    {    	
+        if (flowInvocationContextListeners != null && this.invokeContextListeners)
         {
             for (FlowInvocationContextListener listener : flowInvocationContextListeners)
             {
                 try
                 {
                     listener.endFlow(flowInvocationContext);
-                } catch (RuntimeException e)
+                } 
+                catch (RuntimeException e)
                 {
                     logger.warn("Unable to invoke FlowInvocationContextListener, continuing", e);
                 }
             }
         }
 
+    }
+    
+    /**
+     * Notify any FlowInvocationContextListeners that to snap an event
+     */
+    protected void notifyFlowInvocationContextListenersSnapEvent(FlowElement flowElement, FlowEvent flowEvent)
+    {
+    	if(((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent() &&
+    			((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics())
+    	{
+	        if (flowInvocationContextListeners != null && this.invokeContextListeners)
+	        {
+	            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
+	            {
+	                try
+	                {
+	                    listener.snapEvent(flowElement, flowEvent);
+	                } 
+	                catch (RuntimeException e)
+	                {
+	                    logger.warn("Unable to invoke FlowInvocationContextListener snap event, continuing", e);
+	                }
+	            }
+	        }
+    	}
     }
 
 
