@@ -74,6 +74,7 @@ import org.quartz.SchedulerException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Integration testing for Recovery Manager implementation.
@@ -611,6 +612,11 @@ public class ScheduledRecoveryManagerIntegrationTest
     {
         @Override
         public Object find(String uri) {
+            return null;
+        }
+
+        @Override
+        public Map find(List uris) {
             return null;
         }
 
