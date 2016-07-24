@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.quartz;
 
-import org.apache.log4j.Logger;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 
 
@@ -53,10 +52,6 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
  */
 public class HashedEventIdentifierServiceImpl<T> implements ManagedEventIdentifierService<String, T>
 {
-    /**
-     * class logger
-     */
-    private static Logger logger = Logger.getLogger(HashedEventIdentifierServiceImpl.class);
 
     /*
      * (non-Javadoc)

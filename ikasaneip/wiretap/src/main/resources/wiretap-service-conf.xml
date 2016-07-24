@@ -64,23 +64,12 @@
 		class="org.ikasan.wiretap.service.WiretapServiceImpl">
 		<constructor-arg ref="wiretapDao" />
 		<constructor-arg ref="moduleService" />
-		<constructor-arg>
-		    <!-- wiretap factory -->
-		    <bean class="org.ikasan.wiretap.model.WiretapEventFactory">
-		        <!-- serializer -->
-		        <constructor-arg>
-		          <bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
-		              <constructor-arg>
-		                  <bean class="java.util.HashMap" />
-		              </constructor-arg>
-		          </bean>
-		        </constructor-arg>
-		    </bean>
-		</constructor-arg>
+		<constructor-arg ref ="wiretapEventFactory"/>
 	</bean>
 
     <bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
         <constructor-arg index="0" ref="messageHistoryDao"/>
+        <constructor-arg index="1" ref="wiretapEventFactory"/>
     </bean>
 	
 	<bean id="wiretapDao"
@@ -107,6 +96,7 @@
             <list>
                 <value>org/ikasan/history/model/History.hbm.xml</value>
                 <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
+                <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -137,6 +127,17 @@
 
     <bean id="wiretapJob" class="org.ikasan.trigger.service.WiretapEventJob">
         <constructor-arg ref="wiretapService" />
+    </bean>
+    
+    <bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactory">
+        <!-- serializer -->
+        <constructor-arg>
+          <bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+              <constructor-arg>
+                  <bean class="java.util.HashMap" />
+              </constructor-arg>
+          </bean>
+        </constructor-arg>
     </bean>
 
 </beans>

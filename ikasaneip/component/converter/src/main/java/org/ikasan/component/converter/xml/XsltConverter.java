@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.converter.xml;
 
-// NOTE THIS IS A TEMPORARY PORT OF AN IKASAN 0.8x component that is not yet available in 0.9.x
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Reader;
@@ -75,7 +75,7 @@ import org.xml.sax.XMLReader;
  * This implementation is notable for the following reasons:
  *
  * <ol>
- * <li>It is intended to be threadsafe with respect to the underlying {@link javax.xml.transform.Transformer} as a new
+ * <li>This implementaiton is not threadsafe! It creates a {@link javax.xml.transform.Transformer} as a new
  * instance is created for every payload. Each instance of this class will associate to one and only one style sheet
  * during its life, and as such instances will be good for only one type of transformation only.</li>
  * <br>
@@ -172,6 +172,7 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
     private Converter<Object, Map<String, String>> parameterExtractor;
 
     private Converter<XsltConverterConfiguration, Map<String,String>> configurationParameterConverter;
+
     /**
      * Constructor
      *

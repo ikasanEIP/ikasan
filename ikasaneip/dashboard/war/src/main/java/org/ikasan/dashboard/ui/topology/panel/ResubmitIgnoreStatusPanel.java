@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -118,7 +119,7 @@ public class ResubmitIgnoreStatusPanel extends Panel
 	
 	private IndexedContainer tableContainer;
 	
-	private FilterTable replayEventsTable;
+	private FilterTable exclusionEventsTable;
 	
 	private Container container;
 	private String action;
@@ -135,7 +136,7 @@ public class ResubmitIgnoreStatusPanel extends Panel
 	
 	private boolean cancelled = false;
 	
-	public ResubmitIgnoreStatusPanel(List<ExclusionEvent> replayEvents,
+	public ResubmitIgnoreStatusPanel(List<ExclusionEvent> exclusionEvents,
 			TopologyService topologyService, ErrorReportingService errorReportingService,
 			ErrorReportingManagementService errorReportingManagementService, 
 			ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
@@ -143,7 +144,7 @@ public class ResubmitIgnoreStatusPanel extends Panel
 	{
 		super();
 		
-		this.exclusionEvents = replayEvents;
+		this.exclusionEvents = exclusionEvents;
 		if(this.exclusionEvents == null)
 		{
 			throw new IllegalArgumentException("replayEvents cannot be null!");
@@ -194,7 +195,7 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		cont.addContainerProperty("Module Name", String.class,  null);
 		cont.addContainerProperty("Flow Name", String.class,  null);
 		cont.addContainerProperty("Error URI", String.class,  null);
-		cont.addContainerProperty("Error Message", String.class,  null);
+//		cont.addContainerProperty("Error Message", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
 		cont.addContainerProperty("", Label.class,  null);
 		
@@ -410,26 +411,26 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		formLayout.addComponent(bar, 0, 4, 1, 4);
 		formLayout.setComponentAlignment(bar, Alignment.MIDDLE_CENTER);
 		
-		this.replayEventsTable = new FilterTable();
-		this.replayEventsTable.setFilterBarVisible(true);
-		this.replayEventsTable.setWidth("100%");
-		this.replayEventsTable.setHeight("600px");
-		this.replayEventsTable.addStyleName(ValoTheme.TABLE_SMALL);
-		this.replayEventsTable.addStyleName("ikasan");
+		this.exclusionEventsTable = new FilterTable();
+		this.exclusionEventsTable.setFilterBarVisible(true);
+		this.exclusionEventsTable.setWidth("100%");
+		this.exclusionEventsTable.setHeight("600px");
+		this.exclusionEventsTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.exclusionEventsTable.addStyleName("ikasan");
 		
-		this.replayEventsTable.setColumnExpandRatio("Module Name", .14f);
-		this.replayEventsTable.setColumnExpandRatio("Flow Name", .18f);
-		this.replayEventsTable.setColumnExpandRatio("Error URI", .18f);
-		this.replayEventsTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
-		this.replayEventsTable.setColumnExpandRatio("Timestamp", .1f);
-		this.replayEventsTable.setColumnExpandRatio("", .05f);
+		this.exclusionEventsTable.setColumnExpandRatio("Module Name", .14f);
+		this.exclusionEventsTable.setColumnExpandRatio("Flow Name", .18f);
+		this.exclusionEventsTable.setColumnExpandRatio("Error URI", .18f);
+//		this.exclusionEventsTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
+		this.exclusionEventsTable.setColumnExpandRatio("Timestamp", .1f);
+		this.exclusionEventsTable.setColumnExpandRatio("", .05f);
 		
-		this.replayEventsTable.addStyleName("wordwrap-table");
-		this.replayEventsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		this.replayEventsTable.setPageLength(100);
+		this.exclusionEventsTable.addStyleName("wordwrap-table");
+		this.exclusionEventsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		this.exclusionEventsTable.setPageLength(100);
 		
 		tableContainer = this.buildContainer();
-		this.replayEventsTable.setContainerDataSource(tableContainer);
+		this.exclusionEventsTable.setContainerDataSource(tableContainer);
 		
 		this.populateTable();
 		
@@ -438,20 +439,29 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		layout.setMargin(true);
 		
 		layout.addComponent(formLayout);
-		layout.addComponent(this.replayEventsTable);
+		layout.addComponent(this.exclusionEventsTable);
 		
 		this.setContent(layout);
 	}
 	
 	protected void populateTable()
 	{
+		List<String> errorUris = new ArrayList<String>();
+
+//		for(final ExclusionEvent exclusionEvent: exclusionEvents)
+//		{
+//			errorUris.add(exclusionEvent.getErrorUri());
+//		}
+//
+//		Map<String, ErrorOccurrence> errorOccurrences = this.errorReportingService.find(errorUris);
+
 		for(final ExclusionEvent exclusionEvent: exclusionEvents)
     	{
     		Date date = new Date(exclusionEvent.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
-    	    final ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
+//    	    final ErrorOccurrence errorOccurrence = errorOccurrences.get(exclusionEvent.getErrorUri());
     	    
     	    Item item = this.tableContainer.addItem(exclusionEvent);			            	    
     	    
@@ -459,17 +469,17 @@ public class ResubmitIgnoreStatusPanel extends Panel
 			item.getItemProperty("Flow Name").setValue(exclusionEvent.getFlowName());
 			item.getItemProperty("Error URI").setValue(exclusionEvent.getErrorUri());
 			
-			if(errorOccurrence != null && errorOccurrence.getErrorMessage() != null)
-			{
-				if(errorOccurrence.getErrorMessage().length() > 500)
-				{
-					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage().substring(0, 500));
-				}
-				else
-				{
-					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
-				}
-			}
+//			if(errorOccurrence != null && errorOccurrence.getErrorMessage() != null)
+//			{
+//				if(errorOccurrence.getErrorMessage().length() > 500)
+//				{
+//					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage().substring(0, 500));
+//				}
+//				else
+//				{
+//					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
+//				}
+//			}
 			
 			item.getItemProperty("Timestamp").setValue(timestamp);    	    	    	    
     	}
@@ -678,7 +688,7 @@ public class ResubmitIgnoreStatusPanel extends Panel
 	            			Item item = tableContainer.getItem(exclusionEvent);
 	            			item.getItemProperty("").setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
 	            			
-	            			replayEventsTable.setCurrentPageFirstItemId(item);
+	            			exclusionEventsTable.setCurrentPageFirstItemId(item);
 	            			
 	            			
 	            			float current = count / exclusionEvents.size();

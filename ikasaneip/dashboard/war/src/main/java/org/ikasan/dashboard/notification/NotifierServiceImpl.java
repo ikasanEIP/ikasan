@@ -149,10 +149,9 @@ public class NotifierServiceImpl implements NotifierService
 	@Override
 	public void start()
 	{
-		String notificationInterval = this.platformConfigurationService.getConfigurationValue("notificationIntervalMinutes");
-		
 		try
 		{
+			String notificationInterval = this.platformConfigurationService.getConfigurationValue("notificationIntervalMinutes");
 			notificationIntervalMinutes = Integer.parseInt(notificationInterval);
 		}
 		catch (Exception e) 

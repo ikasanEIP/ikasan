@@ -44,7 +44,7 @@ public class CustomMetric
 	}
 	
 	/**
-	 * @return the messageHistoryFlowEventId
+	 * @return the messageHistoryFlowEvent
 	 */
 	public MessageHistoryFlowEvent getMessageHistoryFlowEvent()
 	{
@@ -52,7 +52,7 @@ public class CustomMetric
 	}
 	
 	/**
-	 * @param messageHistoryFlowEventId the messageHistoryFlowEventId to set
+	 * @param messageHistoryFlowEvent the messageHistoryFlowEvent to set
 	 */
 	public void setMessageHistoryFlowEvent(MessageHistoryFlowEvent messageHistoryFlowEvent) 
 	{

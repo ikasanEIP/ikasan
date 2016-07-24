@@ -60,6 +60,12 @@ public interface FilteredMessageDao
     public void save(FilterEntry message);
 
     /**
+     * Save or update a message.
+     * @param message
+     */
+    public void saveOrUpdate(FilterEntry message);
+
+    /**
      * Try to find {@link FilterEntry} by its id: clientId and
      * criteria.
      *
@@ -69,6 +75,16 @@ public interface FilteredMessageDao
      *         found in persistence.
      */
     public FilterEntry findMessage(FilterEntry message);
+
+    /**
+     * Try to find a List of{@link FilterEntry} by its id: clientId.
+     *
+     * @param clientId of {@link FilterEntry}s to be found
+     *
+     * @return The found List of {@link FilterEntry} or null if nothing
+     *         found in persistence.
+     */
+    public List<FilterEntry> findMessages(String clientId);
 
     /**
      * Delete expired Filter Entries from persistence 

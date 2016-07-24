@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.3-SNAPSHOT</version>
     </parent>
     
   <artifactId>ikasan-error-reporting-service</artifactId>
@@ -148,6 +148,12 @@
           <artifactId>log4j</artifactId>
           <scope>provided</scope>
       </dependency>
+
+      <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+      </dependency>
+
 
       <!-- Test dependencies -->
       <!-- logging -->

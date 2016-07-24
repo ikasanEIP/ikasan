@@ -97,7 +97,7 @@ public class PersistenceServiceImplTest
     @Test
     public void test_post_baseline_install_and_status() throws PersistenceServiceException
     {
-    	// Please not this test will need to change after post baseline changes are made.
+    	// Please note this test will need to change after post baseline changes are made.
     	boolean status = this.persistenceService.postBaselinePersistenceChangesRequired();
     	
     	Assert.assertFalse(status);
