@@ -80,9 +80,9 @@ public class ErrorReportingManagementServiceImplTest {
     ErrorManagementDao errorManagementDao;
 
     @Resource
-    ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
 
-    @Resource
+    @Resource 
     ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
 
     List<String> uris;

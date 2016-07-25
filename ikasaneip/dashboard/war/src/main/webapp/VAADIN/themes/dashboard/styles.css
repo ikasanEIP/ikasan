@@ -13174,6 +13174,18 @@ div.v-layout.v-horizontal.v-widget {
     background: rgba(255, 0, 0, 0.3);
 }
 
+.dashboard .v-table-cell-content-ikasan-blue-small {
+	font-size: 11px;
+	background-color: rgba(0, 0, 255, 0.2);
+	font-size: 9px;
+	vertical-align: top;
+}
+
+
+.dashboard .v-table-row-ikasan-blue-small:hover, .v-table-row-odd-ikasan-blue-small:hover {
+	background: rgba(0, 0, 255, 0.3);
+}
+
 .dashboard .v-table-cell-content-ikasan-orange-small {
 	font-size: 11px;
 	background-color: rgba(255, 153, 0, 0.2);
@@ -13225,10 +13237,9 @@ div.v-layout.v-horizontal.v-widget {
 	color: yellow;
 }
 
-.dashboard .v-tree-node-caption-orangeicon {
-	color: orange;
+.dashboard .v-tree-node-caption-blueicon {
+	color: blue;
 }
-
 .dashboard .v-tree-node-caption-greenicon {
 	color: green;
 }

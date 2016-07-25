@@ -69,7 +69,7 @@ import javax.annotation.Resource;
 public class HibernateErrorReportingServiceDaoTest
 {
     @Resource
-    ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
 
     Exception exception = new Exception("failed error occurence msg");
 

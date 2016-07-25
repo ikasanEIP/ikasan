@@ -496,7 +496,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
     		final ExclusionsTab exclusionsTab = new ExclusionsTab(this.errorReportingService, this.errorReportingManagementService,
     				this.exclusionManagementService, this.hospitalManagementService, this.topologyService,
-    				this.treeViewBusinessStreamCombo, this.hospitalService);
+    				this.treeViewBusinessStreamCombo, this.hospitalService, this.platformConfigurationService);
 
     		exclusionsTab.createLayout();
     		exclusionsTab.applyFilter();
@@ -605,7 +605,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    			}
 	    			else if (state != null && state.equals(STOPPED))
 	    			{
-	    				return "redicon";
+	    				return "blueicon";
 	    			}
 	    			else if (state != null && state.equals(STOPPED_IN_ERROR))
 	    			{

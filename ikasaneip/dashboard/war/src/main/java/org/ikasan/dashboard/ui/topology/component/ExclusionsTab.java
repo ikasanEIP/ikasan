@@ -45,12 +45,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -59,6 +54,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.server.*;
+import com.vaadin.shared.Position;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -79,6 +76,7 @@ import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.hospital.service.HospitalService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -95,12 +93,6 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Resource;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -117,6 +109,7 @@ import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
+import sun.management.Agent;
 
 /**
  * 
@@ -142,6 +135,8 @@ public class ExclusionsTab extends TopologyTab
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
 	private TopologyService topologyService;
+
+	private PlatformConfigurationService platformConfigurationService;
 	
 	private IndexedContainer container = null;
 	
@@ -153,7 +148,8 @@ public class ExclusionsTab extends TopologyTab
 	
 	
 	public ExclusionsTab(ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo, HospitalService<byte[]> hospitalService)
+			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService, ComboBox businessStreamCombo, HospitalService<byte[]> hospitalService,
+						 PlatformConfigurationService platformConfigurationService)
 	{
 		this.errorReportingService = errorReportingService;
 		this.errorReportingManagementService = errorReportingManagementService;
@@ -162,6 +158,7 @@ public class ExclusionsTab extends TopologyTab
 		this.topologyService = topologyService;
 		this.businessStreamCombo = businessStreamCombo;
 		this.hospitalService = hospitalService;
+		this.platformConfigurationService = platformConfigurationService;
 	}
 	
 	protected IndexedContainer buildContainer() 
@@ -596,16 +593,47 @@ public class ExclusionsTab extends TopologyTab
     	}
     	
     	List<ExclusionEvent> exclusionEvents = exclusionManagementService.find(modulesNames,
-    			flowNames, fromDate.getValue(),  toDate.getValue(), null);
-    	
+    			flowNames, fromDate.getValue(),  toDate.getValue(), null, platformConfigurationService.getSearchResultSetSize());
+
+		Long resultSize = exclusionManagementService.count(modulesNames,
+				flowNames, fromDate.getValue(),  toDate.getValue(), null);
+
     	searchResultsSizeLayout.removeAllComponents();
-    	this.resultsLabel = new Label("Number of records returned: " + exclusionEvents.size() + " of " + exclusionEvents.size());
+    	this.resultsLabel = new Label("Number of records returned: " + exclusionEvents.size() + " of " + resultSize);
     	searchResultsSizeLayout.addComponent(this.resultsLabel);
+
+		Map<String, ErrorOccurrence> errorOccurrences = null;
+
+		if(resultSize > platformConfigurationService.getSearchResultSetSize())
+		{
+			Notification notif = new Notification(
+					"Warning",
+					"The number of results returned by this search exceeds the configured search " +
+							"result size of " + platformConfigurationService.getSearchResultSetSize() + " records. " +
+							"You can narrow the search with a filter or by being more accurate with the date and time range. ",
+					Type.HUMANIZED_MESSAGE);
+			notif.setDelayMsec(-1);
+			notif.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+			notif.setPosition(Position.MIDDLE_CENTER);
+
+			notif.show(Page.getCurrent());
+		}
     	
     	if(exclusionEvents == null || exclusionEvents.size() == 0)
     	{
     		Notification.show("The exclusions search returned no results!", Type.ERROR_MESSAGE);
     	}
+		else
+		{
+			List<String> errorUris = new ArrayList<String>();
+
+			for(final ExclusionEvent exclusionEvent: exclusionEvents)
+			{
+				errorUris.add(exclusionEvent.getErrorUri());
+			}
+
+			errorOccurrences = this.errorReportingService.find(errorUris);
+		}
 
     	for(final ExclusionEvent exclusionEvent: exclusionEvents)
     	{
@@ -613,7 +641,7 @@ public class ExclusionsTab extends TopologyTab
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
-    	    final ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
+    	    final ErrorOccurrence errorOccurrence = errorOccurrences.get(exclusionEvent.getErrorUri());
     	    
     	    Item item = container.addItem(exclusionEvent);			            	    
     	    
@@ -710,8 +738,12 @@ public class ExclusionsTab extends TopologyTab
     			if(container.getType(propertyId) == String.class)
 	    		{
     				Property property = item.getItemProperty(propertyId);
-    				
-    				if(((String)property.getValue()).length() > 300)
+
+					if(property == null || property.getValue() == null)
+					{
+						sb.append("|").append("NULL");
+					}
+    				else if(((String)property.getValue()).length() > 300)
     				{
     					sb.append("|").append("{code}").append((String)property.getValue()).append("{code}");
     				}

@@ -54,7 +54,7 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public class MapErrorReportingServiceDao<T>
-        implements ErrorReportingServiceDao<ErrorOccurrence>
+        implements ErrorReportingServiceDao<ErrorOccurrence, String>
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(MapErrorReportingServiceDao.class);
@@ -112,9 +112,15 @@ public class MapErrorReportingServiceDao<T>
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
-	 */
+
+    @Override
+    public Map find(List uris) {
+        return null;
+    }
+
+    /* (non-Javadoc)
+         * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+         */
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName,
 			List<String> flowName, List<String> flowElementname,
