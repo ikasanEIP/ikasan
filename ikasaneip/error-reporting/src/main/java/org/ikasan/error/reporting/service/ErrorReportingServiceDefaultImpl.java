@@ -48,6 +48,7 @@ import org.ikasan.spec.serialiser.Serialiser;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Default implementation of the ErrorReportingService.
@@ -63,7 +64,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     String flowName;
 
     /** handle to the underlying DAO */
-    ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
 
     /** allow override of timeToLive */
     Long timeToLive = ErrorReportingService.DEFAULT_TIME_TO_LIVE;
@@ -78,7 +79,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param serialiser
      * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao)
     {
         this(serialiser,errorReportingServiceDao);
         this.moduleName = moduleName;
@@ -99,7 +100,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param serialiser
      * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao)
     {
         this.serialiser = serialiser;
         if(serialiser == null)
@@ -136,6 +137,12 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     public ErrorOccurrence find(String uri)
     {
         return this.errorReportingServiceDao.find(uri);
+    }
+
+    @Override
+    public Map<String, ErrorOccurrence> find(List<String> uris)
+    {
+        return this.errorReportingServiceDao.find(uris);
     }
 
     @Override

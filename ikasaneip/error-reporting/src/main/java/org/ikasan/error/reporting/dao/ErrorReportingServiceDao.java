@@ -42,6 +42,7 @@ package org.ikasan.error.reporting.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
@@ -51,14 +52,23 @@ import org.hibernate.criterion.Projections;
  *
  * @author Ikasan Development Team
  */
-public interface ErrorReportingServiceDao<EVENT> {
+public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
+
     /**
      * Find an error reporting event instance from the incoming uri.
      *
      * @param uri
      * @return EVENT
      */
-    public EVENT find(String uri);
+    public EVENT find(IDENTIFIER uri);
+
+    /**
+     * Find a map of error reporting event instances from the incoming uris.
+     *
+     * @param uris
+     * @return EVENT
+     */
+    public Map<IDENTIFIER, EVENT> find(List<IDENTIFIER> uris);
 
     /**
      * Find an error reporting events based on a list of moduleName, flowName and flowElementName
