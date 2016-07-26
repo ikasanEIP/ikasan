@@ -82,6 +82,9 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     /** handle to mongoDB instance */
     protected DB mongoDatabase;
 
+    /** set if the setter on MongoClient is used (so we don't close it) */
+    protected boolean mongoClientSet = false;
+
     /**
      * bson transformers that will be used when encoding from java types to bson
      **/
@@ -121,7 +124,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
             mongoClientProxy.start(this);
             mongoClient = mongoClientProxy.getMongoClient();
         }
-        else
+        else if (mongoClient == null)
         {
             mongoClient = MongoClientFactory.getMongoClient(configuration);
         }
@@ -152,7 +155,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         }
         else
         {
-            if (this.mongoClient != null)
+            if (this.mongoClient != null && !mongoClientSet)
             {
                 this.mongoClient.close();
                 this.mongoClient = null;
@@ -236,4 +239,9 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         return mongoClient;
     }
 
+    public void setMongoClient(MongoClient mongoClient)
+    {
+        this.mongoClient = mongoClient;
+        this.mongoClientSet = true;
+    }
 }
