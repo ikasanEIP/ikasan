@@ -733,9 +733,16 @@ public class ErrorOccurrenceTab extends TopologyTab
     		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getModuleName()).append("\",");
     		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getFlowName()).append("\",");
     		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getFlowElementName()).append("\",");
-    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getErrorMessage().length() > 32760 ?
-    				((ErrorOccurrence)errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"").substring(0, 32759) :
-    					((ErrorOccurrence)errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"")).append("\",");
+
+			if(((ErrorOccurrence)errorOccurrence).getErrorMessage() != null) {
+				sb.append("\"").append(((ErrorOccurrence) errorOccurrence).getErrorMessage().length() > 32760 ?
+						((ErrorOccurrence) errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"").substring(0, 32759) :
+						((ErrorOccurrence) errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"")).append("\",");
+			}
+			else
+			{
+				sb.append("\"").append("NULL").append("\",");
+			}
     		
     		Date date = new Date(((ErrorOccurrence)errorOccurrence).getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
@@ -854,7 +861,14 @@ public class ErrorOccurrenceTab extends TopologyTab
     	    item.getItemProperty("Module Name").setValue(errorOccurrence.getModuleName());
 			item.getItemProperty("Flow Name").setValue(errorOccurrence.getFlowName());
 			item.getItemProperty("Component Name").setValue(errorOccurrence.getFlowElementName());
-			item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
+			if(errorOccurrence.getErrorMessage() != null && errorOccurrence.getErrorMessage().length() > 1000)
+			{
+				item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage().substring(0, 1000));
+			}
+			else
+			{
+				item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
+			}
 			item.getItemProperty("Timestamp").setValue(timestamp);
 						
 			HorizontalLayout layout = new HorizontalLayout();
