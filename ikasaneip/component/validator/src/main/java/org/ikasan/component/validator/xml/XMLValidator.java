@@ -109,6 +109,9 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
      * @param factory - pre configured document builder factory
      */
     public XMLValidator(final DocumentBuilderFactory factory) {
+        System.setProperty("org.apache.xerces.xni.parser.XMLParserConfiguration",
+                "org.apache.xerces.parsers.XMLGrammarCachingConfiguration");
+
         this.factory = factory;
         if (this.factory == null) {
             throw new IllegalArgumentException("document builder factory cannot be 'null'.");
