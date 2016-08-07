@@ -66,6 +66,11 @@
             <artifactId>Saxon-HE</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
+
         <!-- for jaxb -->
         <dependency>
             <groupId>org.springframework</groupId>
