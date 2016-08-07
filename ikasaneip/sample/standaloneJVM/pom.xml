@@ -43,11 +43,11 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-parent</artifactId>
-        <version>1.2.4</version>
+        <version>1.2.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-sample-standaloneJVM</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration Sample</name>
 
