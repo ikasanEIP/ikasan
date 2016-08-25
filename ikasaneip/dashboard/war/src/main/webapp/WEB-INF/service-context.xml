@@ -114,6 +114,24 @@
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
+
+	<bean id="wiretapService"
+		  class="org.ikasan.wiretap.service.WiretapServiceImpl">
+		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="moduleService" />
+		<constructor-arg ref ="wiretapEventFactory"/>
+	</bean>
+
+	<bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactory">
+		<!-- serializer -->
+		<constructor-arg>
+			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+				<constructor-arg>
+					<bean class="java.util.HashMap" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
 	
 	<bean id="wiretapDao"
 		class="org.ikasan.wiretap.dao.HibernateWiretapDao">

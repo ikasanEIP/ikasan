@@ -43,7 +43,7 @@ package org.ikasan.exclusion.model;
 import java.util.Arrays;
 
 /**
- * ExclusionEvent model instance.
+ * ExclusionEvent window instance.
  *
  * @author Ikasan Development Team
  */

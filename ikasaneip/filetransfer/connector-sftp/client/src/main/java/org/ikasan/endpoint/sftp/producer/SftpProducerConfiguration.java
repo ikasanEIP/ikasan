@@ -41,7 +41,7 @@
 package org.ikasan.endpoint.sftp.producer;
 
 /**
- * SFTP Producer Configuration model.
+ * SFTP Producer Configuration window.
  * 
  * @author Ikasan Development Team
  */

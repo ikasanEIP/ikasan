@@ -113,7 +113,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      *
      * @see
      * org.ikasan.framework.systemevent.dao.SystemFlowEventDao#save(org.ikasan
-     * .framework.systemevent.model.SystemFlowEvent)
+     * .framework.systemevent.window.SystemFlowEvent)
      */
     public void save(SystemEvent systemEvent)
     {

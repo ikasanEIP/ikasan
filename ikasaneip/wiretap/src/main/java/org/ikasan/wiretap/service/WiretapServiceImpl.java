@@ -45,7 +45,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.management.HousekeeperService;
+import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -59,7 +59,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean, HousekeeperService
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean, HousekeepService
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
@@ -215,9 +215,22 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
 		return this.wiretapDao.housekeepablesExist();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.wiretap.WiretapService#housekeep()
-	 */
+    @Override
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        wiretapDao.setBatchHousekeepDelete(true);
+        wiretapDao.setHousekeepingBatchSize(housekeepingBatchSize);
+    }
+
+    @Override
+    public void setTransactionBatchSize(Integer transactionBatchSize)
+    {
+        wiretapDao.setTransactionBatchSize(transactionBatchSize);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.wiretap.WiretapService#housekeep()
+     */
 	@Override
     public void housekeep()
     {

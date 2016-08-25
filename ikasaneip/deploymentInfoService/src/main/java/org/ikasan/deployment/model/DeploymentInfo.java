@@ -43,7 +43,7 @@ package org.ikasan.deployment.model;
 import java.io.Serializable;
 
 /**
- * Data model representing the deployment information around a module
+ * Data window representing the deployment information around a module
  * in a high availability runtime environment.
  * This module depicts the logical cluster name within which the module is deployed, 
  * the module name and the server name the module is deployed to.

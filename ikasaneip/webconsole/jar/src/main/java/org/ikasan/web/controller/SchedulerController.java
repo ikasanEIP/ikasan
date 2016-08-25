@@ -100,7 +100,7 @@ public class SchedulerController
      *
      * Warning is suppressed because ModelMap does not support Generics
      *
-     * @return model and view to go to next ("admin/viewScheduler")
+     * @return window and view to go to next ("admin/viewScheduler")
      * @throws Exception - Catch all
      */
     @SuppressWarnings("unchecked")

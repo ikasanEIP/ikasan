@@ -196,7 +196,7 @@ public class HibernateFileChunkDao implements FileChunkDao
     /*
      * (non-Javadoc)
      * 
-     * @see chunkedFtp.dao.FileChunkDao#load(chunkedFtp.model.FileConstituentHandle)
+     * @see chunkedFtp.dao.FileChunkDao#load(chunkedFtp.window.FileConstituentHandle)
      */
     public FileChunk load(FileConstituentHandle fileConstituentHandle) throws ChunkLoadException
     {
@@ -319,7 +319,7 @@ public class HibernateFileChunkDao implements FileChunkDao
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.connector.util.chunking.model.dao.FileChunkDao#delete(org.ikasan.connector.util.chunking.model.FileChunkHeader)
+     * @see org.ikasan.connector.util.chunking.window.dao.FileChunkDao#delete(org.ikasan.connector.util.chunking.window.FileChunkHeader)
      */
     public void delete(FileChunkHeader fileChunkHeader)
     {
