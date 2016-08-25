@@ -209,7 +209,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.dao.service.ConfigurationService#update(org.ikasan.framework.dao.model.Configuration)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#update(org.ikasan.framework.dao.window.Configuration)
      */
     public void update(ConfiguredResource configuredResource)
     {
@@ -261,7 +261,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.dao.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.model.
+     * @see org.ikasan.framework.dao.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.window.
      * Configuration)
      */
     public void deleteConfiguration(Configuration configuration)
@@ -273,7 +273,7 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.dao.service.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.model.Configuration
+     * org.ikasan.framework.dao.service.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.window.Configuration
      * )
      */
     public void saveConfiguration(Configuration configuration)

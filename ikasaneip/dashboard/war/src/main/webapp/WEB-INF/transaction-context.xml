@@ -47,6 +47,10 @@
                 expression="execution(* org.ikasan.hospital.service.HospitalManagementService.*(..))"/>
         <aop:pointcut id="replayServiceMethods"
                 expression="execution(* org.ikasan.replay.service.*.*(..))"/>
+        <aop:pointcut id="housekeepingServiceMethods"
+                      expression="execution(* org.ikasan.housekeeping.HousekeepService.*(..))"/>
+        <aop:pointcut id="platformConfigurationServiceMethods"
+                      expression="execution(* org.ikasan.spec.configuration.PlatformConfigurationService.*(..))"/>
 
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalManagementServiceMethods"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalServiceMethods"/>
@@ -62,6 +66,8 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="startupControlServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="replayServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="housekeepingServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="platformConfigurationServiceMethods"/>
         
     </aop:config>
 

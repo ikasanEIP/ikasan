@@ -41,7 +41,7 @@
 package org.ikasan.sample.genericTechDrivenPriceSrc.tech;
 
 /**
- * This demonstrates a stubbed tech data model as
+ * This demonstrates a stubbed tech data window as
  * such would be utilised and transmitted by any system/application API.
  * 
  * @author Ikasan Development Team

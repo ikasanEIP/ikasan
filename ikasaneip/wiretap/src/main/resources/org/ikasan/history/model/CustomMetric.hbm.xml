@@ -57,9 +57,9 @@
             <generator class="identity"/>
         </id>
         		  
-        <many-to-one name="messageHistoryFlowEvent" class="org.ikasan.history.model.MessageHistoryFlowEvent" fetch="select">
+        <!--many-to-one name="messageHistoryFlowEvent" class="org.ikasan.history.window.MessageHistoryFlowEvent" fetch="select">
             <column name="MessageHistoryId" not-null="false" />
-        </many-to-one>
+        </many-to-one-->
 
         <property name="name"        type="java.lang.String"
                   column="Name"      not-null="true"/>

@@ -272,6 +272,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-scheduler</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 		</dependency>

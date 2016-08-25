@@ -43,6 +43,8 @@ package org.ikasan.replay.service;
 import java.util.Date;
 import java.util.List;
 
+
+import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
@@ -51,16 +53,20 @@ import org.ikasan.spec.replay.ReplayManagementService;
 
 
 /**
- * 
+ * Replay management service implementatiom.
+ *
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>
+public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>, HousekeepService
 {
 	/** the underlying dao **/
 	private ReplayDao replayDao;
 	
-	
+	private Integer housekeepingBatchSize = 200;
+
+	private Integer transactionBatchSize = 1000;
+
 	/**
 	 * Constructor
 	 * 
@@ -75,10 +81,10 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 			throw new IllegalArgumentException("repalyDao cannot be null!");
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(java.util.List, java.util.List, java.lang.String, java.lang.String, java.sql.Date, java.sql.Date)
-	 */
+         * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(java.util.List, java.util.List, java.lang.String, java.lang.String, java.sql.Date, java.sql.Date)
+         */
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
 			List<String> flowNames, String eventId,
@@ -124,6 +130,34 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 		return this.replayDao.getNumberReplayAuditEventsByAuditId(id);
 	}
 
-	
+	@Override
+	public void housekeep()
+	{
+		int deleted = 0;
 
+		while(deleted < this.transactionBatchSize)
+		{
+			this.replayDao.housekeep(housekeepingBatchSize);
+
+			deleted = deleted + this.housekeepingBatchSize;
+		}
+	}
+
+	@Override
+	public boolean housekeepablesExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+	{
+		this.housekeepingBatchSize = housekeepingBatchSize;
+	}
+
+	@Override
+	public void setTransactionBatchSize(Integer transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
 }

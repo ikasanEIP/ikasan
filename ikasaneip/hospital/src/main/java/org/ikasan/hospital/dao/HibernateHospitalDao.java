@@ -61,7 +61,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 {
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.hospital.dao.HospitalDao#saveOrUpdate(org.ikasan.hospital.model.ExclusionEventAction)
+	 * @see org.ikasan.hospital.dao.HospitalDao#saveOrUpdate(org.ikasan.hospital.window.ExclusionEventAction)
 	 */
 	@Override
 	public void saveOrUpdate(ExclusionEventAction exclusionEventAction)

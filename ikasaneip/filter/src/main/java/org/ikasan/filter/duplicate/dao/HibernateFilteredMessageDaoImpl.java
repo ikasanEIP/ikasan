@@ -86,7 +86,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     /*
          * (non-Javadoc)
-         * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.model.FilterEntry)
+         * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.window.FilterEntry)
          */
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
@@ -113,7 +113,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#save(org.ikasan.filter.duplicate.model.FilterEntry)
+     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#save(org.ikasan.filter.duplicate.window.FilterEntry)
      */
     public void save(FilterEntry message)
     {

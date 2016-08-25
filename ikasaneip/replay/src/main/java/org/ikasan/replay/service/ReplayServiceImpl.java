@@ -21,7 +21,12 @@ import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
 
 
-
+/**
+ * Replay service implementation.
+ *
+ * @author Ikasan Development Team
+ *
+ */
 public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent> 
 {
 	private Logger logger = Logger.getLogger(ReplayService.class);

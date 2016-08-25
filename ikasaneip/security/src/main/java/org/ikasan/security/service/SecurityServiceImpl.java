@@ -99,7 +99,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#savePrincipal(org.ikasan.security.model.IkasanPrincipal)
+     * @see org.ikasan.security.service.SecurityService#savePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
     public void savePrincipal(IkasanPrincipal principal)
@@ -140,7 +140,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#saveRole(org.ikasan.security.model.Role)
+     * @see org.ikasan.security.service.SecurityService#saveRole(org.ikasan.security.window.Role)
      */
     @Override
     public void saveRole(Role role) 
@@ -150,7 +150,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#savePolicy(org.ikasan.security.model.Policy)
+     * @see org.ikasan.security.service.SecurityService#savePolicy(org.ikasan.security.window.Policy)
      */
     @Override
     public void savePolicy(Policy policy) 
@@ -170,7 +170,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#deletePrincipal(org.ikasan.security.model.IkasanPrincipal)
+     * @see org.ikasan.security.service.SecurityService#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
     public void deletePrincipal(IkasanPrincipal principal) 
@@ -180,7 +180,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#deleteRole(org.ikasan.security.model.Role)
+     * @see org.ikasan.security.service.SecurityService#deleteRole(org.ikasan.security.window.Role)
      */
     @Override
     public void deleteRole(Role role) 
@@ -190,7 +190,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#deletePolicy(org.ikasan.security.model.Policy)
+     * @see org.ikasan.security.service.SecurityService#deletePolicy(org.ikasan.security.window.Policy)
      */
     @Override
     public void deletePolicy(Policy policy) 
@@ -239,7 +239,7 @@ public class SecurityServiceImpl implements SecurityService
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+     * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
      */
     public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) 
     {
@@ -310,7 +310,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#savePolicyLink(org.ikasan.security.model.PolicyLink)
+	 * @see org.ikasan.security.service.SecurityService#savePolicyLink(org.ikasan.security.window.PolicyLink)
 	 */
 	@Override
 	public void savePolicyLink(PolicyLink policyLink)
@@ -319,7 +319,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#deletePolicyLink(org.ikasan.security.model.PolicyLink)
+	 * @see org.ikasan.security.service.SecurityService#deletePolicyLink(org.ikasan.security.window.PolicyLink)
 	 */
 	@Override
 	public void deletePolicyLink(PolicyLink policyLink)
@@ -355,7 +355,7 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#deleteAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 * @see org.ikasan.security.service.SecurityService#deleteAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
 	 */
 	@Override
 	public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod)

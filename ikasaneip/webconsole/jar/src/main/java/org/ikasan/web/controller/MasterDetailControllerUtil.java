@@ -69,7 +69,7 @@ public class MasterDetailControllerUtil {
 	}
 
 	/**
-	 * Adds all standard control attributes to the model for displaying the search 
+	 * Adds all standard control attributes to the window for displaying the search
 	 * results page
 	 * 
 	 * @param orderBy

@@ -141,7 +141,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#testAuthenticationConnection(org.ikasan.security.model.AuthenticationMethod)
+	 * @see org.ikasan.security.service.authentication.AuthenticationProviderFactory#testAuthenticationConnection(org.ikasan.security.window.AuthenticationMethod)
 	 */
 	public void testAuthenticationConnection(AuthenticationMethod authMethod) throws Exception
 	{

@@ -85,7 +85,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	public final String COMPONENT_NAMES_CLAUSE =  "and e.FlowElementName in (:" + COMPONENT_NAMES + ") ";
 	
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#save(org.ikasan.error.reporting.model.ErrorCategorisation)
+	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#save(org.ikasan.error.reporting.window.ErrorCategorisation)
 	 */
 	@Override
 	public void save(ErrorCategorisation errorCategorisation)
@@ -94,7 +94,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#save(org.ikasan.error.reporting.model.ErrorCategorisationLink)
+	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#save(org.ikasan.error.reporting.window.ErrorCategorisationLink)
 	 */
 	@Override
 	public void save(ErrorCategorisationLink errorCategorisationLink)
@@ -104,7 +104,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#delete(org.ikasan.error.reporting.model.ErrorCategorisationLink)
+	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#delete(org.ikasan.error.reporting.window.ErrorCategorisationLink)
 	 */
 	@Override
 	public void delete(ErrorCategorisationLink errorCategorisationLink)
@@ -157,7 +157,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#delete(org.ikasan.error.reporting.model.ErrorCategorisation)
+	 * @see org.ikasan.error.reporting.dao.ErrorCategorisationDao#delete(org.ikasan.error.reporting.window.ErrorCategorisation)
 	 */
 	@Override
 	public void delete(ErrorCategorisation errorCategorisation)

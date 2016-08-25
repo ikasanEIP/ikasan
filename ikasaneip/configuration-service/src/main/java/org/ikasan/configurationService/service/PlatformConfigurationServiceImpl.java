@@ -98,8 +98,36 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         	throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
         }
         
-        
         return parameterMap.getValue().get(paramName);
+	}
+
+	@Override
+	public void saveConfigurationValue(String paramName, String value)
+	{
+		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
+
+		Configuration configuration = this.configurationManagement.getConfiguration(platformConfigurationConfiguredResource);
+
+		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
+
+		ConfigurationParameterMapImpl parameterMap = null;
+
+		for(ConfigurationParameter parameter: parameters)
+		{
+			if(parameter instanceof ConfigurationParameterMapImpl)
+			{
+				parameterMap = (ConfigurationParameterMapImpl)parameter;
+			}
+		}
+
+		if(parameterMap == null)
+		{
+			throw new RuntimeException("Cannot resolve the platform configuration map containing the platform configuration!");
+		}
+
+		parameterMap.getValue().put(paramName, value);
+
+		this.configurationManagement.saveConfiguration(configuration);
 	}
 
 	/* (non-Javadoc)
