@@ -230,6 +230,15 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
+	<bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+		<constructor-arg ref="duplicateFilterDao"/>
+	</bean>
+
+	<bean id="duplicateFilterDao"
+		  class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
@@ -282,6 +291,7 @@
 			   <value>/org/ikasan/replay/model/ReplayAudit.hbm.xml</value>
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
+			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

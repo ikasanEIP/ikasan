@@ -43,12 +43,16 @@ package org.ikasan.hospital.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
@@ -59,6 +63,19 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateHospitalDao extends HibernateDaoSupport implements HospitalDao
 {
+	public static final Long THIRTY_DAYS = 30 * 24 * 60 * 1000L;
+
+	public static final String EVENT_IDS = "eventIds";
+	public static final String NOW = "now";
+
+	public static final String EXCLUSION_EVENT_ACTIONS_TO_DELETE_QUERY = "select errorUri from ExclusionEventAction eo " +
+			" where eo.timestamp < :" + NOW;
+
+	public static final String EXCLUSION_EVENT_ACTIONS_DELETE_QUERY = "delete ExclusionEventAction eo " +
+			" where eo.errorUri in(:" + EVENT_IDS + ")";
+
+	private Integer transactionBatchSize;
+	private Integer housekeepingBatchSize;
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.hospital.dao.HospitalDao#saveOrUpdate(org.ikasan.hospital.window.ExclusionEventAction)
@@ -184,5 +201,48 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 		
 		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
-    
+
+	@Override
+	public void housekeep()
+	{
+		getHibernateTemplate().execute(new HibernateCallback<Object>()
+		{
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				int numHousekept = 0;
+
+				while(numHousekept < transactionBatchSize)
+				{
+					numHousekept += housekeepingBatchSize;
+					
+					Query query = session.createQuery(EXCLUSION_EVENT_ACTIONS_TO_DELETE_QUERY);
+					query.setLong(NOW, System.currentTimeMillis() - THIRTY_DAYS);
+					query.setMaxResults(housekeepingBatchSize);
+
+					List<Long> errorUris = (List<Long>) query.list();
+
+					if (errorUris.size() > 0) {
+						query = session.createQuery(EXCLUSION_EVENT_ACTIONS_DELETE_QUERY);
+						query.setParameterList(EVENT_IDS, errorUris);
+						query.executeUpdate();
+					}
+				}
+
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+	{
+		this.housekeepingBatchSize = housekeepingBatchSize;
+	}
+
+	@Override
+	public void setTransactionBatchSize(Integer transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
+
 }

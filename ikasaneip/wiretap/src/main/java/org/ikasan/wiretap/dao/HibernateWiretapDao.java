@@ -78,8 +78,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     /** Query for finding all wiretap events with the same payloadId */
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
 
-    private static final String HOUSEKEEPABLES_EXIST = "SELECT CAST(COUNT(1) AS BIT) AS HousekeepableExists FROM IkasanWiretap" +
-            " WHERE EXISTS (select * from IkasanWiretap where Expiry <= " + EXPIRY + ")";
 
     public static final String WIRETAP_EVENTS_TO_DELETE_QUERY = "select id from WiretapFlowEvent w " +
             " where w.expiry < :" + NOW;
@@ -418,14 +416,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 public Object doInHibernate(Session session) throws HibernateException
                 {
-
-//                    String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
-//                            .replace("_ex_", String.valueOf(System.currentTimeMillis()));
-//
-//                    SQLQuery query = session.createSQLQuery(formattedQuery);
-//
-//                    query.executeUpdate();
-//                    return null;
 
                     Query query = session.createQuery(WIRETAP_EVENTS_TO_DELETE_QUERY);
                     query.setLong(NOW, System.currentTimeMillis());
