@@ -108,6 +108,7 @@ public class HousekeepingPanel extends Panel implements View
         this.housekeepingTable.setColumnExpandRatio("Next execution time", .32f);
         this.housekeepingTable.setColumnExpandRatio("Batch delete size", .32f);
         this.housekeepingTable.setColumnExpandRatio("Transaction delete size", .32f);
+        this.housekeepingTable.setColumnExpandRatio("Last Execution Status", .1f);
         this.housekeepingTable.setColumnExpandRatio("Enabled", .1f);
 
         this.housekeepingTable.addItemClickListener(new ItemClickEvent.ItemClickListener()
@@ -133,7 +134,7 @@ public class HousekeepingPanel extends Panel implements View
             }
         });
 
-        final GridLayout layout = new GridLayout(2, 5);
+        final GridLayout layout = new GridLayout(2, 6);
         layout.setWidth("100%");
         layout.setSpacing(true);
         layout.setMargin(true);
@@ -248,7 +249,24 @@ public class HousekeepingPanel extends Panel implements View
             logger.warn("Cannot determine if scheduler is running!");
         }
 
+        final Button refreshButton = new Button("Refresh");
+        refreshButton.setDescription("Refresh jobs table");
+        refreshButton.addStyleName(ValoTheme.BUTTON_SMALL);
+
+        refreshButton.addClickListener(new Button.ClickListener()
+        {
+            public void buttonClick(Button.ClickEvent event)
+            {
+                refresh();
+            }
+        });
+
+
+
         layout.addComponent(this.housekeepingTable, 0, 4, 1, 4);
+
+        layout.addComponent(refreshButton, 0, 5, 1, 5);
+        layout.setComponentAlignment(refreshButton, Alignment.MIDDLE_CENTER);
 
         this.setContent(layout);
     }
@@ -264,6 +282,7 @@ public class HousekeepingPanel extends Panel implements View
         cont.addContainerProperty("Batch delete size", Integer.class,  null);
         cont.addContainerProperty("Transaction delete size", Integer.class,  null);
         cont.addContainerProperty("Enabled", HorizontalLayout.class,  null);
+        cont.addContainerProperty("Last Execution Status", HorizontalLayout.class,  null);
 
         return cont;
     }
@@ -367,6 +386,28 @@ public class HousekeepingPanel extends Panel implements View
             layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
 
             item.getItemProperty("Enabled").setValue(layout);
+
+            HorizontalLayout statuslayout = new HorizontalLayout();
+            layout.setSpacing(true);
+
+            Label statusLabel = null;
+
+            if(job.getLastExecutionSuccessful())
+            {
+                statusLabel = new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML);
+            }
+            else
+            {
+                statusLabel = new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML);
+                statusLabel.setDescription(job.getExecutionErrorMessage());
+            }
+
+            statusLabel.addStyleName(ValoTheme.LABEL_TINY);
+
+            statuslayout.addComponent(statusLabel);
+            statuslayout.setComponentAlignment(statusLabel, Alignment.MIDDLE_CENTER);
+
+            item.getItemProperty("Last Execution Status").setValue(statuslayout);
         }
     }
 }
