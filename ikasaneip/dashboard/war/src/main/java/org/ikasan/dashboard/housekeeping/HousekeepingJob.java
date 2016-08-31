@@ -18,6 +18,9 @@ public class HousekeepingJob implements Job
     public static final String HOUSE_KEEPING_BATCH_SIZE = "-houseKeepingBatchSize";
     public static final String TRANSACTION_BATCH_SIZE = "-transactionBatchSize";
     public static final String CRON_EXPRESSION = "-cronExpression";
+    public static final String ENABLED = "-enabled";
+
+
     public static final String DEFAULT_CRON_EXPRESSION = "0 0/1 * * * ?";
     public static final Integer DEFAULT_BATCH_DELETE_SIZE = 200;
     public static final Integer DEFAULT_TRANSACTION_DELETE_SIZE = 2500;
@@ -30,6 +33,8 @@ public class HousekeepingJob implements Job
     private Integer transactionDeleteSize;
     private String cronExpression;
     private Boolean enabled = true;
+    private Boolean lastExecutionSuccessful = true;
+    private String executionErrorMessage;
 
     public HousekeepingJob(String jobName, HousekeepService houseKeepService,
                            PlatformConfigurationService platformConfigurationService)
@@ -101,6 +106,27 @@ public class HousekeepingJob implements Job
             logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
                     + " is not available. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
         }
+
+        String enabled = this.platformConfigurationService.getConfigurationValue(this.jobName + ENABLED);
+        if(enabled != null && enabled.length() > 0)
+        {
+            try
+            {
+                this.enabled = new Boolean(enabled);
+            }
+            catch(Exception e)
+            {
+                this.enabled = true;
+                this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
+                logger.warn("The value configured for " + this.jobName + ENABLED  + " is not a boolean. Using default house keeping enabled: true");
+            }
+        }
+        else
+        {
+            this.enabled = true;
+            this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
+            logger.warn("The value configured for " + this.jobName + ENABLED  + " is not available. Using default house keeping enabled: true");
+        }
     }
 
     @Override
@@ -116,10 +142,12 @@ public class HousekeepingJob implements Job
         }
         catch(Exception e)
         {
+            this.executionErrorMessage = e.getMessage();
+            this.lastExecutionSuccessful = false;
             throw new JobExecutionException("Could not execute housekeeping job: " + this.jobName, e);
         }
 
-
+        this.lastExecutionSuccessful = true;
         logger.info("Finished housekeeping job executing: " + this.getJobName());
     }
 
@@ -131,6 +159,8 @@ public class HousekeepingJob implements Job
                 + HousekeepingJob.HOUSE_KEEPING_BATCH_SIZE, this.batchDeleteSize.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + HousekeepingJob.DEFAULT_TRANSACTION_DELETE_SIZE, this.transactionDeleteSize.toString());
+        getPlatformConfigurationService().saveConfigurationValue(getJobName()
+                + HousekeepingJob.ENABLED, this.enabled.toString());
 
     }
 
@@ -191,5 +221,15 @@ public class HousekeepingJob implements Job
     public void setEnabled(Boolean enabled)
     {
         this.enabled = enabled;
+    }
+
+    public Boolean getLastExecutionSuccessful()
+    {
+        return lastExecutionSuccessful;
+    }
+
+    public String getExecutionErrorMessage()
+    {
+        return executionErrorMessage;
     }
 }
