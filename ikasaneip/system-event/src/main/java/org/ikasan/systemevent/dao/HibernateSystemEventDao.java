@@ -68,10 +68,18 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     /** logger instance */
     private static final Logger logger = Logger.getLogger(HibernateSystemEventDao.class);
 
-    private static final String EXPIRY = "expiry";
+    public static final String EXPIRY = "expiry";
+    public static final String EVENT_IDS = "eventIds";
+    public static final String NOW = "now";
 
     /** Query used for housekeeping expired system events */
     private static final String HOUSEKEEP_QUERY = "delete SystemEvent w where w.expiry <= :" + EXPIRY;
+
+    public static final String SYSTEM_EVENTS_TO_DELETE_QUERY = "select id from SystemEvent se " +
+            " where se.expiry < :" + NOW;
+
+    public static final String SYSTEM_EVENTS_DELETE_QUERY = "delete SystemEvent se " +
+            " where se.id in(:" + EVENT_IDS + ")";
 
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
@@ -113,7 +121,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      *
      * @see
      * org.ikasan.framework.systemevent.dao.SystemFlowEventDao#save(org.ikasan
-     * .framework.systemevent.model.SystemFlowEvent)
+     * .framework.systemevent.window.SystemFlowEvent)
      */
     public void save(SystemEvent systemEvent)
     {
@@ -294,58 +302,35 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     {
         logger.info("SystemEvent called batchHousekeepDelete");
 
-        int numDeleted = 0;
+        int numberDeleted = 0;
 
-        while (housekeepablesExist() && numDeleted < this.transactionBatchSize)
+        while(housekeepablesExist() && numberDeleted < this.transactionBatchSize)
         {
+
+            numberDeleted += this.housekeepingBatchSize;
 
             getHibernateTemplate().execute(new HibernateCallback<Object>()
             {
                 public Object doInHibernate(Session session) throws HibernateException
                 {
 
-                    String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize));
+                    Query query = session.createQuery(SYSTEM_EVENTS_TO_DELETE_QUERY);
+                    query.setParameter(NOW, new Date());
+                    query.setMaxResults(housekeepingBatchSize);
 
-                    SQLQuery query = session.createSQLQuery(formattedQuery);
+                    List<Long> wiretapEventIds = (List<Long>)query.list();
 
-                    query.executeUpdate();
+                    if(wiretapEventIds.size() > 0)
+                    {
+                        query = session.createQuery(SYSTEM_EVENTS_DELETE_QUERY);
+                        query.setParameterList(EVENT_IDS, wiretapEventIds);
+                        query.executeUpdate();
+                    }
 
                     return null;
                 }
             });
-
-            numDeleted += housekeepingBatchSize;
         }
-    }
-
-    /**
-     * Identifies a batch (List of Ids) of housekeepable items
-     *
-     * @return List of ids for SystemFlowEvents
-     */
-    @SuppressWarnings("unchecked")
-    private List<Long> getHousekeepableBatch()
-    {
-        return (List<Long>) getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                List<Long> ids = new ArrayList<Long>();
-
-                Criteria criteria = session.createCriteria(SystemEvent.class);
-                criteria.add(Restrictions.lt("expiry", new Date()));
-                criteria.setMaxResults(housekeepingBatchSize);
-
-                for (Object systemEventObj : criteria.list())
-                {
-                    SystemEvent systemFlowEvent = (SystemEvent) systemEventObj;
-                    ids.add(systemFlowEvent.getId());
-                }
-
-                return ids;
-
-            }
-        });
     }
 
     /**

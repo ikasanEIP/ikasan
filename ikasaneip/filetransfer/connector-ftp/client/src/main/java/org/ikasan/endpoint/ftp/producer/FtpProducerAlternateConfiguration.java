@@ -43,7 +43,7 @@ package org.ikasan.endpoint.ftp.producer;
 import org.apache.log4j.Logger;
 
 /**
- * FTP Producer Configuration model providing alternate connection details
+ * FTP Producer Configuration window providing alternate connection details
  * to be used in case primary connection fails
  * 
  * @author Ikasan Development Team

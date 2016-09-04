@@ -58,7 +58,7 @@ import org.springframework.beans.factory.BeanFactory;
 
 /**
  * This base implementation of the <code>TransactionalResourceCommand</code>
- * enforces a valid state transition model
+ * enforces a valid state transition window
  * 
  * @author Ikasan Development Team
  * 

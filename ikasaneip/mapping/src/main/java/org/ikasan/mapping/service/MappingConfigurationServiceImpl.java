@@ -284,7 +284,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 	}
     
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
      */
     @Override
     public Long saveMappingConfiguration(MappingConfiguration mappingConfiguration) throws MappingConfigurationServiceException
@@ -305,7 +305,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
      */
     @Override
     public Long saveSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -314,7 +314,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public Long saveTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -350,7 +350,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationType(org.ikasan.mapping.model.ConfigurationType)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationType(org.ikasan.mapping.window.ConfigurationType)
      */
     @Override
     public Long saveConfigurationType(ConfigurationType configurationType)
@@ -359,7 +359,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationConext(org.ikasan.mapping.model.ConfigurationContext)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationConext(org.ikasan.mapping.window.ConfigurationContext)
      */
     @Override
     public Long saveConfigurationConext(ConfigurationContext configurationContext)
@@ -368,7 +368,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationServiceClient(org.ikasan.mapping.model.ConfigurationServiceClient)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#addConfigurationServiceClient(org.ikasan.mapping.window.ConfigurationServiceClient)
      */
     @Override
     public Long saveConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient)
@@ -547,7 +547,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
      */
     @Override
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -556,7 +556,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -585,7 +585,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public Long getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(
@@ -595,7 +595,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#saveKeyLocationQuery(org.ikasan.mapping.model.KeyLocationQuery)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#saveKeyLocationQuery(org.ikasan.mapping.window.KeyLocationQuery)
      */
     @Override
     public Long saveKeyLocationQuery(KeyLocationQuery query)
@@ -625,7 +625,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#deleteMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
      */
     @Override
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration)

@@ -85,7 +85,7 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.security.dao.UserDao#delete(org.ikasan.framework.security.model.User)
+     * @see org.ikasan.framework.security.dao.UserDao#delete(org.ikasan.framework.security.window.User)
      */
     public void delete(User user)
     {

@@ -47,7 +47,7 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.framework.factory.DirectoryURLFactory;
 
 /**
- * FTP Consumer Configuration model.
+ * FTP Consumer Configuration window.
  * 
  * @author Ikasan Development Team
  */

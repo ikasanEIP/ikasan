@@ -69,7 +69,7 @@ public class MasterDetailControllerUtil
     }
 
     /**
-     * Adds all standard control attributes to the model for displaying the
+     * Adds all standard control attributes to the window for displaying the
      * search results page
      * 
      * @param orderBy - The field we are ordering by
@@ -80,7 +80,7 @@ public class MasterDetailControllerUtil
      *            pointToPointFlowProfile based search
      * @param moduleSelectAll - Select all boolean for pointToPointFlowProfile
      *            based search
-     * @param model - The model we are displaying (the data)
+     * @param model - The window we are displaying (the data)
      * @param pageNo - The page number we are on
      * @param pageSize - The page Size (how many results to display per page)
      * @param pagedResult - The paged result page

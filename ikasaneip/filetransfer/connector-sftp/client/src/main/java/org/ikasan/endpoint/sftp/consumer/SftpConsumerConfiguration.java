@@ -46,7 +46,7 @@ import org.ikasan.framework.factory.DirectoryURLFactory;
 import javax.resource.spi.InvalidPropertyException;
 
 /**
- * SFTP Consumer Configuration model.
+ * SFTP Consumer Configuration window.
  * 
  * @author Ikasan Development Team
  */

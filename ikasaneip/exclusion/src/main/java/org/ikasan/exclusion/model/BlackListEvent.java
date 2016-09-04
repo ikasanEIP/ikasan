@@ -43,7 +43,7 @@ package org.ikasan.exclusion.model;
 import org.ikasan.spec.exclusion.ExclusionService;
 
 /**
- * Blacklist event model instance.
+ * Blacklist event window instance.
  *
  * @author Ikasan Development Team
  */

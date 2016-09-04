@@ -98,5 +98,24 @@ public interface HospitalDao
      * @return
      */
     public Long getNumberOfModuleActionedExclusions(String moduleName, Date startDate, Date endDate);
+
+	/**
+	 * Perform the housekeeping.
+     */
+	public void housekeep();
+
+	/**
+	 * Set the housekeeping batch size.
+	 *
+	 * @param housekeepingBatchSize
+     */
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
+
+	/**
+	 * Set the transaction batch size.
+	 *
+	 * @param transactionBatchSize
+     */
+	public void setTransactionBatchSize(Integer transactionBatchSize);
   
 }

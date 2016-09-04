@@ -177,7 +177,7 @@ public class WiretapEventsSearchFormController
      * @param untilDateString - Include only events before untilDate
      * @param untilTimeString - Include only events before untilDate
      * @param payloadContent - The Payload content
-     * @param model - The model (map)
+     * @param model - The window (map)
      * 
      * @return wiretap events view
      */
@@ -231,7 +231,7 @@ public class WiretapEventsSearchFormController
         wiretapSearchCriteria.setUntilDate(untilDateString);
         wiretapSearchCriteria.setUntilTime(untilTimeString);
         wiretapSearchCriteria.setPayloadContent(payloadContent);
-        // Validate the criteria and add any errors to the model
+        // Validate the criteria and add any errors to the window
         this.validator.validate(wiretapSearchCriteria, errors);
         model.addAttribute("errors", errors);
         if (!errors.isEmpty())
@@ -307,8 +307,8 @@ public class WiretapEventsSearchFormController
      * 
      * @param wiretapEventId The id of the wiretapped event to get
      * @param searchResultsUrl The Search Results Page we came from
-     * @param modelMap The model
-     * @return The model and view representing the wiretap event
+     * @param modelMap The window
+     * @return The window and view representing the wiretap event
      */
     @RequestMapping("viewEvent.htm")
     public ModelAndView viewEvent(@RequestParam("wiretapEventId") long wiretapEventId, @RequestParam(required = false) String searchResultsUrl, ModelMap modelMap)

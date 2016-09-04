@@ -43,7 +43,7 @@ package org.ikasan.endpoint.ftp.producer;
 import org.apache.log4j.Logger;
 
 /**
- * FTP Producer Configuration model.
+ * FTP Producer Configuration window.
  * 
  * @author Ikasan Development Team
  */

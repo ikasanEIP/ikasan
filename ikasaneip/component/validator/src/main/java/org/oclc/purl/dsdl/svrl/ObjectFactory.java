@@ -54,7 +54,7 @@ import javax.xml.namespace.QName;
  * for XML content. The Java representation of XML 
  * content can consist of schema derived interfaces 
  * and classes representing the binding of schema 
- * type definitions, element declarations and model 
+ * type definitions, element declarations and window
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
