@@ -42,6 +42,7 @@ package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.management.HousekeeperService;
 
@@ -51,7 +52,7 @@ import org.ikasan.spec.management.HousekeeperService;
  * @author Ikasan Development Team
  *
  */
-public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>, HousekeeperService
+public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>, HousekeepService
 {
     /** {@link FilteredMessageDao} for accessing encountered messages*/
     private final FilteredMessageDao dao;
@@ -122,6 +123,18 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService, Co
     public boolean housekeepablesExist()
     {
         return this.dao.housekeepablesExist();
+    }
+
+    @Override
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        this.dao.setHousekeepingBatchSize(housekeepingBatchSize);
+    }
+
+    @Override
+    public void setTransactionBatchSize(Integer transactionBatchSize)
+    {
+        this.dao.setTransactionBatchSize(transactionBatchSize);
     }
 
     /* (non-Javadoc)

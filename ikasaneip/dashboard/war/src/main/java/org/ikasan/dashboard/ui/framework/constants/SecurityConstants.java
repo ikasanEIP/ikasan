@@ -69,6 +69,7 @@ public class SecurityConstants
 	public static String VIEW_MONITORING_AUTHORITY = "ViewMonitoring";
 	public static String VIEW_REPLAY_AUTHORITY = "ViewReplay";
 	public static String VIEW_REPLAY_AUDIT_AUTHORITY = "ViewReplayAudit";
+	public static String VIEW_HOUSEKEEPING_AUTHORITY = "ViewHouseKeeping";
 	public static String EDIT_MAPPING_AUTHORITY = "EditMapping";
 	public static String MODIFY_EXISTING_MAPPING_AUTHORITY = "ModifyExistingMapping";
 	

@@ -61,6 +61,10 @@ import javax.xml.parsers.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * XML Validator uses an injected XML parser to validate each incoming payload content.
@@ -101,11 +105,15 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
      */
     private ErrorHandler errorHandler = new ExceptionThrowingErrorHandler();
 
-
     /**
      * Source to InputStream converter
      */
     private Converter<SOURCE, ByteArrayInputStream> sourceToByteArrayInputStreamConverter;
+
+    /**
+     * A map of converters that are keyed on context. In this case the context is the thread id.
+     */
+    protected Map<Long, XMLReader> xmlReaders;
 
 
     /**
@@ -146,9 +154,20 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         try
         {
             InputStream sourceAsInputStream = this.createSourceAsBytes(source);
+
+            XMLReader reader = this.xmlReaders.get(Thread.currentThread().getId());
+
+            if(reader == null)
+            {
+                reader = this.createXMLReader();
+
+                this.xmlReaders.put(Thread.currentThread().getId(), reader);
+            }
+
             reader.parse(new InputSource(sourceAsInputStream));
 
-            if (!configuration.isReturnValidationResult()) {
+            if (!configuration.isReturnValidationResult())
+            {
                 return source;
             }
 
@@ -209,6 +228,40 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         }
     }
 
+    private XMLReader createXMLReader()
+    {
+        XMLReader reader = null;
+
+        try
+        {
+            Class poolClass =
+                    Class.forName("org.apache.xerces.util.XMLGrammarPoolImpl");
+
+            Object grammarPool = poolClass.newInstance();
+
+            factory.setValidating(true);
+            factory.setNamespaceAware(true);
+
+            SAXParser parser = factory.newSAXParser();
+            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                    "http://www.w3.org/2001/XMLSchema");
+
+            reader = parser.getXMLReader();
+            reader.setErrorHandler(this.errorHandler);
+            reader.setProperty(
+                    "http://apache.org/xml/properties/internal/grammar-pool",
+                    grammarPool);
+        }
+        catch(Exception e)
+        {
+            logger.error("Cannot create XMLReader for XSD Validation", e);
+
+            throw new RuntimeException("Cannot create XMLReader for XSD Validation", e);
+        }
+
+        return reader;
+    }
+
     @Override
     public String getConfiguredResourceId()
     {
@@ -236,38 +289,16 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
     @Override
     public void startManagedResource()
     {
-        try
-        {
-            Class poolClass =
-                    Class.forName("org.apache.xerces.util.XMLGrammarPoolImpl");
+        this.xmlReaders = new HashMap<Long, XMLReader>();
 
-            Object grammarPool = poolClass.newInstance();
-
-            factory.setValidating(true);
-            factory.setNamespaceAware(true);
-
-            SAXParser parser = factory.newSAXParser();
-            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                    "http://www.w3.org/2001/XMLSchema");
-
-            this.reader = parser.getXMLReader();
-            this.reader.setErrorHandler(this.errorHandler);
-            this.reader.setProperty(
-                    "http://apache.org/xml/properties/internal/grammar-pool",
-                    grammarPool);
-        }
-        catch(Exception e)
-        {
-            logger.error("Cannot create XMLReader for XSD Validation", e);
-
-            throw new RuntimeException("Cannot create XMLReader for XSD Validation", e);
-        }
+        // Make sure we can initialise one of these.
+        this.createXMLReader();
     }
 
     @Override
     public void stopManagedResource()
     {
-
+        this.xmlReaders = null;
     }
 
     @Override
@@ -278,7 +309,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
 
     @Override
     public boolean isCriticalOnStartup() {
-        return false;
+        return true;
     }
 
     @Override

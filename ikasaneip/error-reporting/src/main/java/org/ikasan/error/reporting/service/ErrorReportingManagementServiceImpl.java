@@ -51,6 +51,7 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 
 /**
@@ -58,7 +59,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>, HousekeepService
 {
 	private static Logger logger = Logger.getLogger(ErrorReportingManagementServiceImpl.class);
 	
@@ -69,6 +70,8 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	private ErrorReportingServiceDao errorReportingServiceDao;
 	
 	private int batchSize = 100;
+
+	private int transactionBatchSize = 1000;
 	
 	
 	/**
@@ -190,16 +193,6 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#housekeep()
-	 */
-	@Override
-	public void housekeep()
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#deleteNote(java.lang.Object)
 	 */
 	@Override
@@ -281,4 +274,37 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 		return errorCounts;
 	}
 
+	@Override
+	public boolean housekeepablesExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+	{
+		this.batchSize = housekeepingBatchSize;
+	}
+
+	@Override
+	public void setTransactionBatchSize(Integer transactionBatchSize)
+	{
+		this.transactionBatchSize = transactionBatchSize;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#housekeep()
+	 */
+	@Override
+	public void housekeep()
+	{
+		int deleted = 0;
+
+		while(deleted < this.transactionBatchSize)
+		{
+			this.errorManagementDao.housekeep(this.batchSize);
+
+			deleted = deleted + this.batchSize;
+		}
+	}
 }

@@ -58,9 +58,9 @@
         </id>
         
         <set name="metrics" 
-             cascade="all" 
+             cascade="all"
              lazy="false">
-             <key column="MessageHistoryId"/>
+             <key column="MessageHistoryId" update="false" on-delete="noaction" not-null="true"/>
              <one-to-many class="org.ikasan.history.model.CustomMetric"/>
         </set>
 

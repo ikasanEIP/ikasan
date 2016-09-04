@@ -89,7 +89,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Server)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Server)
 	 */
 	@Override
 	public void save(Server server)
@@ -111,7 +111,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Module)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Module)
 	 */
 	@Override
 	public void save(Module module)
@@ -133,7 +133,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Flow)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Flow)
 	 */
 	@Override
 	public void save(Flow flow)
@@ -204,7 +204,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStreamFlow(org.ikasan.topology.model.BusinessStreamFlow)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStreamFlow(org.ikasan.topology.window.BusinessStreamFlow)
 	 */
 	@Override
 	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow)
@@ -270,7 +270,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.model.Flow)
+	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.window.Flow)
 	 */
 	@Override
 	public void delete(Flow flow)
@@ -279,7 +279,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.model.Component)
+	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.window.Component)
 	 */
 	@Override
 	public void delete(Component component)
@@ -288,7 +288,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Component)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Component)
 	 */
 	@Override
 	public void save(Component component)
@@ -298,7 +298,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStream(org.ikasan.topology.model.BusinessStream)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStream(org.ikasan.topology.window.BusinessStream)
 	 */
 	@Override
 	public void deleteBusinessStream(BusinessStream businessStream)
@@ -392,7 +392,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#saveRoleFilter(org.ikasan.topology.model.RoleFilter)
+	 * @see org.ikasan.topology.dao.TopologyDao#saveRoleFilter(org.ikasan.topology.window.RoleFilter)
 	 */
 	@Override
 	public void saveRoleFilter(RoleFilter roleFilter)
@@ -425,7 +425,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#deleteFilter(org.ikasan.topology.model.Filter)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteFilter(org.ikasan.topology.window.Filter)
 	 */
 	@Override
 	public void deleteFilter(Filter filter)
@@ -434,7 +434,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#deleteRoleFilter(org.ikasan.topology.model.RoleFilter)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteRoleFilter(org.ikasan.topology.window.RoleFilter)
 	 */
 	@Override
 	public void deleteRoleFilter(RoleFilter roleFilter)
@@ -510,7 +510,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Notification)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Notification)
 	 */
 	@Override
 	public void save(Notification notification)
@@ -519,7 +519,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.model.Notification)
+	 * @see org.ikasan.topology.dao.TopologyDao#delete(org.ikasan.topology.window.Notification)
 	 */
 	@Override
 	public void delete(Notification notification)

@@ -69,6 +69,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     private static final String EXPIRY = "expiry";
     private static final String EVENT_ID = "eventId";
     private static final String BATCH_SIZE = "batchSize";
+    public static final String EVENT_IDS = "eventIds";
+    public static final String NOW = "now";
 
     /** Query used for housekeeping expired wiretap events */
     private static final String HOUSEKEEP_DELETE_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
@@ -76,18 +78,22 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     /** Query for finding all wiretap events with the same payloadId */
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
 
-    private static final String HOUSEKEEPABLES_EXIST = "SELECT CAST(COUNT(1) AS BIT) AS HousekeepableExists FROM IkasanWiretap" +
-            " WHERE EXISTS (select * from IkasanWiretap where Expiry <= " + EXPIRY + ")";
+
+    public static final String WIRETAP_EVENTS_TO_DELETE_QUERY = "select id from WiretapFlowEvent w " +
+            " where w.expiry < :" + NOW;
+
+    public static final String WIRETAP_EVENTS_DELETE_QUERY = "delete WiretapFlowEvent w " +
+            " where w.id in(:" + EVENT_IDS + ")";
 
 
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
 
     /** Batch size used when in batching housekeep */
-    private Integer housekeepingBatchSize = 1000;
+    private Integer housekeepingBatchSize = 200;
 
     /** Batch size used when in a single transaction */
-    private Integer transactionBatchSize = 5000;
+    private Integer transactionBatchSize = 2000;
 
     private String housekeepQuery;
     /**
@@ -411,12 +417,19 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 public Object doInHibernate(Session session) throws HibernateException
                 {
 
-                    String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
-                            .replace("_ex_", String.valueOf(System.currentTimeMillis()));
+                    Query query = session.createQuery(WIRETAP_EVENTS_TO_DELETE_QUERY);
+                    query.setLong(NOW, System.currentTimeMillis());
+                    query.setMaxResults(housekeepingBatchSize);
 
-                    SQLQuery query = session.createSQLQuery(formattedQuery);
+                    List<Long> wiretapEventIds = (List<Long>)query.list();
 
-                    query.executeUpdate();
+                    if(wiretapEventIds.size() > 0)
+                    {
+                        query = session.createQuery(WIRETAP_EVENTS_DELETE_QUERY);
+                        query.setParameterList(EVENT_IDS, wiretapEventIds);
+                        query.executeUpdate();
+                    }
+
                     return null;
                 }
             });

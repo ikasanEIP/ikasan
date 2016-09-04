@@ -48,7 +48,7 @@ package example.io.dao;
 public interface WriterDao<MODEL>
 {
     /**
-     * Save given model
+     * Save given window
      * @param model
      */
     public void saveOrUpdate(MODEL model);

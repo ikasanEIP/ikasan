@@ -66,7 +66,7 @@ public class ConfigurationCacheImpl
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#saveConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#saveConfiguration(org.ikasan.framework.configuration.window.Configuration)
      */
     public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
@@ -74,7 +74,7 @@ public class ConfigurationCacheImpl
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#deleteConfiguration(org.ikasan.framework.configuration.window.Configuration)
      */
     public void delete(Configuration<List<ConfigurationParameter>> configuration)
     {
