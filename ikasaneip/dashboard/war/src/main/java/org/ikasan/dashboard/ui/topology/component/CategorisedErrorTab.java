@@ -865,8 +865,7 @@ public class CategorisedErrorTab extends TopologyTab
 		        	.getAttribute(DashboardSessionValueConstants.USER);
 			
 			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
-					&& !errorOccurrence.getAction().equals("ExcludeEvent"))
+					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
 			{	
 				CheckBox cb = new CheckBox();
 				cb.setValue(false);

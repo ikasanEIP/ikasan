@@ -42,13 +42,15 @@ package org.ikasan.wiretap.model;
 
 import org.ikasan.spec.wiretap.WiretapEvent;
 
+import java.io.Serializable;
+
 /**
  * Implementation of a flowEvent based on payload being of any generic type.
  * 
  * @author Ikasan Development Team
  *
  */
-public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>
+public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable
 {
     /** event id */
     private String eventId;
@@ -102,4 +104,5 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     {
         this.eventTimestamp = eventTimestamp;
     }
+
 }

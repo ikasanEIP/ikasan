@@ -49,8 +49,9 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.2.5-SNAPSHOT</version>
+        <version>1.2.6-SNAPSHOT</version>
     </parent>
+
 
     <artifactId>ikasan-replay</artifactId>
     <packaging>jar</packaging>
@@ -67,6 +68,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-module</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-housekeeping</artifactId>
             <scope>provided</scope>
         </dependency>
         
@@ -304,7 +311,35 @@
             <artifactId>spring-webflow</artifactId>
 			<scope>test</scope>
         </dependency>
-		
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-housekeeping</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-replay</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-replay</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-housekeeping</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-housekeeping</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-replay</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-replay</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

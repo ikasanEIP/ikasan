@@ -105,7 +105,7 @@ public class ReplayServiceTest extends JerseyTest
 	{
 		for(int i=0; i<100; i++)
 		{
-			ReplayEvent replayEvent = new ReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "moduleName", "flowName", 30);
+			ReplayEvent replayEvent = new ReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "moduleName", "flowName", 0);
 			
 	        
 			this.replayDao.saveOrUpdate(replayEvent);
@@ -254,6 +254,48 @@ public class ReplayServiceTest extends JerseyTest
     	
     	Assert.assertTrue(listener.count == 100);
     }
+
+	@Test
+	@DirtiesContext
+	public void test_delete_success() throws MalformedURLException
+	{
+		// expectations
+		mockery.checking(new Expectations()
+		{
+			{
+				for(int i=0; i<100; i++)
+				{
+					// get each flow name
+					one(ikasanSerialiserFactory).getDefaultSerialiser();
+					will(returnValue(serialiser));
+					one(serialiser).deserialise("event".getBytes());
+					will(returnValue("event".getBytes()));
+				}
+
+			}
+		});
+
+		ReplayListenerImpl listener = new ReplayListenerImpl();
+		this.replayService.addReplayListener(listener);
+
+		ArrayList<String> moduleNames = new ArrayList<String>();
+		moduleNames.add("moduleName");
+
+		ArrayList<String> flowNames = new ArrayList<String>();
+		flowNames.add("flowName");
+
+		List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
+				(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+
+		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
+
+
+		this.replayDao.housekeep(1000);
+
+		List<ReplayAudit> replayAudits = this.replayDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+
+		Assert.assertTrue(replayAudits.size() == 0);
+	}
     
     
     class ReplayListenerImpl implements ReplayListener<ReplayAuditEvent>
@@ -269,6 +311,4 @@ public class ReplayServiceTest extends JerseyTest
 		}
     	
     }
-
-
 }

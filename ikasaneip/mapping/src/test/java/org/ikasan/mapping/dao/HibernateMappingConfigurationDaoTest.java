@@ -143,7 +143,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test 
     @DirtiesContext
@@ -161,7 +161,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -179,7 +179,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -197,7 +197,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -222,7 +222,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -239,7 +239,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -256,7 +256,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -274,7 +274,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -291,7 +291,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -308,7 +308,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -325,7 +325,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -342,7 +342,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -359,7 +359,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -388,7 +388,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -406,7 +406,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -424,7 +424,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -442,7 +442,7 @@ public class HibernateMappingConfigurationDaoTest
      /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -461,7 +461,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext
@@ -487,7 +487,7 @@ public class HibernateMappingConfigurationDaoTest
     /**
      * Putting an instance of StateModel into the StateModel store
      * 
-     * @throws StateModelDaoException if error accessing state model store
+     * @throws StateModelDaoException if error accessing state window store
      */
     @Test
     @DirtiesContext

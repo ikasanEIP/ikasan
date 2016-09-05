@@ -74,7 +74,7 @@ public class TargetConfigurationValue implements Serializable
     }
 
     /**
-     * It is a Hibernate requirement that all properties of a model object have getter and setter methods. However, the value of
+     * It is a Hibernate requirement that all properties of a window object have getter and setter methods. However, the value of
      * an {@link Id} is part of its primary key and must me immutable. Hence, setter method is private to prevent 
      * client code from changing the value.
      * 

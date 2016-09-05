@@ -117,7 +117,7 @@ public class WiretapEventsSearchFormController
      * Setup the search form
      * 
      * @param request The standard HttpServletRequest
-     * @param model The model
+     * @param model The window
      * @return "events/wiretapEvents"
      */
     @RequestMapping(value = "search.htm", method = RequestMethod.GET)
@@ -136,10 +136,10 @@ public class WiretapEventsSearchFormController
     /**
      * Handle submission of the search form
      * 
-     * @param modelMap The model
+     * @param modelMap The window
      * @param searchCriteria The criteria to search on
      * @param result The place holder for the result
-     * @return The model and its corresponding view (search results)
+     * @return The window and its corresponding view (search results)
      */
     @RequestMapping(value = "search.htm", method = RequestMethod.POST)
     public String processSubmit(ModelMap modelMap,
@@ -157,7 +157,7 @@ public class WiretapEventsSearchFormController
      * Search for the next page of results
      * 
      * @param request The standard HttpServletRequest
-     * @param modelMap The model
+     * @param modelMap The window
      * @return The next page of search results (as a Model/View pairing)
      */
     @RequestMapping("next.htm")
@@ -194,7 +194,7 @@ public class WiretapEventsSearchFormController
      * Return to the search results page
      * 
      * @param request The standard HttpServletRequest
-     * @param modelMap The model
+     * @param modelMap The window
      * @return The next page of search results (as a Model/View pairing)
      */
     @RequestMapping("searchResults.htm")
@@ -214,7 +214,7 @@ public class WiretapEventsSearchFormController
      * Search for the previous page of results
      * 
      * @param request The standard HttpServletRequest
-     * @param modelMap The model
+     * @param modelMap The window
      * @return The previous page of search results (as a Model/View pairing)
      */
     @RequestMapping("previous.htm")
@@ -234,8 +234,8 @@ public class WiretapEventsSearchFormController
      * View a specified WiretapEvent
      * 
      * @param eventId The id of the event to get
-     * @param modelMap The model
-     * @return The model and view representing the wiretap event
+     * @param modelMap The window
+     * @return The window and view representing the wiretap event
      */
     @RequestMapping("viewEvent.htm")
     public ModelAndView viewEvent(@RequestParam("eventId") long eventId, ModelMap modelMap)
@@ -288,7 +288,7 @@ public class WiretapEventsSearchFormController
     /**
      * Search for and display a page of search results
      * 
-     * @param modelMap The model
+     * @param modelMap The window
      * @param searchCriteria The criteria to search on
      * @param pageNo The page number to display (for paged results)
      * @return Model and View representing a page of search results

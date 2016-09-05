@@ -41,7 +41,7 @@
 package org.ikasan.spec.configuration;
 
 /**
- * Configuration data model supporting the runtime attributes 
+ * Configuration data window supporting the runtime attributes
  * of any resource marked as a ConfiguredResource.
  * 
  * @author Ikasan Development Team

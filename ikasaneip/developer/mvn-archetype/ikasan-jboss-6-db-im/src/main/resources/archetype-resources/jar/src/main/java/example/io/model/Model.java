@@ -43,7 +43,7 @@ package example.io.model;
 import java.io.Serializable;
 
 /**
- * Simple Java bean model.
+ * Simple Java bean window.
  *
  * @author Ikasan Development Team
  */

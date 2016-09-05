@@ -98,7 +98,7 @@ public class UsersController
     /**
      * List the users known to the system
      *
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return "modules/modules"
      */
     @RequestMapping("list.htm")
@@ -115,7 +115,7 @@ public class UsersController
     /**
      * Accepts submission of the createUser form
      *
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @param user - The user we're trying to create
      * @param result - The result
      * @return view the user
@@ -144,7 +144,7 @@ public class UsersController
      * List the users known to the system
      *
      * @param username - The name of the user we're trying to view
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return path to user view
      */
     @RequestMapping(value = "view.htm", method = RequestMethod.GET)
@@ -161,7 +161,7 @@ public class UsersController
      *
      * @param user - The user we're changing the password for
      * @param confirmNewPassword - The password again, for confirmation
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @param result - The binding result
      * @return view the user
      */
@@ -184,7 +184,7 @@ public class UsersController
      *
      * @param username - The name of the user we're granting authority to
      * @param authority - The authority we're granting the user
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return to the view users
      */
     @RequestMapping(value="grantAuthority.htm", method = RequestMethod.POST)
@@ -200,7 +200,7 @@ public class UsersController
      *
      * @param username - The name of the user we're revoking authority from
      * @param authority - The authority we're revoking from the user
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return to the view users
      */
     @RequestMapping(value="revokeAuthority.htm", method = RequestMethod.POST)
@@ -215,7 +215,7 @@ public class UsersController
      * Delete a existing user
      *
      * @param username - The name of the user we're deleting
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return to the view users
      */
     @RequestMapping(value="delete.htm", method = RequestMethod.POST)
@@ -229,7 +229,7 @@ public class UsersController
      * Disable an existing user
      *
      * @param username - The name of the user we're disabling
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return to the view users
      */
     @RequestMapping(value="disable.htm", method = RequestMethod.POST)
@@ -243,7 +243,7 @@ public class UsersController
      * Enable an existing user
      *
      * @param username - The name of the user we're enabling
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return to the view users
      */
     @RequestMapping(value="enable.htm", method = RequestMethod.POST)
