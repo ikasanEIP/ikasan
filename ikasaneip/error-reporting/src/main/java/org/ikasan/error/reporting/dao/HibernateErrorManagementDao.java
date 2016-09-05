@@ -71,8 +71,22 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 {
 	private static Logger logger = Logger.getLogger(HibernateErrorManagementDao.class);
 
+	public static final String EVENT_IDS = "eventIds";
+	public static final String NOW = "now";
+
+	public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrence eo " +
+			" where eo.expiry < :" + NOW;
+
+	public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
+			" where eo.uri in(:" + EVENT_IDS + ")";
+
+	public static final String NOTES_DELETE_QUERY = "delete Note n " +
+			" where n.id in(select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + "))";
+
+	public static final String ERROR_OCCURRENCE_NOT_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.model.ErrorOccurrenceAction)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
 	 */
 	@Override
 	public void saveErrorOccurrenceAction(
@@ -82,7 +96,7 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.model.Note)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
 	 */
 	@Override
 	public void saveNote(Note note)
@@ -91,7 +105,7 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteNote(org.ikasan.error.reporting.model.Note)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteNote(org.ikasan.error.reporting.window.Note)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -117,7 +131,7 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceLink(org.ikasan.error.reporting.model.ErrorOccurrenceLink)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceLink(org.ikasan.error.reporting.window.ErrorOccurrenceLink)
 	 */
 	@Override
 	public void saveErrorOccurrenceLink(ErrorOccurrenceLink errorOccurrenceLink)
@@ -126,7 +140,7 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceNote(org.ikasan.error.reporting.model.ErrorOccurrenceNote)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceNote(org.ikasan.error.reporting.window.ErrorOccurrenceNote)
 	 */
 	@Override
 	public void saveErrorOccurrenceNote(ErrorOccurrenceNote errorOccurrenceNote)
@@ -135,7 +149,7 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteErrorOccurence(org.ikasan.error.reporting.model.ErrorOccurrence)
+	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteErrorOccurence(org.ikasan.error.reporting.window.ErrorOccurrence)
 	 */
 	@Override
 	public void deleteErrorOccurence(ErrorOccurrence errorOccurrence)
@@ -346,6 +360,39 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 		                    .add(Projections.count("moduleName")));
 		
 		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
+	@Override
+	public void housekeep(final Integer numToHousekeep)
+	{
+		getHibernateTemplate().execute(new HibernateCallback<Object>()
+		{
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				Query query = session.createQuery(ERROR_OCCURRENCES_TO_DELETE_QUERY);
+				query.setLong(NOW, System.currentTimeMillis());
+				query.setMaxResults(numToHousekeep);
+
+				List<Long> errorUris = (List<Long>)query.list();
+
+				if(errorUris.size() > 0)
+				{
+					query = session.createQuery(NOTES_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, errorUris);
+					query.executeUpdate();
+
+					query = session.createQuery(ERROR_OCCURRENCE_NOT_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, errorUris);
+					query.executeUpdate();
+
+					query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, errorUris);
+					query.executeUpdate();
+				}
+
+				return null;
+			}
+		});
 	}
 
 }

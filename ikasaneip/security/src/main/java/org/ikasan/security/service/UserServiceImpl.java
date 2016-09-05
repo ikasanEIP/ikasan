@@ -331,7 +331,7 @@ public class UserServiceImpl implements UserService
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.security.service.UserService#createAuthority(org.ikasan.framework.security.model.Authority)
+     * org.ikasan.framework.security.service.UserService#createAuthority(org.ikasan.framework.security.window.Authority)
      */
     public void createAuthority(Authority newAuthority)
     {

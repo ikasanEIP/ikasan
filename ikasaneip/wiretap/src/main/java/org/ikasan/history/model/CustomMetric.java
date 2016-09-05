@@ -1,6 +1,8 @@
 package org.ikasan.history.model;
 
-public class CustomMetric 
+import java.io.Serializable;
+
+public class CustomMetric implements Serializable
 {
 	private Long id;
 	private MessageHistoryFlowEvent messageHistoryFlowEvent;
@@ -90,5 +92,5 @@ public class CustomMetric
 	{
 		this.value = value;
 	}
-		
+
 }

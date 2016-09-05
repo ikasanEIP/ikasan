@@ -124,7 +124,7 @@ public interface ReplayDao
     public ReplayAudit getReplayAuditById(Long id);
     
     /**
-     * Get a ReplayAudit by its id.
+     * Get a ReplayAuditEvents by their audit id.
      * 
      * @param id
      * @return
@@ -132,10 +132,18 @@ public interface ReplayDao
     public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id);
     
     /**
-     * Get a ReplayAudit by its id.
+     * Get the number of ReplayAuditEvents by their audit id.
      * 
      * @param id
      * @return
      */
     public Long getNumberReplayAuditEventsByAuditId(Long id);
+
+	/**
+	 * House keep a number of records.
+	 *
+	 * @param numToHousekeep
+     */
+	public void housekeep(Integer numToHousekeep);
+
 }

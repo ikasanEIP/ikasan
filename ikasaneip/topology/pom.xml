@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.2.5-SNAPSHOT</version>
+        <version>1.2.6-SNAPSHOT</version>
     </parent>
 
 	<groupId>org.ikasan</groupId>
@@ -57,7 +57,7 @@
     <packaging>jar</packaging>
     <name>Ikasan Topology</name>
     <description>The topology library for the Ikasan Enterprise Integration Platform</description>
-	<version>1.2.5-SNAPSHOT</version>
+	<version>1.2.6-SNAPSHOT</version>
 
     <dependencies>
         <dependency>

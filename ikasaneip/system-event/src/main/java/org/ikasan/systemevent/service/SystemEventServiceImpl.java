@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.spec.management.HousekeeperService;
+import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.dao.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEvent;
@@ -56,7 +56,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Ikasan Development Team
  * 
  */
-public class SystemEventServiceImpl implements SystemEventService, InitializingBean, HousekeeperService
+public class SystemEventServiceImpl implements SystemEventService, InitializingBean, HousekeepService
 {
     private Logger logger = Logger.getLogger(SystemEventServiceImpl.class);
 
@@ -159,9 +159,21 @@ public class SystemEventServiceImpl implements SystemEventService, InitializingB
 		return this.systemEventDao.housekeepablesExist();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.systemevent.service.SystemEventService#housekeep()
-	 */
+    @Override
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        this.systemEventDao.setHousekeepingBatchSize(housekeepingBatchSize);
+    }
+
+    @Override
+    public void setTransactionBatchSize(Integer transactionBatchSize)
+    {
+        this.systemEventDao.setTransactionBatchSize(transactionBatchSize);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.systemevent.service.SystemEventService#housekeep()
+     */
 	@Override
 	public void housekeep()
 	{

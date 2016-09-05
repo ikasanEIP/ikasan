@@ -127,7 +127,6 @@ public class NotificationsConfigurationPanel extends Panel implements View
 		init();
 	}
 
-	@SuppressWarnings("deprecation")
 	protected void init()
 	{
 		container = buildContainer();

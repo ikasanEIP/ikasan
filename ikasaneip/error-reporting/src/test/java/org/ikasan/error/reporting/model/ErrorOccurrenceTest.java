@@ -56,7 +56,7 @@ public class ErrorOccurrenceTest
     Exception exception = new Exception("failed error occurence msg");
 
     /**
-     * Test error occurrence model instance
+     * Test error occurrence window instance
      */
     @Test
     public void test_new_errorOccurrence()
@@ -79,7 +79,7 @@ public class ErrorOccurrenceTest
     }
 
     /**
-     * Test error occurrence model instance
+     * Test error occurrence window instance
      */
     @Test
     public void test_equals()
@@ -96,7 +96,7 @@ public class ErrorOccurrenceTest
     }
 
     /**
-     * Test error occurrence model instance
+     * Test error occurrence window instance
      */
     @Test
     public void test_hashcode()

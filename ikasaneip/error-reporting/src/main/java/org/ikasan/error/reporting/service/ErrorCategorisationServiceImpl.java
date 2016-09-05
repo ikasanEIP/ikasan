@@ -88,7 +88,7 @@ public class ErrorCategorisationServiceImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#save(org.ikasan.error.reporting.model.ErrorCategorisation)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#save(org.ikasan.error.reporting.window.ErrorCategorisation)
 	 */
 	@Override
 	public void save(ErrorCategorisation errorCategorisation)
@@ -117,7 +117,7 @@ public class ErrorCategorisationServiceImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.model.ErrorCategorisation)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.window.ErrorCategorisation)
 	 */
 	@Override
 	public void delete(ErrorCategorisation errorCategorisation)
@@ -127,7 +127,7 @@ public class ErrorCategorisationServiceImpl implements
 
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#save(org.ikasan.error.reporting.model.ErrorCategorisationLink)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#save(org.ikasan.error.reporting.window.ErrorCategorisationLink)
 	 */
 	@Override
 	public void save(ErrorCategorisationLink errorCategorisationLink)
@@ -136,7 +136,7 @@ public class ErrorCategorisationServiceImpl implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.model.ErrorCategorisationLink)
+	 * @see org.ikasan.error.reporting.service.ErrorCategorisationService#delete(org.ikasan.error.reporting.window.ErrorCategorisationLink)
 	 */
 	@Override
 	public void delete(ErrorCategorisationLink errorCategorisationLink)

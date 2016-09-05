@@ -28,12 +28,14 @@
         			 /WEB-INF/service-context.xml,
         			 /WEB-INF/topology-context.xml, 
         			 /WEB-INF/monitor-context.xml,
-        			 /WEB-INF/notification-context.xml, 
+        			 /WEB-INF/notification-context.xml,
+                     /WEB-INF/housekeeping-context.xml,
         			 classpath:platform-service-conf.xml, 
         			 classpath:serialiser-service-conf.xml, 
         			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
-        			 classpath:module-service-conf.xml
+        			 classpath:module-service-conf.xml,
+                     classpath:scheduler-service-conf.xml
         </param-value>
     </context-param>
 

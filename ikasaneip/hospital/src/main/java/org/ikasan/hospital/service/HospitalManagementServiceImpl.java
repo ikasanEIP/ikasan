@@ -47,6 +47,7 @@ import java.util.List;
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
+import org.ikasan.housekeeping.HousekeepService;
 
 /**
  * 
@@ -54,7 +55,7 @@ import org.ikasan.hospital.model.ModuleActionedExclusionCount;
  *
  */
 public class HospitalManagementServiceImpl implements
-		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>
+		HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount>, HousekeepService
 {
 	private HospitalDao hospitalDao;
 
@@ -117,5 +118,29 @@ public class HospitalManagementServiceImpl implements
 	public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate) 
 	{
 		return this.hospitalDao.actionedExclusionsRowCount(moduleName, flowName, startDate, endDate);
+	}
+
+	@Override
+	public void housekeep()
+	{
+		this.hospitalDao.housekeep();
+	}
+
+	@Override
+	public boolean housekeepablesExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+	{
+		this.hospitalDao.setHousekeepingBatchSize(housekeepingBatchSize);
+	}
+
+	@Override
+	public void setTransactionBatchSize(Integer transactionBatchSize)
+	{
+		this.hospitalDao.setTransactionBatchSize(transactionBatchSize);
 	}
 }

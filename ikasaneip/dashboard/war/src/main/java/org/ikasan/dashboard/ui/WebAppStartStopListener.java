@@ -45,8 +45,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.notification.NotifierServiceImpl;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * 
@@ -57,6 +64,11 @@ import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 public class WebAppStartStopListener implements ServletContextListener
 {
 	private Logger logger = Logger.getLogger(WebAppStartStopListener.class);
+
+    public WebAppStartStopListener()
+    {
+
+    }
 	
     // Our web app (Vaadin app) is starting up.
     public void contextInitialized ( ServletContextEvent servletContextEvent )
@@ -65,6 +77,30 @@ public class WebAppStartStopListener implements ServletContextListener
         logger.info( "Web app context initialized." ); 
         logger.info( "TRACE Servlet Context Name : " + ctx.getServletContextName() );
         logger.info( "TRACE Server Info : " + ctx.getServerInfo() );
+        logger.info( "TRACE getCurrentWebApplicationContext : " + ContextLoaderListener.getCurrentWebApplicationContext() );
+
+
+        final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
+        HousekeepingSchedulerService schedulerService = (HousekeepingSchedulerService)springContext.getBean("housekeepingSchedulerService");
+
+        if(schedulerService != null)
+        {
+            try
+            {
+                logger.info("Starting scheduler.");
+                schedulerService.registerJobs();
+                schedulerService.startScheduler();
+                logger.info("Successfully registered jobs and started scheduler.");
+            }
+            catch (Exception e)
+            {
+                logger.error("Could not start scheduler!", e);
+            }
+        }
+        else
+        {
+            logger.warn("schedulerService was null when trying to access from web application context!");
+        }
 
     }
 
@@ -75,6 +111,27 @@ public class WebAppStartStopListener implements ServletContextListener
         TopologyStateCache.shutdown();
         NotifierServiceImpl.shutdown();
         Broadcaster.shutdown();
+
+        HousekeepingSchedulerService schedulerService = (HousekeepingSchedulerService)ContextLoaderListener
+                .getCurrentWebApplicationContext().getBean("housekeepingSchedulerService");
+
+        if(schedulerService != null)
+        {
+            try
+            {
+                logger.info("Shutting down scheduler.");
+                schedulerService.shutdownScheduler();
+                logger.info("Successfully shut down scheduler.");
+            }
+            catch (Exception e)
+            {
+                logger.error("Could not shutdown scheduler!", e);
+            }
+        }
+        else
+        {
+            logger.warn("schedulerService was null when trying to access from web application context!");
+        }
     }
 
 }
