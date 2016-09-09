@@ -1,0 +1,697 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Ikasan Wiretap Implementation 1.2.6-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ikasan-wiretap ---
+[INFO] Deleting /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ ikasan-wiretap ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (regex-property) @ ikasan-wiretap ---
+[INFO] Setting property 'dashed.project.version' to '1-2-6-SNAPSHOT'.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (activamq-regex-property) @ ikasan-wiretap ---
+[INFO] Setting property 'dashed.version.activemq' to '5-12-1'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ ikasan-wiretap ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 6 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ ikasan-wiretap ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 27 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/classes
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/main/java/org/ikasan/trigger/service/WiretapEventJob.java: Some input files use unchecked or unsafe operations.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/main/java/org/ikasan/trigger/service/WiretapEventJob.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ ikasan-wiretap ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ ikasan-wiretap ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 7 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/test-classes
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java uses or overrides a deprecated API.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java: Recompile with -Xlint:deprecation for details.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/history/listener/MessageHistoryContextListenerTest.java: Some input files use unchecked or unsafe operations.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/history/listener/MessageHistoryContextListenerTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ ikasan-wiretap ---
+[INFO] Surefire report directory: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.ikasan.history.listener.DefaultFlowInvocationContextWriteStrategyTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.353 sec
+Running org.ikasan.history.listener.MessageHistoryContextListenerTest
+20160909 17:38:49 969 WARN  [main]:  Failed to save flowInvocationContext
+java.lang.RuntimeException
+	at org.jmock.lib.action.ThrowAction.invoke(ThrowAction.java:27)
+	at org.jmock.internal.InvocationExpectation.invoke(InvocationExpectation.java:165)
+	at org.jmock.internal.InvocationDispatcher.dispatch(InvocationDispatcher.java:81)
+	at org.jmock.Mockery.dispatch(Mockery.java:231)
+	at org.jmock.Mockery.access$100(Mockery.java:29)
+	at org.jmock.Mockery$MockObject.invoke(Mockery.java:271)
+	at org.jmock.internal.InvocationDiverter.invoke(InvocationDiverter.java:27)
+	at org.jmock.internal.FakeObjectMethods.invoke(FakeObjectMethods.java:38)
+	at org.jmock.lib.concurrent.Synchroniser.synchroniseInvocation(Synchroniser.java:82)
+	at org.jmock.lib.concurrent.Synchroniser.access$000(Synchroniser.java:23)
+	at org.jmock.lib.concurrent.Synchroniser$1.invoke(Synchroniser.java:74)
+	at org.jmock.lib.legacy.ClassImposteriser$4.invoke(ClassImposteriser.java:137)
+	at org.ikasan.spec.history.MessageHistoryService$$EnhancerByCGLIB$$8bf41cf7.save(<generated>)
+	at org.ikasan.history.listener.MessageHistoryContextListener.endFlow(MessageHistoryContextListener.java:101)
+	at org.ikasan.history.listener.MessageHistoryContextListenerTest.test_successful_endFlow_withLogException(MessageHistoryContextListenerTest.java:129)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.apache.maven.surefire.junit4.JUnit4TestSet.execute(JUnit4TestSet.java:59)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:120)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:103)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:169)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:350)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1021)
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.165 sec
+Running org.ikasan.wiretap.serialiser.SpringExpressionLanguageWiretapSerialiserTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.362 sec
+Running org.ikasan.history.service.MessageHistoryServiceImplTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.076 sec
+Running org.ikasan.wiretap.serialiser.WiretapSerialiserServiceTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 sec
+Running org.ikasan.history.dao.HibernateMessageHistoryDaoTest
+20160909 17:38:50 546 INFO  [main]:  Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+20160909 17:38:50 566 INFO  [main]:  Could not instantiate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener]. Specify custom listener classes or make the default listener classes (and their required dependencies) available. Offending class: [javax/servlet/ServletContext]
+20160909 17:38:50 569 INFO  [main]:  Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@37e80da0, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@63d6a00c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@1fa5a709, org.springframework.test.context.transaction.TransactionalTestExecutionListener@3479501a, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@879f5e0]
+20160909 17:38:50 668 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:38:50 824 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:38:50 946 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@4362f992: startup date [Fri Sep 09 17:38:50 BST 2016]; root of context hierarchy
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+the Mockery is not thread-safe: use a Synchroniser to ensure thread safety
+20160909 17:38:51 513 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:38:51 798 INFO  [main]:  HCANN000001: Hibernate Commons Annotations {4.0.5.Final}
+20160909 17:38:51 808 INFO  [main]:  HHH000412: Hibernate Core {4.3.9.Final}
+20160909 17:38:51 811 INFO  [main]:  HHH000206: hibernate.properties not found
+20160909 17:38:51 813 INFO  [main]:  HHH000021: Bytecode provider name : javassist
+20160909 17:38:52 459 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:38:52 596 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:38:52 603 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:38:53 045 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:38:53 085 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:38:53 174 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@175d41b5] of Hibernate SessionFactory for HibernateTransactionManager
+Starting to delete records: 1473439160151
+Completed deleting records: 1473439167588
+Delete completed records: 0
+20160909 17:39:27 591 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:27 592 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:27 595 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@4362f992: startup date [Fri Sep 09 17:38:50 BST 2016]; root of context hierarchy
+20160909 17:39:27 607 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:27 650 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:27 704 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@273881ae: startup date [Fri Sep 09 17:39:27 BST 2016]; root of context hierarchy
+20160909 17:39:27 743 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:27 879 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:27 888 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:27 889 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:27 917 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:27 930 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:27 974 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@5f5e110d] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:28 046 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:28 047 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:28 051 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 052 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 053 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 054 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 055 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 056 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 057 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 058 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 059 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 060 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 062 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@273881ae: startup date [Fri Sep 09 17:39:27 BST 2016]; root of context hierarchy
+20160909 17:39:28 065 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:28 112 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:28 164 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@6f9a9bec: startup date [Fri Sep 09 17:39:28 BST 2016]; root of context hierarchy
+20160909 17:39:28 204 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:28 358 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:28 369 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:28 369 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:28 397 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:28 408 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:28 454 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@56e0cc0f] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:28 524 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:28 525 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:28 529 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:28 531 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@6f9a9bec: startup date [Fri Sep 09 17:39:28 BST 2016]; root of context hierarchy
+20160909 17:39:28 534 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:28 583 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:28 647 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@4f1a21ec: startup date [Fri Sep 09 17:39:28 BST 2016]; root of context hierarchy
+20160909 17:39:28 686 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:28 854 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:28 866 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:28 866 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:28 895 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:28 908 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:28 954 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@7d7b67a3] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:29 024 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:29 025 INFO  [main]:  3, MessageHistory housekeepables exist
+20160909 17:39:29 029 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 030 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 031 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 032 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 033 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 034 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 035 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 036 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 037 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 038 INFO  [main]:  2, MessageHistory housekeepables exist
+20160909 17:39:29 041 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@4f1a21ec: startup date [Fri Sep 09 17:39:28 BST 2016]; root of context hierarchy
+20160909 17:39:29 044 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:29 099 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:29 171 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@33af174f: startup date [Fri Sep 09 17:39:29 BST 2016]; root of context hierarchy
+20160909 17:39:29 210 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:29 387 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:29 400 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:29 400 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:29 429 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:29 442 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:29 492 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@354d7ca2] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:29 565 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:29 567 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:29 572 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:29 574 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:29 574 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:29 576 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:29 577 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@33af174f: startup date [Fri Sep 09 17:39:29 BST 2016]; root of context hierarchy
+20160909 17:39:29 580 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:29 640 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:29 713 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@120cd2af: startup date [Fri Sep 09 17:39:29 BST 2016]; root of context hierarchy
+20160909 17:39:29 753 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:29 933 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:29 945 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:29 946 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:29 974 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:29 987 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:30 040 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@37841cc5] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:30 120 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:30 121 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:30 125 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:30 127 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@120cd2af: startup date [Fri Sep 09 17:39:29 BST 2016]; root of context hierarchy
+20160909 17:39:30 130 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:30 171 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:30 220 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@54ab8067: startup date [Fri Sep 09 17:39:30 BST 2016]; root of context hierarchy
+20160909 17:39:30 261 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:30 451 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:30 463 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:30 464 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:30 492 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:30 505 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:30 561 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@60e82f98] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:30 643 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:30 644 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:30 648 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:30 649 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@54ab8067: startup date [Fri Sep 09 17:39:30 BST 2016]; root of context hierarchy
+20160909 17:39:30 653 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:30 695 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:30 746 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@4e30897: startup date [Fri Sep 09 17:39:30 BST 2016]; root of context hierarchy
+20160909 17:39:30 784 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:30 972 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:30 984 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:30 984 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:31 012 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:31 026 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:31 079 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@527a4013] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:31 159 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:31 161 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:31 165 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:31 166 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@4e30897: startup date [Fri Sep 09 17:39:30 BST 2016]; root of context hierarchy
+20160909 17:39:31 170 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:31 211 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:31 262 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@72bd2fb5: startup date [Fri Sep 09 17:39:31 BST 2016]; root of context hierarchy
+20160909 17:39:31 299 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:31 472 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:31 480 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:31 480 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:31 507 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:31 521 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:31 575 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@13558028] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:31 653 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:31 654 INFO  [main]:  Message History batched housekeeper called
+20160909 17:39:31 655 INFO  [main]:  1, MessageHistory housekeepables exist
+20160909 17:39:31 659 INFO  [main]:  0, MessageHistory housekeepables exist
+20160909 17:39:31 660 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@72bd2fb5: startup date [Fri Sep 09 17:39:31 BST 2016]; root of context hierarchy
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 41.235 sec
+Running org.ikasan.wiretap.dao.HibernateWiretapDaoTest
+20160909 17:39:31 669 INFO  [main]:  Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+20160909 17:39:31 670 INFO  [main]:  Could not instantiate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener]. Specify custom listener classes or make the default listener classes (and their required dependencies) available. Offending class: [javax/servlet/ServletContext]
+20160909 17:39:31 670 INFO  [main]:  Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@24e92ddd, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@48c21b19, org.springframework.test.context.support.DirtiesContextTestExecutionListener@3f812ba0, org.springframework.test.context.transaction.TransactionalTestExecutionListener@395735f2, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@c96c047]
+20160909 17:39:31 673 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:31 714 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:31 766 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@7d297bc5: startup date [Fri Sep 09 17:39:31 BST 2016]; root of context hierarchy
+20160909 17:39:31 806 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:31 961 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:31 967 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:31 967 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:31 996 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:32 009 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:32 053 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@123f796f] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:38 314 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:38 327 INFO  [main]:  10000, Wiretap housekeepables exist
+20160909 17:39:38 549 INFO  [main]:  9900, Wiretap housekeepables exist
+20160909 17:39:38 560 INFO  [main]:  9800, Wiretap housekeepables exist
+20160909 17:39:38 574 INFO  [main]:  9700, Wiretap housekeepables exist
+20160909 17:39:38 584 INFO  [main]:  9600, Wiretap housekeepables exist
+20160909 17:39:38 591 INFO  [main]:  9500, Wiretap housekeepables exist
+20160909 17:39:38 597 INFO  [main]:  9400, Wiretap housekeepables exist
+20160909 17:39:38 603 INFO  [main]:  9300, Wiretap housekeepables exist
+20160909 17:39:38 610 INFO  [main]:  9200, Wiretap housekeepables exist
+20160909 17:39:38 616 INFO  [main]:  9100, Wiretap housekeepables exist
+20160909 17:39:38 621 INFO  [main]:  9000, Wiretap housekeepables exist
+20160909 17:39:38 627 INFO  [main]:  8900, Wiretap housekeepables exist
+20160909 17:39:38 633 INFO  [main]:  8800, Wiretap housekeepables exist
+20160909 17:39:38 639 INFO  [main]:  8700, Wiretap housekeepables exist
+20160909 17:39:38 645 INFO  [main]:  8600, Wiretap housekeepables exist
+20160909 17:39:38 651 INFO  [main]:  8500, Wiretap housekeepables exist
+20160909 17:39:38 656 INFO  [main]:  8400, Wiretap housekeepables exist
+20160909 17:39:38 662 INFO  [main]:  8300, Wiretap housekeepables exist
+20160909 17:39:38 667 INFO  [main]:  8200, Wiretap housekeepables exist
+20160909 17:39:38 672 INFO  [main]:  8100, Wiretap housekeepables exist
+20160909 17:39:38 678 INFO  [main]:  8000, Wiretap housekeepables exist
+20160909 17:39:38 683 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:38 687 INFO  [main]:  8000, Wiretap housekeepables exist
+20160909 17:39:38 692 INFO  [main]:  7900, Wiretap housekeepables exist
+20160909 17:39:38 697 INFO  [main]:  7800, Wiretap housekeepables exist
+20160909 17:39:38 702 INFO  [main]:  7700, Wiretap housekeepables exist
+20160909 17:39:38 707 INFO  [main]:  7600, Wiretap housekeepables exist
+20160909 17:39:38 712 INFO  [main]:  7500, Wiretap housekeepables exist
+20160909 17:39:38 716 INFO  [main]:  7400, Wiretap housekeepables exist
+20160909 17:39:38 721 INFO  [main]:  7300, Wiretap housekeepables exist
+20160909 17:39:38 726 INFO  [main]:  7200, Wiretap housekeepables exist
+20160909 17:39:38 730 INFO  [main]:  7100, Wiretap housekeepables exist
+20160909 17:39:38 735 INFO  [main]:  7000, Wiretap housekeepables exist
+20160909 17:39:38 740 INFO  [main]:  6900, Wiretap housekeepables exist
+20160909 17:39:38 745 INFO  [main]:  6800, Wiretap housekeepables exist
+20160909 17:39:38 751 INFO  [main]:  6700, Wiretap housekeepables exist
+20160909 17:39:38 755 INFO  [main]:  6600, Wiretap housekeepables exist
+20160909 17:39:38 760 INFO  [main]:  6500, Wiretap housekeepables exist
+20160909 17:39:38 764 INFO  [main]:  6400, Wiretap housekeepables exist
+20160909 17:39:38 768 INFO  [main]:  6300, Wiretap housekeepables exist
+20160909 17:39:38 773 INFO  [main]:  6200, Wiretap housekeepables exist
+20160909 17:39:38 777 INFO  [main]:  6100, Wiretap housekeepables exist
+20160909 17:39:38 781 INFO  [main]:  6000, Wiretap housekeepables exist
+20160909 17:39:38 787 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:38 789 INFO  [main]:  6000, Wiretap housekeepables exist
+20160909 17:39:38 796 INFO  [main]:  5900, Wiretap housekeepables exist
+20160909 17:39:38 800 INFO  [main]:  5800, Wiretap housekeepables exist
+20160909 17:39:38 804 INFO  [main]:  5700, Wiretap housekeepables exist
+20160909 17:39:38 808 INFO  [main]:  5600, Wiretap housekeepables exist
+20160909 17:39:38 811 INFO  [main]:  5500, Wiretap housekeepables exist
+20160909 17:39:38 815 INFO  [main]:  5400, Wiretap housekeepables exist
+20160909 17:39:38 819 INFO  [main]:  5300, Wiretap housekeepables exist
+20160909 17:39:38 823 INFO  [main]:  5200, Wiretap housekeepables exist
+20160909 17:39:38 827 INFO  [main]:  5100, Wiretap housekeepables exist
+20160909 17:39:38 831 INFO  [main]:  5000, Wiretap housekeepables exist
+20160909 17:39:38 835 INFO  [main]:  4900, Wiretap housekeepables exist
+20160909 17:39:38 840 INFO  [main]:  4800, Wiretap housekeepables exist
+20160909 17:39:38 844 INFO  [main]:  4700, Wiretap housekeepables exist
+20160909 17:39:38 848 INFO  [main]:  4600, Wiretap housekeepables exist
+20160909 17:39:38 852 INFO  [main]:  4500, Wiretap housekeepables exist
+20160909 17:39:38 855 INFO  [main]:  4400, Wiretap housekeepables exist
+20160909 17:39:38 859 INFO  [main]:  4300, Wiretap housekeepables exist
+20160909 17:39:38 863 INFO  [main]:  4200, Wiretap housekeepables exist
+20160909 17:39:38 866 INFO  [main]:  4100, Wiretap housekeepables exist
+20160909 17:39:38 870 INFO  [main]:  4000, Wiretap housekeepables exist
+20160909 17:39:38 875 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:38 877 INFO  [main]:  4000, Wiretap housekeepables exist
+20160909 17:39:38 880 INFO  [main]:  3900, Wiretap housekeepables exist
+20160909 17:39:38 884 INFO  [main]:  3800, Wiretap housekeepables exist
+20160909 17:39:38 887 INFO  [main]:  3700, Wiretap housekeepables exist
+20160909 17:39:38 890 INFO  [main]:  3600, Wiretap housekeepables exist
+20160909 17:39:38 894 INFO  [main]:  3500, Wiretap housekeepables exist
+20160909 17:39:38 897 INFO  [main]:  3400, Wiretap housekeepables exist
+20160909 17:39:38 900 INFO  [main]:  3300, Wiretap housekeepables exist
+20160909 17:39:38 903 INFO  [main]:  3200, Wiretap housekeepables exist
+20160909 17:39:38 907 INFO  [main]:  3100, Wiretap housekeepables exist
+20160909 17:39:38 910 INFO  [main]:  3000, Wiretap housekeepables exist
+20160909 17:39:38 913 INFO  [main]:  2900, Wiretap housekeepables exist
+20160909 17:39:38 916 INFO  [main]:  2800, Wiretap housekeepables exist
+20160909 17:39:38 919 INFO  [main]:  2700, Wiretap housekeepables exist
+20160909 17:39:38 921 INFO  [main]:  2600, Wiretap housekeepables exist
+20160909 17:39:38 924 INFO  [main]:  2500, Wiretap housekeepables exist
+20160909 17:39:38 927 INFO  [main]:  2400, Wiretap housekeepables exist
+20160909 17:39:38 930 INFO  [main]:  2300, Wiretap housekeepables exist
+20160909 17:39:38 933 INFO  [main]:  2200, Wiretap housekeepables exist
+20160909 17:39:38 936 INFO  [main]:  2100, Wiretap housekeepables exist
+20160909 17:39:38 939 INFO  [main]:  2000, Wiretap housekeepables exist
+20160909 17:39:38 943 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:38 944 INFO  [main]:  2000, Wiretap housekeepables exist
+20160909 17:39:38 947 INFO  [main]:  1900, Wiretap housekeepables exist
+20160909 17:39:38 949 INFO  [main]:  1800, Wiretap housekeepables exist
+20160909 17:39:38 952 INFO  [main]:  1700, Wiretap housekeepables exist
+20160909 17:39:38 954 INFO  [main]:  1600, Wiretap housekeepables exist
+20160909 17:39:38 957 INFO  [main]:  1500, Wiretap housekeepables exist
+20160909 17:39:38 959 INFO  [main]:  1400, Wiretap housekeepables exist
+20160909 17:39:38 961 INFO  [main]:  1300, Wiretap housekeepables exist
+20160909 17:39:38 964 INFO  [main]:  1200, Wiretap housekeepables exist
+20160909 17:39:38 966 INFO  [main]:  1100, Wiretap housekeepables exist
+20160909 17:39:38 968 INFO  [main]:  1000, Wiretap housekeepables exist
+20160909 17:39:38 971 INFO  [main]:  900, Wiretap housekeepables exist
+20160909 17:39:38 973 INFO  [main]:  800, Wiretap housekeepables exist
+20160909 17:39:38 975 INFO  [main]:  700, Wiretap housekeepables exist
+20160909 17:39:38 978 INFO  [main]:  600, Wiretap housekeepables exist
+20160909 17:39:38 980 INFO  [main]:  500, Wiretap housekeepables exist
+20160909 17:39:38 982 INFO  [main]:  400, Wiretap housekeepables exist
+20160909 17:39:38 984 INFO  [main]:  300, Wiretap housekeepables exist
+20160909 17:39:38 987 INFO  [main]:  200, Wiretap housekeepables exist
+20160909 17:39:38 989 INFO  [main]:  100, Wiretap housekeepables exist
+20160909 17:39:38 991 INFO  [main]:  0, Wiretap housekeepables exist
+20160909 17:39:38 996 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@7d297bc5: startup date [Fri Sep 09 17:39:31 BST 2016]; root of context hierarchy
+20160909 17:39:38 999 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:39 020 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:39 043 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@5b88ace7: startup date [Fri Sep 09 17:39:39 BST 2016]; root of context hierarchy
+20160909 17:39:39 068 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:39 125 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:39 131 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:39 131 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:39 154 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:39 166 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:39 185 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@33bb2e8a] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:43 155 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:43 170 INFO  [main]:  10000, Wiretap housekeepables exist
+20160909 17:39:43 204 INFO  [main]:  9900, Wiretap housekeepables exist
+20160909 17:39:43 210 INFO  [main]:  9800, Wiretap housekeepables exist
+20160909 17:39:43 215 INFO  [main]:  9700, Wiretap housekeepables exist
+20160909 17:39:43 222 INFO  [main]:  9600, Wiretap housekeepables exist
+20160909 17:39:43 228 INFO  [main]:  9500, Wiretap housekeepables exist
+20160909 17:39:43 233 INFO  [main]:  9400, Wiretap housekeepables exist
+20160909 17:39:43 239 INFO  [main]:  9300, Wiretap housekeepables exist
+20160909 17:39:43 245 INFO  [main]:  9200, Wiretap housekeepables exist
+20160909 17:39:43 250 INFO  [main]:  9100, Wiretap housekeepables exist
+20160909 17:39:43 255 INFO  [main]:  9000, Wiretap housekeepables exist
+20160909 17:39:43 261 INFO  [main]:  8900, Wiretap housekeepables exist
+20160909 17:39:43 266 INFO  [main]:  8800, Wiretap housekeepables exist
+20160909 17:39:43 272 INFO  [main]:  8700, Wiretap housekeepables exist
+20160909 17:39:43 277 INFO  [main]:  8600, Wiretap housekeepables exist
+20160909 17:39:43 282 INFO  [main]:  8500, Wiretap housekeepables exist
+20160909 17:39:43 288 INFO  [main]:  8400, Wiretap housekeepables exist
+20160909 17:39:43 293 INFO  [main]:  8300, Wiretap housekeepables exist
+20160909 17:39:43 298 INFO  [main]:  8200, Wiretap housekeepables exist
+20160909 17:39:43 303 INFO  [main]:  8100, Wiretap housekeepables exist
+20160909 17:39:43 308 INFO  [main]:  8000, Wiretap housekeepables exist
+20160909 17:39:43 314 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:43 319 INFO  [main]:  8000, Wiretap housekeepables exist
+20160909 17:39:43 324 INFO  [main]:  7900, Wiretap housekeepables exist
+20160909 17:39:43 329 INFO  [main]:  7800, Wiretap housekeepables exist
+20160909 17:39:43 333 INFO  [main]:  7700, Wiretap housekeepables exist
+20160909 17:39:43 338 INFO  [main]:  7600, Wiretap housekeepables exist
+20160909 17:39:43 343 INFO  [main]:  7500, Wiretap housekeepables exist
+20160909 17:39:43 347 INFO  [main]:  7400, Wiretap housekeepables exist
+20160909 17:39:43 352 INFO  [main]:  7300, Wiretap housekeepables exist
+20160909 17:39:43 357 INFO  [main]:  7200, Wiretap housekeepables exist
+20160909 17:39:43 361 INFO  [main]:  7100, Wiretap housekeepables exist
+20160909 17:39:43 366 INFO  [main]:  7000, Wiretap housekeepables exist
+20160909 17:39:43 371 INFO  [main]:  6900, Wiretap housekeepables exist
+20160909 17:39:43 375 INFO  [main]:  6800, Wiretap housekeepables exist
+20160909 17:39:43 380 INFO  [main]:  6700, Wiretap housekeepables exist
+20160909 17:39:43 385 INFO  [main]:  6600, Wiretap housekeepables exist
+20160909 17:39:43 389 INFO  [main]:  6500, Wiretap housekeepables exist
+20160909 17:39:43 394 INFO  [main]:  6400, Wiretap housekeepables exist
+20160909 17:39:43 399 INFO  [main]:  6300, Wiretap housekeepables exist
+20160909 17:39:43 403 INFO  [main]:  6200, Wiretap housekeepables exist
+20160909 17:39:43 408 INFO  [main]:  6100, Wiretap housekeepables exist
+20160909 17:39:43 412 INFO  [main]:  6000, Wiretap housekeepables exist
+20160909 17:39:43 418 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:43 421 INFO  [main]:  6000, Wiretap housekeepables exist
+20160909 17:39:43 427 INFO  [main]:  5900, Wiretap housekeepables exist
+20160909 17:39:43 431 INFO  [main]:  5800, Wiretap housekeepables exist
+20160909 17:39:43 435 INFO  [main]:  5700, Wiretap housekeepables exist
+20160909 17:39:43 439 INFO  [main]:  5600, Wiretap housekeepables exist
+20160909 17:39:43 443 INFO  [main]:  5500, Wiretap housekeepables exist
+20160909 17:39:43 447 INFO  [main]:  5400, Wiretap housekeepables exist
+20160909 17:39:43 451 INFO  [main]:  5300, Wiretap housekeepables exist
+20160909 17:39:43 455 INFO  [main]:  5200, Wiretap housekeepables exist
+20160909 17:39:43 459 INFO  [main]:  5100, Wiretap housekeepables exist
+20160909 17:39:43 463 INFO  [main]:  5000, Wiretap housekeepables exist
+20160909 17:39:43 467 INFO  [main]:  4900, Wiretap housekeepables exist
+20160909 17:39:43 482 INFO  [main]:  4800, Wiretap housekeepables exist
+20160909 17:39:43 488 INFO  [main]:  4700, Wiretap housekeepables exist
+20160909 17:39:43 491 INFO  [main]:  4600, Wiretap housekeepables exist
+20160909 17:39:43 494 INFO  [main]:  4500, Wiretap housekeepables exist
+20160909 17:39:43 496 INFO  [main]:  4400, Wiretap housekeepables exist
+20160909 17:39:43 499 INFO  [main]:  4300, Wiretap housekeepables exist
+20160909 17:39:43 502 INFO  [main]:  4200, Wiretap housekeepables exist
+20160909 17:39:43 505 INFO  [main]:  4100, Wiretap housekeepables exist
+20160909 17:39:43 508 INFO  [main]:  4000, Wiretap housekeepables exist
+20160909 17:39:43 511 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:43 513 INFO  [main]:  4000, Wiretap housekeepables exist
+20160909 17:39:43 516 INFO  [main]:  3900, Wiretap housekeepables exist
+20160909 17:39:43 519 INFO  [main]:  3800, Wiretap housekeepables exist
+20160909 17:39:43 521 INFO  [main]:  3700, Wiretap housekeepables exist
+20160909 17:39:43 524 INFO  [main]:  3600, Wiretap housekeepables exist
+20160909 17:39:43 527 INFO  [main]:  3500, Wiretap housekeepables exist
+20160909 17:39:43 529 INFO  [main]:  3400, Wiretap housekeepables exist
+20160909 17:39:43 532 INFO  [main]:  3300, Wiretap housekeepables exist
+20160909 17:39:43 534 INFO  [main]:  3200, Wiretap housekeepables exist
+20160909 17:39:43 537 INFO  [main]:  3100, Wiretap housekeepables exist
+20160909 17:39:43 539 INFO  [main]:  3000, Wiretap housekeepables exist
+20160909 17:39:43 542 INFO  [main]:  2900, Wiretap housekeepables exist
+20160909 17:39:43 544 INFO  [main]:  2800, Wiretap housekeepables exist
+20160909 17:39:43 547 INFO  [main]:  2700, Wiretap housekeepables exist
+20160909 17:39:43 549 INFO  [main]:  2600, Wiretap housekeepables exist
+20160909 17:39:43 551 INFO  [main]:  2500, Wiretap housekeepables exist
+20160909 17:39:43 554 INFO  [main]:  2400, Wiretap housekeepables exist
+20160909 17:39:43 556 INFO  [main]:  2300, Wiretap housekeepables exist
+20160909 17:39:43 558 INFO  [main]:  2200, Wiretap housekeepables exist
+20160909 17:39:43 561 INFO  [main]:  2100, Wiretap housekeepables exist
+20160909 17:39:43 563 INFO  [main]:  2000, Wiretap housekeepables exist
+20160909 17:39:43 566 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:43 567 INFO  [main]:  2000, Wiretap housekeepables exist
+20160909 17:39:43 570 INFO  [main]:  1900, Wiretap housekeepables exist
+20160909 17:39:43 572 INFO  [main]:  1800, Wiretap housekeepables exist
+20160909 17:39:43 574 INFO  [main]:  1700, Wiretap housekeepables exist
+20160909 17:39:43 576 INFO  [main]:  1600, Wiretap housekeepables exist
+20160909 17:39:43 578 INFO  [main]:  1500, Wiretap housekeepables exist
+20160909 17:39:43 580 INFO  [main]:  1400, Wiretap housekeepables exist
+20160909 17:39:43 582 INFO  [main]:  1300, Wiretap housekeepables exist
+20160909 17:39:43 584 INFO  [main]:  1200, Wiretap housekeepables exist
+20160909 17:39:43 585 INFO  [main]:  1100, Wiretap housekeepables exist
+20160909 17:39:43 587 INFO  [main]:  1000, Wiretap housekeepables exist
+20160909 17:39:43 589 INFO  [main]:  900, Wiretap housekeepables exist
+20160909 17:39:43 591 INFO  [main]:  800, Wiretap housekeepables exist
+20160909 17:39:43 593 INFO  [main]:  700, Wiretap housekeepables exist
+20160909 17:39:43 595 INFO  [main]:  600, Wiretap housekeepables exist
+20160909 17:39:43 597 INFO  [main]:  500, Wiretap housekeepables exist
+20160909 17:39:43 598 INFO  [main]:  400, Wiretap housekeepables exist
+20160909 17:39:43 600 INFO  [main]:  300, Wiretap housekeepables exist
+20160909 17:39:43 602 INFO  [main]:  200, Wiretap housekeepables exist
+20160909 17:39:43 604 INFO  [main]:  100, Wiretap housekeepables exist
+20160909 17:39:43 606 INFO  [main]:  0, Wiretap housekeepables exist
+20160909 17:39:43 610 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@5b88ace7: startup date [Fri Sep 09 17:39:39 BST 2016]; root of context hierarchy
+20160909 17:39:43 613 INFO  [main]:  Loading XML bean definitions from class path resource [hsqldb-config.xml]
+20160909 17:39:43 631 INFO  [main]:  Loading XML bean definitions from class path resource [substitute-components.xml]
+20160909 17:39:43 652 INFO  [main]:  Refreshing org.springframework.context.support.GenericApplicationContext@389fba0a: startup date [Fri Sep 09 17:39:43 BST 2016]; root of context hierarchy
+20160909 17:39:43 673 INFO  [main]:  Loaded JDBC driver: org.h2.Driver
+20160909 17:39:43 724 INFO  [main]:  HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+20160909 17:39:43 730 INFO  [main]:  HHH000399: Using default transaction strategy (direct JDBC transactions)
+20160909 17:39:43 730 INFO  [main]:  HHH000397: Using ASTQueryTranslatorFactory
+20160909 17:39:43 753 INFO  [main]:  HHH000227: Running hbm2ddl schema export
+20160909 17:39:43 759 INFO  [main]:  HHH000230: Schema export complete
+20160909 17:39:43 776 INFO  [main]:  Using DataSource [org.springframework.jdbc.datasource.DriverManagerDataSource@6ec08f07] of Hibernate SessionFactory for HibernateTransactionManager
+20160909 17:39:46 734 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:46 744 INFO  [main]:  10000, Wiretap housekeepables exist
+20160909 17:39:46 776 INFO  [main]:  9900, Wiretap housekeepables exist
+20160909 17:39:46 781 INFO  [main]:  9800, Wiretap housekeepables exist
+20160909 17:39:46 786 INFO  [main]:  9700, Wiretap housekeepables exist
+20160909 17:39:46 791 INFO  [main]:  9600, Wiretap housekeepables exist
+20160909 17:39:46 796 INFO  [main]:  9500, Wiretap housekeepables exist
+20160909 17:39:46 800 INFO  [main]:  9400, Wiretap housekeepables exist
+20160909 17:39:46 806 INFO  [main]:  9300, Wiretap housekeepables exist
+20160909 17:39:46 811 INFO  [main]:  9200, Wiretap housekeepables exist
+20160909 17:39:46 816 INFO  [main]:  9100, Wiretap housekeepables exist
+20160909 17:39:46 820 INFO  [main]:  9000, Wiretap housekeepables exist
+20160909 17:39:46 825 INFO  [main]:  8900, Wiretap housekeepables exist
+20160909 17:39:46 830 INFO  [main]:  8800, Wiretap housekeepables exist
+20160909 17:39:46 835 INFO  [main]:  8700, Wiretap housekeepables exist
+20160909 17:39:46 840 INFO  [main]:  8600, Wiretap housekeepables exist
+20160909 17:39:46 844 INFO  [main]:  8500, Wiretap housekeepables exist
+20160909 17:39:46 849 INFO  [main]:  8400, Wiretap housekeepables exist
+20160909 17:39:46 854 INFO  [main]:  8300, Wiretap housekeepables exist
+20160909 17:39:46 858 INFO  [main]:  8200, Wiretap housekeepables exist
+20160909 17:39:46 863 INFO  [main]:  8100, Wiretap housekeepables exist
+20160909 17:39:46 867 INFO  [main]:  8000, Wiretap housekeepables exist
+20160909 17:39:46 872 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:46 876 INFO  [main]:  8000, Wiretap housekeepables exist
+20160909 17:39:46 880 INFO  [main]:  7900, Wiretap housekeepables exist
+20160909 17:39:46 885 INFO  [main]:  7800, Wiretap housekeepables exist
+20160909 17:39:46 889 INFO  [main]:  7700, Wiretap housekeepables exist
+20160909 17:39:46 893 INFO  [main]:  7600, Wiretap housekeepables exist
+20160909 17:39:46 897 INFO  [main]:  7500, Wiretap housekeepables exist
+20160909 17:39:46 901 INFO  [main]:  7400, Wiretap housekeepables exist
+20160909 17:39:46 905 INFO  [main]:  7300, Wiretap housekeepables exist
+20160909 17:39:46 910 INFO  [main]:  7200, Wiretap housekeepables exist
+20160909 17:39:46 914 INFO  [main]:  7100, Wiretap housekeepables exist
+20160909 17:39:46 918 INFO  [main]:  7000, Wiretap housekeepables exist
+20160909 17:39:46 922 INFO  [main]:  6900, Wiretap housekeepables exist
+20160909 17:39:46 926 INFO  [main]:  6800, Wiretap housekeepables exist
+20160909 17:39:46 930 INFO  [main]:  6700, Wiretap housekeepables exist
+20160909 17:39:46 934 INFO  [main]:  6600, Wiretap housekeepables exist
+20160909 17:39:46 938 INFO  [main]:  6500, Wiretap housekeepables exist
+20160909 17:39:46 942 INFO  [main]:  6400, Wiretap housekeepables exist
+20160909 17:39:46 946 INFO  [main]:  6300, Wiretap housekeepables exist
+20160909 17:39:46 949 INFO  [main]:  6200, Wiretap housekeepables exist
+20160909 17:39:46 953 INFO  [main]:  6100, Wiretap housekeepables exist
+20160909 17:39:46 957 INFO  [main]:  6000, Wiretap housekeepables exist
+20160909 17:39:46 962 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:46 965 INFO  [main]:  6000, Wiretap housekeepables exist
+20160909 17:39:46 970 INFO  [main]:  5900, Wiretap housekeepables exist
+20160909 17:39:46 974 INFO  [main]:  5800, Wiretap housekeepables exist
+20160909 17:39:46 977 INFO  [main]:  5700, Wiretap housekeepables exist
+20160909 17:39:46 981 INFO  [main]:  5600, Wiretap housekeepables exist
+20160909 17:39:46 984 INFO  [main]:  5500, Wiretap housekeepables exist
+20160909 17:39:46 988 INFO  [main]:  5400, Wiretap housekeepables exist
+20160909 17:39:46 991 INFO  [main]:  5300, Wiretap housekeepables exist
+20160909 17:39:46 995 INFO  [main]:  5200, Wiretap housekeepables exist
+20160909 17:39:46 998 INFO  [main]:  5100, Wiretap housekeepables exist
+20160909 17:39:47 002 INFO  [main]:  5000, Wiretap housekeepables exist
+20160909 17:39:47 005 INFO  [main]:  4900, Wiretap housekeepables exist
+20160909 17:39:47 008 INFO  [main]:  4800, Wiretap housekeepables exist
+20160909 17:39:47 012 INFO  [main]:  4700, Wiretap housekeepables exist
+20160909 17:39:47 015 INFO  [main]:  4600, Wiretap housekeepables exist
+20160909 17:39:47 018 INFO  [main]:  4500, Wiretap housekeepables exist
+20160909 17:39:47 021 INFO  [main]:  4400, Wiretap housekeepables exist
+20160909 17:39:47 025 INFO  [main]:  4300, Wiretap housekeepables exist
+20160909 17:39:47 028 INFO  [main]:  4200, Wiretap housekeepables exist
+20160909 17:39:47 031 INFO  [main]:  4100, Wiretap housekeepables exist
+20160909 17:39:47 034 INFO  [main]:  4000, Wiretap housekeepables exist
+20160909 17:39:47 039 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:47 041 INFO  [main]:  4000, Wiretap housekeepables exist
+20160909 17:39:47 044 INFO  [main]:  3900, Wiretap housekeepables exist
+20160909 17:39:47 047 INFO  [main]:  3800, Wiretap housekeepables exist
+20160909 17:39:47 050 INFO  [main]:  3700, Wiretap housekeepables exist
+20160909 17:39:47 053 INFO  [main]:  3600, Wiretap housekeepables exist
+20160909 17:39:47 056 INFO  [main]:  3500, Wiretap housekeepables exist
+20160909 17:39:47 059 INFO  [main]:  3400, Wiretap housekeepables exist
+20160909 17:39:47 062 INFO  [main]:  3300, Wiretap housekeepables exist
+20160909 17:39:47 065 INFO  [main]:  3200, Wiretap housekeepables exist
+20160909 17:39:47 067 INFO  [main]:  3100, Wiretap housekeepables exist
+20160909 17:39:47 070 INFO  [main]:  3000, Wiretap housekeepables exist
+20160909 17:39:47 073 INFO  [main]:  2900, Wiretap housekeepables exist
+20160909 17:39:47 075 INFO  [main]:  2800, Wiretap housekeepables exist
+20160909 17:39:47 078 INFO  [main]:  2700, Wiretap housekeepables exist
+20160909 17:39:47 081 INFO  [main]:  2600, Wiretap housekeepables exist
+20160909 17:39:47 083 INFO  [main]:  2500, Wiretap housekeepables exist
+20160909 17:39:47 086 INFO  [main]:  2400, Wiretap housekeepables exist
+20160909 17:39:47 088 INFO  [main]:  2300, Wiretap housekeepables exist
+20160909 17:39:47 091 INFO  [main]:  2200, Wiretap housekeepables exist
+20160909 17:39:47 093 INFO  [main]:  2100, Wiretap housekeepables exist
+20160909 17:39:47 096 INFO  [main]:  2000, Wiretap housekeepables exist
+20160909 17:39:47 100 INFO  [main]:  Wiretap batched housekeeper called
+20160909 17:39:47 102 INFO  [main]:  2000, Wiretap housekeepables exist
+20160909 17:39:47 104 INFO  [main]:  1900, Wiretap housekeepables exist
+20160909 17:39:47 106 INFO  [main]:  1800, Wiretap housekeepables exist
+20160909 17:39:47 108 INFO  [main]:  1700, Wiretap housekeepables exist
+20160909 17:39:47 111 INFO  [main]:  1600, Wiretap housekeepables exist
+20160909 17:39:47 113 INFO  [main]:  1500, Wiretap housekeepables exist
+20160909 17:39:47 115 INFO  [main]:  1400, Wiretap housekeepables exist
+20160909 17:39:47 117 INFO  [main]:  1300, Wiretap housekeepables exist
+20160909 17:39:47 119 INFO  [main]:  1200, Wiretap housekeepables exist
+20160909 17:39:47 121 INFO  [main]:  1100, Wiretap housekeepables exist
+20160909 17:39:47 123 INFO  [main]:  1000, Wiretap housekeepables exist
+20160909 17:39:47 125 INFO  [main]:  900, Wiretap housekeepables exist
+20160909 17:39:47 127 INFO  [main]:  800, Wiretap housekeepables exist
+20160909 17:39:47 129 INFO  [main]:  700, Wiretap housekeepables exist
+20160909 17:39:47 131 INFO  [main]:  600, Wiretap housekeepables exist
+20160909 17:39:47 133 INFO  [main]:  500, Wiretap housekeepables exist
+20160909 17:39:47 135 INFO  [main]:  400, Wiretap housekeepables exist
+20160909 17:39:47 137 INFO  [main]:  300, Wiretap housekeepables exist
+20160909 17:39:47 139 INFO  [main]:  200, Wiretap housekeepables exist
+20160909 17:39:47 141 INFO  [main]:  100, Wiretap housekeepables exist
+20160909 17:39:47 143 INFO  [main]:  0, Wiretap housekeepables exist
+20160909 17:39:47 147 INFO  [main]:  Closing org.springframework.context.support.GenericApplicationContext@389fba0a: startup date [Fri Sep 09 17:39:43 BST 2016]; root of context hierarchy
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.486 sec
+
+Results :
+
+Tests run: 36, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ ikasan-wiretap ---
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.2.6-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ ikasan-wiretap ---
+[INFO] org already added, skipping
+[INFO] org/ikasan already added, skipping
+[INFO] org/ikasan/wiretap already added, skipping
+[INFO] org/ikasan/wiretap/model already added, skipping
+[INFO] org/ikasan/history already added, skipping
+[INFO] org/ikasan/history/model already added, skipping
+[INFO] org/ikasan/trigger already added, skipping
+[INFO] org/ikasan/trigger/model already added, skipping
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.2.6-SNAPSHOT-sources.jar
+[INFO] org already added, skipping
+[INFO] org/ikasan already added, skipping
+[INFO] org/ikasan/wiretap already added, skipping
+[INFO] org/ikasan/wiretap/model already added, skipping
+[INFO] org/ikasan/history already added, skipping
+[INFO] org/ikasan/history/model already added, skipping
+[INFO] org/ikasan/trigger already added, skipping
+[INFO] org/ikasan/trigger/model already added, skipping
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ ikasan-wiretap ---
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.2.6-SNAPSHOT.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-wiretap/1.2.6-SNAPSHOT/ikasan-wiretap-1.2.6-SNAPSHOT.jar
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/pom.xml to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-wiretap/1.2.6-SNAPSHOT/ikasan-wiretap-1.2.6-SNAPSHOT.pom
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.2.6-SNAPSHOT-sources.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-wiretap/1.2.6-SNAPSHOT/ikasan-wiretap-1.2.6-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 01:03 min
+[INFO] Finished at: 2016-09-09T17:39:48+00:00
+[INFO] Final Memory: 21M/303M
+[INFO] ------------------------------------------------------------------------

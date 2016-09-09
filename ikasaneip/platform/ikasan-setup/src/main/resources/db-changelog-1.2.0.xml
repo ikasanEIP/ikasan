@@ -3,11 +3,8 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
-    	
-    <!-- 1.2.0 table alterations -->   
-    <include file="db/alter/db-changeLog-alterFlowAddConfiguration.xml" relativeToChangelogFile="true" /> 
-	
-    <!-- 1.2.0 table creation -->    
+
+	<!-- 1.2.0 table creation -->
 	<include file="db/tables/db-changeLog-createFilter.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createFilterComponent.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createRoleFilter.xml" relativeToChangelogFile="true" />
@@ -18,6 +15,10 @@
 	<include file="db/tables/db-changeLog-createMessageHistory.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createMetric.xml" relativeToChangelogFile="true" />
 	<include file="db/tables/db-changeLog-createMetricEvent.xml" relativeToChangelogFile="true" />
+
+	<!-- 1.2.0 table alterations -->
+	<include file="db/alter/db-changeLog-alterFlowAddConfiguration.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMessageHistoryAddHarvested.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.2.0 cardinality creation -->
 	<include file="db/cardinality/db-changeLog-createRoleFilterFk.xml" relativeToChangelogFile="true" />

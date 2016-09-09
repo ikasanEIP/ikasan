@@ -62,6 +62,8 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
 
     private WiretapFlowEvent wiretapFlowEvent;
 
+    private Boolean harvested = false;
+
     /** Required by the ORM... */
     protected MessageHistoryFlowEvent()
     {
@@ -230,6 +232,16 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
     public void setWiretapFlowEvent(WiretapFlowEvent wiretapFlowEvent)
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
+    }
+
+    public Boolean getHarvested()
+    {
+        return harvested;
+    }
+
+    public void setHarvested(Boolean harvested)
+    {
+        this.harvested = harvested;
     }
 
 }

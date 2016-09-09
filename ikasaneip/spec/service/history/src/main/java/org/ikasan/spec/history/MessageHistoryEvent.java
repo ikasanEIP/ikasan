@@ -75,4 +75,8 @@ public interface MessageHistoryEvent<ID, METRIC, EVENT> {
     public EVENT getWiretapFlowEvent();
 
     public void setWiretapFlowEvent(EVENT wiretapFlowEvent);
+
+    public Boolean getHarvested();
+
+    public void setHarvested(Boolean harvested);
 }

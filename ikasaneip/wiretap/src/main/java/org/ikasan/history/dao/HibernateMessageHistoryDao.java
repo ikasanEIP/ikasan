@@ -292,25 +292,9 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             numberDeleted += this.housekeepingBatchSize;
 
-            getHibernateTemplate().execute(new HibernateCallback<Object>()
-            {
-                public Object doInHibernate(Session session) throws HibernateException
-                {
-	            	session.createSQLQuery(metricHousekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
-                            .replace("_ex_", String.valueOf(System.currentTimeMillis()))).executeUpdate();
-                	
-	            	
-                    String formattedQuery = messageHistoryHousekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
-                            .replace("_ex_", String.valueOf(System.currentTimeMillis()));
-                    
+            List<MessageHistoryEvent> events = this.getHarvestedRecords(this.transactionBatchSize);
 
-                    SQLQuery query = session.createSQLQuery(formattedQuery);
-
-                    query.executeUpdate();
-
-                    return null;
-                }
-            });
+            this.deleteHarvestableRecords(events);
         }
     }
 
@@ -345,6 +329,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             public Object doInHibernate(Session session) throws HibernateException
             {
                 Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                criteria.add(Restrictions.eq("harvested", false));
                 criteria.setProjection(Projections.rowCount());
 
                 Long rowCount = 0L;
@@ -360,13 +345,25 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     }
 
     @Override
-    public List<MessageHistoryEvent> getHarvestableRecordsRecords(final int transactionBatchSize)
+    public List<MessageHistoryEvent> getHarvestableRecords(final int transactionBatchSize)
+    {
+        return this.getHarvestableRecords(transactionBatchSize, false);
+    }
+
+    public List<MessageHistoryEvent> getHarvestedRecords(final int transactionBatchSize)
+    {
+        return this.getHarvestableRecords(transactionBatchSize, true);
+    }
+
+
+    public List<MessageHistoryEvent> getHarvestableRecords(final int transactionBatchSize, final Boolean harvested)
     {
         return (List<MessageHistoryEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
                 Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                criteria.add(Restrictions.eq("harvested", harvested));
                 criteria.setMaxResults(transactionBatchSize);
                 criteria.addOrder(Order.asc("startTimeMillis"));
 
