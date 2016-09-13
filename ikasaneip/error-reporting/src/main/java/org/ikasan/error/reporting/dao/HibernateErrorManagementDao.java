@@ -79,8 +79,10 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
 			" where eo.uri in(:" + EVENT_IDS + ")";
 
+	public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
+
 	public static final String NOTES_DELETE_QUERY = "delete Note n " +
-			" where n.id in(select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + "))";
+			" where n.id in(:" + EVENT_IDS + ")";
 
 	public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
 
@@ -380,9 +382,17 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 					query.setParameterList(EVENT_IDS, errorUris);
 					query.executeUpdate();
 
-					query = session.createQuery(NOTES_DELETE_QUERY);
+					query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
 					query.setParameterList(EVENT_IDS, errorUris);
-					query.executeUpdate();
+
+					List<Long> errorOccurenceNotesIds = (List<Long>)query.list();
+
+					if(errorOccurenceNotesIds.size() > 0)
+					{
+						query = session.createQuery(NOTES_DELETE_QUERY);
+						query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
+						query.executeUpdate();
+					}
 
 					query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
 					query.setParameterList(EVENT_IDS, errorUris);
