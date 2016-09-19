@@ -40,6 +40,10 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +53,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -59,6 +66,7 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
@@ -79,18 +87,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -116,55 +114,56 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 	}
 
     @SuppressWarnings("unchecked")
-	public void populate(Component component)
-    {
-    	configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
-    	
-    	if(configuration == null)
-    	{
-    		Server server = component.getFlow().getModule().getServer();
-    		
-    		String url = server.getUrl() + ":" + server.getPort()
-    				+ component.getFlow().getModule().getContextRoot()
-    				+ "/rest/configuration/createConfiguration/"
-    	    		+ component.getFlow().getModule().getName() 
-    	    		+ "/"
-    	    		+ component.getFlow().getName()
-    	    		+ "/"
-    	    		+ component.getName();
-    		
+	public void populate(Component component) {
+		configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
 
-    		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-    	        	.getAttribute(DashboardSessionValueConstants.USER);
-    		
-        	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-        	
-        	ClientConfig clientConfig = new ClientConfig();
-        	clientConfig.register(feature) ;
-        	
-        	Client client = ClientBuilder.newClient(clientConfig);
-        	
-        	ObjectMapper mapper = new ObjectMapper();
-        	
-    	    WebTarget webTarget = client.target(url);
-    	    
-    	    Response response = webTarget.request().get();
-    	    
-    	    if(response.getStatus()  != 200)
-    	    {
-    	    	response.bufferEntity();
-    	        
-    	        String responseMessage = response.readEntity(String.class);
-    	    	Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': " 
-    	    			+ responseMessage, Type.ERROR_MESSAGE);
-    	    	
-    	    	return;
-    	    }
-    	    
-    	    configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
-    	}
-    		
-    	  	
+		if (configuration == null) {
+			Server server = component.getFlow().getModule().getServer();
+
+			String url = server.getUrl() + ":" + server.getPort()
+					+ component.getFlow().getModule().getContextRoot()
+					+ "/rest/configuration/createConfiguration/"
+					+ component.getFlow().getModule().getName()
+					+ "/"
+					+ component.getFlow().getName()
+					+ "/"
+					+ component.getName();
+
+
+			IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+					.getAttribute(DashboardSessionValueConstants.USER);
+
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String) authentication.getCredentials());
+
+			ClientConfig clientConfig = new ClientConfig();
+			clientConfig.register(feature);
+
+			Client client = ClientBuilder.newClient(clientConfig);
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			WebTarget webTarget = client.target(url);
+
+			Response response = webTarget.request().get();
+
+			if (response.getStatus() != 200) {
+				response.bufferEntity();
+
+				String responseMessage = response.readEntity(String.class);
+				Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': "
+						+ responseMessage, Type.ERROR_MESSAGE);
+
+				return;
+			}
+
+			configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
+		}
+
+		this.buildLayout();
+	}
+
+	protected void buildLayout()
+	{
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 		
 		this.layout = new GridLayout(2, parameters.size() + 6);
@@ -178,7 +177,49 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		Label configurationParametersLabel = new Label("Configuration Parameters");
 		configurationParametersLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
-		
+
+		Button exportMappingConfigurationButton = new Button();
+		exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+		exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		exportMappingConfigurationButton.setDescription("Export the current component configuration");
+		exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
+		FileDownloader fd = new FileDownloader(this.getComponentConfigurationExportStream());
+		fd.extend(exportMappingConfigurationButton);
+
+		Button importMappingConfigurationButton = new Button();
+
+		final ComponentConfigurationImportWindow componentConfigurationImportWindow = new ComponentConfigurationImportWindow(configuration);
+
+		componentConfigurationImportWindow.addCloseListener(new Window.CloseListener()
+		{
+			@Override
+			public void windowClose(CloseEvent closeEvent)
+			{
+				buildLayout();
+			}
+		});
+
+		importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
+		importMappingConfigurationButton.setDescription("Import a component configuration");
+		importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(componentConfigurationImportWindow);
+			}
+		});
+
+		HorizontalLayout uploadDownloadLayout = new HorizontalLayout();
+		uploadDownloadLayout.setSpacing(true);
+		uploadDownloadLayout.setWidth("100px");
+
+		uploadDownloadLayout.addComponent(exportMappingConfigurationButton);
+		uploadDownloadLayout.addComponent(importMappingConfigurationButton);
+
+		this.layout.addComponent(uploadDownloadLayout, 1 ,0);
+		this.layout.setComponentAlignment(uploadDownloadLayout, Alignment.MIDDLE_RIGHT);
+
 		GridLayout paramLayout = new GridLayout(2, 2);
 		paramLayout.setSpacing(true);
 		paramLayout.setSizeFull();
@@ -208,9 +249,9 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		paramLayout.addComponent(conmfigurationDescriptionTextField, 1, 1);
 
 		
-		this.layout.addComponent(paramLayout, 0, 1, 1, 1);
+		this.layout.addComponent(paramLayout, 0, 2, 1, 2);
 		
-		int i=2;
+		int i=3;
 		
 		for(ConfigurationParameter parameter: parameters)
 		{	
@@ -414,7 +455,63 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
     	Panel configurationPanel = new Panel();
     	configurationPanel.setContent(this.layout);
 
-    	
 		this.setContent(configurationPanel);
     }
+
+	/**
+	 * Helper method to get the stream associated with the export of the file.
+	 *
+	 * @return the StreamResource associated with the export.
+	 */
+	private StreamResource getComponentConfigurationExportStream()
+	{
+		StreamResource.StreamSource source = new StreamResource.StreamSource()
+		{
+
+			public InputStream getStream() {
+				ByteArrayOutputStream stream = null;
+				try
+				{
+					stream = getComponentConfigurationExport();
+				}
+				catch (IOException e)
+				{
+					logger.error(e.getMessage(), e);
+				}
+				InputStream input = new ByteArrayInputStream(stream.toByteArray());
+				return input;
+
+			}
+		};
+		StreamResource resource = new StreamResource ( source,"mappingConfigurationExport.xml");
+		return resource;
+	}
+
+	/**
+	 * Helper method to get the ByteArrayOutputStream associated with the export.
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	private ByteArrayOutputStream getComponentConfigurationExport() throws IOException
+	{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+//		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("mappingExportSchemaLocation");
+
+//		if(schemaLocation == null || schemaLocation.length() == 0)
+//		{
+//			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
+//		}
+//
+//		logger.debug("Resolved schemaLocation " + schemaLocation);
+
+		ComponentConfigurationExportHelper exportHelper = new ComponentConfigurationExportHelper(this.configuration);
+
+		String exportXml = exportHelper.getComponentConfigurationExportXml();
+
+		out.write(exportXml.getBytes());
+
+		return out;
+	}
 }
