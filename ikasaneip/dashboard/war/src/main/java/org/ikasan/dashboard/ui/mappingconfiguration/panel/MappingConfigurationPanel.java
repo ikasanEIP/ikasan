@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
@@ -269,7 +270,7 @@ public class MappingConfigurationPanel extends Panel implements View
         this.editButton.setCaption("Edit");
         this.editButton.setDescription("Edit the mapping configuration");
         this.editButton.addStyleName(ValoTheme.BUTTON_SMALL);
-//        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
         this.editButton.setVisible(false);
         this.editButton.addClickListener(new Button.ClickListener() 
         {
@@ -283,12 +284,10 @@ public class MappingConfigurationPanel extends Panel implements View
         toolBarLayout.addComponent(this.editButton);
         toolBarLayout.setExpandRatio(this.editButton, 0.045f);
 
-//        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
+
         this.saveButton.setCaption("Save");
         this.saveButton.setDescription("Save the mapping configuration");
         this.saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
-//        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-//        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.saveButton.setVisible(false);
         this.saveButton.addClickListener(new Button.ClickListener() 
         {
@@ -323,14 +322,9 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-//        toolBarLayout.addComponent(this.saveButton);
-//        toolBarLayout.setExpandRatio(this.saveButton, 0.045f);
-
-//        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
         this.cancelButton.setCaption("Cancel");
         this.cancelButton.setDescription("Cancel the current edit");
-//        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-//        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
         this.cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickListener(new Button.ClickListener() 
@@ -358,8 +352,6 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-//        toolBarLayout.addComponent(this.cancelButton);
-//        toolBarLayout.setExpandRatio(this.cancelButton, 0.045f);
 
         FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
         fd.extend(exportMappingConfigurationButton);
@@ -902,8 +894,8 @@ public class MappingConfigurationPanel extends Panel implements View
         	throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
         }
         
-        logger.debug("Resolved schemaLocation " + schemaLocation);	
-        
+        logger.debug("Resolved schemaLocation " + schemaLocation);
+
         String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
             , this.keyLocationQueries, schemaLocation);
 

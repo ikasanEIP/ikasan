@@ -40,6 +40,8 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,6 +64,7 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
@@ -137,8 +140,6 @@ public abstract class AbstractConfigurationWindow extends Window
 
 	/**
      * Helper method to initialise this object.
-     * 
-     * @param message
      */
     protected void init()
     {
@@ -653,7 +654,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		
 		return paramPanel;
     }
-    
+
     protected class TextFieldKeyValuePair
     {
     	public TextField key;
