@@ -53,14 +53,18 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * XML Validator uses an injected XML parser to validate each incoming payload content.
@@ -87,33 +91,43 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
     private XMLValidatorConfiguration configuration;
 
     /**
-     * Pre-configured document builder factory
+     * The parser factory
      */
-    private DocumentBuilderFactory factory;
+    private SAXParserFactory factory;
+
+    /**
+     * The reader to do the parsing
+     */
+    private XMLReader reader;
 
     /**
      * ErrorHandler instance
      */
     private ErrorHandler errorHandler = new ExceptionThrowingErrorHandler();
 
-
     /**
      * Source to InputStream converter
      */
     private Converter<SOURCE, ByteArrayInputStream> sourceToByteArrayInputStreamConverter;
 
+    /**
+     * A map of converters that are keyed on context. In this case the context is the thread id.
+     */
+    protected Map<Long, XMLReader> xmlReaders;
+
 
     /**
      * Constructor
-     *
-     * @param factory - pre configured document builder factory
      */
-    public XMLValidator(final DocumentBuilderFactory factory) {
+    public XMLValidator(SAXParserFactory factory)
+    {
         this.factory = factory;
-        if (this.factory == null) {
-            throw new IllegalArgumentException("document builder factory cannot be 'null'.");
+        if(factory == null)
+        {
+            throw new IllegalArgumentException("factory cannot be null!");
         }
     }
+
 
     /**
      * Implementation of the onEvent XMLValidation
@@ -125,7 +139,8 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
 
         ValidationResult<SOURCE, TARGET> validationResult = new ValidationResult<>();
         validationResult.setSource(source);
-        if (configuration.isSkipValidation()) {
+        if (configuration.isSkipValidation())
+        {
 
             if (configuration.isReturnValidationResult()) {
                 validationResult.setResult(ValidationResult.Result.VALID);
@@ -136,15 +151,23 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
 
         }
 
-        try {
-
-            DocumentBuilder builder = this.factory.newDocumentBuilder();
-            builder.setErrorHandler(this.errorHandler);
-
+        try
+        {
             InputStream sourceAsInputStream = this.createSourceAsBytes(source);
-            builder.parse(sourceAsInputStream);
 
-            if (!configuration.isReturnValidationResult()) {
+            XMLReader reader = this.xmlReaders.get(Thread.currentThread().getId());
+
+            if(reader == null)
+            {
+                reader = this.createXMLReader();
+
+                this.xmlReaders.put(Thread.currentThread().getId(), reader);
+            }
+
+            reader.parse(new InputSource(sourceAsInputStream));
+
+            if (!configuration.isReturnValidationResult())
+            {
                 return source;
             }
 
@@ -164,25 +187,25 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
             }
             validationResult.setResult(ValidationResult.Result.INVALID);
             validationResult.setException(e);
-        } catch (ParserConfigurationException e) {
-            if (configuration.isThrowExceptionOnValidationFailure()||!configuration.isReturnValidationResult()) {
-                throw new ValidationException(e);
-            }
-            validationResult.setResult(ValidationResult.Result.INVALID);
-            validationResult.setException(e);
         }
+
         return validationResult;
     }
 
     private String generateErrorMessage(SAXException e, SOURCE source) {
 
         String payload;
-        if (sourceToByteArrayInputStreamConverter == null && source instanceof String) {
+        if (sourceToByteArrayInputStreamConverter == null && source instanceof String)
+        {
             payload = (String) source;
-        } else {
-            try {
+        }
+        else
+        {
+            try
+            {
                 payload = IOUtils.toString(sourceToByteArrayInputStreamConverter.convert(source));
-            } catch (IOException ioe) {
+            } catch (IOException ioe)
+            {
                 logger.error(ioe);
                 payload = String.format("An exception occurred whilst converting the payload to a String: %s", ioe.getMessage());
             }
@@ -193,52 +216,100 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
         return errorMessage;
     }
 
-    private ByteArrayInputStream createSourceAsBytes(SOURCE xml) {
-        if (sourceToByteArrayInputStreamConverter == null && xml instanceof String) {
+    private ByteArrayInputStream createSourceAsBytes(SOURCE xml)
+    {
+        if (sourceToByteArrayInputStreamConverter == null && xml instanceof String)
+        {
             return new ByteArrayInputStream(((String) xml).getBytes());
-        } else {
+        }
+        else
+        {
             return sourceToByteArrayInputStreamConverter.convert(xml);
         }
     }
 
+    private XMLReader createXMLReader()
+    {
+        XMLReader reader = null;
+
+        try
+        {
+            Class poolClass =
+                    Class.forName("org.apache.xerces.util.XMLGrammarPoolImpl");
+
+            Object grammarPool = poolClass.newInstance();
+
+            factory.setValidating(true);
+            factory.setNamespaceAware(true);
+
+            SAXParser parser = factory.newSAXParser();
+            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                    "http://www.w3.org/2001/XMLSchema");
+
+            reader = parser.getXMLReader();
+            reader.setErrorHandler(this.errorHandler);
+            reader.setProperty(
+                    "http://apache.org/xml/properties/internal/grammar-pool",
+                    grammarPool);
+        }
+        catch(Exception e)
+        {
+            logger.error("Cannot create XMLReader for XSD Validation", e);
+
+            throw new RuntimeException("Cannot create XMLReader for XSD Validation", e);
+        }
+
+        return reader;
+    }
+
     @Override
-    public String getConfiguredResourceId() {
+    public String getConfiguredResourceId()
+    {
         return configuredResourceId;
     }
 
     @Override
-    public void setConfiguredResourceId(String configuredResourceId) {
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
         this.configuredResourceId = configuredResourceId;
     }
 
     @Override
-    public XMLValidatorConfiguration getConfiguration() {
+    public XMLValidatorConfiguration getConfiguration()
+    {
         return configuration;
     }
 
     @Override
-    public void setConfiguration(XMLValidatorConfiguration configuration) {
+    public void setConfiguration(XMLValidatorConfiguration configuration)
+    {
         this.configuration = configuration;
     }
 
     @Override
-    public void startManagedResource() {
+    public void startManagedResource()
+    {
+        this.xmlReaders = new HashMap<Long, XMLReader>();
 
+        // Make sure we can initialise one of these.
+        this.createXMLReader();
     }
 
     @Override
-    public void stopManagedResource() {
-
+    public void stopManagedResource()
+    {
+        this.xmlReaders = null;
     }
 
     @Override
-    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager) {
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    {
 
     }
 
     @Override
     public boolean isCriticalOnStartup() {
-        return false;
+        return true;
     }
 
     @Override

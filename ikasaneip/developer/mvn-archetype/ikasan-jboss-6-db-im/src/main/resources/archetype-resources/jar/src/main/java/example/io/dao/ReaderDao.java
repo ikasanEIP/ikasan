@@ -50,7 +50,7 @@ import java.util.List;
 public interface ReaderDao<MODEL>
 {
     /**
-     * Read a model based on the given identifier
+     * Read a window based on the given identifier
      * @return
      */
     public List<MODEL> getAll();

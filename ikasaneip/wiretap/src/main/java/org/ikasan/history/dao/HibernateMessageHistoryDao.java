@@ -40,6 +40,7 @@
  */
 package org.ikasan.history.dao;
 
+import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -57,10 +58,7 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Hibernate implementation of the <code>MessageHistoryDao</code>
@@ -373,8 +371,25 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 criteria.addOrder(Order.asc("startTimeMillis"));
 
                 List<MessageHistoryEvent> messageHistoryEvents = criteria.list();
+                ArrayList<String> eventIds = new ArrayList<String>();
 
-                for(MessageHistoryEvent messageHistoryEvent: messageHistoryEvents)
+                List<List<MessageHistoryEvent>> smallerLists = Lists.partition(messageHistoryEvents, 200);
+
+                Map<String, WiretapFlowEvent> eventsMap = new HashMap<String, WiretapFlowEvent>();
+
+                for(List<MessageHistoryEvent> list: smallerLists)
+                {
+                    for (MessageHistoryEvent event: list)
+                    {
+                        eventIds.add((String)event.getBeforeEventIdentifier());
+                    }
+
+                    eventsMap.putAll(getWiretapFlowEvents(eventIds));
+
+                    eventIds = new ArrayList<String>();
+                }
+
+                for(MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent> messageHistoryEvent: messageHistoryEvents)
                 {
                     criteria = session.createCriteria(WiretapFlowEvent.class);
                     criteria.add(Restrictions.eq("moduleName", messageHistoryEvent.getModuleName()));
@@ -383,17 +398,45 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                     criteria.add(Restrictions.eq("eventId", messageHistoryEvent.getBeforeEventIdentifier()));
                     criteria.addOrder(Order.asc("timestamp"));
 
-                    List<WiretapFlowEvent> wiretapEvents = criteria.list();
-                    if(wiretapEvents != null && wiretapEvents.size() > 0)
+                    WiretapFlowEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier());
+                    if(event != null)
                     {
-                        messageHistoryEvent.setWiretapFlowEvent(wiretapEvents.get(0));
+                        if(event.getComponentName().equals(messageHistoryEvent.getComponentName())
+                                && event.getFlowName().equals(messageHistoryEvent.getFlowName())
+                                && event.getModuleName().equals(messageHistoryEvent.getModuleName()))
+                        {
+                            messageHistoryEvent.setWiretapFlowEvent(event);
+                        }
                     }
                 }
 
                 return messageHistoryEvents;
             }
         });
+    }
 
+    protected Map<String, WiretapFlowEvent> getWiretapFlowEvents(final List<String> eventIds)
+    {
+        return (Map<String, WiretapFlowEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
+                criteria.add(Restrictions.in("eventId", eventIds));
+
+
+                List<WiretapFlowEvent> wiretapEvents = criteria.list();
+
+                HashMap<String, WiretapFlowEvent> results = new HashMap<String, WiretapFlowEvent>();
+
+                for(WiretapFlowEvent event: wiretapEvents)
+                {
+                    results.put(event.getEventId(), event);
+                }
+
+                return results;
+            }
+        });
     }
 
     @Override
@@ -408,7 +451,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             for(CustomMetric metric: (Set<CustomMetric>)event.getMetrics())
             {
-                getHibernateTemplate().delete(metric);    
+                getHibernateTemplate().delete(metric);
             }
 
             getHibernateTemplate().delete(event);

@@ -45,7 +45,7 @@ import javax.resource.spi.InvalidPropertyException;
 import org.apache.log4j.Logger;
 
 /**
- * FTP Consumer Configuration model providing alternate connection details
+ * FTP Consumer Configuration window providing alternate connection details
  * to be used in case primary connection fails
  * 
  * @author Ikasan Development Team

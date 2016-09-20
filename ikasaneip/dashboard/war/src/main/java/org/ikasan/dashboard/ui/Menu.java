@@ -223,6 +223,22 @@ public class Menu extends CssLayout
         replayMenuItem.setIcon(VaadinIcons.RECYCLE);
         menuItemsLayout.addComponent(replayMenuItem);
         this.menuComponents.put(replayMenuItem, SecurityConstants.VIEW_REPLAY_AUTHORITY);
+
+        final Button houseKeepingMenuItem = new Button("Housekeeping", new ClickListener()
+        {
+            @Override
+            public void buttonClick(final ClickEvent event)
+            {
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("housekeepingView");
+            }
+        });
+
+        houseKeepingMenuItem.setHtmlContentAllowed(true);
+        houseKeepingMenuItem.setPrimaryStyleName("valo-menu-item");
+        houseKeepingMenuItem.setIcon(VaadinIcons.TRASH);
+        menuItemsLayout.addComponent(houseKeepingMenuItem);
+        this.menuComponents.put(houseKeepingMenuItem, SecurityConstants.VIEW_HOUSEKEEPING_AUTHORITY);
         
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");

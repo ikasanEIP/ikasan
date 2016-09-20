@@ -77,7 +77,7 @@ public class HibernateAuthorityDao extends HibernateDaoSupport implements Author
         return result;    }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.security.dao.AuthorityDao#save(org.ikasan.framework.security.model.Authority)
+     * @see org.ikasan.framework.security.dao.AuthorityDao#save(org.ikasan.framework.security.window.Authority)
      */
     public void save(Authority newAuthority)
     {

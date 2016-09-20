@@ -40,6 +40,7 @@
  */
 package org.ikasan.replay.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -72,6 +73,8 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
 	public static final String EVENT_ID = "eventId";
+	public static final String EVENT_IDS = "eventIds";
+	public static final String NOW = "now";
 	
 	public static final String REPLAY_AUDIT_QUERY = "select DISTINCT ra from ReplayAudit ra, ReplayAuditEvent rae, ReplayEvent re "
 			+ "where "
@@ -85,6 +88,21 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String END_DATE_PREDICATE =  " and ra.timestamp < :" + END_DATE;
 	public static final String EVENT_ID_PREDICATE =  " and re.eventId = :" + EVENT_ID;
 	public static final String ORDER_BY =  " order by ra.timestamp desc";
+
+	public static final String REPLAY_EVENTS_TO_DELETE_QUERY = "select id from ReplayEvent re " +
+			" where re.expiry < :" + NOW;
+
+	public static final String REPLAY_EVENTS_DELETE_QUERY = "delete ReplayEvent re " +
+			" where re.id in(:" + EVENT_IDS + ")";
+
+	public static final String REPLAY_AUDIT_EVENTS_TO_DELETE_QUERY = "select rae.id.replayAuditId from ReplayAuditEvent rae " +
+			" where rae.id.replayEventId in (:" + EVENT_IDS + ")";
+
+	public static final String REPLAY_AUDIT_DELETE_QUERY = "delete ReplayAudit re " +
+			" where re.id in(:" + EVENT_IDS + ")";
+
+	public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete ReplayAuditEvent re " +
+			" where re.id.replayEventId in(:" + EVENT_IDS + ")";
 	
 	/* (non-Javadoc)
 	 * @see org.ikasan.replay.dao.ReplayDao#getReplayAudits(java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
@@ -171,7 +189,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayEvent)
+	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayEvent)
 	 */
 	@Override
 	public void saveOrUpdate(ReplayEvent replayEvent) 
@@ -257,7 +275,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayAudit)
+	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayAudit)
 	 */
 	@Override
 	public void saveOrUpdate(ReplayAudit replayAudit) 
@@ -266,7 +284,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.model.ReplayAuditEvent)
+	 * @see org.ikasan.replay.dao.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayAuditEvent)
 	 */
 	@Override
 	public void saveOrUpdate(ReplayAuditEvent replayAuditEvent) 
@@ -327,5 +345,57 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
         });
 	}
 
-	
+	@Override
+	public void housekeep(final Integer numToHousekeep)
+	{
+		this.getHibernateTemplate().execute(new HibernateCallback()
+		{
+			@SuppressWarnings("unchecked")
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+
+				Query query = session.createQuery(REPLAY_EVENTS_TO_DELETE_QUERY);
+				query.setLong(NOW, System.currentTimeMillis());
+				query.setMaxResults(numToHousekeep);
+
+				List<Long> replayEventIds = (List<Long>)query.list();
+
+				List<Long> replayAuditEventIds = new ArrayList<Long>();
+
+				if(replayEventIds.size() > 0)
+				{
+
+					query = session.createQuery(REPLAY_AUDIT_EVENTS_TO_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, replayEventIds);
+
+					replayAuditEventIds = (List<Long>) query.list();
+				}
+
+				if(replayEventIds.size() > 0)
+				{
+					query = session.createQuery(REPLAY_AUDIT_EVENT_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, replayEventIds);
+					query.executeUpdate();
+				}
+
+				if(replayAuditEventIds.size() > 0)
+				{
+					query = session.createQuery(REPLAY_AUDIT_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, replayAuditEventIds);
+					query.executeUpdate();
+				}
+
+				if(replayEventIds.size() > 0)
+				{
+					query = session.createQuery(REPLAY_EVENTS_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, replayEventIds);
+					query.executeUpdate();
+				}
+
+				return null;
+			}
+		});
+	}
+
+
 }

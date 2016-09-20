@@ -181,6 +181,10 @@
                    <constructor-arg value="notificationView"/>
                    <constructor-arg ref="notificationPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="housekeepingView"/>
+                    <constructor-arg ref="houseKeepingPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
