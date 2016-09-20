@@ -114,6 +114,24 @@
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
+
+	<bean id="wiretapService"
+		  class="org.ikasan.wiretap.service.WiretapServiceImpl">
+		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="moduleService" />
+		<constructor-arg ref ="wiretapEventFactory"/>
+	</bean>
+
+	<bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactory">
+		<!-- serializer -->
+		<constructor-arg>
+			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+				<constructor-arg>
+					<bean class="java.util.HashMap" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
 	
 	<bean id="wiretapDao"
 		class="org.ikasan.wiretap.dao.HibernateWiretapDao">
@@ -212,6 +230,15 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
+	<bean id="duplicateFilterService" class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+		<constructor-arg ref="duplicateFilterDao"/>
+	</bean>
+
+	<bean id="duplicateFilterDao"
+		  class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
@@ -264,6 +291,7 @@
 			   <value>/org/ikasan/replay/model/ReplayAudit.hbm.xml</value>
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
+			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

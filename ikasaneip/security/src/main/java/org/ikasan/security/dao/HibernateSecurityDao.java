@@ -72,7 +72,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
  	/*
  	 * (non-Javadoc)
- 	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateRole(org.ikasan.security.model.Role)
+ 	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateRole(org.ikasan.security.window.Role)
  	 */
     @Override
     public void saveOrUpdateRole(Role role)
@@ -83,7 +83,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicy(org.ikasan.security.model.Policy)
+     * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicy(org.ikasan.security.window.Policy)
      */
     @Override
     public void saveOrUpdatePolicy(Policy policy)
@@ -94,7 +94,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePrincipal(org.ikasan.security.model.IkasanPrincipal)
+     * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
     public void saveOrUpdatePrincipal(IkasanPrincipal principal)
@@ -189,7 +189,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.dao.SecurityDao#deleteRole(org.ikasan.security.model.Role)
+     * @see org.ikasan.security.dao.SecurityDao#deleteRole(org.ikasan.security.window.Role)
      */
     @Override
     public void deleteRole(Role role)
@@ -199,7 +199,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.dao.SecurityDao#deletePolicy(org.ikasan.security.model.Policy)
+     * @see org.ikasan.security.dao.SecurityDao#deletePolicy(org.ikasan.security.window.Policy)
      */
     @Override
     public void deletePolicy(Policy policy)
@@ -209,7 +209,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.security.dao.SecurityDao#deletePrincipal(org.ikasan.security.model.IkasanPrincipal)
+     * @see org.ikasan.security.dao.SecurityDao#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
     public void deletePrincipal(IkasanPrincipal principal)
@@ -218,7 +218,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
 	 */
 	@Override
 	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
@@ -330,7 +330,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLink(org.ikasan.security.model.PolicyLink)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLink(org.ikasan.security.window.PolicyLink)
 	 */
 	@Override
 	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
@@ -339,7 +339,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLinkType(org.ikasan.security.model.PolicyLinkType)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLinkType(org.ikasan.security.window.PolicyLinkType)
 	 */
 	@Override
 	public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType)
@@ -348,7 +348,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#deletePolicyLink(org.ikasan.security.model.PolicyLink)
+	 * @see org.ikasan.security.dao.SecurityDao#deletePolicyLink(org.ikasan.security.window.PolicyLink)
 	 */
 	@Override
 	public void deletePolicyLink(PolicyLink policyLink)
@@ -369,7 +369,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#deleteAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 * @see org.ikasan.security.dao.SecurityDao#deleteAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
 	 */
 	@Override
 	public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod)

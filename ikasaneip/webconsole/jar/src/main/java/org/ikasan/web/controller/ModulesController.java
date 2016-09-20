@@ -105,9 +105,9 @@ public class ModulesController
     }
 
     /**
-     * List the modules given a model (map)
+     * List the modules given a window (map)
      * 
-     * @param model - The model (map)
+     * @param model - The window (map)
      * @return "modules/modules"
      */
     @RequestMapping("list.htm")
@@ -121,7 +121,7 @@ public class ModulesController
      * View the module
      * 
      * @param moduleName - The name of the module to view
-     * @param model - The model
+     * @param model - The window
      * @return - "modules/viewModule"
      */
     @RequestMapping("view.htm")
@@ -140,7 +140,7 @@ public class ModulesController
      * 
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
-     * @param model - The model
+     * @param model - The window
      * @return "modules/viewFlow"
      */
     @RequestMapping("viewFlow.htm")
@@ -244,7 +244,7 @@ public class ModulesController
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param flowElementName - The name of the flow element
-     * @param model - The model
+     * @param model - The window
      * @return "modules/viewFlowElement"
      */
     @RequestMapping("viewFlowElement.htm")
@@ -274,12 +274,12 @@ public class ModulesController
     }
 
     /**
-     * Sets the model attributes required for the model sub-navigation
+     * Sets the window attributes required for the window sub-navigation
      * 
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param flowElementName - The name of the flow element
-     * @param model - The model
+     * @param model - The window
      */
     private void setupNavigationAttributes(String moduleName, String flowName, String flowElementName, ModelMap model)
     {
@@ -289,9 +289,9 @@ public class ModulesController
     }
 
     /**
-     * Sets an attribute in the model if it is not null
+     * Sets an attribute in the window if it is not null
      * 
-     * @param model - The model
+     * @param model - The window
      * @param parameterName - The parameter name
      * @param parameterValue - The parameter value
      */
@@ -310,7 +310,7 @@ public class ModulesController
      * @param flowName - The name of the flow
      * @param flowElementName - The name of the flow element
      * @param triggerId - The id of the trigger to delete
-     * @param model - The model
+     * @param model - The window
      * @return "modules/viewFlowElement"
      * @throws Exception - Exception if we fail to delete the trigger
      */

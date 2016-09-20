@@ -40,6 +40,7 @@
  */
 package org.ikasan.history.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.ikasan.spec.history.MessageHistoryEvent;
@@ -50,7 +51,7 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>
+public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>, Serializable
 {
     private String moduleName, flowName, componentName,
             beforeEventIdentifier, beforeRelatedEventIdentifier,
@@ -230,4 +231,5 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
     }
+
 }

@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-spec-service</artifactId>
-        <version>1.2.3-SNAPSHOT</version>
+        <version>1.2.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-spec-serialiser</artifactId>

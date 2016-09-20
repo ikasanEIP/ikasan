@@ -380,7 +380,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
    /*
     * /(non-Javadoc)
-    * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationType(org.ikasan.mapping.model.ConfigurationType)
+    * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationType(org.ikasan.mapping.window.ConfigurationType)
     */
     @Override
     public Long storeConfigurationType(ConfigurationType configurationType)
@@ -393,7 +393,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
      */
     @Override
     public Long storeMappingConfiguration(MappingConfiguration configurationContext) throws DataAccessException
@@ -406,7 +406,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
      */
     @Override
     public Long storeSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -419,7 +419,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public Long storeTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -432,7 +432,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationServiceClient(org.ikasan.mapping.model.ConfigurationServiceClient)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationServiceClient(org.ikasan.mapping.window.ConfigurationServiceClient)
      */
     @Override
     public Long storeConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient)
@@ -444,7 +444,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeKeyLocationQuery(org.ikasan.mapping.model.KeyLocationQuery)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeKeyLocationQuery(org.ikasan.mapping.window.KeyLocationQuery)
      */
     @Override
     public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery)
@@ -456,7 +456,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationContext(org.ikasan.mapping.model.ConfigurationContext)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationContext(org.ikasan.mapping.window.ConfigurationContext)
      */
     @Override
     public Long storeConfigurationContext(ConfigurationContext configurationContext)
@@ -819,7 +819,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteSourceConfigurationValue(org.ikasan.mapping.model.SourceConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteSourceConfigurationValue(org.ikasan.mapping.window.SourceConfigurationValue)
      */
     @Override
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
@@ -828,7 +828,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue)
@@ -851,7 +851,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#saveSourceConfigurationGroupSequence(org.ikasan.mapping.model.SourceConfigurationGroupSequence)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#saveSourceConfigurationGroupSequence(org.ikasan.mapping.window.SourceConfigurationGroupSequence)
      */
     @Override
     public void saveSourceConfigurationGroupSequence(SourceConfigurationGroupSequence sequence)
@@ -861,7 +861,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.model.TargetConfigurationValue)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(org.ikasan.mapping.window.TargetConfigurationValue)
      */
     @Override
     public Long getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(
@@ -904,7 +904,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteMappingConfiguration(org.ikasan.mapping.model.MappingConfiguration)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#deleteMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
      */
     @Override
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration)

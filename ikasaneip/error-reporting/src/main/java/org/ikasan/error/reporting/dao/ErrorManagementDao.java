@@ -141,7 +141,6 @@ public interface ErrorManagementDao
 	 */
     public List<ErrorOccurrence> findActionErrorOccurrences(List<String> moduleName, List<String> flowName, List<String> flowElementname,
 			Date startDate, Date endDate);
-    
     /**
      * 
      * @return
@@ -154,4 +153,9 @@ public interface ErrorManagementDao
      * @return
      */
     public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate);
+
+	/**
+	 * House keep associated entities.
+     */
+	public void housekeep(final Integer numToHousekeep);
 }

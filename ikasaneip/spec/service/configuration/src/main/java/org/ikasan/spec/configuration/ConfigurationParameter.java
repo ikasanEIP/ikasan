@@ -41,7 +41,7 @@
 package org.ikasan.spec.configuration;
 
 /**
- * Individual configuration parameter model contract.
+ * Individual configuration parameter window contract.
  * 
  * @author Ikasan Development Team
  *

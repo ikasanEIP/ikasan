@@ -41,7 +41,7 @@
 package org.ikasan.spec.flow;
 
 /**
- * Contract for a model of an invocation of a FlowElement. This effectively holds meta-data regarding
+ * Contract for a window of an invocation of a FlowElement. This effectively holds meta-data regarding
  * the invocations of FlowElements for a specific event
  * @author Ikasan Development Team
  *

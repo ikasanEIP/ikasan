@@ -227,9 +227,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 {
                     criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
                 }
-
-                criteria.addOrder(Order.desc("timestamp"));
-
+                
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = new Long(0);
                 List<Long> rowCountList = criteria.list();

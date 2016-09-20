@@ -55,7 +55,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerDao
 {
     /* (non-Javadoc)
-     * @see org.ikasan.trigger.dao.TriggerDao#delete(org.ikasan.trigger.model.Trigger)
+     * @see org.ikasan.trigger.dao.TriggerDao#delete(org.ikasan.trigger.window.Trigger)
      */
     public void delete(Trigger trigger)
     {
@@ -80,7 +80,7 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.trigger.dao.TriggerDao#save(org.ikasan.trigger.model.Trigger)
+     * @see org.ikasan.trigger.dao.TriggerDao#save(org.ikasan.trigger.window.Trigger)
      */
     public void save(Trigger trigger)
     {

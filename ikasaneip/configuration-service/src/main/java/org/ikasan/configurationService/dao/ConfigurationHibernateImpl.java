@@ -75,7 +75,7 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#saveConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#saveConfiguration(org.ikasan.framework.configuration.window.Configuration)
      */
     public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
@@ -104,7 +104,7 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#deleteConfiguration(org.ikasan.framework.configuration.window.Configuration)
      */
     public void delete(Configuration<List<ConfigurationParameter>> configuration)
     {

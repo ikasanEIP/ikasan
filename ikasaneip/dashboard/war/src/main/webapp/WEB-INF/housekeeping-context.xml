@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security 
+        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+
+
+	<bean id="houseKeepingPanel" class="org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel" scope="session">
+        <constructor-arg ref="scheduler" />
+        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="housekeepingJobs" />
+        <constructor-arg ref="housekeepingSchedulerService" />
+    </bean>
+
+    <bean id="housekeepingSchedulerService" class="org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService">
+        <constructor-arg ref="scheduler" />
+        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="housekeepingJobs" />
+    </bean>
+
+    <util:list id="housekeepingJobs">
+        <ref bean="replyHousekeepingJob" />
+        <ref bean="wiretapHousekeepingJob" />
+        <ref bean="errorReportingHousekeepingJob" />
+        <ref bean="hospitalServiceHousekeepingJob" />
+        <ref bean="systemEventServiceHousekeepingJob" />
+        <ref bean="duplicateFilterHousekeepingJob" />
+    </util:list>
+
+    <bean id="replyHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="replayHousekeepingJob" />
+        <constructor-arg ref="replayManagementService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="wiretapHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="wiretapHousekeepingJob" />
+        <constructor-arg ref="wiretapService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="errorReportingHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="errorReportingHousekeepingJob" />
+        <constructor-arg ref="errorReportingManagementService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="hospitalServiceHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="hospitalServiceHousekeepingJob" />
+        <constructor-arg ref="hospitalManagementService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="systemEventServiceHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="systemEventServiceHousekeepingJob" />
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="duplicateFilterHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="duplicateFilterHousekeepingJob" />
+        <constructor-arg ref="duplicateFilterService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+</beans>

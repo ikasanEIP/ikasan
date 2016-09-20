@@ -46,10 +46,8 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 
-
-
 /**
- * User and Authority service interface
+ * Replay record service implementation.
  * 
  * @author Ikasan Development Team
  * 

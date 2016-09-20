@@ -55,7 +55,23 @@ public interface HousekeepService
 
     /**
      * Method to state that there are housekeepable records available.
+     * 
      * @return true if records can be housekept, false otherwise
      */
     boolean housekeepablesExist();
+
+    /**
+     * Set the house keeping batch size. That is, the number of records to delete in
+     * a single command.
+     *
+     * @param housekeepingBatchSize
+     */
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
+
+    /**
+     * Set the number of records to delete in a single transaction.
+     *
+     * @param transactionBatchSize the transactionBatchSize to set
+     */
+    public void setTransactionBatchSize(Integer transactionBatchSize);
 }

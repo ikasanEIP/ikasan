@@ -83,7 +83,7 @@ public class DeploymentInfoDAOHibernateImpl extends HibernateDaoSupport implemen
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.middleware.ha.deployment.dao.DeploymentInfoDAO#save(com.mizuho.middleware.ha.deployment.model.DeploymentInfo)
+     * @see com.mizuho.middleware.ha.deployment.dao.DeploymentInfoDAO#save(com.mizuho.middleware.ha.deployment.window.DeploymentInfo)
      */
     public void save(DeploymentInfo deploymentInfo)
     {
@@ -100,7 +100,7 @@ public class DeploymentInfoDAOHibernateImpl extends HibernateDaoSupport implemen
     }
 
     /* (non-Javadoc)
-     * @see com.mizuho.middleware.ha.deployment.dao.DeploymentInfoDAO#remove(com.mizuho.middleware.ha.deployment.model.DeploymentInfo)
+     * @see com.mizuho.middleware.ha.deployment.dao.DeploymentInfoDAO#remove(com.mizuho.middleware.ha.deployment.window.DeploymentInfo)
      */
     public void remove(DeploymentInfo deploymentInfo)
     {

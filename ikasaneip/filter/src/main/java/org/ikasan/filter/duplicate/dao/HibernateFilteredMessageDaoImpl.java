@@ -59,10 +59,18 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
 {
-    private static final String EXPIRY = "expiry";
+    public static final String EXPIRY = "expiry";
+    public static final String EVENT_IDS = "eventIds";
+    public static final String NOW = "now";
 
     /** Query used for housekeeping expired filtered messages */
     private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= :" + EXPIRY;
+
+    public static final String MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY = "select id from DefaultFilterEntry se " +
+            " where se.expiry < :" + NOW;
+
+    public static final String MESSAGE_FILTER_ENTRIES_DELETE_QUERY = "delete DefaultFilterEntry se " +
+            " where se.id in(:" + EVENT_IDS + ")";
 
     /** Flag for batch housekeeping option. Defaults to true */
     private boolean batchHousekeepDelete = true;
@@ -86,7 +94,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     /*
          * (non-Javadoc)
-         * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.model.FilterEntry)
+         * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.window.FilterEntry)
          */
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
@@ -113,7 +121,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     /*
      * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#save(org.ikasan.filter.duplicate.model.FilterEntry)
+     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#save(org.ikasan.filter.duplicate.window.FilterEntry)
      */
     public void save(FilterEntry message)
     {
@@ -153,26 +161,33 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     {
         logger.info("MessageFilter batch delete.");
 
-        int numDeleted = 0;
+        int numberDeleted = 0;
 
-        while (housekeepablesExist() && numDeleted < this.transactionBatchSize)
+        while(housekeepablesExist() && numberDeleted < this.transactionBatchSize)
         {
+            numberDeleted += this.housekeepingBatchSize;
+
             getHibernateTemplate().execute(new HibernateCallback<Object>()
             {
-                public Object doInHibernate(Session session) throws HibernateException{
+                public Object doInHibernate(Session session) throws HibernateException
+                {
 
+                    Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY);
+                    query.setParameter(NOW, System.currentTimeMillis());
+                    query.setMaxResults(housekeepingBatchSize);
 
-                    String formattedQuery = housekeepQuery.replace("_bs_", String.valueOf(housekeepingBatchSize))
-                            .replace("_ex_", String.valueOf(System.currentTimeMillis()));
+                    List<Long> wiretapEventIds = (List<Long>)query.list();
 
-                    SQLQuery query = session.createSQLQuery(formattedQuery);
-                    query.executeUpdate();
+                    if(wiretapEventIds.size() > 0)
+                    {
+                        query = session.createQuery(MESSAGE_FILTER_ENTRIES_DELETE_QUERY);
+                        query.setParameterList(EVENT_IDS, wiretapEventIds);
+                        query.executeUpdate();
+                    }
 
                     return null;
                 }
             });
-
-            numDeleted += housekeepingBatchSize;
         }
     }
 

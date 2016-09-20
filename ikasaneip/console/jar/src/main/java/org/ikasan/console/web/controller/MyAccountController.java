@@ -123,8 +123,8 @@ public class MyAccountController
      * Navigate to the my account page for a user (not an administrator)
      * 
      * @param request - Standard HTTP Request
-     * @param response - Standard HTTP Response- The model, contains the user amongst other things
-     * @param model - The model, will need to contain the user amongst other things
+     * @param response - Standard HTTP Response- The window, contains the user amongst other things
+     * @param model - The window, will need to contain the user amongst other things
      * @return - Model and View for myAccount
      */
     @RequestMapping(value = "myAccount.htm", method = RequestMethod.GET)
@@ -142,7 +142,7 @@ public class MyAccountController
      * 
      * @param user - The user we're changing the password for
      * @param confirmNewPassword - The password again, for confirmation
-     * @param model - The model to add any errors too if required
+     * @param model - The window to add any errors too if required
      * @return Back to the changePassword screen in case of error, else back to the myAccount screen
      */
     @RequestMapping(value = "userChangePassword.htm", method = RequestMethod.POST)
@@ -184,7 +184,7 @@ public class MyAccountController
      * TODO Split tasks into individual methods
      * 
      * @param username - User to send the new password to
-     * @param model - The model to hold errors
+     * @param model - The window to hold errors
      * 
      * @return - On success, return the user to the login screen, else return back to the forgot password screen
      */
