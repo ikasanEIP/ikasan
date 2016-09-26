@@ -40,20 +40,19 @@
  */
 package org.ikasan.client;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.listener.TransactionCommitFailureListener;
+import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
+import org.ikasan.filetransfer.Payload;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
-
-import org.ikasan.filetransfer.Payload;
-import org.ikasan.connector.BaseFileTransferConnection;
-import org.ikasan.connector.listener.TransactionCommitFailureListener;
-import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test the FileTRansferConnectionTempalte class
@@ -160,14 +159,14 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
     public Payload getDiscoveredFile(final String sourceDir, final String filenamePattern, final boolean renameOnSuccess,
                                      final String renameOnSuccessExtension, final boolean moveOnSuccess, final String moveOnSuccessNewPath, final boolean chunking, final int chunkSize,
                                      final boolean checksum, final long minAge, final boolean destructive,
-                                     final boolean filterDuplicates, final boolean filterOnFilename, final boolean filterOnLastModifedDate, final boolean chronological, final boolean isRecursive) throws ResourceException
+                                     final boolean filterDuplicates, final boolean filterOnFilename, final boolean filterOnLastModifedDate, final boolean chronological, final boolean isRecursive, final boolean alwaysChunk) throws ResourceException
     {
         return (Payload) execute(new ConnectionCallback()
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
                 addListenersToConnection((BaseFileTransferConnection) connection);
-                Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
+                Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive,alwaysChunk);
                 return discoveredFile;
             }
         });

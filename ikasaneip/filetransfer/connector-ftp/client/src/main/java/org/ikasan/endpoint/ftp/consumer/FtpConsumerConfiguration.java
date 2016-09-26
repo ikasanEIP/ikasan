@@ -40,11 +40,11 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
-import javax.resource.spi.InvalidPropertyException;
-
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
+
+import javax.resource.spi.InvalidPropertyException;
 
 /**
  * FTP Consumer Configuration model.
@@ -97,6 +97,9 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
 
     /** Attempt to verify integrity of retrieved file by comparing with a checksum supplied by the remote system */
     private Boolean checksum = Boolean.FALSE;
+
+    /** If true always chunk regardless of threshold **/
+    private Boolean alwaysChunk = Boolean.FALSE;
 
     /** Minimum age (in seconds) of file to match */
     private Long minAge = Long.valueOf(120);
@@ -769,5 +772,13 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     public void setPasswordFilePath(String passwordFilePath)
     {
         this.passwordFilePath = passwordFilePath;
+    }
+
+    public Boolean getAlwaysChunk() {
+        return alwaysChunk;
+    }
+
+    public void setAlwaysChunk(Boolean alwaysChunk) {
+        this.alwaysChunk = alwaysChunk;
     }
 }
