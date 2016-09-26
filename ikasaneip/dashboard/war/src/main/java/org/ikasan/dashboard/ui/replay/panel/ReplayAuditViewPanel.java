@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -59,14 +60,7 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -119,6 +113,19 @@ public class ReplayAuditViewPanel extends Panel
     }
 
 	public void init()
+	{
+		this.setSizeFull();
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
+
+		layout.addComponent( createPanel());
+
+		this.setContent(layout);
+	}
+
+	public Panel createPanel()
 	{
 		this.setSizeFull();
 		
@@ -278,7 +285,13 @@ public class ReplayAuditViewPanel extends Panel
 		
 		layout.addComponent(formLayout);
 		layout.addComponent(this.replayAuditTable);
-		
-		this.setContent(layout);
+
+		Panel panel = new Panel();
+		panel.setSizeFull();
+		panel.setStyleName("dashboard");
+
+		panel.setContent(layout);
+
+		return panel;
 	}
 }

@@ -118,9 +118,9 @@ public class WiretapPayloadViewPanel extends Panel
 
 	protected Panel createWiretapDetailsPanel()
 	{
-		Panel errorOccurrenceDetailsPanel = new Panel();
-		errorOccurrenceDetailsPanel.setSizeFull();
-		errorOccurrenceDetailsPanel.setStyleName("dashboard");
+		Panel wiretapDetailsPanel = new Panel();
+		wiretapDetailsPanel.setSizeFull();
+		wiretapDetailsPanel.setStyleName("dashboard");
 		
 		GridLayout layout = new GridLayout(2, 6);
 		layout.setSizeFull();
@@ -242,8 +242,8 @@ public class WiretapPayloadViewPanel extends Panel
 		wrapperLayout.addComponent(editor, 0, 2, 1, 2);
 		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 
-		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
-		return errorOccurrenceDetailsPanel;
+		wiretapDetailsPanel.setContent(wrapperLayout);
+		return wiretapDetailsPanel;
 	}
 	
 	/**
