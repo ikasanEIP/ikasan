@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
@@ -72,18 +73,7 @@ import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -154,6 +144,20 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
     }
 
 	public void init()
+	{
+		this.setSizeFull();
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
+
+		layout.addComponent(createPanel());
+
+
+		this.setContent(layout);
+	}
+
+	public Panel createPanel()
 	{
 		this.setSizeFull();
 		
@@ -409,8 +413,14 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		
 		layout.addComponent(formLayout);
 		layout.addComponent(this.replayEventsTable);
-		
-		this.setContent(layout);
+
+		Panel panel = new Panel();
+		panel.setSizeFull();
+		panel.setStyleName("dashboard");
+
+		panel.setContent(layout);
+
+		return panel;
 	}
 	
 	private List<String> getValidTargetServers()
