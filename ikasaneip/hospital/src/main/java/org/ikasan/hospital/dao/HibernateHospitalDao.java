@@ -63,7 +63,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateHospitalDao extends HibernateDaoSupport implements HospitalDao
 {
-	public static final Long THIRTY_DAYS = 30 * 24 * 60 * 1000L;
+	public static final Long THIRTY_DAYS = 30 * 24 * 60 *  60 * 1000L;
 
 	public static final String EVENT_IDS = "eventIds";
 	public static final String NOW = "now";
