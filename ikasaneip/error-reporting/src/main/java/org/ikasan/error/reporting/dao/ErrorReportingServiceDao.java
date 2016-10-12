@@ -44,15 +44,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-
 /**
  * Error Reporting Service Data Access Contract.
  *
  * @author Ikasan Development Team
  */
-public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
+public interface ErrorReportingServiceDao<EVENT, IDENTIFIER> {
 
     /**
      * Find an error reporting event instance from the incoming uri.
