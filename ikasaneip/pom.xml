@@ -526,7 +526,7 @@
                                 <goal>jar</goal>
                             </goals>
                             <configuration>
-                                <additionalparam>-Xdoclint:none</additionalparam>
+                                <additionalparam>${javadoc.opts}</additionalparam>
                             </configuration>
                         </execution>
                     </executions>
@@ -924,6 +924,15 @@
                 <module>sample</module>
                 <module>transaction</module>
             </modules>
+        </profile>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
         </profile>
     </profiles>
 
