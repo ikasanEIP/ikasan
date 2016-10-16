@@ -34,7 +34,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>${project.version}</version.ikasan>
+        <version.ikasan>${ikasanversion}</version.ikasan>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.org.hibernate>4.3.9.Final</version.org.hibernate>
         <version.org.springframework>4.1.6.RELEASE</version.org.springframework>
