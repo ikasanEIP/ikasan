@@ -52,6 +52,7 @@ import java.util.Map;
         "/target-filesystem-flow-conf.xml",
         "/filesystem-conf.xml",
         "/jms-conf.xml",
+        "/replay-service-conf.xml",
         "/scheduled-conf.xml",
         "/exception-conf.xml",
         "/ikasan-transaction-conf.xml",
