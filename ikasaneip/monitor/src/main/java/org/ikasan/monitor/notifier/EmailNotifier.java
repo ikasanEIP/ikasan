@@ -61,6 +61,9 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
     /** logger instance */
     private static Logger logger = Logger.getLogger(EmailNotifier.class);
 
+    /** regular expression for splitting grouped email addresses in a single String separated by comma, semi-colon, or space */
+    private static String EMAIL_ADDRESS_SPLIT_REGEXP = ",| |;";
+
     /** date time formatter */
     private static DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss.SSS Z");
 
@@ -199,6 +202,9 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
             return null;
         }
 
+        // fix any email Strings which contain mulitple email addresses
+        emailAddresses = expandTokenisedAddresses(emailAddresses);
+
         int index = 0;
         Address[] addresses = new Address[emailAddresses.size()];
         for(String emailAddress:emailAddresses)
@@ -214,6 +220,32 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
         }
 
         return addresses;
+    }
+
+    /**
+     * Ensure email addresses are tokenised correctly when seprated by commas, spaces, or semi-colons.
+     * @param addresses
+     * @return
+     */
+    protected List<String> expandTokenisedAddresses(List<String> addresses)
+    {
+        List<String> reviewedAddresses = new ArrayList<String>();
+
+        for(String address:addresses)
+        {
+            String[] splitAddresses = address.split(EMAIL_ADDRESS_SPLIT_REGEXP);
+            {
+                for(String splitAddress:splitAddresses)
+                {
+                    if(splitAddress.length() > 0)
+                    {
+                        reviewedAddresses.add(splitAddress);
+                    }
+                }
+            }
+        }
+
+        return reviewedAddresses;
     }
 
     @Override
