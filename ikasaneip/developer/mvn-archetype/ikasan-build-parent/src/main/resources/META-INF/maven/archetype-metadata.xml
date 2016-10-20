@@ -52,7 +52,7 @@
         <requiredProperty key="version">
             <defaultValue>1.0.0-SNAPSHOT</defaultValue>
         </requiredProperty>
-        <requiredProperty key="ikasanversion">
+        <requiredProperty key="ikasanVersion">
         </requiredProperty>
     </requiredProperties>
 
