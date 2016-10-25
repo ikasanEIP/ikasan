@@ -44,17 +44,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-
 /**
  * Error Reporting Service Data Access Contract.
+ *
  * @author Ikasan Development Team
  */
-public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
-{
+public interface ErrorReportingServiceDao<EVENT, IDENTIFIER> {
+
     /**
      * Find an error reporting event instance from the incoming uri.
+     *
      * @param uri
      * @return EVENT
      */
@@ -71,36 +70,34 @@ public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
     /**
      * Find an error reporting events based on a list of moduleName, flowName and flowElementName
      * as well as a date range.
-     * 
+     *
      * @param moduleName
      * @param flowName
      * @param flowElementname
      * @param startDate
      * @param endDate
-     * 
      * @return
      */
     public List<EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, int size);
-    
+                            Date startDate, Date endDate, int size);
+
     /**
      * Find an error reporting events based on a list of moduleName, flowName and flowElementName
      * as well as a date range.
-     * 
+     *
      * @param moduleName
      * @param flowName
      * @param flowElementname
      * @param startDate
      * @param endDate
-     * 
      * @return
      */
     public List<EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, String action, String exceptionClass, int size);
-    
+                            Date startDate, Date endDate, String action, String exceptionClass, int size);
+
     /**
      * Helper method to return the row count based on the criteria.
-     * 
+     *
      * @param moduleName
      * @param flowName
      * @param flowElementname
@@ -109,10 +106,11 @@ public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
      * @return
      */
     public Long rowCount(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate);
+                         Date startDate, Date endDate);
 
     /**
      * Save the incoming EVENT.
+     *
      * @param event
      */
     public void save(EVENT event);
