@@ -225,9 +225,9 @@ public class EmailProducerTest {
 
         try {
             emailProducer.invoke(getEmailPayload(false, null));
-            Assert.assertTrue("Expeccting mail server connection issue", false);
+            Assert.assertTrue("Expecting mail server connection issue", false);
         }catch(EndpointException e){
-            Assert.assertTrue("Expeccting mail server connection issue", e.getMessage().contains("Could not connect to SMTP host"));
+            Assert.assertTrue("Expecting mail server connection issue", e.getMessage().contains("Could not connect to SMTP host"));
         }
     }
 

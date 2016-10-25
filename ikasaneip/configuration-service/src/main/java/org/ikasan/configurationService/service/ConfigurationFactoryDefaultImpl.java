@@ -45,6 +45,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
@@ -65,54 +66,44 @@ import org.ikasan.spec.configuration.Masked;
 /**
  * Default implementation of the ConfigurationFactory for creating configuration
  * and configuration parameter instances.
- * 
+ *
  * @author Ikasan Development Team
- * 
  */
-public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory
-{
-	/**
-	 * logger instance
-	 */
-	private static Logger logger = Logger
-			.getLogger(ConfigurationFactoryDefaultImpl.class);
+public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
 
-	/**
-	 * singleton instance
-	 */
-	private static ConfigurationFactory configurationFactory = new ConfigurationFactoryDefaultImpl();
+    private static Logger logger = Logger
+            .getLogger(ConfigurationFactoryDefaultImpl.class);
 
-	/**
-	 * Get an instance of the configurationFactory. This is a thread-safe
-	 * singleton.
-	 * 
-	 * @return
-	 */
-	public static ConfigurationFactory getInstance()
-	{
-		return configurationFactory;
-	}
+    private static ConfigurationFactory configurationFactory = new ConfigurationFactoryDefaultImpl();
 
-	/**
-	 * Singleton so don't let this be instantiated
-	 */
-	private ConfigurationFactoryDefaultImpl()
-	{
-		// hide the constructor
-	}
+    /**
+     * Get an instance of the configurationFactory. This is a thread-safe
+     * singleton.
+     *
+     * @return
+     */
+    public static ConfigurationFactory getInstance() {
+        return configurationFactory;
+    }
 
-	public Configuration<List<ConfigurationParameter>> createConfiguration(
-			String configurationResourceId)
-	{
-		return new DefaultConfiguration(configurationResourceId,
-				new ArrayList<ConfigurationParameter>());
-	}
+    private ConfigurationFactoryDefaultImpl() {
+        // hide the constructor
+    }
 
-	/**
-	 * @param runtimeConfiguration
-	 * @return
-	 */
-	public Configuration<List<ConfigurationParameter>> createConfiguration(String configurationResourceId, Object runtimeConfiguration) {
+    public Configuration<List<ConfigurationParameter>> createConfiguration(
+            String configurationResourceId) {
+        return new DefaultConfiguration(configurationResourceId,
+                new ArrayList<ConfigurationParameter>());
+    }
+
+    /**
+     * Create a filtered configuration given an Id and a representation of the current runtime configuration
+     *
+     * @param configurationResourceId - The id for the configuration resource
+     * @param runtimeConfiguration - The runtime configuration
+     * @return
+     */
+    public Configuration<List<ConfigurationParameter>> createConfiguration(String configurationResourceId, Object runtimeConfiguration) {
         if (runtimeConfiguration == null) {
             throw new ConfigurationException("Runtime configuration object cannot be 'null'");
         }
@@ -121,8 +112,12 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory
 
         try {
             Map<String, Object> properties = PropertyUtils.describe(runtimeConfiguration);
+            // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several
+            // tests require implicit ordering (and it's not a bad thing to have ordering anyhow)
+            TreeMap<String, Object> orderedProperties = new TreeMap<>(properties);
 
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            for (Map.Entry<String, Object> entry : orderedProperties.entrySet()) {
+
                 String name = entry.getKey();
                 Object value = entry.getValue();
 
@@ -131,144 +126,96 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory
                     if (value == null) {
                         Class<?> cls = PropertyUtils.getPropertyType(runtimeConfiguration, name);
 
-                        if (cls.isAssignableFrom(String.class))
-                        {
-                            if (isMasked(runtimeConfiguration, name))
-                            {
+                        if (cls.isAssignableFrom(String.class)) {
+                            if (isMasked(runtimeConfiguration, name)) {
                                 configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, null));
-                            } 
-                            else 
-                            {
+                            } else {
                                 configuration.getParameters().add(new ConfigurationParameterStringImpl(name, null));
                             }
-                        } 
-                        else if (cls.isAssignableFrom(Long.class)) 
-                        {
+                        } else if (cls.isAssignableFrom(Long.class)) {
                             configuration.getParameters().add(new ConfigurationParameterLongImpl(name, null));
-                        } 
-                        else if (cls.isAssignableFrom(Integer.class)) 
-                        {
+                        } else if (cls.isAssignableFrom(Integer.class)) {
                             configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, null));
-                        } 
-                        else if (cls.isAssignableFrom(Boolean.class)) 
-                        {
+                        } else if (cls.isAssignableFrom(Boolean.class)) {
                             configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, null));
-                        } 
-                        else if (cls.isAssignableFrom(List.class)) 
-                        {
+                        } else if (cls.isAssignableFrom(List.class)) {
                             configuration.getParameters().add(new ConfigurationParameterListImpl(name, null));
-                        } 
-                        else if (cls.isAssignableFrom(Map.class)) 
-                        {
+                        } else if (cls.isAssignableFrom(Map.class)) {
                             configuration.getParameters().add(new ConfigurationParameterMapImpl(name, null));
-                        } 
-                        else 
-                        {
+                        } else {
                             logger.warn("Ignoring unsupported configurationParameter class [" + cls.getName() + "].");
                         }
-                    } 
-                    else 
-                    {
-                        if (value instanceof String) 
-                        {
-                            if (isMasked(runtimeConfiguration, name))
-                            {
+                    } else {
+                        if (value instanceof String) {
+                            if (isMasked(runtimeConfiguration, name)) {
                                 configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, (String) value));
-                            } 
-                            else 
-                            {
+                            } else {
                                 configuration.getParameters().add(new ConfigurationParameterStringImpl(name, (String) value));
                             }
-                        } 
-                        else if (value instanceof Long) 
-                        {
+                        } else if (value instanceof Long) {
                             configuration.getParameters().add(new ConfigurationParameterLongImpl(name, (Long) value));
-                        } 
-                        else if (value instanceof Integer) 
-                        {
+                        } else if (value instanceof Integer) {
                             configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, (Integer) value));
-                        } 
-                        else if (value instanceof Boolean) 
-                        {
+                        } else if (value instanceof Boolean) {
                             configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, (Boolean) value));
-                        } 
-                        else if (value instanceof List) 
-                        {
+                        } else if (value instanceof List) {
                             configuration.getParameters().add(new ConfigurationParameterListImpl(name, (List) value));
-                        } 
-                        else if (value instanceof Map) 
-                        {
+                        } else if (value instanceof Map) {
                             configuration.getParameters().add(new ConfigurationParameterMapImpl(name, (Map) value));
-                        } 
-                        else 
-                        {
+                        } else {
                             logger.warn("Ignoring unsupported configurationParameter class [" + value.getClass().getName() + "].");
                         }
                     }
                 }
             }
-        }
-        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
-        {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new ConfigurationException(e);
         }
 
         return configuration;
     }
 
-	/**
-	 * Is this runtime configuration name data item subject to being masked
-	 * 
-	 * @param runtimeConfiguration
-	 * @param name
-	 * @return
-	 * @throws ConfigurationException
-	 */
-	protected boolean isMasked(Object runtimeConfiguration, String name)
-			throws ConfigurationException
-	{
-		try
-		{
-			Field field = getField(runtimeConfiguration.getClass(), name);
-					
-			if (field.isAnnotationPresent(Masked.class))
-			{
-				return true;
-			}
+    /**
+     * Is this runtime configuration name data item subject to being masked
+     *
+     * @param runtimeConfiguration
+     * @param name
+     * @return
+     * @throws ConfigurationException
+     */
+    protected boolean isMasked(Object runtimeConfiguration, String name)
+            throws ConfigurationException {
+        try {
+            Field field = getField(runtimeConfiguration.getClass(), name);
 
-		} 
-		catch (NoSuchFieldException e)
-		{
-			logger.warn("Unable to ascertain is field [" + name
-					+ "] is annotated for masking.", e);
-		}
+            if (field.isAnnotationPresent(Masked.class)) {
+                return true;
+            }
 
-		return false;
-	}
-	
-	/**
-	 * Helper method to attempt to get the field from the class hierarchy.
-	 * 
-	 * @param clazz
-	 * @param fieldName
-	 * @return
-	 * @throws NoSuchFieldException
-	 */
-	public Field getField(Class clazz, String fieldName) throws NoSuchFieldException 
-	{
-        try 
-        {
+        } catch (NoSuchFieldException e) {
+            logger.warn("Unable to ascertain is field [" + name
+                    + "] is annotated for masking.", e);
+        }
+
+        return false;
+    }
+
+    /**
+     * Helper method to attempt to get the field from the class hierarchy.
+     *
+     * @param clazz
+     * @param fieldName
+     * @return
+     * @throws NoSuchFieldException
+     */
+    public Field getField(Class clazz, String fieldName) throws NoSuchFieldException {
+        try {
             return clazz.getDeclaredField(fieldName);
-        } 
-        catch (NoSuchFieldException e) 
-        {
+        } catch (NoSuchFieldException e) {
             Class superClass = clazz.getSuperclass();
-            if (superClass == null) 
-            {
+            if (superClass == null) {
                 throw e;
-            } 
-            else 
-            {
+            } else {
                 return getField(superClass, fieldName);
             }
         }

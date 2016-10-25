@@ -55,6 +55,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -63,66 +64,62 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
  * the implementation of a ErrorReportingService contract.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@ContextConfiguration(locations = {
         "/error-reporting-service-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
 })
 
-public class ErrorReportingManagementServiceImplTest
-{
-	@Resource
+public class ErrorReportingManagementServiceImplTest {
+    @Resource
     ErrorManagementDao errorManagementDao;
-    
-    @Resource 
+
+    @Resource
     ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
-    
+
     @Resource 
     ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount> errorReportingManagementService;
-    
-    List<String> uris;
-    
-    @Before
-    public void load()
-    {
-    	uris = new ArrayList<String>();
-    	
-    	for(int i=0; i<1000; i++)
-    	{
-    		ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail", 
-    				"errorMessage", "exceptionClass", 100, new byte[100], "errorString");
-    		
-    		errorReportingServiceDao.save(eo);
-    		
-    		uris.add(eo.getUri());
-    	}
-    	
-    }
 
+    List<String> uris;
+
+    @Before
+    public void load() {
+        uris = new ArrayList<String>();
+
+        for (int i = 0; i < 1000; i++) {
+            ErrorOccurrence eo = new ErrorOccurrence("moduleName", "flowName", "flowElementName", "errorDetail",
+                    "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+
+            errorReportingServiceDao.save(eo);
+
+            uris.add(eo.getUri());
+        }
+
+    }
 
     @Test
     @DirtiesContext
-    public void test_close_error_occurrences()
-    {
-    	errorReportingManagementService.close(uris, "this is a not", "username");
-    	
-    	List<String> moduleNames = new ArrayList<String>();
-    	moduleNames.add("moduleName");
-    	
-    	List<String> flowNames = new ArrayList<String>();
-    	flowNames.add("flowName");
-    	
-    	List<String> componentNames = new ArrayList<String>();
-    	componentNames.add("componentName");
-    	
-    	Assert.assertTrue(errorReportingServiceDao.find(moduleNames, flowNames, componentNames, null, null, 1000).size() == 1);
+    public void test_close_error_occurrences() {
+
+        errorReportingManagementService.close(uris, "this is a note", "username");
+
+        List<String> moduleNames = new ArrayList<>();
+        moduleNames.add("moduleName");
+
+        List<String> flowNames = new ArrayList<>();
+        flowNames.add("flowName");
+
+        List<String> flowElementNames = new ArrayList<>();
+        flowElementNames.add("flowElementName");
+
+        int numberOfErrorsFound = errorReportingServiceDao.find(moduleNames, flowNames, flowElementNames, null, null, 1000).size();
+        Assert.assertTrue("Expected 0 errors after closing them all, got " + numberOfErrorsFound, numberOfErrorsFound == 0);
     }
 
-    
 
 }
