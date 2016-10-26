@@ -54,6 +54,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -78,6 +79,7 @@ import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.module.StartupType;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
@@ -90,19 +92,8 @@ import com.vaadin.data.util.converter.StringToIntegerConverter;
 import com.vaadin.data.util.converter.StringToLongConverter;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -119,9 +110,10 @@ public abstract class AbstractConfigurationWindow extends Window
 	protected GridLayout layout;
 	protected HashMap<String, PasswordField> passwordFields = new HashMap<String, PasswordField>();
 	protected HashMap<String, TextArea> textFields = new HashMap<String, TextArea>();
+	protected HashMap<String, ComboBox> comboBoxes = new HashMap<String, ComboBox>();
 	protected HashMap<String, TextArea> descriptionTextFields = new HashMap<String, TextArea>();
 	protected HashMap<String, TextFieldKeyValuePair> mapTextFields = new HashMap<String, TextFieldKeyValuePair>();
-	protected HashMap<String, TextField> valueTextFields = new HashMap<String, TextField>();
+	protected HashMap<String, TextArea> valueTextFields = new HashMap<String, TextArea>();
 	protected Configuration configuration;
 	
 	/**
@@ -165,7 +157,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		label.setIcon(VaadinIcons.COG);
 		label.addStyleName(ValoTheme.LABEL_LARGE);
 		label.addStyleName(ValoTheme.LABEL_BOLD);
-		label.setSizeUndefined();
+//		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
@@ -263,7 +255,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		label.setIcon(VaadinIcons.COG);
 		label.addStyleName(ValoTheme.LABEL_LARGE);
 		label.addStyleName(ValoTheme.LABEL_BOLD);
-		label.setSizeUndefined();
+//		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0, 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 		
@@ -344,6 +336,170 @@ public abstract class AbstractConfigurationWindow extends Window
 		
 		return paramPanel;
     }
+
+	protected Panel createTrueFalsePanel(ConfigurationParameter parameter, Validator validator)
+	{
+		Panel paramPanel = new Panel();
+		paramPanel.setStyleName("dashboard");
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(2, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+
+		Label label = new Label(parameter.getName());
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
+		paramLayout.addComponent(label, 0, 0, 1, 0);
+		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+
+		Label valueLabel = new Label("Value:");
+		valueLabel.setSizeUndefined();
+		ComboBox trueFalse = new ComboBox();
+		trueFalse.setWidth("15%");
+		trueFalse.addItem(Boolean.TRUE);
+		trueFalse.setItemCaption(Boolean.TRUE, "true");
+		trueFalse.addItem(Boolean.FALSE);
+		trueFalse.setItemCaption(Boolean.FALSE, "false");
+
+		comboBoxes.put(parameter.getName(), trueFalse);
+
+		BeanItem<ConfigurationParameter> parameterItem = new BeanItem<ConfigurationParameter>(parameter);
+
+		if(parameter.getValue() != null)
+		{
+			trueFalse.setPropertyDataSource(parameterItem.getItemProperty("value"));
+		}
+
+		paramLayout.addComponent(valueLabel, 0, 1);
+		paramLayout.addComponent(trueFalse, 1, 1);
+		paramLayout.setComponentAlignment(valueLabel, Alignment.TOP_RIGHT);
+
+		Label paramDescriptionLabel = new Label("Description:");
+		paramDescriptionLabel.setSizeUndefined();
+		TextArea descriptionTextField = new TextArea();
+		descriptionTextField.setRows(4);
+		descriptionTextField.setWidth("80%");
+		descriptionTextField.setId(parameter.getName());
+
+		paramLayout.addComponent(paramDescriptionLabel, 0, 2);
+		paramLayout.addComponent(descriptionTextField, 1, 2);
+		paramLayout.setComponentAlignment(paramDescriptionLabel, Alignment.TOP_RIGHT);
+
+		descriptionTextFields.put(parameter.getName(), descriptionTextField);
+
+		if(parameter.getDescription() != null)
+		{
+			descriptionTextField.setValue(parameter.getDescription());
+		}
+
+		paramPanel.setContent(paramLayout);
+
+		return paramPanel;
+	}
+
+	protected Panel createTextFieldPanel(ConfigurationParameter parameter, Validator validator)
+	{
+		Panel paramPanel = new Panel();
+		paramPanel.setStyleName("dashboard");
+		paramPanel.setWidth("100%");
+
+		GridLayout paramLayout = new GridLayout(2, 3);
+		paramLayout.setSpacing(true);
+		paramLayout.setSizeFull();
+		paramLayout.setMargin(true);
+		paramLayout.setColumnExpandRatio(0, .25f);
+		paramLayout.setColumnExpandRatio(1, .75f);
+
+		Label label = new Label(parameter.getName());
+		label.setIcon(VaadinIcons.COG);
+		label.addStyleName(ValoTheme.LABEL_LARGE);
+		label.addStyleName(ValoTheme.LABEL_BOLD);
+//		label.setSizeUndefined();
+		paramLayout.addComponent(label, 0, 0, 1, 0);
+		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
+
+		Label valueLabel = new Label("Value:");
+		valueLabel.setSizeUndefined();
+		TextArea textField = new TextArea();
+		textField.addValidator(validator);
+		textField.setNullSettingAllowed(true);
+		textField.setNullRepresentation("");
+		textField.setValidationVisible(false);
+		textField.setRows(1);
+		textField.setWidth("15%");
+		textField.setId(parameter.getName());
+
+		if(parameter instanceof ConfigurationParameterIntegerImpl)
+		{
+			StringToIntegerConverter plainIntegerConverter = new StringToIntegerConverter()
+			{
+				protected java.text.NumberFormat getFormat(Locale locale)
+				{
+					NumberFormat format = super.getFormat(locale);
+					format.setGroupingUsed(false);
+					return format;
+				};
+			};
+
+			// either set for the field or in your field factory for multiple fields
+			textField.setConverter(plainIntegerConverter);
+		}
+		else if (parameter instanceof ConfigurationParameterLongImpl)
+		{
+			StringToLongConverter plainLongConverter = new StringToLongConverter()
+			{
+				protected java.text.NumberFormat getFormat(Locale locale)
+				{
+					NumberFormat format = super.getFormat(locale);
+					format.setGroupingUsed(false);
+					return format;
+				};
+			};
+
+			// either set for the field or in your field factory for multiple fields
+			textField.setConverter(plainLongConverter);
+		}
+
+		textFields.put(parameter.getName(), textField);
+
+		BeanItem<ConfigurationParameter> parameterItem = new BeanItem<ConfigurationParameter>(parameter);
+
+		if(parameter.getValue() != null)
+		{
+			textField.setPropertyDataSource(parameterItem.getItemProperty("value"));
+		}
+
+		paramLayout.addComponent(valueLabel, 0, 1);
+		paramLayout.addComponent(textField, 1, 1);
+		paramLayout.setComponentAlignment(valueLabel, Alignment.TOP_RIGHT);
+
+		Label paramDescriptionLabel = new Label("Description:");
+		paramDescriptionLabel.setSizeUndefined();
+		TextArea descriptionTextField = new TextArea();
+		descriptionTextField.setRows(4);
+		descriptionTextField.setWidth("80%");
+		descriptionTextField.setId(parameter.getName());
+
+		paramLayout.addComponent(paramDescriptionLabel, 0, 2);
+		paramLayout.addComponent(descriptionTextField, 1, 2);
+		paramLayout.setComponentAlignment(paramDescriptionLabel, Alignment.TOP_RIGHT);
+
+		descriptionTextFields.put(parameter.getName(), descriptionTextField);
+
+		if(parameter.getDescription() != null)
+		{
+			descriptionTextField.setValue(parameter.getDescription());
+		}
+
+		paramPanel.setContent(paramLayout);
+
+		return paramPanel;
+	}
     
     protected Panel createMapPanel(final ConfigurationParameterMapImpl parameter)
     {
@@ -362,7 +518,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		label.setIcon(VaadinIcons.COG);
 		label.addStyleName(ValoTheme.LABEL_LARGE);
 		label.addStyleName(ValoTheme.LABEL_BOLD);
-		label.setSizeUndefined();
+//		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 				
@@ -390,7 +546,8 @@ public abstract class AbstractConfigurationWindow extends Window
 			keyField.setValue(key);
 			keyField.setWidth("95%");
 			
-			final TextField valueField = new TextField();
+			final TextArea valueField = new TextArea();
+			valueField.setRows(3);
 			valueField.setValue(valueMap.get(key));
 			valueField.setWidth("95%");
 			
@@ -438,8 +595,9 @@ public abstract class AbstractConfigurationWindow extends Window
     			
     			final TextField keyField = new TextField();
     			keyField.setWidth("95%");
-    			
-    			final TextField valueField = new TextField();
+
+				final TextArea valueField = new TextArea();
+				valueField.setRows(3);
     			valueField.setWidth("95%");
     			
     			mapLayout.insertRow(mapLayout.getRows());
@@ -529,7 +687,7 @@ public abstract class AbstractConfigurationWindow extends Window
 		label.setIcon(VaadinIcons.COG);
 		label.addStyleName(ValoTheme.LABEL_LARGE);
 		label.addStyleName(ValoTheme.LABEL_BOLD);
-		label.setSizeUndefined();
+//		label.setSizeUndefined();
 		paramLayout.addComponent(label, 0 , 0, 1, 0);
 		paramLayout.setComponentAlignment(label, Alignment.TOP_LEFT);
 				
@@ -550,7 +708,8 @@ public abstract class AbstractConfigurationWindow extends Window
 		{
 			final Label valueLabel = new Label("Value");
 			
-			final TextField valueField = new TextField();
+			final TextArea valueField = new TextArea();
+			valueField.setRows(3);
 			valueField.setValue(value);
 			valueField.setWidth("95%");
 		
@@ -589,7 +748,8 @@ public abstract class AbstractConfigurationWindow extends Window
             {
     			final Label valueLabel = new Label("Value");
     				
-    			final TextField valueField = new TextField();
+    			final TextArea valueField = new TextArea();
+				valueField.setRows(3);
     			valueField.setWidth("95%");
     			
     			listLayout.insertRow(listLayout.getRows());
@@ -658,6 +818,6 @@ public abstract class AbstractConfigurationWindow extends Window
     protected class TextFieldKeyValuePair
     {
     	public TextField key;
-    	public TextField value;
+    	public TextArea value;
     }
 }
