@@ -3,7 +3,7 @@ package org.ikasan.filter.duplicate.service;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 
 /**
- * Created by stewmi on 09/07/2016.
+ * Created by Ikasan Development Team on 09/07/2016.
  */
 public interface EntityAgeFilterService
 {

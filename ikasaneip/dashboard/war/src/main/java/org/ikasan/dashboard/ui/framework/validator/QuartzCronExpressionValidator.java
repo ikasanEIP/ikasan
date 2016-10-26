@@ -4,7 +4,7 @@ import com.vaadin.data.validator.AbstractValidator;
 import org.quartz.CronExpression;
 
 /**
- * Created by stewmi on 25/08/2016.
+ * Created by Ikasan Development Team on 25/08/2016.
  */
 public class QuartzCronExpressionValidator extends AbstractValidator<String>
 {

@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 
 /**
- * Created by stewmi on 10/07/2016.
+ * Created by Ikasan Development Team on 10/07/2016.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={

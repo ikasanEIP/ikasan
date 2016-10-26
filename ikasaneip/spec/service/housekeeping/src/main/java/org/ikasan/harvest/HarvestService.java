@@ -3,7 +3,7 @@ package org.ikasan.harvest;
 import java.util.List;
 
 /**
- * Created by stewmi on 17/07/2016.
+ * Created by Ikasan Development Team on 17/07/2016.
  */
 public interface HarvestService<RECORD>
 {
