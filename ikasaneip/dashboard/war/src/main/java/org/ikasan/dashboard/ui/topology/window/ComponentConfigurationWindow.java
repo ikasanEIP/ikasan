@@ -257,7 +257,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		{	
 			if(parameter instanceof ConfigurationParameterIntegerImpl)
     		{
-				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
+				this.layout.addComponent(this.createTextFieldPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
     		}
 			else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
     		{
@@ -269,11 +269,11 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
     		}
     		else if(parameter instanceof ConfigurationParameterBooleanImpl)
     		{
-    			this.layout.addComponent(this.createTextAreaPanel(parameter, new BooleanValidator()), 0, i, 1, i);
+    			this.layout.addComponent(this.createTrueFalsePanel(parameter, new BooleanValidator()), 0, i, 1, i);
     		}
     		else if(parameter instanceof ConfigurationParameterLongImpl)
     		{
-    			this.layout.addComponent(this.createTextAreaPanel(parameter, new LongValidator()), 0, i, 1, i);
+    			this.layout.addComponent(this.createTextFieldPanel(parameter, new LongValidator()), 0, i, 1, i);
     		}
     		else if(parameter instanceof ConfigurationParameterMapImpl)
     		{
@@ -346,11 +346,12 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             		}
             		else if(parameter instanceof ConfigurationParameterBooleanImpl)
             		{
-            			
-            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            			ComboBox combo = ComponentConfigurationWindow
+								.this.comboBoxes.get(parameter.getName());
+            			if(combo.getValue() != null)
             			{
-            				logger.debug("Setting Boolean value: " + textField.getValue());
-            				parameter.setValue(new Boolean(textField.getValue()));
+            				logger.debug("Setting Boolean value: " + combo.getValue());
+            				parameter.setValue((Boolean)combo.getValue());
             			}
             		}
             		else if(parameter instanceof ConfigurationParameterLongImpl)
@@ -483,7 +484,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 
 			}
 		};
-		StreamResource resource = new StreamResource ( source,"mappingConfigurationExport.xml");
+		StreamResource resource = new StreamResource ( source,"componentConfigurationExport.xml");
 		return resource;
 	}
 
