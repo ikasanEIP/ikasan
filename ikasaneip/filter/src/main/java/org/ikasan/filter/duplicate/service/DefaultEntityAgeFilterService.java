@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by stewmi on 09/07/2016.
+ * Created by Ikasan Development Team on 09/07/2016.
  */
 public class DefaultEntityAgeFilterService implements EntityAgeFilterService
 {
