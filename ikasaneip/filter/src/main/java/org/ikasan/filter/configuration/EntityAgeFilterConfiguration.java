@@ -64,6 +64,9 @@ public class EntityAgeFilterConfiguration
     /** The date pattern of the last updated date. */
     private String lastUpdatedDatePattern;
 
+    /** Flag to determine if a record is considered older if timestamp **/
+    private boolean olderIfEquals = false;
+
     /**
      * Getter for determining if filter should be applied
      * @return
@@ -94,6 +97,16 @@ public class EntityAgeFilterConfiguration
 
     public String getEntityIdentifierXpath() {
         return entityIdentifierXpath;
+    }
+
+    public boolean isOlderIfEquals()
+    {
+        return olderIfEquals;
+    }
+
+    public void setOlderIfEquals(boolean olderIfEquals)
+    {
+        this.olderIfEquals = olderIfEquals;
     }
 
     public void setEntityIdentifierXpath(String entityIdentifierXpath)
