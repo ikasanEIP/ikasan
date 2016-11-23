@@ -86,10 +86,10 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
 
     @Override
     public List<FilterEntry> findMessages(String clientId)
-        {
-            DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
-            criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, clientId));
-            return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
+        criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, clientId));
+        return (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
     }
 
     /*
