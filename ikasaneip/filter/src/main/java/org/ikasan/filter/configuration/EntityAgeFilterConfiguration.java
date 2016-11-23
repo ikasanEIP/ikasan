@@ -67,6 +67,10 @@ public class EntityAgeFilterConfiguration
     /** Flag to determine if a record is considered older if timestamp **/
     private boolean olderIfEquals = false;
 
+    /** How long to keep the filter record in the cache **/
+
+    private int daysToKeep = 30;
+
     /**
      * Getter for determining if filter should be applied
      * @return
@@ -132,5 +136,15 @@ public class EntityAgeFilterConfiguration
     public void setLastUpdatedDatePattern(String lastUpdatedDatePattern)
     {
         this.lastUpdatedDatePattern = lastUpdatedDatePattern;
+    }
+
+    public int getDaysToKeep()
+    {
+        return daysToKeep;
+    }
+
+    public void setDaysToKeep(int daysToKeep)
+    {
+        this.daysToKeep = daysToKeep;
     }
 }

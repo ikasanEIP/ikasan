@@ -53,7 +53,7 @@ public class DefaultEntityAgeFilterService implements EntityAgeFilterService
         long cachedEntryUpdatedTimeMilliseconds = Long.parseLong(cachedEntry.getCriteriaDescription());
         long entryUpdatedTimeMilliseconds = Long.parseLong(entry.getCriteriaDescription());
 
-        logger.info("Comparing cached time: [" + cachedEntryUpdatedTimeMilliseconds + "] to last updated time" +
+        logger.debug("Comparing cached time: [" + cachedEntryUpdatedTimeMilliseconds + "] to last updated time" +
                 "[" + entryUpdatedTimeMilliseconds + "] for criteria: [" + entry.getCriteria() + "] and " +
                 " client: [" + entry.getClientId() + "]");
 
@@ -67,18 +67,18 @@ public class DefaultEntityAgeFilterService implements EntityAgeFilterService
                 cachedEntry.setCreatedDateTime(entry.getCreatedDateTime());
                 this.filteredMessageDao.saveOrUpdate(cachedEntry);
 
-                logger.info("Is older: [false]. Saving: " + cachedEntry);
+                logger.debug("Is older: [false]. Saving: " + cachedEntry);
             }
             else
             {
-                logger.info("Is older: [false].");
+                logger.debug("Is older: [false].");
             }
 
             return false;
         }
         else
         {
-            logger.info("Is older: [true].");
+            logger.debug("Is older: [true].");
             return true;
         }
     }
