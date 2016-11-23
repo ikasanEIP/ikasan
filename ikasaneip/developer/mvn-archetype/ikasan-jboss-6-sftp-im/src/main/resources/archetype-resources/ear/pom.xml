@@ -36,7 +36,7 @@
 							<Dependencies>deployment.${artifactId}-ear-${project.version}.ear,
                                 org.ikasan.${dashed.ikasan.version}.configuration,
 								${groupId}.${artifactId}.${dashed.project.version}.conf,
-								org.ikasan.${dashed.ikasan.version}.sftp.ra
+								org.ikasan.${dashed.ikasan.version}.sftp.ra,
                                 javax.servlet.jsp.api,javax.servlet.jstl.api,javax.servlet.api, org.apache.log4j,
 								org.hornetq, org.jboss.remote-naming, org.jboss.msc, org.jboss.as.naming
 							</Dependencies>
