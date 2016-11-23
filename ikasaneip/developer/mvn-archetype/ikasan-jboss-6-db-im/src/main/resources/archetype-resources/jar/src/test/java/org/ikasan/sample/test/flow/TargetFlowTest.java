@@ -43,6 +43,7 @@ import java.util.Map;
         "/target-db-flow-conf.xml",
         "/db-conf.xml",
         "/jms-conf.xml",
+        "/replay-service-conf.xml",
         "/scheduled-conf.xml",
         "/exception-conf.xml",
         "/ikasan-transaction-conf.xml",

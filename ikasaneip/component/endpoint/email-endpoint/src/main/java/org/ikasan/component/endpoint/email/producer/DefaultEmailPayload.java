@@ -39,14 +39,13 @@ package org.ikasan.component.endpoint.email.producer;
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by xualys on 16/09/2015.
+ * @author Ikasan Development Team
  */
 public class DefaultEmailPayload implements EmailPayload {
 
