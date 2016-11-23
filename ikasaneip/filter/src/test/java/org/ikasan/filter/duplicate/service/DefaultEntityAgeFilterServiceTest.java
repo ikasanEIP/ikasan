@@ -53,6 +53,10 @@ public class DefaultEntityAgeFilterServiceTest
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
         Assert.assertFalse(result);
+
+        FilterEntry bMessage = duplicateFilterDao.findMessage(aMessage);
+
+        Assert.assertTrue(aMessage.getCriteriaDescription().equals(bMessage.getCriteriaDescription()));
     }
 
     @Test
@@ -66,6 +70,10 @@ public class DefaultEntityAgeFilterServiceTest
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
         Assert.assertFalse(result);
+
+        FilterEntry bMessage = duplicateFilterDao.findMessage(aMessage);
+
+        Assert.assertTrue(aMessage.getCriteriaDescription().equals(bMessage.getCriteriaDescription()));
     }
 
     @Test
@@ -75,6 +83,51 @@ public class DefaultEntityAgeFilterServiceTest
         defaultEntityAgeFilterService.initialise("client-d");
 
         FilterEntry aMessage = new DefaultFilterEntry( "business-id-1".hashCode(), "client-d", "2345", 30);
+
+        boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
+
+        Assert.assertTrue(result);
+
+        FilterEntry bMessage = duplicateFilterDao.findMessage(aMessage);
+
+        Assert.assertFalse(aMessage.getCriteriaDescription().equals(bMessage.getCriteriaDescription()));
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_equals_message_older_equals_flag_default()
+    {
+        defaultEntityAgeFilterService.initialise("client-d");
+
+        FilterEntry aMessage = new DefaultFilterEntry( "business-id-1".hashCode(), "client-d", "12345", 30);
+
+        boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_equals_message_older_equals_flag_false()
+    {
+        defaultEntityAgeFilterService.initialise("client-d");
+        defaultEntityAgeFilterService.setOlderIfEquals(false);
+
+        FilterEntry aMessage = new DefaultFilterEntry( "business-id-1".hashCode(), "client-d", "12345", 30);
+
+        boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_equals_message_older_equals_flag_true()
+    {
+        defaultEntityAgeFilterService.initialise("client-d");
+        defaultEntityAgeFilterService.setOlderIfEquals(true);
+
+        FilterEntry aMessage = new DefaultFilterEntry( "business-id-1".hashCode(), "client-d", "12345", 30);
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 

@@ -116,6 +116,8 @@ public class ThreadSafeXsltConverter<SOURCE, TARGET> implements Converter<SOURCE
 
     private Converter<Object, Map<String, String>> parameterExtractor;
 
+
+
     /**
      * A map of converters that are keyed on context. In this case the context is the thread id.
      */
@@ -168,6 +170,8 @@ public class ThreadSafeXsltConverter<SOURCE, TARGET> implements Converter<SOURCE
             converter.setConfigurationParameterConverter(this.configurationParameterConverter);
             converter.setTargetCreator(this.targetCreator);
             converter.setXmlExtractor(this.xmlExtractor);
+
+            converter.setParameterExtractor(this.parameterExtractor);
             converter.setExternalResources(this.externalResources);
 
             converter.startManagedResource();
@@ -303,5 +307,15 @@ public class ThreadSafeXsltConverter<SOURCE, TARGET> implements Converter<SOURCE
     public void setExternalResources(Map<String, Object> externalResources)
     {
         this.externalResources = externalResources;
+    }
+
+    public void setXmlExtractor(Converter<Object, String> xmlExtractor)
+    {
+        this.xmlExtractor = xmlExtractor;
+    }
+
+    public void setParameterExtractor(Converter<Object, Map<String, String>> parameterExtractor) 
+    {
+        this.parameterExtractor = parameterExtractor;
     }
 }
