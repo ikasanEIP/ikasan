@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 /**
- * Email Endpoiunt Producer
+ * Email Endpoint Producer
  * @author Ikasan Development Team
  */
 public class EmailProducer implements Producer<EmailPayload>, ManagedResource, ConfiguredResource<EmailProducerConfiguration> {

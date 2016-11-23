@@ -12,7 +12,7 @@
         <property name="configuredResourceId" value="${artifactId}-${sourceFlowName}ProducerConfiguration"/>
     </bean>
 
-    <bean id="${sourceFlowName}ProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+    <bean id="${sourceFlowName}ProducerConfiguration" scope="prototype" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
         <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
         <property name="destinationJndiName" value="/jms/topic/sample"/>
         <property name="destinationJndiProperties">
@@ -41,7 +41,7 @@
         <property name="transactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="${targetFlowName}ConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+    <bean id="${targetFlowName}ConsumerConfiguration" scope="prototype" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
         <property name="connectionFactoryName" value="java:/BdmJmsXA"/>
         <property name="destinationJndiName" value="/jms/topic/sample"/>
         <property name="destinationJndiProperties">
