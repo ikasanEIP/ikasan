@@ -13,9 +13,10 @@ public class EntityAgeFilterEntryConverter implements FilterEntryConverter<Strin
     private String entityLastUpdatedXpath;
     private String datePattern;
     private String clientId;
+    private int timeToLive;
 
     public EntityAgeFilterEntryConverter(String entityIdentifierXpath, String entityLastUpdatedXpath,
-                                         String datePattern, String clientId)
+                                         String datePattern, String clientId, int timeToLive)
     {
         this.entityIdentifierXpath = entityIdentifierXpath;
         if(this.entityIdentifierXpath == null || this.entityIdentifierXpath.isEmpty())
@@ -37,6 +38,8 @@ public class EntityAgeFilterEntryConverter implements FilterEntryConverter<Strin
         {
             throw  new IllegalArgumentException("clientId cannot be null or an empty String!");
         }
+
+        this.timeToLive = timeToLive;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class EntityAgeFilterEntryConverter implements FilterEntryConverter<Strin
             Date date =  df.parse(entityLastUpdated);
 
             result = new DefaultFilterEntry(entityIdentifier.hashCode(),
-                    this.clientId, new Long(date.getTime()).toString(), -1);
+                    this.clientId, new Long(date.getTime()).toString(), timeToLive);
         }
         catch (Exception e)
         {

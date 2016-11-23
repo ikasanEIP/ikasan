@@ -16,7 +16,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 (null, "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -24,7 +24,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -32,7 +32,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", null
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -40,7 +40,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", ""
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -48,7 +48,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , null, "test-client");
+                        , null, "test-client", 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -56,7 +56,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "", "test-client");
+                        , "", "test-client", 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -64,7 +64,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", null);
+                        , "DDMMYYYY", null, 30);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -72,7 +72,7 @@ public class EntityAgeFilterEntryConverterTest
     {
         new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "");
+                        , "DDMMYYYY", "", 30);
     }
 
     @Test
@@ -83,12 +83,13 @@ public class EntityAgeFilterEntryConverterTest
         EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
 
         FilterEntry entry = converter.convert(xml);
 
         System.out.println(entry);
 
+        System.out.println("Criteria = " + entry.getCriteria());
         Assert.assertEquals(entry.getCriteria(), new Integer(65757));
         Assert.assertEquals(entry.getClientId(), "test-client");
         Assert.assertEquals(entry.getCriteriaDescription(), "94694400000");
@@ -100,7 +101,7 @@ public class EntityAgeFilterEntryConverterTest
         EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
 
         converter.convert("bad xml");
     }
@@ -111,7 +112,7 @@ public class EntityAgeFilterEntryConverterTest
         EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("bad xpath", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
 
         converter.convert(xml);
     }
@@ -122,7 +123,7 @@ public class EntityAgeFilterEntryConverterTest
         EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "bad xpath"
-                        , "DDMMYYYY", "test-client");
+                        , "DDMMYYYY", "test-client", 30);
 
         converter.convert(xml);
     }
