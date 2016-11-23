@@ -62,6 +62,7 @@ import org.junit.Test;
 import org.quartz.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -446,6 +447,9 @@ public class ScheduledRecoveryManagerTest
 //                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getJobDataMap();
+                will(returnValue(new JobDataMap()));
                 
                 exactly(2).of(retryAction).getMaxRetries();
                 will(returnValue(2));
@@ -525,6 +529,9 @@ public class ScheduledRecoveryManagerTest
 //                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getJobDataMap();
+                will(returnValue(new JobDataMap()));
                 
                 exactly(2).of(retryAction).getMaxRetries();
                 will(returnValue(2));
@@ -572,8 +579,8 @@ public class ScheduledRecoveryManagerTest
         final Exception exception = new Exception();
         final long delay = 2000;
         final int maxRetries = 2;
-        final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
-        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName", "moduleName");
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName" + 0, "moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -597,6 +604,9 @@ public class ScheduledRecoveryManagerTest
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
+
+                exactly(1).of(jobDetail).getJobDataMap();
+                will(returnValue(new JobDataMap()));
                 
                 exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
@@ -632,6 +642,9 @@ public class ScheduledRecoveryManagerTest
                 // check we have not exceeded retry limits
                 exactly(4).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
+
+                exactly(1).of(jobDetail).getJobDataMap();
+                will(returnValue(new JobDataMap()));
 
                 //
                 // third time retry action is invoked
@@ -725,8 +738,8 @@ public class ScheduledRecoveryManagerTest
         final Exception exception = new Exception();
         final long delay = 2000;
         final int maxRetries = 2;
-        final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
-        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName", "moduleName");
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName" + 0, "moduleName");
         final List managedResources = new ArrayList();
         managedResources.add(flowElement);
 
@@ -757,6 +770,9 @@ public class ScheduledRecoveryManagerTest
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
+
+                exactly(1).of(jobDetail).getJobDataMap();
+                will(returnValue(new JobDataMap()));
                 
                 exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
@@ -797,6 +813,9 @@ public class ScheduledRecoveryManagerTest
                 // check we have not exceeded retry limits
                 exactly(4).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
+
+                exactly(1).of(jobDetail).getJobDataMap();
+                will(returnValue(new JobDataMap()));
 
                 //
                 // third time retry action is invoked
