@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-jboss-parent</artifactId>
-        <version>1.2.6</version>
+        <version>1.2.7-SNAPSHOT</version>
     </parent>
 
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-ftp-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.6</version>
+    <version>1.2.7-SNAPSHOT</version>
     <name>ikasan-sample-ftp Integration Module Parent POM</name>
     <description>Describe the purpose of this Integration Module</description>
 
