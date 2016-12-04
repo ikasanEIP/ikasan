@@ -409,6 +409,7 @@
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
         <version.commons-lang>2.5</version.commons-lang>
         <version.javax.servlet>2.4</version.javax.servlet>
+        <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
         <version.activemq>5.12.1</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
@@ -1390,6 +1391,13 @@
                 <artifactId>spring-security-taglibs</artifactId>
                 <version>${version.org.springframework.security.taglibs}</version>
             </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${version.javax.servlet.jstl}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>geronimo-spec</groupId>
