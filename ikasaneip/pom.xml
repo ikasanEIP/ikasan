@@ -47,12 +47,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-        <parent>
-          <groupId>org.sonatype.oss</groupId>
-          <artifactId>oss-parent</artifactId>
-          <version>7</version>
-          <relativePath />
-        </parent>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+        <relativePath />
+    </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
@@ -62,8 +62,8 @@
     <description>Ikasan Parent Project</description>
 
     <organization>
-      <name>Ikasan</name>
-      <url>http://www.ikasan.org</url>
+        <name>Ikasan</name>
+        <url>http://www.ikasan.org</url>
     </organization>
     <inceptionYear>2007</inceptionYear>
 
@@ -826,106 +826,116 @@
                 </plugins>
             </build>
         </profile>
-    <profile>
-      <id>all</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-       <!-- ikasan eip core -->
-        <module>spec</module>
-        <module>system-event</module>
-        <module>module</module>
-        <module>bootstrap</module>  <!-- TODO - is this still required ? -->
-        <module>scheduler</module>
-        <module>serialiser</module>
-        <module>exclusion</module>
-        <module>error-reporting</module>
-        <module>recovery-manager</module>
-        <module>flow</module>
-        <module>configuration-service</module>
-        <module>wiretap</module>
-        <module>security</module>
-        <module>filter</module>
-		<module>rest</module>
-        <module>test</module>
-        <module>monitor</module>
-        <module>marshaller</module>
-        <module>component</module>
-        <module>jca</module>
-        <module>platform</module>
-        <module>builder</module>
-        <module>compatibility</module>
-   		<module>filetransfer</module>
-        <module>mapping</module>
-        <module>management</module>
-        <module>hospital</module>
-        <module>webconsole</module>
-		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-        <!-- module>console</module -->
-		<module>topology</module>
-        <module>dashboard</module>
-        <module>developer</module>
-        <module>sample</module>
-        <module>transaction</module>
-		<module>replay</module>
-      </modules>
-    </profile>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <!-- ikasan eip core -->
+                <module>spec</module>
+                <module>system-event</module>
+                <module>module</module>
+                <module>bootstrap</module>  <!-- TODO - is this still required ? -->
+                <module>scheduler</module>
+                <module>serialiser</module>
+                <module>exclusion</module>
+                <module>error-reporting</module>
+                <module>recovery-manager</module>
+                <module>flow</module>
+                <module>configuration-service</module>
+                <module>wiretap</module>
+                <module>security</module>
+                <module>filter</module>
+                <module>rest</module>
+                <module>rest-boot</module>
+                <module>test</module>
+                <module>monitor</module>
+                <module>marshaller</module>
+                <module>component</module>
+                <module>jca</module>
+                <module>platform</module>
+                <module>builder</module>
+                <module>compatibility</module>
+                <module>filetransfer</module>
+                <module>mapping</module>
+                <module>management</module>
+                <module>hospital</module>
+                <module>webconsole</module>
+                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+                <!-- module>console</module -->
+                <module>topology</module>
+                <module>dashboard</module>
+                <module>developer</module>
+                <module>sample</module>
+                <module>transaction</module>
+                <module>replay</module>
+            </modules>
+        </profile>
 
-    <profile>
-      <id>core-and-components</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-    	<module>spec</module>
-        <module>system-event</module>
-        <module>module</module>
-        <module>bootstrap</module>
-        <module>scheduler</module>
-        <module>serialiser</module>
-        <module>exclusion</module>
-        <module>error-reporting</module>
-        <module>recovery-manager</module>
-        <module>flow</module>
-        <module>configuration-service</module>
-        <module>wiretap</module>
-        <module>security</module>
-        <module>filter</module>
-		<module>rest</module>
-        <module>test</module>
-        <module>monitor</module>
-        <module>marshaller</module>
-        <module>component</module>
-        <module>jca</module>
-        <module>platform</module>
-        <module>builder</module>
-        <module>compatibility</module>
-		<module>filetransfer</module>
-		<module>replay</module>
-      </modules>
-    </profile>
+        <profile>
+            <id>core-and-components</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>spec</module>
+                <module>system-event</module>
+                <module>module</module>
+                <module>bootstrap</module>
+                <module>scheduler</module>
+                <module>serialiser</module>
+                <module>exclusion</module>
+                <module>error-reporting</module>
+                <module>recovery-manager</module>
+                <module>flow</module>
+                <module>configuration-service</module>
+                <module>wiretap</module>
+                <module>security</module>
+                <module>filter</module>
+                <module>rest</module>
+                <module>test</module>
+                <module>monitor</module>
+                <module>marshaller</module>
+                <module>component</module>
+                <module>jca</module>
+                <module>platform</module>
+                <module>builder</module>
+                <module>compatibility</module>
+                <module>filetransfer</module>
+                <module>replay</module>
+            </modules>
+        </profile>
 
-    <profile>
-      <id>top-level-services-and-applications</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-        <module>mapping</module>
-        <module>management</module>
-        <module>platform</module>
-		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-        <!-- module>console</module -->
-        <module>hospital</module>
-        <module>webconsole</module>
-        <module>topology</module>
-        <module>dashboard</module>
-        <module>developer</module>
-        <module>sample</module>
-        <module>transaction</module>
-      </modules>
-    </profile>
+        <profile>
+            <id>top-level-services-and-applications</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>mapping</module>
+                <module>management</module>
+                <module>platform</module>
+                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+                <!-- module>console</module -->
+                <module>hospital</module>
+                <module>webconsole</module>
+                <module>topology</module>
+                <module>dashboard</module>
+                <module>developer</module>
+                <module>sample</module>
+                <module>transaction</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencyManagement>
