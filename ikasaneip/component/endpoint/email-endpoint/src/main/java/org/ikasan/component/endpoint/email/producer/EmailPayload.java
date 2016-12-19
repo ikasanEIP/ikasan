@@ -39,9 +39,7 @@ package org.ikasan.component.endpoint.email.producer;
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This interface defines email payload
@@ -49,7 +47,7 @@ import java.util.Map;
  */
 public interface EmailPayload{
 
-    public String formatEmailBody(String emailBody, String emailFormat) ;
+    public String formatEmailBody(String emailBody, String emailFormat);
 
     public String getEmailBody();
 

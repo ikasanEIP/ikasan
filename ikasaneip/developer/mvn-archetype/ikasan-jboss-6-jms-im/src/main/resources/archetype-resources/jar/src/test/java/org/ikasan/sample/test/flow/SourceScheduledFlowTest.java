@@ -41,6 +41,7 @@ import java.util.Map;
         "/shared-conf.xml",
         "/jms-to-jms-flow-conf.xml",
         "/jms-conf.xml",
+        "/replay-service-conf.xml",
         "/exception-conf.xml",
         "/ikasan-transaction-conf.xml",
         "/mock-conf.xml",

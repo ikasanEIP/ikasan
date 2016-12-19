@@ -24,4 +24,18 @@ public interface EntityAgeFilterService
      * Method to destroy internals of the service.
      */
     public void destroy();
+
+    /**
+     * Get flag stating messages older if timestamp equals.
+     * @return
+     */
+    public boolean isOlderIfEquals();
+
+    /**
+     * Messages considered older if timestamp equals.
+     *
+     * @param olderIfEquals
+     */
+    public void setOlderIfEquals(boolean olderIfEquals);
+
 }

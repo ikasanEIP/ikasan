@@ -17,7 +17,7 @@
         <constructor-arg value="${artifactId}-${sourceFlowName}"/>
     </bean>
 
-    <bean id="${sourceFlowName}ConsumerConfiguration"
+    <bean id="${sourceFlowName}ConsumerConfiguration" scope="prototype"
           class="org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration">
         <property name="cronExpression" value="0/5 * * * * ?" />
         <property name="username" value="username"/>
@@ -39,7 +39,7 @@
         <property name="configuredResourceId" value="${artifactId}-${targetFlowName}-producerConfiguration"/>
     </bean>
 
-    <bean id="sampleTargetFlowProducerConfiguration" class="org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration">
+    <bean id="${targetFlowName}ProducerConfiguration" scope="prototype" class="org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration">
         <property name="clientID" value="${artifactId}-${sourceFlowName}-producer"/>
         <property name="username" value="username"/>
         <property name="remoteHost" value="localhost"/>

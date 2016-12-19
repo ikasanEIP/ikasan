@@ -32,6 +32,8 @@ public class EntityAgeFilterTest
     String xmlVeryOldNewEntity = "<message><businessIdentifier>business-id-100</businessIdentifier><lastUpdated>1973-03-02T19:06:44.000Z</lastUpdated></message>";
     String xmlQuiteRecentNewEntity = "<message><businessIdentifier>business-id-100</businessIdentifier><lastUpdated>2016-03-02T19:06:44.000Z</lastUpdated></message>";
 
+    String xmlEquals = "<message><businessIdentifier>business-id-1</businessIdentifier><lastUpdated>1980-03-02T00:00:00.000Z</lastUpdated></message>";
+
     @Resource private FilteredMessageDao duplicateFilterDao;
     @Resource private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
 
@@ -96,6 +98,7 @@ public class EntityAgeFilterTest
 
         Assert.assertNotNull(result);
     }
+
 
     @Test
     @DirtiesContext

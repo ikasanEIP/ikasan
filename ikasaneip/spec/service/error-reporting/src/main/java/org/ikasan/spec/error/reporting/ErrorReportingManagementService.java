@@ -56,20 +56,18 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, NOTE, ERROR_OCC
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
 
     /**
-     * This message will associate a note and link with the errors referenced by the uris.
+     * This message will associate a note with the errors referenced by the uris.
      * 
      * @param uris
      * @param note
-     * @param link
      */
     public void update(List<String> uris, String note, String user);
     
     /**
-     * This method will close errors and associate a note and link with them.
+     * This method will close errors and associate a note with them.
      * 
      * @param uris
      * @param note
-     * @param link
      * @param user
      */
     public void close(List<String> uris, String note, String user);
