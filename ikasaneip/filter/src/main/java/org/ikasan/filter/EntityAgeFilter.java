@@ -152,7 +152,7 @@ public class EntityAgeFilter<T> implements Filter<T>, ConfiguredResource<EntityA
 
         this.converter = new EntityAgeFilterEntryConverter(this.filterConfiguration.getEntityIdentifierXpath(),
                 this.filterConfiguration.getEntityLastUpdatedXpath(), this.filterConfiguration.getLastUpdatedDatePattern(),
-                this.clientId);
+                this.clientId, this.filterConfiguration.getDaysToKeep());
     }
 
     @Override

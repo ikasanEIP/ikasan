@@ -178,6 +178,36 @@ public class EmailNotifierTest
      * Test successful invoke.
      */
     @Test
+    public void test_successful_notifier_multi_toRecipients_in_one_line() throws MessagingException, IOException {
+        EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
+        emailNotifierConfiguration.getToRecipients().add("first@email.com,second@email.com third@email.com;forth@email.com, fifth@email.com");
+        emailNotifierConfiguration.getBccRecipients().add("sixth@email.com , seventh@email.com; ;, ; ");
+        emailNotifierConfiguration.getCcRecipients().add(" eigth@email.com ");
+
+        Notifier<String> notifier = new EmailNotifier();
+        ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
+
+        notifier.invoke("env", "moduleName", "flowName", "stopped");
+        List<WiserMessage> messages = wiser.getMessages();
+
+        Assert.assertTrue("Should be eleven messages - one per addressee", messages.size() == 11);
+        for(WiserMessage message:wiser.getMessages())
+        {
+            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+
+            MimeMessage mimeMessage = message.getMimeMessage();
+            MimeMultipart mimeMultipart = (MimeMultipart)mimeMessage.getContent();
+            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            BodyPart bodyPart = mimeMultipart.getBodyPart(0);
+            String content = (String)bodyPart.getContent();
+            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
+        }
+    }
+
+    /**
+     * Test successful invoke.
+     */
+    @Test
     public void test_successful_notifier_null_toRecipients() throws MessagingException, IOException {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setToRecipients(null);

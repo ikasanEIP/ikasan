@@ -41,6 +41,7 @@
 package org.ikasan.recovery;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.or.ThreadGroupRenderer;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -87,6 +88,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /** recovery job trigger name */
     protected static final String IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME = "immediateRecoveryJobTrigger_";
 
+    protected static final String JOB_IDENTIFIER = "jobIdentifier";
+
     /** consumer to stop and start for recovery */
     private Consumer<?,?> consumer;
 
@@ -125,6 +128,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
     /** Error Reporting Service */
     private ErrorReportingService errorReportingService;
+
+    private Long jobIdentifier = 0L;
 
     /**
      * Constructor
@@ -249,22 +254,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         {
             RetryAction retryAction = (RetryAction)action;
 
-//            if(!this.consumer.isRunning())
-//            {
-//                // consumer has been paused or previously stopped for a reason,
-//                // so do not allow the retry to reactivate the consumer.
-//                // Just want to ensure any changes get rolled back.
-//                if(this.isRecovering())
-//                {
-//                    this.cancelRecovery();
-//                }
-//
-//                this.previousComponentName = componentName;
-//                this.previousExceptionAction = retryAction;
-//
-//                throw new ForceTransactionRollbackException(action.toString() + " ignored on a paused/stopped consumer", throwable);
-//            }
-
             this.consumer.stop();
             stopManagedResources();
                 
@@ -303,22 +292,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         else if(action instanceof ScheduledRetryAction)
         {
             ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)action;
-
-//            if(!this.consumer.isRunning())
-//            {
-//                // consumer has been paused or previously stopped for a reason,
-//                // so do not allow the retry to reactivate the consumer.
-//                // Just want to ensure any changes get rolled back.
-//                if(this.isRecovering())
-//                {
-//                    this.cancelRecovery();
-//                }
-//
-//                this.previousComponentName = componentName;
-//                this.previousExceptionAction = scheduledRetryAction;
-//
-//                throw new ForceTransactionRollbackException(action.toString() + " ignoring retry on a paused/stopped consumer.", throwable);
-//            }
 
             this.consumer.stop();
             stopManagedResources();
@@ -440,7 +413,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     private void startRecovery(RetryAction retryAction)
         throws SchedulerException
     {
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
+        recoveryJobDetail.getJobDataMap().put(JOB_IDENTIFIER, Thread.currentThread().getId());
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
@@ -459,7 +433,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     private void startRecovery(ScheduledRetryAction scheduledRetryAction)
             throws SchedulerException
     {
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
+        recoveryJobDetail.getJobDataMap().put(JOB_IDENTIFIER, Thread.currentThread().getId());
         Trigger recoveryJobTrigger = newRecoveryTrigger(scheduledRetryAction.getCronExpression());
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
@@ -487,7 +462,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             throw new RuntimeException("Exhausted maximum retries.");
         }
 
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName);
+        recoveryJobDetail.getJobDataMap().put(JOB_IDENTIFIER, Thread.currentThread().getId());
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
         
         // Only schedule a new recovery if we don't have one in-progress.
@@ -602,7 +578,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     protected Trigger newRecoveryTrigger(long delay)
     {
         return newTrigger()
-        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
+        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
         .startAt(new Date(System.currentTimeMillis() + delay))
         .build();
     }
@@ -614,7 +590,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     protected Trigger newImmediateRecoveryTrigger()
     {
         return newTrigger()
-                .withIdentity(triggerKey(IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
+                .withIdentity(triggerKey(IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
                 .startNow()
                 .build();
     }
@@ -629,7 +605,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         try
         {
             return newTrigger()
-                    .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
+                    .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName + Thread.currentThread().getId(), this.moduleName))
                     .withSchedule(cronSchedule(cronExpression))
                     .build();
         }
@@ -645,10 +621,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     private void cancelScheduledJob() throws SchedulerException
     {
-        JobKey jobKey = new JobKey(RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobKey jobKey = new JobKey(RECOVERY_JOB_NAME + this.flowName + this.jobIdentifier, this.moduleName);
         this.scheduler.deleteJob(jobKey);
 
-        JobKey consumerJobKey = new JobKey(CONSUMER_RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobKey consumerJobKey = new JobKey(CONSUMER_RECOVERY_JOB_NAME + this.flowName + this.jobIdentifier, this.moduleName);
         if(this.scheduler.checkExists(consumerJobKey))
         {
             this.scheduler.deleteJob(consumerJobKey);
@@ -663,12 +639,14 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         try
         {
+            this.jobIdentifier = (Long)context.getMergedJobDataMap().get(JOB_IDENTIFIER);
             startManagedResources();
 
             if(this.consumer instanceof Job)
             {
                 Class consumerClass = this.consumer.getClass();
-                JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail((Job)this.consumer, consumerClass, CONSUMER_RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+                JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail((Job)this.consumer, consumerClass, CONSUMER_RECOVERY_JOB_NAME + this.flowName+this.jobIdentifier, this.moduleName);
+                recoveryJobDetail.getJobDataMap().put(JOB_IDENTIFIER, this.jobIdentifier);
                 this.scheduler.scheduleJob(recoveryJobDetail, newImmediateRecoveryTrigger());
             }
             else

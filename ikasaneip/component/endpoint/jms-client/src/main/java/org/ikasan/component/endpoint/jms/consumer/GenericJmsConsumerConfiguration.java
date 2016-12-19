@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
+import org.ikasan.spec.configuration.Masked;
+
 import javax.jms.Session;
 
 /**
