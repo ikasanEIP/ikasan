@@ -371,7 +371,7 @@
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.org.springboot>1.4.1.RELEASE</version.org.springboot>
         <version.org.slf4j>1.7.16</version.org.slf4j>
-        <version.junit>4.11</version.junit>
+        <version.junit>4.12</version.junit>
         <version.org.jmock>2.6.0</version.org.jmock>
         <version.log4j>1.2.16</version.log4j>
         <version.javax.transaction.jta>1.1</version.javax.transaction.jta>
