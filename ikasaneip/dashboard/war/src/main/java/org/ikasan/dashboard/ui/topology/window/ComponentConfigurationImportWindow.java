@@ -40,41 +40,19 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
- import com.vaadin.server.VaadinService;
  import com.vaadin.ui.*;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.Upload.*;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
- import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationDocumentHelper;
- import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
- import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
- import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
- import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
- import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
- import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
- import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
- import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
+ import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationImportHelper;
  import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
- import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow;
- import org.ikasan.mapping.model.*;
- import org.ikasan.mapping.service.MappingConfigurationService;
- import org.ikasan.mapping.service.MappingConfigurationServiceException;
- import org.ikasan.security.service.authentication.IkasanAuthentication;
  import org.ikasan.spec.configuration.Configuration;
- import org.ikasan.systemevent.service.SystemEventService;
- import org.springframework.dao.DataIntegrityViolationException;
- import org.w3c.dom.Element;
- import org.w3c.dom.Node;
- import org.w3c.dom.NodeList;
  import org.xml.sax.SAXException;
- import org.xml.sax.SAXParseException;
 
  import javax.xml.parsers.ParserConfigurationException;
  import javax.xml.xpath.XPathExpressionException;
  import java.io.*;
- import java.util.ArrayList;
- import java.util.List;
 
  /**
   * @author Ikasan Development Team
@@ -248,20 +226,20 @@ package org.ikasan.dashboard.ui.topology.window;
 //         }
 //         else
 //         {
-             ComponentConfigurationDocumentHelper helper = new ComponentConfigurationDocumentHelper();
+             ComponentConfigurationImportHelper helper = new ComponentConfigurationImportHelper(this.configuration);
 
-             try
-             {
-                 helper.updateComponentConfiguration(this.configuration, receiver.file.toByteArray());
-             }
-             catch(MappingConfigurationImportException e)
-             {
-                 Notification.show("An error has occurred importing a mapping configuration!\n",
-                         e.getMessage(),
-                         Notification.Type.ERROR_MESSAGE);
-
-                 return;
-             }
+//             try
+//             {
+//                 helper.updateComponentConfiguration(this.configuration, receiver.file.toByteArray());
+//             }
+//             catch(MappingConfigurationImportException e)
+//             {
+//                 Notification.show("An error has occurred importing a mapping configuration!\n",
+//                         e.getMessage(),
+//                         Notification.Type.ERROR_MESSAGE);
+//
+//                 return;
+//             }
 
              this.uploadLabel.setValue("Importing component configuration"
                  + ". Press import to proceed.");

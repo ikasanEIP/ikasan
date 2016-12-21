@@ -50,6 +50,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.history.model.CustomMetric;
+import org.ikasan.history.model.MetricEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -372,7 +373,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
                 List<List<MessageHistoryEvent>> smallerLists = Lists.partition(messageHistoryEvents, 200);
 
-                Map<String, WiretapFlowEvent> eventsMap = new HashMap<String, WiretapFlowEvent>();
+                Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
 
                 for(List<MessageHistoryEvent> list: smallerLists)
                 {
@@ -386,16 +387,9 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                     eventIds = new ArrayList<String>();
                 }
 
-                for(MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent> messageHistoryEvent: messageHistoryEvents)
+                for(MessageHistoryEvent<String, CustomMetric, MetricEvent> messageHistoryEvent: messageHistoryEvents)
                 {
-                    criteria = session.createCriteria(WiretapFlowEvent.class);
-                    criteria.add(Restrictions.eq("moduleName", messageHistoryEvent.getModuleName()));
-                    criteria.add(Restrictions.eq("flowName", messageHistoryEvent.getFlowName()));
-                    criteria.add(Restrictions.eq("componentName", messageHistoryEvent.getComponentName()));
-                    criteria.add(Restrictions.eq("eventId", messageHistoryEvent.getBeforeEventIdentifier()));
-                    criteria.addOrder(Order.asc("timestamp"));
-
-                    WiretapFlowEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier());
+                    MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier());
                     if(event != null)
                     {
                         if(event.getComponentName().equals(messageHistoryEvent.getComponentName())
@@ -412,21 +406,21 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
         });
     }
 
-    protected Map<String, WiretapFlowEvent> getWiretapFlowEvents(final List<String> eventIds)
+    protected Map<String, MetricEvent> getWiretapFlowEvents(final List<String> eventIds)
     {
-        return (Map<String, WiretapFlowEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        return (Map<String, MetricEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
+                Criteria criteria = session.createCriteria(MetricEvent.class);
                 criteria.add(Restrictions.in("eventId", eventIds));
 
 
-                List<WiretapFlowEvent> wiretapEvents = criteria.list();
+                List<MetricEvent> wiretapEvents = criteria.list();
 
-                HashMap<String, WiretapFlowEvent> results = new HashMap<String, WiretapFlowEvent>();
+                HashMap<String, MetricEvent> results = new HashMap<String, MetricEvent>();
 
-                for(WiretapFlowEvent event: wiretapEvents)
+                for(MetricEvent event: wiretapEvents)
                 {
                     results.put(event.getEventId(), event);
                 }

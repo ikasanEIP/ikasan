@@ -66,7 +66,7 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
+import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationImportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
@@ -507,7 +507,7 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 //
 //		logger.debug("Resolved schemaLocation " + schemaLocation);
 
-		ComponentConfigurationExportHelper exportHelper = new ComponentConfigurationExportHelper(this.configuration);
+		ComponentConfigurationImportHelper exportHelper = new ComponentConfigurationImportHelper(this.configuration);
 
 		String exportXml = exportHelper.getComponentConfigurationExportXml();
 

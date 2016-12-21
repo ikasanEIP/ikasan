@@ -60,11 +60,11 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
 public class HistoryEventFactory
 {
 
-    public List<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
+    public List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
     {
 
-        List<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>> messageHistoryEvents
-        	= new ArrayList<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>>();
+        List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents
+        	= new ArrayList<MessageHistoryEvent<String, CustomMetric, MetricEvent>>();
 
         for ( FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation : flowInvocationContext.getElementInvocations())
         {

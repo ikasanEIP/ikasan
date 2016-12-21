@@ -40,60 +40,30 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
-import org.ikasan.dashboard.ui.framework.validation.LongValidator;
-import org.ikasan.dashboard.ui.framework.validation.StringValidator;
-import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
-import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
-import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.module.StartupType;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.data.Validator;
-import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.converter.StringToIntegerConverter;
 import com.vaadin.data.util.converter.StringToLongConverter;
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
