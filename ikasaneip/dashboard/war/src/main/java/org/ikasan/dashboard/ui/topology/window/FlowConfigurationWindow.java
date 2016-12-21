@@ -523,7 +523,7 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
 //
 //		logger.debug("Resolved schemaLocation " + schemaLocation);
 
-		FlowConfigurationExportHelper exportHelper = new FlowConfigurationExportHelper(flow, this.getFlowConfigurations(flow));
+		FlowConfigurationExportHelper exportHelper = new FlowConfigurationExportHelper(flow, this.configurationManagement);
 
 		String exportXml = exportHelper.getFlowConfigurationExportXml();
 
