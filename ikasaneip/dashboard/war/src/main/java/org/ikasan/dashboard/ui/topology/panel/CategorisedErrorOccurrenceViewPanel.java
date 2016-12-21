@@ -121,28 +121,27 @@ import com.vaadin.ui.themes.ValoTheme;
 public class CategorisedErrorOccurrenceViewPanel extends Panel
 {
 	private static Logger logger = Logger.getLogger(ExclusionEventViewPanel.class);
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -3347325521531925322L;
-	
+
 	private CategorisedErrorOccurrence categorisedErrorOccurrence;
-	
 	private ErrorReportingManagementService errorReportingManagementService;
-	
 	private HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService;
-	
 	private TopologyService topologyService;
-	
 	private ExclusionManagementService<ExclusionEvent, String> exclusionManagementService;
-	
 	private Container container;
-	
+
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param errorOccurrence
+	 * @param errorReportingManagementService
+	 * @param hospitalManagementService
+	 * @param topologyService
+	 * @param exclusionManagementService
+     * @param container
+     */
 	public CategorisedErrorOccurrenceViewPanel(CategorisedErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService,
@@ -164,12 +163,13 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	public void init()
 	{
 		this.setSizeFull();
-		
-		GridLayout layout = new GridLayout(1, 1);
-		layout.setWidth("100%");
 
-		layout.addComponent(createErrorOccurrenceDetailsPanel(), 0, 0);
-		
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
+
+		layout.addComponent(createErrorOccurrenceDetailsPanel());
+
 		this.setContent(layout);
 	}
 

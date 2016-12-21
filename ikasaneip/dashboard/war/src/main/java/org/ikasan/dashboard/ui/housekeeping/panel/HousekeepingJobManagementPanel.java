@@ -1,34 +1,17 @@
 package org.ikasan.dashboard.ui.housekeeping.panel;
 
 
-import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
-import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
-import org.ikasan.dashboard.ui.ReplayPopup;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.QuartzCronExpressionValidator;
-import org.ikasan.replay.model.ReplayEvent;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.vaadin.aceeditor.AceEditor;
-import org.vaadin.aceeditor.AceMode;
-import org.vaadin.aceeditor.AceTheme;
-import org.vaadin.teemu.VaadinIcons;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
- * Created by stewmi on 24/08/2016.
+ * Created by Ikasan Development Team on 24/08/2016.
  */
 public class HousekeepingJobManagementPanel extends Panel
 {
@@ -139,7 +122,7 @@ public class HousekeepingJobManagementPanel extends Panel
         layout.setComponentAlignment(enabledLabel, Alignment.MIDDLE_RIGHT);
 
         final CheckBox enabledCheckbox = new CheckBox();
-        enabledCheckbox.setValue(housekeepingjob.getEnabled());
+        enabledCheckbox.setValue(housekeepingjob.isEnabled());
         layout.addComponent(enabledCheckbox, 1, 5);
 
         final Button saveButton = new Button("Save");
@@ -169,7 +152,7 @@ public class HousekeepingJobManagementPanel extends Panel
                 housekeepingjob.setTransactionDeleteSize(new Integer(tf5.getValue()));
                 housekeepingjob.setEnabled(enabledCheckbox.getValue());
 
-                if(housekeepingjob.getEnabled())
+                if(housekeepingjob.isEnabled())
                 {
                     housekeepingSchedulerService.addJob(housekeepingjob.getJobName());
                 }

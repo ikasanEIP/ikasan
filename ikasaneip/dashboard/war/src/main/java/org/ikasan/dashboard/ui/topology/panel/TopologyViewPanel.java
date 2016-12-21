@@ -71,7 +71,6 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellSty
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
 import org.ikasan.dashboard.ui.topology.component.ActionedErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ActionedExclusionTab;
-import org.ikasan.dashboard.ui.topology.component.BusinessStreamTab;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.component.ErrorOccurrenceTab;
 import org.ikasan.dashboard.ui.topology.component.ExclusionsTab;
@@ -80,13 +79,7 @@ import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.dashboard.ui.topology.component.WiretapTab;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.dashboard.ui.topology.util.FilterUtil;
-import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
-import org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.FlowElementConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.ServerWindow;
-import org.ikasan.dashboard.ui.topology.window.StartupControlConfigurationWindow;
-import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
+import org.ikasan.dashboard.ui.topology.window.*;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -206,17 +199,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action WIRETAP = new Action("Wiretap");
     private final Action ERROR_CATEGORISATION = new Action("Categorise Error");
     private final Action EDIT = new Action("Edit");
+	private final Action UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS = new Action("Upload/Download Component Configurations");
     private final Action STARTUP_CONTROL = new Action("Startup Type");
     private final Action[] serverActions = new Action[] { DETAILS, ERROR_CATEGORISATION, EDIT };
-    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION };
-    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
-    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION };
-    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION };
-    private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION };
-    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
-    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
-    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE };
-    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE };
+    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
     private final Action[] componentActionsConfigurableConfigureMetrics = new Action[] { CONFIGURE, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigurableConfigure = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigureMetrics = new Action[] { CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
@@ -227,6 +221,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private Tree moduleTree;
 	private ComponentConfigurationWindow componentConfigurationWindow;
 	private FlowConfigurationWindow flowConfigurationWindow;
+	private FlowComponentsConfigurationUploadDownloadWindow flowComponentsConfigurationUploadDownloadWindow;
+	private ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow;
 	private FlowElementConfigurationWindow flowElementConfigurationWindow;
 
 	private Panel tabsheetPanel;
@@ -280,7 +276,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
 			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,
-			 FlowElementConfigurationWindow flowElementConfigurationWindow)
+			 FlowElementConfigurationWindow flowElementConfigurationWindow, FlowComponentsConfigurationUploadDownloadWindow flowComponentsConfigurationUploadDownloadWindow,
+			 ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -367,7 +364,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("flowElementConfigurationWindow cannot be null!");
 		}
-
+		this.flowComponentsConfigurationUploadDownloadWindow = flowComponentsConfigurationUploadDownloadWindow;
+		if(this.flowComponentsConfigurationUploadDownloadWindow == null)
+		{
+			throw new IllegalArgumentException("flowComponentsConfigurationUploadDownloadWindow cannot be null!");
+		}
+		this.moduleComponentsConfigurationUploadDownloadWindow = moduleComponentsConfigurationUploadDownloadWindow;
+		if(this.moduleComponentsConfigurationUploadDownloadWindow == null)
+		{
+			throw new IllegalArgumentException("moduleComponentsConfigurationUploadDownloadWindow cannot be null!");
+		}
 
 		init();
 	}
@@ -1120,9 +1126,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			this.createTabSheet();
 		}
 
-//		logger.debug("refreshTree!");
-//		this.refreshTree();
-
 		logger.debug("createFilterPopupContent!");
 		createFilterPopupContent();
 
@@ -1592,6 +1595,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		this.flowConfigurationWindow.populate(flow);
         		UI.getCurrent().addWindow(this.flowConfigurationWindow);
         	}
+			else if(action.equals(UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS))
+			{
+				this.flowComponentsConfigurationUploadDownloadWindow.populate(flow);
+				UI.getCurrent().addWindow(this.flowComponentsConfigurationUploadDownloadWindow);
+			}
         	else if(action.equals(START))
 	        {
 	     		if(this.actionFlow(flow, "start"))
@@ -1676,13 +1684,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         }
         else if(target != null && target instanceof Module)
         {
+			Module module = (Module)target;
+			
         	if(action.equals(ERROR_CATEGORISATION))
         	{
-        		Module module = (Module)target;
-
         		UI.getCurrent().addWindow(new ErrorCategorisationWindow(module.getServer(),
         				module, null, null, errorCategorisationService));
         	}
+			else if(action.equals(UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS))
+			{
+				this.moduleComponentsConfigurationUploadDownloadWindow.populate(module);
+				UI.getCurrent().addWindow(this.moduleComponentsConfigurationUploadDownloadWindow);
+			}
         }
         else if(target != null && target instanceof Server)
         {

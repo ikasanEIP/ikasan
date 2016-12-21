@@ -239,6 +239,16 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
+	<bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
+		<constructor-arg index="0" ref="messageHistoryDao"/>
+		<constructor-arg index="1" ref="wiretapEventFactory"/>
+	</bean>
+
+	<bean id="messageHistoryDao"
+		  class="org.ikasan.history.dao.HibernateMessageHistoryDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory"/>
+	</bean>
+
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
@@ -292,11 +302,15 @@
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
 			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+
+			   <value>org/ikasan/history/model/History.hbm.xml</value>
+			   <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-    
+
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
     
     <bean id="ikasan.xads"

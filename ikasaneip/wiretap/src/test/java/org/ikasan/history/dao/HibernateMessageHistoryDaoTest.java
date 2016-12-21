@@ -49,6 +49,7 @@ import javax.annotation.Resource;
 
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.MessageHistoryFlowEvent;
+import org.ikasan.history.model.MetricEvent;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
@@ -97,7 +98,7 @@ public class HibernateMessageHistoryDaoTest
         
         event1.setMetrics(metrics);
 
-        WiretapFlowEvent wiretapEvent = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+        MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
                 "lifeId", "relatedLifeId", System.currentTimeMillis(), "payload", 30L);
 
         messageHistoryDao.save(wiretapEvent);
@@ -210,7 +211,7 @@ public class HibernateMessageHistoryDaoTest
 	        
 	        event1.setMetrics(metrics);
 
-            WiretapFlowEvent wiretapEvent = new WiretapFlowEvent("moduleName", "flowName", "componentName",
+            MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
                     "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
 
             messageHistoryDao.save(wiretapEvent);

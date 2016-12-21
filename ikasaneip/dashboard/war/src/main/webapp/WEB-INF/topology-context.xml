@@ -54,6 +54,8 @@
         <constructor-arg ref="hospitalService"/>
         <constructor-arg ref="flowConfigurationWindow"/>
         <constructor-arg ref="flowElementConfigurationWindow"/>
+        <constructor-arg ref="flowComponentsConfigurationUploadDownloadWindow"/>
+        <constructor-arg ref="moduleComponentsConfigurationUploadDownloadWindow"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">
@@ -70,6 +72,14 @@
     </bean>
     
     <bean id="flowConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+    </bean>
+
+    <bean id="flowComponentsConfigurationUploadDownloadWindow" class="org.ikasan.dashboard.ui.topology.window.FlowComponentsConfigurationUploadDownloadWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+    </bean>
+
+    <bean id="moduleComponentsConfigurationUploadDownloadWindow" class="org.ikasan.dashboard.ui.topology.window.ModuleComponentsConfigurationUploadDownloadWindow" scope="session">
         <constructor-arg ref="configurationService" />
     </bean>
     
