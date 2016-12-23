@@ -38,13 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.configurationManagement.util;
+package org.ikasan.configurationService.util;
 
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.model.*;
-import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
-import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
-import org.ikasan.mapping.model.*;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.w3c.dom.Document;
@@ -96,10 +93,9 @@ public class ComponentConfigurationImportHelper
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
-     * @throws MappingConfigurationImportException
      */
     public void updateComponentConfiguration(Configuration configuration, byte[] fileContents) throws SAXException
-        , IOException, ParserConfigurationException, XPathExpressionException, MappingConfigurationImportException
+        , IOException, ParserConfigurationException, XPathExpressionException
     {
         List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 
@@ -156,10 +152,9 @@ public class ComponentConfigurationImportHelper
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
-     * @throws MappingConfigurationImportException
      */
     public void updateComponentConfiguration(Configuration configuration, Document document) throws SAXException
-            , IOException, ParserConfigurationException, XPathExpressionException, MappingConfigurationImportException
+            , IOException, ParserConfigurationException, XPathExpressionException
     {
         List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 

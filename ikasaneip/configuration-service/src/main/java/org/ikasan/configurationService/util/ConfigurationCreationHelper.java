@@ -1,15 +1,12 @@
-package org.ikasan.dashboard.configurationManagement.util;
+package org.ikasan.configurationService.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Notification;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
 
@@ -23,11 +20,22 @@ import javax.ws.rs.core.Response;
  */
 public class ConfigurationCreationHelper
 {
-    ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+    private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+    private PlatformConfigurationService platformConfigurationService;
 
-    public ConfigurationCreationHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+    public ConfigurationCreationHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+                                       PlatformConfigurationService platformConfigurationService)
     {
         this.configurationManagement = configurationManagement;
+        if(this.configurationManagement == null)
+        {
+            throw new IllegalArgumentException("configurationManagement cannot be null!");
+        }
+        this.platformConfigurationService = platformConfigurationService;
+        if(this.platformConfigurationService == null)
+        {
+            throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+        }
     }
 
     public Configuration createConfiguration(Component component)
@@ -43,17 +51,16 @@ public class ConfigurationCreationHelper
                 + "/"
                 + component.getName();
 
+                String username = platformConfigurationService.getWebServiceUsername();
+        String password = platformConfigurationService.getWebServicePassword();
 
-        IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
-                .getAttribute(DashboardSessionValueConstants.USER);
-
-        HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String) authentication.getCredentials());
+        HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
 
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.register(feature);
 
         Client client = ClientBuilder.newClient(clientConfig);
--
+
         ObjectMapper mapper = new ObjectMapper();
 
         WebTarget webTarget = client.target(url);
@@ -64,10 +71,8 @@ public class ConfigurationCreationHelper
             response.bufferEntity();
 
             String responseMessage = response.readEntity(String.class);
-            Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': "
-                    + responseMessage, Notification.Type.ERROR_MESSAGE);
-
-            return null;
+            throw new RuntimeException("An error was received trying to create configured resource '" + component.getConfigurationId() + "': "
+                    + responseMessage);
         }
 
         return this.configurationManagement.getConfiguration(component.getConfigurationId());
