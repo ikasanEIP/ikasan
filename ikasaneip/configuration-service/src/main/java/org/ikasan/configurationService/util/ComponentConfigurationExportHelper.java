@@ -38,11 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.dashboard.configurationManagement.util;
+package org.ikasan.configurationService.util;
 
- import org.apache.commons.lang.StringEscapeUtils;
+ import org.apache.commons.lang3.StringEscapeUtils;
  import org.ikasan.configurationService.model.*;
- import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
  import org.ikasan.spec.configuration.Configuration;
  import org.ikasan.spec.configuration.ConfigurationParameter;
 
@@ -88,17 +87,15 @@ package org.ikasan.dashboard.configurationManagement.util;
      private static final String VALUE_START_TAG = "<value>";
      private static final String VALUE_END_TAG = "</value>";
 
-     private Configuration configuration;
      private String schemaLocation = "schemaLocation";
      private Boolean isEmbeded = false;
 
-     public ComponentConfigurationExportHelper(Configuration configuration)
+     public ComponentConfigurationExportHelper()
      {
          super();
-         this.configuration = configuration;
      }
 
-     public String getComponentConfigurationExportXml()
+     public String getComponentConfigurationExportXml(Configuration configuration)
      {
          StringBuffer exportString = new StringBuffer();
 
@@ -257,7 +254,7 @@ package org.ikasan.dashboard.configurationManagement.util;
          }
          else
          {
-             return XmlFormatter.format(exportString.toString().trim());
+             return exportString.toString().trim();
          }
      }
 

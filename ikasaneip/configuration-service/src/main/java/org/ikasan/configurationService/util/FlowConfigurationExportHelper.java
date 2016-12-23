@@ -1,12 +1,10 @@
-package org.ikasan.dashboard.configurationManagement.util;
+package org.ikasan.configurationService.util;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Flow;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +41,13 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
 
     private Flow flow;
 
-    public FlowConfigurationExportHelper(Flow flow, ConfigurationManagement<ConfiguredResource, Configuration> configurationService)
+    public FlowConfigurationExportHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
+                                         ConfigurationCreationHelper helper)
     {
-        super(configurationService);
-        this.flow = flow;
+        super(configurationService, helper);
     }
 
-    public String getFlowConfigurationExportXml()
+    public String getFlowConfigurationExportXml(Flow flow)
     {
         StringBuffer xml = new StringBuffer("");
 
@@ -70,11 +68,6 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
 
         xml.append(NAME_START_TAG).append(flow.getName()).append(NAME_END_TAG);
 
-        if(flow.isConfigurable())
-        {
-            //todo deal with the actual flow configuration
-        }
-
         xml.append(COMPONENT_CONFIGURATIONS_START_TAG);
 
         List<Configuration> configurationList = super.getFlowConfigurations(this.flow);
@@ -90,11 +83,11 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
             if(configuration != null && !configuredResourceIds.contains(configuration.getConfigurationId()))
             {
                 ComponentConfigurationExportHelper componentConfigurationExportHelper
-                        = new ComponentConfigurationExportHelper(configuration);
+                        = new ComponentConfigurationExportHelper();
 
                 componentConfigurationExportHelper.setEmbeded(true);
 
-                xml.append(componentConfigurationExportHelper.getComponentConfigurationExportXml());
+                xml.append(componentConfigurationExportHelper.getComponentConfigurationExportXml(configuration));
                 xml.append("\r\n");
 
                 configuredResourceIds.add(configuration.getConfigurationId());
@@ -108,7 +101,7 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
 
         if(!this.isEmbeded)
         {
-            return XmlFormatter.format(xml.toString().trim());
+            return xml.toString().trim();
         }
         else
         {

@@ -42,13 +42,11 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
     private void init()
     {
         setModal(true);
-        setHeight("300px");
-        setWidth("500px");
-        this.layout = new GridLayout(2, 2);
+        setHeight("150px");
+        setWidth("300px");
+        this.layout = new GridLayout(1, 2);
 
         this.layout.setSpacing(true);
-        this.layout.setColumnExpandRatio(0, .25f);
-        this.layout.setColumnExpandRatio(1, .75f);
 
         this.layout.setWidth("95%");
         this.layout.setMargin(true);
@@ -63,7 +61,7 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
 
         this.layout.removeAllComponents();
 
-        Label configurationParametersLabel = new Label("Flow Configured Resources Import/Export");
+        Label configurationParametersLabel = new Label("Module Configured Resources Import/Export");
         configurationParametersLabel.setStyleName(ValoTheme.LABEL_HUGE);
         this.layout.addComponent(configurationParametersLabel, 0, 0);
 
@@ -78,8 +76,8 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
 
         Button importMappingConfigurationButton = new Button();
 
-//        final FlowConfigurationImportWindow flowConfigurationImportWindow
-//                = new FlowConfigurationImportWindow(this.flow, this.getFlowConfigurations(flow), this.configurationService);
+        final ModuleConfigurationImportWindow moduleConfigurationImportWindow
+                = new ModuleConfigurationImportWindow(this.module, this.configurationService);
 
         importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
         importMappingConfigurationButton.setDescription("Import a component configuration");
@@ -89,7 +87,7 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
         {
             public void buttonClick(Button.ClickEvent event)
             {
-//                UI.getCurrent().addWindow(flowConfigurationImportWindow);
+                UI.getCurrent().addWindow(moduleConfigurationImportWindow);
             }
         });
 
@@ -100,8 +98,8 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
         uploadDownloadLayout.addComponent(exportMappingConfigurationButton);
         uploadDownloadLayout.addComponent(importMappingConfigurationButton);
 
-        this.layout.addComponent(uploadDownloadLayout, 1 ,1);
-
+        this.layout.addComponent(uploadDownloadLayout, 0 ,1 );
+        this.layout.setComponentAlignment(uploadDownloadLayout, Alignment.MIDDLE_CENTER);
     }
 
     /**

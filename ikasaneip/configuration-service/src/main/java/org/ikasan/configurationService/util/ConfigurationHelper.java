@@ -1,4 +1,4 @@
-package org.ikasan.dashboard.configurationManagement.util;
+package org.ikasan.configurationService.util;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.Configuration;
@@ -32,21 +32,24 @@ public abstract class ConfigurationHelper
 
     protected final XPathFactory xpathFactory = XPathFactory.newInstance();
 
+    ConfigurationCreationHelper helper = null;
+
     /**
      * Constructor
      *
      * @param configurationService
+     * @param helper
      */
-    public ConfigurationHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationService)
+    protected ConfigurationHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
+                               ConfigurationCreationHelper helper)
     {
         this.configurationService = configurationService;
+        this.helper = helper;
     }
 
     protected List<Configuration> getFlowConfigurations(Flow flow)
     {
         List<Configuration> configurations = new ArrayList<Configuration>();
-
-        ConfigurationCreationHelper helper = new ConfigurationCreationHelper(configurationService);
 
         logger.info("Getting configurations for flow: " + flow.getName() + " with " + flow.getComponents().size() + " components");
 

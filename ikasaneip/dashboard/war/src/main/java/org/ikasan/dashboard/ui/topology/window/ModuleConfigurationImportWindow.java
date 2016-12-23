@@ -3,13 +3,14 @@ package org.ikasan.dashboard.ui.topology.window;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationImportHelper;
 import org.ikasan.dashboard.configurationManagement.util.FlowConfigurationImportHelper;
+import org.ikasan.dashboard.configurationManagement.util.ModuleConfigurationImportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,24 +23,24 @@ import java.util.List;
 /**
  * Created by stewmi on 20/12/2016.
  */
-public class FlowConfigurationImportWindow extends Window
+public class ModuleConfigurationImportWindow extends Window
 {
-    private Logger logger = Logger.getLogger(FlowConfigurationImportWindow.class);
+    private Logger logger = Logger.getLogger(ModuleConfigurationImportWindow.class);
 
-    private FlowConfigurationImportWindow.FileUploader receiver = new FlowConfigurationImportWindow.FileUploader();
+    private ModuleConfigurationImportWindow.FileUploader receiver = new ModuleConfigurationImportWindow.FileUploader();
     private HorizontalLayout progressLayout = new HorizontalLayout();
     private Label uploadLabel = new Label();
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
-    private Flow flow;
+    private Module module;
 
-    FlowConfigurationImportHelper helper = null;
+    private ModuleConfigurationImportHelper helper = null;
 
-    public FlowConfigurationImportWindow(Flow flow, List<Configuration> configurationList, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+    public ModuleConfigurationImportWindow(Module module, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
     {
         this.configurationService = configurationManagement;
-        this.flow = flow;
+        this.module = module;
 
-        helper = new FlowConfigurationImportHelper(this.configurationService);
+        helper = new ModuleConfigurationImportHelper(this.configurationService);
 
         init();
     }
@@ -193,7 +194,7 @@ public class FlowConfigurationImportWindow extends Window
 
         try
         {
-            helper.updateFlowConfiguration(flow, receiver.file.toByteArray());
+            helper.updateModuleConfiguration(module, receiver.file.toByteArray());
         }
         catch(MappingConfigurationImportException e)
         {

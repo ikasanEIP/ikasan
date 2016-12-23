@@ -41,17 +41,13 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
     private void init()
     {
         setModal(true);
-        setHeight("300px");
-        setWidth("500px");
-        this.layout = new GridLayout(2, 2);
+        setHeight("150px");
+        setWidth("300px");
+        this.layout = new GridLayout(1, 2);
 
         this.layout.setSpacing(true);
-        this.layout.setColumnExpandRatio(0, .25f);
-        this.layout.setColumnExpandRatio(1, .75f);
-
         this.layout.setWidth("95%");
         this.layout.setMargin(true);
-
         this.setContent(this.layout);
     }
 
@@ -68,7 +64,7 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         Button exportMappingConfigurationButton = new Button();
         exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        exportMappingConfigurationButton.setDescription("Export the current component configuration");
+        exportMappingConfigurationButton.setDescription("Export the current flow configuration");
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         FileDownloader fd = new FileDownloader(this.getFlowConfigurationExportStream(flow));
@@ -80,7 +76,7 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
                 = new FlowConfigurationImportWindow(this.flow, this.getFlowConfigurations(flow), this.configurationService);
 
         importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
-        importMappingConfigurationButton.setDescription("Import a component configuration");
+        importMappingConfigurationButton.setDescription("Import a flow configuration");
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         importMappingConfigurationButton.addClickListener(new Button.ClickListener()
@@ -98,8 +94,8 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         uploadDownloadLayout.addComponent(exportMappingConfigurationButton);
         uploadDownloadLayout.addComponent(importMappingConfigurationButton);
 
-        this.layout.addComponent(uploadDownloadLayout, 1 ,1);
-
+        this.layout.addComponent(uploadDownloadLayout, 0 ,1);
+        this.layout.setComponentAlignment(uploadDownloadLayout, Alignment.MIDDLE_CENTER);
     }
 
     /**
