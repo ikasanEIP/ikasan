@@ -41,8 +41,8 @@
 package org.ikasan.dashboard.configurationManagement.rest;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.configurationManagement.util.ModuleConfigurationExportHelper;
-import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
+import org.ikasan.configurationService.util.ModuleConfigurationExportHelper;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -52,7 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Module application implementing the REST contract
@@ -66,7 +65,7 @@ public class ConfigurationApplication
 	private TopologyService topologyService;
 
     @Autowired
-    private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
+    private ModuleConfigurationExportHelper helper;
 
     /**
      * Registers the applications we implement and the Spring-Jersey glue
@@ -85,10 +84,7 @@ public class ConfigurationApplication
 
         Module module = this.topologyService.getModuleByName(moduleName);
 
-        ModuleConfigurationExportHelper helper
-                = new ModuleConfigurationExportHelper(module, this.configurationService);
-
-        return  helper.getModuleConfigurationExportXml();
+        return XmlFormatter.format(helper.getModuleConfigurationExportXml(module));
     }
     
 }

@@ -5,9 +5,8 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.configurationManagement.util.ConfigurationCreationHelper;
-import org.ikasan.dashboard.configurationManagement.util.FlowConfigurationExportHelper;
-import org.ikasan.dashboard.configurationManagement.util.ModuleConfigurationExportHelper;
+import org.ikasan.configurationService.util.ModuleConfigurationExportHelper;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
 {
@@ -32,10 +31,28 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
     private GridLayout layout;
     private Module module;
+    private ModuleConfigurationImportWindow moduleConfigurationImportWindow;
+    private ModuleConfigurationExportHelper exportHelper;
 
-    public ModuleComponentsConfigurationUploadDownloadWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationService)
+    public ModuleComponentsConfigurationUploadDownloadWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
+                                                             ModuleConfigurationImportWindow moduleConfigurationImportWindow, ModuleConfigurationExportHelper exportHelper)
     {
         this.configurationService = configurationService;
+        if(this.configurationService == null)
+        {
+            throw new IllegalArgumentException("configurationService cannot be null!");
+        }
+        this.moduleConfigurationImportWindow = moduleConfigurationImportWindow;
+        if(this.moduleConfigurationImportWindow == null)
+        {
+            throw new IllegalArgumentException("moduleConfigurationImportWindow cannot be null!");
+        }
+        this.exportHelper = exportHelper;
+        if(this.exportHelper == null)
+        {
+            throw new IllegalArgumentException("exportHelper cannot be null!");
+        }
+
         init();
     }
 
@@ -76,9 +93,6 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
 
         Button importMappingConfigurationButton = new Button();
 
-        final ModuleConfigurationImportWindow moduleConfigurationImportWindow
-                = new ModuleConfigurationImportWindow(this.module, this.configurationService);
-
         importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
         importMappingConfigurationButton.setDescription("Import a component configuration");
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -87,6 +101,7 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
         {
             public void buttonClick(Button.ClickEvent event)
             {
+                moduleConfigurationImportWindow.setModule(ModuleComponentsConfigurationUploadDownloadWindow.this.module);
                 UI.getCurrent().addWindow(moduleConfigurationImportWindow);
             }
         });
@@ -149,11 +164,10 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
 //
 //		logger.debug("Resolved schemaLocation " + schemaLocation);
 
-        ModuleConfigurationExportHelper exportHelper = new ModuleConfigurationExportHelper(module, this.configurationService);
 
-        String exportXml = exportHelper.getModuleConfigurationExportXml();
+        String exportXml = exportHelper.getModuleConfigurationExportXml(this.module);
 
-        out.write(exportXml.getBytes());
+        out.write(XmlFormatter.format(exportXml).getBytes());
 
         return out;
     }

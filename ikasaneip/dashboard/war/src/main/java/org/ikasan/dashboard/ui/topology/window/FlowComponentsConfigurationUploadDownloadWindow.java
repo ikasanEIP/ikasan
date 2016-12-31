@@ -5,9 +5,8 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
-import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.dashboard.configurationManagement.util.ConfigurationCreationHelper;
-import org.ikasan.dashboard.configurationManagement.util.FlowConfigurationExportHelper;
+import org.ikasan.configurationService.util.FlowConfigurationExportHelper;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -18,23 +17,38 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class FlowComponentsConfigurationUploadDownloadWindow extends Window
 {
     private Logger logger = Logger.getLogger(FlowComponentsConfigurationUploadDownloadWindow.class);
 
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
+    private FlowConfigurationExportHelper flowConfigurationExportHelper;
     private GridLayout layout;
     private Flow flow;
+    private FlowConfigurationImportWindow flowConfigurationImportWindow;
 
-    public FlowComponentsConfigurationUploadDownloadWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationService)
+    public FlowComponentsConfigurationUploadDownloadWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
+                                                           FlowConfigurationExportHelper flowConfigurationExportHelper, FlowConfigurationImportWindow flowConfigurationImportWindow)
     {
         this.configurationService = configurationService;
+        if(this.configurationService == null)
+        {
+            throw new IllegalArgumentException("configurationService cannot be null!");
+        }
+        this.flowConfigurationExportHelper = flowConfigurationExportHelper;
+        if(this.flowConfigurationExportHelper == null)
+        {
+            throw new IllegalArgumentException("flowConfigurationExportHelper cannot be null!");
+        }
+        this.flowConfigurationImportWindow = flowConfigurationImportWindow;
+        if(this.flowConfigurationImportWindow == null)
+        {
+            throw new IllegalArgumentException("flowConfigurationImportWindow cannot be null!");
+        }
         init();
     }
 
@@ -51,7 +65,7 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         this.setContent(this.layout);
     }
 
-    public void populate(Flow flow)
+    public void populate(final Flow flow)
     {
         this.flow = flow;
 
@@ -72,9 +86,6 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
 
         Button importMappingConfigurationButton = new Button();
 
-        final FlowConfigurationImportWindow flowConfigurationImportWindow
-                = new FlowConfigurationImportWindow(this.flow, this.getFlowConfigurations(flow), this.configurationService);
-
         importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
         importMappingConfigurationButton.setDescription("Import a flow configuration");
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -83,6 +94,7 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         {
             public void buttonClick(Button.ClickEvent event)
             {
+                flowConfigurationImportWindow.setFlow(flow);
                 UI.getCurrent().addWindow(flowConfigurationImportWindow);
             }
         });
@@ -148,42 +160,11 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
 //
 //		logger.debug("Resolved schemaLocation " + schemaLocation);
 
-        FlowConfigurationExportHelper exportHelper = new FlowConfigurationExportHelper(flow, this.configurationService);
+        String exportXml = this.flowConfigurationExportHelper.getFlowConfigurationExportXml(flow);
 
-        String exportXml = exportHelper.getFlowConfigurationExportXml();
-
-        out.write(exportXml.getBytes());
+        out.write(XmlFormatter.format(exportXml).getBytes());
 
         return out;
     }
 
-    protected List<Configuration> getFlowConfigurations(Flow flow)
-    {
-        List<Configuration> configurations = new ArrayList<Configuration>();
-
-        ConfigurationCreationHelper helper = new ConfigurationCreationHelper(configurationService);
-
-        logger.info("Getting configurations for flow: " + flow.getName() + " with " + flow.getComponents().size() + " components");
-
-        for(org.ikasan.topology.model.Component component: flow.getComponents())
-        {
-            if(component.isConfigurable() && component.getConfigurationId() != null)
-            {
-                logger.info("Component is configurable: " + component.getName());
-
-                Configuration configuration = configurationService
-                        .getConfiguration(component.getConfigurationId());
-
-                if(configuration == null)
-                {
-                    logger.info("Creating configuration for component: " + component.getName());
-                    configuration = helper.createConfiguration(component);
-                }
-
-                configurations.add(configuration);
-            }
-        }
-
-        return configurations;
-    }
 }

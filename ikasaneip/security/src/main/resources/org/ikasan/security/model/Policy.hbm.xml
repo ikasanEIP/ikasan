@@ -59,7 +59,7 @@
           <generator class="identity" />
         </id>
         
-        <many-to-one name="policyLink" column="PolicyLinkId" 
+        <many-to-string name="policyLink" column="PolicyLinkId"
        			  class="org.ikasan.security.model.PolicyLink" not-null="false" lazy="false"
        			  cascade="all"/>
        			  

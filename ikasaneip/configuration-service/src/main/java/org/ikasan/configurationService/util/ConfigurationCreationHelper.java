@@ -16,7 +16,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class ConfigurationCreationHelper
 {
@@ -60,8 +60,6 @@ public class ConfigurationCreationHelper
         clientConfig.register(feature);
 
         Client client = ClientBuilder.newClient(clientConfig);
-
-        ObjectMapper mapper = new ObjectMapper();
 
         WebTarget webTarget = client.target(url);
 

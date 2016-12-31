@@ -69,18 +69,36 @@
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
+        <constructor-arg ref="componentConfigurationExportHelper" />
     </bean>
     
     <bean id="flowConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
+        <constructor-arg ref="flowConfigurationImportWindow" />
+        <constructor-arg ref="flowConfigurationExportHelper" />
     </bean>
+
 
     <bean id="flowComponentsConfigurationUploadDownloadWindow" class="org.ikasan.dashboard.ui.topology.window.FlowComponentsConfigurationUploadDownloadWindow" scope="session">
         <constructor-arg ref="configurationService" />
+        <constructor-arg ref="flowConfigurationExportHelper" />
+        <constructor-arg ref="flowConfigurationImportWindow" />
+    </bean>
+
+    <bean id="flowConfigurationImportWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationImportWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="flowConfigurationImportHelper" />
     </bean>
 
     <bean id="moduleComponentsConfigurationUploadDownloadWindow" class="org.ikasan.dashboard.ui.topology.window.ModuleComponentsConfigurationUploadDownloadWindow" scope="session">
         <constructor-arg ref="configurationService" />
+        <constructor-arg ref="moduleConfigurationImportWindow" />
+        <constructor-arg ref="moduleConfigurationExportHelper" />
+    </bean>
+
+    <bean id="moduleConfigurationImportWindow" class="org.ikasan.dashboard.ui.topology.window.ModuleConfigurationImportWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="moduleConfigurationImportHelper" />
     </bean>
     
     <bean id="flowElementConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowElementConfigurationWindow" scope="session">

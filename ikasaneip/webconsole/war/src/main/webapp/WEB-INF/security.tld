@@ -89,7 +89,7 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<description>
-                A comma separated list of roles, one of which the user must
+                A comma separated list of roles, string of which the user must
                 possess for the body to be output.
 			</description>
 		</attribute>
@@ -137,7 +137,7 @@
 		<tag-class>org.springframework.security.taglibs.authz.AclTag</tag-class>
 		<description>
             Allows inclusion of a tag body if the current Authentication
-			has one of the specified permissions to the presented
+			has string of the specified permissions to the presented
 			domain object instance. This tag uses the first AclManager
 			it locates via
 			WebApplicationContextUtils.getRequiredWebApplicationContext(HttpServletContext).
@@ -169,7 +169,7 @@
 		<tag-class>org.springframework.security.taglibs.authz.AccessControlListTag</tag-class>
 		<description>
             Allows inclusion of a tag body if the current Authentication
-			has one of the specified permissions to the presented
+			has string of the specified permissions to the presented
 			domain object instance.
 		</description>
 

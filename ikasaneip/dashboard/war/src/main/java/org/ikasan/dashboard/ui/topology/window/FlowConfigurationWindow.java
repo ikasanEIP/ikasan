@@ -66,9 +66,9 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.dashboard.configurationManagement.util.ConfigurationCreationHelper;
-import org.ikasan.dashboard.configurationManagement.util.FlowConfigurationExportHelper;
+import org.ikasan.configurationService.util.FlowConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.validation.StringValidator;
@@ -80,7 +80,6 @@ import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
@@ -101,22 +100,38 @@ import com.vaadin.ui.themes.ValoTheme;
 public class FlowConfigurationWindow extends AbstractConfigurationWindow
 {
 	private Logger logger = Logger.getLogger(FlowConfigurationWindow.class);
-	
-	/**
-	 * @param configurationManagement
-	 */
-	public FlowConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+
+	private FlowConfigurationImportWindow flowConfigurationImportWindow;
+	private FlowConfigurationExportHelper exportHelper;
+
+
+	public FlowConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+								   FlowConfigurationImportWindow flowConfigurationImportWindow, FlowConfigurationExportHelper exportHelper)
 	{
 		super(configurationManagement, "Flow Configuration");
 		this.setIcon(VaadinIcons.COG_O);
 				
 		super.configurationManagement = configurationManagement;
+		if(this.configurationManagement == null)
+		{
+			throw new IllegalArgumentException("configurationManagement cannot be null!");
+		}
+		this.flowConfigurationImportWindow = flowConfigurationImportWindow;
+		if(this.flowConfigurationImportWindow == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationImportWindow cannot be null!");
+		}
+		this.exportHelper = exportHelper;
+		if(this.exportHelper == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationImportWindow cannot be null!");
+		}
 		
 		init();
 	}
 
     @SuppressWarnings("unchecked")
-	public void populate(Flow flow)
+	public void populate(final Flow flow)
     {
     	configuration = this.configurationManagement.getConfiguration(flow.getConfigurationId());
     	
@@ -188,15 +203,13 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
 
 		Button importFlowConfigurationButton = new Button();
 
-		final FlowConfigurationImportWindow flowConfigurationImportWindow
-                = new FlowConfigurationImportWindow(flow, this.getFlowConfigurations(flow), configurationManagement);
-
 		importFlowConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
 		importFlowConfigurationButton.setDescription("Import a flow configuration");
 		importFlowConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		importFlowConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		importFlowConfigurationButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
+				flowConfigurationImportWindow.setFlow(flow);
 				UI.getCurrent().addWindow(flowConfigurationImportWindow);
 			}
 		});
@@ -450,31 +463,6 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
 		this.setContent(configurationPanel);
     }
 
-    protected List<Configuration> getFlowConfigurations(Flow flow)
-	{
-		List<Configuration> configurations = new ArrayList<Configuration>();
-
-		ConfigurationCreationHelper helper = new ConfigurationCreationHelper(super.configurationManagement);
-
-		for(Component component: flow.getComponents())
-		{
-			if(component.isConfigurable() && component.getConfigurationId() != null)
-			{
-				Configuration configuration = super.configurationManagement
-						.getConfiguration(component.getConfigurationId());
-
-				if(configuration == null)
-				{
-					configuration = helper.createConfiguration(component);
-				}
-
-				configurations.add(configuration);
-			}
-		}
-
-		return configurations;
-	}
-
 	/**
 	 * Helper method to get the stream associated with the export of the file.
 	 *
@@ -523,11 +511,10 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
 //
 //		logger.debug("Resolved schemaLocation " + schemaLocation);
 
-		FlowConfigurationExportHelper exportHelper = new FlowConfigurationExportHelper(flow, this.configurationManagement);
 
-		String exportXml = exportHelper.getFlowConfigurationExportXml();
+		String exportXml = exportHelper.getFlowConfigurationExportXml(flow);
 
-		out.write(exportXml.getBytes());
+		out.write(XmlFormatter.format(exportXml).getBytes());
 
 		return out;
 	}

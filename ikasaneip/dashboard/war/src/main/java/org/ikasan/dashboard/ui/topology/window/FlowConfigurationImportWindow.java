@@ -3,8 +3,7 @@ package org.ikasan.dashboard.ui.topology.window;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationImportHelper;
-import org.ikasan.dashboard.configurationManagement.util.FlowConfigurationImportHelper;
+import org.ikasan.configurationService.util.FlowConfigurationImportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -17,10 +16,9 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class FlowConfigurationImportWindow extends Window
 {
@@ -32,14 +30,21 @@ public class FlowConfigurationImportWindow extends Window
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
     private Flow flow;
 
-    FlowConfigurationImportHelper helper = null;
+    private FlowConfigurationImportHelper helper = null;
 
-    public FlowConfigurationImportWindow(Flow flow, List<Configuration> configurationList, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+    public FlowConfigurationImportWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+        FlowConfigurationImportHelper helper)
     {
         this.configurationService = configurationManagement;
-        this.flow = flow;
-
-        helper = new FlowConfigurationImportHelper(this.configurationService);
+        if(this.configurationService == null)
+        {
+            throw new IllegalArgumentException("configurationService cannot be null!");
+        }
+        this.helper = helper;
+        if(this.helper == null)
+        {
+            throw new IllegalArgumentException("helper cannot be null!");
+        }
 
         init();
     }
@@ -191,23 +196,19 @@ public class FlowConfigurationImportWindow extends Window
 //         else
 //         {
 
-        try
-        {
-            helper.updateFlowConfiguration(flow, receiver.file.toByteArray());
-        }
-        catch(MappingConfigurationImportException e)
-        {
-            Notification.show("An error has occurred importing a flow configuration!\n",
-                    e.getMessage(),
-                    Notification.Type.ERROR_MESSAGE);
+        helper.updateFlowConfiguration(flow, receiver.file.toByteArray());
 
-            return;
-        }
 
         this.uploadLabel.setValue("Importing flow configuration"
                 + ". Press import to proceed.");
+
         progressLayout.setVisible(true);
 //         }
 
+    }
+
+    public void setFlow(Flow flow)
+    {
+        this.flow = flow;
     }
 }

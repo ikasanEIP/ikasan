@@ -96,6 +96,8 @@ public class ModuleConfigurationImportHelper extends ConfigurationHelper
     public void updateModuleConfiguration(Module module, byte[] fileContents) throws SAXException
         , IOException, ParserConfigurationException, XPathExpressionException
     {
+		logger.info("Module: " + module);
+		
         DocumentBuilderFactory builderFactory =
                 DocumentBuilderFactory.newInstance();
 
@@ -184,7 +186,8 @@ public class ModuleConfigurationImportHelper extends ConfigurationHelper
         {
             for (Component component : flow.getComponents())
             {
-                if (component.isConfigurable() && component.getConfigurationId().equals(configureResourceId))
+				logger.info("Checking component: " + component);
+                if (component.isConfigurable() && component.getConfigurationId() != null && component.getConfigurationId().equals(configureResourceId))
                 {
                     returnComponent = component;
                     exists = true;

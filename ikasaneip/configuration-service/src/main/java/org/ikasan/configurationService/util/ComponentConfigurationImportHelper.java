@@ -97,50 +97,14 @@ public class ComponentConfigurationImportHelper
     public void updateComponentConfiguration(Configuration configuration, byte[] fileContents) throws SAXException
         , IOException, ParserConfigurationException, XPathExpressionException
     {
-        List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
-
-        this.configurationParameters = new HashMap<String, ConfigurationParameter>();
-
-        for(ConfigurationParameter parameter: parameters)
-        {
-            this.configurationParameters.put(parameter.getName(), parameter);
-        }
-
         DocumentBuilderFactory builderFactory =
                 DocumentBuilderFactory.newInstance();
 
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
-        
+
         Document document = builder.parse(new ByteArrayInputStream(fileContents));
-        XPath xpath = this.xpathFactory.newXPath();
-        String id = (String) xpath.evaluate(ID_XPATH, document, XPathConstants.STRING);
-        String description = (String) xpath.evaluate(DESCRIPTION_XPATH, document, XPathConstants.STRING);
 
-        this.errorMessage = new StringBuffer();
-
-        if(id == null || id.isEmpty())
-        {
-            errorMessage.append("Component Configuration id is missing!\n");
-        }
-        else if(!id.equals(configuration.getConfigurationId()))
-        {
-            errorMessage.append("This configuration id of the imported document must match the id of the configuration we are importing to!\n");
-        }
-
-        configuration.setDescription(description);
-        this.updateStringParameters(document);
-        this.updateBooleanParameters(document);
-        this.updateIntegerParameters(document);
-        this.updateLongParameters(document);
-        this.updateMaskedStringParameters(document);
-        this.updateMapParameters(document);
-        this.updateListParameters(document);
-
-        if(this.errorMessage.length() > 0)
-        {
-            logger.error("Error importing component configuration: " + errorMessage.toString());
-            throw new RuntimeException(errorMessage.toString());
-        }
+        this.updateComponentConfiguration(configuration, document);
     }
 
     /**

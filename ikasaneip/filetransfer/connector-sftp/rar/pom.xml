@@ -62,7 +62,7 @@
 
     <dependencies>
         <!--
-            TODO:  Should be able to haul this up one level
+            TODO:  Should be able to haul this up string level
             Used for the common connector functionality for the ikasan platform
          -->
         <dependency>

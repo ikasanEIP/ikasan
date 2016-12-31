@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
- /*
+/*
  * $Id$
  * $URL$
  *
@@ -40,49 +38,98 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
--->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-    <class
-        name="org.ikasan.mapping.model.SourceConfigurationValue"
-        table="MCSSourceConfigValue">
+package org.ikasan.configurationService.util;
 
-        <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-        </id>
+import org.ikasan.spec.configuration.Masked;
 
-        <property name="sourceSystemValue"
-                  type="java.lang.String"
-                  column="SourceSystemValue" />
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-        <property name="mappingConfigurationId"
-                  type="java.lang.Long"
-                  column="MappingConfigurationId" />
+/**
+ * Sample configuration class for testing
+ * Ikasan Development Team.
+ */
+public class ImportExportConfiguration
+{
+	private String string;
+    
+    @Masked
+    private String maskedString;
+    
+    private Map<String,String>map;
 
-        <property name="sourceConfigGroupId"
-                  type="java.lang.Long"
-                  column="SourceConfigGroupId" />
+	private Long longParam;
 
-        <many-to-string name="targetConfigurationValue"
-                  class="org.ikasan.mapping.model.TargetConfigurationValue"
-                  column="TargetConfigurationValueId"
-                  not-null="true" 	
-                  fetch="select"
-                  lazy="false"/>
+	private Integer intParam;
 
-        <property name="createdDateTime"
-                  type="java.util.Date"
-                  column="CreatedDateTime"
-                  not-null="true" />
+	private List<String> list = new ArrayList<String>();
 
-        <property name="updatedDateTime"
-                  type="java.util.Date"
-                  column="UpdatedDateTime"
-                  not-null="true" />
-    </class>
-</hibernate-mapping>
+	private Boolean booleanParam;
+
+    public Map<String, String> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
+
+	public String getString()
+    {
+        return string;
+    }
+
+    public void setString(String string)
+    {
+        this.string = string;
+    }
+
+	/**
+	 * @return the maskedString
+	 */
+	public String getMaskedString()
+	{
+		return maskedString;
+	}
+
+	/**
+	 * @param maskedString the maskedString to set
+	 */
+	public void setMaskedString(String maskedString)
+	{
+		this.maskedString = maskedString;
+	}
+
+	public Long getLongParam() {
+		return longParam;
+	}
+
+	public void setLongParam(Long longParam) {
+		this.longParam = longParam;
+	}
+
+	public Integer getIntParam() {
+		return intParam;
+	}
+
+	public void setIntParam(Integer intParam) {
+		this.intParam = intParam;
+	}
+
+	public List<String> getList() {
+		return list;
+	}
+
+	public void setList(List<String> list) {
+		this.list = list;
+	}
+
+	public Boolean getBooleanParam() {
+		return booleanParam;
+	}
+
+	public void setBooleanParam(Boolean booleanParam) {
+		this.booleanParam = booleanParam;
+	}
+}

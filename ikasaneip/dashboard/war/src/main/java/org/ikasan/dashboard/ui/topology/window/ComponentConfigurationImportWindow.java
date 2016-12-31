@@ -45,8 +45,7 @@ package org.ikasan.dashboard.ui.topology.window;
  import com.vaadin.ui.Upload.*;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
- import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
- import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationImportHelper;
+ import org.ikasan.configurationService.util.ComponentConfigurationImportHelper;
  import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
  import org.ikasan.spec.configuration.Configuration;
  import org.xml.sax.SAXException;
@@ -229,18 +228,7 @@ package org.ikasan.dashboard.ui.topology.window;
 //         {
              ComponentConfigurationImportHelper helper = new ComponentConfigurationImportHelper();
 
-             try
-             {
-                 helper.updateComponentConfiguration(this.configuration, receiver.file.toByteArray());
-             }
-             catch(MappingConfigurationImportException e)
-             {
-                 Notification.show("An error has occurred importing a component configuration!\n",
-                         e.getMessage(),
-                         Notification.Type.ERROR_MESSAGE);
-
-                 return;
-             }
+             helper.updateComponentConfiguration(this.configuration, receiver.file.toByteArray());
 
              this.uploadLabel.setValue("Importing component configuration"
                  + ". Press import to proceed.");
