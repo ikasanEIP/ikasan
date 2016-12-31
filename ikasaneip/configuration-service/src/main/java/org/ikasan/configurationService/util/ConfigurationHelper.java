@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by stewmi on 21/12/2016.
+ * Created by Ikasan Development Team on 21/12/2016.
  */
 public abstract class ConfigurationHelper
 {

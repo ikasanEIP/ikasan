@@ -120,7 +120,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- TODO Investigate wrapping this one day, used to interact with LastResourceCommit -->
+        <!-- TODO Investigate wrapping this string day, used to interact with LastResourceCommit -->
         <dependency>
             <groupId>org.jboss.transaction</groupId>
             <artifactId>jboss-jta</artifactId>

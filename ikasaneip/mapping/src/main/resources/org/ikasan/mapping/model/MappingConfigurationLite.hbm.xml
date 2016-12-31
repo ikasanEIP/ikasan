@@ -57,7 +57,7 @@
           <generator class="identity" />
         </id>
 
-        <many-to-one name="sourceContext" 
+        <many-to-string name="sourceContext"
                   class="org.ikasan.mapping.model.ConfigurationContext" 
                   column="SourceContextId" 
                   not-null="true" 
@@ -65,7 +65,7 @@
                   lazy="false"
                   unique-key="multicolumn_unique_key"/>
 
-        <many-to-one name="targetContext"
+        <many-to-string name="targetContext"
                   class="org.ikasan.mapping.model.ConfigurationContext"
                   column="TargetContextId" 
                   not-null="true" 
@@ -81,7 +81,7 @@
                   type="java.lang.String" 
                   column="Description" />
 
-        <many-to-one name="configurationType"
+        <many-to-string name="configurationType"
                   class="org.ikasan.mapping.model.ConfigurationType"
                   column="ConfigurationTypeId"
                   not-null="true" 
@@ -89,7 +89,7 @@
                   lazy="false"
                   unique-key="multicolumn_unique_key"/>
 
-        <many-to-one name="configurationServiceClient"
+        <many-to-string name="configurationServiceClient"
                   class="org.ikasan.mapping.model.ConfigurationServiceClient"
                   column="ConfigurationServiceClientId"
                   not-null="true"     

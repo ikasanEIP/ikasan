@@ -57,7 +57,7 @@
 	        <key-property name="flowId" column="FlowId"/>
     	</composite-id>
     	
-    	<many-to-one name="flow" class="org.ikasan.topology.model.Flow" 
+    	<many-to-string name="flow" class="org.ikasan.topology.model.Flow"
     		column="FlowId" not-null="true" insert="false" update="false" lazy="false"/>
 
 		<property name="order" 

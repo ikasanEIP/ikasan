@@ -56,11 +56,11 @@
             <generator class="identity" />
         </id>
 
-        <many-to-one name="pointToPointFlowProfile" class="org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl" column="PointToPointFlowProfileId" />
+        <many-to-string name="pointToPointFlowProfile" class="org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl" column="PointToPointFlowProfileId" />
         
-        <many-to-one name="fromModule" class="org.ikasan.console.module.Module" lazy="false" column="FromModuleId" />
+        <many-to-string name="fromModule" class="org.ikasan.console.module.Module" lazy="false" column="FromModuleId" />
 
-        <many-to-one name="toModule" class="org.ikasan.console.module.Module" lazy="false" column="ToModuleId" />
+        <many-to-string name="toModule" class="org.ikasan.console.module.Module" lazy="false" column="ToModuleId" />
        
     </class>
 	

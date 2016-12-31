@@ -55,7 +55,7 @@
 	        <key-property name="businessStreamId" column="BusinessStreamId"/>
     	</composite-id>
 
-		<many-to-one name="businessStream" column="businessStreamId" 
+		<many-to-string name="businessStream" column="businessStreamId"
        		class="org.ikasan.topology.model.BusinessStream" not-null="true" insert="false" update="false"/>
   </class>
 </hibernate-mapping>

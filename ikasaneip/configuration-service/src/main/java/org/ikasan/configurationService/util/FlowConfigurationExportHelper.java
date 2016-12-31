@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class FlowConfigurationExportHelper extends ConfigurationHelper
 {
@@ -38,8 +38,6 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
     private String schemaLocation = "schemaLocation";
 
     private Boolean isEmbeded = false;
-
-    private Flow flow;
 
     public FlowConfigurationExportHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
                                          ConfigurationCreationHelper helper)
@@ -70,7 +68,7 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
 
         xml.append(COMPONENT_CONFIGURATIONS_START_TAG);
 
-        List<Configuration> configurationList = super.getFlowConfigurations(this.flow);
+        List<Configuration> configurationList = super.getFlowConfigurations(flow);
 
         logger.info("Number of configurations: " + configurationList.size());
 
@@ -88,7 +86,6 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
                 componentConfigurationExportHelper.setEmbeded(true);
 
                 xml.append(componentConfigurationExportHelper.getComponentConfigurationExportXml(configuration));
-                xml.append("\r\n");
 
                 configuredResourceIds.add(configuration.getConfigurationId());
             }

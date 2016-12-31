@@ -61,7 +61,7 @@
         <!-- common fields -->
         <property name="state" type="java.lang.String" column="State" not-null="true" />
 
-        <many-to-one name="xid" column="Xid_Id" class="org.ikasan.connector.base.command.XidImpl"/>
+        <many-to-string name="xid" column="Xid_Id" class="org.ikasan.connector.base.command.XidImpl"/>
 
         <property name="executionTimestamp" type="java.lang.String" column="ExecutionTimestamp" not-null="false" />
 

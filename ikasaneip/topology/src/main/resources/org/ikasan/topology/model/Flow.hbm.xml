@@ -77,7 +77,7 @@
                   not-null="true" 
                   unique="false"/>
         
-        <many-to-one name="module" column="ModuleId" 
+        <many-to-string name="module" column="ModuleId"
        		class="org.ikasan.topology.model.Module" not-null="true" lazy="false"/>
        	
        	<set name="components" cascade="all" order-by="ComponentOrder asc" lazy="false">

@@ -3,13 +3,11 @@ package org.ikasan.dashboard.ui.topology.window;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.configurationManagement.util.FlowConfigurationImportHelper;
-import org.ikasan.dashboard.configurationManagement.util.ModuleConfigurationImportHelper;
+import org.ikasan.configurationService.util.ModuleConfigurationImportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.xml.sax.SAXException;
 
@@ -18,10 +16,9 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class ModuleConfigurationImportWindow extends Window
 {
@@ -33,15 +30,21 @@ public class ModuleConfigurationImportWindow extends Window
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
     private Module module;
 
-    private ModuleConfigurationImportHelper helper = null;
+    private ModuleConfigurationImportHelper moduleImportHelper = null;
 
-    public ModuleConfigurationImportWindow(Module module, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+    public ModuleConfigurationImportWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+                                           ModuleConfigurationImportHelper moduleImportHelper)
     {
         this.configurationService = configurationManagement;
-        this.module = module;
-
-        helper = new ModuleConfigurationImportHelper(this.configurationService);
-
+        if(this.configurationService == null)
+        {
+            throw new IllegalArgumentException("configurationService cannot be null!");
+        }
+        this.moduleImportHelper = moduleImportHelper;
+        if(this.moduleImportHelper == null)
+        {
+            throw new IllegalArgumentException("moduleImportHelper cannot be null!");
+        }
         init();
     }
 
@@ -72,7 +75,8 @@ public class ModuleConfigurationImportWindow extends Window
                 }
                 catch (Exception e)
                 {
-                    Notification.show("Caught exception trying to import a Flow Configuration!\n", e.getMessage()
+                    e.printStackTrace();
+                    Notification.show("Caught exception trying to import a Module Configuration!\n", e.getMessage()
                             , Notification.Type.ERROR_MESSAGE);
                 }
             }
@@ -105,7 +109,7 @@ public class ModuleConfigurationImportWindow extends Window
         {
             public void buttonClick(Button.ClickEvent event)
             {
-                helper.save();
+                moduleImportHelper.save();
                 progressLayout.setVisible(false);
                 upload.setVisible(true);
                 close();
@@ -116,7 +120,7 @@ public class ModuleConfigurationImportWindow extends Window
 
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
-        layout.addComponent(new Label("Select file to upload flow configuration."));
+        layout.addComponent(new Label("Select file to upload module configuration."));
         layout.addComponent(upload);
 
         layout.addComponent(progressLayout);
@@ -140,7 +144,7 @@ public class ModuleConfigurationImportWindow extends Window
         super.setContent(layout);
     }
 
-    /**
+     /**
      * Inner class to help with file uploads.
      */
     class FileUploader implements Upload.Receiver, Upload.SucceededListener
@@ -192,23 +196,18 @@ public class ModuleConfigurationImportWindow extends Window
 //         else
 //         {
 
-        try
-        {
-            helper.updateModuleConfiguration(module, receiver.file.toByteArray());
-        }
-        catch(MappingConfigurationImportException e)
-        {
-            Notification.show("An error has occurred importing a flow configuration!\n",
-                    e.getMessage(),
-                    Notification.Type.ERROR_MESSAGE);
 
-            return;
-        }
+        moduleImportHelper.updateModuleConfiguration(module, receiver.file.toByteArray());
 
-        this.uploadLabel.setValue("Importing flow configuration"
+        this.uploadLabel.setValue("Importing module configuration"
                 + ". Press import to proceed.");
         progressLayout.setVisible(true);
 //         }
 
+    }
+
+    public void setModule(Module module)
+    {
+        this.module = module;
     }
 }

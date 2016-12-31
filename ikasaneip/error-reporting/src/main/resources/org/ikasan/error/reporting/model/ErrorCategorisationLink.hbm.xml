@@ -85,7 +85,7 @@
 	                  
 	    </properties>
 	    
-	    <many-to-one name="errorCategorisation" column="ErrorCategorisationId" 
+	    <many-to-string name="errorCategorisation" column="ErrorCategorisationId"
        		class="org.ikasan.error.reporting.model.ErrorCategorisation" not-null="false" lazy="false"/>
 
     </class>

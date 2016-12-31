@@ -89,21 +89,21 @@
     </aop:config>
 
     <tx:annotation-driven />
-    <!-- MANDATORY will enroll in an existing transaction; or throw exception if one doesnt exist -->
+    <!-- MANDATORY will enroll in an existing transaction; or throw exception if string doesnt exist -->
     <tx:advice id="mandatory-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="MANDATORY" />
         </tx:attributes>
     </tx:advice>
 
-    <!-- REQUIRED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
+    <!-- REQUIRED will enroll in any existing transaction or create a new transaction if string doesnt exist -->
     <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" />
         </tx:attributes>
     </tx:advice>
 
-    <!-- NOT_SUPPORTED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
+    <!-- NOT_SUPPORTED will enroll in any existing transaction or create a new transaction if string doesnt exist -->
     <tx:advice id="notSupported-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="NOT_SUPPORTED" />

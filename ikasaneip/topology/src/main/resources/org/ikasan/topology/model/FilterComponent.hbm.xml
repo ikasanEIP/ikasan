@@ -58,7 +58,7 @@
 	        <key-property name="componentId" column="ComponentId"/>
     	</composite-id>
     	
-    	<many-to-one name="component" class="org.ikasan.topology.model.Component" 
+    	<many-to-string name="component" class="org.ikasan.topology.model.Component"
     		column="ComponentId" not-null="true" insert="false" update="false" lazy="false"/>
 
 	</class>

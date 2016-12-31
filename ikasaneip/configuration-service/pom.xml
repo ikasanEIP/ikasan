@@ -258,10 +258,6 @@
             <artifactId>javassist</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-topology</artifactId>
-        </dependency>
 
     </dependencies>
 

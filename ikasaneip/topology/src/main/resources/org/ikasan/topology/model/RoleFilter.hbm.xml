@@ -58,7 +58,7 @@
 	        <key-property name="roleId" column="RoleId"/>
     	</composite-id>
     	
-    	<many-to-one name="filter" class="org.ikasan.topology.model.Filter" 
+    	<many-to-string name="filter" class="org.ikasan.topology.model.Filter"
     		column="FilterId" not-null="true" insert="false" update="false" lazy="false"/>
 
 		

@@ -66,8 +66,9 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.dashboard.configurationManagement.util.ComponentConfigurationExportHelper;
+import org.ikasan.configurationService.util.ComponentConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.validation.StringValidator;
@@ -99,16 +100,27 @@ import com.vaadin.ui.themes.ValoTheme;
 public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 {
 	private Logger logger = Logger.getLogger(ComponentConfigurationWindow.class);
+
+	private ComponentConfigurationExportHelper exportHelper = new ComponentConfigurationExportHelper();
 	
-	/**
-	 * @param configurationManagement
-	 */
-	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+
+	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+										ComponentConfigurationExportHelper exportHelper)
 	{
 		super(configurationManagement, "Component Configuration");
 		this.setIcon(VaadinIcons.COG_O);
 				
 		this.configurationManagement = configurationManagement;
+		if(this.configurationManagement == null)
+		{
+			throw new IllegalArgumentException("configurationManagement cannot be null!");
+		}
+
+		this.exportHelper = exportHelper;
+		if(this.exportHelper == null)
+		{
+			throw new IllegalArgumentException("exportHelper cannot be null!");
+		}
 		
 		init();
 	}
@@ -507,11 +519,11 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 //
 //		logger.debug("Resolved schemaLocation " + schemaLocation);
 
-		ComponentConfigurationExportHelper exportHelper = new ComponentConfigurationExportHelper(this.configuration);
 
-		String exportXml = exportHelper.getComponentConfigurationExportXml();
 
-		out.write(exportXml.getBytes());
+		String exportXml = exportHelper.getComponentConfigurationExportXml(this.configuration);
+
+		out.write(XmlFormatter.format(exportXml).getBytes());
 
 		return out;
 	}

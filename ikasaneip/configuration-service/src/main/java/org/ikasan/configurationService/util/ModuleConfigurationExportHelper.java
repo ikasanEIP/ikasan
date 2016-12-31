@@ -8,7 +8,7 @@ import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 
 /**
- * Created by stewmi on 20/12/2016.
+ * Created by Ikasan Development Team on 20/12/2016.
  */
 public class ModuleConfigurationExportHelper extends ConfigurationHelper
 {
@@ -34,7 +34,6 @@ public class ModuleConfigurationExportHelper extends ConfigurationHelper
     private static final String MODULE_NAME_END_TAG = "</module>";
 
     private String schemaLocation = "schemaLocation";
-    private Boolean isEmbeded = false;
 
     public ModuleConfigurationExportHelper(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
                                            ConfigurationCreationHelper helper)
@@ -48,34 +47,27 @@ public class ModuleConfigurationExportHelper extends ConfigurationHelper
 
         String startTag = EMBEDED_START_TAG;
 
-        if(!isEmbeded)
-        {
-            xml.append(XML_TAG);
-            startTag = NON_EMBEDED_START_TAG;
-            xml.append(startTag.replace("{$schemaLocation}", schemaLocation));
-        }
-        else
-        {
-            xml.append(startTag);
-        }
+        xml.append(XML_TAG);
+        startTag = NON_EMBEDED_START_TAG;
+        xml.append(startTag.replace("{$schemaLocation}", schemaLocation));
 
         xml.append(NAME_START_TAG).append(module.getName()).append(NAME_END_TAG);
 
-
-
         xml.append(FLOW_CONFIGURATIONS_START_TAG);
 
-        for(Flow flow: module.getFlows())
+        if(module.getFlows() != null)
         {
-            if(flow != null)
+            for (Flow flow : module.getFlows())
             {
-                FlowConfigurationExportHelper flowConfigurationExportHelper
-                        = new FlowConfigurationExportHelper(super.configurationService, helper);
+                if (flow != null)
+                {
+                    FlowConfigurationExportHelper flowConfigurationExportHelper
+                            = new FlowConfigurationExportHelper(super.configurationService, helper);
 
-                flowConfigurationExportHelper.setEmbeded(true);
+                    flowConfigurationExportHelper.setEmbeded(true);
 
-                xml.append(flowConfigurationExportHelper.getFlowConfigurationExportXml(flow));
-                xml.append("\r\n");
+                    xml.append(flowConfigurationExportHelper.getFlowConfigurationExportXml(flow));
+                }
             }
         }
 

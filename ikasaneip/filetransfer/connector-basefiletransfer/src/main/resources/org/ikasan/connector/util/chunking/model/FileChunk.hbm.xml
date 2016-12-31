@@ -58,7 +58,7 @@
     <property name="content" type="byte[]" column="Content" not-null="true" />
     <property name="ordinal" type="long" column="Ordinal" not-null="true" />
     <property name="md5Hash" type="java.lang.String" column="Md5Hash" not-null="true" />
-    <many-to-one name="fileChunkHeader" column="FileChunkHeaderId"></many-to-one>
+    <many-to-string name="fileChunkHeader" column="FileChunkHeaderId"></many-to-string>
    
   </class>
 
