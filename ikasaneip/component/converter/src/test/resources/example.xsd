@@ -3,7 +3,7 @@
 	<xs:element name="example">
 	<xs:complexType>
 		<xs:sequence>
-			<xs:element name="string" type="xs:string"/>
+			<xs:element name="one" type="xs:string"/>
 			<xs:element name="two" type="xs:string"/>
 		</xs:sequence>
 	</xs:complexType>

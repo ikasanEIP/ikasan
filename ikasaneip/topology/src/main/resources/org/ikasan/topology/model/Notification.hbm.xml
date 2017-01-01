@@ -72,7 +72,7 @@
                   not-null="true"
                   unique="false"/>
     	
-    	<many-to-string name="filter" class="org.ikasan.topology.model.Filter"
+    	<many-to-one name="filter" class="org.ikasan.topology.model.Filter"
     		column="FilterId" not-null="false" lazy="false"/>
 
 	</class>

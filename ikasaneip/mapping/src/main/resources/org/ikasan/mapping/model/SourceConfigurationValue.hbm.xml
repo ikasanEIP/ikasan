@@ -68,7 +68,7 @@
                   type="java.lang.Long"
                   column="SourceConfigGroupId" />
 
-        <many-to-string name="targetConfigurationValue"
+        <many-to-one name="targetConfigurationValue"
                   class="org.ikasan.mapping.model.TargetConfigurationValue"
                   column="TargetConfigurationValueId"
                   not-null="true" 	

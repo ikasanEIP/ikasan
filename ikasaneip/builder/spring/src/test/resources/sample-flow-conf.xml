@@ -46,7 +46,7 @@
         <property name="component"  ref="mrRouter"/>
         <property name="transitions">
             <util:map>
-                <entry key="string"  value-ref="sequencerAFlowElement" />
+                <entry key="one"  value-ref="sequencerAFlowElement" />
                 <entry key="two"  value-ref="sequencerBFlowElement" />
                 <entry key="three" value-ref="srRouterFlowElement" />
             </util:map>
@@ -69,7 +69,7 @@
         <property name="component"  ref="srRouter"/>
         <property name="transitions">
             <util:map>
-                <entry key="string"  value-ref="sequencerAFlowElement" />
+                <entry key="one"  value-ref="sequencerAFlowElement" />
                 <entry key="two"  value-ref="sequencerBFlowElement" />
             </util:map>
         </property>
