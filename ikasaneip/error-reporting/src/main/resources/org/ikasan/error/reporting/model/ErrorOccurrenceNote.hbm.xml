@@ -55,7 +55,7 @@
 	    <key-property name="noteId" column="NoteId"/>
 	</composite-id>
             
-    <many-to-string name="note" class="org.ikasan.error.reporting.model.Note"
+    <many-to-one name="note" class="org.ikasan.error.reporting.model.Note"
             column="NoteId" not-null="false" cascade="all" lazy="false"
             insert="false" update="false"/>
 

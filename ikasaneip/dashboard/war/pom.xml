@@ -4,13 +4,13 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-dashboard-war</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.7-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<name>Ikasan Dashboard</name>
 
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-dashboard</artifactId>
-		<version>1.2.7-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -119,7 +119,7 @@
 		<dependency>
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>filteringtable</artifactId>
-		   <version>0.9.13.v7</version>
+		   <version>0.9.15.v7</version>
 		</dependency>
 		
 		<dependency>
