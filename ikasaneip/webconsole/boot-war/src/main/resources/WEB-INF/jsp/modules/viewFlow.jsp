@@ -65,13 +65,13 @@
     <input type="submit" value="Update" class="controlButton"/>
 <!--/security:authorize-->
 
-	<security:authorize access="hasRole('ADMIN')">
+	<security:authorize access="hasRole('ROLE_ADMIN')">
 	Startup Type : ${startupControl.startupType}
 	</security:authorize>
 
 </form>
-    
-    
+
+
 	<h3>Flow Elements</h3>
 	
 	<table id="flowElementsList" class="listTable">

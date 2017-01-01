@@ -38,9 +38,9 @@
 
 	<!-- TODO point cuts below are commented out as these methods are called via REST and rest
  supplies its own security. -->
-	<global-method-security
-			access-decision-manager-ref="accessDecisionManager" >
 
+	<global-method-security pre-post-annotations="enabled"
+			>
 		<!-- AspectJ pointcut expression that locates our "post" method and applies
 			security that way -->
 
@@ -50,6 +50,7 @@
 		<protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.stopFlow(..))"
 			access="MODULE_ADMIN" / -->
+
 		<protect-pointcut
 				expression="execution(* org.ikasan.security.service.UserService.changeUsersPassword(..))"
 				access="ROLE_ADMIN" />
@@ -61,6 +62,7 @@
 		<protect-pointcut
 				expression="execution(* org.ikasan.security.service.UserService.revokeAuthority(..))"
 				access="ROLE_ADMIN" />
+
 
 		<!-- protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.setStartupType(..))"
@@ -74,25 +76,27 @@
 			expression="execution(* org.ikasan.spec.module.ModuleService.getModules())"
 			access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" / -->
 
+
 		<after-invocation-provider
 				ref="moduleCollectionFilteringAfterInvocationProvider" />
 		<after-invocation-provider ref="moduleAfterInvocationProvider" />
+
 
 	</global-method-security>
 
 
 	<!--<http auto-config="false" use-expressions="false" authentication-manager-ref="auth-manager"-->
 		  <!--access-decision-manager-ref="accessDecisionManager" >-->
-	<http auto-config="false" use-expressions="false"
-		  authentication-manager-ref="auth-manager">
+	<http auto-config="false" use-expressions="true"
+		  authentication-manager-ref="auth-manager" access-decision-manager-ref="accessDecisionManager">
 
 
 		<access-denied-handler error-page="/accessDenied.jsp"/>
-		<intercept-url pattern="/login.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-		<intercept-url pattern="/css/*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-		<intercept-url pattern="/images/*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-		<intercept-url pattern="/rest/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-		<intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/login.jsp" access="permitAll"/>
+		<intercept-url pattern="/css/*" access="permitAll"/>
+		<intercept-url pattern="/images/*" access="permitAll"/>
+		<intercept-url pattern="/rest/**" access="hasAnyRole('ALL','WebServiceAdmin')"/>
+		<intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN')" />
 
 		<form-login login-page="/login.jsp"
 					default-target-url="/home.htm"
@@ -103,8 +107,12 @@
 		/>
 
 		<csrf disabled="true"/>
-		<logout logout-success-url="/" logout-url="/j_spring_security_logout" />
-		<intercept-url pattern="/**" access="ROLE_USER"/>
+		<logout logout-success-url="/login.jsp" logout-url="/j_spring_security_logout" />
+		<remember-me
+				remember-me-parameter="_spring_security_remember_me"
+				remember-me-cookie="SPRING_SECURITY_REMEMBER_ME_COOKIE"
+		/>
+		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER')"/>
 
 	</http>
 
@@ -301,20 +309,21 @@
 		useful either <beans:bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" 
 		/> -->
 
-
 	<beans:bean id="accessDecisionManager"
-		class="org.springframework.security.access.vote.UnanimousBased">
-		<beans:constructor-arg>
+				class="org.springframework.security.access.vote.UnanimousBased">
+		<beans:constructor-arg name="decisionVoters">
 			<beans:list>
-				<beans:bean id="roleVoter"
-					class="org.springframework.security.access.vote.RoleVoter" />
-				<!--<beans:bean id="webExpressionVoter" class="org.springframework.security.web.access.expression.WebExpressionVoter"/>-->
+				<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
 
 				<!--<beans:bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />-->
+
 			</beans:list>
 		</beans:constructor-arg>
 		<beans:property name="allowIfAllAbstainDecisions"
-			value="true" />
+						value="true" />
 		<!-- beans:property name="decisionVoters">
 			<beans:list>
 				<beans:bean id="roleVoter"
@@ -323,6 +332,7 @@
 			</beans:list>
 		</beans:property -->
 	</beans:bean>
+
 
 	<beans:bean id="moduleCollectionFilteringAfterInvocationProvider"
 		class="org.ikasan.web.security.AfterInvocationModuleCollectionFilteringProvider">

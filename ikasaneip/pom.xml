@@ -865,11 +865,11 @@
                 <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
                 <!-- module>console</module -->
                 <module>topology</module>
-                <module>dashboard</module>
                 <module>developer</module>
-                <module>sample</module>
                 <module>transaction</module>
                 <module>replay</module>
+                <module>dashboard</module>
+                <module>sample</module>
             </modules>
         </profile>
 

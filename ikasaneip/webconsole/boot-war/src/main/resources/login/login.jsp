@@ -86,9 +86,10 @@
                     <input type='password' name='j_password'/>
                 </li>
                 <li>
-				    <label for="_spring_security_remember_me">Don't ask for my password for two weeks</label>
-				    <input type="checkbox" name="_spring_security_remember_me"/>
-				</li>	
+				    <label for="remember-me">Don't ask for my password for two weeks</label>
+				    <input type="checkbox" id="remember-me" name="remember-me"/>
+
+                </li>
              </ol>   				 
         </fieldset>
 
