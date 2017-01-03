@@ -47,11 +47,11 @@
 		<title>Commonality</title>
 		<para>
 			The nature of an integration platform is such that the integration
-			requirements for one application are likely to be repeated, either in
+			requirements for string application are likely to be repeated, either in
 			part or whole for subsequent application integration solutions. It would
 			seem foolish to implement the same artefacts over and over again; or,
 			in the case where requirements differ only slightly, distort the
-			implementation of one to meet the requirements of others. This
+			implementation of string to meet the requirements of others. This
 			approach would not require many application integration solutions
 			before the implementation became an unstable, tightly coupled mash of
 			technologies.

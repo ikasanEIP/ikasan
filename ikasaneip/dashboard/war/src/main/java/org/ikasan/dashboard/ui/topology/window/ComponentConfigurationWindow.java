@@ -40,6 +40,10 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +53,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -59,7 +66,9 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.configurationService.util.ComponentConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.validation.StringValidator;
@@ -67,10 +76,7 @@ import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.*;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
@@ -79,18 +85,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -101,70 +97,89 @@ import com.vaadin.ui.themes.ValoTheme;
 public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 {
 	private Logger logger = Logger.getLogger(ComponentConfigurationWindow.class);
+
+	private ComponentConfigurationExportHelper exportHelper = null;
+	private PlatformConfigurationService platformConfigurationService = null;
 	
-	/**
-	 * @param configurationManagement
-	 */
-	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+
+	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+										ComponentConfigurationExportHelper exportHelper, PlatformConfigurationService platformConfigurationService)
 	{
 		super(configurationManagement, "Component Configuration");
 		this.setIcon(VaadinIcons.COG_O);
 				
 		this.configurationManagement = configurationManagement;
+		if(this.configurationManagement == null)
+		{
+			throw new IllegalArgumentException("configurationManagement cannot be null!");
+		}
+
+		this.exportHelper = exportHelper;
+		if(this.exportHelper == null)
+		{
+			throw new IllegalArgumentException("exportHelper cannot be null!");
+		}
+
+		this.platformConfigurationService = platformConfigurationService;
+		if(this.platformConfigurationService == null)
+		{
+			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
 		
 		init();
 	}
 
     @SuppressWarnings("unchecked")
-	public void populate(Component component)
-    {
-    	configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
-    	
-    	if(configuration == null)
-    	{
-    		Server server = component.getFlow().getModule().getServer();
-    		
-    		String url = server.getUrl() + ":" + server.getPort()
-    				+ component.getFlow().getModule().getContextRoot()
-    				+ "/rest/configuration/createConfiguration/"
-    	    		+ component.getFlow().getModule().getName() 
-    	    		+ "/"
-    	    		+ component.getFlow().getName()
-    	    		+ "/"
-    	    		+ component.getName();
-    		
+	public void populate(Component component) {
+		configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
 
-    		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-    	        	.getAttribute(DashboardSessionValueConstants.USER);
-    		
-        	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-        	
-        	ClientConfig clientConfig = new ClientConfig();
-        	clientConfig.register(feature) ;
-        	
-        	Client client = ClientBuilder.newClient(clientConfig);
-        	
-        	ObjectMapper mapper = new ObjectMapper();
-        	
-    	    WebTarget webTarget = client.target(url);
-    	    
-    	    Response response = webTarget.request().get();
-    	    
-    	    if(response.getStatus()  != 200)
-    	    {
-    	    	response.bufferEntity();
-    	        
-    	        String responseMessage = response.readEntity(String.class);
-    	    	Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': " 
-    	    			+ responseMessage, Type.ERROR_MESSAGE);
-    	    	
-    	    	return;
-    	    }
-    	    
-    	    configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
-    	}
-    		
-    	  	
+		if (configuration == null) {
+			Server server = component.getFlow().getModule().getServer();
+
+			String url = server.getUrl() + ":" + server.getPort()
+					+ component.getFlow().getModule().getContextRoot()
+					+ "/rest/configuration/createConfiguration/"
+					+ component.getFlow().getModule().getName()
+					+ "/"
+					+ component.getFlow().getName()
+					+ "/"
+					+ component.getName();
+
+
+			IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+					.getAttribute(DashboardSessionValueConstants.USER);
+
+			HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String) authentication.getCredentials());
+
+			ClientConfig clientConfig = new ClientConfig();
+			clientConfig.register(feature);
+
+			Client client = ClientBuilder.newClient(clientConfig);
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			WebTarget webTarget = client.target(url);
+
+			Response response = webTarget.request().get();
+
+			if (response.getStatus() != 200) {
+				response.bufferEntity();
+
+				String responseMessage = response.readEntity(String.class);
+				Notification.show("An error was received trying to create configured resource '" + component.getConfigurationId() + "': "
+						+ responseMessage, Type.ERROR_MESSAGE);
+
+				return;
+			}
+
+			configuration = this.configurationManagement.getConfiguration(component.getConfigurationId());
+		}
+
+		this.buildLayout();
+	}
+
+	protected void buildLayout()
+	{
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 		
 		this.layout = new GridLayout(2, parameters.size() + 6);
@@ -178,7 +193,49 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		Label configurationParametersLabel = new Label("Configuration Parameters");
 		configurationParametersLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
-		
+
+		Button exportMappingConfigurationButton = new Button();
+		exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+		exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		exportMappingConfigurationButton.setDescription("Export the current component configuration");
+		exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
+		FileDownloader fd = new FileDownloader(this.getComponentConfigurationExportStream());
+		fd.extend(exportMappingConfigurationButton);
+
+		Button importMappingConfigurationButton = new Button();
+
+		final ComponentConfigurationImportWindow componentConfigurationImportWindow = new ComponentConfigurationImportWindow(configuration);
+
+		componentConfigurationImportWindow.addCloseListener(new Window.CloseListener()
+		{
+			@Override
+			public void windowClose(CloseEvent closeEvent)
+			{
+				buildLayout();
+			}
+		});
+
+		importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
+		importMappingConfigurationButton.setDescription("Import a component configuration");
+		importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		importMappingConfigurationButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(componentConfigurationImportWindow);
+			}
+		});
+
+		HorizontalLayout uploadDownloadLayout = new HorizontalLayout();
+		uploadDownloadLayout.setSpacing(true);
+		uploadDownloadLayout.setWidth("100px");
+
+		uploadDownloadLayout.addComponent(exportMappingConfigurationButton);
+		uploadDownloadLayout.addComponent(importMappingConfigurationButton);
+
+		this.layout.addComponent(uploadDownloadLayout, 1 ,0);
+		this.layout.setComponentAlignment(uploadDownloadLayout, Alignment.MIDDLE_RIGHT);
+
 		GridLayout paramLayout = new GridLayout(2, 2);
 		paramLayout.setSpacing(true);
 		paramLayout.setSizeFull();
@@ -208,15 +265,15 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		paramLayout.addComponent(conmfigurationDescriptionTextField, 1, 1);
 
 		
-		this.layout.addComponent(paramLayout, 0, 1, 1, 1);
+		this.layout.addComponent(paramLayout, 0, 2, 1, 2);
 		
-		int i=2;
+		int i=3;
 		
 		for(ConfigurationParameter parameter: parameters)
 		{	
 			if(parameter instanceof ConfigurationParameterIntegerImpl)
     		{
-				this.layout.addComponent(this.createTextAreaPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
+				this.layout.addComponent(this.createTextFieldPanel(parameter, new IntegerValidator("Must be a valid number")), 0, i, 1, i);
     		}
 			else if(parameter instanceof ConfigurationParameterMaskedStringImpl)
     		{
@@ -228,11 +285,11 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
     		}
     		else if(parameter instanceof ConfigurationParameterBooleanImpl)
     		{
-    			this.layout.addComponent(this.createTextAreaPanel(parameter, new BooleanValidator()), 0, i, 1, i);
+    			this.layout.addComponent(this.createTrueFalsePanel(parameter, new BooleanValidator()), 0, i, 1, i);
     		}
     		else if(parameter instanceof ConfigurationParameterLongImpl)
     		{
-    			this.layout.addComponent(this.createTextAreaPanel(parameter, new LongValidator()), 0, i, 1, i);
+    			this.layout.addComponent(this.createTextFieldPanel(parameter, new LongValidator()), 0, i, 1, i);
     		}
     		else if(parameter instanceof ConfigurationParameterMapImpl)
     		{
@@ -305,11 +362,12 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
             		}
             		else if(parameter instanceof ConfigurationParameterBooleanImpl)
             		{
-            			
-            			if(textField.getValue() != null && textField.getValue().length() > 0)
+            			ComboBox combo = ComponentConfigurationWindow
+								.this.comboBoxes.get(parameter.getName());
+            			if(combo.getValue() != null)
             			{
-            				logger.debug("Setting Boolean value: " + textField.getValue());
-            				parameter.setValue(new Boolean(textField.getValue()));
+            				logger.debug("Setting Boolean value: " + combo.getValue());
+            				parameter.setValue((Boolean)combo.getValue());
             			}
             		}
             		else if(parameter instanceof ConfigurationParameterLongImpl)
@@ -414,7 +472,63 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
     	Panel configurationPanel = new Panel();
     	configurationPanel.setContent(this.layout);
 
-    	
 		this.setContent(configurationPanel);
     }
+
+	/**
+	 * Helper method to get the stream associated with the export of the file.
+	 *
+	 * @return the StreamResource associated with the export.
+	 */
+	private StreamResource getComponentConfigurationExportStream()
+	{
+		StreamResource.StreamSource source = new StreamResource.StreamSource()
+		{
+
+			public InputStream getStream() {
+				ByteArrayOutputStream stream = null;
+				try
+				{
+					stream = getComponentConfigurationExport();
+				}
+				catch (IOException e)
+				{
+					logger.error(e.getMessage(), e);
+				}
+				InputStream input = new ByteArrayInputStream(stream.toByteArray());
+				return input;
+
+			}
+		};
+		StreamResource resource = new StreamResource ( source,"componentConfigurationExport.xml");
+		return resource;
+	}
+
+	/**
+	 * Helper method to get the ByteArrayOutputStream associated with the export.
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	private ByteArrayOutputStream getComponentConfigurationExport() throws IOException
+	{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("componentConfigurationSchemaLocation");
+
+		if(schemaLocation == null || schemaLocation.length() == 0)
+		{
+			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
+		}
+
+		logger.info("Resolved schemaLocation " + schemaLocation);
+
+		exportHelper.setSchemaLocation(schemaLocation);
+
+		String exportXml = exportHelper.getComponentConfigurationExportXml(this.configuration);
+
+		out.write(XmlFormatter.format(exportXml).getBytes());
+
+		return out;
+	}
 }

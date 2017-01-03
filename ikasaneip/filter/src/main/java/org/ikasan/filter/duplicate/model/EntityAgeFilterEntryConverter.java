@@ -5,7 +5,7 @@ import java.text.*;
 import java.util.Date;
 
 /**
- * Created by stewmi on 09/07/2016.
+ * Created by Ikasan Development Team on 09/07/2016.
  */
 public class EntityAgeFilterEntryConverter implements FilterEntryConverter<String>
 {

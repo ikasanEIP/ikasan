@@ -8,7 +8,7 @@ import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingJobManagementPanel
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 
 /**
- * Created by stewmi on 24/08/2016.
+ * Created by Ikasan Development Team on 24/08/2016.
  */
 public class HousekeepingJobManagementWindow extends Window
 {

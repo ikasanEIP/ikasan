@@ -288,13 +288,40 @@ public class ReplayServiceTest extends JerseyTest
 				(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
 
 		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
-
-
-		this.replayDao.housekeep(1000);
+		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
+		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
+		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
 
 		List<ReplayAudit> replayAudits = this.replayDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 
-		Assert.assertTrue(replayAudits.size() == 0);
+		Long auditId1 = replayAudits.get(0).getId();
+		Long auditId2 = replayAudits.get(1).getId();
+		Long auditId3 = replayAudits.get(2).getId();
+		Long auditId4 = replayAudits.get(3).getId();
+
+		List<ReplayAuditEvent> auditEvents = this.replayDao.getReplayAuditEventsByAuditId(auditId1);
+		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId2));
+		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId3));
+		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId4));
+
+
+		System.out.println("Number of replay events: " + replayEvents.size());
+		System.out.println("Number of replay audits: " + replayAudits.size());
+		System.out.println("Number of replay audit events: " + auditEvents.size());
+
+		this.replayDao.housekeep(1000);
+
+		replayAudits = this.replayDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+		replayEvents = this.replayDao.getReplayEvents
+				(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+		auditEvents = this.replayDao.getReplayAuditEventsByAuditId(auditId1);
+		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId2));
+		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId3));
+		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId4));
+
+		Assert.assertTrue("Replay audits must be empty!", replayAudits.size() == 0);
+		Assert.assertTrue("Replay events must be empty!", replayEvents.size() == 0);
+		Assert.assertTrue("Replay audit events must be empty!", auditEvents.size() == 0);
 	}
     
     

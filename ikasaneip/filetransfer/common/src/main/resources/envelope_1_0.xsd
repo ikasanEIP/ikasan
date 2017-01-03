@@ -101,7 +101,7 @@
 
   <xsd:complexType name="Payloads">
     <xsd:annotation>
-      <xsd:documentation xml:lang="en">Envelope contains one or more payloads reflecting devliered business data.</xsd:documentation>
+      <xsd:documentation xml:lang="en">Envelope contains string or more payloads reflecting devliered business data.</xsd:documentation>
     </xsd:annotation>
 
     <xsd:sequence>

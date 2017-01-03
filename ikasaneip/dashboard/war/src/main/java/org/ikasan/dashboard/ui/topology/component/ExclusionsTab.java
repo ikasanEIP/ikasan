@@ -421,7 +421,7 @@ public class ExclusionsTab extends TopologyTab
 		resubmitSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		resubmitSelectedButton.setIcon(VaadinIcons.PLAY);
 		resubmitSelectedButton.setImmediate(true);
-		resubmitSelectedButton.setDescription("Resubmit all the below selected exclusioned events.");
+		resubmitSelectedButton.setDescription("Resubmit all the below selected excluded events.");
 		
 		BrowserWindowOpener resubmitPopupOpener = new BrowserWindowOpener(ResubmitIgnorePopup.class);
 		resubmitPopupOpener.setFeatures("height=600,width=900,resizable");
