@@ -93,7 +93,7 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
         Button exportMappingConfigurationButton = new Button();
         exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        exportMappingConfigurationButton.setDescription("Export the current component configuration");
+        exportMappingConfigurationButton.setDescription("Export the current module component configurations");
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         FileDownloader fd = new FileDownloader(this.getModuleConfigurationExportStream(module));
@@ -102,7 +102,7 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
         Button importMappingConfigurationButton = new Button();
 
         importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
-        importMappingConfigurationButton.setDescription("Import a component configuration");
+        importMappingConfigurationButton.setDescription("Import module component configurations");
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         importMappingConfigurationButton.addClickListener(new Button.ClickListener()

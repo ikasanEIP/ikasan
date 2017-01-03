@@ -116,6 +116,9 @@ public class ModuleConfigurationImportWindow extends Window
                 progressLayout.setVisible(false);
                 upload.setVisible(true);
                 close();
+
+                Notification.show("Module component configurations successfully imported!"
+                        , Notification.Type.HUMANIZED_MESSAGE);
             }
         });
 
@@ -198,11 +201,12 @@ public class ModuleConfigurationImportWindow extends Window
          }
          else
          {
-            moduleImportHelper.updateModuleConfiguration(module, receiver.file.toByteArray());
+             moduleImportHelper.updateModuleConfiguration(module, receiver.file.toByteArray());
 
-            this.uploadLabel.setValue("Importing module configuration"
+             this.uploadLabel.setValue("Importing module configuration"
                     + ". Press import to proceed.");
-            progressLayout.setVisible(true);
+             progressLayout.setVisible(true);
+             
          }
 
     }
