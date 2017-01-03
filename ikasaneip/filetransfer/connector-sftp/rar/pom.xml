@@ -52,7 +52,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-connector-sftp-parent</artifactId>
-        <version>1.2.7-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -62,7 +62,7 @@
 
     <dependencies>
         <!--
-            TODO:  Should be able to haul this up one level
+            TODO:  Should be able to haul this up string level
             Used for the common connector functionality for the ikasan platform
          -->
         <dependency>

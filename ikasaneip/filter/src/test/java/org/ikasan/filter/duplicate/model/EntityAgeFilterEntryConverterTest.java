@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Created by stewmi on 09/07/2016.
+ * Created by Ikasan Development Team on 09/07/2016.
  */
 public class EntityAgeFilterEntryConverterTest
 {

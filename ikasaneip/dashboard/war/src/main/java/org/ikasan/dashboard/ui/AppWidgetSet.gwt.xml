@@ -10,7 +10,7 @@
      
 
     <!--
-     Uncomment the following to compile the widgetset for one browser only.
+     Uncomment the following to compile the widgetset for string browser only.
 
      Multiple browsers can be specified as a comma separated list. The
      supported user agents at the moment of writing were:

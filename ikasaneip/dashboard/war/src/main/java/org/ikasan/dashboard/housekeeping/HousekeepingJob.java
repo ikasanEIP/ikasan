@@ -3,13 +3,15 @@ package org.ikasan.dashboard.housekeeping;
 import org.apache.log4j.Logger;
 import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * Created by stewmi on 09/08/2016.
+ * Created by Ikasan Development Team on 09/08/2016.
  */
+@DisallowConcurrentExecution
 public class HousekeepingJob implements Job
 {
     /** Logger for this class */
@@ -35,6 +37,8 @@ public class HousekeepingJob implements Job
     private Boolean enabled = true;
     private Boolean lastExecutionSuccessful = true;
     private String executionErrorMessage;
+    private Boolean initialised = false;
+
 
     public HousekeepingJob(String jobName, HousekeepService houseKeepService,
                            PlatformConfigurationService platformConfigurationService)
@@ -54,79 +58,90 @@ public class HousekeepingJob implements Job
         {
             throw new IllegalArgumentException("platformConfigurationService cannot be null!");
         }
+    }
 
-        String houseKeepingBatchSize = this.platformConfigurationService.getConfigurationValue(this.jobName + HOUSE_KEEPING_BATCH_SIZE);
-        if(houseKeepingBatchSize != null && houseKeepingBatchSize.length() > 0)
+    public void init()
+    {
+        try
         {
-            try
+            String houseKeepingBatchSize = this.platformConfigurationService.getConfigurationValue(this.jobName + HOUSE_KEEPING_BATCH_SIZE);
+            if (houseKeepingBatchSize != null && houseKeepingBatchSize.length() > 0)
             {
-                this.batchDeleteSize = new Integer(houseKeepingBatchSize);
-                this.houseKeepService.setHousekeepingBatchSize(this.batchDeleteSize);
+                try
+                {
+                    this.batchDeleteSize = new Integer(houseKeepingBatchSize);
+                    this.houseKeepService.setHousekeepingBatchSize(this.batchDeleteSize);
+                } catch (NumberFormatException e)
+                {
+                    this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
+                    this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
+                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + HOUSE_KEEPING_BATCH_SIZE, DEFAULT_BATCH_DELETE_SIZE.toString());
+                    logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
+                            + " is not a number. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
+                }
             }
-            catch(NumberFormatException e)
+            else
             {
                 this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
                 this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
                 this.platformConfigurationService.saveConfigurationValue(this.getJobName() + HOUSE_KEEPING_BATCH_SIZE, DEFAULT_BATCH_DELETE_SIZE.toString());
                 logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
-                        + " is not a number. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
+                        + " is not available. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
             }
-        }
-        else
-        {
-            this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
-            this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
-            this.platformConfigurationService.saveConfigurationValue(this.getJobName() + HOUSE_KEEPING_BATCH_SIZE, DEFAULT_BATCH_DELETE_SIZE.toString());
-            logger.warn("The value configured for " + this.jobName + HOUSE_KEEPING_BATCH_SIZE
-                    + " is not available. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
-        }
 
-        String transactionBatchSize = this.platformConfigurationService.getConfigurationValue(this.jobName + TRANSACTION_BATCH_SIZE);
-        if(transactionBatchSize != null && transactionBatchSize.length() > 0)
-        {
-            try
+            String transactionBatchSize = this.platformConfigurationService.getConfigurationValue(this.jobName + TRANSACTION_BATCH_SIZE);
+            if (transactionBatchSize != null && transactionBatchSize.length() > 0)
             {
-                this.transactionDeleteSize = new Integer(transactionBatchSize);
-                this.houseKeepService.setTransactionBatchSize(this.transactionDeleteSize);
+                try
+                {
+                    this.transactionDeleteSize = new Integer(transactionBatchSize);
+                    this.houseKeepService.setTransactionBatchSize(this.transactionDeleteSize);
+                }
+                catch (NumberFormatException e)
+                {
+                    this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
+                    this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
+                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + TRANSACTION_BATCH_SIZE, DEFAULT_TRANSACTION_DELETE_SIZE.toString());
+                    logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
+                            + " is not a number. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
+                }
             }
-            catch(NumberFormatException e)
+            else
             {
                 this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
                 this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
                 this.platformConfigurationService.saveConfigurationValue(this.getJobName() + TRANSACTION_BATCH_SIZE, DEFAULT_TRANSACTION_DELETE_SIZE.toString());
                 logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
-                        + " is not a number. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
+                        + " is not available. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
             }
-        }
-        else
-        {
-            this.transactionDeleteSize = DEFAULT_TRANSACTION_DELETE_SIZE;
-            this.houseKeepService.setTransactionBatchSize(DEFAULT_TRANSACTION_DELETE_SIZE);
-            this.platformConfigurationService.saveConfigurationValue(this.getJobName() + TRANSACTION_BATCH_SIZE, DEFAULT_TRANSACTION_DELETE_SIZE.toString());
-            logger.warn("The value configured for " + this.jobName + TRANSACTION_BATCH_SIZE
-                    + " is not available. Using default house keeping transaction size: " + DEFAULT_TRANSACTION_DELETE_SIZE);
-        }
 
-        String enabled = this.platformConfigurationService.getConfigurationValue(this.jobName + ENABLED);
-        if(enabled != null && enabled.length() > 0)
-        {
-            try
+            String enabled = this.platformConfigurationService.getConfigurationValue(this.jobName + ENABLED);
+            if (enabled != null && enabled.length() > 0)
             {
-                this.enabled = new Boolean(enabled);
+                try
+                {
+                    this.enabled = new Boolean(enabled);
+                } catch (Exception e)
+                {
+                    this.enabled = true;
+                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
+                    logger.warn("The value configured for " + this.jobName + ENABLED + " is not a boolean. Using default house keeping enabled: true");
+                }
             }
-            catch(Exception e)
+            else
             {
                 this.enabled = true;
                 this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
-                logger.warn("The value configured for " + this.jobName + ENABLED  + " is not a boolean. Using default house keeping enabled: true");
+                logger.warn("The value configured for " + this.jobName + ENABLED + " is not available. Using default house keeping enabled: true");
             }
         }
-        else
+        catch(Exception e)
         {
-            this.enabled = true;
-            this.platformConfigurationService.saveConfigurationValue(this.getJobName() + ENABLED, this.enabled.toString());
-            logger.warn("The value configured for " + this.jobName + ENABLED  + " is not available. Using default house keeping enabled: true");
+            logger.error("Unable to initialise house keeping job: " + this.getJobName()
+                    + ". This may be due to the database not yet having been created.", e);
         }
+
+        this.initialised = true;
     }
 
     @Override
@@ -213,7 +228,7 @@ public class HousekeepingJob implements Job
         this.transactionDeleteSize = transactionDeleteSize;
     }
 
-    public Boolean getEnabled()
+    public Boolean isEnabled()
     {
         return enabled;
     }
@@ -231,5 +246,15 @@ public class HousekeepingJob implements Job
     public String getExecutionErrorMessage()
     {
         return executionErrorMessage;
+    }
+
+    public Boolean isInitialised()
+    {
+        return initialised;
+    }
+
+    public void setInitialised(Boolean initialised)
+    {
+        this.initialised = initialised;
     }
 }

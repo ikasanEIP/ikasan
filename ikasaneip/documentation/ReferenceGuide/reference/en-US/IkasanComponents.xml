@@ -108,7 +108,7 @@
 		<itemizedlist mark='bullet'>
 		  <listitem>
 		    <para>
-		      Recipient list - routes an event to one or more recipients
+		      Recipient list - routes an event to string or more recipients
 		    </para>
 		  </listitem>
 		  <listitem>
@@ -157,7 +157,7 @@
 			    </listitem>
 			    <listitem>
 			      <para>
-				Single payload per event - splits multiple payloads contained within a single event into one payload per event
+				Single payload per event - splits multiple payloads contained within a single event into string payload per event
 			      </para>
 			    </listitem>
 			    <listitem>

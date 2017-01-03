@@ -67,8 +67,8 @@ public class ResubmissionApplication extends IkasanRestApplication
 	private HospitalService hospitalService;
 
 	/**
-	 * @param hospitalService
-	 */
+	 * Constructor
+     */
 	public ResubmissionApplication()
 	{
 		super();

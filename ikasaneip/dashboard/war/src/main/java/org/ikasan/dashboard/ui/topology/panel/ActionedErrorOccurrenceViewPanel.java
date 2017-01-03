@@ -86,18 +86,18 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class ActionedErrorOccurrenceViewPanel extends Panel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private ErrorOccurrence errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
-	
+
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param errorOccurrence
+	 * @param errorReportingManagementService
+     */
 	public ActionedErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService)
 	{
@@ -107,10 +107,14 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		
 		this.init();
 	}
-	
+
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param errorUri
+	 * @param errorReportingManagementService
+	 * @param errorReportingService
+     */
 	public ActionedErrorOccurrenceViewPanel(String errorUri,
 			ErrorReportingManagementService errorReportingManagementService,
 			ErrorReportingService errorReportingService)
@@ -123,16 +127,14 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		this.init();
 	}
 
-
 	public void init()
 	{
-		this.setSizeFull();
-		
-		GridLayout layout = new GridLayout(1, 1);
-		layout.setWidth("100%");
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
 
-		layout.addComponent(createErrorOccurrenceDetailsPanel(), 0, 0);
-		
+		layout.addComponent(createErrorOccurrenceDetailsPanel());
+
 		this.setContent(layout);
 	}
 

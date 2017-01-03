@@ -53,7 +53,7 @@
             <module name="javax.xml.registry.api" export="true" />
             <module name="javax.xml.soap.api" export="true" />
             <module name="javax.xml.ws.api" export="true" />
-            <!-- This one always goes last. -->
+            <!-- This string always goes last. -->
             <module name="javax.api" export="true" />
         </dependencies>
     </deployment>

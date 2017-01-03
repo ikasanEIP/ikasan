@@ -54,6 +54,8 @@
         <constructor-arg ref="hospitalService"/>
         <constructor-arg ref="flowConfigurationWindow"/>
         <constructor-arg ref="flowElementConfigurationWindow"/>
+        <constructor-arg ref="flowComponentsConfigurationUploadDownloadWindow"/>
+        <constructor-arg ref="moduleComponentsConfigurationUploadDownloadWindow"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">
@@ -67,10 +69,40 @@
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
+        <constructor-arg ref="componentConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
     <bean id="flowConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
+        <constructor-arg ref="flowConfigurationImportWindow" />
+        <constructor-arg ref="flowConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
+    </bean>
+
+
+    <bean id="flowComponentsConfigurationUploadDownloadWindow" class="org.ikasan.dashboard.ui.topology.window.FlowComponentsConfigurationUploadDownloadWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="flowConfigurationExportHelper" />
+        <constructor-arg ref="flowConfigurationImportWindow" />
+        <constructor-arg ref="platformConfigurationService"/>
+    </bean>
+
+    <bean id="flowConfigurationImportWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationImportWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="flowConfigurationImportHelper" />
+    </bean>
+
+    <bean id="moduleComponentsConfigurationUploadDownloadWindow" class="org.ikasan.dashboard.ui.topology.window.ModuleComponentsConfigurationUploadDownloadWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="moduleConfigurationImportWindow" />
+        <constructor-arg ref="moduleConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
+    </bean>
+
+    <bean id="moduleConfigurationImportWindow" class="org.ikasan.dashboard.ui.topology.window.ModuleConfigurationImportWindow" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="moduleConfigurationImportHelper" />
     </bean>
     
     <bean id="flowElementConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowElementConfigurationWindow" scope="session">

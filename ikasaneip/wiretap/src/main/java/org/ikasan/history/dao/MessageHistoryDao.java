@@ -115,12 +115,20 @@ public interface MessageHistoryDao
 
 
     /**
-     * Get the events that are ready to be house kept.
+     * Get the events that are ready to be harvested.
      *
      * @param transactionBatchSize
      * @return
      */
-    public List<MessageHistoryEvent> getHarvestableRecordsRecords(int transactionBatchSize);
+    public List<MessageHistoryEvent> getHarvestableRecords(int transactionBatchSize);
+
+    /**
+     * Get the events that are already harvested.
+     *
+     * @param transactionBatchSize
+     * @return
+     */
+    public List<MessageHistoryEvent> getHarvestedRecords(final int transactionBatchSize);
 
     /**
      * Delete the events in the list.

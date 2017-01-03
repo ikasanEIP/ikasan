@@ -51,7 +51,7 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>, Serializable
+public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, MetricEvent>, Serializable
 {
     private String moduleName, flowName, componentName,
             beforeEventIdentifier, beforeRelatedEventIdentifier,
@@ -60,7 +60,9 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
     
     private Set<CustomMetric> metrics;
 
-    private WiretapFlowEvent wiretapFlowEvent;
+    private MetricEvent wiretapFlowEvent;
+
+    private Boolean harvested = false;
 
     /** Required by the ORM... */
     protected MessageHistoryFlowEvent()
@@ -222,14 +224,26 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
 		this.metrics = metrics;
 	}
 
-    public WiretapFlowEvent getWiretapFlowEvent()
+    @Override
+    public MetricEvent getWiretapFlowEvent()
     {
-        return wiretapFlowEvent;
+        return this.wiretapFlowEvent;
     }
 
-    public void setWiretapFlowEvent(WiretapFlowEvent wiretapFlowEvent)
+    @Override
+    public void setWiretapFlowEvent(MetricEvent wiretapFlowEvent)
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
+    }
+
+    public Boolean getHarvested()
+    {
+        return harvested;
+    }
+
+    public void setHarvested(Boolean harvested)
+    {
+        this.harvested = harvested;
     }
 
 }

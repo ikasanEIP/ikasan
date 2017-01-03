@@ -57,7 +57,7 @@
           <generator class="identity" />
         </id>
 
-        <many-to-one name="sourceContext" 
+        <many-to-one name="sourceContext"
                   class="org.ikasan.mapping.model.ConfigurationContext" 
                   column="SourceContextId" 
                   not-null="true" 
