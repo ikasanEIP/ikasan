@@ -268,6 +268,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	private HashMap<String, AbstractComponent> tabComponentMap = new HashMap<String, AbstractComponent>();
 
+	private GridLayout discoverButtonLayout = new GridLayout(3, 1);
+
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -579,6 +581,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	protected void createTopologyTreePanel()
 	{
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
 		this.topologyTreePanel = new Panel();
 		this.topologyTreePanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		this.topologyTreePanel.setSizeFull();
@@ -874,7 +879,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 
 		this.treeViewBusinessStreamCombo.setWidth("250px");
-		layout.addComponent(this.treeViewBusinessStreamCombo);
+
+		// removing businss stream combo until more clearer around functionality.
+		// layout.addComponent(this.treeViewBusinessStreamCombo);
 
 		Button discoverButton = new Button("Discover");
 		discoverButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -925,13 +932,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             }
         });
 
-		GridLayout buttonLayout = new GridLayout(3, 1);
-		buttonLayout.setSpacing(true);
-		buttonLayout.addComponent(discoverButton);
-		buttonLayout.addComponent(refreshButton);
-		buttonLayout.addComponent(newServerButton);
 
-		layout.addComponent(buttonLayout);
+		discoverButtonLayout.setSpacing(true);
+		discoverButtonLayout.addComponent(discoverButton);
+		discoverButtonLayout.addComponent(refreshButton);
+		discoverButtonLayout.addComponent(newServerButton);
+
+		layout.addComponent(discoverButtonLayout);
+
 		layout.addComponent(this.moduleTree);
 
 		this.topologyTreePanel.setContent(layout);
@@ -1124,6 +1132,20 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			logger.debug("createTabSheet!");
 			this.refreshTree();
 			this.createTabSheet();
+		}
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null
+				&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.DISCOVER_AUTHORITY)))
+		{
+			this.discoverButtonLayout.setVisible(true);
+		}
+		else
+		{
+			this.discoverButtonLayout.setVisible(false);
 		}
 
 		logger.debug("createFilterPopupContent!");

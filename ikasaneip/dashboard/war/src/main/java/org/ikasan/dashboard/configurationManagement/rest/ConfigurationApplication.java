@@ -389,7 +389,7 @@ public class ConfigurationApplication
         return returnFlow;
     }
 
-    
+
     private Component getComponent(String moduleName, String flowName, String componentIdentifier)
     {
         Flow flow = this.getFlow(moduleName, flowName);
