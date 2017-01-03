@@ -61,6 +61,7 @@ public class SecurityConstants
 	public static String MODIFY_BUSINESS_STREAM_AUTHORITY = "ModifyBusinessStream";
 	public static String DELETE_BUSINESS_STREAM_AUTHORITY = "DeleteBusinessStream";
 	public static String ACTION_ERRORS_AUTHORITY = "ActionErrors";
+	public static String DISCOVER_AUTHORITY = "Discover";
 	
 	public static String MANAGE_FILTERS_AUTHORITY = "ManageFilters";
 	
