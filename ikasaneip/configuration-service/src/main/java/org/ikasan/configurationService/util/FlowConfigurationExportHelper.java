@@ -94,8 +94,6 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
         xml.append(COMPONENT_CONFIGURATIONS_END_TAG);
         xml.append(END_TAG);
 
-        logger.info(xml.toString());
-
         if(!this.isEmbeded)
         {
             return xml.toString().trim();
