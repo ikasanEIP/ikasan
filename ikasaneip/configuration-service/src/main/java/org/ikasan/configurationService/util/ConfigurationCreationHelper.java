@@ -51,7 +51,7 @@ public class ConfigurationCreationHelper
                 + "/"
                 + component.getName();
 
-                String username = platformConfigurationService.getWebServiceUsername();
+        String username = platformConfigurationService.getWebServiceUsername();
         String password = platformConfigurationService.getWebServicePassword();
 
         HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);

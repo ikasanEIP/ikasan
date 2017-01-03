@@ -70,12 +70,14 @@
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
         <constructor-arg ref="componentConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
     
     <bean id="flowConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
         <constructor-arg ref="flowConfigurationImportWindow" />
         <constructor-arg ref="flowConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
 
 
@@ -83,6 +85,7 @@
         <constructor-arg ref="configurationService" />
         <constructor-arg ref="flowConfigurationExportHelper" />
         <constructor-arg ref="flowConfigurationImportWindow" />
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
 
     <bean id="flowConfigurationImportWindow" class="org.ikasan.dashboard.ui.topology.window.FlowConfigurationImportWindow" scope="session">
@@ -94,6 +97,7 @@
         <constructor-arg ref="configurationService" />
         <constructor-arg ref="moduleConfigurationImportWindow" />
         <constructor-arg ref="moduleConfigurationExportHelper" />
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
 
     <bean id="moduleConfigurationImportWindow" class="org.ikasan.dashboard.ui.topology.window.ModuleConfigurationImportWindow" scope="session">

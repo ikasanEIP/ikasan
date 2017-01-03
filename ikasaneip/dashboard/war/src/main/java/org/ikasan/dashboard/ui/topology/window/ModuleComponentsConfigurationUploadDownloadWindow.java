@@ -10,6 +10,7 @@ import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.vaadin.teemu.VaadinIcons;
@@ -33,9 +34,11 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
     private Module module;
     private ModuleConfigurationImportWindow moduleConfigurationImportWindow;
     private ModuleConfigurationExportHelper exportHelper;
+    private PlatformConfigurationService platformConfigurationService = null;
 
     public ModuleComponentsConfigurationUploadDownloadWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
-                                                             ModuleConfigurationImportWindow moduleConfigurationImportWindow, ModuleConfigurationExportHelper exportHelper)
+                                                             ModuleConfigurationImportWindow moduleConfigurationImportWindow, ModuleConfigurationExportHelper exportHelper,
+                                                             PlatformConfigurationService platformConfigurationService)
     {
         this.configurationService = configurationService;
         if(this.configurationService == null)
@@ -51,6 +54,11 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
         if(this.exportHelper == null)
         {
             throw new IllegalArgumentException("exportHelper cannot be null!");
+        }
+        this.platformConfigurationService = platformConfigurationService;
+        if(this.platformConfigurationService == null)
+        {
+            throw new IllegalArgumentException("platformConfigurationService cannot be null!");
         }
 
         init();
@@ -155,15 +163,16 @@ public class ModuleComponentsConfigurationUploadDownloadWindow extends Window
     private ByteArrayOutputStream getModuleConfigurationExport(final Module module) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-//		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("mappingExportSchemaLocation");
+		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("moduleConfigurationSchemaLocation");
 
-//		if(schemaLocation == null || schemaLocation.length() == 0)
-//		{
-//			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
-//		}
-//
-//		logger.debug("Resolved schemaLocation " + schemaLocation);
+		if(schemaLocation == null || schemaLocation.length() == 0)
+		{
+			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
+		}
 
+		logger.debug("Resolved schemaLocation " + schemaLocation);
+
+        this.exportHelper.setSchemaLocation(schemaLocation);
 
         String exportXml = exportHelper.getModuleConfigurationExportXml(this.module);
 

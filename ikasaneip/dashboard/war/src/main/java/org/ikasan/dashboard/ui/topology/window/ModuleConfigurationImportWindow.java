@@ -4,12 +4,15 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.util.ModuleConfigurationImportHelper;
+import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
+import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.topology.model.Module;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -173,36 +176,34 @@ public class ModuleConfigurationImportWindow extends Window
      */
     protected void parseUploadFile() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
     {
-//
-//         SchemaValidationErrorHandler errorHandler = DocumentValidator.validateUploadedDocument(receiver.file.toByteArray());
-//
-//         if(errorHandler.isInError())
-//         {
-//             StringBuffer errors = new StringBuffer();
-//
-//             for(SAXParseException exception: errorHandler.getErrors())
-//             {
-//                 errors.append(exception.getMessage()).append("\n");
-//             }
-//
-//             for(SAXParseException exception: errorHandler.getFatal())
-//             {
-//                 errors.append(exception.getMessage()).append("\n");
-//             }
-//
-//             Notification.show("An error occured parsing the uploaded XML document!\n", errors.toString()
-//                 , Notification.Type.ERROR_MESSAGE);
-//         }
-//         else
-//         {
 
+         SchemaValidationErrorHandler errorHandler = DocumentValidator.validateUploadedDocument(receiver.file.toByteArray());
 
-        moduleImportHelper.updateModuleConfiguration(module, receiver.file.toByteArray());
+         if(errorHandler.isInError())
+         {
+             StringBuffer errors = new StringBuffer();
 
-        this.uploadLabel.setValue("Importing module configuration"
-                + ". Press import to proceed.");
-        progressLayout.setVisible(true);
-//         }
+             for(SAXParseException exception: errorHandler.getErrors())
+             {
+                 errors.append(exception.getMessage()).append("\n");
+             }
+
+             for(SAXParseException exception: errorHandler.getFatal())
+             {
+                 errors.append(exception.getMessage()).append("\n");
+             }
+
+             Notification.show("An error occured parsing the uploaded XML document!\n", errors.toString()
+                 , Notification.Type.ERROR_MESSAGE);
+         }
+         else
+         {
+            moduleImportHelper.updateModuleConfiguration(module, receiver.file.toByteArray());
+
+            this.uploadLabel.setValue("Importing module configuration"
+                    + ". Press import to proceed.");
+            progressLayout.setVisible(true);
+         }
 
     }
 

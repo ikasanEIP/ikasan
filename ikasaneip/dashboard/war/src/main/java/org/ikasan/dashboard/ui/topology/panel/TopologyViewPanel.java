@@ -199,18 +199,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     private final Action WIRETAP = new Action("Wiretap");
     private final Action ERROR_CATEGORISATION = new Action("Categorise Error");
     private final Action EDIT = new Action("Edit");
-	private final Action UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS = new Action("Upload/Download Component Configurations");
+	private final Action MANAGE_COMPONENT_CONFIGURATIONS = new Action("Manage Component Configurations");
     private final Action STARTUP_CONTROL = new Action("Startup Type");
     private final Action[] serverActions = new Action[] { DETAILS, ERROR_CATEGORISATION, EDIT };
-    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
-    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE, UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS };
+    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM, ERROR_CATEGORISATION, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsStopped = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsStarted = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsPaused = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActions = new Action[] { ERROR_CATEGORISATION, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsStoppedConfigurable = new Action[] { START, START_PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsStartedConfigurable = new Action[] { STOP, PAUSE, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsPausedConfigurable = new Action[] { STOP, RESUME, STARTUP_CONTROL, ERROR_CATEGORISATION, CONFIGURE, MANAGE_COMPONENT_CONFIGURATIONS};
+    private final Action[] flowActionsConfigurable = new Action[] { ERROR_CATEGORISATION, CONFIGURE, MANAGE_COMPONENT_CONFIGURATIONS};
     private final Action[] componentActionsConfigurableConfigureMetrics = new Action[] { CONFIGURE, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigurableConfigure = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigureMetrics = new Action[] { CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
@@ -1595,7 +1595,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		this.flowConfigurationWindow.populate(flow);
         		UI.getCurrent().addWindow(this.flowConfigurationWindow);
         	}
-			else if(action.equals(UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS))
+			else if(action.equals(MANAGE_COMPONENT_CONFIGURATIONS))
 			{
 				this.flowComponentsConfigurationUploadDownloadWindow.populate(flow);
 				UI.getCurrent().addWindow(this.flowComponentsConfigurationUploadDownloadWindow);
@@ -1691,7 +1691,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         		UI.getCurrent().addWindow(new ErrorCategorisationWindow(module.getServer(),
         				module, null, null, errorCategorisationService));
         	}
-			else if(action.equals(UPLOAD_DOWNLOAD_COMPONENT_CONFIGURATIONS))
+			else if(action.equals(MANAGE_COMPONENT_CONFIGURATIONS))
 			{
 				this.moduleComponentsConfigurationUploadDownloadWindow.populate(module);
 				UI.getCurrent().addWindow(this.moduleComponentsConfigurationUploadDownloadWindow);
