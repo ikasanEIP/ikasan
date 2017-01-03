@@ -74,7 +74,6 @@ public class ModuleConfigurationExportHelper extends ConfigurationHelper
         xml.append(FLOW_CONFIGURATIONS_END_TAG);
         xml.append(END_TAG);
 
-        logger.info(xml.toString());
         return xml.toString().trim();
     }
 
