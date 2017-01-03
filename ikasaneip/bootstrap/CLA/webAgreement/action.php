@@ -106,9 +106,9 @@ function is_multiArrayEmpty($multiarray) {
 }
 
 function check_email_address($email) {
-	// First, we check that there's one @ symbol, and that the lengths are right
+	// First, we check that there's string @ symbol, and that the lengths are right
 	if (!ereg("^[^@]{1,64}@[^@]{1,255}$", $email)) {
-		// Email invalid because wrong number of characters in one section, or wrong number of @ symbols.
+		// Email invalid because wrong number of characters in string section, or wrong number of @ symbols.
 		return false;
 	}
 	// Split it into sections to make life easier

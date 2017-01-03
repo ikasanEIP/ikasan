@@ -40,6 +40,10 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +53,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -59,7 +66,9 @@ import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.configurationService.util.FlowConfigurationExportHelper;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
 import org.ikasan.dashboard.ui.framework.validation.LongValidator;
 import org.ikasan.dashboard.ui.framework.validation.StringValidator;
@@ -67,10 +76,7 @@ import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.*;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
@@ -79,18 +85,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -101,22 +97,45 @@ import com.vaadin.ui.themes.ValoTheme;
 public class FlowConfigurationWindow extends AbstractConfigurationWindow
 {
 	private Logger logger = Logger.getLogger(FlowConfigurationWindow.class);
-	
-	/**
-	 * @param configurationManagement
-	 */
-	public FlowConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+
+	private FlowConfigurationImportWindow flowConfigurationImportWindow = null;
+	private FlowConfigurationExportHelper exportHelper = null;
+	private PlatformConfigurationService platformConfigurationService = null;
+
+
+	public FlowConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+								   FlowConfigurationImportWindow flowConfigurationImportWindow, FlowConfigurationExportHelper exportHelper,
+								   PlatformConfigurationService platformConfigurationService)
 	{
 		super(configurationManagement, "Flow Configuration");
 		this.setIcon(VaadinIcons.COG_O);
 				
-		this.configurationManagement = configurationManagement;
+		super.configurationManagement = configurationManagement;
+		if(this.configurationManagement == null)
+		{
+			throw new IllegalArgumentException("configurationManagement cannot be null!");
+		}
+		this.flowConfigurationImportWindow = flowConfigurationImportWindow;
+		if(this.flowConfigurationImportWindow == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationImportWindow cannot be null!");
+		}
+		this.exportHelper = exportHelper;
+		if(this.exportHelper == null)
+		{
+			throw new IllegalArgumentException("flowConfigurationImportWindow cannot be null!");
+		}
+		this.platformConfigurationService = platformConfigurationService;
+		if(this.platformConfigurationService == null)
+		{
+			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+		}
 		
 		init();
 	}
 
     @SuppressWarnings("unchecked")
-	public void populate(Flow flow)
+	public void populate(final Flow flow)
     {
     	configuration = this.configurationManagement.getConfiguration(flow.getConfigurationId());
     	
@@ -176,6 +195,38 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
 		Label configurationParametersLabel = new Label("Configuration Parameters");
 		configurationParametersLabel.setStyleName(ValoTheme.LABEL_HUGE);
 		this.layout.addComponent(configurationParametersLabel, 0, 0);
+
+		Button exportMappingConfigurationButton = new Button();
+		exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+		exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		exportMappingConfigurationButton.setDescription("Export the current component configuration");
+		exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
+		FileDownloader fd = new FileDownloader(this.getFlowConfigurationExportStream(flow));
+		fd.extend(exportMappingConfigurationButton);
+
+		Button importFlowConfigurationButton = new Button();
+
+		importFlowConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
+		importFlowConfigurationButton.setDescription("Import a flow configuration");
+		importFlowConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		importFlowConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		importFlowConfigurationButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				flowConfigurationImportWindow.setFlow(flow);
+				UI.getCurrent().addWindow(flowConfigurationImportWindow);
+			}
+		});
+
+		HorizontalLayout uploadDownloadLayout = new HorizontalLayout();
+		uploadDownloadLayout.setSpacing(true);
+		uploadDownloadLayout.setWidth("100px");
+
+		uploadDownloadLayout.addComponent(exportMappingConfigurationButton);
+		uploadDownloadLayout.addComponent(importFlowConfigurationButton);
+
+		this.layout.addComponent(uploadDownloadLayout, 1 ,0);
+		this.layout.setComponentAlignment(uploadDownloadLayout, Alignment.MIDDLE_RIGHT);
 		
 		GridLayout paramLayout = new GridLayout(2, 2);
 		paramLayout.setSpacing(true);
@@ -415,4 +466,61 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
     	
 		this.setContent(configurationPanel);
     }
+
+	/**
+	 * Helper method to get the stream associated with the export of the file.
+	 *
+	 * @return the StreamResource associated with the export.
+	 */
+	private StreamResource getFlowConfigurationExportStream(final Flow flow)
+	{
+		StreamResource.StreamSource source = new StreamResource.StreamSource()
+		{
+
+			public InputStream getStream() {
+				ByteArrayOutputStream stream = null;
+				try
+				{
+					stream = getFlowConfigurationExport(flow);
+				}
+				catch (IOException e)
+				{
+					logger.error(e.getMessage(), e);
+				}
+				InputStream input = new ByteArrayInputStream(stream.toByteArray());
+				return input;
+
+			}
+		};
+		StreamResource resource = new StreamResource ( source,"flowConfigurationExport.xml");
+		return resource;
+	}
+
+	/**
+	 * Helper method to get the ByteArrayOutputStream associated with the export.
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	private ByteArrayOutputStream getFlowConfigurationExport(final Flow flow) throws IOException
+	{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("flowConfigurationSchemaLocation");
+
+		if(schemaLocation == null || schemaLocation.length() == 0)
+		{
+			throw new RuntimeException("Cannot resolve the platform configuration flowConfigurationSchemaLocation!");
+		}
+
+		logger.debug("Resolved schemaLocation " + schemaLocation);
+
+		this.exportHelper.setSchemaLocation(schemaLocation);
+
+		String exportXml = exportHelper.getFlowConfigurationExportXml(flow);
+
+		out.write(XmlFormatter.format(exportXml).getBytes());
+
+		return out;
+	}
 }

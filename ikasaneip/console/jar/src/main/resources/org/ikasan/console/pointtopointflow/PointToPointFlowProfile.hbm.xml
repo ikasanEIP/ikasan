@@ -60,7 +60,7 @@
         		
         <set name="pointToPointFlows" table="PointToPointFlow" lazy="false">
             <key column="PointToPointFlowProfileId" />
-            <one-to-many class="org.ikasan.console.pointtopointflow.PointToPointFlowImpl" not-found="exception" />            
+            <one-to-many class="org.ikasan.console.pointtopointflow.PointToPointFlowImpl" not-found="exception" />
         </set>
 
 	</class>

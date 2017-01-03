@@ -1,7 +1,7 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.util;
 
 /**
- * Created by stewmi on 15/07/2016.
+ * Created by Ikasan Development Team on 15/07/2016.
  */
 public class MappingConfigurationImportException extends Exception
 {

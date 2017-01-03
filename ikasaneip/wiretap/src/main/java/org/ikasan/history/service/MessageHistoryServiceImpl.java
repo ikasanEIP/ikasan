@@ -48,6 +48,8 @@ import org.ikasan.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
+import org.ikasan.history.model.MetricEvent;
+import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
@@ -64,7 +66,7 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
  * @author Ikasan Development Team
  */
 public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
-        , HousekeeperService, HarvestService<MessageHistoryEvent>
+        , HousekeepService, HarvestService<MessageHistoryEvent>
 {
     protected MessageHistoryDao messageHistoryDao;
 
@@ -90,8 +92,8 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public void save(FlowInvocationContext flowInvocationContext, String moduleName, String flowName)
     {
-        List<MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
-        for (MessageHistoryEvent<String, CustomMetric, WiretapFlowEvent > messageHistoryEvent : messageHistoryEvents)
+        List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+        for (MessageHistoryEvent<String, CustomMetric, MetricEvent > messageHistoryEvent : messageHistoryEvents)
         {
             messageHistoryDao.save(messageHistoryEvent);
         }
@@ -129,9 +131,14 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public List<MessageHistoryEvent> harvest(int transactionBatchSize)
     {
-        List<MessageHistoryEvent> events = this.messageHistoryDao.getHarvestableRecordsRecords(transactionBatchSize);
+        List<MessageHistoryEvent> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
 
-        this.messageHistoryDao.deleteHarvestableRecords(events);
+        for(MessageHistoryEvent event: events)
+        {
+            event.setHarvested(true);
+
+            this.messageHistoryDao.save(event);
+        }
 
         return events;
     }
@@ -152,6 +159,16 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     public boolean housekeepablesExist()
     {
         return messageHistoryDao.housekeepablesExist();
+    }
+
+    @Override
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
+        
+    }
+
+    @Override
+    public void setTransactionBatchSize(Integer transactionBatchSize) {
+
     }
 
     /** used to mock the factory in testing */

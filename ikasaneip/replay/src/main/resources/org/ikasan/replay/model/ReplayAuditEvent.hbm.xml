@@ -57,10 +57,10 @@
 	        <key-property name="replayEventId" column="ReplayEventId"/>
     	</composite-id>
     	
-    	<many-to-one name="replayAudit" class="org.ikasan.replay.model.ReplayAudit" 
+    	<many-to-one name="replayAudit" class="org.ikasan.replay.model.ReplayAudit"
     		column="ReplayAuditId" not-null="true" insert="false" update="false" lazy="false"/>
     	
-    	<many-to-one name="replayEvent" class="org.ikasan.replay.model.ReplayEvent" 
+    	<many-to-one name="replayEvent" class="org.ikasan.replay.model.ReplayEvent"
     		column="ReplayEventId" not-null="true" insert="false" update="false" lazy="false"/>
     	
     	<property name="success"

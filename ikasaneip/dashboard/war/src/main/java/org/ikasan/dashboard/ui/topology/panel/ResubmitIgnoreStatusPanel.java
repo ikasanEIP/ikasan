@@ -55,6 +55,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -81,18 +82,8 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -195,15 +186,29 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		cont.addContainerProperty("Module Name", String.class,  null);
 		cont.addContainerProperty("Flow Name", String.class,  null);
 		cont.addContainerProperty("Error URI", String.class,  null);
-//		cont.addContainerProperty("Error Message", String.class,  null);
 		cont.addContainerProperty("Timestamp", String.class,  null);
 		cont.addContainerProperty("", Label.class,  null);
 		
         return cont;
     }
 
-	public void init()
+	protected void init()
 	{
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
+
+		layout.addComponent(createPanel());
+
+		this.setContent(layout);
+	}
+
+	protected Panel createPanel()
+	{
+		Panel panel = new Panel();
+		panel.setSizeFull();
+		panel.setStyleName("dashboard");
+
 		this.setSizeFull();
 		
 		this.authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -421,7 +426,6 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		this.exclusionEventsTable.setColumnExpandRatio("Module Name", .14f);
 		this.exclusionEventsTable.setColumnExpandRatio("Flow Name", .18f);
 		this.exclusionEventsTable.setColumnExpandRatio("Error URI", .18f);
-//		this.exclusionEventsTable.setColumnExpandRatio("Event Id / Payload Id", .33f);
 		this.exclusionEventsTable.setColumnExpandRatio("Timestamp", .1f);
 		this.exclusionEventsTable.setColumnExpandRatio("", .05f);
 		
@@ -441,46 +445,28 @@ public class ResubmitIgnoreStatusPanel extends Panel
 		layout.addComponent(formLayout);
 		layout.addComponent(this.exclusionEventsTable);
 		
-		this.setContent(layout);
+		panel.setContent(layout);
+
+		return panel;
 	}
 	
 	protected void populateTable()
 	{
 		List<String> errorUris = new ArrayList<String>();
 
-//		for(final ExclusionEvent exclusionEvent: exclusionEvents)
-//		{
-//			errorUris.add(exclusionEvent.getErrorUri());
-//		}
-//
-//		Map<String, ErrorOccurrence> errorOccurrences = this.errorReportingService.find(errorUris);
-
 		for(final ExclusionEvent exclusionEvent: exclusionEvents)
     	{
     		Date date = new Date(exclusionEvent.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
-    	    
-//    	    final ErrorOccurrence errorOccurrence = errorOccurrences.get(exclusionEvent.getErrorUri());
+
     	    
     	    Item item = this.tableContainer.addItem(exclusionEvent);			            	    
     	    
     	    item.getItemProperty("Module Name").setValue(exclusionEvent.getModuleName());
 			item.getItemProperty("Flow Name").setValue(exclusionEvent.getFlowName());
 			item.getItemProperty("Error URI").setValue(exclusionEvent.getErrorUri());
-			
-//			if(errorOccurrence != null && errorOccurrence.getErrorMessage() != null)
-//			{
-//				if(errorOccurrence.getErrorMessage().length() > 500)
-//				{
-//					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage().substring(0, 500));
-//				}
-//				else
-//				{
-//					item.getItemProperty("Error Message").setValue(errorOccurrence.getErrorMessage());
-//				}
-//			}
-			
+
 			item.getItemProperty("Timestamp").setValue(timestamp);    	    	    	    
     	}
 	}

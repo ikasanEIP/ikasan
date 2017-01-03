@@ -5,28 +5,28 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
         
-    <!-- MANDATORY will enroll in an existing transaction; or throw exception if one doesnt exist -->
+    <!-- MANDATORY will enroll in an existing transaction; or throw exception if string doesnt exist -->
     <tx:advice id="mandatory-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="MANDATORY" />
         </tx:attributes>
     </tx:advice>
 
-    <!-- REQUIRED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
+    <!-- REQUIRED will enroll in any existing transaction or create a new transaction if string doesnt exist -->
     <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED" />
         </tx:attributes>
     </tx:advice>
 
-    <!-- REQUIRES_NEW will start a new transaction new transaction regardless if one exists or not -->
+    <!-- REQUIRES_NEW will start a new transaction new transaction regardless if string exists or not -->
     <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRES_NEW" />
         </tx:attributes>
     </tx:advice>
 
-    <!-- NOT_SUPPORTED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
+    <!-- NOT_SUPPORTED will enroll in any existing transaction or create a new transaction if string doesnt exist -->
     <tx:advice id="notSupported-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="NOT_SUPPORTED" />

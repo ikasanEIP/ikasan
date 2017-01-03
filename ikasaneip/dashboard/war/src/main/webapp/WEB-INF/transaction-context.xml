@@ -51,6 +51,8 @@
                       expression="execution(* org.ikasan.housekeeping.HousekeepService.*(..))"/>
         <aop:pointcut id="platformConfigurationServiceMethods"
                       expression="execution(* org.ikasan.spec.configuration.PlatformConfigurationService.*(..))"/>
+        <aop:pointcut id="messageHistoryServiceMethods"
+                      expression="execution(* org.ikasan.history.dao.MessageHistoryDao.*(..))"/>
 
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalManagementServiceMethods"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalServiceMethods"/>
@@ -68,6 +70,7 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="replayServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="housekeepingServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="platformConfigurationServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="messageHistoryServiceMethods"/>
         
     </aop:config>
 
@@ -76,5 +79,5 @@
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
-	
+
 </beans>

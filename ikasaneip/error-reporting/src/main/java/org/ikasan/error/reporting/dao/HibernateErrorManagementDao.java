@@ -52,7 +52,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.dao.constants.ErrorManagementDaoConstants;
-import org.ikasan.error.reporting.model.ErrorCategorisationLink;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
@@ -80,10 +79,12 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 	public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
 			" where eo.uri in(:" + EVENT_IDS + ")";
 
-	public static final String NOTES_DELETE_QUERY = "delete Note n " +
-			" where n.id in(select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + "))";
+	public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
 
-	public static final String ERROR_OCCURRENCE_NOT_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
+	public static final String NOTES_DELETE_QUERY = "delete Note n " +
+			" where n.id in(:" + EVENT_IDS + ")";
+
+	public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
@@ -377,13 +378,21 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 
 				if(errorUris.size() > 0)
 				{
-					query = session.createQuery(NOTES_DELETE_QUERY);
+					query = session.createQuery(ERROR_OCCURRENCE_NOTE_DELETE_QUERY);
 					query.setParameterList(EVENT_IDS, errorUris);
 					query.executeUpdate();
 
-					query = session.createQuery(ERROR_OCCURRENCE_NOT_DELETE_QUERY);
+					query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
 					query.setParameterList(EVENT_IDS, errorUris);
-					query.executeUpdate();
+
+					List<Long> errorOccurenceNotesIds = (List<Long>)query.list();
+
+					if(errorOccurenceNotesIds.size() > 0)
+					{
+						query = session.createQuery(NOTES_DELETE_QUERY);
+						query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
+						query.executeUpdate();
+					}
 
 					query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
 					query.setParameterList(EVENT_IDS, errorUris);
