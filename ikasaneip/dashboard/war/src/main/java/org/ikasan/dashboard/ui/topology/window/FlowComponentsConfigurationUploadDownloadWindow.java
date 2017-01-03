@@ -86,7 +86,7 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         Button exportMappingConfigurationButton = new Button();
         exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        exportMappingConfigurationButton.setDescription("Export the current flow configuration");
+        exportMappingConfigurationButton.setDescription("Export the current flow component configurations");
         exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         FileDownloader fd = new FileDownloader(this.getFlowConfigurationExportStream(flow));
@@ -95,7 +95,7 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         Button importMappingConfigurationButton = new Button();
 
         importMappingConfigurationButton.setIcon(VaadinIcons.UPLOAD_ALT);
-        importMappingConfigurationButton.setDescription("Import a flow configuration");
+        importMappingConfigurationButton.setDescription("Import flow component configurations");
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         importMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         importMappingConfigurationButton.addClickListener(new Button.ClickListener()

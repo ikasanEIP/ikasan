@@ -116,6 +116,9 @@ public class FlowConfigurationImportWindow extends Window
                 progressLayout.setVisible(false);
                 upload.setVisible(true);
                 close();
+
+                Notification.show("Flow component configurations successfully imported!"
+                        , Notification.Type.HUMANIZED_MESSAGE);
             }
         });
 
@@ -198,7 +201,7 @@ public class FlowConfigurationImportWindow extends Window
          }
          else
          {
-            helper.updateFlowConfiguration(flow, receiver.file.toByteArray());
+             helper.updateFlowConfiguration(flow, receiver.file.toByteArray());
 
 
             this.uploadLabel.setValue("Importing flow configuration"

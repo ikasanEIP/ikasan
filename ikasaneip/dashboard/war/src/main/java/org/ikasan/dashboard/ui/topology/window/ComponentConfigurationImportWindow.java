@@ -149,6 +149,9 @@ package org.ikasan.dashboard.ui.topology.window;
                 progressLayout.setVisible(false);
                 upload.setVisible(true);
                 close();
+
+                 Notification.show("Module component configurations successfully imported! Please save congiuration to apply changes."
+                         , Notification.Type.HUMANIZED_MESSAGE);
              }
          });
 
