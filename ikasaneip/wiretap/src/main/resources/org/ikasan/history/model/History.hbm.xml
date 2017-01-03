@@ -83,7 +83,9 @@
         <property name="endTimeMillis"     type="long"
                   column="EndTime"/>
         <property name="expiry"            type="long"
-                  column="Expiry"          not-null="true"/> 
+                  column="Expiry"          not-null="true"/>
+        <property name="harvested"            type="java.lang.Boolean"
+                  column="Harvested"          not-null="true"/>
 
     </class>
 

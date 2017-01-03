@@ -114,20 +114,24 @@ public class ErrorOccurrenceViewPanel extends Panel
 	}
 
 	public void init()
-	{		
+	{
 		this.setSizeFull();
-		
-		GridLayout layout = new GridLayout(1, 1);
-		layout.setWidth("100%");
 
-		layout.addComponent(createErrorOccurrenceDetailsPanel(), 0, 0);
-		
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
+
+		layout.addComponent(createErrorOccurrenceDetailsPanel());
+
+
 		this.setContent(layout);
 	}
 
 	protected Panel createErrorOccurrenceDetailsPanel()
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
+		errorOccurrenceDetailsPanel.setSizeFull();
+		errorOccurrenceDetailsPanel.setStyleName("dashboard");
 		
 		GridLayout layout = new GridLayout(4, 8);
 		layout.setSizeFull();

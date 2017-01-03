@@ -1,7 +1,6 @@
 package org.ikasan.dashboard.housekeeping;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.*;
 
@@ -12,7 +11,7 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
- * Created by stewmi on 24/08/2016.
+ * Created by Ikasan Development Team on 24/08/2016.
  */
 public class HousekeepingSchedulerService
 {
@@ -69,12 +68,20 @@ public class HousekeepingSchedulerService
             {
                 // create trigger
                 JobKey jobkey = jobDetail.getKey();
-                Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
-                Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                logger.info("Scheduled consumer for house keeper job ["
-                        + jobkey.getName()
-                        + "-" + jobkey.getGroup()
-                        + "] starting at [" + scheduledDate + "]");
+
+                HousekeepingJob housekeepingJob = this.houseKeepingJobs.get(jobkey.toString());
+                housekeepingJob.init();
+
+                if(housekeepingJob.isInitialised() && housekeepingJob.isEnabled()
+                        && !this.scheduler.checkExists(jobkey))
+                {
+                    Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
+                    Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
+                    logger.info("Scheduled consumer for house keeper job ["
+                            + jobkey.getName()
+                            + "-" + jobkey.getGroup()
+                            + "] starting at [" + scheduledDate + "]");
+                }
 
             }
             catch (Exception e)
@@ -132,14 +139,7 @@ public class HousekeepingSchedulerService
         TriggerBuilder triggerBuilder = newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup());
 
         CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
-//        if (this.consumerConfiguration.isIgnoreMisfire())
-//        {
-//            cronScheduleBuilder.withMisfireHandlingInstructionDoNothing();
-//        }
-//        if (this.consumerConfiguration.getTimezone() != null && this.consumerConfiguration.getTimezone().length() > 0)
-//        {
-//            cronScheduleBuilder.inTimeZone(TimeZone.getTimeZone(this.consumerConfiguration.getTimezone()));
-//        }
+
         triggerBuilder.withSchedule(cronScheduleBuilder);
         return triggerBuilder.build();
     }
@@ -151,6 +151,7 @@ public class HousekeepingSchedulerService
     {
         try
         {
+            this.registerJobs();
             this.scheduler.start();
         }
         catch (SchedulerException e)

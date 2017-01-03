@@ -54,7 +54,7 @@
 <hibernate-mapping>
 
   <class
-    name="org.ikasan.wiretap.model.WiretapFlowEvent"
+    name="org.ikasan.history.model.MetricEvent"
     table="MetricEvent">
 
         <id name="identifier" type="java.lang.Long" column="Id">

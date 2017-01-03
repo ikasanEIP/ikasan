@@ -4,6 +4,45 @@
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+	<bean id="componentConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.ComponentConfigurationExportHelper">
+	</bean>
+
+	<bean id="componentConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.ComponentConfigurationImportHelper">
+	</bean>
+
+	<bean id="flowConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.FlowConfigurationExportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="flowConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.FlowConfigurationImportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="moduleConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.ModuleConfigurationExportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="moduleConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.ModuleConfigurationImportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+
+	<bean id="configurationCreationHelper"
+		  class="org.ikasan.configurationService.util.ConfigurationCreationHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="platformConfigurationService"/>
+	</bean>
+
 	<bean id="platformConfigurationService"
 		class="org.ikasan.configurationService.service.PlatformConfigurationServiceImpl">
 		<constructor-arg ref="configurationService"/>

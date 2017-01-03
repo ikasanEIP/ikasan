@@ -48,9 +48,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.notification.NotifierServiceImpl;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -88,7 +85,6 @@ public class WebAppStartStopListener implements ServletContextListener
             try
             {
                 logger.info("Starting scheduler.");
-                schedulerService.registerJobs();
                 schedulerService.startScheduler();
                 logger.info("Successfully registered jobs and started scheduler.");
             }

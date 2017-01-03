@@ -66,10 +66,10 @@ public class IkasanUITest extends TestBenchTestCase
 	   public void setUp() throws Exception {
 //		   DesiredCapabilities capability = DesiredCapabilities.firefox();
 //		   capability.setCapability("platform", Platform.ANY);
-//		   capability.setCapability("binary", "C:/Users/stewmi/AppData/Local/Mozilla Firefox/firefox.exe"); //for linux
+//		   capability.setCapability("binary", "C:/Users/Ikasan Development Team/AppData/Local/Mozilla Firefox/firefox.exe"); //for linux
 //		   
 //		   FirefoxProfile profile = new FirefoxProfile();
-//	       setDriver(new FirefoxDriver(new FirefoxBinary(new File("C:/Users/stewmi/AppData/Local/Mozilla Firefox/firefox.exe")), profile));
+//	       setDriver(new FirefoxDriver(new FirefoxBinary(new File("C:/Users/Ikasan Development Team/AppData/Local/Mozilla Firefox/firefox.exe")), profile));
 		   
 		   System.setProperty("webdriver.chrome.driver", "C:\\Program Files (x86)\\Google\\Chrome\\chromedriver.exe");
 		   

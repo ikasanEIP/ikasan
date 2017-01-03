@@ -7,33 +7,24 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
-import org.ikasan.dashboard.notification.NotifierService;
-import org.ikasan.dashboard.notification.contentproducer.CategorisedErrorNotificationContentProducer;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.housekeeping.window.HousekeepingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.topology.model.*;
 import org.quartz.*;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
-
 /**
- * Created by stewmi on 22/08/2016.
+ * Created by Ikasan Development Team on 22/08/2016.
  */
 public class HousekeepingPanel extends Panel implements View
 {
@@ -371,7 +362,7 @@ public class HousekeepingPanel extends Panel implements View
 
             Label label = null;
 
-            if(job.getEnabled())
+            if(job.isEnabled())
             {
                 label = new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML);
             }

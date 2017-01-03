@@ -32,6 +32,7 @@
         <ref bean="hospitalServiceHousekeepingJob" />
         <ref bean="systemEventServiceHousekeepingJob" />
         <ref bean="duplicateFilterHousekeepingJob" />
+        <!--ref bean="messageHistoryHousekeepingJob" / -->
     </util:list>
 
     <bean id="replyHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
@@ -67,6 +68,12 @@
     <bean id="duplicateFilterHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
         <constructor-arg value="duplicateFilterHousekeepingJob" />
         <constructor-arg ref="duplicateFilterService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="messageHistoryHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="messageHistoryHousekeepingJob" />
+        <constructor-arg ref="messageHistoryService" />
         <constructor-arg ref="platformConfigurationService" />
     </bean>
 

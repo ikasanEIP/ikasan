@@ -102,7 +102,7 @@
 		</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>org.ikasan.dashboard.ui.monitor.rest</param-value>
+			<param-value>org.ikasan.dashboard.ui.monitor.rest,org.ikasan.dashboard.configurationManagement.rest</param-value>
 		</init-param>
 		<init-param>
 		    <param-name>jersey.config.server.provider.scanning.recursive</param-name>

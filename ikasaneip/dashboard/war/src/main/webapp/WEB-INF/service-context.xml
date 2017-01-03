@@ -10,6 +10,45 @@
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+	<bean id="componentConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.ComponentConfigurationExportHelper">
+	</bean>
+
+	<bean id="componentConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.ComponentConfigurationImportHelper">
+	</bean>
+
+	<bean id="flowConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.FlowConfigurationExportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="flowConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.FlowConfigurationImportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="moduleConfigurationExportHelper"
+		  class="org.ikasan.configurationService.util.ModuleConfigurationExportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+	<bean id="moduleConfigurationImportHelper"
+		  class="org.ikasan.configurationService.util.ModuleConfigurationImportHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="configurationCreationHelper"/>
+	</bean>
+
+
+	<bean id="configurationCreationHelper"
+		  class="org.ikasan.configurationService.util.ConfigurationCreationHelper">
+		<constructor-arg ref="configurationService"/>
+		<constructor-arg ref="platformConfigurationService"/>
+	</bean>
+
 	<bean id="platformConfigurationService"
 		class="org.ikasan.configurationService.service.PlatformConfigurationServiceImpl">
 		<constructor-arg ref="configurationService"/>
@@ -239,6 +278,16 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
+	<bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
+		<constructor-arg index="0" ref="messageHistoryDao"/>
+		<constructor-arg index="1" ref="wiretapEventFactory"/>
+	</bean>
+
+	<bean id="messageHistoryDao"
+		  class="org.ikasan.history.dao.HibernateMessageHistoryDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory"/>
+	</bean>
+
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
@@ -292,11 +341,15 @@
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
 			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+
+			   <value>org/ikasan/history/model/History.hbm.xml</value>
+			   <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-    
+
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
     
     <bean id="ikasan.xads"

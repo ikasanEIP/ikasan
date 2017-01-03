@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by stewmi on 03/08/2016.
+ * Created by Ikasan Development Team on 03/08/2016.
  */
 public class ClasspathSchemaResolverTest
 {
