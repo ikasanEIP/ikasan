@@ -77,4 +77,9 @@ public class ModuleConfigurationExportHelper extends ConfigurationHelper
         logger.info(xml.toString());
         return xml.toString().trim();
     }
+
+    public void setSchemaLocation(String schemaLocation)
+    {
+        this.schemaLocation = schemaLocation;
+    }
 }

@@ -76,10 +76,7 @@ import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.topology.action.DeleteConfigurationAction;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.*;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Server;
 import org.vaadin.teemu.VaadinIcons;
@@ -101,11 +98,12 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 {
 	private Logger logger = Logger.getLogger(ComponentConfigurationWindow.class);
 
-	private ComponentConfigurationExportHelper exportHelper = new ComponentConfigurationExportHelper();
+	private ComponentConfigurationExportHelper exportHelper = null;
+	private PlatformConfigurationService platformConfigurationService = null;
 	
 
 	public ComponentConfigurationWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
-										ComponentConfigurationExportHelper exportHelper)
+										ComponentConfigurationExportHelper exportHelper, PlatformConfigurationService platformConfigurationService)
 	{
 		super(configurationManagement, "Component Configuration");
 		this.setIcon(VaadinIcons.COG_O);
@@ -120,6 +118,12 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 		if(this.exportHelper == null)
 		{
 			throw new IllegalArgumentException("exportHelper cannot be null!");
+		}
+
+		this.platformConfigurationService = platformConfigurationService;
+		if(this.platformConfigurationService == null)
+		{
+			throw new IllegalArgumentException("platformConfigurationService cannot be null!");
 		}
 		
 		init();
@@ -510,16 +514,16 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-//		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("mappingExportSchemaLocation");
+		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("componentConfigurationSchemaLocation");
 
-//		if(schemaLocation == null || schemaLocation.length() == 0)
-//		{
-//			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
-//		}
-//
-//		logger.debug("Resolved schemaLocation " + schemaLocation);
+		if(schemaLocation == null || schemaLocation.length() == 0)
+		{
+			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
+		}
 
+		logger.info("Resolved schemaLocation " + schemaLocation);
 
+		exportHelper.setSchemaLocation(schemaLocation);
 
 		String exportXml = exportHelper.getComponentConfigurationExportXml(this.configuration);
 

@@ -79,6 +79,11 @@
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>aceeditor</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
 		
 		<dependency>
 		   <groupId>org.vaadin.addons.lazyquerycontainer</groupId>

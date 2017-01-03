@@ -10,6 +10,7 @@ import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.topology.model.*;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -30,9 +31,11 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
     private GridLayout layout;
     private Flow flow;
     private FlowConfigurationImportWindow flowConfigurationImportWindow;
+    private PlatformConfigurationService platformConfigurationService = null;
 
     public FlowComponentsConfigurationUploadDownloadWindow(ConfigurationManagement<ConfiguredResource, Configuration> configurationService,
-                                                           FlowConfigurationExportHelper flowConfigurationExportHelper, FlowConfigurationImportWindow flowConfigurationImportWindow)
+                                                           FlowConfigurationExportHelper flowConfigurationExportHelper, FlowConfigurationImportWindow flowConfigurationImportWindow,
+                                                           PlatformConfigurationService platformConfigurationService)
     {
         this.configurationService = configurationService;
         if(this.configurationService == null)
@@ -48,6 +51,11 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
         if(this.flowConfigurationImportWindow == null)
         {
             throw new IllegalArgumentException("flowConfigurationImportWindow cannot be null!");
+        }
+        this.platformConfigurationService = platformConfigurationService;
+        if(this.platformConfigurationService == null)
+        {
+            throw new IllegalArgumentException("platformConfigurationService cannot be null!");
         }
         init();
     }
@@ -151,14 +159,16 @@ public class FlowComponentsConfigurationUploadDownloadWindow extends Window
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-//		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("mappingExportSchemaLocation");
+		String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("flowConfigurationSchemaLocation");
 
-//		if(schemaLocation == null || schemaLocation.length() == 0)
-//		{
-//			throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
-//		}
-//
-//		logger.debug("Resolved schemaLocation " + schemaLocation);
+        if(schemaLocation == null || schemaLocation.length() == 0)
+        {
+            throw new RuntimeException("Cannot resolve the platform configuration flowConfigurationSchemaLocation!");
+        }
+
+		logger.debug("Resolved schemaLocation " + schemaLocation);
+
+        this.flowConfigurationExportHelper.setSchemaLocation(schemaLocation);
 
         String exportXml = this.flowConfigurationExportHelper.getFlowConfigurationExportXml(flow);
 

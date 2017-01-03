@@ -46,9 +46,12 @@ package org.ikasan.dashboard.ui.topology.window;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
  import org.ikasan.configurationService.util.ComponentConfigurationImportHelper;
+ import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
+ import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
  import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
  import org.ikasan.spec.configuration.Configuration;
  import org.xml.sax.SAXException;
+ import org.xml.sax.SAXParseException;
 
  import javax.xml.parsers.ParserConfigurationException;
  import javax.xml.xpath.XPathExpressionException;
@@ -108,6 +111,8 @@ package org.ikasan.dashboard.ui.topology.window;
                  }
                  catch (Exception e)
                  {
+                     e.printStackTrace();
+
                      Notification.show("Caught exception trying to import a Component Configuration!\n", e.getMessage()
                          , Notification.Type.ERROR_MESSAGE);
                  }
@@ -204,28 +209,28 @@ package org.ikasan.dashboard.ui.topology.window;
       */
      protected void parseUploadFile() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
      {
-//
-//         SchemaValidationErrorHandler errorHandler = DocumentValidator.validateUploadedDocument(receiver.file.toByteArray());
-//
-//         if(errorHandler.isInError())
-//         {
-//             StringBuffer errors = new StringBuffer();
-//
-//             for(SAXParseException exception: errorHandler.getErrors())
-//             {
-//                 errors.append(exception.getMessage()).append("\n");
-//             }
-//
-//             for(SAXParseException exception: errorHandler.getFatal())
-//             {
-//                 errors.append(exception.getMessage()).append("\n");
-//             }
-//
-//             Notification.show("An error occured parsing the uploaded XML document!\n", errors.toString()
-//                 , Notification.Type.ERROR_MESSAGE);
-//         }
-//         else
-//         {
+
+         SchemaValidationErrorHandler errorHandler = DocumentValidator.validateUploadedDocument(receiver.file.toByteArray());
+
+         if(errorHandler.isInError())
+         {
+             StringBuffer errors = new StringBuffer();
+
+             for(SAXParseException exception: errorHandler.getErrors())
+             {
+                 errors.append(exception.getMessage()).append("\n");
+             }
+
+             for(SAXParseException exception: errorHandler.getFatal())
+             {
+                 errors.append(exception.getMessage()).append("\n");
+             }
+
+             Notification.show("An error occured parsing the uploaded XML document!\n", errors.toString()
+                 , Notification.Type.ERROR_MESSAGE);
+         }
+         else
+         {
              ComponentConfigurationImportHelper helper = new ComponentConfigurationImportHelper();
 
              helper.updateComponentConfiguration(this.configuration, receiver.file.toByteArray());
@@ -233,7 +238,7 @@ package org.ikasan.dashboard.ui.topology.window;
              this.uploadLabel.setValue("Importing component configuration"
                  + ". Press import to proceed.");
              progressLayout.setVisible(true);
-//         }
+         }
 
      }
  }

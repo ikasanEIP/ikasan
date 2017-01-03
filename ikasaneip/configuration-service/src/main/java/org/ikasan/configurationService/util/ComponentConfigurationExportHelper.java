@@ -87,6 +87,7 @@ package org.ikasan.configurationService.util;
      private static final String VALUE_START_TAG = "<value>";
      private static final String VALUE_END_TAG = "</value>";
 
+
      private String schemaLocation = "schemaLocation";
      private Boolean isEmbeded = false;
 
@@ -262,5 +263,10 @@ package org.ikasan.configurationService.util;
      public void setEmbeded(Boolean embeded)
      {
          isEmbeded = embeded;
+     }
+
+     public void setSchemaLocation(String schemaLocation)
+     {
+         this.schemaLocation = schemaLocation;
      }
  }

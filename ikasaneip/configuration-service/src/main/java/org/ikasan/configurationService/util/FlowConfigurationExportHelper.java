@@ -115,4 +115,9 @@ public class FlowConfigurationExportHelper extends ConfigurationHelper
     {
         isEmbeded = embeded;
     }
+
+    public void setSchemaLocation(String schemaLocation)
+    {
+        this.schemaLocation = schemaLocation;
+    }
 }

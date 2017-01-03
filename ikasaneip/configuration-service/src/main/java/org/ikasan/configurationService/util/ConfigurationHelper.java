@@ -101,7 +101,7 @@ public abstract class ConfigurationHelper
 
         for(Component component: flow.getComponents())
         {
-            if(component.isConfigurable() && component.getConfigurationId().equals(configureResourceId))
+            if(component.isConfigurable() && component.getConfigurationId() != null && component.getConfigurationId().equals(configureResourceId))
             {
                 returnComponent = component;
                 exists = true;
