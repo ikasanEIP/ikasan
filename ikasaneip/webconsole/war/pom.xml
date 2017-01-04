@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>webconsole</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1-SNAPSHOT</version>
     </parent>
 
 	<groupId>org.ikasan</groupId>
