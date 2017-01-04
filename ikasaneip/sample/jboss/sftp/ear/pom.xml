@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-sample-sftp-parent</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-sftp-ear</artifactId>
     <packaging>ear</packaging>
-    <version>1.3.0</version>
+    <version>1.3.1-SNAPSHOT</version>
     <name>ikasan-sample-sftp Integration Module EAR</name>
 
 	<build>
