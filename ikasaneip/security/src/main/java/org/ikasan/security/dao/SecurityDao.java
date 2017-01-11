@@ -42,13 +42,7 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 
 
 /**
@@ -137,6 +131,12 @@ public interface SecurityDao
      * @return     
      */
     public List<IkasanPrincipal> getAllPrincipals();
+
+    /**
+     *
+     * @return
+     */
+    public List<IkasanPrincipalLite> getAllPrincipalLites();
 
     /**
      * 

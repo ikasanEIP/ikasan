@@ -303,8 +303,10 @@
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
                <value>/org/ikasan/security/model/Principal.hbm.xml</value>
+			   <value>/org/ikasan/security/model/PrincipalLite.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Role.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Policy.hbm.xml</value>
+			   <value>/org/ikasan/security/model/UserLite.hbm.xml</value>
 			   <value>/org/ikasan/security/model/User.hbm.xml</value>
 			   <value>/org/ikasan/security/model/UserPrincipal.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Authority.hbm.xml</value>

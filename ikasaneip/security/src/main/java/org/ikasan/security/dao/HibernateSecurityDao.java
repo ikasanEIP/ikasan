@@ -51,13 +51,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.dao.constants.SecurityConstants;
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -157,7 +151,15 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
-    /*
+	@Override
+	public List<IkasanPrincipalLite> getAllPrincipalLites()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipalLite.class);
+
+		return (List<IkasanPrincipalLite>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/*
      * (non-Javadoc)
      * @see org.ikasan.security.dao.SecurityDao#getPolicyByName(java.lang.String)
      */

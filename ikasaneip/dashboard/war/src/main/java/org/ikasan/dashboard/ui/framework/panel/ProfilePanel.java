@@ -99,11 +99,7 @@ public class ProfilePanel extends Panel implements View
 	private Table permissionChangeTable = new Table();
 	private SystemEventService systemEventService;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param ikasanModuleService
-	 */
+
 	public ProfilePanel(UserService userService, SecurityService securityService,
 			AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener,
 			SystemEventService systemEventService)
