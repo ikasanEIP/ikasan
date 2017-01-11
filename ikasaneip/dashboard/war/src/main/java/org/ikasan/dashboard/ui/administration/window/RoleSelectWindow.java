@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,81 +38,77 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.dao;
+package org.ikasan.dashboard.ui.administration.window;
 
-import java.util.List;
-
-import org.ikasan.security.model.User;
-import org.ikasan.security.model.UserLite;
+import com.vaadin.ui.Window;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.administration.panel.RoleSelectPanel;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.UserService;
+import org.ikasan.systemevent.service.SystemEventService;
 
 /**
- * Data Access interface for <code>User</code> instances
  * 
  * @author Ikasan Development Team
  *
  */
-public interface UserDao
+public class RoleSelectWindow extends Window
 {
+	private Logger logger = Logger.getLogger(RoleSelectWindow.class);
 
-    /**
-     * Retrieves all <code>User</code>s known to the system
-     * 
-     * @return List of all <code>Users</code>
-     */
-    public List<User> getUsers();
+	private static final long serialVersionUID = -3347325521531925322L;
 
-    /**
-     * Retrieves all <code>UserLite</code>s known to the system
-     *
-     * @return List of all <code>UserLites</code>
-     */
-    public List<UserLite> getUserLites();
+	private UserService userService;
+	private SecurityService securityService;
+	private SystemEventService systemEventService;
+	private Role role;
 
-    /**
-     * Retrieves a specific <code>User</code> by name
-     * 
-     * @param username
-     * @return specified <code>User</code> or null if does not exist
-     */
-    public User getUser(String username);
+	public RoleSelectWindow(UserService userService, SecurityService securityService,
+                            SystemEventService systemEventService)
+	{
+		super();
+		this.userService = userService;
+		if (this.userService == null)
+		{
+			throw new IllegalArgumentException("userService cannot be null!");
+		}
+		this.securityService = securityService;
+		if (this.securityService == null)
+		{
+			throw new IllegalArgumentException(
+					"securityService cannot be null!");
+		}
+		this.systemEventService = systemEventService;
+		if (this.systemEventService == null)
+		{
+			throw new IllegalArgumentException(
+					"systemEventService cannot be null!");
+		}
 
-    /**
-     * Retrieves a List of <code>User</code> whose username like username%
-     * 
-     * @param username
-     * @return specified <code>User</code> or null if does not exist
-     */
-    public List<User> getUserByUsernameLike(String username);
-    
-    /**
-     * Retrieves a List of <code>User</code> whose firstname like firstname%
-     * 
-     * @param username
-     * @return specified <code>User</code> or null if does not exist
-     */
-    public List<User> getUserByFirstnameLike(String firstname);
-    
-    /**
-     * Retrieves a List of <code>User</code> whose surname like surname%
-     * 
-     * @param username
-     * @return specified <code>User</code> or null if does not exist
-     */
-    public List<User> getUserBySurnameLike(String surname);
+		init();
+	}
 
-    /**
-     * Saves a <code>User</code> to persistent storage
-     * 
-     * @param user
-     */
-    public void save(User user);
 
-    /**
-     * Deletes a <code>User</code> from persistent storage
-     * 
-     * @param user
-     */
-    public void delete(User user);
+	public void init()
+	{
+		this.setModal(true);
+		this.setResizable(false);
 
-   
+		this.setWidth("600px");
+		this.setHeight("400px");
+
+		RoleSelectPanel panel = new RoleSelectPanel(userService, securityService, systemEventService);
+		this.setContent(panel);
+	}
+
+	public Role getRole()
+	{
+		return role;
+	}
+
+	public void setRole(Role role)
+	{
+		this.role = role;
+	}
 }

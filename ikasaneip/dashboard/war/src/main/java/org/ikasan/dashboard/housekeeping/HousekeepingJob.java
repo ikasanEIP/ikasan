@@ -173,7 +173,7 @@ public class HousekeepingJob implements Job
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + HousekeepingJob.HOUSE_KEEPING_BATCH_SIZE, this.batchDeleteSize.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + HousekeepingJob.DEFAULT_TRANSACTION_DELETE_SIZE, this.transactionDeleteSize.toString());
+                + HousekeepingJob.TRANSACTION_BATCH_SIZE, this.transactionDeleteSize.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + HousekeepingJob.ENABLED, this.enabled.toString());
 

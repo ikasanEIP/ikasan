@@ -40,14 +40,25 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
+import org.ikasan.dashboard.ui.administration.window.GroupWindow;
+import org.ikasan.dashboard.ui.administration.window.UserWindow;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
+import org.ikasan.security.model.*;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.systemevent.service.SystemEventService;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Property;
@@ -58,22 +69,10 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
@@ -91,21 +90,14 @@ public class PrincipalManagementPanel extends Panel implements View
 
 	private UserService userService;
 	private SecurityService securityService;
-	private ComboBox rolesCombo;
-	private Table principalDropTable = new Table();
-	private TextField principalTypeField = new TextField();
-	private TextArea descriptionField = new TextArea();
-	private Table roleTable = new Table();
-	private Table userTable = new Table();
-	private IkasanPrincipal principal;
-	private AutocompleteField<IkasanPrincipal> principalNameField;
+	private SystemEventService systemEventService;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param ikasanModuleService
-	 */
-	public PrincipalManagementPanel(UserService userService, SecurityService securityService)
+	private FilterTable userTable;
+
+	private IndexedContainer tableContainer;
+
+	public PrincipalManagementPanel(UserService userService, SecurityService securityService,
+							   SystemEventService systemEventService)
 	{
 		super();
 		this.userService = userService;
@@ -119,18 +111,33 @@ public class PrincipalManagementPanel extends Panel implements View
 			throw new IllegalArgumentException(
 					"securityService cannot be null!");
 		}
+		this.systemEventService = systemEventService;
+		if (this.systemEventService == null)
+		{
+			throw new IllegalArgumentException(
+					"systemEventService cannot be null!");
+		}
 
 		init();
 	}
 
-	@SuppressWarnings("deprecation")
+	protected IndexedContainer buildContainer()
+	{
+		IndexedContainer cont = new IndexedContainer();
+
+		cont.addContainerProperty("Name", String.class,  null);
+		cont.addContainerProperty("Type", String.class,  null);
+		cont.addContainerProperty("Description", String.class,  null);
+
+		return cont;
+	}
+
 	protected void init()
 	{
 		this.setWidth("100%");
 		this.setHeight("100%");
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
 		layout.setSizeFull();
 
 		Panel securityAdministrationPanel = new Panel();
@@ -138,355 +145,61 @@ public class PrincipalManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 5);
-		gridLayout.setWidth("100%");
-		gridLayout.setHeight("100%");
+		GridLayout gridLayout = new GridLayout();
 		gridLayout.setMargin(true);
-		gridLayout.setSizeFull();
+		gridLayout.setSpacing(true);
+		gridLayout.setWidth("100%");
 
-		Label groupManagementLabel = new Label("Group Management");
- 		groupManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
- 		gridLayout.addComponent(groupManagementLabel, 0, 0, 1, 0);
- 		
- 		Label groupSearchHintLabel = new Label();
-		groupSearchHintLabel.setCaptionAsHtml(true);
-		groupSearchHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
-				" Type into the Group Name field to find a group.");
-		groupSearchHintLabel.addStyleName(ValoTheme.LABEL_TINY);
-		groupSearchHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
-		gridLayout.addComponent(groupSearchHintLabel, 0, 1, 1, 1);
+		Label mappingConfigurationLabel = new Label("Group Management");
+		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		gridLayout.addComponent(mappingConfigurationLabel);
+		gridLayout.setComponentAlignment(mappingConfigurationLabel, Alignment.MIDDLE_LEFT);
+
+
+		this.tableContainer = this.buildContainer();
+
+		this.userTable = new FilterTable();
+		this.userTable.setWidth("100%");
+		this.userTable.setHeight("900px");
 		
-		Label principalNameLabel = new Label("Group Name:");
-		principalNameLabel.setSizeUndefined();
+		this.userTable.setFilterBarVisible(true);
+		this.userTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.userTable.addStyleName("ikasan");
 
-		principalNameField = new AutocompleteField<IkasanPrincipal>();
-		principalNameField.setWidth("70%");
+		this.userTable.setColumnExpandRatio("Name", .1f);
+		this.userTable.setColumnExpandRatio("Type", .1f);
+		this.userTable.setColumnExpandRatio("Description", .2f);
 
-		final DragAndDropWrapper principalNameFieldWrap = new DragAndDropWrapper(
-				principalNameField);
-		principalNameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
+		this.userTable.addStyleName("wordwrap-table");
+		this.userTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
 
-		principalTypeField.setWidth("70%");
-		descriptionField.setWidth("70%");
-		descriptionField.setHeight("60px");
-		
-		roleTable.addContainerProperty("Role", String.class, null);
-		roleTable.addContainerProperty("", Button.class, null);
-		roleTable.setHeight("610px");
-		roleTable.setWidth("300px");
-		
-		userTable.addContainerProperty("Associated Users", String.class, null);
-		userTable.setHeight("610px");
-		userTable.setWidth("300px");
-		
-		principalDropTable.addContainerProperty("Members", String.class, null);
-		principalDropTable.addContainerProperty("", Button.class, null);
-		principalDropTable.setHeight("700px");
-		principalDropTable.setWidth("300px");
+		this.userTable.setContainerDataSource(tableContainer);
 
-		principalNameField.setQueryListener(new AutocompleteQueryListener<IkasanPrincipal>()
+		this.userTable.addItemClickListener(new ItemClickEvent.ItemClickListener()
 		{
 			@Override
-			public void handleUserQuery(AutocompleteField<IkasanPrincipal> field,
-					String query)
+			public void itemClick(ItemClickEvent itemClickEvent)
 			{
-				for (IkasanPrincipal principal : securityService.getPrincipalByNameLike(query))
+				if(itemClickEvent.isDoubleClick())
 				{
-					field.addSuggestion(principal, principal.getName());
+					GroupWindow window = new GroupWindow(userService, securityService, systemEventService, (IkasanPrincipalLite)itemClickEvent.getItemId());
+					UI.getCurrent().addWindow(window);
 				}
 			}
 		});
 
-		principalNameField.setSuggestionPickedListener(new AutocompleteSuggestionPickedListener<IkasanPrincipal>()
-		{
-			@Override
-			public void onSuggestionPicked(final IkasanPrincipal principal)
-			{
-				PrincipalManagementPanel.this.principal = principal;
-				PrincipalManagementPanel.this.setValues();
-			}
-		});
-		
-		GridLayout formLayout = new GridLayout(2, 3);
-		formLayout.setWidth("100%");
-		formLayout.setHeight("135px");
-		formLayout.setSpacing(true);
-		
-		formLayout.setColumnExpandRatio(0, .1f);
-		formLayout.setColumnExpandRatio(1, .8f);
-
-		formLayout.addComponent(principalNameLabel, 0, 0);
-		formLayout.setComponentAlignment(principalNameLabel, Alignment.MIDDLE_RIGHT);
-		formLayout.addComponent(principalNameFieldWrap, 1, 0);
-
-		Label principalTypeLabel = new Label("Group Type:");
-		principalTypeLabel.setSizeUndefined();
-		formLayout.addComponent(principalTypeLabel, 0, 1);
-		formLayout.setComponentAlignment(principalTypeLabel, Alignment.MIDDLE_RIGHT);
-		formLayout.addComponent(principalTypeField, 1, 1);
-
-		Label descriptionLabel = new Label("Description:");
-		descriptionLabel.setSizeUndefined();
-		formLayout.addComponent(descriptionLabel, 0, 2);
-		formLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
-		formLayout.addComponent(descriptionField, 1, 2);
-		
-		gridLayout.addComponent(formLayout, 0, 2, 1, 2);
-
-		principalDropTable.setDragMode(TableDragMode.ROW);
-		principalDropTable.setDropHandler(new DropHandler()
-		{
-			@Override
-			public void drop(final DragAndDropEvent dropEvent)
-			{
-				// criteria verify that this is safe
-				logger.debug("Trying to drop: " + dropEvent);
-
-				if(rolesCombo.getValue() == null)
-				{
-					// Do nothing if there is no role selected
-					logger.debug("Ignoring drop: " + dropEvent);
-					return;
-				}
-
-				final WrapperTransferable t = (WrapperTransferable) dropEvent
-						.getTransferable();
-
-				final AutocompleteField sourceContainer = (AutocompleteField) t
-						.getDraggedComponent();
-				logger.debug("sourceContainer.getText(): "
-						+ sourceContainer.getText());
-
-				Button deleteButton = new Button();
-				
-				deleteButton.setIcon(VaadinIcons.TRASH);
-				deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-				deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-				
-				final IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
-				final Role roleToRemove = (Role)rolesCombo.getValue();
-				
-				deleteButton.addClickListener(new Button.ClickListener() 
-		        {
-		            public void buttonClick(ClickEvent event) 
-		            {
-		            	principalDropTable.removeItem(principal.getName());
-		            	
-		            	principal.getRoles().remove(roleToRemove);
-		            	
-		            	securityService.savePrincipal(principal);
-		            	
-		            	if(principalNameField.getText().equals(principal.getName()))
-		            	{
-		            		roleTable.removeItem(roleToRemove);
-		            	}
-		            }
-		        });
-				
-				principalDropTable.addItem(new Object[]
-						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
-
-				principal.getRoles().add((Role)rolesCombo.getValue());
-				
-				securityService.savePrincipal(principal);
-
-				roleTable.removeAllItems();
-
-				for (final Role role : principal.getRoles())
-				{
-					Button roleDeleteButton = new Button();
-					roleDeleteButton.setIcon(VaadinIcons.TRASH);
-					roleDeleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-					roleDeleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-					
-					roleDeleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {
-			            	roleTable.removeItem(role);
-			            	
-			            	principal.getRoles().remove(role);
-			            	
-			            	securityService.savePrincipal(principal);
-			            	
-			            	principalDropTable.removeItem(principal.getName());
-			            }
-			        }); 
-					
-					roleTable.addItem(new Object[]
-					{ role.getName(), roleDeleteButton }, role);
-				}
-			}
-
-			@Override
-			public AcceptCriterion getAcceptCriterion()
-			{
-				return AcceptAll.get();
-			}
-		});
-		
-		Label roleTableHintLabel = new Label();
-		roleTableHintLabel.setCaptionAsHtml(true);
-		roleTableHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
-				" The Roles table below displays the roles that are assigned to the group. Roles can be deleted from this table.");
-		roleTableHintLabel.addStyleName(ValoTheme.LABEL_TINY);
-		roleTableHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
-		gridLayout.addComponent(roleTableHintLabel, 0, 3, 1, 3);
-		
-		gridLayout.addComponent(roleTable, 0, 4);
-		gridLayout.addComponent(userTable, 1, 4);
-					
-		this.rolesCombo = new ComboBox("Roles");
-		this.rolesCombo.setWidth("90%");
-		this.rolesCombo.addListener(new Property.ValueChangeListener() {
-		    public void valueChange(ValueChangeEvent event) {
-		        final Role role = (Role)event.getProperty().getValue();
-		       
-		        if(role != null)
-		        {
-			        logger.debug("Value changed got Role: " + role);
-			        
-			        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
-					
-					principalDropTable.removeAllItems();
-					
-					
-					for(final IkasanPrincipal principal: principals)
-					{
-						Button deleteButton = new Button();
-						
-						deleteButton.setIcon(VaadinIcons.TRASH);
-						deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-						deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-						
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {
-				            	principalDropTable.removeItem(principal.getName());
-				            	
-				            	principal.getRoles().remove(role);
-				            	
-				            	securityService.savePrincipal(principal);
-				            	
-				            	if(principalNameField.getText().equals(principal.getName()))
-				            	{
-				            		roleTable.removeItem(role);
-				            	}
-				            }
-				        });
-						
-						
-						principalDropTable.addItem(new Object[]
-								{ principal.getName(), deleteButton }, principal.getName());
-					}
-		        }
-		    }
-		});
-			
-		Panel roleMemberPanel = new Panel();
-		
-		
-		roleMemberPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-		roleMemberPanel.setHeight("100%");
-		roleMemberPanel.setWidth("100%");
-
-		GridLayout roleMemberLayout = new GridLayout();
-		roleMemberLayout.setSpacing(true);
-		roleMemberLayout.setWidth("100%");
-		roleMemberLayout.setHeight("100%");
-		
-		Label roleGroupLabels = new Label("Role/Group Associations");
-		roleGroupLabels.setStyleName(ValoTheme.LABEL_HUGE);
- 		gridLayout.addComponent(roleGroupLabels);
- 		
- 		Label groupDragHintLabel = new Label();
-		groupDragHintLabel.setCaptionAsHtml(true);
-		groupDragHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
-				" Drop groups into the table below to assign them the role.");
- 		
- 		roleMemberLayout.addComponent(roleGroupLabels);
- 		roleMemberLayout.addComponent(groupDragHintLabel);
-		roleMemberLayout.addComponent(this.rolesCombo);
-		roleMemberLayout.addComponent(this.principalDropTable);
-		
-		roleMemberPanel.setContent(roleMemberLayout);
+		gridLayout.addComponent(this.userTable);
+		gridLayout.setComponentAlignment(this.userTable, Alignment.MIDDLE_CENTER);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
-		
-		VerticalLayout roleMemberPanelLayout = new VerticalLayout();
-		roleMemberPanelLayout.setWidth("100%");
-		roleMemberPanelLayout.setHeight("100%");
-		roleMemberPanelLayout.setMargin(true);
-		roleMemberPanelLayout.addComponent(roleMemberPanel);
-		roleMemberPanelLayout.setSizeFull();
-		
-		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
-		hsplit.setFirstComponent(layout);
-		hsplit.setSecondComponent(roleMemberPanelLayout);
 
-
-		// Set the position of the splitter as percentage
-		hsplit.setSplitPosition(65, Unit.PERCENTAGE);
-		hsplit.setLocked(true);
-		
-		this.setContent(hsplit);
-	}
-
-	/**
-	 * 
-	 */
-	protected void setValues()
-	{
-		this.principal = this.securityService.findPrincipalByName(this.principal.getName());
-		this.principalNameField.setText(this.principal.getName());
-		this.principalTypeField.setValue(this.principal.getType());
-		this.descriptionField.setValue(this.principal.getDescription());
-
-		this.roleTable.removeAllItems();
-		this.userTable.removeAllItems();
-		
-		List<User> users = this.securityService.getUsersAssociatedWithPrincipal(this.principal.getId());
-		
-		for(final User user: users)
-		{
-			String userString = "(" + user.getName() + ") " + user.getFirstName() +
-					" " + user.getSurname();
-			
-			userTable.addItem(new Object[]
-					{ userString }, user);
-		}
-
-		for (final Role role : principal.getRoles())
-		{
-			Button deleteButton = new Button();
-			deleteButton.setIcon(VaadinIcons.TRASH);
-			deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-			deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-			
-			deleteButton.addClickListener(new Button.ClickListener() 
-	        {
-	            public void buttonClick(ClickEvent event) 
-	            {
-	            	PrincipalManagementPanel.this.roleTable.removeItem(role);
-	            	
-	            	PrincipalManagementPanel.this.principal.getRoles().remove(role);
-	            	
-	            	PrincipalManagementPanel.this.securityService.savePrincipal(principal);
-	            	
-	            	PrincipalManagementPanel.this.principalDropTable.removeItem(principal.getName());
-	            }
-	        });
-			
-			roleTable.addItem(new Object[]
-					{ role.getName(), deleteButton }, role);
-		}
+		this.setContent(securityAdministrationPanel);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener
 	 * .ViewChangeEvent)
@@ -494,30 +207,28 @@ public class PrincipalManagementPanel extends Panel implements View
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
-		List<Role> roles = this.securityService.getAllRoles();
-		
-		this.principalNameField.clearChoices();
-		this.rolesCombo.removeAllItems();
-		this.principalDropTable.removeAllItems();
-		
-		for(Role role: roles)
+		logger.info("Loading users");
+
+		List<IkasanPrincipalLite> principals = this.securityService.getAllPrincipalLites();
+
+		logger.info("Finished loading users. Number loaded: " + principals.size());
+
+		this.tableContainer.removeAllItems();
+
+		for(IkasanPrincipalLite principal: principals)
 		{
-			this.rolesCombo.addItem(role);
-			this.rolesCombo.setItemCaption(role, role.getName());
+			if(principal.getType() != null && principal.getType().equals("application"))
+			{
+				Item item = tableContainer.addItem(principal);
+				this.userTable.setColumnExpandRatio("Name", .1f);
+				this.userTable.setColumnExpandRatio("Type", .1f);
+				this.userTable.setColumnExpandRatio("Description", .2f);
+
+
+				item.getItemProperty("Name").setValue(principal.getName());
+				item.getItemProperty("Type").setValue(principal.getType());
+				item.getItemProperty("Description").setValue(((principal.getDescription() == null) ? "No description" : principal.getDescription()));
+			}
 		}
-		
-		if(this.principal != null)
-		{
-			this.setValues();
-		}
-		
-	}
-	
-	/**
-	 * @param principal the principal to set
-	 */
-	public void setPrincipal(IkasanPrincipal principal)
-	{
-		this.principal = principal;
 	}
 }

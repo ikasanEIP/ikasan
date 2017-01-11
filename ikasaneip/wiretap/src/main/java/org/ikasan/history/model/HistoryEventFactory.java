@@ -60,7 +60,19 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
 public class HistoryEventFactory
 {
 
-    public List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext)
+	private static final Long MILLISECONDS_IN_DAY = 60 * 60 * 1000 * 24L;
+
+	/**
+	 * Create a message history event.
+	 *
+	 * @param moduleName
+	 * @param flowName
+	 * @param flowInvocationContext
+	 * @param daysToLive
+     * @return
+     */
+    public List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext,
+																				 int daysToLive)
     {
 
         List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents
@@ -75,8 +87,7 @@ public class HistoryEventFactory
                     Objects.toString(invocation.getAfterIdentifier(), null),
                     Objects.toString(invocation.getAfterRelatedIdentifier(), null),
                     invocation.getStartTimeMillis(), invocation.getEndTimeMillis(),
-                    30);
-        	//TODO - move expiry to configurable aspect, where?
+                    System.currentTimeMillis() + (MILLISECONDS_IN_DAY * daysToLive));
         	
         	event.setMetrics(this.getMetrics(invocation, event));
         	

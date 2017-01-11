@@ -83,7 +83,6 @@ public class AssociatedPrincipalItemClickListener implements ItemClickListener
     @Override
     public void itemClick(ItemClickEvent event)
     {
-    	this.principalManagementPanel.setPrincipal((IkasanPrincipal)event.getItemId());
     	this.viewContext.setCurrentView("principalManagementPanel");
     	
         UI.getCurrent().getNavigator().navigateTo("principalManagementPanel");
