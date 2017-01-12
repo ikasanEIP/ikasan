@@ -321,6 +321,12 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             logger.info("module does not exist [" + module.getName() + "], creating...");
             moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
             this.topologyService.save(moduleDB);
+            String host = platformContext.getEnvironment().getProperty("server.address");
+            String port = platformContext.getEnvironment().getProperty("server.port");
+
+
+            logger.info("module host [" + host + ":"+port+"] ");
+
         }
 
     }

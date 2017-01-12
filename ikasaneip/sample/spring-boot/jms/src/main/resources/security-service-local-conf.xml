@@ -39,9 +39,11 @@
 	<!-- TODO point cuts below are commented out as these methods are called via REST and rest
  supplies its own security. -->
 
-	<global-method-security pre-post-annotations="enabled"
-			>
-		<!-- AspectJ pointcut expression that locates our "post" method and applies
+
+	<global-method-security authentication-manager-ref="auth-manager"
+							pre-post-annotations="enabled">
+
+	    <!-- AspectJ pointcut expression that locates our "post" method and applies
 			security that way -->
 
 		<!--  protect-pointcut
@@ -77,9 +79,9 @@
 			access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" / -->
 
 
-		<after-invocation-provider
-				ref="moduleCollectionFilteringAfterInvocationProvider" />
-		<after-invocation-provider ref="moduleAfterInvocationProvider" />
+		<!--<after-invocation-provider-->
+				<!--ref="moduleCollectionFilteringAfterInvocationProvider" />-->
+		<!--<after-invocation-provider ref="moduleAfterInvocationProvider" />-->
 
 
 	</global-method-security>
@@ -88,15 +90,18 @@
 	<!--<http auto-config="false" use-expressions="false" authentication-manager-ref="auth-manager"-->
 		  <!--access-decision-manager-ref="accessDecisionManager" >-->
 	<http auto-config="false" use-expressions="true"
+
 		  authentication-manager-ref="auth-manager" access-decision-manager-ref="accessDecisionManager">
+
 
 
 		<access-denied-handler error-page="/accessDenied.jsp"/>
 		<intercept-url pattern="/login.jsp" access="permitAll"/>
 		<intercept-url pattern="/css/*" access="permitAll"/>
 		<intercept-url pattern="/images/*" access="permitAll"/>
-		<intercept-url pattern="/rest/**" access="hasAnyRole('ALL','WebServiceAdmin')"/>
-		<intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN')" />
+		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
+		<intercept-url pattern="/rest/**" access="permitAll"/>
+		<intercept-url pattern="/admin/**" access="hasAnyRole('ADMIN')" />
 
 		<form-login login-page="/login.jsp"
 					default-target-url="/home.htm"
@@ -112,7 +117,8 @@
 				remember-me-parameter="_spring_security_remember_me"
 				remember-me-cookie="SPRING_SECURITY_REMEMBER_ME_COOKIE"
 		/>
-		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER')"/>
+		<intercept-url pattern="/**" access="hasAnyRole('USER')"/>
+		<http-basic />
 
 	</http>
 

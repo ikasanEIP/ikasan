@@ -110,7 +110,7 @@ public class ModuleControlApplication {
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET,
             value = "/flowState/{moduleName}")
-    @PreAuthorize("hasRole('ALL') OR hasRole('WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public Map<String, String> getFlowStates(@PathVariable("moduleName") String moduleName) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -133,7 +133,7 @@ public class ModuleControlApplication {
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET,
             value = "/contextListenersState/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public String getContextListenersState(@PathVariable("moduleName") String moduleName,
                                            @PathVariable("flowName") String flowName) {
 
