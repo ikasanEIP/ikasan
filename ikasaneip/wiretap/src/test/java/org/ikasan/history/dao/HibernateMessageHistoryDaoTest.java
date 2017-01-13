@@ -289,6 +289,51 @@ public class HibernateMessageHistoryDaoTest
         Assert.assertTrue(results.getPagedResults().size() == 0);
     }
 
+    @Test
+    @DirtiesContext
+    public void bulkDelete2Test()
+    {
+        for(int i=0; i<10000; i++)
+        {
+            MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName" , "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
+                    System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+
+            event1.setHarvested(true);
+
+            Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+            CustomMetric cm = new CustomMetric("name", "value");
+            cm.setMessageHistoryFlowEvent(event1);
+
+
+            metrics.add(cm);
+
+            event1.setMetrics(metrics);
+
+            MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+
+            messageHistoryDao.save(wiretapEvent);
+            messageHistoryDao.save(event1);
+        }
+
+        System.out.println("Started deleting message history records: " + System.currentTimeMillis());
+
+        messageHistoryDao.setHousekeepingBatchSize(500);
+        messageHistoryDao.setTransactionBatchSize(10500);
+        messageHistoryDao.setBatchHousekeepDelete(true);
+
+        messageHistoryDao.deleteAllExpired();
+
+        System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
+
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+
+        System.out.println("Delete completed records: " + results.getResultSize());
+
+        Assert.assertTrue(results.getPagedResults().size() == 0);
+    }
+
     @After
     public void tear_down()
     {
