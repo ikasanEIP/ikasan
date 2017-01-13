@@ -293,9 +293,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     public Flow getObject()
     {
         // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
-        if(resubmissionService == null && this.consumer instanceof ResubmissionService)
+        if(resubmissionService == null && this.consumer != null && this.consumer.getFlowComponent() instanceof ResubmissionService)
         {
-            resubmissionService = (ResubmissionService)this.consumer;
+            resubmissionService = (ResubmissionService)this.consumer.getFlowComponent();
         }
 
         final FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(this.consumer, this.configurationService, this.resubmissionService, this.replayRecordService);
