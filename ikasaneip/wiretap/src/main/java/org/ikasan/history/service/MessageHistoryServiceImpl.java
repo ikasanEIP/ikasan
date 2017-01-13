@@ -44,12 +44,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.ikasan.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
+import org.ikasan.history.listener.MessageHistoryContextListener;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
 import org.ikasan.history.model.MetricEvent;
 import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
@@ -68,12 +71,21 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
 public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
         , HousekeepService, HarvestService<MessageHistoryEvent>
 {
+    private static final Logger logger = Logger.getLogger(MessageHistoryServiceImpl.class);
+
+    public static final String MESSAGE_HISTORY_DAYS_TO_LIVE = "messageHistoryDaysToLive";
+
     protected MessageHistoryDao messageHistoryDao;
 
     protected HistoryEventFactory historyEventFactory = new HistoryEventFactory();
+
+    protected PlatformConfigurationService platformConfigurationService;
+
+    protected Integer messageHistoryDaysToLive = 7;
     
     /** The wiretap event factory */
     private WiretapEventFactory wiretapEventFactory;
+
 
     public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao, WiretapEventFactory wiretapEventFactory)
     {
@@ -87,12 +99,31 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
             throw new IllegalArgumentException("wiretapEventFactory cannot be null");
         }
         this.wiretapEventFactory = wiretapEventFactory;
+
     }
 
     @Override
     public void save(FlowInvocationContext flowInvocationContext, String moduleName, String flowName)
     {
-        List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName, flowInvocationContext);
+        if(this.platformConfigurationService != null)
+        {
+            String messageHistoryDaysToLiveString = this.platformConfigurationService.getConfigurationValue(MESSAGE_HISTORY_DAYS_TO_LIVE);
+
+            if (messageHistoryDaysToLiveString != null && !messageHistoryDaysToLiveString.isEmpty())
+            {
+                try
+                {
+                    this.messageHistoryDaysToLive = Integer.parseInt(messageHistoryDaysToLiveString);
+                }
+                catch (Exception e)
+                {
+                    logger.info("Could not convert message history days to live from platform configuration to Integer! Using default.", e);
+                }
+            }
+        }
+
+        List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName
+                , flowInvocationContext, this.messageHistoryDaysToLive);
         for (MessageHistoryEvent<String, CustomMetric, MetricEvent > messageHistoryEvent : messageHistoryEvents)
         {
             messageHistoryDao.save(messageHistoryEvent);
@@ -162,18 +193,30 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     }
 
     @Override
-    public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
-        
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        this.messageHistoryDao.setHousekeepingBatchSize(housekeepingBatchSize);
     }
 
     @Override
-    public void setTransactionBatchSize(Integer transactionBatchSize) {
-
+    public void setTransactionBatchSize(Integer transactionBatchSize)
+    {
+        this.messageHistoryDao.setTransactionBatchSize(transactionBatchSize);
     }
 
     /** used to mock the factory in testing */
     protected void setHistoryEventFactory(HistoryEventFactory historyEventFactory)
     {
         this.historyEventFactory = historyEventFactory;
+    }
+
+    public PlatformConfigurationService getPlatformConfigurationService()
+    {
+        return platformConfigurationService;
+    }
+
+    public void setPlatformConfigurationService(PlatformConfigurationService platformConfigurationService)
+    {
+        this.platformConfigurationService = platformConfigurationService;
     }
 }

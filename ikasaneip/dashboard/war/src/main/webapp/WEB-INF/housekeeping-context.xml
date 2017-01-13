@@ -32,7 +32,7 @@
         <ref bean="hospitalServiceHousekeepingJob" />
         <ref bean="systemEventServiceHousekeepingJob" />
         <ref bean="duplicateFilterHousekeepingJob" />
-        <!--ref bean="messageHistoryHousekeepingJob" / -->
+        <ref bean="messageHistoryHousekeepingJob" />
     </util:list>
 
     <bean id="replyHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">

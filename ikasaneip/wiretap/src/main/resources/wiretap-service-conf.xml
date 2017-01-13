@@ -70,6 +70,7 @@
     <bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
         <constructor-arg index="0" ref="messageHistoryDao"/>
         <constructor-arg index="1" ref="wiretapEventFactory"/>
+        <property name="platformConfigurationService" ref="platformConfigurationService"/>
     </bean>
 	
 	<bean id="wiretapDao"
