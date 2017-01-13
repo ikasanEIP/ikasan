@@ -236,11 +236,13 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         this.wiretapFlowEvent = wiretapFlowEvent;
     }
 
+    @Override
     public Boolean getHarvested()
     {
         return harvested;
     }
 
+    @Override
     public void setHarvested(Boolean harvested)
     {
         this.harvested = harvested;
