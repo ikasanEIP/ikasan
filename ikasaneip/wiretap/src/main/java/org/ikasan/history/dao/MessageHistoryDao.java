@@ -142,4 +142,35 @@ public interface MessageHistoryDao
      * @return true if so, false otherwise
      */
     public boolean harvestableRecordsExist();
+
+    /**
+     * @return the housekeepingBatchSize
+     */
+    public Integer getHousekeepingBatchSize();
+
+    /**
+     * @param housekeepingBatchSize the housekeepingBatchSize to set
+     */
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
+
+    /**
+     * @return the housekeepingBatchSize
+     */
+    public Integer getTransactionBatchSize();
+
+    /**
+     * @param transactionBatchSize the housekeepingBatchSize to set
+     */
+    public void setTransactionBatchSize(Integer transactionBatchSize);
+
+    /**
+     * @return the batchHousekeepDelete
+     */
+    public boolean isBatchHousekeepDelete();
+
+    /**
+     * @param batchHousekeepDelete the batchHousekeepDelete to set
+     */
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
+
 }

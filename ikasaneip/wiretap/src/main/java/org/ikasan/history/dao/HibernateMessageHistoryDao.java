@@ -43,8 +43,6 @@ package org.ikasan.history.dao;
 import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -55,7 +53,6 @@ import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -73,26 +70,22 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     private boolean batchHousekeepDelete = false;
 
     /** Batch size used when in batching housekeep */
-    private Integer housekeepingBatchSize = 1000;
+    private Integer housekeepingBatchSize = 400;
 
     /** Batch size used when in a single transaction */
-    private Integer transactionBatchSize = 5000;
+    private Integer transactionBatchSize = 2000;
 
-    private String messageHistoryHousekeepQuery = null;
-    
-    private String metricHousekeepQuery = null;
-    
 
     @Override
     public void save(MessageHistoryEvent messageHistoryEvent)
     {
-        getHibernateTemplate().save(messageHistoryEvent);
+        getHibernateTemplate().saveOrUpdate(messageHistoryEvent);
     }
     
 	@Override
 	public void save(WiretapEvent wiretapEvent) 
 	{
-		getHibernateTemplate().save(wiretapEvent);
+		getHibernateTemplate().saveOrUpdate(wiretapEvent);
 	}
 
     @Override
@@ -245,37 +238,29 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     @Override
     public void deleteAllExpired()
     {        
-        if (batchHousekeepDelete && this.metricHousekeepQuery != null
-        		&& this.messageHistoryHousekeepQuery != null)
+        if (batchHousekeepDelete)
         {
         	 batchHousekeepDelete();
         }
         else
         {
-        	if (batchHousekeepDelete && (this.metricHousekeepQuery == null
-            		|| this.messageHistoryHousekeepQuery == null))
-        	{
-        		logger.warn("Housing keeping was set to batch mode but either the message " +
-        				"history house keep query or the metric house keep query are null. " +
-        				"Housekeeping will not be performed in batch mode.");
-        	}
-        		
             getHibernateTemplate().execute(new HibernateCallback<Object>()
 	        {
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
 	            	String deleteMetrics = "DELETE FROM Metric WHERE MessageHistoryId in " +
-	            			"(SELECT Id FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis() + ")";
+	            			"(SELECT Id FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis() +
+                            " AND Harvested = 1)";
 	            	session.createSQLQuery(deleteMetrics).executeUpdate();
 	            	 
-	                String delete = "DELETE FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis();
+	                String delete = "DELETE FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis() + " AND Harvested = 1";
 	                session.createSQLQuery(delete).executeUpdate();
 	                return null;
 	            }
 	        });
         }
     }
-    
+
     /**
      * Housekeep using batching.
      *
@@ -293,7 +278,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             numberDeleted += this.housekeepingBatchSize;
 
-            List<MessageHistoryEvent> events = this.getHarvestedRecords(this.transactionBatchSize);
+            List<MessageHistoryEvent> events = this.getHarvestedRecords(this.housekeepingBatchSize);
 
             this.deleteHarvestableRecords(events);
         }
@@ -309,6 +294,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             {
                 Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
                 criteria.add(Restrictions.le("expiry", System.currentTimeMillis()));
+                criteria.add(Restrictions.eq("harvested", true));
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = 0L;
                 List<Long> rowCountList = criteria.list();
@@ -346,18 +332,18 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     }
 
     @Override
-    public List<MessageHistoryEvent> getHarvestableRecords(final int transactionBatchSize)
+    public List<MessageHistoryEvent> getHarvestableRecords(final int housekeepingBatchSize)
     {
-        return this.getHarvestableRecords(transactionBatchSize, false);
+        return this.getHarvestableRecords(housekeepingBatchSize, false);
     }
 
-    public List<MessageHistoryEvent> getHarvestedRecords(final int transactionBatchSize)
+    public List<MessageHistoryEvent> getHarvestedRecords(final int housekeepingBatchSize)
     {
-        return this.getHarvestableRecords(transactionBatchSize, true);
+        return this.getHarvestableRecords(housekeepingBatchSize, true);
     }
 
 
-    public List<MessageHistoryEvent> getHarvestableRecords(final int transactionBatchSize, final Boolean harvested)
+    public List<MessageHistoryEvent> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested)
     {
         return (List<MessageHistoryEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
@@ -365,7 +351,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
             {
                 Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
                 criteria.add(Restrictions.eq("harvested", harvested));
-                criteria.setMaxResults(transactionBatchSize);
+                criteria.setMaxResults(housekeepingBatchSize);
                 criteria.addOrder(Order.asc("startTimeMillis"));
 
                 List<MessageHistoryEvent> messageHistoryEvents = criteria.list();
@@ -495,7 +481,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 	}
 
 	/**
-	 * @return the transactionBatchSize
+	 * @return the housekeepingBatchSize
 	 */
 	public Integer getTransactionBatchSize() 
 	{
@@ -503,42 +489,11 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 	}
 
 	/**
-	 * @param transactionBatchSize the transactionBatchSize to set
+	 * @param transactionBatchSize the housekeepingBatchSize to set
 	 */
 	public void setTransactionBatchSize(Integer transactionBatchSize)
 	{
 		this.transactionBatchSize = transactionBatchSize;
 	}	
 
-	/**
-	 * @return the metricHousekeepQuery
-	 */
-	public String getMetricHousekeepQuery() 
-	{
-		return metricHousekeepQuery;
-	}
-
-	/**
-	 * @param metricHousekeepQuery the metricHousekeepQuery to set
-	 */
-	public void setMetricHousekeepQuery(String metricHousekeepQuery) 
-	{
-		this.metricHousekeepQuery = metricHousekeepQuery;
-	}
-
-	/**
-	 * @return the messageHistoryHousekeepQuery
-	 */
-	public String getMessageHistoryHousekeepQuery()
-	{
-		return messageHistoryHousekeepQuery;
-	}
-
-	/**
-	 * @param messageHistoryHousekeepQuery the messageHistoryHousekeepQuery to set
-	 */
-	public void setMessageHistoryHousekeepQuery(String messageHistoryHousekeepQuery) 
-	{
-		this.messageHistoryHousekeepQuery = messageHistoryHousekeepQuery;
-	}
 }
