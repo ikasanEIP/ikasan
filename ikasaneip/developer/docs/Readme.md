@@ -41,7 +41,9 @@ ${root\_install\_dir}/${devtools\_install\_dir}
 where,
 
 ${devtools\_install\_dir} - contains your development tools installs i.e. Java, Maven
+
 ${runtime\_dir}  - is your runtime environment for deployment
+
 ${sandbox\_dir}  - is your area for creating and building Integration Modules
 
 For convenience we will refer to the base directories above throughout this guide.
@@ -146,7 +148,7 @@ This should reflect the Maven version you have just installed.
 For instance – the bold output depicts the important information,
 
 ```
-| **Apache Maven 3.3.3** (r1232337; 2012-01-17 16:44:56+0800)
+**Apache Maven 3.3.3** (r1232337; 2012-01-17 16:44:56+0800)
 Maven home: /opt/platform/maven-platform/apache-maven-3.0.4
 Java version: 1.7.0\_51, 
 vendor: Oracle Corporation
