@@ -1,59 +1,5 @@
-##
 
 # Ikasan Getting Started Guide
-
-1.0.5
-
-EMAIL: info@ikasan.org
-
-WEBSITE: www.ikasan.org
-
-# Table of Contents
-
-| 1        Introduction        |
-| --- |
-| 1.1        Overview        |
-| 1.2        About        |
-| 1.3        Audience        |
-| 1.4        How to Use This Guide        |
-| 2        Development Platform Structure        |
-| 3        Development Tools        |
-| 3.1        Java Development Kit/Runtime Environment        |
-| 3.1.1        Version        |
-| 3.1.2        Installation        |
-| 3.1.2.1        Setting Unix Environment Variables        |
-| 3.1.2.2        Setting Windows Environment Variables        |
-| 3.1.3        Sanity Checks        |
-| 3.2        Maven        |
-| 3.2.1        Version        |
-| 3.2.2        Installation        |
-| 3.2.2.1        Setting Environment Variables From UNIX Command Line        |
-| 3.2.2.2        Setting Environment Variables From Windows Command Line        |
-| 3.2.3        Sanity Checks        |
-| 4        Runtime Environment        |
-| 4.1        JBoss EAP Application Server        |
-| 4.1.1        Versions        |
-| 4.1.2        Installation        |
-| 4.1.2.1        Setting Environment Variables From Unix Command Line        |
-| 4.1.2.2        Setting Environment Variables from Windows Command Line        |
-| 4.1.2.3        Creating User from Unix Command Line        |
-| 4.1.2.4        Creating User from Windows Command Line        |
-| 4.1.3        Sanity Checks        |
-| 4.2        Ikasan Runtime Platform Configuration        |
-| 4.2.1        Versions        |
-| 4.2.2        Installation        |
-| 4.2.2.1        JBoss Application Server Platform Configuration        |
-| 4.2.2.2        Creating IkasanEIP Databases        |
-| 4.2.2.3        IkasanEIP Dashboard Deployment        |
-| 4.3        Ikasan Integration Module Development Sandbox        |
-| 4.3.1        Creating a Build Parent Artefact        |
-| 4.3.2        Creating an Integration Module Artefact        |
-| 4.3.2.1        Local File System to JMS / JMS to Local File System Archetype        |
-| 4.3.2.2        JMS to JMS (HornetQ) Archetype        |
-| 4.3.2.3        JMS to JMS (ActiveMQ) Archetype        |
-| 4.3.2.4        DB to JMS / JMS to DB Archetype        |
-| 4.3.2.5        SFTP to JMS / JMS to SFTP Archetype        |
-| 5        Document Info        |
 
 # Introduction
 
@@ -65,7 +11,7 @@ The Ikasan Enterprise Integration Platform (IkasanEIP) provides a robust and sca
 
 This document will guide you through the process of creating an Ikasan development environment and runtime platform from scratch.
 
-This will include the build tools install and configuration; container install and configuration; and the creation and deployment of a simple Ikasan Integration Module.
+This will include the build tools and configuration; container install and configuration; and the creation and deployment of a simple Ikasan Integration Module.
 
 This is part of the documentation suite for the Ikasan Enterprise Integration Platform.
 
@@ -262,13 +208,13 @@ Some installers will create an initial administration user for jboss, if that&#3
 cd $JBOSS_HOME/bin./add-user.sh 
 ```
 
-#### 4.1.2.4Creating User from Windows Command Line
+#### Creating User from Windows Command Line
 
 ```
 cd %JBOSS_HOME%\bin.\add-user
 ```
 
-You will be prompted for the following – select (a) and <_RETURN_>
+You will be prompted for the following – select (a) and RETURN
 
 ```
 What type of user do you wish to add?  a) Management User (mgmt-users.properties)  b) Application User (application-users.properties)(a):
@@ -307,7 +253,7 @@ You can test your installation by starting the server as follows,
 ```
 cd $JBOSS_HOME/bin
 ./domain.sh
- ```
+```
 
 Ensure no errors are reported in the console logs.
 
@@ -1280,7 +1226,7 @@ Utility consumer for the generation of ad-hoc events for demonstration or test o
 
 
 
-# 6Document Info
+# Document Info
 
 | Authors | Ikasan Development Team |
 | --- | --- |
