@@ -1,15 +1,12 @@
 package org.ikasan.sample.test.flow;
 
 import org.apache.commons.io.FileUtils;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.*;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
@@ -25,9 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

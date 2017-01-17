@@ -54,6 +54,7 @@ import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 
 import java.util.ArrayList;
@@ -63,32 +64,46 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit Rule implementation allowing flow tests to be created and executed using a builder pattern.
- *
+ * <p>
  * The underlying Flow will be automatically stopped and checked when the rule is evaluated at the end of the test
  *
  * @author Ikasan Development Team
  */
 public class IkasanFlowTestRule implements TestRule
 {
-    /** the expectations created by the builder methods */
+    /**
+     * the expectations created by the builder methods
+     */
     private OrderedExpectation flowExpectations;
 
-    /** the FlowSubject listener */
+    /**
+     * the FlowSubject listener
+     */
     private FlowTestHarness flowTestHarness;
 
-    /** the Flow under test */
+    /**
+     * the Flow under test
+     */
     private Flow flow;
 
-    /** an optional scheduledConsumerName used to indicate the flow is triggered by a ScheduledConsumer */
+    /**
+     * an optional scheduledConsumerName used to indicate the flow is triggered by a ScheduledConsumer
+     */
     String scheduledConsumerName;
 
-    /** flag used to open a repeating block */
+    /**
+     * flag used to open a repeating block
+     */
     private boolean openBlock = false;
 
-    /** optional block of components used to repeat */
+    /**
+     * optional block of components used to repeat
+     */
     private List<AbstractComponent> blockComponents = new ArrayList<>();
 
-    /** flag indicating the expected end state (stopped=false, stoppedInError=true) */
+    /**
+     * flag indicating the expected end state (stopped=false, stoppedInError=true)
+     */
     private boolean errorEndState = false;
 
     public IkasanFlowTestRule()
@@ -98,11 +113,12 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Applies the basic flow test rules:
-     *  1. Stop the flow and assert it is stopped; or stoppedInError if withErrorEndState() was called when building
-     *  2. Assert the flowTestHarness for component invocation completeness
-     * @param base a base Statement
+     * 1. Stop the flow and assert it is stopped; or stoppedInError if withErrorEndState() was called when building
+     * 2. Assert the flowTestHarness for component invocation completeness
+     *
+     * @param base        a base Statement
      * @param description a Description (not used)
-     * @return a new Statement that can be evaluated by JUnit
+     * @return a Statement, wrapping the provided instance, that can be evaluated by JUnit
      */
     @Override
     public Statement apply(final Statement base, Description description)
@@ -116,13 +132,14 @@ public class IkasanFlowTestRule implements TestRule
                 if (flow != null && flowTestHarness != null)
                 {
                     flow.stop();
-                    assertEquals("flow should be stopped", errorEndState ? "stoppedInError" : "stopped", flow.getState());
+                    assertEquals("flow should be stopped", errorEndState ?
+                            "stoppedInError" :
+                            "stopped", flow.getState());
                     flowTestHarness.assertIsSatisfied();
                 }
             }
         };
     }
-
 
     private void addExpectation(AbstractComponent component)
     {
@@ -136,14 +153,24 @@ public class IkasanFlowTestRule implements TestRule
         }
     }
 
+    /**
+     * Set the flow which this Rule will check
+     *
+     * @param flow the Flow
+     * @return this rule
+     */
     public IkasanFlowTestRule withFlow(Flow flow)
     {
         Assert.assertNotNull("Flow cannot be null", flow);
         this.flow = flow;
-
         return this;
     }
 
+    /**
+     * Indicate the flow end state will be 'stoppedInError', used in negative testing
+     *
+     * @return this rule
+     */
     public IkasanFlowTestRule withErrorEndState()
     {
         errorEndState = true;
@@ -152,6 +179,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a consumer
+     *
      * @param name the consumer name
      * @return this rule
      */
@@ -172,6 +200,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a splitter
+     *
      * @param name the splitter name
      * @return this rule
      */
@@ -183,6 +212,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a converter
+     *
      * @param name the converter name
      * @return this rule
      */
@@ -194,6 +224,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a producer
+     *
      * @param name the producer name
      * @return this rule
      */
@@ -205,6 +236,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a SingleRecipientRouter
+     *
      * @param name the router name
      * @return this rule
      */
@@ -216,6 +248,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a MultiRecipientRouter
+     *
      * @param name the MRR name
      * @return this rule
      */
@@ -225,9 +258,9 @@ public class IkasanFlowTestRule implements TestRule
         return this;
     }
 
-
     /**
      * Expect a translator
+     *
      * @param name the translator name
      * @return this rule
      */
@@ -239,6 +272,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a broker
+     *
      * @param name the broker name
      * @return this rule
      */
@@ -250,6 +284,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a filter
+     *
      * @param name the filter name
      * @return this rule
      */
@@ -261,6 +296,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Expect a sequencer
+     *
      * @param name the sequencer name
      * @return this rule
      */
@@ -270,9 +306,9 @@ public class IkasanFlowTestRule implements TestRule
         return this;
     }
 
-
     /**
      * Start a block of repeated components
+     *
      * @return this rule
      */
     public IkasanFlowTestRule blockStart()
@@ -284,6 +320,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Close the current block of repeated components
+     *
      * @return this rule
      */
     public IkasanFlowTestRule blockEnd()
@@ -294,6 +331,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Repeat the current block n times;
+     *
      * @param n number of times to repeat the block
      * @return this rule
      */
@@ -312,7 +350,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Invoke the scheduled consumer via its triggerSchedulerNow method
-     *
+     * <p>
      * This method executes the underlying Job asynchronously
      */
     public void fireScheduledConsumer()
@@ -330,7 +368,22 @@ public class IkasanFlowTestRule implements TestRule
     }
 
     /**
+     * Invoke the scheduled consumer with a given JobExecutionContext (can be mocked).
+     *
+     * This method executes synchronously - when the flow finished executing the given task this method will then return.
+     *
+     * @param jobExecutionContext a JobExecutionContext
+     */
+    public void fireScheduledConsumerSynchronously(JobExecutionContext jobExecutionContext)
+    {
+        FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
+        ScheduledConsumer consumer = (ScheduledConsumer) flowElement.getFlowComponent();
+        consumer.execute(jobExecutionContext);
+    }
+
+    /**
      * Setup the flow expectations and start the given flow.
+     *
      * @param testHarnessFlowEventListener the test harness flow listener
      */
     public void startFlow(FlowSubject testHarnessFlowEventListener)
@@ -352,6 +405,7 @@ public class IkasanFlowTestRule implements TestRule
 
     /**
      * Sleep for a bit to let a flow execution complete
+     *
      * @param time the number of milliseconds to sleep for
      */
     public void sleep(long time)
@@ -360,7 +414,7 @@ public class IkasanFlowTestRule implements TestRule
         {
             Thread.sleep(time);
         }
-        catch(InterruptedException e)
+        catch (InterruptedException e)
         {
             Assert.fail("Sleep interrupted: " + e.getMessage());
         }
