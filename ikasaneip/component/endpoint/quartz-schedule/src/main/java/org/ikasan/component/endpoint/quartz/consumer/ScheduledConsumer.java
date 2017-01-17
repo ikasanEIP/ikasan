@@ -352,7 +352,7 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    protected void triggerSchedulerNow() throws SchedulerException
+    public void triggerSchedulerNow() throws SchedulerException
     {
         JobKey jobkey = jobDetail.getKey();
         TriggerKey triggerKey = triggerKey(EAGER_SCHEDULE + jobkey.getName(), jobkey.getGroup());

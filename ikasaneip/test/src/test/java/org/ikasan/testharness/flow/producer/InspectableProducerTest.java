@@ -40,7 +40,7 @@
  */
 package org.ikasan.testharness.flow.producer;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.jms.core.IkasanJmsTemplate;
 
