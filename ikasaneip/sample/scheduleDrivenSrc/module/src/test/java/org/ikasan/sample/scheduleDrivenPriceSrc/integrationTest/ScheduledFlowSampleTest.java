@@ -83,9 +83,8 @@ public class ScheduledFlowSampleTest extends IkasanEIPTest
         ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
 
         // invoke the scheduled consumer
-        ikasanFlowTestRule.fireScheduledConsumer();
+        ikasanFlowTestRule.fireScheduledConsumerSynchronously(null);
 
-        // wait for a brief while to let the flow complete
-        ikasanFlowTestRule.sleep(1000L);
+        // no need to wait for flow to execute - above method is synchronous
     }
 }
