@@ -70,8 +70,7 @@ public class PriceConsumer implements Consumer<EventListener, EventFactory<FlowE
 
     /**
      * Constructor
-     * @param stubbedTechImpl
-     * @param flowEventFactory
+     * @param priceTechImpl a PriceTechImpl
      */
     public PriceConsumer(PriceTechImpl priceTechImpl)
     {
@@ -112,7 +111,7 @@ public class PriceConsumer implements Consumer<EventListener, EventFactory<FlowE
 
     /**
      * Set the consumer event listener
-     * @param eventListener
+     * @param eventListener a EventListener
      */
     public void setListener(EventListener eventListener)
     {

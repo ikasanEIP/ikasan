@@ -38,30 +38,54 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator;
+package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.testharness.flow.comparator.ExpectationComparator;
+import org.ikasan.platform.IkasanEIPTest;
+import org.ikasan.spec.flow.Flow;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.quartz.SchedulerException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
- * Compares event characteristics.
+ * Test class for sample <code>SchedulerExclusion</code> flow.
  * 
  * @author Ikasan Development Team
- * 
  */
-public class ProducerEventComparator
-    implements ExpectationComparator<FlowEvent<String,StringBuilder>,FlowEvent<String,StringBuilder>>
+@RunWith(SpringJUnit4ClassRunner.class)
+//specifies the Spring configuration to load for this test fixture
+@ContextConfiguration(locations={
+        "/demo-exclusion-flow-conf.xml",
+        "/demo-exclusion-component-conf.xml",
+        "/exclusion-flow-conf.xml",
+        "/substitute-components.xml",
+        "/exception-conf.xml",
+        "/hsqldb-conf.xml"
+      })
+      
+public class ScheduledExclusionFlowSampleTest extends IkasanEIPTest
 {
-    /**
-     * Compare the two incoming expected and actual events.
-     */
-    public void compare(FlowEvent<String,StringBuilder> expected, FlowEvent<String,StringBuilder> actual)
+    @Resource
+    Flow demoExclusionScheduledConverterFlow;
+    
+    @Test
+    public void test_flow_scheduledExclusionConsumer() throws SchedulerException
     {
-        compare(expected.getPayload(), actual.getPayload());
-    }
+        // setup the expected component invocations
+        ikasanFlowTestRule.withFlow(demoExclusionScheduledConverterFlow)
+                          .consumer("Scheduled Consumer")
+                          .converter("Scheduled Converter"); // note no producer since the converter throws exception
 
-    protected void compare(StringBuilder expected, StringBuilder actual)
-    {
-        // do nothing, just a clean invocation of the method is enough to prove we have a price tech message
+        // start the flow
+        ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
+
+        // invoke the scheduled consumer
+        ikasanFlowTestRule.fireScheduledConsumer();
+
+        // wait for a brief while to let the flow complete
+        ikasanFlowTestRule.sleep(1000L);
     }
 }
