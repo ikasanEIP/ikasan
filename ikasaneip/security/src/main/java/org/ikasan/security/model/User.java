@@ -41,10 +41,9 @@
 package org.ikasan.security.model;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -146,7 +145,29 @@ public class User implements UserDetails, Principal
      */
     public Collection<? extends org.springframework.security.core.GrantedAuthority> getAuthorities()
     {
-        return grantedAuthorities;
+		Set<IkasanPrincipal> principals = this.getPrincipals();
+
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+		for(IkasanPrincipal principal: principals)
+		{
+			Set<Role> roles = principal.getRoles();
+
+			for(Role role: roles)
+			{
+				Set<Policy> policies = role.getPolicies();
+
+				for(Policy policy: policies)
+				{
+					if(!authorities.contains(policy))
+					{
+						authorities.add(policy);
+					}
+				}
+			}
+		}
+
+		return authorities;
     }
 
     /*

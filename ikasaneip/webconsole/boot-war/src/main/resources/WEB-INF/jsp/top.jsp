@@ -76,7 +76,7 @@
 		<li><a href="<c:url value='/modules/list.htm'/>">Modules</a></li>
 		<li><a href="<c:url value='/events/search.htm'/>">Events</a></li>
 
-		<security:authorize access="hasRole('ROLE_ADMIN')">
+		<security:authorize access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin')">
 		  <li><a href="<c:url value='/admin/admin.htm'/>">Admin</a></li>
 		</security:authorize>
 	</ul>
