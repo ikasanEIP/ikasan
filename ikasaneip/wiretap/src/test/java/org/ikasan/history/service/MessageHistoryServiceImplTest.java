@@ -40,13 +40,16 @@
  */
 package org.ikasan.history.service;
 
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 import org.ikasan.history.dao.MessageHistoryDao;
+import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
+import org.ikasan.history.model.MessageHistoryFlowEvent;
+import org.ikasan.history.model.MetricEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -54,12 +57,23 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
  * Test cases for MessageHistoryService
  *
  * @author Ikasan Development Team
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+})
 public class MessageHistoryServiceImplTest
 {
     private final Mockery mockery = new Mockery()
@@ -69,90 +83,217 @@ public class MessageHistoryServiceImplTest
         }
     };
 
-    MessageHistoryDao messageHistoryDao = mockery.mock(MessageHistoryDao.class);
+    MessageHistoryDao mockMessageHistoryDao = mockery.mock(MessageHistoryDao.class);
     WiretapEventFactory wiretapEventFactory = mockery.mock(WiretapEventFactory.class);
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
     HistoryEventFactory historyEventFactory = mockery.mock(HistoryEventFactory.class);
     MessageHistoryEvent messageHistoryEvent = mockery.mock(MessageHistoryEvent.class);
 
-    MessageHistoryServiceImpl messageHistoryService = new MessageHistoryServiceImpl(messageHistoryDao, wiretapEventFactory);
+    MessageHistoryServiceImpl mockMessageHistoryService = new MessageHistoryServiceImpl(mockMessageHistoryDao, wiretapEventFactory);
+
+    @Resource
+    private MessageHistoryDao messageHistoryDao;
+
+    MessageHistoryServiceImpl messageHistoryService;
 
     @Before
     public void setup()
     {
-        messageHistoryService.setHistoryEventFactory(historyEventFactory);
+        messageHistoryService = new MessageHistoryServiceImpl(messageHistoryDao, wiretapEventFactory);
+        mockMessageHistoryService.setHistoryEventFactory(historyEventFactory);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    @DirtiesContext
+    public void test_exception_null_dao()
+    {
+        new MessageHistoryServiceImpl(null, wiretapEventFactory);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @DirtiesContext
+    public void test_exception_null_event_factory()
+    {
+        new MessageHistoryServiceImpl(mockMessageHistoryDao, null);
+    }
+
+
     @Test
+    @DirtiesContext
     public void test_save()
     {
         mockery.checking(new Expectations(){{
-            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext);
+            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext, 7);
             will(returnValue(Collections.singletonList(messageHistoryEvent)));
-            oneOf(messageHistoryDao).save(messageHistoryEvent);
+            oneOf(mockMessageHistoryDao).save(messageHistoryEvent);
         }});
-        messageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
+        mockMessageHistoryService.save(flowInvocationContext, "moduleName", "flowName");
         mockery.assertIsSatisfied();
     }
 
     @Test
+    @DirtiesContext
     public void test_housekeep()
     {
         mockery.checking(new Expectations(){{
-            oneOf(messageHistoryDao).deleteAllExpired();
+            oneOf(mockMessageHistoryDao).deleteAllExpired();
         }});
-        messageHistoryService.housekeep();
+        mockMessageHistoryService.housekeep();
         mockery.assertIsSatisfied();
     }
 
     @Test
+    @DirtiesContext
     public void test_housekeepablesExist()
     {
         mockery.checking(new Expectations()
         {{
-                oneOf(messageHistoryDao).housekeepablesExist();
+                oneOf(mockMessageHistoryDao).housekeepablesExist();
                 will(returnValue(true));
             }});
-        Assert.assertTrue(messageHistoryService.housekeepablesExist());
+        Assert.assertTrue(mockMessageHistoryService.housekeepablesExist());
         mockery.assertIsSatisfied();
     }
 
     @Test
+    @DirtiesContext
     public void test_findMessageHistoryEvents()
     {
         mockery.checking(new Expectations()
         {{
-                oneOf(messageHistoryDao).findMessageHistoryEvents(0, 0, "orderBy", true, Collections.<String>emptySet(),
+                oneOf(mockMessageHistoryDao).findMessageHistoryEvents(0, 0, "orderBy", true, Collections.<String>emptySet(),
                         "flowName", "componentName", "lifeId", "relatedLifeId", new Date(0L), new Date(0L));
                 will(returnValue(null));
             }});
-        messageHistoryService.findMessageHistoryEvents(0, 0, "orderBy", true, Collections.<String>emptySet(),
+        mockMessageHistoryService.findMessageHistoryEvents(0, 0, "orderBy", true, Collections.<String>emptySet(),
                 "flowName", "componentName", "lifeId", "relatedLifeId", new Date(0L), new Date(0L));
         mockery.assertIsSatisfied();
     }
 
     @Test
+    @DirtiesContext
     public void test_getMessageHistoryEvents_with_relatedId()
     {
         mockery.checking(new Expectations()
         {{
-                oneOf(messageHistoryDao).getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", "lifeId");
+                oneOf(mockMessageHistoryDao).getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", "lifeId");
                 will(returnValue(null));
             }});
-        messageHistoryService.getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", true);
+        mockMessageHistoryService.getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", true);
         mockery.assertIsSatisfied();
     }
 
     @Test
+    @DirtiesContext
     public void test_getMessageHistoryEvents_without_relatedId()
     {
         mockery.checking(new Expectations()
         {{
-                oneOf(messageHistoryDao).getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", null);
+                oneOf(mockMessageHistoryDao).getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", null);
                 will(returnValue(null));
             }});
-        messageHistoryService.getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", false);
+        mockMessageHistoryService.getMessageHistoryEvent(0, 0, "orderBy", true, "lifeId", false);
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest()
+    {
+        for(int i=0; i<10000; i++)
+        {
+            MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName" , "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
+                    System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+
+
+            Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+            CustomMetric cm = new CustomMetric("name", "value");
+            cm.setMessageHistoryFlowEvent(event1);
+
+
+            metrics.add(cm);
+
+            event1.setMetrics(metrics);
+
+            MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+
+            messageHistoryDao.save(wiretapEvent);
+            messageHistoryDao.save(event1);
+        }
+
+        System.out.println("Started deleting message history records: " + System.currentTimeMillis());
+
+        Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
+
+        this.messageHistoryService.setTransactionBatchSize(10500);
+        this.messageHistoryService.setHousekeepingBatchSize(500);
+
+        List events = this.messageHistoryService.harvest(10000);
+
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 10000);
+
+        this.messageHistoryService.housekeep();
+
+        System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
+
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 100000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+
+        System.out.println("Delete completed records: " + results.getResultSize());
+
+        Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_batch_delete_false()
+    {
+        for(int i=0; i<10000; i++)
+        {
+            MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("moduleName", "flowName" , "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
+                    System.currentTimeMillis()-500L, System.currentTimeMillis(), System.currentTimeMillis()-1000000000L);
+
+
+            Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+            CustomMetric cm = new CustomMetric("name", "value");
+            cm.setMessageHistoryFlowEvent(event1);
+
+
+            metrics.add(cm);
+
+            event1.setMetrics(metrics);
+
+            MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
+                    "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+
+            messageHistoryDao.save(wiretapEvent);
+            messageHistoryDao.save(event1);
+        }
+
+        System.out.println("Started deleting message history records: " + System.currentTimeMillis());
+
+        messageHistoryDao.setBatchHousekeepDelete(false);
+
+        Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
+
+        this.messageHistoryService.setTransactionBatchSize(10500);
+        this.messageHistoryService.setHousekeepingBatchSize(500);
+
+        List events = this.messageHistoryService.harvest(10000);
+
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 10000);
+
+        this.messageHistoryService.housekeep();
+
+        System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
+
+        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 100000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+
+        System.out.println("Delete completed records: " + results.getResultSize());
+
+        Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
     }
 
 }
