@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+ <!-- 
  /*
  * $Id$
  * $URL$
@@ -45,9 +45,10 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+
     <class
-        name="org.ikasan.mapping.model.SourceConfigurationValue"
-        table="MCSSourceConfigValue">
+        name="org.ikasan.mapping.model.ManyToManyTargetConfigurationValue"
+        table="MCSManyToManyTargetConfigValue">
 
         <id name="id"
           type="java.lang.Long"
@@ -56,24 +57,9 @@
           <generator class="identity" />
         </id>
 
-        <property name="sourceSystemValue"
+        <property name="targetSystemValue"
                   type="java.lang.String"
-                  column="SourceSystemValue" />
-
-        <property name="mappingConfigurationId"
-                  type="java.lang.Long"
-                  column="MappingConfigurationId" />
-
-        <property name="sourceConfigGroupId"
-                  type="java.lang.Long"
-                  column="SourceConfigGroupId" />
-
-        <many-to-one name="targetConfigurationValue"
-                  class="org.ikasan.mapping.model.TargetConfigurationValue"
-                  column="TargetConfigurationValueId"
-                  not-null="false"
-                  fetch="select"
-                  lazy="false"/>
+                  column="TargetSystemValue" />
 
         <property name="createdDateTime"
                   type="java.util.Date"
@@ -85,4 +71,5 @@
                   column="UpdatedDateTime"
                   not-null="true" />
     </class>
+
 </hibernate-mapping>

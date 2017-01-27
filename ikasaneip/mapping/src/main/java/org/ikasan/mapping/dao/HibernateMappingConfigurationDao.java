@@ -40,6 +40,7 @@
  */
 package org.ikasan.mapping.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,15 +50,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.mapping.dao.constants.MappingConfigurationDaoConstants;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
@@ -290,6 +283,55 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         });
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
+     */
+    @Override
+    public List<String> getTargetConfigurationValues(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final List<String> sourceSystemValues)
+    {
+        MappingConfiguration mappingConfiguration = this.getMappingConfiguration(clientName, configurationType, sourceSystem, targetSystem);
+
+        final List<SourceConfigurationValue> manyToManySourceConfigurationValues
+                    = this.getManyToManySourceConfigurationValues(mappingConfiguration.getId(), sourceSystemValues);
+
+        Long groupingId = -1l;
+
+        for(SourceConfigurationValue value: manyToManySourceConfigurationValues)
+        {
+            if(groupingId != -1l && groupingId != value.getSourceConfigGroupId())
+            {
+                return new ArrayList<String>();
+            }
+
+            groupingId = value.getSourceConfigGroupId();
+        }
+
+        final Long groupingIdParam = groupingId;
+
+        return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            @SuppressWarnings("unchecked")
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(MappingConfigurationDaoConstants.MANY_TO_MAPPING_CONFIGURATION_QUERY);
+                query.setParameter(MappingConfigurationDaoConstants.GROUPING_ID, groupingIdParam);
+
+                List<String> results = (List<String>)query.list();
+
+                if(results.size() == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return results;
+                }
+            }
+        });
+    }
+
     /**
      * (non-Javadoc)
      * @see org.ikasan.mapping.dao.MappingConfigurationDao#getKeyLocationQuery(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
@@ -430,10 +472,36 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
         return targetConfigurationValue.getId();
     }
 
+
+    @Override
+    public Long storeManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue)
+    {
+        targetConfigurationValue.setUpdatedDateTime(new Date());
+        this.getHibernateTemplate().saveOrUpdate(targetConfigurationValue);
+
+        return targetConfigurationValue.getId();
+    }
+
+    @Override
+    public void storeSourceValueTargetValueGrouping(SourceValueTargetValueGrouping sourceValueTargetValueGrouping)
+    {
+        this.getHibernateTemplate().saveOrUpdate(sourceValueTargetValueGrouping);
+    }
+
+    @Override
+    public List<SourceConfigurationValue> getManyToManySourceConfigurationValues(Long mappingConfigurationId, List<String> values)
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(SourceConfigurationValue.class);
+        criteria.add(Restrictions.in("sourceSystemValue", values));
+        criteria.add(Restrictions.eq("mappingConfigurationId", mappingConfigurationId));
+
+        return (List<SourceConfigurationValue>)this.getHibernateTemplate().findByCriteria(criteria);
+    }
+
     /*
-     * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationServiceClient(org.ikasan.mapping.window.ConfigurationServiceClient)
-     */
+             * (non-Javadoc)
+             * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeConfigurationServiceClient(org.ikasan.mapping.window.ConfigurationServiceClient)
+             */
     @Override
     public Long storeConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient)
     {
