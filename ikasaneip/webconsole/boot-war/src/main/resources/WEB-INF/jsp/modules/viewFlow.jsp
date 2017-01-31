@@ -48,7 +48,7 @@
 
 <h2>Flow :: <c:out value="${flow.name}" /></h2>
 
- <security:authorize access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin')">
+ <security:authorize access="hasAnyAuthority('ALL','WriteBlueConsole')">
  <c:url var="initiatorLink" value="flowStartupControl.htm">
                 <c:param name="moduleName" value="${moduleName}"/>
                 <c:param name="flowName" value="${flow.name}"/>
@@ -65,7 +65,7 @@
     <input type="submit" value="Update" class="controlButton"/>
 </security:authorize>
 
-	<security:authorize access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin')">
+	<security:authorize access="hasAnyAuthority('ALL','WriteBlueConsole')">
 	Startup Type : ${startupControl.startupType}
 	</security:authorize>
 

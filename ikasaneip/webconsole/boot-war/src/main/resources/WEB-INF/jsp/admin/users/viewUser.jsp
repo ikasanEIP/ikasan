@@ -158,7 +158,7 @@
           </c:url>
           
             <tr>
-                <td><c:out value="${authority.authority}" /></td>
+                <td><c:out value="${authority.name}" /></td>
                 <td><c:out value="${authority.description}" /></td>
                 <td>
                   <form:form action="${grantLink}" method="post">

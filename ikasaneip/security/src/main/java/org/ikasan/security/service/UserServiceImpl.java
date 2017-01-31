@@ -40,14 +40,17 @@
  */
 package org.ikasan.security.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.security.dao.AuthorityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.Authority;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -69,6 +72,8 @@ public class UserServiceImpl implements UserService
      */
     private AuthorityDao authorityDao;
 
+    private SecurityService securityService;
+
     /**
      * <code>PasswordEncoder</code> for encoding user passwords
      */
@@ -81,11 +86,12 @@ public class UserServiceImpl implements UserService
      * @param authorityDao
      * @param passwordEncoder
      */
-    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao, PasswordEncoder passwordEncoder)
+    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao ,SecurityService securityService , PasswordEncoder passwordEncoder)
     {
         super();
         this.userDao = userDao;
         this.authorityDao = authorityDao;
+        this.securityService = securityService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -254,9 +260,12 @@ public class UserServiceImpl implements UserService
      * 
      * @see org.ikasan.framework.security.service.UserService#getAuthorities()
      */
-    public List<Authority> getAuthorities()
+    public List<Policy> getAuthorities()
     {
-        return authorityDao.getAuthorities();
+        List<Policy> policies = securityService.getAllPolicies();
+
+        return policies;
+
     }
 
     /*
@@ -267,8 +276,9 @@ public class UserServiceImpl implements UserService
     public void grantAuthority(String username, String authority)
     {
         User user = loadUserByUsername(username);
-        Authority nongrantedAuthority = authorityDao.getAuthority(authority);
-        user.grantAuthority(nongrantedAuthority);
+        Policy nongrantedPolicy = securityService.findPolicyByName(authority);
+       //TODO: attach policy to user
+        //user.grantAuthority(nongrantedAuthority);
         userDao.save(user);
     }
 
@@ -280,8 +290,8 @@ public class UserServiceImpl implements UserService
     public void revokeAuthority(String username, String authority)
     {
         User user = loadUserByUsername(username);
-        Authority grantedAuthority = authorityDao.getAuthority(authority);
-        user.revokeAuthority(grantedAuthority);
+        Policy nongrantedPolicy = securityService.findPolicyByName(authority);
+        user.revokePolicy(nongrantedPolicy);
         userDao.save(user);
     }
 
@@ -326,22 +336,7 @@ public class UserServiceImpl implements UserService
         user.setEmail(newEmail);
         userDao.save(user);
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.ikasan.framework.security.service.UserService#createAuthority(org.ikasan.framework.security.window.Authority)
-     */
-    public void createAuthority(Authority newAuthority)
-    {
-        if (authorityDao.getAuthorities().contains(newAuthority))
-        {
-            throw new IllegalArgumentException("Cannot create new authority [" + newAuthority
-                    + "] as it already exists!");
-        }
-        authorityDao.save(newAuthority);
-    }
+
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.security.service.UserService#getUserByUsernameLike(java.lang.String)

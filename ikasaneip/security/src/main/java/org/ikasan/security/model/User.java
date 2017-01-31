@@ -305,18 +305,32 @@ public class User implements UserDetails, Principal
     }
 
     /**
-     * Removes an Authority from a user's granted authorities
+     * Removes an Policy from a user's granted authorities
      * 
-     * @param authority
+     * @param policy
      */
-    public void revokeAuthority(Authority authority)
+    public void revokePolicy(Policy policy)
     {
-        if (!grantedAuthorities.contains(authority))
-        {
-            throw new IllegalArgumentException("Authority [" + authority + "] has not been granted to user [" + this
-                    + "]");
-        }
-        grantedAuthorities.remove(authority);
+		for(IkasanPrincipal principal: principals)
+		{
+			Set<Role> roles = principal.getRoles();
+
+			for(Role role: roles)
+			{
+				Set<Policy> policies = role.getPolicies();
+
+
+				if(policies.contains(policy)){
+					policies.remove(policy);
+
+				}
+
+			}
+		}
+
+        //
+        //    throw new IllegalArgumentException("Authority [" + authority + "] has not been granted to user [" + this
+        //            + "]");
     }
 
     /**

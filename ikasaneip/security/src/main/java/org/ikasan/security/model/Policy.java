@@ -78,7 +78,16 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
         this.updatedDateTime = new Date(now);
     }
 
-    /**
+
+	public Policy(String name,String description) {
+		this.description = description;
+		this.name = name;
+		long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
+		this.updatedDateTime = new Date(now);
+	}
+
+	/**
      * @return the id
      */
     public Long getId()

@@ -75,4 +75,7 @@ public class SecurityConstants
 	public static String MODIFY_EXISTING_MAPPING_AUTHORITY = "ModifyExistingMapping";
 	
 	public static String MAPPING_CONFIGURATION_LINKED_TYPE = "Mapping Configuration";
+	public static String READ_BLUE_CONSOLE_AUTHORITY = "ReadBlueConsole";
+	public static String WRITE_BLUE_CONSOLE_AUTHORITY = "WriteBlueConsole";
+
 }

@@ -41,8 +41,8 @@
 package org.ikasan.module.service;
 
 import org.apache.log4j.Logger;
-import org.ikasan.security.model.Authority;
-import org.ikasan.security.service.UserService;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
@@ -90,8 +90,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private ApplicationContext platformContext;
 
-    /** UserService provides access to users and authorities */
-    private UserService userService;
+    /** SecurityService provides access to users and authorities */
+    private SecurityService securityService;
 
     /** TopologyService provides access to module metadata tables */
     private TopologyService topologyService;
@@ -103,10 +103,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * Constructor
      * @param moduleContainer
      * @param moduleActivator
-     * @param userService
+     * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-                                           UserService userService, TopologyService topologyService)
+                                           SecurityService securityService, TopologyService topologyService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -121,16 +121,16 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
         }
 
-        this.userService = userService;
-        if(userService == null)
+        this.securityService = securityService;
+        if(securityService == null)
         {
-            throw new IllegalArgumentException("userService cannot be 'null'");
+            throw new IllegalArgumentException("securityService cannot be 'null'");
         }
 
         this.topologyService = topologyService;
         if(topologyService == null)
         {
-            throw new IllegalArgumentException("userService cannot be 'null'");
+            throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
         innerContexts = new LinkedList<>();
     }
@@ -289,21 +289,20 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleSecurity(Module module)
     {
-        List<Authority> existingAuthorities = this.userService.getAuthorities();
-        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
-                + module.getName() + " module. This is typically assigned to business users");
-        if (!existingAuthorities.contains(moduleUserAuthority))
+        List<Policy> existingAuthorities = this.securityService.getAllPolicies();
+
+        Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module vai BlueConsole.");
+        if (!existingAuthorities.contains(readBlueConsole))
         {
             logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleUserAuthority);
+            this.securityService.savePolicy(readBlueConsole);
         }
-        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
-                "Allows administrator access to the " + module.getName()
-                        + " module. This is typically assigned to business administrators");
-        if (!existingAuthorities.contains(moduleAdminAuthority))
+        Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module vai BlueConsole.");
+
+        if (!existingAuthorities.contains(writeBlueConsole))
         {
             logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleAdminAuthority);
+            this.securityService.savePolicy(writeBlueConsole);
         }
     }
 

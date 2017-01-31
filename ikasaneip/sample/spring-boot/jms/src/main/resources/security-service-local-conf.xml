@@ -52,19 +52,19 @@
 		<protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.stopFlow(..))"
 			access="MODULE_ADMIN" / -->
-
+<!--
 		<protect-pointcut
 				expression="execution(* org.ikasan.security.service.UserService.changeUsersPassword(..))"
-				access="ROLE_ADMIN" />
+				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
 
 		<protect-pointcut
 				expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..))"
-				access="ROLE_ADMIN" />
+				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
 
 		<protect-pointcut
 				expression="execution(* org.ikasan.security.service.UserService.revokeAuthority(..))"
-				access="ROLE_ADMIN" />
-
+				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
+-->
 
 		<!-- protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.setStartupType(..))"
@@ -101,7 +101,7 @@
 		<intercept-url pattern="/images/*" access="permitAll"/>
 		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
 		<intercept-url pattern="/rest/**" access="permitAll"/>
-		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin')" />
+		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
 
 		<form-login login-page="/login.jsp"
 					default-target-url="/home.htm"
@@ -117,7 +117,7 @@
 				remember-me-parameter="_spring_security_remember_me"
 				remember-me-cookie="SPRING_SECURITY_REMEMBER_ME_COOKIE"
 		/>
-		<intercept-url pattern="/**" access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleUser')"/>
+		<intercept-url pattern="/**" access="hasAnyAuthority('ALL','ReadBlueConsole','WriteBlueConsole')"/>
 		<http-basic />
 
 	</http>
@@ -185,7 +185,10 @@
 						execution(* org.ikasan.security.service.UserService.enableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.createAuthority(..)) ||
 						execution(* org.ikasan.security.service.UserService.deleteUser(..)) ||
-						execution(* org.ikasan.security.service.UserService.createUser(..))" />
+						execution(* org.ikasan.security.service.UserService.createUser(..)) ||
+						execution(* org.ikasan.security.service.SecurityService.savePolicy(..))
+
+						" />
 		<aop:pointcut id="systemEventServiceMethods"
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
