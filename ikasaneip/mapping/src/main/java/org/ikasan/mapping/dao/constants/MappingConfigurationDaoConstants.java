@@ -190,9 +190,7 @@ public interface MappingConfigurationDaoConstants
     		"mc.id = s1.mappingConfigurationId " +
     		"and s1.sourceSystemValue = '' and scv.targetConfigurationValue = s1.targetConfigurationValue))";
 
-
-    public static final String MANY_TO_MAPPING_CONFIGURATION_QUERY = "select tcv.targetSystemValue from SourceValueTargetValueGrouping as g," +
+    public static final String MANY_TO_MAPPING_CONFIGURATION_QUERY = "select tcv.targetSystemValue from" +
             " ManyToManyTargetConfigurationValue as tcv" +
-            " where g.id.groupingId = :" + GROUPING_ID +
-            " and g.id.targetValueId = tcv.id";
+            " where tcv.groupId = :" + GROUPING_ID;
 }

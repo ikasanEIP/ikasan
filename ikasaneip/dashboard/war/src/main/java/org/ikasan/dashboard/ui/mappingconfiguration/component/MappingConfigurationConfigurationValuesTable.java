@@ -40,12 +40,9 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
@@ -54,6 +51,7 @@ import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
+import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -69,15 +67,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.DefaultItemSorter;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -96,6 +86,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     private IndexedContainer container;
     private VisibilityGroup visibilityGroup;
     private SystemEventService systemEventService;
+    private ArrayList<ManyToManyTargetConfigurationValue> manyToManyTargetConfigurationValues;
+    private ArrayList<ManyToManyTargetConfigurationValue> deletedManyToManyTargetConfigurationValues;
 
     /**
      * Constructor
@@ -160,6 +152,11 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     return ((TextField)((VerticalLayout) o1).getComponent(0)).getValue().toLowerCase().compareTo(
                         ((TextField)((VerticalLayout) o2).getComponent(0)).getValue().toLowerCase());
                 }
+                else if (o1 instanceof HorizontalLayout && o2 instanceof HorizontalLayout)
+                {
+                    return ((TextField)((HorizontalLayout) o1).getComponent(0)).getValue().toLowerCase().compareTo(
+                            ((TextField)((HorizontalLayout) o2).getComponent(0)).getValue().toLowerCase());
+                }
 
                 return 0;
 
@@ -167,7 +164,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         }));
 
         container.addContainerProperty("Source Configuration Value", VerticalLayout.class,  null);
-        container.addContainerProperty("Target Configuration Value", TextField.class,  null);
+        container.addContainerProperty("Target Configuration Value", VerticalLayout.class,  null);
         container.addContainerProperty("Delete", Button.class,  null);
 
         this.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
@@ -193,11 +190,45 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
             for(int i=0; i<layout.getComponentCount(); i++)
             {
-                ((TextField)layout.getComponent(i)).setReadOnly(!editable);
+                if(layout.getComponent(i) instanceof HorizontalLayout)
+                {
+                    ((TextField) ((HorizontalLayout) layout.getComponent(i)).getComponent(0)).setReadOnly(!editable);
+
+                    if(((HorizontalLayout) layout.getComponent(i)).getComponentCount() > 1)
+                    {
+                        ((Button) ((HorizontalLayout) layout.getComponent(i)).getComponent(1)).setVisible(editable);
+                    }
+
+                    if(((HorizontalLayout) layout.getComponent(i)).getComponentCount() > 2)
+                    {
+                        ((Button) ((HorizontalLayout) layout.getComponent(i)).getComponent(2)).setVisible(editable);
+                    }
+                }
+                else
+                {
+                    ((TextField) layout.getComponent(i)).setReadOnly(!editable);
+                }
             }
 
-            Property<TextField> targetProperty = item.getItemProperty("Target Configuration Value");
-            targetProperty.getValue().setReadOnly(!editable);
+            Property<VerticalLayout> targetProperty = item.getItemProperty("Target Configuration Value");
+            layout = targetProperty.getValue();
+
+            for(int i=0; i<layout.getComponentCount(); i++)
+            {
+                if(layout.getComponent(i) instanceof HorizontalLayout)
+                {
+                    ((TextField) ((HorizontalLayout) layout.getComponent(i)).getComponent(0)).setReadOnly(!editable);
+
+                    if(((HorizontalLayout) layout.getComponent(i)).getComponentCount() > 1)
+                    {
+                        ((Button) ((HorizontalLayout) layout.getComponent(i)).getComponent(1)).setVisible(editable);
+                    }
+                }
+                else
+                {
+                    ((TextField) layout.getComponent(i)).setReadOnly(!editable);
+                }
+            }
         }
 
         super.setEditable(editable);
@@ -210,28 +241,47 @@ public class MappingConfigurationConfigurationValuesTable extends Table
      */
     public void save() throws Exception
     {
-
-        for(SourceConfigurationValue value: this.mappingConfiguration.getSourceConfigurationValues())
+        if(!mappingConfiguration.getIsManyToMany())
         {
-           Long numberOfSourceConfigurationValues = this.mappingConfigurationService
-                    .getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(value.getTargetConfigurationValue());
-
-            if(numberOfSourceConfigurationValues == 0)
+            for (SourceConfigurationValue value : this.mappingConfiguration.getSourceConfigurationValues())
             {
-                this.mappingConfigurationService.deleteTargetConfigurationValue(value.getTargetConfigurationValue());
-            }
-            else
-            {
-            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                        .getAttribute(DashboardSessionValueConstants.USER);
+                Long numberOfSourceConfigurationValues = this.mappingConfigurationService
+                        .getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(value.getTargetConfigurationValue());
 
-                logger.debug("User: " + authentication.getName() + " saving Target Configuration Value: " +
-                        value);
-                this.mappingConfigurationService.saveTargetConfigurationValue(value.getTargetConfigurationValue());
-                
-                systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
-                		"Saving Target Configuration Value: " + value, authentication.getName());
+                if (numberOfSourceConfigurationValues == 0)
+                {
+                    this.mappingConfigurationService.deleteTargetConfigurationValue(value.getTargetConfigurationValue());
+                } else
+                {
+                    IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                            .getAttribute(DashboardSessionValueConstants.USER);
+
+                    logger.debug("User: " + authentication.getName() + " saving Target Configuration Value: " +
+                            value);
+                    this.mappingConfigurationService.saveTargetConfigurationValue(value.getTargetConfigurationValue());
+
+                    systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE,
+                            "Saving Target Configuration Value: " + value, authentication.getName());
+                }
             }
+        }
+        else
+        {
+            for(ManyToManyTargetConfigurationValue value: this.deletedManyToManyTargetConfigurationValues)
+            {
+                this.manyToManyTargetConfigurationValues.remove(value);
+
+                logger.info("Trying to delete: " + value);
+
+                this.mappingConfigurationService.deleteManyToManyTargetConfigurationValue(value);
+            }
+
+            for(ManyToManyTargetConfigurationValue value: this.manyToManyTargetConfigurationValues)
+            {
+                this.mappingConfigurationService.storeManyToManyTargetConfigurationValue(value);
+            }
+
+            deletedManyToManyTargetConfigurationValues = new ArrayList<ManyToManyTargetConfigurationValue>();
         }
     }
 
@@ -244,7 +294,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     {
         Long sourceSystemGroupId = null;
         
-        if(this.mappingConfiguration.getNumberOfParams() > 1)
+        if(this.mappingConfiguration.getNumberOfParams() > 1 || mappingConfiguration.getIsManyToMany())
         {
             sourceSystemGroupId = this.mappingConfigurationService.getNextSequenceNumber();
         }
@@ -253,12 +303,15 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
         this.mappingConfigurationService.saveTargetConfigurationValue(targetConfigurationValue);
 
-        VerticalLayout tableCellLayout = new VerticalLayout();
+        final VerticalLayout sourceValueTableCellLayout = new VerticalLayout();
+        sourceValueTableCellLayout.setSpacing(true);
 
         SourceConfigurationValue sourceConfigurationValue = null;
         final Button deleteButton = new Button("Delete");
 
         ArrayList<SourceConfigurationValue> sourceConfigurationValues = new ArrayList<SourceConfigurationValue>();
+
+        final Long fsourceSystemGroupId = sourceSystemGroupId;
 
         for(int i=0; i<this.mappingConfiguration.getNumberOfParams(); i++)
         {
@@ -272,18 +325,108 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
             this.mappingConfiguration.getSourceConfigurationValues().add(sourceConfigurationValue);
             
-            BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(sourceConfigurationValue);
+            final BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(sourceConfigurationValue);
             final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
 
-            tableCellLayout.addComponent(tf);
-            tf.setReadOnly(true);
+            final HorizontalLayout hl = new HorizontalLayout();
+            hl.addComponent(tf);
+
+            if(mappingConfiguration.getIsManyToMany())
+            {
+                Button addSourceValueButton = new Button();
+                addSourceValueButton.setIcon(VaadinIcons.PLUS);
+                addSourceValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                addSourceValueButton.setDescription("Add new source value.");
+                addSourceValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
+                addSourceValueButton.addClickListener(new Button.ClickListener()
+                {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent)
+                    {
+                        logger.info("Attempting to add text field");
+                        SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
+                        sourceConfigurationValue.setSourceSystemValue("Add source system value");
+                        sourceConfigurationValue.setSourceConfigGroupId(fsourceSystemGroupId);
+                        sourceConfigurationValue.setMappingConfigurationId(mappingConfiguration.getId());
+
+                        mappingConfiguration.getSourceConfigurationValues().add(sourceConfigurationValue);
+
+                        Item item = new BeanItem<SourceConfigurationValue>(sourceConfigurationValue);
+                        TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
+                        tf.setReadOnly(false);
+                        tf.setWidth(300, Unit.PIXELS);
+
+                        sourceValueTableCellLayout.addComponent(tf);
+                    }
+                });
+
+                hl.addComponent(addSourceValueButton);
+            }
+
+            sourceValueTableCellLayout.addComponent(hl);
+            tf.setReadOnly(false);
             tf.setWidth(300, Unit.PIXELS);
         }
 
-        BeanItem<TargetConfigurationValue> targetConfigurationItem = new BeanItem<TargetConfigurationValue>(targetConfigurationValue);
-        final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
-        targetConfigurationTextField.setReadOnly(true);
-        targetConfigurationTextField.setWidth(300, Unit.PIXELS);
+        final VerticalLayout targetValueTableCellLayout = new VerticalLayout();
+        targetValueTableCellLayout.setSpacing(true);
+
+        if(this.mappingConfiguration.getIsManyToMany())
+        {
+            ManyToManyTargetConfigurationValue manyToManyTargetConfigurationValue = new ManyToManyTargetConfigurationValue();
+            manyToManyTargetConfigurationValue.setGroupId(fsourceSystemGroupId);
+            manyToManyTargetConfigurationValue.setTargetSystemValue("Add source system value");
+
+            manyToManyTargetConfigurationValues.add(manyToManyTargetConfigurationValue);
+
+            Item item = new BeanItem<ManyToManyTargetConfigurationValue>(manyToManyTargetConfigurationValue);
+            TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
+            tf.setReadOnly(false);
+            tf.setWidth(300, Unit.PIXELS);
+
+            final HorizontalLayout hl = new HorizontalLayout();
+            hl.addComponent(tf);
+
+            Button addTargetValueButton = new Button();
+            addTargetValueButton.setIcon(VaadinIcons.PLUS);
+            addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            addTargetValueButton.setDescription("Add new source value.");
+            addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+            addTargetValueButton.setVisible(false);
+
+            addTargetValueButton.addClickListener(new Button.ClickListener()
+            {
+                @Override
+                public void buttonClick(ClickEvent clickEvent)
+                {
+                    ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
+                    targetConfigurationValue.setGroupId(fsourceSystemGroupId);
+                    targetConfigurationValue.setTargetSystemValue("Add source system value");
+
+                    manyToManyTargetConfigurationValues.add(targetConfigurationValue);
+
+                    Item item = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
+                    TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
+                    tf.setReadOnly(false);
+                    tf.setWidth(300, Unit.PIXELS);
+
+                    targetValueTableCellLayout.addComponent(tf);
+                }
+            });
+
+            hl.addComponent(addTargetValueButton);
+            targetValueTableCellLayout.addComponent(hl);
+        }
+        else
+        {
+            BeanItem<TargetConfigurationValue> targetConfigurationItem = new BeanItem<TargetConfigurationValue>(targetConfigurationValue);
+            final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
+            targetConfigurationTextField.setReadOnly(true);
+            targetConfigurationTextField.setWidth(300, Unit.PIXELS);
+
+            targetValueTableCellLayout.addComponent(targetConfigurationTextField);
+        }
 
         final DeleteRowAction action = new DeleteRowAction(sourceConfigurationValues, this.mappingConfiguration
             , this, this.mappingConfigurationService, this.systemEventService);
@@ -323,9 +466,9 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
         Item item = this.container.addItemAt(0, sourceConfigurationValue);
         Property<Layout> sourceProperty = item.getItemProperty("Source Configuration Value");
-        sourceProperty.setValue(tableCellLayout);
-        Property<TextField> targetProperty = item.getItemProperty("Target Configuration Value");
-        targetProperty.setValue(targetConfigurationTextField);
+        sourceProperty.setValue(sourceValueTableCellLayout);
+        Property<Layout> targetProperty = item.getItemProperty("Target Configuration Value");
+        targetProperty.setValue(targetValueTableCellLayout);
         Property<Button> deleteProperty = item.getItemProperty("Delete");
         deleteProperty.setValue(deleteButton);
 
@@ -336,12 +479,12 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(DashboardSessionValueConstants.USER);
 
-        logger.debug("User: " + principal.getName() 
+        logger.info("User: " + principal.getName()
             + " added new mapping configuration value for Mapping Configuration " 
-                + this.mappingConfiguration);
+                + this.mappingConfiguration.toStringLite());
         
         systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
-        		"Added new mapping configuration value for Mapping Configuration: " + this.mappingConfiguration, principal.getName());
+        		"Added new mapping configuration value for Mapping Configuration: " + this.mappingConfiguration.toStringLite(), principal.getName());
     }
 
     /**
@@ -352,6 +495,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     public void populateTable(final MappingConfiguration mappingConfiguration)
     {
         this.mappingConfiguration = mappingConfiguration;
+        manyToManyTargetConfigurationValues = new ArrayList<ManyToManyTargetConfigurationValue>();
+        deletedManyToManyTargetConfigurationValues = new ArrayList<ManyToManyTargetConfigurationValue>();
 
         Set<SourceConfigurationValue> sourceConfigurationValues 
             = mappingConfiguration.getSourceConfigurationValues();
@@ -366,29 +511,100 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
         while(sourceConfigurationValueItr.hasNext())
         {
-            SourceConfigurationValue value = sourceConfigurationValueItr.next();
+            final SourceConfigurationValue value = sourceConfigurationValueItr.next();
 
-            VerticalLayout tableCellLayout = new VerticalLayout();
+            final VerticalLayout tableCellLayout = new VerticalLayout();
+            tableCellLayout.setSpacing(true);
 
             for(int i=0; i<this.mappingConfiguration.getNumberOfParams(); i++)
             {
                 if(!usedSourceConfigurationValues.contains(value))
                 {
+                    logger.info("Adding source value, should be adding button");
                     groupedSourceSystemValues.add(value);
 
                     BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(value);
                     final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
                     tf.setWidth(300, Unit.PIXELS);
 
-                    tableCellLayout.addComponent(tf);
                     tf.setReadOnly(true);
                     usedSourceConfigurationValues.add(value);
-    
+
+                    if (mappingConfiguration.getIsManyToMany())
+                    {
+                        final HorizontalLayout hl = new HorizontalLayout();
+                        hl.addComponent(tf);
+
+                        Button addSourceValueButton = new Button();
+                        addSourceValueButton.setIcon(VaadinIcons.PLUS);
+                        addSourceValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                        addSourceValueButton.setDescription("Add new source value.");
+                        addSourceValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                        addSourceValueButton.setVisible(false);
+
+                        addSourceValueButton.addClickListener(new Button.ClickListener()
+                        {
+                            @Override
+                            public void buttonClick(ClickEvent clickEvent)
+                            {
+                                final SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
+                                sourceConfigurationValue.setSourceSystemValue("Add source system value");
+                                sourceConfigurationValue.setSourceConfigGroupId(value.getSourceConfigGroupId());
+                                sourceConfigurationValue.setMappingConfigurationId(mappingConfiguration.getId());
+
+                                mappingConfiguration.getSourceConfigurationValues().add(sourceConfigurationValue);
+
+                                Item item = new BeanItem<SourceConfigurationValue>(sourceConfigurationValue);
+                                final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
+                                tf.setReadOnly(false);
+                                tf.setWidth(300, Unit.PIXELS);
+
+                                final HorizontalLayout hl = new HorizontalLayout();
+
+                                final Button minusTargetValueButton = new Button();
+                                minusTargetValueButton.setIcon(VaadinIcons.MINUS);
+                                minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                                minusTargetValueButton.setDescription("Add new source value.");
+                                minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                                minusTargetValueButton.setVisible(true);
+
+                                minusTargetValueButton.addClickListener(new Button.ClickListener()
+                                {
+                                    @Override
+                                    public void buttonClick(ClickEvent clickEvent)
+                                    {
+                                        hl.removeComponent(tf);
+                                        hl.removeComponent(minusTargetValueButton);
+                                        hl.setImmediate(true);
+                                        hl.markAsDirty();
+                                        tableCellLayout.removeComponent(hl);
+                                        tableCellLayout.markAsDirty();
+
+                                        mappingConfiguration.getSourceConfigurationValues().remove(sourceConfigurationValue);
+                                    }
+                                });
+
+                                hl.addComponent(tf);
+                                hl.addComponent(minusTargetValueButton);
+
+                                tableCellLayout.addComponent(hl);
+                            }
+                        });
+
+                        hl.addComponent(addSourceValueButton);
+                        tableCellLayout.addComponent(hl);
+                    }
+                    else
+                    {
+                        logger.info("Adding source value, should NOT be adding button");
+                        tableCellLayout.addComponent(tf);
+                    }
+
                     Iterator<SourceConfigurationValue> partnerSourceConfigurationValueItr = sourceConfigurationValues.iterator();
-    
+
                     while(partnerSourceConfigurationValueItr.hasNext())
                     {
-                        SourceConfigurationValue partnerSourceConfigurationValue = partnerSourceConfigurationValueItr.next();
+                        final SourceConfigurationValue partnerSourceConfigurationValue = partnerSourceConfigurationValueItr.next();
 
                         if(partnerSourceConfigurationValue.getSourceConfigGroupId() != null &&
                                 !usedSourceConfigurationValues.contains(partnerSourceConfigurationValue) && 
@@ -400,17 +616,275 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             final TextField stf = new TextField(item.getItemProperty("sourceSystemValue"));
                             stf.setWidth(300, Unit.PIXELS);
 
-                            tableCellLayout.addComponent(stf);
                             stf.setReadOnly(true);
                             usedSourceConfigurationValues.add(partnerSourceConfigurationValue);
+                            tableCellLayout.addComponent(stf);
+
+                            logger.info("Adding source value as partner group");
+
+                            final HorizontalLayout hl = new HorizontalLayout();
+
+                            final Button minusTargetValueButton = new Button();
+                            minusTargetValueButton.setIcon(VaadinIcons.MINUS);
+                            minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                            minusTargetValueButton.setDescription("Add new source value.");
+                            minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                            minusTargetValueButton.setVisible(false);
+
+                            minusTargetValueButton.addClickListener(new Button.ClickListener()
+                            {
+                                @Override
+                                public void buttonClick(ClickEvent clickEvent)
+                                {
+                                    hl.removeComponent(stf);
+                                    hl.removeComponent(minusTargetValueButton);
+                                    hl.setImmediate(true);
+                                    hl.markAsDirty();
+                                    tableCellLayout.removeComponent(hl);
+                                    tableCellLayout.markAsDirty();
+
+                                    mappingConfiguration.getSourceConfigurationValues().remove(partnerSourceConfigurationValue);
+                                }
+                            });
+
+                            hl.addComponent(stf);
+                            hl.addComponent(minusTargetValueButton);
+                            
+                            tableCellLayout.addComponent(hl);
                         }
                     }
 
-                    TargetConfigurationValue targetConfigurationValue = value.getTargetConfigurationValue();
-                    BeanItem<TargetConfigurationValue> targetConfigurationItem = new BeanItem<TargetConfigurationValue>(targetConfigurationValue);
-                    final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
-                    targetConfigurationTextField.setReadOnly(true);
-                    targetConfigurationTextField.setWidth(300, Unit.PIXELS);
+                    final VerticalLayout targetValueTableCellLayout = new VerticalLayout();
+                    targetValueTableCellLayout.setSizeUndefined();
+                    targetValueTableCellLayout.setImmediate(true);
+                    targetValueTableCellLayout.setSpacing(true);
+
+                    if(this.mappingConfiguration.getIsManyToMany())
+                    {
+                        List<ManyToManyTargetConfigurationValue> targetValues
+                                = this.mappingConfigurationService.getManyToManyTargetConfigurationValues(value.getSourceConfigGroupId());
+
+                        boolean buttonAdded = false;
+
+                        if(targetValues.size() == 0)
+                        {
+                            ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
+                            targetConfigurationValue.setGroupId(value.getSourceConfigGroupId());
+                            targetConfigurationValue.setTargetSystemValue("Add source system value");
+
+                            manyToManyTargetConfigurationValues.add(targetConfigurationValue);
+
+                            Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
+                            final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
+                            tvf.setReadOnly(false);
+                            tvf.setWidth(300, Unit.PIXELS);
+
+                            final HorizontalLayout hl = new HorizontalLayout();
+                            hl.addComponent(tvf);
+
+                            Button addTargetValueButton = new Button();
+                            addTargetValueButton.setIcon(VaadinIcons.PLUS);
+                            addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                            addTargetValueButton.setDescription("Add new source value.");
+                            addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                            addTargetValueButton.setVisible(false);
+
+                            addTargetValueButton.addClickListener(new Button.ClickListener()
+                            {
+                                @Override
+                                public void buttonClick(ClickEvent clickEvent)
+                                {
+                                    final HorizontalLayout hl = new HorizontalLayout();
+                                    hl.setSizeUndefined();
+
+                                    final ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
+                                    targetConfigurationValue.setGroupId(value.getSourceConfigGroupId());
+                                    targetConfigurationValue.setTargetSystemValue("Add source system value");
+
+                                    manyToManyTargetConfigurationValues.add(targetConfigurationValue);
+
+                                    Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
+                                    final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
+                                    tvf.setReadOnly(false);
+                                    tvf.setWidth(300, Unit.PIXELS);
+
+                                    final Button minusTargetValueButton = new Button();
+                                    minusTargetValueButton.setIcon(VaadinIcons.MINUS);
+                                    minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                                    minusTargetValueButton.setDescription("Add new source value.");
+                                    minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                                    minusTargetValueButton.setVisible(true);
+
+                                    minusTargetValueButton.addClickListener(new Button.ClickListener()
+                                    {
+                                        @Override
+                                        public void buttonClick(ClickEvent clickEvent)
+                                        {
+                                            hl.removeComponent(tvf);
+                                            hl.removeComponent(minusTargetValueButton);
+                                            hl.setImmediate(true);
+                                            hl.markAsDirty();
+                                            targetValueTableCellLayout.removeComponent(hl);
+                                            targetValueTableCellLayout.markAsDirty();
+
+                                            deletedManyToManyTargetConfigurationValues.add(targetConfigurationValue);
+                                        }
+                                    });
+                                    
+                                    hl.addComponent(tvf);
+                                    hl.addComponent(minusTargetValueButton);
+                                    targetValueTableCellLayout.addComponent(hl);
+                                }
+                            });
+
+                            hl.addComponent(addTargetValueButton);
+                            targetValueTableCellLayout.addComponent(hl);
+                        }
+                        else
+                        {
+                            for(final ManyToManyTargetConfigurationValue targetValue: targetValues)
+                            {
+                                manyToManyTargetConfigurationValues.add(targetValue);
+
+                                Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetValue);
+                                final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
+                                tvf.setReadOnly(true);
+                                tvf.setWidth(300, Unit.PIXELS);
+
+                                if (!buttonAdded)
+                                {
+                                    buttonAdded = true;
+                                    final HorizontalLayout hl = new HorizontalLayout();
+                                    hl.setSizeUndefined();
+                                    hl.addComponent(tvf);
+
+                                    Button addTargetValueButton = new Button();
+                                    addTargetValueButton.setIcon(VaadinIcons.PLUS);
+                                    addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                                    addTargetValueButton.setDescription("Add new source value.");
+                                    addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                                    addTargetValueButton.setVisible(false);
+
+                                    addTargetValueButton.addClickListener(new Button.ClickListener()
+                                    {
+                                        @Override
+                                        public void buttonClick(ClickEvent clickEvent)
+                                        {
+                                            final ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
+                                            targetConfigurationValue.setGroupId(value.getSourceConfigGroupId());
+                                            targetConfigurationValue.setTargetSystemValue("Add source system value");
+
+                                            manyToManyTargetConfigurationValues.add(targetConfigurationValue);
+
+                                            Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
+                                            final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
+                                            tvf.setReadOnly(false);
+                                            tvf.setWidth(300, Unit.PIXELS);
+
+                                            final HorizontalLayout hl = new HorizontalLayout();
+
+                                            final Button minusTargetValueButton = new Button();
+                                            minusTargetValueButton.setIcon(VaadinIcons.MINUS);
+                                            minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                                            minusTargetValueButton.setDescription("Add new source value.");
+                                            minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                                            minusTargetValueButton.setVisible(true);
+
+                                            minusTargetValueButton.addClickListener(new Button.ClickListener()
+                                            {
+                                                @Override
+                                                public void buttonClick(ClickEvent clickEvent)
+                                                {
+                                                    hl.removeComponent(tvf);
+                                                    hl.removeComponent(minusTargetValueButton);
+                                                    hl.setImmediate(true);
+                                                    hl.markAsDirty();
+                                                    targetValueTableCellLayout.removeComponent(hl);
+                                                    targetValueTableCellLayout.markAsDirty();
+
+                                                    deletedManyToManyTargetConfigurationValues.add(targetConfigurationValue);
+                                                }
+                                            });
+
+                                            hl.addComponent(tvf);
+                                            hl.addComponent(minusTargetValueButton);
+
+                                            targetValueTableCellLayout.addComponent(hl);
+                                        }
+                                    });
+
+                                    final Button minusTargetValueButton = new Button();
+                                    minusTargetValueButton.setIcon(VaadinIcons.MINUS);
+                                    minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                                    minusTargetValueButton.setDescription("Remove target value.");
+                                    minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                                    minusTargetValueButton.setVisible(false);
+
+                                    minusTargetValueButton.addClickListener(new Button.ClickListener()
+                                    {
+                                        @Override
+                                        public void buttonClick(ClickEvent clickEvent)
+                                        {
+                                            hl.removeComponent(tvf);
+                                            hl.removeComponent(minusTargetValueButton);
+                                            hl.setImmediate(true);
+                                            hl.markAsDirty();
+                                            targetValueTableCellLayout.removeComponent(hl);
+                                            targetValueTableCellLayout.markAsDirty();
+
+                                            deletedManyToManyTargetConfigurationValues.add(targetValue);
+                                        }
+                                    });
+
+                                    hl.addComponent(addTargetValueButton);
+                                    hl.addComponent(minusTargetValueButton);
+                                    targetValueTableCellLayout.addComponent(hl);
+                                } 
+                                else
+                                {
+                                    final HorizontalLayout hl = new HorizontalLayout();
+                                    hl.setSizeUndefined();
+
+                                    final Button minusTargetValueButton = new Button();
+                                    minusTargetValueButton.setIcon(VaadinIcons.MINUS);
+                                    minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                                    minusTargetValueButton.setDescription("Remove target value.");
+                                    minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                                    minusTargetValueButton.setVisible(false);
+
+                                    minusTargetValueButton.addClickListener(new Button.ClickListener()
+                                    {
+                                        @Override
+                                        public void buttonClick(ClickEvent clickEvent)
+                                        {
+                                            hl.removeComponent(tvf);
+                                            hl.removeComponent(minusTargetValueButton);
+                                            hl.setImmediate(true);
+                                            hl.markAsDirty();
+                                            targetValueTableCellLayout.removeComponent(hl);
+                                            targetValueTableCellLayout.markAsDirty();
+
+                                            deletedManyToManyTargetConfigurationValues.add(targetValue);
+                                        }
+                                    });
+
+                                    hl.addComponent(tvf);
+                                    hl.addComponent(minusTargetValueButton);
+
+                                    targetValueTableCellLayout.addComponent(hl);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        BeanItem<TargetConfigurationValue> targetConfigurationItem = new BeanItem<TargetConfigurationValue>(value.getTargetConfigurationValue());
+                        final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
+                        targetConfigurationTextField.setReadOnly(true);
+                        targetConfigurationTextField.setWidth(300, Unit.PIXELS);
+
+                        targetValueTableCellLayout.addComponent(targetConfigurationTextField);
+                    }
 
                     final DeleteRowAction action = new DeleteRowAction(groupedSourceSystemValues
                         , this.mappingConfiguration, this, this.mappingConfigurationService, this.systemEventService);
@@ -448,7 +922,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 	}
 
                     this.addItem(new Object[] {tableCellLayout,
-                            targetConfigurationTextField, deleteButton}, value);
+                            targetValueTableCellLayout, deleteButton}, value);
 
                     groupedSourceSystemValues = new ArrayList<SourceConfigurationValue>();
                 }
@@ -492,5 +966,15 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         		"Deleted all configuration values for Mapping Configuration " + message, principal.getName());
         
         return super.removeAllItems();
+    }
+
+    public ArrayList<ManyToManyTargetConfigurationValue> getManyToManyTargetConfigurationValues()
+    {
+        return manyToManyTargetConfigurationValues;
+    }
+
+    public ArrayList<ManyToManyTargetConfigurationValue> getDeletedManyToManyTargetConfigurationValues()
+    {
+        return deletedManyToManyTargetConfigurationValues;
     }
 }

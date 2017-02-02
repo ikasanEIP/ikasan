@@ -84,5 +84,6 @@
                   type="java.util.Date"
                   column="UpdatedDateTime"
                   not-null="true" />
+
     </class>
 </hibernate-mapping>

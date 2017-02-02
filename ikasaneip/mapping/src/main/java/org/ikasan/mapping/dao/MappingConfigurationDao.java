@@ -170,7 +170,7 @@ public interface MappingConfigurationDao
 
     public Long storeSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue);
     
-    public List<SourceConfigurationValue> getManyToManySourceConfigurationValues(Long mappingConfigurationId, List<String> values);
+    public List<SourceConfigurationValue> getSourceConfigurationValues(Long mappingConfigurationId, List<String> values);
 
     public Long storeTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
 
@@ -181,6 +181,8 @@ public interface MappingConfigurationDao
     public void storeSourceValueTargetValueGrouping(SourceValueTargetValueGrouping sourceValueTargetValueGrouping);
 
     public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery);
+
+    public Long getNumberOfSourceValuesForGroupId(Long groupId);
 
     /**
      * 
@@ -320,10 +322,16 @@ public interface MappingConfigurationDao
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue);
 
     /**
-     * 
-     * @param sourceConfigurationValue
+     *
+     * @param targetConfigurationValue
      */
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
+
+    /**
+     *
+     * @param targetConfigurationValue
+     */
+    public void deleteManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue);
 
     /**
      * 
@@ -378,6 +386,13 @@ public interface MappingConfigurationDao
      * @return
      */
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
+
+    /**
+     *
+     * @param groupId
+     * @return
+     */
+    public List<ManyToManyTargetConfigurationValue> getManyToManyTargetConfigurationValues(Long groupId);
 
 
     /**

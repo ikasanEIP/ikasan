@@ -84,7 +84,6 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ManyToManyTargetConfigurationValue.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/SourceValueTargetValueGrouping.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
            </list>
         </property>
@@ -114,7 +113,6 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ManyToManyTargetConfigurationValue.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/SourceValueTargetValueGrouping.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
            </list>
         </property>

@@ -193,6 +193,7 @@
     </bean>
 
     <bean id="mappingConfigurationValuesExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="mappingView" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationView" scope="session">

@@ -55,6 +55,8 @@ public class ManyToManyTargetConfigurationValue implements Serializable
 
     private Long id;
 
+    private Long groupId;
+
     private String targetSystemValue;
 
     /** The data time stamp when an instance was first created */
@@ -93,6 +95,16 @@ public class ManyToManyTargetConfigurationValue implements Serializable
     public Long getId()
     {
         return this.id;
+    }
+
+    public Long getGroupId()
+    {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId)
+    {
+        this.groupId = groupId;
     }
 
     /**
