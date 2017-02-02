@@ -231,12 +231,12 @@ public class MappingConfiguration implements Serializable
 		this.sourceConfigurationValues = sourceConfigurationValues;
 	}
 
-	public boolean isManyToMany()
+	public boolean getIsManyToMany()
 	{
 		return isManyToMany;
 	}
 
-	public void setManyToMany(boolean manyToMany)
+	public void setIsManyToMany(boolean manyToMany)
 	{
 		isManyToMany = manyToMany;
 	}

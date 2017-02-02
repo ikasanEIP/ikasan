@@ -302,6 +302,7 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
+			   <value>/org/ikasan/mapping/model/ManyToManyTargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/security/model/Principal.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Role.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Policy.hbm.xml</value>

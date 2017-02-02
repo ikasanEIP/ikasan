@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -43,29 +41,41 @@
 
  Author:  Ikasan Development Team
  
- Purpose: User table hibernate mapping file.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-  <class name="org.ikasan.mapping.model.SourceValueTargetValueGrouping" table="SourceValueTargetValueGrouping">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-      <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-      </id>
+    <changeSet author="ikasan dev" id="createManyToManyTargetConfigurationValue" context="postBaseline">
 
-      <set name="targetValues"
-           inverse="true"
-           cascade="all,delete-orphan"
-           lazy="false"
-           order-by="groupingId">
-          <key column="GroupingId"/>
-          <one-to-many class="org.ikasan.mapping.model.ManyToManyTargetConfigurationValue"/>
-      </set>
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="MCSManyToManyTargetConfigValue" /></not>
+        </preConditions>
 
-  </class>
-</hibernate-mapping>
+        <createTable tableName="MCSManyToManyTargetConfigValue">
+
+            <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
+                <constraints primaryKey="true" primaryKeyName="MCSManyToManyTargetConfigValuePk"/>
+            </column>
+            <column name="GroupId" type="numeric(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TargetSystemValue" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="${getDate}" name="CreatedDateTime" type="${dateType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UpdatedDateTime" type="${dateType}">
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+
+        <!-- The statement below is required by sybase to set the identity gap to 1. -->
+        <sql dbms="sybase">sp_chgattribute 'MCSManyToManyTargetConfigValue', 'identity_gap', 1</sql>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -57,6 +57,10 @@
           <generator class="identity" />
         </id>
 
+        <property name="groupId"
+                  type="java.lang.Long"
+                  column="GroupId" />
+
         <property name="targetSystemValue"
                   type="java.lang.String"
                   column="TargetSystemValue" />

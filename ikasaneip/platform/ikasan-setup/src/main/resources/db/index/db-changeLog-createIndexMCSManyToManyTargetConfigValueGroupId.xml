@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-
  $Id$
  $URL$
  
@@ -43,29 +41,24 @@
 
  Author:  Ikasan Development Team
  
- Purpose: User table hibernate mapping file.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-  <class name="org.ikasan.mapping.model.SourceValueTargetValueGrouping" table="SourceValueTargetValueGrouping">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    
+     <changeSet author="ikasan dev" id="createIndexMCSManyToManyTargetConfigValueGroupId" context="postBaseline">
+     
+     	<preConditions onFail="MARK_RAN">
+			<not><indexExists indexName="IX_MCSManyToManyTargetConfigValue_GroupId" /></not>
+		</preConditions>
 
-      <id name="id"
-          type="java.lang.Long"
-          column="Id"
-          unsaved-value="null">
-          <generator class="identity" />
-      </id>
-
-      <set name="targetValues"
-           inverse="true"
-           cascade="all,delete-orphan"
-           lazy="false"
-           order-by="groupingId">
-          <key column="GroupingId"/>
-          <one-to-many class="org.ikasan.mapping.model.ManyToManyTargetConfigurationValue"/>
-      </set>
-
-  </class>
-</hibernate-mapping>
+        <createIndex
+            indexName="IX_MCSManyToManyTargetConfigValue_GroupId"
+            tableName="MCSManyToManyTargetConfigValue">
+	        <column name="GroupId" type="numeric(18)"/>
+	    </createIndex>
+        
+    </changeSet>
+    
+</databaseChangeLog>

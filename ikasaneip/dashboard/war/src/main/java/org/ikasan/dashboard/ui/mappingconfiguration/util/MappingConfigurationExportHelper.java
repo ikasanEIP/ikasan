@@ -55,6 +55,7 @@ import org.ikasan.mapping.model.MappingConfiguration;
  */
 public class MappingConfigurationExportHelper
 {
+
     private static final String XML_TAG = "<?xml version=\"1.0\"?>";
     private static final String START_TAG = "<mappingConfiguration xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
     		"xsi:noNamespaceSchemaLocation=\"{$schemaLocation}\">";
@@ -69,6 +70,8 @@ public class MappingConfigurationExportHelper
     private static final String TARGET_CONTEXT_END_TAG = "</targetContext>";
     private static final String DESCRIPTION_START_TAG = "<description>";
     private static final String DESCRIPTION_END_TAG = "</description>";
+    private static final String IS_MANY_TO_MANY_START_TAG = "<isManyToMany>";
+    private static final String IS_MANY_TO_MANY_END_TAG = "</isManyToMany>";
     private static final String NUMBER_OF_SOURCE_PARAMS_START_TAG = "<numberOfSourceParams>";
     private static final String NUMBER_OF_SOURCE_PARAMS_END_TAG = "</numberOfSourceParams>";
     private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG = "<sourceConfigurationValueQueries>";
@@ -129,20 +132,28 @@ public class MappingConfigurationExportHelper
         exportString.append(StringEscapeUtils.escapeXml(mappingConfiguration.getDescription()));
         exportString.append(DESCRIPTION_END_TAG);
 
-        exportString.append(NUMBER_OF_SOURCE_PARAMS_START_TAG);
-        exportString.append(mappingConfiguration.getNumberOfParams());
-        exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
+        exportString.append(IS_MANY_TO_MANY_START_TAG);
+        exportString.append(mappingConfiguration.getIsManyToMany());
+        exportString.append(IS_MANY_TO_MANY_END_TAG);
 
-        exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG);
-
-        for(KeyLocationQuery query: keyLocationQueries)
+        if(!mappingConfiguration.getIsManyToMany())
         {
-            exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG);
-            exportString.append(query.getValue());
-            exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG);
+            exportString.append(NUMBER_OF_SOURCE_PARAMS_START_TAG);
+            exportString.append(mappingConfiguration.getNumberOfParams());
+            exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
+
+            exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG);
+
+            for (KeyLocationQuery query : keyLocationQueries)
+            {
+                exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG);
+                exportString.append(query.getValue());
+                exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG);
+            }
+
+            exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG);
         }
 
-        exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG);
 
         exportString.append(this.mappingConfigurationValuesExportHelper
             .getMappingConfigurationExportXml(mappingConfiguration, false, schemaLocation));
