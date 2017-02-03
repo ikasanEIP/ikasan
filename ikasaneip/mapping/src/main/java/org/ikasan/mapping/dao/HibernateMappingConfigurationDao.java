@@ -296,6 +296,11 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     {
         MappingConfiguration mappingConfiguration = this.getMappingConfiguration(clientName, configurationType, sourceSystem, targetSystem);
 
+        if(mappingConfiguration == null)
+        {
+            return new ArrayList<String>();
+        }
+
         final List<SourceConfigurationValue> manyToManySourceConfigurationValues
                     = this.getSourceConfigurationValues(mappingConfiguration.getId(), sourceSystemValues);
 
