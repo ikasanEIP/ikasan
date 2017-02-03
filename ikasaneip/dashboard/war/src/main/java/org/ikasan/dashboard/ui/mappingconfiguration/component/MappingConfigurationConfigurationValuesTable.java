@@ -648,7 +648,11 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             });
 
                             hl.addComponent(stf);
-                            hl.addComponent(minusTargetValueButton);
+
+                            if(mappingConfiguration.getIsManyToMany())
+                            {
+                                hl.addComponent(minusTargetValueButton);
+                            }
                             
                             tableCellLayout.addComponent(hl);
                         }
@@ -670,7 +674,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                         {
                             ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
                             targetConfigurationValue.setGroupId(value.getSourceConfigGroupId());
-                            targetConfigurationValue.setTargetSystemValue("Add source system value");
+                            targetConfigurationValue.setTargetSystemValue("Add target system value");
 
                             manyToManyTargetConfigurationValues.add(targetConfigurationValue);
 
@@ -685,7 +689,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             Button addTargetValueButton = new Button();
                             addTargetValueButton.setIcon(VaadinIcons.PLUS);
                             addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                            addTargetValueButton.setDescription("Add new source value.");
+                            addTargetValueButton.setDescription("Add new target value.");
                             addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
                             addTargetValueButton.setVisible(false);
 
@@ -699,7 +703,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                                     final ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
                                     targetConfigurationValue.setGroupId(value.getSourceConfigGroupId());
-                                    targetConfigurationValue.setTargetSystemValue("Add source system value");
+                                    targetConfigurationValue.setTargetSystemValue("Add target system value");
 
                                     manyToManyTargetConfigurationValues.add(targetConfigurationValue);
 
@@ -711,7 +715,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                     final Button minusTargetValueButton = new Button();
                                     minusTargetValueButton.setIcon(VaadinIcons.MINUS);
                                     minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                                    minusTargetValueButton.setDescription("Add new source value.");
+                                    minusTargetValueButton.setDescription("Add new target value.");
                                     minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
                                     minusTargetValueButton.setVisible(true);
 
@@ -761,7 +765,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                     Button addTargetValueButton = new Button();
                                     addTargetValueButton.setIcon(VaadinIcons.PLUS);
                                     addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                                    addTargetValueButton.setDescription("Add new source value.");
+                                    addTargetValueButton.setDescription("Add new target value.");
                                     addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
                                     addTargetValueButton.setVisible(false);
 
@@ -772,7 +776,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                         {
                                             final ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
                                             targetConfigurationValue.setGroupId(value.getSourceConfigGroupId());
-                                            targetConfigurationValue.setTargetSystemValue("Add source system value");
+                                            targetConfigurationValue.setTargetSystemValue("Add target system value");
 
                                             manyToManyTargetConfigurationValues.add(targetConfigurationValue);
 
@@ -786,7 +790,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                             final Button minusTargetValueButton = new Button();
                                             minusTargetValueButton.setIcon(VaadinIcons.MINUS);
                                             minusTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                                            minusTargetValueButton.setDescription("Add new source value.");
+                                            minusTargetValueButton.setDescription("Add new target value.");
                                             minusTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
                                             minusTargetValueButton.setVisible(true);
 

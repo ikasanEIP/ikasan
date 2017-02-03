@@ -243,8 +243,8 @@ public class MappingConfigurationPanel extends Panel implements View
         		{
         			navigator.addView(view.getPath(), view.getView());
         		}
-            	
-                saveRequiredMonitor.manageSaveRequired("mappingView");
+
+                UI.getCurrent().getNavigator().navigateTo("mappingView");
                 
                 navigator = new Navigator(UI.getCurrent(), mappingNavigator.getContainer());
 
