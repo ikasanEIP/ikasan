@@ -38,6 +38,10 @@
                    <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="mappingView"/>
+                    <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="existingMappingConfigurationPanel"/>
                    <constructor-arg ref="existingMappingConfigurationPanel"/>
                 </bean>

@@ -102,7 +102,7 @@ public class MappingConfigurationDocumentHelper
         String sourceContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.SOURCE_CONTEXT_XPATH, document, XPathConstants.STRING);
         String targetContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.TARGET_CONTEXT_XPATH, document, XPathConstants.STRING);
         String description = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.DESCRIPTION_XPATH, document, XPathConstants.STRING);
-        Boolean isManyToMany = (Boolean) xpath.evaluate(MappingConfigurationImportXpathConstants.IS_MANY_TO_MANY_XPATH, document, XPathConstants.BOOLEAN);
+        String isManyToMany = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.IS_MANY_TO_MANY_XPATH, document, XPathConstants.STRING);
         String numberOfParams = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.NUMBER_OF_SOURCE_PARAMS_XPATH, document, XPathConstants.STRING);
 
         StringBuffer errorMessage = new StringBuffer();
@@ -127,7 +127,7 @@ public class MappingConfigurationDocumentHelper
             errorMessage.append("Mapping Configuration Description is missing\n");
         }
 
-        if(!isManyToMany && (numberOfParams == null || numberOfParams.isEmpty()))
+        if(isManyToMany.equals("false") && (numberOfParams == null || numberOfParams.isEmpty()))
         {
             errorMessage.append("Mapping Configuration Number of Parameters is missing\n");
         }
@@ -155,9 +155,11 @@ public class MappingConfigurationDocumentHelper
         mappingConfiguration.setSourceContext(sourceConfigurationContext);
         mappingConfiguration.setTargetContext(targetConfigurationContext);
         mappingConfiguration.setDescription(description);
-        mappingConfiguration.setIsManyToMany(isManyToMany);
+        mappingConfiguration.setIsManyToMany((isManyToMany.equals("true")) ? true : false);
 
-        if(!isManyToMany)
+        logger.info("Setting is many to many to: " + isManyToMany);
+
+        if(isManyToMany.equals("false"))
         {
             mappingConfiguration.setNumberOfParams(new Long(numberOfParams));
         }

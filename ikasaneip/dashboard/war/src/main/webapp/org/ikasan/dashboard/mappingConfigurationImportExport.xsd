@@ -9,7 +9,7 @@
         <xs:element ref="sourceContext" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="targetContext" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="description" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="isManyToMany" minOccurs="1" maxOccurs="1"/>
+        <xs:element ref="isManyToMany" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="numberOfSourceParams" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="sourceConfigurationValueQueries" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="mappingConfigurationValues" minOccurs="1" maxOccurs="1"/>
