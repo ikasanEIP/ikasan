@@ -282,6 +282,8 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 		
 		return returnValue;
 	}
+
+
     
     /* (non-Javadoc)
      * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
