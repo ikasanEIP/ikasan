@@ -28,7 +28,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-mvn-archetype</artifactId>
-		<version>1.3.2-SNAPSHOT</version>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ikasan-rt-conf-jboss6-maven-plugin</artifactId>
