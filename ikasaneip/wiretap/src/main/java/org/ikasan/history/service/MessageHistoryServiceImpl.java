@@ -55,11 +55,13 @@ import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.history.FlowInvocation;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapSerialiser;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 
@@ -68,8 +70,8 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
-        , HousekeepService, HarvestService<MessageHistoryEvent>
+public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent<String,Object>, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
+        , HousekeepService, HarvestService<FlowInvocation>
 {
     private static final Logger logger = Logger.getLogger(MessageHistoryServiceImpl.class);
 
@@ -82,23 +84,22 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     protected PlatformConfigurationService platformConfigurationService;
 
     protected Integer messageHistoryDaysToLive = 7;
-    
-    /** The wiretap event factory */
-    private WiretapEventFactory wiretapEventFactory;
+
+    private WiretapSerialiser<Object,String> serialiser;
 
 
-    public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao, WiretapEventFactory wiretapEventFactory)
+    public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao,  WiretapSerialiser<Object,String> serialiser)
     {
         if (messageHistoryDao == null)
         {
             throw new IllegalArgumentException("messageHistoryDao cannot be null");
         }
         this.messageHistoryDao = messageHistoryDao;
-        if (wiretapEventFactory == null)
+        if (serialiser == null)
         {
-            throw new IllegalArgumentException("wiretapEventFactory cannot be null");
+            throw new IllegalArgumentException("serialiser cannot be null");
         }
-        this.wiretapEventFactory = wiretapEventFactory;
+        this.serialiser = serialiser;
 
     }
 
@@ -122,12 +123,10 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
             }
         }
 
-        List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName
+        FlowInvocation<MessageHistoryEvent<String, CustomMetric, MetricEvent>> flowInvocation = historyEventFactory.newEvent(moduleName, flowName
                 , flowInvocationContext, this.messageHistoryDaysToLive);
-        for (MessageHistoryEvent<String, CustomMetric, MetricEvent > messageHistoryEvent : messageHistoryEvents)
-        {
-            messageHistoryDao.save(messageHistoryEvent);
-        }
+
+        this.messageHistoryDao.save(flowInvocation);
     }
 
     @Override
@@ -151,20 +150,21 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
 	 * @see org.ikasan.spec.history.MessageHistoryService#snapMetricEvent(java.lang.Object, java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
 	 */
     @Override
-    public void snapMetricEvent(FlowEvent event, String componentName,
+    public void snapMetricEvent(FlowEvent<String,Object> event, String componentName,
                                 String moduleName, String flowName, Long timeToLive)
     {
         long expiry = System.currentTimeMillis() + (timeToLive * 60000);
-        WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
+        MetricEvent wiretapEvent = new MetricEvent(moduleName, flowName, componentName, event.getIdentifier(),
+                event.getRelatedIdentifier(), event.getTimestamp(), serialiser.serialise(event.getPayload()), expiry);
         this.messageHistoryDao.save(wiretapEvent);
     }
 
     @Override
-    public List<MessageHistoryEvent> harvest(int transactionBatchSize)
+    public List<FlowInvocation> harvest(int transactionBatchSize)
     {
-        List<MessageHistoryEvent> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
+        List<FlowInvocation> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
 
-        for(MessageHistoryEvent event: events)
+        for(FlowInvocation event: events)
         {
             event.setHarvested(true);
 

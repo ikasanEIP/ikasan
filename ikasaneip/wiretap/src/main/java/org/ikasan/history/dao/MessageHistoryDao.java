@@ -44,6 +44,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.ikasan.history.model.MetricEvent;
+import org.ikasan.spec.history.FlowInvocation;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -60,12 +62,19 @@ public interface MessageHistoryDao
      * @param messageHistoryEvent the event
      */
     public void save(MessageHistoryEvent messageHistoryEvent);
-    
+
     /**
      * Save a MetricEvent
-     * @param wiretapEvent the event
+     * @param metricEvent the event
      */
-    public void save(WiretapEvent wiretapEvent);
+    public void save(MetricEvent metricEvent);
+
+    /**
+     * Save a FlowInvocation
+     *
+     * @param flowInvocation
+     */
+    public void save(FlowInvocation flowInvocation);
 
 
     /**
@@ -120,7 +129,7 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<MessageHistoryEvent> getHarvestableRecords(int transactionBatchSize);
+    public List<FlowInvocation> getHarvestableRecords(int transactionBatchSize);
 
     /**
      * Get the events that are already harvested.
@@ -128,14 +137,14 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<MessageHistoryEvent> getHarvestedRecords(final int transactionBatchSize);
+    public List<FlowInvocation> getHarvestedRecords(final int transactionBatchSize);
 
     /**
      * Delete the events in the list.
      *
      * @param events
      */
-    public void deleteHarvestableRecords(List<MessageHistoryEvent> events);
+    public void deleteHarvestableRecords(List<FlowInvocation> events);
 
     /**
      * Method to state that there are harvestable records available.
