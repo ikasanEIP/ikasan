@@ -40,16 +40,14 @@
  */
 package org.ikasan.endpoint.sftp.producer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.ByteArrayInputStream;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
-import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -109,6 +107,15 @@ public class SftpProducerTest
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
+		final String content = "content";
+		final String fileName = "fileName";
+		final String outputDirectory = "outputDirectory";
+		final boolean overwrite = true;
+		final String renameExtension = "renameExtension";
+		final boolean checksumDelivered = false;
+		final boolean unzip = false;
+		final boolean createParentDirectory = true;
+		final String tempFileName = "tempFileName";
 
         final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
@@ -116,76 +123,39 @@ public class SftpProducerTest
         this.mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(sftpConfiguration).getOutputDirectory();
-                will(returnValue("outputDirectory"));
-                exactly(1).of(sftpConfiguration).getOverwrite();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(sftpConfiguration).getRenameExtension();
-                will(returnValue("rename"));
-                exactly(1).of(sftpConfiguration).getChecksumDelivered();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getUnzip();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(sftpConfiguration).getCleanUpChunks();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(activeFileTransferConnectionTemplate).deliverPayload(payload, "outputDirectory",
-                    new HashMap<String, String>(), true, "rename", false, true, false);
+				oneOf(payload).getContent();
+				will(returnValue(content.getBytes()));
+				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+				will(returnValue(fileName));
+				oneOf(sftpConfiguration).getOutputDirectory();
+				will(returnValue(outputDirectory));
+				oneOf(sftpConfiguration).getOverwrite();
+				will(returnValue(overwrite));
+				oneOf(sftpConfiguration).getRenameExtension();
+				will(returnValue(renameExtension));
+				oneOf(sftpConfiguration).getChecksumDelivered();
+				will(returnValue(checksumDelivered));
+				oneOf(sftpConfiguration).getUnzip();
+				will(returnValue(unzip));
+				oneOf(sftpConfiguration).getCreateParentDirectory();
+				will(returnValue(createParentDirectory));
+				oneOf(sftpConfiguration).getTempFileName();
+				will(returnValue(tempFileName));
+                oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+						with(any(ByteArrayInputStream.class)),
+						with(equal(fileName)),
+						with(equal(outputDirectory)),
+						with(equal(overwrite)),
+						with(equal(renameExtension)),
+						with(equal(checksumDelivered)),
+						with(equal(unzip)),
+						with(equal(createParentDirectory)),
+						with(equal(tempFileName)));
             }
         });
 
         this.uut.invoke(payload);
         this.mockery.assertIsSatisfied();
-    }
-
-    /**
-     * If no alternate connection details are provided, the producer will throw the exception and give up
-     * @throws ResourceException if error invoking endpoint
-     */
-    @Test(expected=EndpointException.class)
-    public void producer_fails() throws ResourceException
-    {
-        uut.setConfiguration(sftpConfiguration);
-        ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-        ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
-
-        final Payload payload = mockery.mock(Payload.class, "mockPayload");
-        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
-
-        // Expectations
-        this.mockery.checking(new Expectations()
-        {
-            {
-                one(sftpConfiguration).getOutputDirectory();
-                will(returnValue("outputDirectory"));
-                one(sftpConfiguration).getOverwrite();
-                will(returnValue(Boolean.TRUE));
-                one(sftpConfiguration).getRenameExtension();
-                will(returnValue("rename"));
-                one(sftpConfiguration).getChecksumDelivered();
-                will(returnValue(Boolean.FALSE));
-                one(sftpConfiguration).getUnzip();
-                will(returnValue(Boolean.TRUE));
-                one(sftpConfiguration).getCleanUpChunks();
-                will(returnValue(Boolean.FALSE));
-                one(activeFileTransferConnectionTemplate).deliverPayload(payload, "outputDirectory",
-                    new HashMap<String, String>(), true, "rename", false, true, false);
-                will(throwException(exception));
-            }
-        });
-
-        try
-        {  
-            this.uut.invoke(payload);
-        }
-        catch (EndpointException e)
-        {
-            Assert.assertEquals(this.alternateFileTransferConnectionTemplate,
-                    this.uut.getActiveFileTransferConnectionTemplate());
-            throw e;
-        }
-        this.mockery.assertIsSatisfied();
-        Assert.fail("Unreachable code.");
     }
 
     /**
@@ -202,6 +172,16 @@ public class SftpProducerTest
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
+		final String content = "content";
+		final String fileName = "fileName";
+		final String outputDirectory = "outputDirectory";
+		final boolean overwrite = true;
+		final String renameExtension = "renameExtension";
+		final boolean checksumDelivered = false;
+		final boolean unzip = false;
+		final boolean createParentDirectory = true;
+		final String tempFileName = "tempFileName";
+
         final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
         final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
@@ -210,20 +190,34 @@ public class SftpProducerTest
         this.mockery.checking(new Expectations()
         {
             {
-                one(sftpConfiguration).getOutputDirectory();
-                will(returnValue("outputDirectory"));
-                one(sftpConfiguration).getOverwrite();
-                will(returnValue(Boolean.TRUE));
-                one(sftpConfiguration).getRenameExtension();
-                will(returnValue("rename"));
-                one(sftpConfiguration).getChecksumDelivered();
-                will(returnValue(Boolean.FALSE));
-                one(sftpConfiguration).getUnzip();
-                will(returnValue(Boolean.TRUE));
-                one(sftpConfiguration).getCleanUpChunks();
-                will(returnValue(Boolean.FALSE));
-                one(activeFileTransferConnectionTemplate).deliverPayload(payload, "outputDirectory",
-                    new HashMap<String, String>(), true, "rename", false, true, false);
+				oneOf(payload).getContent();
+				will(returnValue(content.getBytes()));
+				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+				will(returnValue(fileName));
+				oneOf(sftpConfiguration).getOutputDirectory();
+				will(returnValue(outputDirectory));
+				oneOf(sftpConfiguration).getOverwrite();
+				will(returnValue(overwrite));
+				oneOf(sftpConfiguration).getRenameExtension();
+				will(returnValue(renameExtension));
+				oneOf(sftpConfiguration).getChecksumDelivered();
+				will(returnValue(checksumDelivered));
+				oneOf(sftpConfiguration).getUnzip();
+				will(returnValue(unzip));
+				oneOf(sftpConfiguration).getCreateParentDirectory();
+				will(returnValue(createParentDirectory));
+				oneOf(sftpConfiguration).getTempFileName();
+				will(returnValue(tempFileName));
+                oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+						with(any(ByteArrayInputStream.class)),
+						with(equal(fileName)),
+						with(equal(outputDirectory)),
+						with(equal(overwrite)),
+						with(equal(renameExtension)),
+						with(equal(checksumDelivered)),
+						with(equal(unzip)),
+						with(equal(createParentDirectory)),
+						with(equal(tempFileName)));
                 will(throwException(exception));
             }
         });
@@ -254,6 +248,16 @@ public class SftpProducerTest
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
+		final String content = "content";
+		final String fileName = "fileName";
+		final String outputDirectory = "outputDirectory";
+		final boolean overwrite = true;
+		final String renameExtension = "renameExtension";
+		final boolean checksumDelivered = false;
+		final boolean unzip = false;
+		final boolean createParentDirectory = true;
+		final String tempFileName = "tempFileName";
+
         final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
         final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
@@ -262,24 +266,46 @@ public class SftpProducerTest
         this.mockery.checking(new Expectations()
         {
             {
-                exactly(2).of(sftpConfiguration).getOutputDirectory();
-                will(returnValue("outputDirectory"));
-                exactly(2).of(sftpConfiguration).getOverwrite();
-                will(returnValue(Boolean.TRUE));
-                exactly(2).of(sftpConfiguration).getRenameExtension();
-                will(returnValue("rename"));
-                exactly(2).of(sftpConfiguration).getChecksumDelivered();
-                will(returnValue(Boolean.FALSE));
-                exactly(2).of(sftpConfiguration).getUnzip();
-                will(returnValue(Boolean.TRUE));
-                exactly(2).of(sftpConfiguration).getCleanUpChunks();
-                will(returnValue(Boolean.FALSE));
-                one(activeFileTransferConnectionTemplate).deliverPayload(payload, "outputDirectory",
-                    new HashMap<String, String>(), true, "rename", false, true, false);
-                will(throwException(exception));
-                one(alternateFileTransferConnectionTemplate).deliverPayload(payload, "outputDirectory",
-                    new HashMap<String, String>(), true, "rename", false, true, false);
-                will(throwException(exception));
+				exactly(2).of(payload).getContent();
+				will(returnValue(content.getBytes()));
+				exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+				will(returnValue(fileName));
+				exactly(2).of(sftpConfiguration).getOutputDirectory();
+				will(returnValue(outputDirectory));
+				exactly(2).of(sftpConfiguration).getOverwrite();
+				will(returnValue(overwrite));
+				exactly(2).of(sftpConfiguration).getRenameExtension();
+				will(returnValue(renameExtension));
+				exactly(2).of(sftpConfiguration).getChecksumDelivered();
+				will(returnValue(checksumDelivered));
+				exactly(2).of(sftpConfiguration).getUnzip();
+				will(returnValue(unzip));
+				exactly(2).of(sftpConfiguration).getCreateParentDirectory();
+				will(returnValue(createParentDirectory));
+				exactly(2).of(sftpConfiguration).getTempFileName();
+				will(returnValue(tempFileName));
+				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+						with(any(ByteArrayInputStream.class)),
+						with(equal(fileName)),
+						with(equal(outputDirectory)),
+						with(equal(overwrite)),
+						with(equal(renameExtension)),
+						with(equal(checksumDelivered)),
+						with(equal(unzip)),
+						with(equal(createParentDirectory)),
+						with(equal(tempFileName)));
+				will(throwException(exception));
+				oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
+						with(any(ByteArrayInputStream.class)),
+						with(equal(fileName)),
+						with(equal(outputDirectory)),
+						with(equal(overwrite)),
+						with(equal(renameExtension)),
+						with(equal(checksumDelivered)),
+						with(equal(unzip)),
+						with(equal(createParentDirectory)),
+						with(equal(tempFileName)));
+				will(throwException(exception));
             }
         });
 
