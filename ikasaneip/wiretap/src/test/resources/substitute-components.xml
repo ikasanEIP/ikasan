@@ -90,6 +90,7 @@
                 <value>org/ikasan/history/model/History.hbm.xml</value>
                 <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
                 <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
+                <value>org/ikasan/history/model/FlowInvocation.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

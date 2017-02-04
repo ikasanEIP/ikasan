@@ -43,6 +43,7 @@ package org.ikasan.history.model;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.ikasan.spec.history.FlowInvocation;
 import org.ikasan.spec.history.MessageHistoryEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 
@@ -53,28 +54,26 @@ import org.ikasan.wiretap.model.WiretapFlowEvent;
  */
 public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, MetricEvent>, Serializable
 {
-    private String moduleName, flowName, componentName,
+    private String componentName,
             beforeEventIdentifier, beforeRelatedEventIdentifier,
             afterEventIdentifier, afterRelatedEventIdentifier;
-    private long startTimeMillis, endTimeMillis, expiry, id;
+    private long startTimeMillis, endTimeMillis, id;
+
+    private FlowInvocationImpl flowInvocation;
     
     private Set<CustomMetric> metrics;
 
     private MetricEvent wiretapFlowEvent;
-
-    private Boolean harvested = false;
 
     /** Required by the ORM... */
     protected MessageHistoryFlowEvent()
     {
     }
 
-    public MessageHistoryFlowEvent(String moduleName, String flowName, String componentName, 
+    public MessageHistoryFlowEvent(String componentName,
     		String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier, 
-    		String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis, long expiry)
+    		String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis)
     {
-        this.moduleName = moduleName;
-        this.flowName = flowName;
         this.componentName = componentName;
         this.beforeEventIdentifier = beforeEventIdentifier;
         this.beforeRelatedEventIdentifier = beforeRelatedEventIdentifier;
@@ -82,19 +81,6 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         this.afterRelatedEventIdentifier = afterRelatedEventIdentifier;
         this.startTimeMillis = startTimeMillis;
         this.endTimeMillis = endTimeMillis;
-        this.expiry = expiry;
-    }
-
-    @Override
-    public String getModuleName()
-    {
-        return moduleName;
-    }
-
-    @Override
-    public String getFlowName()
-    {
-        return flowName;
     }
 
     @Override
@@ -139,12 +125,6 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         return endTimeMillis;
     }
 
-    @Override
-    public long getExpiry()
-    {
-        return expiry;
-    }
-
     public long getId()
     {
         return id;
@@ -154,17 +134,7 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
 	private void setId(long id)
     {
         this.id = id;
-    }
-
-    public void setModuleName(String moduleName)
-    {
-        this.moduleName = moduleName;
-    }
-
-    public void setFlowName(String flowName)
-    {
-        this.flowName = flowName;
-    }
+    };
 
     public void setComponentName(String componentName)
     {
@@ -201,11 +171,6 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         this.endTimeMillis = endTimeMillis;
     }
 
-    public void setExpiry(long expiry)
-    {
-        this.expiry = expiry;
-    }
-
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.history.MessageHistoryEvent#getMetrics()
 	 */
@@ -236,16 +201,13 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         this.wiretapFlowEvent = wiretapFlowEvent;
     }
 
-    @Override
-    public Boolean getHarvested()
+    public FlowInvocationImpl getFlowInvocation()
     {
-        return harvested;
+        return flowInvocation;
     }
 
-    @Override
-    public void setHarvested(Boolean harvested)
+    public void setFlowInvocation(FlowInvocationImpl flowInvocation)
     {
-        this.harvested = harvested;
+        this.flowInvocation = flowInvocation;
     }
-
 }
