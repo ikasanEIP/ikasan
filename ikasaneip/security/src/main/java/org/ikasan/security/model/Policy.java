@@ -205,82 +205,34 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 		this.roles = roles;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((policyLink == null) ? 0 : policyLink.hashCode());
-		result = prime * result
-				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Policy policy = (Policy) o;
+
+		if (id != null ? !id.equals(policy.id) : policy.id != null) return false;
+		if (name != null ? !name.equals(policy.name) : policy.name != null) return false;
+		if (description != null ? !description.equals(policy.description) : policy.description != null) return false;
+		if (policyLink != null ? !policyLink.equals(policy.policyLink) : policy.policyLink != null) return false;
+		return roles != null ? roles.equals(policy.roles) : policy.roles == null;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		result = 31 * result + (policyLink != null ? policyLink.hashCode() : 0);
+		result = 31 * result + (roles != null ? roles.hashCode() : 0);
 		return result;
 	}
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Policy other = (Policy) obj;
-		if (createdDateTime == null)
-		{
-			if (other.createdDateTime != null)
-				return false;
-		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null)
-		{
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null)
-		{
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (name == null)
-		{
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (policyLink == null)
-		{
-			if (other.policyLink != null)
-				return false;
-		} else if (!policyLink.equals(other.policyLink))
-			return false;
-		if (updatedDateTime == null)
-		{
-			if (other.updatedDateTime != null)
-				return false;
-		} else if (!updatedDateTime.equals(other.updatedDateTime))
-			return false;
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+         * @see java.lang.Object#toString()
+         */
 	@Override
 	public String toString()
 	{

@@ -41,7 +41,9 @@
 package org.ikasan.module.service;
 
 import org.apache.log4j.Logger;
+import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -294,16 +296,49 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module vai BlueConsole.");
         if (!existingAuthorities.contains(readBlueConsole))
         {
-            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
+            logger.info("Creating ReadBlueConsole policy...");
             this.securityService.savePolicy(readBlueConsole);
         }
         Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module vai BlueConsole.");
 
         if (!existingAuthorities.contains(writeBlueConsole))
         {
-            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
+            logger.info("Creating WriteBlueConsole policy...");
             this.securityService.savePolicy(writeBlueConsole);
         }
+
+        List<Role> existingRoles = this.securityService.getAllRoles();
+
+        Role userRole = new Role("User", "Users who have a read only view on the system.");
+        if (!existingRoles.contains(userRole))
+        {
+            logger.info("Creating standard User role...");
+            this.securityService.saveRole(userRole);
+        }
+
+        Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
+        if (!existingRoles.contains(adminRole))
+        {
+            logger.info("Creating standard Admin role...");
+            this.securityService.saveRole(adminRole);
+        }
+
+        List<IkasanPrincipal> existingPrinciples = this.securityService.getAllPrincipals();
+
+        IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","Admin user", "The administrator user principle.");
+        if (!existingPrinciples.contains(adminPrinciple))
+        {
+            logger.info("Creating standard admin principle...");
+            this.securityService.savePrincipal(adminPrinciple);
+        }
+        IkasanPrincipal userPrinciple = new IkasanPrincipal("user","user", "The user principle.");
+        if (!existingPrinciples.contains(userPrinciple))
+        {
+            logger.info("Creating standard user principle...");
+            this.securityService.savePrincipal(userPrinciple);
+        }
+
+
     }
 
     /**

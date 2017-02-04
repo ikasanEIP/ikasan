@@ -248,7 +248,6 @@
 	<beans:bean id="securityService" class="org.ikasan.security.service.SecurityServiceImpl">
 		<beans:constructor-arg ref="securityDao" />
 	</beans:bean>
-	
 
 	<beans:bean id="securityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<beans:property name="sessionFactory" ref="securitySessionFactory" />
@@ -256,19 +255,13 @@
 
 	<beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
 		<beans:constructor-arg ref="userDao" />
-		<beans:constructor-arg ref="authorityDao" />
+		<beans:constructor-arg ref="securityService" />
 		<beans:constructor-arg ref="sha1PasswordEncoder" />
 	</beans:bean>
 
 	<beans:bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
 		<beans:property name="sessionFactory" ref="securitySessionFactory" />
 	</beans:bean>
-
-	<beans:bean id="authorityDao"
-		class="org.ikasan.security.dao.HibernateAuthorityDao">
-		<beans:property name="sessionFactory" ref="securitySessionFactory" />
-	</beans:bean>
-
 
 	<beans:bean id="securitySessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -279,7 +272,6 @@
 				<beans:value>/org/ikasan/security/model/Role.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/Policy.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/User.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/Authority.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/PolicyLink.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</beans:value>

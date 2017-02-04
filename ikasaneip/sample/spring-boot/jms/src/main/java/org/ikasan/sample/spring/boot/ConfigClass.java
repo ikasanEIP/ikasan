@@ -49,7 +49,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:topology-conf.xml",
         "classpath:topology-tx-conf.xml",
 
-        "classpath:user-conf.xml",
+        //"classpath:user-conf.xml",
         //   "classpath:sybase-datasource-conf.xml",
         "classpath:h2db-datasource-conf.xml",
 

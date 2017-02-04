@@ -40,13 +40,12 @@
  */
 package org.ikasan.security.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.security.dao.AuthorityDao;
 import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.model.Authority;
+import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
@@ -68,10 +67,8 @@ public class UserServiceImpl implements UserService
     private UserDao userDao;
 
     /**
-     * Data access object for <code>Authority</code>s
+     * Data access object for <code>SecurityService</code>s
      */
-    private AuthorityDao authorityDao;
-
     private SecurityService securityService;
 
     /**
@@ -83,14 +80,13 @@ public class UserServiceImpl implements UserService
      * Constructor
      * 
      * @param userDao
-     * @param authorityDao
+     * @param securityService
      * @param passwordEncoder
      */
-    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao ,SecurityService securityService , PasswordEncoder passwordEncoder)
+    public UserServiceImpl(UserDao userDao, SecurityService securityService , PasswordEncoder passwordEncoder)
     {
         super();
         this.userDao = userDao;
-        this.authorityDao = authorityDao;
         this.securityService = securityService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -277,8 +273,12 @@ public class UserServiceImpl implements UserService
     {
         User user = loadUserByUsername(username);
         Policy nongrantedPolicy = securityService.findPolicyByName(authority);
-       //TODO: attach policy to user
-        //user.grantAuthority(nongrantedAuthority);
+        IkasanPrincipal userPrincipal = securityService.findPrincipalByName("user");
+        Role userRole = securityService.findRoleByName("User");
+
+        user.addPrincipal(userPrincipal);
+        userPrincipal.addRole(userRole);
+        userRole.addPolicy(nongrantedPolicy);
         userDao.save(user);
     }
 
