@@ -27,6 +27,9 @@
 	
 	<!-- 1.2.0 change log -->
 	<include file="db-changelog-1.2.0.xml" relativeToChangelogFile="true" />
+
+    <!-- 1.4.0 change log -->
+    <include file="db-changelog-1.4.0.xml" relativeToChangelogFile="true" />
 	
 
 </databaseChangeLog>
