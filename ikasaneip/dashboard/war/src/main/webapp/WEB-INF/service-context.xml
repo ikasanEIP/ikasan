@@ -280,7 +280,13 @@
 
 	<bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
 		<constructor-arg index="0" ref="messageHistoryDao"/>
-		<constructor-arg index="1" ref="wiretapEventFactory"/>
+		<constructor-arg>
+			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+				<constructor-arg>
+					<bean class="java.util.HashMap" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
 	</bean>
 
 	<bean id="messageHistoryDao"
