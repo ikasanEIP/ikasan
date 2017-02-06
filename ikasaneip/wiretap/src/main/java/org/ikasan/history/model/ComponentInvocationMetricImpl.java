@@ -43,36 +43,34 @@ package org.ikasan.history.model;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.ikasan.spec.history.FlowInvocation;
-import org.ikasan.spec.history.MessageHistoryEvent;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.ikasan.spec.history.ComponentInvocationMetric;
 
 /**
  * Implementation of a MessageHistoryEvent based on a String lifeIdentifier from a Flow
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, CustomMetric, MetricEvent>, Serializable
+public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<String, CustomMetric, MetricEvent>, Serializable
 {
     private String componentName,
             beforeEventIdentifier, beforeRelatedEventIdentifier,
             afterEventIdentifier, afterRelatedEventIdentifier;
     private long startTimeMillis, endTimeMillis, id;
 
-    private FlowInvocationImpl flowInvocation;
+    private FlowInvocationMetricImpl flowInvocation;
     
     private Set<CustomMetric> metrics;
 
     private MetricEvent wiretapFlowEvent;
 
     /** Required by the ORM... */
-    protected MessageHistoryFlowEvent()
+    protected ComponentInvocationMetricImpl()
     {
     }
 
-    public MessageHistoryFlowEvent(String componentName,
-    		String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier, 
-    		String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis)
+    public ComponentInvocationMetricImpl(String componentName,
+                                         String beforeEventIdentifier, String beforeRelatedEventIdentifier, String afterEventIdentifier,
+                                         String afterRelatedEventIdentifier, long startTimeMillis, long endTimeMillis)
     {
         this.componentName = componentName;
         this.beforeEventIdentifier = beforeEventIdentifier;
@@ -201,12 +199,12 @@ public class MessageHistoryFlowEvent implements MessageHistoryEvent<String, Cust
         this.wiretapFlowEvent = wiretapFlowEvent;
     }
 
-    public FlowInvocationImpl getFlowInvocation()
+    public FlowInvocationMetricImpl getFlowInvocation()
     {
         return flowInvocation;
     }
 
-    public void setFlowInvocation(FlowInvocationImpl flowInvocation)
+    public void setFlowInvocation(FlowInvocationMetricImpl flowInvocation)
     {
         this.flowInvocation = flowInvocation;
     }

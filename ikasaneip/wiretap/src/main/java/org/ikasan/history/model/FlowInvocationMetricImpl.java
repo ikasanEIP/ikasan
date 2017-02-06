@@ -1,13 +1,13 @@
 package org.ikasan.history.model;
 
-import org.ikasan.spec.history.FlowInvocation;
+import org.ikasan.spec.history.FlowInvocationMetric;
 
 import java.util.Set;
 
 /**
  * @author Ikasan Development Team
  */
-public class FlowInvocationImpl implements FlowInvocation<MessageHistoryFlowEvent>
+public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentInvocationMetricImpl>
 {
     private Long id;
     private String moduleName;
@@ -15,7 +15,7 @@ public class FlowInvocationImpl implements FlowInvocation<MessageHistoryFlowEven
     private long invocationStartTime;
     private long invocationEndTime;
     private String finalAction;
-    private Set<MessageHistoryFlowEvent> messageHistoryFlowEvents;
+    private Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls;
     private Boolean harvested = false;
     private long expiry;
 
@@ -27,22 +27,22 @@ public class FlowInvocationImpl implements FlowInvocation<MessageHistoryFlowEven
      * @param invocationStartTime
      * @param invocationEndTime
      * @param finalAction
-     * @param messageHistoryFlowEvents
+     * @param componentInvocationMetricImpls
      * @param expiry
      */
-    public FlowInvocationImpl(String moduleName, String flowName, long invocationStartTime, long invocationEndTime
-            , String finalAction, Set<MessageHistoryFlowEvent> messageHistoryFlowEvents, long expiry)
+    public FlowInvocationMetricImpl(String moduleName, String flowName, long invocationStartTime, long invocationEndTime
+            , String finalAction, Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls, long expiry)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
         this.invocationStartTime = invocationStartTime;
         this.invocationEndTime = invocationEndTime;
         this.finalAction = finalAction;
-        this.messageHistoryFlowEvents = messageHistoryFlowEvents;
+        this.componentInvocationMetricImpls = componentInvocationMetricImpls;
         this.expiry = expiry;
     }
 
-    private FlowInvocationImpl()
+    private FlowInvocationMetricImpl()
     {
 
     }
@@ -108,15 +108,15 @@ public class FlowInvocationImpl implements FlowInvocation<MessageHistoryFlowEven
     }
 
     @Override
-    public Set<MessageHistoryFlowEvent> getFlowInvocationEvents()
+    public Set<ComponentInvocationMetricImpl> getFlowInvocationEvents()
     {
-        return this.messageHistoryFlowEvents;
+        return this.componentInvocationMetricImpls;
     }
 
     @Override
-    public void setFlowInvocationEvents(Set<MessageHistoryFlowEvent> messageHistoryFlowEvents)
+    public void setFlowInvocationEvents(Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls)
     {
-        this.messageHistoryFlowEvents = messageHistoryFlowEvents;
+        this.componentInvocationMetricImpls = componentInvocationMetricImpls;
     }
 
     public Boolean getHarvested()

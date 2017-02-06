@@ -41,6 +41,7 @@
 package org.ikasan.exclusion.model;
 
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.FlowInvocationContext;
 
 /**
  * Blacklist event window instance.
@@ -67,15 +68,18 @@ public class BlackListEvent
     /** error uri reported as part of this excluded event */
     String errorUri;
 
+    /** flow invocation context of the flow that has been blacklisted */
+    FlowInvocationContext flowInvocationContext;
+
     /**
      * Constructor
      * @param moduleName
      * @param flowName
      * @param identifier
      */
-    public BlackListEvent(String moduleName, String flowName, String identifier, String errorUri)
+    public BlackListEvent(String moduleName, String flowName, String identifier, String errorUri, FlowInvocationContext flowInvocationContext)
     {
-        this(moduleName, flowName, identifier, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
+        this(moduleName, flowName, identifier, errorUri, flowInvocationContext, ExclusionService.DEFAULT_TIME_TO_LIVE);
     }
 
     /**
@@ -85,7 +89,7 @@ public class BlackListEvent
      * @param identifier
      * @param timeToLive
      */
-    public BlackListEvent(String moduleName, String flowName, String identifier, String errorUri, long timeToLive)
+    public BlackListEvent(String moduleName, String flowName, String identifier, String errorUri, FlowInvocationContext flowInvocationContext, long timeToLive)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -103,6 +107,12 @@ public class BlackListEvent
         if(identifier == null)
         {
             throw new IllegalArgumentException("identifier cannot be 'null'");
+        }
+
+        this.flowInvocationContext = flowInvocationContext;
+        if(flowInvocationContext == null)
+        {
+            throw new IllegalArgumentException("flowInvocationContext cannot be 'null'");
         }
 
         this.errorUri = errorUri;
@@ -162,6 +172,16 @@ public class BlackListEvent
 
     protected void setExpiry(long expiry) {
         this.expiry = expiry;
+    }
+
+    public FlowInvocationContext getFlowInvocationContext()
+    {
+        return flowInvocationContext;
+    }
+
+    protected void setFlowInvocationContext(FlowInvocationContext flowInvocationContext)
+    {
+        this.flowInvocationContext = flowInvocationContext;
     }
 
     @Override

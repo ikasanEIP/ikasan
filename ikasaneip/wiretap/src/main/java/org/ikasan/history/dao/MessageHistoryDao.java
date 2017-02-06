@@ -45,10 +45,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.FlowInvocation;
-import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * DAO contract for accessing Message History data
@@ -61,7 +60,7 @@ public interface MessageHistoryDao
      * Save a MessageHistoryEvent
      * @param messageHistoryEvent the event
      */
-    public void save(MessageHistoryEvent messageHistoryEvent);
+    public void save(ComponentInvocationMetric messageHistoryEvent);
 
     /**
      * Save a MetricEvent
@@ -72,9 +71,9 @@ public interface MessageHistoryDao
     /**
      * Save a FlowInvocation
      *
-     * @param flowInvocation
+     * @param flowInvocationMetric
      */
-    public void save(FlowInvocation flowInvocation);
+    public void save(FlowInvocationMetric flowInvocationMetric);
 
 
     /**
@@ -92,9 +91,9 @@ public interface MessageHistoryDao
      * @param toDate the to datetime
      * @return a paged result set of MessageHistoryEvent
      */
-    public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                                    Set<String> moduleNames, String flowName, String componentName,
-                                                                    String eventId, String relatedEventId, Date fromDate, Date toDate);
+    public PagedSearchResult<ComponentInvocationMetric> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                                 Set<String> moduleNames, String flowName, String componentName,
+                                                                                 String eventId, String relatedEventId, Date fromDate, Date toDate);
 
     /**
      * Retrieve a MessageHistoryEvent (or set of events from multiple Flows) using the lifeId or relatedLifeId
@@ -108,8 +107,8 @@ public interface MessageHistoryDao
      * @param relatedEventId an optional relatedEventId to retrieve events that had the main eventId mutated
      * @return a paged result set of MessageHistoryEvent
      */
-    public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                                  String eventId, String relatedEventId);
+    public PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                               String eventId, String relatedEventId);
 
     /**
      * Delete all expired MessageHistoryEvents
@@ -129,7 +128,7 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<FlowInvocation> getHarvestableRecords(int transactionBatchSize);
+    public List<FlowInvocationMetric> getHarvestableRecords(int transactionBatchSize);
 
     /**
      * Get the events that are already harvested.
@@ -137,14 +136,14 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<FlowInvocation> getHarvestedRecords(final int transactionBatchSize);
+    public List<FlowInvocationMetric> getHarvestedRecords(final int transactionBatchSize);
 
     /**
      * Delete the events in the list.
      *
      * @param events
      */
-    public void deleteHarvestableRecords(List<FlowInvocation> events);
+    public void deleteHarvestableRecords(List<FlowInvocationMetric> events);
 
     /**
      * Method to state that there are harvestable records available.

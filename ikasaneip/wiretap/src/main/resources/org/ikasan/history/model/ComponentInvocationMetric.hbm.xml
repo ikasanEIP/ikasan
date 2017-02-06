@@ -50,34 +50,34 @@
 
 <hibernate-mapping>
 
-    <class name="org.ikasan.history.model.FlowInvocationImpl"
-           table="FlowInvocation">
+    <class name="org.ikasan.history.model.ComponentInvocationMetricImpl"
+           table="ComponentInvocationMetric">
 
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity"/>
         </id>
         
-        <set name="flowInvocationEvents"
+        <set name="metrics" 
              cascade="all"
              lazy="false">
-             <key column="FlowInvocationId" update="false" on-delete="noaction" not-null="true"/>
-             <one-to-many class="org.ikasan.history.model.MessageHistoryFlowEvent"/>
+             <key column="CompInvocationMetricId" update="false" on-delete="noaction" not-null="true"/>
+             <one-to-many class="org.ikasan.history.model.CustomMetric"/>
         </set>
 
-        <property name="moduleName"        type="java.lang.String"
-                  column="ModuleName"      not-null="true"/>
-        <property name="flowName"          type="java.lang.String"
-                  column="FlowName"        not-null="true"/>
-        <property name="finalAction"          type="java.lang.String"
-                  column="FinalAction"        not-null="true"/>
-        <property name="invocationStartTime"   type="long"
+        <property name="componentName"     type="java.lang.String"
+                  column="ComponentName"   not-null="true"/>
+        <property name="beforeEventIdentifier"    type="java.lang.String"
+                  column="BeforeEventIdentifier"  not-null="true"/>
+        <property name="beforeRelatedEventIdentifier" type="java.lang.String"
+                  column="BeforeRelatedEventIdentifier"/>
+        <property name="afterEventIdentifier"    type="java.lang.String"
+                  column="AfterEventIdentifier"  not-null="true"/>
+        <property name="afterRelatedEventIdentifier" type="java.lang.String"
+                  column="AfterRelatedEventIdentifier"/>
+        <property name="startTimeMillis"   type="long"
                   column="StartTime"       not-null="true"/>
-        <property name="invocationEndTime"     type="long"
+        <property name="endTimeMillis"     type="long"
                   column="EndTime"/>
-        <property name="expiry"            type="long"
-                  column="Expiry"          not-null="true"/>
-        <property name="harvested"            type="java.lang.Boolean"
-                  column="Harvested"          not-null="true"/>
 
     </class>
 

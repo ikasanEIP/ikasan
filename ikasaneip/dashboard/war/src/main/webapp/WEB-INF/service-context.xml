@@ -347,8 +347,8 @@
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
 			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
-
-			   <value>org/ikasan/history/model/History.hbm.xml</value>
+			   <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
            </list>
