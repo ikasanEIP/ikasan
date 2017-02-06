@@ -748,6 +748,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 {
                     invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 }
+                flowInvocationContext = this.exclusionService.getFlowInvocationContext(originalEventLifeIdentifier);
                 this.exclusionService.removeBlacklisted(originalEventLifeIdentifier);
             }
             else

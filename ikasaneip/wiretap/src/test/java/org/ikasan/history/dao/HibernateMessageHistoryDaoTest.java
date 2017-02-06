@@ -48,13 +48,12 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.ikasan.history.model.CustomMetric;
-import org.ikasan.history.model.FlowInvocationImpl;
-import org.ikasan.history.model.MessageHistoryFlowEvent;
+import org.ikasan.history.model.FlowInvocationMetricImpl;
+import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.FlowInvocation;
-import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -83,11 +82,11 @@ public class HibernateMessageHistoryDaoTest
     @Before
     public void setup()
     {
-        Set<MessageHistoryFlowEvent> events = new HashSet<MessageHistoryFlowEvent>();
+        Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
 
         for(int j=0; j<5; j++)
         {
-            MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("componentName",
+            ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
                     "lifeId" + j, "relatedLifeId" + j, "lifeId" + j, "relatedLifeId" + j,
                     System.currentTimeMillis() - 500L, System.currentTimeMillis());
 
@@ -96,7 +95,7 @@ public class HibernateMessageHistoryDaoTest
             for(int i=0; i<6; i++)
             {
                 CustomMetric cm = new CustomMetric("name", "value");
-                cm.setMessageHistoryFlowEvent(event1);
+                cm.setComponentInvocationMetricImpl(event1);
                 metrics.add(cm);
             }
 
@@ -110,13 +109,13 @@ public class HibernateMessageHistoryDaoTest
             events.add(event1);
         }
 
-        FlowInvocation<MessageHistoryFlowEvent> flowInvocation = new FlowInvocationImpl("moduleName", "flowName",
+        FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l);
 
-        flowInvocation.setHarvested(true);
+        flowInvocationMetric.setHarvested(true);
 
 
-        messageHistoryDao.save(flowInvocation);
+        messageHistoryDao.save(flowInvocationMetric);
 
     }
 
@@ -139,7 +138,7 @@ public class HibernateMessageHistoryDaoTest
     @DirtiesContext
     public void test_search_lifeId()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, "lifeId1", null, null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, "lifeId1", null, null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
@@ -147,7 +146,7 @@ public class HibernateMessageHistoryDaoTest
     @DirtiesContext
     public void test_search_relatedLifeId()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, null, "relatedLifeId1", null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, null, null, null, null, "relatedLifeId1", null, null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
@@ -155,7 +154,7 @@ public class HibernateMessageHistoryDaoTest
     @DirtiesContext
     public void test_get_lifeId()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", null);
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
 
@@ -163,7 +162,7 @@ public class HibernateMessageHistoryDaoTest
     @DirtiesContext
     public void test_get_relatedLifeId()
     {
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", "lifeId1");
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", "lifeId1");
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
     
@@ -173,17 +172,17 @@ public class HibernateMessageHistoryDaoTest
     {
     	for(int i=0; i<1000; i++)
     	{
-            Set<MessageHistoryFlowEvent> events = new HashSet<MessageHistoryFlowEvent>();
+            Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
 
     	    for(int j=0; j<5; j++)
             {
-                MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("componentName",
+                ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
                         "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
                         System.currentTimeMillis() - 500L, System.currentTimeMillis());
 
                 Set<CustomMetric> metrics = new HashSet<CustomMetric>();
                 CustomMetric cm = new CustomMetric("name", "value");
-                cm.setMessageHistoryFlowEvent(event1);
+                cm.setComponentInvocationMetricImpl(event1);
 
 
                 metrics.add(cm);
@@ -198,29 +197,29 @@ public class HibernateMessageHistoryDaoTest
                 events.add(event1);
             }
 
-            FlowInvocation<MessageHistoryFlowEvent> flowInvocation = new FlowInvocationImpl("moduleName", "flowName",
+            FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
                     System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l);
 
-            flowInvocation.setHarvested(true);
+            flowInvocationMetric.setHarvested(true);
 
 
-	        messageHistoryDao.save(flowInvocation);
+	        messageHistoryDao.save(flowInvocationMetric);
     	}
 
-        List<FlowInvocation> events =  messageHistoryDao.getHarvestedRecords(50);
+        List<FlowInvocationMetric> events =  messageHistoryDao.getHarvestedRecords(50);
 
         Assert.assertTrue(events.size() == 50);
 
-        for(FlowInvocation<MessageHistoryEvent> event: events)
+        for(FlowInvocationMetric<ComponentInvocationMetric> event: events)
         {
-            for(MessageHistoryEvent messageHistoryEvent: event.getFlowInvocationEvents())
+            for(ComponentInvocationMetric messageHistoryEvent: event.getFlowInvocationEvents())
             {
                 Assert.assertTrue(messageHistoryEvent.getWiretapFlowEvent() != null);
             }
         }
 
     	
-    	PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+    	PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
 
         messageHistoryDao.deleteHarvestableRecords(events);
 
@@ -287,17 +286,17 @@ public class HibernateMessageHistoryDaoTest
     {
         for(int i=0; i<1000; i++)
         {
-            Set<MessageHistoryFlowEvent> events = new HashSet<MessageHistoryFlowEvent>();
+            Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
 
             for(int j=0; j<5; j++)
             {
-                MessageHistoryFlowEvent event1 = new MessageHistoryFlowEvent("componentName",
+                ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
                         "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
                         System.currentTimeMillis() - 500L, System.currentTimeMillis());
 
                 Set<CustomMetric> metrics = new HashSet<CustomMetric>();
                 CustomMetric cm = new CustomMetric("name", "value");
-                cm.setMessageHistoryFlowEvent(event1);
+                cm.setComponentInvocationMetricImpl(event1);
 
 
                 metrics.add(cm);
@@ -312,13 +311,13 @@ public class HibernateMessageHistoryDaoTest
                 events.add(event1);
             }
 
-            FlowInvocation<MessageHistoryFlowEvent> flowInvocation = new FlowInvocationImpl("moduleName", "flowName",
+            FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
                     System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l);
 
-            flowInvocation.setHarvested(true);
+            flowInvocationMetric.setHarvested(true);
 
 
-            messageHistoryDao.save(flowInvocation);
+            messageHistoryDao.save(flowInvocationMetric);
         }
 
         System.out.println("Started deleting message history records: " + System.currentTimeMillis());
@@ -331,7 +330,7 @@ public class HibernateMessageHistoryDaoTest
 
         System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
 
-        PagedSearchResult<MessageHistoryEvent> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
 
         System.out.println("Delete completed records: " + results.getResultSize());
 

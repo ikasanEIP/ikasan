@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * @author Ikasan Development Team
  */
-public interface FlowInvocation<EVENT>
+public interface FlowInvocationMetric<EVENT>
 {
     public String getModuleName();
 

@@ -47,7 +47,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ikasan.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
-import org.ikasan.history.listener.MessageHistoryContextListener;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
 import org.ikasan.history.model.MetricEvent;
@@ -55,23 +54,19 @@ import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.history.FlowInvocation;
-import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.history.MessageHistoryService;
-import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapSerialiser;
-import org.ikasan.wiretap.model.WiretapEventFactory;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 
 /**
  * Implementation of the MessageHistoryService with Housekeeping
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent<String,Object>, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
-        , HousekeepService, HarvestService<FlowInvocation>
+public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent<String,Object>, PagedSearchResult<ComponentInvocationMetric>, ComponentInvocationMetric>
+        , HousekeepService, HarvestService<FlowInvocationMetric>
 {
     private static final Logger logger = Logger.getLogger(MessageHistoryServiceImpl.class);
 
@@ -123,16 +118,16 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
             }
         }
 
-        FlowInvocation<MessageHistoryEvent<String, CustomMetric, MetricEvent>> flowInvocation = historyEventFactory.newEvent(moduleName, flowName
+        FlowInvocationMetric<ComponentInvocationMetric<String, CustomMetric, MetricEvent>> flowInvocationMetric = historyEventFactory.newEvent(moduleName, flowName
                 , flowInvocationContext, this.messageHistoryDaysToLive);
 
-        this.messageHistoryDao.save(flowInvocation);
+        this.messageHistoryDao.save(flowInvocationMetric);
     }
 
     @Override
-    public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                         Set<String> moduleNames, String flowName, String componentName,
-                                                         String eventId, String relatedEventId, Date fromDate, Date toDate)
+    public PagedSearchResult<ComponentInvocationMetric> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                                 Set<String> moduleNames, String flowName, String componentName,
+                                                                                 String eventId, String relatedEventId, Date fromDate, Date toDate)
     {
         return messageHistoryDao.findMessageHistoryEvents(pageNo, pageSize, orderBy, orderAscending,
                                                           moduleNames, flowName, componentName,
@@ -140,8 +135,8 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     }
 
     @Override
-    public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                       String eventId, boolean lookupRelatedEventId)
+    public PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                               String eventId, boolean lookupRelatedEventId)
     {
         return messageHistoryDao.getMessageHistoryEvent(pageNo, pageSize, orderBy, orderAscending, eventId, lookupRelatedEventId ? eventId : null);
     }
@@ -160,11 +155,11 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     }
 
     @Override
-    public List<FlowInvocation> harvest(int transactionBatchSize)
+    public List<FlowInvocationMetric> harvest(int transactionBatchSize)
     {
-        List<FlowInvocation> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
+        List<FlowInvocationMetric> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
 
-        for(FlowInvocation event: events)
+        for(FlowInvocationMetric event: events)
         {
             event.setHarvested(true);
 

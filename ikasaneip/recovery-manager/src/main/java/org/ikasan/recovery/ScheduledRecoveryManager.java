@@ -374,7 +374,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable, action.toString());
         if(action instanceof ExcludeEventAction)
         {
-            this.exclusionService.addBlacklisted(identifier, errorUri);
+            this.exclusionService.addBlacklisted(identifier, errorUri, flowInvocationContext);
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 

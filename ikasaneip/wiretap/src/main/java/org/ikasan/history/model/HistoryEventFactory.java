@@ -41,7 +41,6 @@
 package org.ikasan.history.model;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -49,9 +48,7 @@ import java.util.Set;
 
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.history.FlowInvocation;
-import org.ikasan.spec.history.MessageHistoryEvent;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.ikasan.spec.history.FlowInvocationMetric;
 
 /**
  * Factory for creating MessageHistoryEvents from FlowInvocationContext objects
@@ -72,15 +69,15 @@ public class HistoryEventFactory
 	 * @param daysToLive
      * @return
      */
-    public FlowInvocation newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext,
-								   int daysToLive)
+    public FlowInvocationMetric newEvent(final String moduleName, final String flowName, FlowInvocationContext flowInvocationContext,
+                                         int daysToLive)
     {
-        Set<MessageHistoryFlowEvent> messageHistoryEvents
-        	= new HashSet<MessageHistoryFlowEvent>();
+        Set<ComponentInvocationMetricImpl> messageHistoryEvents
+        	= new HashSet<ComponentInvocationMetricImpl>();
 
         for ( FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation : flowInvocationContext.getElementInvocations())
         {
-        	MessageHistoryFlowEvent event = new MessageHistoryFlowEvent(
+        	ComponentInvocationMetricImpl event = new ComponentInvocationMetricImpl(
                     invocation.getFlowElement().getComponentName(),
                     Objects.toString(invocation.getBeforeIdentifier(), null),
                     Objects.toString(invocation.getBeforeRelatedIdentifier(), null),
@@ -93,7 +90,7 @@ public class HistoryEventFactory
             messageHistoryEvents.add(event);            
         }
 
-		FlowInvocationImpl flowInvocation = new FlowInvocationImpl(moduleName, flowName, flowInvocationContext.getFlowStartTimeMillis(),
+		FlowInvocationMetricImpl flowInvocation = new FlowInvocationMetricImpl(moduleName, flowName, flowInvocationContext.getFlowStartTimeMillis(),
 				flowInvocationContext.getFlowEndTimeMillis(), flowInvocationContext.getFinalAction().toString(), messageHistoryEvents,
 				System.currentTimeMillis() + (MILLISECONDS_IN_DAY * daysToLive));
 
@@ -101,7 +98,7 @@ public class HistoryEventFactory
     }
     
     private Set<CustomMetric> getMetrics(FlowElementInvocation<Object, List<AbstractMap.SimpleImmutableEntry<String, String>>> invocation,
-    		MessageHistoryFlowEvent event)
+    		ComponentInvocationMetricImpl event)
     {
     	Set<CustomMetric> metrics = new HashSet<CustomMetric>();
     	
@@ -110,7 +107,7 @@ public class HistoryEventFactory
     		CustomMetric cm = new CustomMetric();
     		cm.setName(nvp.getKey());
     		cm.setValue(nvp.getValue());
-    		cm.setMessageHistoryFlowEvent(event);
+    		cm.setComponentInvocationMetricImpl(event);
     		
     		metrics.add(cm);
     	}

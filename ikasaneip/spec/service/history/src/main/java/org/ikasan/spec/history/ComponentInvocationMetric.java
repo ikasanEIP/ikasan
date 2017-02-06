@@ -47,7 +47,7 @@ import java.util.Set;
  *
  * @author Ikasan Development Team
  */
-public interface MessageHistoryEvent<ID, METRIC, EVENT> {
+public interface ComponentInvocationMetric<ID, METRIC, EVENT> {
 
     String getComponentName();
 

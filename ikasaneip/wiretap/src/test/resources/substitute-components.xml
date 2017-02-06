@@ -87,10 +87,10 @@
             <list>
                 <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
                 <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
-                <value>org/ikasan/history/model/History.hbm.xml</value>
+                <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
                 <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
                 <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
-                <value>org/ikasan/history/model/FlowInvocation.hbm.xml</value>
+                <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
