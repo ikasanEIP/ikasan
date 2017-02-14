@@ -67,7 +67,7 @@ import java.util.*;
 public class HibernateMessageHistoryDao extends HibernateDaoSupport implements MessageHistoryDao
 {
 	/** Use batch housekeeping mode? */
-    private boolean batchHousekeepDelete = false;
+    private boolean batchHousekeepDelete = true;
 
     /** Batch size used when in batching housekeep */
     private Integer housekeepingBatchSize = 400;
