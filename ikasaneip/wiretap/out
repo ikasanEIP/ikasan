@@ -1,0 +1,209 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Ikasan Wiretap Implementation 1.4.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ikasan-wiretap ---
+[INFO] Deleting /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ ikasan-wiretap ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (regex-property) @ ikasan-wiretap ---
+[INFO] Setting property 'dashed.project.version' to '1-4-0-SNAPSHOT'.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:1.7:regex-property (activamq-regex-property) @ ikasan-wiretap ---
+[INFO] Setting property 'dashed.version.activemq' to '5-12-1'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ ikasan-wiretap ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 6 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ ikasan-wiretap ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 30 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/classes
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/main/java/org/ikasan/wiretap/service/WiretapServiceImpl.java: Some input files use unchecked or unsafe operations.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/main/java/org/ikasan/wiretap/service/WiretapServiceImpl.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ ikasan-wiretap ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ ikasan-wiretap ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 7 source files to /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/test-classes
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java uses or overrides a deprecated API.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java: Recompile with -Xlint:deprecation for details.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java: Some input files use unchecked or unsafe operations.
+[WARNING] /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/src/test/java/org/ikasan/wiretap/serialiser/WiretapSerialiserServiceTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ ikasan-wiretap ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ ikasan-wiretap ---
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.4.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ ikasan-wiretap ---
+[INFO] org already added, skipping
+[INFO] org/ikasan already added, skipping
+[INFO] org/ikasan/wiretap already added, skipping
+[INFO] org/ikasan/wiretap/model already added, skipping
+[INFO] org/ikasan/history already added, skipping
+[INFO] org/ikasan/history/model already added, skipping
+[INFO] org/ikasan/trigger already added, skipping
+[INFO] org/ikasan/trigger/model already added, skipping
+[INFO] Building jar: /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.4.0-SNAPSHOT-sources.jar
+[INFO] org already added, skipping
+[INFO] org/ikasan already added, skipping
+[INFO] org/ikasan/wiretap already added, skipping
+[INFO] org/ikasan/wiretap/model already added, skipping
+[INFO] org/ikasan/history already added, skipping
+[INFO] org/ikasan/history/model already added, skipping
+[INFO] org/ikasan/trigger already added, skipping
+[INFO] org/ikasan/trigger/model already added, skipping
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ ikasan-wiretap ---
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.4.0-SNAPSHOT.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-wiretap/1.4.0-SNAPSHOT/ikasan-wiretap-1.4.0-SNAPSHOT.jar
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/pom.xml to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-wiretap/1.4.0-SNAPSHOT/ikasan-wiretap-1.4.0-SNAPSHOT.pom
+[INFO] Installing /sandbox/stewmi-sbox/workspace/ikasan/ikasaneip/wiretap/target/ikasan-wiretap-1.4.0-SNAPSHOT-sources.jar to /sandbox/stewmi-sbox/maven/repository/org/ikasan/ikasan-wiretap/1.4.0-SNAPSHOT/ikasan-wiretap-1.4.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- exec-maven-plugin:1.5.0:java (default-cli) @ ikasan-wiretap ---
+Page 0time: 698
+<?xml version="1.0" encoding="ISO-8859-1"?><MxML version="1-1"><documentProperties><producedBy><partyName>Mizuho Int PLC</partyName><user><name>MUREXINT</name><group>FO_TECH</group><desk>FOD</desk><code>SYSTEM ACCOUNT</code></user></producedBy><systemDate>20170209</systemDate><accountingDate>00000000</accountingDate><computerDate>20170209</computerDate><computerTime>23:33:07</computerTime><foDate>20170209</foDate></documentProperties><events><mainEvent><action>insertion</action><object href="#contract_2668617"><objectNature>contract</objectNature><objectId>2668617</objectId></object><inputBy><userName>MUREXFO</userName><group>FO</group><desk>FOD</desk><code>SYSTEM ACCOUNT</code></inputBy></mainEvent></events><contracts><contract id="contract_2668617" mefClass="mxContractISINGLE" mefClassInstanceType="90.000000"><businessObjectId mefClass="mxContractISINGLE" mefClassInstanceType="90"><identifier>2668617</identifier><baseIdentifier>2668617</baseIdentifier><versionIdentifier><versionRevision><versionNumber>1</versionNumber><versionDateAndTime><date>00000000</date></versionDateAndTime></versionRevision></versionIdentifier><primarySystem>MX</primarySystem></businessObjectId><contractId><internalId>2668617</internalId><rootContract>2668617</rootContract></contractId><contractBusinessObjectTemplate><businessObjectId><identifier>0</identifier><displayLabel/></businessObjectId></contractBusinessObjectTemplate><contractHeader><contractCategory><contractTypologyId>1449</contractTypologyId><typology>BidAskPriceAdjLong</typology><mainTypologyPath>/Typologies/ALL/BidAskPriceAdjLong</mainTypologyPath><usage/><onshoreOffshore>NONE</onshoreOffshore><collateralAgreementCategory/></contractCategory><contractAgreements><settlementMethod/></contractAgreements><contractSource><sourceModule>mx</sourceModule><originPublishingSystem>MX</originPublishingSystem><publishingSystem>MX</publishingSystem><packageReference mefClass=""/><contractEventReference mefClass=""><contractEventId><internalId>0</internalId></contractEventId></contractEventReference><contractCreatorReference mefClass=""/><contractOriginReference mefClass="mxContractISINGLE"><businessObjectId mefClass="mxContractISINGLE" mefClassInstanceType="90"><identifier>2668617</identifier><primarySystem>MX</primarySystem></businessObjectId><contractId><internalId>2668617</internalId><rootContract>2668617</rootContract></contractId></contractOriginReference><version>1</version><lastContractEventReference mefClass=""><contractEventId><internalId>0</internalId></contractEventId></lastContractEventReference><lastContractEventAction>INSERT</lastContractEventAction><originContractEventReference mefClass=""><contractEventId><internalId>0</internalId></contractEventId></originContractEventReference><originDate>20170209</originDate><workflowParties><wopInitiator><role/><name>MUREXINT</name><group>FO_TECH</group></wopInitiator><wopLastActor><role/><name>MUREXINT</name><group>FO_TECH</group></wopLastActor><wopInternalTrader><name/><group/></wopInternalTrader><wopInternalPortfolio><wopIsBackToBack>N</wopIsBackToBack></wopInternalPortfolio><wopParties/></workflowParties></contractSource></contractHeader><inputConditions><inputBy/><areaCode>0</areaCode><timestamp>20170209 23:33:07:243</timestamp><modified>false</modified></inputConditions><contractComponents><contractComponent><typologyId>0</typologyId><tradeReference href="#trade_2619650"/></contractComponent></contractComponents></contract></contracts><trades><trade id="trade_2619650" mefClass="mxContractITRADE" mefClassInstanceType="90.000000"><businessObjectId mefClass="mxContractITRADE" mefClassInstanceType="90"><identifier>2619650</identifier><baseIdentifier>2619650</baseIdentifier><versionIdentifier><versionRevision><versionNumber>1</versionNumber><versionDateAndTime><date>00000000</date></versionDateAndTime></versionRevision></versionIdentifier><primarySystem>MX</primarySystem></businessObjectId><parties><party id="Mizuho_Int_PLC"><partyName>Mizuho Int PLC</partyName><partyFullName>Mizuho Int PLC</partyFullName><partyCode>Mizuho Int PLC22</partyCode></party><party id="_65371"><partyName>CORPACTGEN</partyName></party></parties><portfolios><portfolio id="FIN_MM1"><portfolioLabel>FIN MM1</portfolioLabel></portfolio></portfolios><tradeHeader><tradeDate>20170209</tradeDate><tradeCategory><tradeTypologyId>1449</tradeTypologyId><tradeDestination>external</tradeDestination><tradeFamily>SCF</tradeFamily><tradeGroup>SCF</tradeGroup><tradeType>SCF</tradeType><typology>BidAskPriceAdjLong</typology><mainTypologyPath>/Typologies/ALL/BidAskPriceAdjLong</mainTypologyPath><usage/><collateralAgreementCategory/></tradeCategory><tradeSource><tradeOriginId>2619650</tradeOriginId><replacementDate>20170209</replacementDate><originPublishingSystemID>2619650</originPublishingSystemID></tradeSource><tradeViews><tradeView><partyReference href="#Mizuho_Int_PLC"><portfolioReference href="#FIN_MM1"/></partyReference><userName>MUREXINT</userName><accountingSection>FVTPL</accountingSection><entity>MSUKH</entity><legalEntity>MHI</legalEntity><tradeId><tradeInternalId>2619650</tradeInternalId><tradeGlobalId>MNL:MRX:2668617</tradeGlobalId><hostingSystem>MX</hostingSystem><publishingSystemID>2619650</publishingSystemID></tradeId><comments><comment index="0">reversal</comment><comment index="1">BidAskPriceAdjLong.</comment></comments></tradeView><tradeView><partyReference href="#_65371"/><entity>MSUKH</entity></tradeView></tradeViews><tradeUserDefinedFields><userDefinedField><fieldLabel>ADJ_PRICE</fieldLabel><fieldIndex>1</fieldIndex><fieldValue>0.</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>ARRANGMENT</fieldLabel><fieldIndex>2</fieldIndex><fieldValue>0</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>BOFOUREYE</fieldLabel><fieldIndex>3</fieldIndex><fieldValue>N</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>BO_VAL</fieldLabel><fieldIndex>4</fieldIndex><fieldValue>Automatic</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>BRKUNMATD</fieldLabel><fieldIndex>5</fieldIndex><fieldValue>999</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>BRK_AGR</fieldLabel><fieldIndex>6</fieldIndex><fieldValue>NONE</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>BRK_DOC</fieldLabel><fieldIndex>7</fieldIndex><fieldValue>NONE</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>BRK_MAT</fieldLabel><fieldIndex>8</fieldIndex><fieldValue>NONE</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>BRK_SCEN</fieldLabel><fieldIndex>9</fieldIndex><fieldValue>No Chasing</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>CONFORDER</fieldLabel><fieldIndex>11</fieldIndex><fieldValue>No order</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>CONF_VAL</fieldLabel><fieldIndex>18</fieldIndex><fieldValue>Automatic</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>CONF_VAL_B</fieldLabel><fieldIndex>19</fieldIndex><fieldValue>Automatic</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>CTPUNMATD</fieldLabel><fieldIndex>20</fieldIndex><fieldValue>999</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>CTP_MAT</fieldLabel><fieldIndex>21</fieldIndex><fieldValue>NONE</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>CTP_SCEN</fieldLabel><fieldIndex>22</fieldIndex><fieldValue>No Chasing</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>DIST_DESC</fieldLabel><fieldIndex>23</fieldIndex><fieldValue>Receive 810 EUR on 09 feb 2017</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>DIST_TTL</fieldLabel><fieldIndex>25</fieldIndex><fieldValue>0</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>DOC_TYPE</fieldLabel><fieldIndex>28</fieldIndex><fieldValue>NONE</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>EXT_IMPACT</fieldLabel><fieldIndex>31</fieldIndex><fieldValue>EXTERNAL</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>FOFOUREYE</fieldLabel><fieldIndex>34</fieldIndex><fieldValue>N</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>FO_TIMER</fieldLabel><fieldIndex>35</fieldIndex><fieldValue>0</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>FO_VAL</fieldLabel><fieldIndex>36</fieldIndex><fieldValue>Automatic</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>INS_BD_CL</fieldLabel><fieldIndex>37</fieldIndex><fieldValue>OOTH</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>MASTER_AGR</fieldLabel><fieldIndex>40</fieldIndex><fieldValue>NONE</fieldValue><fieldType>character</fieldType></userDefinedField><userDefinedField><fieldLabel>MRG_VAL</fieldLabel><fieldIndex>43</fieldIndex><fieldValue>0.</fieldValue><fieldType>numeric</fieldType></userDefinedField><userDefinedField><fieldLabel>STRATEGYID</fieldLabel><fieldIndex>54</fieldIndex><fieldValue>0</fieldValue><fieldType>numeric</fieldType></userDefinedField></tradeUserDefinedFields><tradeFees/><tradeAgreements><paymentNetting>false</paymentNetting></tradeAgreements><contractReference mefClass="mxContractISINGLE"><businessObjectId mefClass="mxContractISINGLE" mefClassInstanceType="90"><identifier>2668617</identifier><primarySystem>MX</primarySystem></businessObjectId><contractId><internalId>2668617</internalId><rootContract>2668617</rootContract></contractId></contractReference><tradeProcessing><nonUnwoundRatio>1.</nonUnwoundRatio><remainingLiveQuantity>1.</remainingLiveQuantity></tradeProcessing><tradeAccountingInfo><tradeHedging><hedgedTransactionSold>false</hedgedTransactionSold></tradeHedging></tradeAccountingInfo></tradeHeader><tradeBody><simpleCashFlows><plInstrument>BFCM 0.25 140619 A MTN</plInstrument><plInstrumentFamily>Security</plInstrumentFamily><defaultCurrency>EUR</defaultCurrency><flows><flow><payerPartyReference href="#_65371"/><receiverPartyReference href="#Mizuho_Int_PLC"><portfolioReference href="#FIN_MM1"/></receiverPartyReference><date>20170209</date><currency>EUR</currency><amount>810</amount><comment/><flowTypologies><flowTypology><label>Typology0</label><value>CAP</value></flowTypology><flowTypology><label>Typology1</label><value>STL</value></flowTypology><flowTypology><label>Typology2</label><value/></flowTypology><flowTypology><label>Typology3</label><value/></flowTypology><flowTypology><label>Typology4</label><value>INT</value></flowTypology><flowDescription/></flowTypologies></flow></flows></simpleCashFlows></tradeBody><settlementInstructions/><tradeInputConditions><inputBy><userName>MUREXINT</userName><code>SYSTEM ACCOUNT</code></inputBy><systemDate>20170209</systemDate><computerDate>20170209</computerDate><validityDate>20170209</validityDate><computerTime>23:33:07</computerTime><areaCode>0</areaCode><lateTrading>earlyTrading</lateTrading><timestamp>20170209 23:33:07:243</timestamp><modified>false</modified><initialData/></tradeInputConditions><tradeStatus><physicalStatus>live</physicalStatus></tradeStatus><tradeVersions><tradeVersion><businessObjectId><identifier>2619650</identifier><baseIdentifier>2619650</baseIdentifier><versionIdentifier><versionRevision><versionNumber>1</versionNumber><versionDateAndTime><date>00000000</date></versionDateAndTime></versionRevision></versionIdentifier><primarySystem>MX</primarySystem></businessObjectId><contractEventReference mefClass=""><contractEventId><internalId>0</internalId></contractEventId></contractEventReference><eventVersion>0</eventVersion><contractEventOriginReference mefClass=""><contractEventId><internalId>0</internalId><businessObjectId><versionIdentifier><versionRevision><versionNumber>1</versionNumber><versionDateAndTime><date>00000000</date></versionDateAndTime></versionRevision></versionIdentifier><primarySystem>MX</primarySystem></businessObjectId></contractEventId></contractEventOriginReference><action>INSERT</action><date>20170209</date><validityDate>20170209</validityDate><timestamp>2017/02/09 23:33:07.243</timestamp><lateTrading>N</lateTrading><tradePurpose>MfBJy44236</tradePurpose><tradePurposeDisplayedLabel>Contract</tradePurposeDisplayedLabel><tradePurposeId>0</tradePurposeId><stpStatuses><stpStatus><stpStatusKey>STP_STATUS_VALIDATION_LEVEL</stpStatusKey><stpStatusValue/></stpStatus><stpStatus><stpStatusKey>STP_STATUS</stpStatusKey><stpStatusValue/></stpStatus><stpStatus><stpStatusKey>STP_STATUS1</stpStatusKey><stpStatusValue/></stpStatus><stpStatus><stpStatusKey>STP_STATUS2</stpStatusKey><stpStatusValue/></stpStatus><stpStatus><stpStatusKey>STP_STATUS3</stpStatusKey><stpStatusValue/></stpStatus><stpStatus><stpStatusKey>STP_STATUS4</stpStatusKey><stpStatusValue/></stpStatus></stpStatuses><isActive>true</isActive></tradeVersion></tradeVersions><evaluationFlows/><deletedFlows/></trade></trades></MxML>
+Page 0time: 699
+<?xml version="1.0" encoding="UTF-8"?>
+<nonpublicExecutionReport xmlns="http://www.fpml.org/FpML-5/reporting" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mhi="urn:com.mizuho.bdm.mhi" xmlns:m="urn:com.mizuho.bdm" fpmlVersion="5-6" xsi:schemaLocation="http://www.fpml.org/FpML-5/reporting http://svc-bdmentity01p:8080/schema/1.16.0/com/mizuho/bdm/fpml/fpml-5-6-reporting.xsd urn:com.mizuho.bdm http://svc-bdmentity01p:8080/schema/1.16.0/com/mizuho/bdm/fpml/mizuho-fpml.xsd urn:com.mizuho.bdm.mhi http://svc-bdmentity01p:8080/schema/1.16.0/com/mizuho/bdm/mhi/fpml/mhi-fpml.xsd">
+  <parentCorrelationId correlationIdScheme="mhi:murex">2668617</parentCorrelationId>
+  <correlationId correlationIdScheme="mhi:correlation-id">0</correlationId>
+  <sequenceNumber>1</sequenceNumber>
+  <onBehalfOf>
+    <partyReference href="Mizuho_Int_PLC"/>
+    <accountReference href="FIN_MM1"/>
+  </onBehalfOf>
+  <originatingEvent originatingEventScheme="http://www.fpml.org/coding-scheme/originating-event">Trade</originatingEvent>
+  <trade>
+    <tradeHeader>
+      <partyTradeIdentifier>
+        <partyReference href="Mizuho_Int_PLC"/>
+        <tradeId tradeIdScheme="mhi:trade-id">589cfc3b4237d665f33450f6</tradeId>
+        <tradeId tradeIdScheme="mhi:murex-id">2668617</tradeId>
+      </partyTradeIdentifier>
+      <partyTradeInformation xsi:type="m:PartyTradeInformation">
+        <partyReference href="Mizuho_Int_PLC"/>
+        <relatedParty>
+          <partyReference href="_65371"/>
+          <role partyRoleScheme="mizuho:party-role">Counterparty</role>
+        </relatedParty>
+        <trader traderScheme="mhi:trader-name"/>
+        <executionDateTime>2017-02-09T23:33:07</executionDateTime>
+        <intentToAllocate>false</intentToAllocate>
+        <m:tradeNarrative informationItemTypeScheme="murex:typology">BidAskPriceAdjLong</m:tradeNarrative>
+        <m:system>
+          <m:systemId>murex</m:systemId>
+          <m:role>Trade Entry</m:role>
+        </m:system>
+      </partyTradeInformation>
+      <tradeDate>2017-02-09</tradeDate>
+    </tradeHeader>
+    <m:fee>
+      <productType productTypeScheme="mhi:product-type">Simple Cashflow</productType>
+      <payment>
+        <payerPartyReference href="_65371"/>
+        <receiverPartyReference href="Mizuho_Int_PLC"/>
+        <receiverAccountReference href="FIN_MM1"/>
+        <paymentAmount>
+          <currency>EUR</currency>
+          <amount>810</amount>
+        </paymentAmount>
+        <paymentDate>
+          <unadjustedDate>2017-02-09</unadjustedDate>
+        </paymentDate>
+        <paymentType paymentTypeScheme="mizuho:simple-cashflow-type"/>
+      </payment>
+    </m:fee>
+  </trade>
+  <party id="Mizuho_Int_PLC">
+    <partyId partyIdScheme="mhi:party-id">Mizuho Int PLC</partyId>
+  </party>
+  <party id="_65371">
+    <partyId partyIdScheme="mhi:party-id">CORPACTGEN</partyId>
+  </party>
+  <account id="FIN_MM1">
+    <accountId accountIdScheme="mhi:book-ref">FIN</accountId>
+    <accountId accountIdScheme="mhi:book-type">MM1</accountId>
+  </account>
+</nonpublicExecutionReport>
+
+Page 0time: 699
+{content=<?xml version="1.0" encoding="UTF-8"?>
+<nonpublicExecutionReport xmlns="http://www.fpml.org/FpML-5/reporting" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mhi="urn:com.mizuho.bdm.mhi" xmlns:m="urn:com.mizuho.bdm" fpmlVersion="5-6" xsi:schemaLocation="http://www.fpml.org/FpML-5/reporting http://svc-bdmentity01p:8080/schema/1.16.0/com/mizuho/bdm/fpml/fpml-5-6-reporting.xsd urn:com.mizuho.bdm http://svc-bdmentity01p:8080/schema/1.16.0/com/mizuho/bdm/fpml/mizuho-fpml.xsd urn:com.mizuho.bdm.mhi http://svc-bdmentity01p:8080/schema/1.16.0/com/mizuho/bdm/mhi/fpml/mhi-fpml.xsd">
+  <parentCorrelationId correlationIdScheme="mhi:murex">2668617</parentCorrelationId>
+  <correlationId correlationIdScheme="mhi:correlation-id">0</correlationId>
+  <sequenceNumber>1</sequenceNumber>
+  <onBehalfOf>
+    <partyReference href="Mizuho_Int_PLC"/>
+    <accountReference href="FIN_MM1"/>
+  </onBehalfOf>
+  <originatingEvent originatingEventScheme="http://www.fpml.org/coding-scheme/originating-event">Trade</originatingEvent>
+  <trade>
+    <tradeHeader>
+      <partyTradeIdentifier>
+        <partyReference href="Mizuho_Int_PLC"/>
+        <tradeId tradeIdScheme="mhi:trade-id">589cfc3b4237d665f33450f6</tradeId>
+        <tradeId tradeIdScheme="mhi:murex-id">2668617</tradeId>
+      </partyTradeIdentifier>
+      <partyTradeInformation xsi:type="m:PartyTradeInformation">
+        <partyReference href="Mizuho_Int_PLC"/>
+        <relatedParty>
+          <partyReference href="_65371"/>
+          <role partyRoleScheme="mizuho:party-role">Counterparty</role>
+        </relatedParty>
+        <trader traderScheme="mhi:trader-name"/>
+        <executionDateTime>2017-02-09T23:33:07</executionDateTime>
+        <intentToAllocate>false</intentToAllocate>
+        <m:tradeNarrative informationItemTypeScheme="murex:typology">BidAskPriceAdjLong</m:tradeNarrative>
+        <m:system>
+          <m:systemId>murex</m:systemId>
+          <m:role>Trade Entry</m:role>
+        </m:system>
+      </partyTradeInformation>
+      <tradeDate>2017-02-09</tradeDate>
+    </tradeHeader>
+    <m:fee>
+      <productType productTypeScheme="mhi:product-type">Simple Cashflow</productType>
+      <payment>
+        <payerPartyReference href="_65371"/>
+        <receiverPartyReference href="Mizuho_Int_PLC"/>
+        <receiverAccountReference href="FIN_MM1"/>
+        <paymentAmount>
+          <currency>EUR</currency>
+          <amount>810</amount>
+        </paymentAmount>
+        <paymentDate>
+          <unadjustedDate>2017-02-09</unadjustedDate>
+        </paymentDate>
+        <paymentType paymentTypeScheme="mizuho:simple-cashflow-type"/>
+      </payment>
+    </m:fee>
+  </trade>
+  <party id="Mizuho_Int_PLC">
+    <partyId partyIdScheme="mhi:party-id">Mizuho Int PLC</partyId>
+  </party>
+  <party id="_65371">
+    <partyId partyIdScheme="mhi:party-id">CORPACTGEN</partyId>
+  </party>
+  <account id="FIN_MM1">
+    <accountId accountIdScheme="mhi:book-ref">FIN</accountId>
+    <accountId accountIdScheme="mhi:book-type">MM1</accountId>
+  </account>
+</nonpublicExecutionReport>
+}
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14.694 s
+[INFO] Finished at: 2017-02-14T17:25:07+00:00
+[INFO] Final Memory: 33M/350M
+[INFO] ------------------------------------------------------------------------
