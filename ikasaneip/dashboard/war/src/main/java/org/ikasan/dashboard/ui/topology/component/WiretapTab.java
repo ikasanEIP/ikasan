@@ -305,7 +305,8 @@ public class WiretapTab extends TopologyTab
             	    item.getItemProperty("Module Name").setValue(wiretapEvent.getModuleName());
         			item.getItemProperty("Flow Name").setValue(wiretapEvent.getFlowName());
         			item.getItemProperty("Component Name").setValue(wiretapEvent.getComponentName());
-        			item.getItemProperty("Event Id / Payload Id").setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
+//        			item.getItemProperty("Event Id / Payload Id").setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
+					item.getItemProperty("Event Id / Payload Id").setValue("identifier");
         			item.getItemProperty("Timestamp").setValue(timestamp);
         			
         			CheckBox cb = new CheckBox();
@@ -324,13 +325,13 @@ public class WiretapTab extends TopologyTab
         			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
-        	        popupButton.addClickListener(new Button.ClickListener() 
-        	    	{
-        	            public void buttonClick(ClickEvent event) 
-        	            {
-        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
-        	            }
-        	        });
+//        	        popupButton.addClickListener(new Button.ClickListener()
+//        	    	{
+//        	            public void buttonClick(ClickEvent event)
+//        	            {
+//        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
+//        	            }
+//        	        });
         	        
         	        item.getItemProperty(" ").setValue(popupButton);
             	}
