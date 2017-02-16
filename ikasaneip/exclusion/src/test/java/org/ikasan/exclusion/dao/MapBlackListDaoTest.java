@@ -42,6 +42,9 @@ package org.ikasan.exclusion.dao;
 
 import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
+import org.ikasan.spec.flow.FlowInvocationContext;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +68,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class MapBlackListDaoTest
 {
     /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+
+    /**
      * Test exclusion
      */
     @DirtiesContext
@@ -73,7 +84,9 @@ public class MapBlackListDaoTest
     {
         BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(2) );
 
-        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456", "errorUri");
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
+
+        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456", "errorUri", flowInvocationContext);
         Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456"));
 
         blackListDao.insert(blackListEvent);
@@ -94,9 +107,11 @@ public class MapBlackListDaoTest
     {
         BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(2) );
 
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
+
         // new event with 1 milli expiry
-        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456",  "errorUri");
-        BlackListEvent blackListEventExpired = new BlackListEvent("moduleName", "flowName", "1234567",  "errorUri", -1L);
+        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456",  "errorUri", flowInvocationContext);
+        BlackListEvent blackListEventExpired = new BlackListEvent("moduleName", "flowName", "1234567",  "errorUri", flowInvocationContext, -1L);
         Assert.assertFalse("Non expired should not be found", blackListDao.contains("moduleName", "flowName", "123456") );
         Assert.assertFalse("Expired should not be found", blackListDao.contains("moduleName", "flowName", "1234567") );
 
@@ -118,21 +133,22 @@ public class MapBlackListDaoTest
     public void test_roll_operation()
     {
         MapBlackListDao exclusionServiceDao = new MapBlackListDao( new BlackListLinkedHashMap(5) );
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
         // new event with 1 milli expiry
-        BlackListEvent blackListEvent1 = new BlackListEvent("moduleName", "flowName", "1234561", "errorUri");
+        BlackListEvent blackListEvent1 = new BlackListEvent("moduleName", "flowName", "1234561", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent1);
-        BlackListEvent blackListEvent2 = new BlackListEvent("moduleName", "flowName", "1234562", "errorUri");
+        BlackListEvent blackListEvent2 = new BlackListEvent("moduleName", "flowName", "1234562", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent2);
-        BlackListEvent blackListEvent3 = new BlackListEvent("moduleName", "flowName", "1234563", "errorUri");
+        BlackListEvent blackListEvent3 = new BlackListEvent("moduleName", "flowName", "1234563", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent3);
-        BlackListEvent blackListEvent4 = new BlackListEvent("moduleName", "flowName", "1234564", "errorUri");
+        BlackListEvent blackListEvent4 = new BlackListEvent("moduleName", "flowName", "1234564", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent4);
-        BlackListEvent blackListEvent5 = new BlackListEvent("moduleName", "flowName", "1234565", "errorUri");
+        BlackListEvent blackListEvent5 = new BlackListEvent("moduleName", "flowName", "1234565", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent5);
-        BlackListEvent blackListEvent6 = new BlackListEvent("moduleName", "flowName", "1234566", "errorUri");
+        BlackListEvent blackListEvent6 = new BlackListEvent("moduleName", "flowName", "1234566", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent6);
-        BlackListEvent blackListEvent7 = new BlackListEvent("moduleName", "flowName", "1234567", "errorUri");
+        BlackListEvent blackListEvent7 = new BlackListEvent("moduleName", "flowName", "1234567", "errorUri", flowInvocationContext);
         exclusionServiceDao.insert(blackListEvent7);
 
         Assert.assertFalse("blacklisted should not contain exclusionEvent1", exclusionServiceDao.contains("moduleName", "flowName", "1234561"));

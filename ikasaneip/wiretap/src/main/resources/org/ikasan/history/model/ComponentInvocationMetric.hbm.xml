@@ -50,18 +50,34 @@
 
 <hibernate-mapping>
 
-    <class name="org.ikasan.history.model.CustomMetric"
-           table="CustomMetric">
+    <class name="org.ikasan.history.model.ComponentInvocationMetricImpl"
+           table="ComponentInvocationMetric">
 
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity"/>
         </id>
+        
+        <set name="metrics" 
+             cascade="all"
+             lazy="false">
+             <key column="CompInvocationMetricId" update="false" on-delete="noaction" not-null="true"/>
+             <one-to-many class="org.ikasan.history.model.CustomMetric"/>
+        </set>
 
-        <property name="name"        type="java.lang.String"
-                  column="Name"      not-null="true"/>
-                  
-        <property name="value"          type="java.lang.String"
-                  column="Value"        not-null="true"/>
+        <property name="componentName"     type="java.lang.String"
+                  column="ComponentName"   not-null="true"/>
+        <property name="beforeEventIdentifier"    type="java.lang.String"
+                  column="BeforeEventIdentifier"  not-null="true"/>
+        <property name="beforeRelatedEventIdentifier" type="java.lang.String"
+                  column="BeforeRelatedEventIdentifier"/>
+        <property name="afterEventIdentifier"    type="java.lang.String"
+                  column="AfterEventIdentifier"  not-null="true"/>
+        <property name="afterRelatedEventIdentifier" type="java.lang.String"
+                  column="AfterRelatedEventIdentifier"/>
+        <property name="startTimeMillis"   type="long"
+                  column="StartTime"       not-null="true"/>
+        <property name="endTimeMillis"     type="long"
+                  column="EndTime"/>
 
     </class>
 

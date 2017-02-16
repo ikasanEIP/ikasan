@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.exclusion;
 
+import org.ikasan.spec.flow.FlowInvocationContext;
+
 /**
  * ExclusionService contract.
  * 
@@ -59,16 +61,25 @@ public interface ExclusionService<ENTITY, IDENTIFIER>
     public boolean isBlackListed(IDENTIFIER identifier);
 
     /**
-     * Add this identifier to the blacklist based on a specified identifier and associated URI
+     * Add this identifier to the blacklist based on a specified identifier and associated URI.
+     *
      * @param identifier
      * @param uri
      */
-    public void addBlacklisted(IDENTIFIER identifier, String uri);
+    public void addBlacklisted(IDENTIFIER identifier, String uri, FlowInvocationContext flowInvocationContext);
 
     /**
      * Get the errorUri from the blacklist associated with the identifier.
      */
     public String getErrorUri(IDENTIFIER identifier);
+
+    /**
+     * Get the flow invocation from the blacklist associated with the identifier.
+     *
+     * @param identifier
+     * @return
+     */
+    public FlowInvocationContext getFlowInvocationContext(IDENTIFIER identifier);
 
     /**
      * Park this entity

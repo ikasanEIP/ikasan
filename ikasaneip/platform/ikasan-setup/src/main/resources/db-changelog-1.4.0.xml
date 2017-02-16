@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
+
+	<!-- 1.4.0 table creation -->
+	<include file="db/tables/db-changeLog-createFlowInvocation.xml" relativeToChangelogFile="true" />
+
+	<!-- 1.4.0 table alterations -->
+	<include file="db/alter/db-changeLog-alterMessageHistoryRemoveFlowInvocationColumns.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMessageHistoryAddFlowInvocationId.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMessageHistoryRenameToComponentInvocationMetric.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterFlowInvocationRenameToFlowInvocationMetric.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMetricRenameToCustomMetric.xml" relativeToChangelogFile="true" />
+
+	<!-- 1.4.0 cardinality creation -->
+
+	<!-- 1.4.0 data creation -->
+	
+	<!-- 1.4.0 index creation -->
+	
+</databaseChangeLog>

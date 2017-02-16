@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class CustomMetric implements Serializable
 {
 	private Long id;
-	private MessageHistoryFlowEvent messageHistoryFlowEvent;
+	private ComponentInvocationMetricImpl componentInvocationMetricImpl;
 	private String name;
 	private String value;
 	
@@ -48,17 +48,17 @@ public class CustomMetric implements Serializable
 	/**
 	 * @return the messageHistoryFlowEvent
 	 */
-	public MessageHistoryFlowEvent getMessageHistoryFlowEvent()
+	public ComponentInvocationMetricImpl getComponentInvocationMetricImpl()
 	{
-		return messageHistoryFlowEvent;
+		return componentInvocationMetricImpl;
 	}
 	
 	/**
-	 * @param messageHistoryFlowEvent the messageHistoryFlowEvent to set
+	 * @param componentInvocationMetricImpl the messageHistoryFlowEvent to set
 	 */
-	public void setMessageHistoryFlowEvent(MessageHistoryFlowEvent messageHistoryFlowEvent) 
+	public void setComponentInvocationMetricImpl(ComponentInvocationMetricImpl componentInvocationMetricImpl)
 	{
-		this.messageHistoryFlowEvent = messageHistoryFlowEvent;
+		this.componentInvocationMetricImpl = componentInvocationMetricImpl;
 	}
 	
 	/**
