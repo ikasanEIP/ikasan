@@ -44,7 +44,9 @@ import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
@@ -134,15 +136,16 @@ public class ExclusionServiceDefaultImplTest
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
 
         final FlowEvent expiredFlowEvent = mockery.mock(FlowEvent.class, "expired-flow-event");
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
-        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
-        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
-        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
         // this flowEvent should exist in blacklist
@@ -167,9 +170,11 @@ public class ExclusionServiceDefaultImplTest
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(-1L);
 
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
+
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
 
-        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
         exclusionService.housekeep();
@@ -186,9 +191,11 @@ public class ExclusionServiceDefaultImplTest
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(10000L);
 
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
+
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
 
-        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
 
         exclusionService.housekeep();
@@ -205,6 +212,7 @@ public class ExclusionServiceDefaultImplTest
         final String payload = "this is payload content";
 
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
+        final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
         // expectations
         mockery.checking(new Expectations()
@@ -216,7 +224,7 @@ public class ExclusionServiceDefaultImplTest
            }
         });
 
-        exclusionService.addBlacklisted("123456", "uri");
+        exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
         exclusionService.park(flowEvent, "123456");
         ExclusionEvent exclusionEvent = exclusionServiceExclusionEventDao.find("moduleName", "flowName", "123456");
         Object exclusionEventPayloadBytes = exclusionEvent.getEvent();
