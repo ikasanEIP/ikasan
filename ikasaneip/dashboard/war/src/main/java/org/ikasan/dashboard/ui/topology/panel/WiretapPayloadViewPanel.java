@@ -193,7 +193,7 @@ public class WiretapPayloadViewPanel extends Panel
 		layout.setComponentAlignment(eventIdLabel, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf5 = new TextField();
-		tf5.setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
+//		tf5.setValue(((WiretapFlowEvent)wiretapEvent).getEventId());
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
