@@ -72,6 +72,8 @@ public class MappingConfiguration implements Serializable
 
     protected Set<SourceConfigurationValue> sourceConfigurationValues;
 
+	protected boolean isManyToMany = false;
+
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
 
@@ -94,7 +96,7 @@ public class MappingConfiguration implements Serializable
 
     /**
      * It is a Hibernate requirement that all properties of a window object have getter and setter methods. However, the value of
-     * an {@link Id} is part of its primary key and must me immutable. Hence, setter method is private to prevent 
+     * an Id is part of its primary key and must me immutable. Hence, setter method is private to prevent
      * client code from changing the value.
      * 
      * @param id to set
@@ -227,6 +229,16 @@ public class MappingConfiguration implements Serializable
 			Set<SourceConfigurationValue> sourceConfigurationValues) 
 	{
 		this.sourceConfigurationValues = sourceConfigurationValues;
+	}
+
+	public boolean getIsManyToMany()
+	{
+		return isManyToMany;
+	}
+
+	public void setIsManyToMany(boolean manyToMany)
+	{
+		isManyToMany = manyToMany;
 	}
 
 	@Override

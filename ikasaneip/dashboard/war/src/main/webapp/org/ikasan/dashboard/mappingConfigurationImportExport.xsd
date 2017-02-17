@@ -9,8 +9,9 @@
         <xs:element ref="sourceContext" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="targetContext" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="description" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="numberOfSourceParams" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="sourceConfigurationValueQueries" minOccurs="1" maxOccurs="1"/>
+        <xs:element ref="isManyToMany" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="numberOfSourceParams" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="sourceConfigurationValueQueries" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="mappingConfigurationValues" minOccurs="1" maxOccurs="1"/>
       </xs:sequence>
     </xs:complexType>
@@ -21,6 +22,7 @@
   <xs:element name="sourceContext" type="xs:string"/>
   <xs:element name="targetContext" type="xs:string"/>
   <xs:element name="description" type="xs:string"/>
+  <xs:element name="isManyToMany" type="xs:boolean"/>
   <xs:element name="numberOfSourceParams" type="xs:integer"/>
   <xs:element name="sourceConfigurationValueQueries">
     <xs:complexType>
@@ -41,7 +43,8 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="1" ref="sourceConfigurationValues"/>
-        <xs:element minOccurs="1" maxOccurs="1" ref="targetConfigurationValue"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="targetConfigurationValues"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="targetConfigurationValue"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -49,6 +52,13 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="sourceConfigurationValue"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="targetConfigurationValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="targetConfigurationValue"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
