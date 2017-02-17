@@ -38,6 +38,10 @@
                    <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="mappingView"/>
+                    <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="existingMappingConfigurationPanel"/>
                    <constructor-arg ref="existingMappingConfigurationPanel"/>
                 </bean>
@@ -193,6 +197,7 @@
     </bean>
 
     <bean id="mappingConfigurationValuesExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="mappingView" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationView" scope="session">

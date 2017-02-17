@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+ <!-- 
  /*
  * $Id$
  * $URL$
@@ -47,8 +47,8 @@
 <hibernate-mapping>
 
     <class
-        name="org.ikasan.mapping.model.MappingConfiguration"
-        table="MCSMappingConfiguration">
+        name="org.ikasan.mapping.model.ManyToManyTargetConfigurationValue"
+        table="MCSManyToManyTargetConfigValue">
 
         <id name="id"
           type="java.lang.Long"
@@ -57,58 +57,13 @@
           <generator class="identity" />
         </id>
 
-        <many-to-one name="sourceContext"
-                  class="org.ikasan.mapping.model.ConfigurationContext" 
-                  column="SourceContextId" 
-                  not-null="true" 
-                  fetch="select"
-                  lazy="false"
-                  unique-key="multicolumn_unique_key"/>
-
-        <many-to-one name="targetContext"
-                  class="org.ikasan.mapping.model.ConfigurationContext"
-                  column="TargetContextId" 
-                  not-null="true" 
-                  fetch="select"
-                  lazy="false"
-                  unique-key="multicolumn_unique_key"/>
-
-        <property name="numberOfParams"
+        <property name="groupId"
                   type="java.lang.Long"
-                  column="NumberOfParams"/>
+                  column="GroupId" />
 
-        <property name="description" 
-                  type="java.lang.String" 
-                  column="Description" />
-
-        <many-to-one name="configurationType"
-                  class="org.ikasan.mapping.model.ConfigurationType"
-                  column="ConfigurationTypeId"
-                  not-null="true" 
-                  fetch="select"
-                  lazy="false"
-                  unique-key="multicolumn_unique_key"/>
-
-        <many-to-one name="configurationServiceClient"
-                  class="org.ikasan.mapping.model.ConfigurationServiceClient"
-                  column="ConfigurationServiceClientId"
-                  not-null="true"     
-                  fetch="select"
-                  lazy="false"
-                  unique-key="multicolumn_unique_key"/>
-
-        <set name="sourceConfigurationValues" 
-             inverse="true" 
-             cascade="all,delete-orphan" 
-             lazy="false"
-             order-by="sourceConfigGroupId">
-             <key column="MappingConfigurationId"/>
-             <one-to-many class="org.ikasan.mapping.model.SourceConfigurationValue"/>
-        </set>
-
-        <property name="isManyToMany"
-                  type="java.lang.Boolean"
-                  column="IsManyToMany" />
+        <property name="targetSystemValue"
+                  type="java.lang.String"
+                  column="TargetSystemValue" />
 
         <property name="createdDateTime"
                   type="java.util.Date"

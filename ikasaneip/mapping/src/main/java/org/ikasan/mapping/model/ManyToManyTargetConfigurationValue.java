@@ -41,28 +41,23 @@
 package org.ikasan.mapping.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
 
 /**
+ * Model for representing the traded instrument.
  * 
  * @author Ikasan Development Team
  *
  */
-public class SourceConfigurationValue implements Serializable
+public class ManyToManyTargetConfigurationValue implements Serializable
 {
-    private static final long serialVersionUID = 7464033893694959176L;
+    private static final long serialVersionUID = -1264606304216999864L;
 
     private Long id;
 
-    private String sourceSystemValue;
+    private Long groupId;
 
-    private Long mappingConfigurationId;
-
-    private Long sourceConfigGroupId;
-
-    private TargetConfigurationValue targetConfigurationValue;
+    private String targetSystemValue;
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -73,7 +68,7 @@ public class SourceConfigurationValue implements Serializable
     /**
      * Default constructor
      */
-    public SourceConfigurationValue()
+    public ManyToManyTargetConfigurationValue()
     {
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
@@ -81,17 +76,11 @@ public class SourceConfigurationValue implements Serializable
     }
 
     /**
-     * @return the id
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
      * It is a Hibernate requirement that all properties of a window object have getter and setter methods. However, the value of
-     * an Id is part of its primary key and must me immutable. Hence, setter method is private to prevent
+     * an id is part of its primary key and must me immutable. Hence, setter method is private to prevent
      * client code from changing the value.
+     * 
+     * @param id to set
      */
     @SuppressWarnings("unused")
     private void setId(Long id)
@@ -100,58 +89,41 @@ public class SourceConfigurationValue implements Serializable
     }
 
     /**
-     * @return the sourceSystemValue
+     * Instrument immutable id
+     * @return id
      */
-    public String getSourceSystemValue()
+    public Long getId()
     {
-        return sourceSystemValue;
+        return this.id;
+    }
+
+    public Long getGroupId()
+    {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId)
+    {
+        this.groupId = groupId;
     }
 
     /**
-     * @param sourceSystemValue the sourceSystemValue to set
+     * @return the targetSystemValue
      */
-    public void setSourceSystemValue(String sourceSystemValue)
+    public String getTargetSystemValue()
     {
-        this.sourceSystemValue = sourceSystemValue;
+        return targetSystemValue;
     }
 
     /**
-     * @return the configurationContextId
+     * @param targetSystemValue the targetSystemValue to set
      */
-    public Long getMappingConfigurationId()
+    public void setTargetSystemValue(String targetSystemValue)
     {
-        return mappingConfigurationId;
+        this.targetSystemValue = targetSystemValue;
     }
 
     /**
-     * @param mappingConfigurationId the mappingConfigurationId to set
-     */
-    public void setMappingConfigurationId(Long mappingConfigurationId)
-    {
-        this.mappingConfigurationId = mappingConfigurationId;
-    }
-
-    
-    /**
-     * 
-     * @return the targetConfigurationValue
-     */
-    public TargetConfigurationValue getTargetConfigurationValue() 
-    {
-		return targetConfigurationValue;
-	}
-
-	/**
-	 * 
-	 * @param targetConfigurationValue the targetConfigurationValue to set
-	 */
-    public void setTargetConfigurationValue(
-			TargetConfigurationValue targetConfigurationValue) 
-	{
-		this.targetConfigurationValue = targetConfigurationValue;
-	}
-
-	/**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()
@@ -162,7 +134,8 @@ public class SourceConfigurationValue implements Serializable
     /**
      * @param createdDateTime the createdDateTime to set
      */
-    public void setCreatedDateTime(Date createdDateTime)
+    @SuppressWarnings("unused")
+    private void setCreatedDateTime(Date createdDateTime)
     {
         this.createdDateTime = createdDateTime;
     }
@@ -183,29 +156,14 @@ public class SourceConfigurationValue implements Serializable
         this.updatedDateTime = updatedDateTime;
     }
 
-	/**
-     * @return the sourceConfigGroupId
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
      */
-    public Long getSourceConfigGroupId()
-    {
-        return sourceConfigGroupId;
-    }
-
-    /**
-     * @param sourceConfigGroupId the sourceConfigGroupId to set
-     */
-    public void setSourceConfigGroupId(Long sourceConfigGroupId)
-    {
-        this.sourceConfigGroupId = sourceConfigGroupId;
-    }
-
     @Override
-	public String toString() {
-		return "SourceConfigurationValue [id=" + id + ", sourceSystemValue="
-				+ sourceSystemValue + ", mappingConfigurationId="
-				+ mappingConfigurationId + ", targetConfigurationValue="
-				+ targetConfigurationValue + ", createdDateTime="
-				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
-				+ "]";
-	}
+    public String toString()
+    {
+        return "TargetConfigurationValue [id=" + id + ", targetSystemValue=" + targetSystemValue + ", createdDateTime="
+                + createdDateTime + ", updatedDateTime=" + updatedDateTime + "]";
+    }
+
 }
