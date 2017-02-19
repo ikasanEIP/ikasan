@@ -37,3 +37,7 @@ Using Eclipse
 6. In eclipse preferences Java->Editor->Save Actions enable "Additional Actions"
 7. Use import on the root pom.xml which will pull in all modules
 8. Wait (m2e takes awhile on initial import)
+
+
+[Getting Started Guide](https://github.com/ikasanEIP/ikasan/tree/GettingStarted/ikasaneip/developer/docs)
+---------------------
