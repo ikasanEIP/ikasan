@@ -47,6 +47,7 @@ import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.serialiser.Serialiser;
 
 /**
@@ -132,9 +133,9 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     }
 
     @Override
-    public void addBlacklisted(String identifier, String errorUri)
+    public void addBlacklisted(String identifier, String errorUri, FlowInvocationContext flowInvocationContext)
     {
-        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, identifier, errorUri, this.timeToLive);
+        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, identifier, errorUri, flowInvocationContext, this.timeToLive);
         this.blackListDao.insert(blackListEvent);
     }
 
@@ -148,6 +149,19 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
         }
 
         return blackListEvent.getErrorUri();
+    }
+
+    @Override
+    public FlowInvocationContext getFlowInvocationContext(String identifier)
+    {
+        BlackListEvent blackListEvent = this.blackListDao.find(this.moduleName, this.flowName, identifier);
+
+        if (blackListEvent == null)
+        {
+            return null;
+        }
+
+        return blackListEvent.getFlowInvocationContext();
     }
 
     @Override

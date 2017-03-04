@@ -42,15 +42,7 @@ package org.ikasan.mapping.dao;
 
 import java.util.List;
 
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.springframework.dao.DataAccessException;
 
 
@@ -85,18 +77,30 @@ public interface MappingConfigurationDao
      */
     public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationType, final String sourceSystem
             , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
-	
-	/**
-     * 
+
+    /**
+     *
      * @param clientName
      * @param configurationType
-     * @param sourceSystem
-     * @param targetSystem
+     * @param sourceContext
+     * @param targetContext
      * @param sourceSystemValues
      * @return
      */
     public String getTargetConfigurationValue(final String clientName, String configurationType,
             String sourceContext, String targetContext, List<String> sourceSystemValues);
+
+    /**
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public List<String> getTargetConfigurationValues(final String clientName, String configurationType,
+                                              String sourceContext, String targetContext, List<String> sourceSystemValues);
 
     /**
      * 
@@ -162,40 +166,23 @@ public interface MappingConfigurationDao
      */
     public Long storeConfigurationType(ConfigurationType configurationType);
 
-    /**
-     * Store the configuration context.
-     * 
-     * @param configurationContext
-     */
     public Long storeMappingConfiguration(MappingConfiguration mappingConfiguration) throws DataAccessException;
 
-    /**
-     * Store the configuration context.
-     * 
-     * @param configurationContext
-     */
     public Long storeSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue);
+    
+    public List<SourceConfigurationValue> getSourceConfigurationValues(Long mappingConfigurationId, List<String> values);
 
-    /**
-     * Store the configuration context.
-     * 
-     * @param configurationContext
-     */
     public Long storeTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
 
-    /**
-     * Store the configuration service client.
-     * 
-     * @param configurationContext
-     */
+    public Long storeManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue);
+
     public Long storeConfigurationServiceClient(ConfigurationServiceClient configurationServiceClient);
 
-    /**
-     * Store the key location query.
-     * 
-     * @param configurationContext
-     */
+    public void storeSourceValueTargetValueGrouping(SourceValueTargetValueGrouping sourceValueTargetValueGrouping);
+
     public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery);
+
+    public Long getNumberOfSourceValuesForGroupId(Long groupId);
 
     /**
      * 
@@ -335,10 +322,16 @@ public interface MappingConfigurationDao
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue);
 
     /**
-     * 
-     * @param sourceConfigurationValue
+     *
+     * @param targetConfigurationValue
      */
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
+
+    /**
+     *
+     * @param targetConfigurationValue
+     */
+    public void deleteManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue);
 
     /**
      * 
@@ -393,6 +386,13 @@ public interface MappingConfigurationDao
      * @return
      */
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
+
+    /**
+     *
+     * @param groupId
+     * @return
+     */
+    public List<ManyToManyTargetConfigurationValue> getManyToManyTargetConfigurationValues(Long groupId);
 
 
     /**

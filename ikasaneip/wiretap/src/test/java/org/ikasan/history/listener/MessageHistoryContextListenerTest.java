@@ -41,7 +41,6 @@
 package org.ikasan.history.listener;
 
 import org.ikasan.spec.flow.FinalAction;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.flow.FlowInvocationContextListener;
 import org.ikasan.spec.history.MessageHistoryService;
@@ -50,7 +49,6 @@ import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.ikasan.spec.history.MessageHistoryEvent;
 
 /**
  * Test cases for MessageHistoryContextListener
