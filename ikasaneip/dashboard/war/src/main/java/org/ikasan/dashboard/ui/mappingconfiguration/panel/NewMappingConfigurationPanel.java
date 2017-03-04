@@ -97,6 +97,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
 
     private Logger logger = Logger.getLogger(NewMappingConfigurationPanel.class);
 
+
     /**
      * Constructor
      * 
@@ -175,26 +176,21 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         toolBarLayout.addComponent(spacerLabel);
         toolBarLayout.setExpandRatio(spacerLabel, 0.865f);
 
-        this.editButton.setIcon(VaadinIcons.EDIT);
         this.editButton.setDescription("Edit the mapping configuration");
-        this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.editButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
         toolBarLayout.addComponent(editButton);
         toolBarLayout.setExpandRatio(editButton, 0.045f);
 
-        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
-        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
         this.saveButton.setDescription("Save the mapping configuration");
-        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
 
         toolBarLayout.addComponent(saveButton);
         toolBarLayout.setExpandRatio(saveButton, 0.045f);
 
-        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
-        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
         this.cancelButton.setDescription("Cancel the current edit");
-        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         toolBarLayout.addComponent(this.cancelButton);
         toolBarLayout.setExpandRatio(this.cancelButton, 0.045f);
@@ -209,7 +205,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             , createTableLayout(false));
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        Button addParametersButton = new Button();
         addParametersButton.setIcon(VaadinIcons.FORM);
         addParametersButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         addParametersButton.setDescription("Add new key location queries. The number of fields created corresponds to the number of query parameters.");
@@ -222,19 +217,19 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         });
 
         paramQueriesLayout.removeAllComponents();
-//        paramQueriesLayout.addComponent(addParametersButton);
         paramQueriesLayout.setSpacing(true);
+
+        configValueLabels = new Label("Source Configuration Value Queries:");
         
-        Label configValueLabels = new Label("Source Configuration Value Queries:");
-        layout.addComponent(configValueLabels, 2, 2);
-        layout.addComponent(addParametersButton, 3, 2);        
+        layout.addComponent(configValueLabels, 2, 3);
+        layout.addComponent(addParametersButton, 3, 3);
 
         Panel queryParamsPanel = new Panel();
         queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
         queryParamsPanel.setHeight(140, Unit.PIXELS);
         queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
         queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
+        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 5);
 
         vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);

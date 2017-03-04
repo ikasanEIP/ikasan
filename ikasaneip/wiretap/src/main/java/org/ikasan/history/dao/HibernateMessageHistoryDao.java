@@ -49,9 +49,9 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -67,7 +67,7 @@ import java.util.*;
 public class HibernateMessageHistoryDao extends HibernateDaoSupport implements MessageHistoryDao
 {
 	/** Use batch housekeeping mode? */
-    private boolean batchHousekeepDelete = false;
+    private boolean batchHousekeepDelete = true;
 
     /** Batch size used when in batching housekeep */
     private Integer housekeepingBatchSize = 400;
@@ -77,27 +77,33 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
 
     @Override
-    public void save(MessageHistoryEvent messageHistoryEvent)
+    public void save(ComponentInvocationMetric messageHistoryEvent)
     {
         getHibernateTemplate().saveOrUpdate(messageHistoryEvent);
     }
+
+    @Override
+    public void save(FlowInvocationMetric flowInvocationMetric)
+    {
+        getHibernateTemplate().saveOrUpdate(flowInvocationMetric);
+    }
     
 	@Override
-	public void save(WiretapEvent wiretapEvent) 
+	public void save(MetricEvent metricEvent)
 	{
-		getHibernateTemplate().saveOrUpdate(wiretapEvent);
+		getHibernateTemplate().saveOrUpdate(metricEvent);
 	}
 
     @Override
-    public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(final int pageNo, final int pageSize, final String orderBy,
-                                                                           final boolean orderAscending, final Set<String> moduleNames,
-                                                                           final String flowName, final String componentName,
-                                                                           final String eventId, final String relatedEventId,
-                                                                           final Date fromDate, final Date toDate)
+    public PagedSearchResult<ComponentInvocationMetric> findMessageHistoryEvents(final int pageNo, final int pageSize, final String orderBy,
+                                                                                 final boolean orderAscending, final Set<String> moduleNames,
+                                                                                 final String flowName, final String componentName,
+                                                                                 final String eventId, final String relatedEventId,
+                                                                                 final Date fromDate, final Date toDate)
     {
-        return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<MessageHistoryEvent>>()
+        return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<ComponentInvocationMetric>>()
         {
-            public PagedSearchResult<MessageHistoryEvent> doInHibernate(Session session) throws HibernateException
+            public PagedSearchResult<ComponentInvocationMetric> doInHibernate(Session session) throws HibernateException
             {
                 Criteria dataCriteria = getCriteria(session);
                 dataCriteria.setMaxResults(pageSize);
@@ -114,7 +120,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                         dataCriteria.addOrder(Order.desc(orderBy));
                     }
                 }
-                List<MessageHistoryEvent> messageHistoryResults = dataCriteria.list();
+                List<ComponentInvocationMetric> messageHistoryResults = dataCriteria.list();
 
                 Criteria metaDataCriteria = getCriteria(session);
                 metaDataCriteria.setProjection(Projections.rowCount());
@@ -135,16 +141,8 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
              */
             private Criteria getCriteria(Session session)
             {
-                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                Criteria criteria = session.createCriteria(ComponentInvocationMetric.class);
 
-                if (restrictionExists(moduleNames))
-                {
-                    criteria.add(Restrictions.in("moduleName", moduleNames));
-                }
-                if (restrictionExists(flowName))
-                {
-                    criteria.add(Restrictions.eq("flowName", flowName));
-                }
                 if (restrictionExists(componentName))
                 {
                     criteria.add(Restrictions.eq("componentName", componentName));
@@ -175,12 +173,12 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     }
 
     @Override
-    public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(final int pageNo, final int pageSize, final String orderBy,
-            final boolean orderAscending, final String eventId, final String relatedEventId)
+    public PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(final int pageNo, final int pageSize, final String orderBy,
+                                                                               final boolean orderAscending, final String eventId, final String relatedEventId)
     {
-        return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<MessageHistoryEvent>>()
+        return getHibernateTemplate().execute(new HibernateCallback<PagedSearchResult<ComponentInvocationMetric>>()
         {
-            public PagedSearchResult<MessageHistoryEvent> doInHibernate(Session session) throws HibernateException
+            public PagedSearchResult<ComponentInvocationMetric> doInHibernate(Session session) throws HibernateException
             {
                 Criteria dataCriteria = getCriteria(session);
                 dataCriteria.setMaxResults(pageSize);
@@ -197,7 +195,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                         dataCriteria.addOrder(Order.desc(orderBy));
                     }
                 }
-                List<MessageHistoryEvent> messageHistoryResults = dataCriteria.list();
+                List<ComponentInvocationMetric> messageHistoryResults = dataCriteria.list();
 
                 Criteria metaDataCriteria = getCriteria(session);
                 metaDataCriteria.setProjection(Projections.rowCount());
@@ -218,7 +216,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
              */
             private Criteria getCriteria(Session session)
             {
-                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                Criteria criteria = session.createCriteria(ComponentInvocationMetric.class);
 
                 if (restrictionExists(eventId) && !restrictionExists(relatedEventId))
                 {
@@ -248,13 +246,18 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 	        {
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
-	            	String deleteMetrics = "DELETE FROM Metric WHERE MessageHistoryId in " +
-	            			"(SELECT Id FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis() +
-                            " AND Harvested = 1)";
+	            	String deleteMetrics = "DELETE FROM CustomMetric WHERE CompInvocationMetricId in " +
+	            			"(SELECT Id FROM ComponentInvocationMetric WHERE FlowInvocationMetricId in (SELECT Id FROM FlowInvocationMetric WHERE Expiry <= " + System.currentTimeMillis() +
+                            " AND Harvested = 1))";
 	            	session.createSQLQuery(deleteMetrics).executeUpdate();
 	            	 
-	                String delete = "DELETE FROM MessageHistory WHERE Expiry <= " + System.currentTimeMillis() + " AND Harvested = 1";
-	                session.createSQLQuery(delete).executeUpdate();
+	                String deleteMessageHistory = "DELETE FROM ComponentInvocationMetric WHERE FlowInvocationMetricId in (SELECT Id FROM FlowInvocationMetric WHERE Expiry <= " + System.currentTimeMillis() +
+                            " AND Harvested = 1)";
+	                session.createSQLQuery(deleteMessageHistory).executeUpdate();
+
+                    String deleteFlowInvocation = "DELETE FROM FlowInvocationMetric WHERE Expiry <= " + System.currentTimeMillis() +
+                            " AND Harvested = 1";
+                    session.createSQLQuery(deleteFlowInvocation).executeUpdate();
 	                return null;
 	            }
 	        });
@@ -269,7 +272,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
      */
     private void batchHousekeepDelete() 
     {
-        logger.info("Message History batched housekeeper called");
+        logger.info("Metrics batched housekeeper called");
 
         int numberDeleted = 0;
 
@@ -278,7 +281,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             numberDeleted += this.housekeepingBatchSize;
 
-            List<MessageHistoryEvent> events = this.getHarvestedRecords(this.housekeepingBatchSize);
+            List<FlowInvocationMetric> events = this.getHarvestedRecords(this.housekeepingBatchSize);
 
             this.deleteHarvestableRecords(events);
         }
@@ -292,7 +295,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                Criteria criteria = session.createCriteria(FlowInvocationMetric.class);
                 criteria.add(Restrictions.le("expiry", System.currentTimeMillis()));
                 criteria.add(Restrictions.eq("harvested", true));
                 criteria.setProjection(Projections.rowCount());
@@ -302,7 +305,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     rowCount = rowCountList.get(0);
                 }
-                logger.info(rowCount+", MessageHistory housekeepables exist");
+                logger.info(rowCount+", FlowInvocation housekeepables exist");
                 return rowCount > 0;
             }
         });
@@ -315,7 +318,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                Criteria criteria = session.createCriteria(FlowInvocationMetric.class);
                 criteria.add(Restrictions.eq("harvested", false));
                 criteria.setProjection(Projections.rowCount());
 
@@ -325,69 +328,75 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     rowCount = rowCountList.get(0);
                 }
-                logger.info(rowCount+", MessageHistory harvestable records exist");
+                logger.info(rowCount+", FlowInvocation harvestable records exist");
                 return rowCount > 0;
             }
         });
     }
 
     @Override
-    public List<MessageHistoryEvent> getHarvestableRecords(final int housekeepingBatchSize)
+    public List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize)
     {
         return this.getHarvestableRecords(housekeepingBatchSize, false);
     }
 
-    public List<MessageHistoryEvent> getHarvestedRecords(final int housekeepingBatchSize)
+    public List<FlowInvocationMetric> getHarvestedRecords(final int housekeepingBatchSize)
     {
         return this.getHarvestableRecords(housekeepingBatchSize, true);
     }
 
 
-    public List<MessageHistoryEvent> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested)
+    public List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested)
     {
-        return (List<MessageHistoryEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        return (List<FlowInvocationMetric>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(MessageHistoryEvent.class);
+                Criteria criteria = session.createCriteria(FlowInvocationMetric.class);
                 criteria.add(Restrictions.eq("harvested", harvested));
                 criteria.setMaxResults(housekeepingBatchSize);
-                criteria.addOrder(Order.asc("startTimeMillis"));
+                criteria.addOrder(Order.asc("invocationStartTime"));
 
-                List<MessageHistoryEvent> messageHistoryEvents = criteria.list();
+                List<FlowInvocationMetric> flowInvocationMetrics = criteria.list();
                 ArrayList<String> eventIds = new ArrayList<String>();
 
-                List<List<MessageHistoryEvent>> smallerLists = Lists.partition(messageHistoryEvents, 200);
-
-                Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
-
-                for(List<MessageHistoryEvent> list: smallerLists)
+                for(FlowInvocationMetric<ComponentInvocationMetric> flowInvocationMetric : flowInvocationMetrics)
                 {
-                    for (MessageHistoryEvent event: list)
+                    Set<ComponentInvocationMetric> messageHistoryEvents = flowInvocationMetric.getFlowInvocationEvents();
+
+                    List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<ComponentInvocationMetric>(messageHistoryEvents), 200);
+
+                    Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
+
+                    for(List<ComponentInvocationMetric> list: smallerLists)
                     {
-                        eventIds.add((String)event.getBeforeEventIdentifier());
+                        for (ComponentInvocationMetric event: list)
+                        {
+                            eventIds.add((String)event.getBeforeEventIdentifier());
+                        }
+
+                        eventsMap.putAll(getWiretapFlowEvents(eventIds));
+
+                        eventIds = new ArrayList<String>();
                     }
 
-                    eventsMap.putAll(getWiretapFlowEvents(eventIds));
-
-                    eventIds = new ArrayList<String>();
-                }
-
-                for(MessageHistoryEvent<String, CustomMetric, MetricEvent> messageHistoryEvent: messageHistoryEvents)
-                {
-                    MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier());
-                    if(event != null)
+                    for(ComponentInvocationMetric<String, CustomMetric, MetricEvent> messageHistoryEvent: messageHistoryEvents)
                     {
+                        MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier());
+                        if(event != null)
+                        {
                         if(event.getComponentName().equals(messageHistoryEvent.getComponentName())
-                                && event.getFlowName().equals(messageHistoryEvent.getFlowName())
-                                && event.getModuleName().equals(messageHistoryEvent.getModuleName()))
+                                && event.getFlowName().equals(flowInvocationMetric.getFlowName())
+                                && event.getModuleName().equals(flowInvocationMetric.getModuleName()))
                         {
                             messageHistoryEvent.setWiretapFlowEvent(event);
+                        }
                         }
                     }
                 }
 
-                return messageHistoryEvents;
+
+                return flowInvocationMetrics;
             }
         });
     }
@@ -417,21 +426,28 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
     }
 
     @Override
-    public void deleteHarvestableRecords(List<MessageHistoryEvent> events)
+    public void deleteHarvestableRecords(List<FlowInvocationMetric> flowInvocationMetrics)
     {
-        for(MessageHistoryEvent event: events)
+        for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics)
         {
-            if(event.getWiretapFlowEvent() != null)
+            Set<ComponentInvocationMetric> events = flowInvocationMetric.getFlowInvocationEvents();
+
+            for (ComponentInvocationMetric event : events)
             {
-                getHibernateTemplate().delete(event.getWiretapFlowEvent());
+                if (event.getWiretapFlowEvent() != null)
+                {
+                    getHibernateTemplate().delete(event.getWiretapFlowEvent());
+                }
+
+                for (CustomMetric metric : (Set<CustomMetric>) event.getMetrics())
+                {
+                    getHibernateTemplate().delete(metric);
+                }
+
+                getHibernateTemplate().delete(event);
             }
 
-            for(CustomMetric metric: (Set<CustomMetric>)event.getMetrics())
-            {
-                getHibernateTemplate().delete(metric);
-            }
-
-            getHibernateTemplate().delete(event);
+            getHibernateTemplate().delete(flowInvocationMetric);
         }
     }
 

@@ -42,14 +42,7 @@ package org.ikasan.mapping.service;
 
 import java.util.List;
 
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 
 
@@ -121,6 +114,18 @@ public interface MappingConfigurationService
     @Deprecated
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
             byte[] payload) throws MappingConfigurationServiceException;
+
+    /**
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public List<String> getTargetConfigurationValues(final String clientName, String configurationType,
+                                                     String sourceContext, String targetContext, List<String> sourceSystemValues);
 
     /**
      * This method is responsible for returning all {@link ConfigurationType} hibernate
@@ -467,4 +472,24 @@ public interface MappingConfigurationService
      * @param configuration
      */
     public void setConfiguration(MappingConfigurationServiceConfiguration configuration);
+
+    /**
+     *
+     * @param groupId
+     * @return
+     */
+    public List<ManyToManyTargetConfigurationValue> getManyToManyTargetConfigurationValues(Long groupId);
+
+    /**
+     *
+     * @param targetConfigurationValue
+     * @return
+     */
+    public Long storeManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue);
+
+    /**
+     *
+     * @param targetConfigurationValue
+     */
+    public void deleteManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue);
 }
