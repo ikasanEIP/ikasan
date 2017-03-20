@@ -2,12 +2,13 @@ package org.ikasan.history.model;
 
 import org.ikasan.spec.history.FlowInvocationMetric;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * @author Ikasan Development Team
  */
-public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentInvocationMetricImpl>
+public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentInvocationMetricImpl>, Serializable
 {
     private Long id;
     private String moduleName;
