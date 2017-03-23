@@ -74,6 +74,7 @@ import javax.annotation.Resource;
         "/substitute-components.xml",
         "/ikasan-transaction-conf.xml",
         "/replay-service-conf.xml",
+        "/configuration-service-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })

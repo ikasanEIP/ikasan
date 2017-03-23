@@ -43,6 +43,7 @@ package org.ikasan.mapping.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -89,7 +90,7 @@ public class SourceConfigurationValue implements Serializable
 
     /**
      * It is a Hibernate requirement that all properties of a window object have getter and setter methods. However, the value of
-     * an {@link Id} is part of its primary key and must me immutable. Hence, setter method is private to prevent 
+     * an Id is part of its primary key and must me immutable. Hence, setter method is private to prevent
      * client code from changing the value.
      */
     @SuppressWarnings("unused")
@@ -123,7 +124,7 @@ public class SourceConfigurationValue implements Serializable
     }
 
     /**
-     * @param configurationContextId the configurationContextId to set
+     * @param mappingConfigurationId the mappingConfigurationId to set
      */
     public void setMappingConfigurationId(Long mappingConfigurationId)
     {

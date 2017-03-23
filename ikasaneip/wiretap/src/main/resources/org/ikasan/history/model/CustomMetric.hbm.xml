@@ -51,7 +51,7 @@
 <hibernate-mapping>
 
     <class name="org.ikasan.history.model.CustomMetric"
-           table="Metric">
+           table="CustomMetric">
 
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity"/>

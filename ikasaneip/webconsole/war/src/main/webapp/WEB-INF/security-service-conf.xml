@@ -153,6 +153,20 @@
 		</beans:property>
 	</beans:bean>
 
+	<beans:bean id="filterServiceTransactionManager"
+				class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory">
+			<beans:ref bean="filterHibernateSessionFactory" />
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="messageHistoryTransactionManager"
+				class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory">
+			<beans:ref bean="messageHistoryXaHibernateSessionFactory" />
+		</beans:property>
+	</beans:bean>
+
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
 			expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..)) ||
@@ -177,7 +191,15 @@
 						execution(* org.ikasan.hospital.service.HospitalService.ignore(..))" />
 		<aop:pointcut id="triggerDaoMethods"
 			expression="execution(* org.ikasan.trigger.dao.TriggerDao.save(..)) ||
-						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..))" />
+						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..)) ||
+						execution(* org.ikasan.spec.wiretap.WiretapService.tapEvent(..))" />
+
+		<aop:pointcut id="filterServiceMethods"
+					  expression="execution(* org.ikasan.filter.duplicate.service.DuplicateFilterService.persistMessage(..))"/>
+
+		<aop:pointcut id="messageHistoryServiceMethods"
+					  expression="execution(* org.ikasan.spec.history.MessageHistoryService.save(..)) ||
+					  execution(* org.ikasan.spec.history.MessageHistoryService.snapMetricEvent(..))"/>
 			
 		<aop:advisor advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
@@ -191,7 +213,25 @@
 			pointcut-ref="hospitalServiceMethods" />
 		<aop:advisor advice-ref="wiretap-required-TransactionAdvice"
 			pointcut-ref="triggerDaoMethods" />
+		<aop:advisor advice-ref="filter-required-TransactionAdvice"
+					 pointcut-ref="filterServiceMethods" />
+		<aop:advisor advice-ref="messageHistory-required-TransactionAdvice"
+					 pointcut-ref="messageHistoryServiceMethods" />
 	</aop:config>
+
+	<tx:advice id="messageHistory-required-TransactionAdvice"
+			   transaction-manager="messageHistoryTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<tx:advice id="filter-required-TransactionAdvice"
+			   transaction-manager="filterServiceTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
 
 	<tx:advice id="wiretap-required-TransactionAdvice"
 		transaction-manager="wiretapServiceTransactionManager">

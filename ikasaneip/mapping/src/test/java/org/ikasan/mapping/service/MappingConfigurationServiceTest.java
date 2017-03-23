@@ -49,13 +49,7 @@ import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -405,6 +399,137 @@ public class MappingConfigurationServiceTest
 				targetId70);
 		this.addSourceSystemConfiguration("true", mappingConfigurationId3,
 				targetId80);
+
+
+		ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient2("CMI22",
+				"org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+
+		ConfigurationContext context1 = this.addConfigurationContext2("Tradeweb2", "Tradeweb2");
+		ConfigurationContext context2 = this.addConfigurationContext2("Bloomberg2", "Bloomberg2");
+
+		ConfigurationType manyToManyMapping = this.addConfigurationType2("Many to Many");
+
+		Long configurationContextId4 = this.addMappingConfiguration(context1, context2, new Long(-1),
+				manyToManyMapping, configurationServiceClient, "description context 4");
+
+
+
+		ArrayList<String> sourceValues = new ArrayList<>();
+		sourceValues.add("s1");
+		sourceValues.add("s2");
+		sourceValues.add("s3");
+		sourceValues.add("s4");
+
+		ArrayList<String> targetValues = new ArrayList<>();
+		targetValues.add("t1");
+		targetValues.add("t2");
+		targetValues.add("t3");
+		targetValues.add("t4");
+
+		this.addManyToManySourceSystemConfiguration(sourceValues, targetValues, configurationContextId4, 1l);
+
+		sourceValues = new ArrayList<>();
+		sourceValues.add("s5");
+		sourceValues.add("s6");
+		sourceValues.add("s7");
+		sourceValues.add("s8");
+
+		targetValues = new ArrayList<>();
+		targetValues.add("t5");
+		targetValues.add("t6");
+		targetValues.add("t7");
+		targetValues.add("t8");
+		targetValues.add("t9");
+		targetValues.add("t10");
+		targetValues.add("t11");
+		targetValues.add("t12");
+
+		this.addManyToManySourceSystemConfiguration(sourceValues, targetValues, configurationContextId4, 2l);
+
+		sourceValues = new ArrayList<>();
+		sourceValues.add("alone");
+
+		targetValues = new ArrayList<>();
+		targetValues.add("t13");
+		targetValues.add("t14");
+		targetValues.add("t15");
+		targetValues.add("t16");
+		targetValues.add("t17");
+		targetValues.add("t18");
+		targetValues.add("t19");
+		targetValues.add("t20");
+
+		this.addManyToManySourceSystemConfiguration(sourceValues, targetValues, configurationContextId4, 3l);
+	}
+
+	@Test
+	@DirtiesContext
+	public void test_success_many_to_many()
+	{
+		List<String> sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("s1");
+		sourceSystemValues.add("s2");
+		sourceSystemValues.add("s3");
+		sourceSystemValues.add("s4");
+
+		List<String> result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(4, result.size());
+		Assert.assertTrue(result.contains("t1"));
+		Assert.assertTrue(result.contains("t2"));
+		Assert.assertTrue(result.contains("t3"));
+		Assert.assertTrue(result.contains("t4"));
+
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("s5");
+		sourceSystemValues.add("s6");
+		sourceSystemValues.add("s7");
+		sourceSystemValues.add("s8");
+
+		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(8, result.size());
+
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("s1");
+		sourceSystemValues.add("s6");
+		sourceSystemValues.add("s7");
+		sourceSystemValues.add("s8");
+
+		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(0, result.size());
+
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("alone");
+
+		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(8, result.size());
+
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("s5");
+		sourceSystemValues.add("s6");
+
+		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(0, result.size());
+
+		sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("s5");
+		sourceSystemValues.add("s6");
+		sourceSystemValues.add("s3");
+		sourceSystemValues.add("s4");
+
+		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(0, result.size());
 	}
 
 	@Test
@@ -968,7 +1093,7 @@ public class MappingConfigurationServiceTest
 		List<ConfigurationContext> result = this.xaMappingConfigurationService
 				.getAllConfigurationContexts();
 
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(4, result.size());
 	}
 
 	@Test
@@ -978,7 +1103,7 @@ public class MappingConfigurationServiceTest
 		List<ConfigurationType> result = this.xaMappingConfigurationService
 				.getAllConfigurationTypes();
 
-		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(5, result.size());
 	}
 
 	@Test
@@ -988,7 +1113,7 @@ public class MappingConfigurationServiceTest
 		List<ConfigurationServiceClient> result = this.xaMappingConfigurationService
 				.getAllConfigurationServiceClients();
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 	}
 
 	@Test
@@ -1044,22 +1169,25 @@ public class MappingConfigurationServiceTest
 
 			for (SourceConfigurationValue sourceConfigurationValue : sourceConfigurationValues)
 			{
-				TargetConfigurationValue targetValue = this.xaMappingConfigurationDao
-						.getTargetConfigurationValueById(sourceConfigurationValue
-								.getTargetConfigurationValue().getId());
+				if(sourceConfigurationValue.getTargetConfigurationValue() != null)
+				{
+					TargetConfigurationValue targetValue = this.xaMappingConfigurationDao
+							.getTargetConfigurationValueById(sourceConfigurationValue
+									.getTargetConfigurationValue().getId());
 
-				targetValue.setTargetSystemValue("new value");
+					targetValue.setTargetSystemValue("new value");
 
-				this.xaMappingConfigurationDao
-						.storeTargetConfigurationValue(targetValue);
+					this.xaMappingConfigurationDao
+							.storeTargetConfigurationValue(targetValue);
 
-				TargetConfigurationValue targetValueStored = this.xaMappingConfigurationDao
-						.getTargetConfigurationValueById(targetValue.getId());
+					TargetConfigurationValue targetValueStored = this.xaMappingConfigurationDao
+							.getTargetConfigurationValueById(targetValue.getId());
 
-				Assert.assertEquals(targetValue.getTargetSystemValue(),
-						targetValueStored.getTargetSystemValue());
-				Assert.assertEquals(targetValue.getUpdatedDateTime().getTime(),
-						targetValueStored.getUpdatedDateTime().getTime());
+					Assert.assertEquals(targetValue.getTargetSystemValue(),
+							targetValueStored.getTargetSystemValue());
+					Assert.assertEquals(targetValue.getUpdatedDateTime().getTime(),
+							targetValueStored.getUpdatedDateTime().getTime());
+				}
 			}
 		}
 	}
@@ -1391,16 +1519,6 @@ public class MappingConfigurationServiceTest
 			List<SourceConfigurationValue> sourceConfigutationValues = this.xaMappingConfigurationService
 					.getSourceConfigurationValueByMappingConfigurationId(mappingConfiguration
 							.getId());
-
-			for (SourceConfigurationValue sourceConfigutationValue : sourceConfigutationValues)
-			{
-				TargetConfigurationValue targetConfigurationValue = this.xaMappingConfigurationService
-						.getTargetConfigurationValueById(sourceConfigutationValue
-								.getTargetConfigurationValue().getId());
-				Assert.assertEquals(targetConfigurationValue.getId(),
-						sourceConfigutationValue.getTargetConfigurationValue()
-								.getId());
-			}
 		}
 	}
 
@@ -1575,4 +1693,135 @@ public class MappingConfigurationServiceTest
 
 		return targetConfigurationValue;
 	}
+
+	private void addManyToManySourceSystemConfiguration(List<String> sourceSystemValues, List<String> targetSystemValues, Long mappingConfigurationId, Long groupingId)
+	{
+		for(String sourceValue: sourceSystemValues)
+		{
+			SourceConfigurationValue value = new SourceConfigurationValue();
+
+			value.setMappingConfigurationId(mappingConfigurationId);
+			value.setSourceSystemValue(sourceValue);
+			value.setSourceConfigGroupId(groupingId);
+
+			this.xaMappingConfigurationDao.storeSourceConfigurationValue(value);
+		}
+
+		for(String targetValue: targetSystemValues)
+		{
+			ManyToManyTargetConfigurationValue value = new ManyToManyTargetConfigurationValue();
+			value.setTargetSystemValue(targetValue);
+			value.setGroupId(groupingId);
+
+			this.xaMappingConfigurationDao.storeManyToManyTargetConfigurationValue(value);
+		}
+	}
+
+	/**
+	 *
+	 * @param name
+	 * @return
+	 */
+	private ConfigurationType addConfigurationType2(String name)
+	{
+		ConfigurationType configurationType = new ConfigurationType();
+		configurationType.setName(name);
+
+		this.xaMappingConfigurationDao.storeConfigurationType(configurationType);
+
+		return configurationType;
+	}
+
+	/**
+	 *
+	 * @param name
+	 * @param keyLocationQueryProcessorType
+	 * @return
+	 */
+	private ConfigurationServiceClient addConfigurationServiceClient2(String name, String keyLocationQueryProcessorType)
+	{
+		ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
+		configurationServiceClient.setName(name);
+		configurationServiceClient.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
+
+		this.xaMappingConfigurationDao.storeConfigurationServiceClient(configurationServiceClient);
+
+		return configurationServiceClient;
+	}
+
+	/**
+	 *
+	 * @param name
+	 * @param description
+	 * @return
+	 */
+	private ConfigurationContext addConfigurationContext2(String name, String description)
+	{
+		ConfigurationContext configurationContext = new ConfigurationContext();
+		configurationContext.setName(name);
+		configurationContext.setDescription(description);
+
+		this.xaMappingConfigurationDao.storeConfigurationContext(configurationContext);
+
+		return configurationContext;
+	}
+
+	/**
+	 *
+	 * @param sourceContext
+	 * @param targetContext
+	 * @param numberOfParams
+	 * @param configurationType
+	 * @param configurationServiceClient
+	 * @param description
+	 * @return
+	 */
+	private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, Long numberOfParams, ConfigurationType configurationType,
+										 ConfigurationServiceClient configurationServiceClient, String description)
+	{
+		MappingConfiguration configurationContext = new MappingConfiguration();
+		configurationContext.setConfigurationType(configurationType);
+		configurationContext.setNumberOfParams(numberOfParams);
+		configurationContext.setSourceContext(sourceContext);
+		configurationContext.setTargetContext(targetContext);
+		configurationContext.setConfigurationServiceClient(configurationServiceClient);
+		configurationContext.setDescription(description);
+
+		return this.xaMappingConfigurationDao.storeMappingConfiguration(configurationContext);
+	}
+
+	/**
+	 * Helper method to add a source system value to the database.
+	 *
+	 * @param sourceSystemValue
+	 * @param mappingConfigurationId
+	 * @param targetConfigurationValue
+	 * @return
+	 */
+	private Long addSourceSystemConfiguration2(String sourceSystemValue, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
+	{
+		SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
+		sourceConfigurationValue.setMappingConfigurationId(mappingConfigurationId);
+		sourceConfigurationValue.setSourceSystemValue(sourceSystemValue);
+		sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
+
+		return this.xaMappingConfigurationDao.storeSourceConfigurationValue(sourceConfigurationValue);
+	}
+
+	/**
+	 * Helper method to add a target system value to the database.
+	 *
+	 * @param targetSystemValue
+	 */
+	private TargetConfigurationValue addTargetSystemConfiguration2(String targetSystemValue)
+	{
+		TargetConfigurationValue targetConfigurationValue = new TargetConfigurationValue();
+		targetConfigurationValue.setTargetSystemValue(targetSystemValue);
+
+		this.xaMappingConfigurationDao.storeTargetConfigurationValue(targetConfigurationValue);
+
+		return targetConfigurationValue;
+	}
+
+
 }

@@ -106,6 +106,10 @@
              <one-to-many class="org.ikasan.mapping.model.SourceConfigurationValue"/>
         </set>
 
+        <property name="isManyToMany"
+                  type="java.lang.Boolean"
+                  column="IsManyToMany" />
+
         <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"
