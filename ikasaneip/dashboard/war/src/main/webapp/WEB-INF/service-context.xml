@@ -280,7 +280,13 @@
 
 	<bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
 		<constructor-arg index="0" ref="messageHistoryDao"/>
-		<constructor-arg index="1" ref="wiretapEventFactory"/>
+		<constructor-arg>
+			<bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+				<constructor-arg>
+					<bean class="java.util.HashMap" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
 	</bean>
 
 	<bean id="messageHistoryDao"
@@ -302,6 +308,7 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
+			   <value>/org/ikasan/mapping/model/ManyToManyTargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/security/model/Principal.hbm.xml</value>
 			   <value>/org/ikasan/security/model/PrincipalLite.hbm.xml</value>
 			   <value>/org/ikasan/security/model/Role.hbm.xml</value>
@@ -343,8 +350,8 @@
 			   <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
                <value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
 			   <value>/org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
-
-			   <value>org/ikasan/history/model/History.hbm.xml</value>
+			   <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
+			   <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
 			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
            </list>

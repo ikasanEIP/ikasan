@@ -48,15 +48,7 @@ import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessor;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
 import org.ikasan.mapping.util.SetProducer;
 import org.springframework.dao.DataAccessException;
@@ -282,7 +274,13 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 		
 		return returnValue;
 	}
-    
+
+    @Override
+    public List<String> getTargetConfigurationValues(String clientName, String configurationType, String sourceContext, String targetContext, List<String> sourceSystemValues)
+    {
+        return this.dao.getTargetConfigurationValues(clientName, configurationType, sourceContext, targetContext, sourceSystemValues);
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.mapping.service.MappingConfigurationService#saveMappingConfiguration(org.ikasan.mapping.window.MappingConfiguration)
      */
@@ -697,4 +695,24 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 	{
 		this.configuration = configuration;
 	}
+
+    @Override
+    public List<ManyToManyTargetConfigurationValue> getManyToManyTargetConfigurationValues(Long groupId)
+    {
+        return this.dao.getManyToManyTargetConfigurationValues(groupId);
+    }
+
+    @Override
+    public Long storeManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue)
+    {
+        return this.dao.storeManyToManyTargetConfigurationValue(targetConfigurationValue);
+    }
+
+    @Override
+    public void deleteManyToManyTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue)
+    {
+        this.dao.deleteManyToManyTargetConfigurationValue(targetConfigurationValue);
+    }
+
+
 }

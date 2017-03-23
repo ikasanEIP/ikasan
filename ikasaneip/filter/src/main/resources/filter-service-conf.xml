@@ -15,10 +15,10 @@
 
     <bean id="duplicateFilterDao"
           class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
-        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="sessionFactory" ref="filterHibernateSessionFactory" />
     </bean>
 
-    <bean id="sessionFactory"
+    <bean id="filterHibernateSessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">

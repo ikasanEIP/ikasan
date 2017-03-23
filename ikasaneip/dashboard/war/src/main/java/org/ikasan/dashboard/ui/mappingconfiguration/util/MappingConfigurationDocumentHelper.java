@@ -55,13 +55,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -84,10 +78,13 @@ public class MappingConfigurationDocumentHelper
 
     /**
      * Helper method to return a composite mapping configuration value.
-     * 
-     * @param mappingConfigurationValue
+     * @param fileContents
      * @return
-     * @throws XPathExpressionException 
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws XPathExpressionException
+     * @throws MappingConfigurationImportException
      */
     public MappingConfiguration getMappingConfiguration(byte[] fileContents) throws SAXException
         , IOException, ParserConfigurationException, XPathExpressionException, MappingConfigurationImportException
@@ -105,6 +102,7 @@ public class MappingConfigurationDocumentHelper
         String sourceContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.SOURCE_CONTEXT_XPATH, document, XPathConstants.STRING);
         String targetContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.TARGET_CONTEXT_XPATH, document, XPathConstants.STRING);
         String description = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.DESCRIPTION_XPATH, document, XPathConstants.STRING);
+        String isManyToMany = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.IS_MANY_TO_MANY_XPATH, document, XPathConstants.STRING);
         String numberOfParams = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.NUMBER_OF_SOURCE_PARAMS_XPATH, document, XPathConstants.STRING);
 
         StringBuffer errorMessage = new StringBuffer();
@@ -129,14 +127,14 @@ public class MappingConfigurationDocumentHelper
             errorMessage.append("Mapping Configuration Description is missing\n");
         }
 
-        if(numberOfParams == null || numberOfParams.isEmpty())
+        if(isManyToMany.equals("false") && (numberOfParams == null || numberOfParams.isEmpty()))
         {
             errorMessage.append("Mapping Configuration Number of Parameters is missing\n");
         }
 
         if(errorMessage.length() > 0)
         {
-            throw new MappingConfigurationImportException("An error has occurred trying to imprt a Mapping Configuration\n"
+            throw new MappingConfigurationImportException("An error has occurred trying to import a Mapping Configuration\n"
                 + errorMessage.toString());
         }
 
@@ -157,7 +155,14 @@ public class MappingConfigurationDocumentHelper
         mappingConfiguration.setSourceContext(sourceConfigurationContext);
         mappingConfiguration.setTargetContext(targetConfigurationContext);
         mappingConfiguration.setDescription(description);
-        mappingConfiguration.setNumberOfParams(new Long(numberOfParams));
+        mappingConfiguration.setIsManyToMany((isManyToMany.equals("true")) ? true : false);
+
+        logger.info("Setting is many to many to: " + isManyToMany);
+
+        if(isManyToMany.equals("false"))
+        {
+            mappingConfiguration.setNumberOfParams(new Long(numberOfParams));
+        }
 
         return mappingConfiguration;
     }
@@ -170,7 +175,7 @@ public class MappingConfigurationDocumentHelper
      * @throws SAXException 
      * @throws ParserConfigurationException 
      */
-    public List<MappingConfigurationValue> getMappingConfigurationValues(byte[] fileContents) throws SAXException
+    public List<MappingConfigurationValue> getMappingConfigurationValues(byte[] fileContents, boolean isManyToMany) throws SAXException
         , IOException, ParserConfigurationException
     {
         DocumentBuilderFactory builderFactory =
@@ -195,7 +200,7 @@ public class MappingConfigurationDocumentHelper
 
         for(int i=0; i<mappingConfigurationValues.getLength(); i++)
         {
-            this.mappingConfigurationValues.add(getMappingConfigurationValue((Element)mappingConfigurationValues.item(i)));
+            this.mappingConfigurationValues.add(getMappingConfigurationValue((Element)mappingConfigurationValues.item(i), isManyToMany));
         }
 
         return this.mappingConfigurationValues;
@@ -233,21 +238,35 @@ public class MappingConfigurationDocumentHelper
      * @param mappingConfigurationValue
      * @return
      */
-    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue)
+    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue, boolean isManyToMany)
     {
-        TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
-                (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
-
-        ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
-            .getElementsByTagName("sourceConfigurationValue"));
-
-        for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
+        if(isManyToMany)
         {
-            logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
-            sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
-        }
+            ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
+                    .getElementsByTagName("sourceConfigurationValue"));
 
-        return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
+            ArrayList<ManyToManyTargetConfigurationValue> targetConfigurationValues = getTargetConfigurationValues(mappingConfigurationValue
+                    .getElementsByTagName("targetConfigurationValue"));
+
+            return new MappingConfigurationValue(sourceConfigurationValues, targetConfigurationValues);
+
+        }
+        else
+        {
+            TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
+                    (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
+
+            ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
+                    .getElementsByTagName("sourceConfigurationValue"));
+
+            for (SourceConfigurationValue sourceConfigurationValue : sourceConfigurationValues)
+            {
+                logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
+                sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
+            }
+
+            return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
+        }
     }
 
     /**
@@ -264,6 +283,27 @@ public class MappingConfigurationDocumentHelper
             logger.debug("Source value: " + sourceConfigurationValues.item(i).getTextContent());
             SourceConfigurationValue value = new SourceConfigurationValue();
             value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
+
+            returnValue.add(value);
+        }
+
+        return returnValue;
+    }
+
+    /**
+     *
+     * @param targetConfigurationValues
+     * @return
+     */
+    protected ArrayList<ManyToManyTargetConfigurationValue> getTargetConfigurationValues(NodeList targetConfigurationValues)
+    {
+        ArrayList<ManyToManyTargetConfigurationValue> returnValue = new ArrayList<ManyToManyTargetConfigurationValue>();
+
+        for(int i = 0; i< targetConfigurationValues.getLength(); i++)
+        {
+            logger.debug("Target value: " + targetConfigurationValues.item(i).getTextContent());
+            ManyToManyTargetConfigurationValue value = new ManyToManyTargetConfigurationValue();
+            value.setTargetSystemValue(targetConfigurationValues.item(i).getTextContent());
 
             returnValue.add(value);
         }

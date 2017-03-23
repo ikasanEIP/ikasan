@@ -57,6 +57,7 @@ public interface MappingConfigurationDaoConstants
     public static final String CONFIGURATION_SERVICE_CLIENT_NAME = "configurationServiceClientName";
     public static final String TARGET_CONFIGURATION_VALUE_ID = "targetConfigurationValueId";
     public static final String SIZE = "size";
+    public static final String GROUPING_ID = "groupingId";
 
     
     /** The base HQL query used to access the mapping configurations. */
@@ -89,6 +90,19 @@ public interface MappingConfigurationDaoConstants
     /** This fragment of HQL is used to narrow the results based on n number of source system values. */
     public static final String NARROW_SOURCE_SYSTEM_FRAGMENT = " and scv.targetConfigurationValue in (select scv2.targetConfigurationValue " +
             "from SourceConfigurationValue as scv2 where scv2.sourceSystemValue = :" + SOURCE_SYSTEM_VALUE;
+
+    /** The base HQL query used to access the mapping configurations. */
+    public static final String MAPPING_CONFIGURATION_QUERY_MANY_TO_MANY = "select distinct tcv.targetSystemValue from ConfigurationType as ct," +
+            " MappingConfiguration as mc, TargetConfigurationValue as tcv, SourceConfigurationValue as scv, ConfigurationServiceClient as csc" +
+            " where ct.name = :" + CONFIGURATION_TYPE +
+            " and ct.id = mc.configurationType" +
+            " and mc.sourceContext = (select cc.id from ConfigurationContext as cc where cc.name = :" + SOURCE_CONTEXT  + ")" +
+            " and mc.targetContext = (select cc.id from ConfigurationContext as cc where cc.name = :" + TARGET_CONTEXT  + ")" +
+            " and mc.numberOfParams = :" + NUMBER_OF_PARAMS +
+            " and mc.configurationServiceClient = csc.id" +
+            " and csc.name = :" + CONFIGURATION_SERVICE_CLIENT_NAME +
+            " and tcv.id in (select scv2.targetConfigurationValue from SourceConfigurationValue as scv2 where scv2.sourceSystemValue in( :" + SOURCE_SYSTEM_VALUE + ") and mc.id = scv2.mappingConfigurationId)";
+
 
     public static final String KEY_LOCATION_QUERY_QUERY = "select klq.value from ConfigurationType as ct," +
             " MappingConfiguration as mc, KeyLocationQuery as klq, ConfigurationServiceClient as csc" +
@@ -176,4 +190,7 @@ public interface MappingConfigurationDaoConstants
     		"mc.id = s1.mappingConfigurationId " +
     		"and s1.sourceSystemValue = '' and scv.targetConfigurationValue = s1.targetConfigurationValue))";
 
+    public static final String MANY_TO_MAPPING_CONFIGURATION_QUERY = "select tcv.targetSystemValue from" +
+            " ManyToManyTargetConfigurationValue as tcv" +
+            " where tcv.groupId = :" + GROUPING_ID;
 }

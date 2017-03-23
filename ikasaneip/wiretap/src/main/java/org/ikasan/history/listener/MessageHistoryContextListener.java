@@ -41,7 +41,7 @@
 package org.ikasan.history.listener;
 
 import org.apache.log4j.Logger;
-import org.ikasan.history.model.MessageHistoryFlowEvent;
+import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -59,7 +59,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     private static final Logger logger = Logger.getLogger(MessageHistoryContextListener.class);
 
     /** the delegate service used to save the flowInvocationContext */
-    protected MessageHistoryService<FlowInvocationContext, FlowEvent, T, MessageHistoryFlowEvent> messageHistoryService;
+    protected MessageHistoryService<FlowInvocationContext, FlowEvent, T, ComponentInvocationMetricImpl> messageHistoryService;
 
     /** the module and flow name */
     protected String moduleName, flowName;
@@ -71,7 +71,7 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
     /** boolean to determine whether to rethrow any caught exceptions thrown by the underlying service, defaults to false */
     protected boolean rethrowServiceExceptions = false;
 
-    public MessageHistoryContextListener(MessageHistoryService<FlowInvocationContext, FlowEvent, T, MessageHistoryFlowEvent> messageHistoryService, String moduleName, String flowName)
+    public MessageHistoryContextListener(MessageHistoryService<FlowInvocationContext, FlowEvent, T, ComponentInvocationMetricImpl> messageHistoryService, String moduleName, String flowName)
     {
         if (messageHistoryService == null)
         {
