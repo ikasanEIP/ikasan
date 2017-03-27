@@ -58,33 +58,16 @@
 	    </property>
 	</bean>
 	
-	<!-- bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl">
-        <constructor-arg name="serializers">
-            <map>
-            </map>
-        </constructor-arg>
-        <constructor-arg name="converters">
-            <map>
-                <entry key="javax.jms.TextMessage">
-                    <bean class="org.ikasan.serialiser.converter.JmsTextMessageConverter"/>
-                </entry>
-                <entry key="javax.jms.MapMessage">
-                    <bean class="org.ikasan.serialiser.converter.JmsMapMessageConverter"/>
-                </entry>
-            </map>
-        </constructor-arg>
-    </bean -->
-	
 	<aop:config>
         <aop:pointcut id="daoMethods"
                 expression="execution(* org.ikasan.replay.dao.*.*(..))"/>
                 
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="daoMethods"/>
     </aop:config>
 
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="*" propagation="REQUIRED" />
         </tx:attributes>
     </tx:advice>
 
