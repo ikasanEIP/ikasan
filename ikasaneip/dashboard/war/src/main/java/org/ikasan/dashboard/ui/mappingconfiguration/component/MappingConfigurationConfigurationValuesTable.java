@@ -167,6 +167,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         container.addContainerProperty("Target Configuration Value", VerticalLayout.class,  null);
         container.addContainerProperty("Delete", Button.class,  null);
 
+        this.setColumnExpandRatio("Source Configuration Value", 47.5f);
+        this.setColumnExpandRatio("Target Configuration Value", 47.5f);
+        this.setColumnExpandRatio("Delete", 5f);
+
         this.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
         this.setContainerDataSource(container);
     }
@@ -192,16 +196,18 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             {
                 if(layout.getComponent(i) instanceof HorizontalLayout)
                 {
-                    ((TextField) ((HorizontalLayout) layout.getComponent(i)).getComponent(0)).setReadOnly(!editable);
-
-                    if(((HorizontalLayout) layout.getComponent(i)).getComponentCount() > 1)
+                    for(int j=0; j<((HorizontalLayout) layout.getComponent(i)).getComponentCount(); j++)
                     {
-                        ((Button) ((HorizontalLayout) layout.getComponent(i)).getComponent(1)).setVisible(editable);
-                    }
+                        Component component = ((HorizontalLayout) layout.getComponent(i)).getComponent(j);
 
-                    if(((HorizontalLayout) layout.getComponent(i)).getComponentCount() > 2)
-                    {
-                        ((Button) ((HorizontalLayout) layout.getComponent(i)).getComponent(2)).setVisible(editable);
+                        if(component instanceof TextField)
+                        {
+                            component.setReadOnly(!editable);
+                        }
+                        else if(component instanceof Button)
+                        {
+                            component.setVisible(editable);
+                        }
                     }
                 }
                 else
@@ -217,11 +223,18 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             {
                 if(layout.getComponent(i) instanceof HorizontalLayout)
                 {
-                    ((TextField) ((HorizontalLayout) layout.getComponent(i)).getComponent(0)).setReadOnly(!editable);
-
-                    if(((HorizontalLayout) layout.getComponent(i)).getComponentCount() > 1)
+                    for(int j=0; j<((HorizontalLayout) layout.getComponent(i)).getComponentCount(); j++)
                     {
-                        ((Button) ((HorizontalLayout) layout.getComponent(i)).getComponent(1)).setVisible(editable);
+                        Component component = ((HorizontalLayout) layout.getComponent(i)).getComponent(j);
+
+                        if(component instanceof TextField)
+                        {
+                            component.setReadOnly(!editable);
+                        }
+                        else if(component instanceof Button)
+                        {
+                            component.setVisible(editable);
+                        }
                     }
                 }
                 else
@@ -516,6 +529,20 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             final VerticalLayout tableCellLayout = new VerticalLayout();
             tableCellLayout.setSpacing(true);
 
+            if(this.mappingConfiguration.getNumberOfParams() > 1 || this.mappingConfiguration.getIsManyToMany())
+            {
+                HorizontalLayout hl = new HorizontalLayout();
+                Label nameLabel = new Label("Name");
+                nameLabel.setWidth(300, Unit.PIXELS);
+                hl.addComponent(nameLabel);
+
+                Label valueLabel = new Label("Value");
+                valueLabel.setWidth(300, Unit.PIXELS);
+                hl.addComponent(valueLabel);
+
+                tableCellLayout.addComponent(hl);
+            }
+
             for(int i=0; i<this.mappingConfiguration.getNumberOfParams(); i++)
             {
                 if(!usedSourceConfigurationValues.contains(value))
@@ -524,16 +551,22 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     groupedSourceSystemValues.add(value);
 
                     BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(value);
-                    final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
-                    tf.setWidth(300, Unit.PIXELS);
+                    final TextField sourceSystemValueTextField = new TextField(item.getItemProperty("sourceSystemValue"));
+                    sourceSystemValueTextField.setWidth(300, Unit.PIXELS);
 
-                    tf.setReadOnly(true);
+                    sourceSystemValueTextField.setReadOnly(true);
                     usedSourceConfigurationValues.add(value);
+
+                    final TextField nameTextField = new TextField(item.getItemProperty("name"));
+                    nameTextField.setWidth(300, Unit.PIXELS);
+
+                    nameTextField.setReadOnly(true);
 
                     if (mappingConfiguration.getIsManyToMany())
                     {
                         final HorizontalLayout hl = new HorizontalLayout();
-                        hl.addComponent(tf);
+                        hl.addComponent(nameTextField);
+                        hl.addComponent(sourceSystemValueTextField);
 
                         Button addSourceValueButton = new Button();
                         addSourceValueButton.setIcon(VaadinIcons.PLUS);
@@ -558,6 +591,12 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
                                 tf.setReadOnly(false);
                                 tf.setWidth(300, Unit.PIXELS);
+
+                                final TextField nameTextField = new TextField(item.getItemProperty("name"));
+                                nameTextField.setWidth(300, Unit.PIXELS);
+
+                                nameTextField.setReadOnly(true);
+
 
                                 final HorizontalLayout hl = new HorizontalLayout();
 
@@ -584,6 +623,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                     }
                                 });
 
+                                hl.addComponent(nameTextField);
                                 hl.addComponent(tf);
                                 hl.addComponent(minusTargetValueButton);
 
@@ -597,7 +637,14 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     else
                     {
                         logger.info("Adding source value, should NOT be adding button");
-                        tableCellLayout.addComponent(tf);
+                        final HorizontalLayout hl = new HorizontalLayout();
+
+                        if(mappingConfiguration.getNumberOfParams() > 1)
+                        {
+                            hl.addComponent(nameTextField);
+                        }
+                        hl.addComponent(sourceSystemValueTextField);
+                        tableCellLayout.addComponent(hl);
                     }
 
                     Iterator<SourceConfigurationValue> partnerSourceConfigurationValueItr = sourceConfigurationValues.iterator();
@@ -613,12 +660,19 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                         {
                             groupedSourceSystemValues.add(partnerSourceConfigurationValue);
                             item = new BeanItem<SourceConfigurationValue>(partnerSourceConfigurationValue);
-                            final TextField stf = new TextField(item.getItemProperty("sourceSystemValue"));
-                            stf.setWidth(300, Unit.PIXELS);
+                            final TextField sourceSystemValueTextField2 = new TextField(item.getItemProperty("sourceSystemValue"));
+                            sourceSystemValueTextField2.setWidth(300, Unit.PIXELS);
 
-                            stf.setReadOnly(true);
+                            sourceSystemValueTextField2.setReadOnly(true);
+
+                            final TextField nameTextField2 = new TextField(item.getItemProperty("name"));
+                            nameTextField2.setWidth(300, Unit.PIXELS);
+
+                            nameTextField2.setReadOnly(true);
+
+
                             usedSourceConfigurationValues.add(partnerSourceConfigurationValue);
-                            tableCellLayout.addComponent(stf);
+                            tableCellLayout.addComponent(sourceSystemValueTextField2);
 
                             logger.info("Adding source value as partner group");
 
@@ -636,7 +690,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 @Override
                                 public void buttonClick(ClickEvent clickEvent)
                                 {
-                                    hl.removeComponent(stf);
+                                    hl.removeComponent(sourceSystemValueTextField2);
                                     hl.removeComponent(minusTargetValueButton);
                                     hl.setImmediate(true);
                                     hl.markAsDirty();
@@ -647,7 +701,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 }
                             });
 
-                            hl.addComponent(stf);
+                            hl.addComponent(nameTextField2);
+                            hl.addComponent(sourceSystemValueTextField2);
 
                             if(mappingConfiguration.getIsManyToMany())
                             {

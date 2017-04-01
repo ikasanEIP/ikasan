@@ -58,6 +58,8 @@ public class SourceConfigurationValue implements Serializable
 
     private String sourceSystemValue;
 
+    private String name;
+
     private Long mappingConfigurationId;
 
     private Long sourceConfigGroupId;
@@ -151,7 +153,25 @@ public class SourceConfigurationValue implements Serializable
 		this.targetConfigurationValue = targetConfigurationValue;
 	}
 
-	/**
+    /**
+     *
+     * @return the name
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     *
+     * @param name the name to set
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()

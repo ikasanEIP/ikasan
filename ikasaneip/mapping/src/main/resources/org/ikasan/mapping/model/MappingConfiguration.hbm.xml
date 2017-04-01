@@ -101,7 +101,7 @@
              inverse="true" 
              cascade="all,delete-orphan" 
              lazy="false"
-             order-by="sourceConfigGroupId">
+             order-by="sourceSystemValue desc">
              <key column="MappingConfigurationId"/>
              <one-to-many class="org.ikasan.mapping.model.SourceConfigurationValue"/>
         </set>
