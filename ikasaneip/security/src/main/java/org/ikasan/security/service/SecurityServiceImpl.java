@@ -389,4 +389,16 @@ public class SecurityServiceImpl implements SecurityService
 	{
 		return this.securityDao.getUsersAssociatedWithPrincipal(principalId);
 	}
+
+    @Override
+    public Role getRoleById(Long id)
+    {
+        return this.securityDao.getRoleById(id);
+    }
+
+    @Override
+    public Policy getPolicyById(Long id)
+    {
+        return this.securityDao.getPolicyById(id);
+    }
 }

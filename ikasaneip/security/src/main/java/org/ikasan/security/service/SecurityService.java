@@ -275,5 +275,19 @@ public interface SecurityService
      * @return
      */
     public List<User> getUsersAssociatedWithPrincipal(long principalId);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Role getRoleById(Long id);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Policy getPolicyById(Long id);
 }
 

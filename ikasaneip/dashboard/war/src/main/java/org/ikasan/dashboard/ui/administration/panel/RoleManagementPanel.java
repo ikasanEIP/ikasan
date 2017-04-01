@@ -200,10 +200,20 @@ package org.ikasan.dashboard.ui.administration.panel;
              @Override
              public void itemClick(ItemClickEvent itemClickEvent)
              {
+
                  if(itemClickEvent.isDoubleClick())
                  {
-                     RoleWindow window = new RoleWindow(userService, securityService, systemEventService, (Role)itemClickEvent.getItemId());
+                     final RoleWindow window = new RoleWindow(userService, securityService, systemEventService, (Role)itemClickEvent.getItemId());
                      UI.getCurrent().addWindow(window);
+
+                     window.addCloseListener(new Window.CloseListener()
+                     {
+                         @Override
+                         public void windowClose(Window.CloseEvent closeEvent)
+                         {
+                             refresh();
+                         }
+                     });
                  }
              }
          });
@@ -225,6 +235,11 @@ package org.ikasan.dashboard.ui.administration.panel;
       */
      @Override
      public void enter(ViewChangeEvent event)
+     {
+         this.refresh();
+     }
+
+     private void refresh()
      {
          logger.info("Loading roles");
 
