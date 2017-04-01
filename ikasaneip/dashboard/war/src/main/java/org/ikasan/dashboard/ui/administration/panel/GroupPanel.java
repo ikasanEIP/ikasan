@@ -132,7 +132,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
          gridLayout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
 
-         Label usernameLabel = new Label("Username:");
+         Label usernameLabel = new Label("Group name:");
 
          groupNameField.setWidth("65%");
 
@@ -156,13 +156,13 @@ package org.ikasan.dashboard.ui.administration.panel;
          formLayout.setComponentAlignment(usernameLabel, Alignment.MIDDLE_RIGHT);
          formLayout.addComponent(groupNameField, 1, 0);
 
-         Label firstNameLabel = new Label("First name:");
+         Label firstNameLabel = new Label("Group type:");
          firstNameLabel.setSizeUndefined();
          formLayout.addComponent(firstNameLabel, 0, 1);
          formLayout.setComponentAlignment(firstNameLabel, Alignment.MIDDLE_RIGHT);
          formLayout.addComponent(groupTypeField, 1, 1);
 
-         Label surnameLabel = new Label("Surname:");
+         Label surnameLabel = new Label("Description:");
          surnameLabel.setSizeUndefined();
          formLayout.addComponent(surnameLabel, 0, 2);
          formLayout.setComponentAlignment(surnameLabel, Alignment.MIDDLE_RIGHT);

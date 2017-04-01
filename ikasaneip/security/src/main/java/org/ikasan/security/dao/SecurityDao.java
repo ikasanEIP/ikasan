@@ -164,6 +164,13 @@ public interface SecurityDao
     public Role getRoleByName(String name);
 
     /**
+     *
+     * @param id
+     * @return
+     */
+    public Role getRoleById(Long id);
+
+    /**
      * 
      * @param authenticationMethod     
      */
@@ -241,4 +248,11 @@ public interface SecurityDao
      * @return
      */
     public List<User> getUsersAssociatedWithPrincipal(long principalId);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Policy getPolicyById(Long id);
 }

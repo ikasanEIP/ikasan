@@ -189,6 +189,36 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return role;
     }
 
+	/*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getRoleByName(java.lang.String)
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Role getRoleById(Long id)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
+		criteria.add(Restrictions.eq("id", id));
+		Role role = (Role) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+		return role;
+	}
+
+	/*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getRoleByName(java.lang.String)
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Policy getPolicyById(Long id)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
+		criteria.add(Restrictions.eq("id", id));
+		Policy policy = (Policy) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+		return policy;
+	}
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.dao.SecurityDao#deleteRole(org.ikasan.security.window.Role)
@@ -433,6 +463,6 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
             }
         });
 	}
-	
-	
+
+
 }

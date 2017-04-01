@@ -243,13 +243,6 @@ public class UserManagementPanel extends Panel implements View
 			String timestamp = format.format(date);
 
 			Item item = tableContainer.addItem(user);
-			this.userTable.setColumnExpandRatio("Username", .1f);
-			this.userTable.setColumnExpandRatio("First name", .2f);
-			this.userTable.setColumnExpandRatio("Last name", .2f);
-			this.userTable.setColumnExpandRatio("Email", .33f);
-			this.userTable.setColumnExpandRatio("Department", .2f);
-			this.userTable.setColumnExpandRatio("Previous Access", .1f);
-
 
 			item.getItemProperty("Username").setValue(user.getUsername());
 			item.getItemProperty("First name").setValue(user.getFirstName());

@@ -115,7 +115,6 @@ package org.ikasan.dashboard.ui.administration.panel;
          init();
      }
 
-     @SuppressWarnings("deprecation")
      protected void init()
      {
          this.setWidth("100%");
