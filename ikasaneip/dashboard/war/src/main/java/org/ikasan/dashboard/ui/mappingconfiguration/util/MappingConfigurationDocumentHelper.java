@@ -56,10 +56,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.mapping.model.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -284,6 +281,15 @@ public class MappingConfigurationDocumentHelper
             SourceConfigurationValue value = new SourceConfigurationValue();
             value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
 
+            NamedNodeMap attributes = sourceConfigurationValues.item(i).getAttributes();
+
+            Node nameAttribute = attributes.getNamedItem("name");
+
+            if(nameAttribute != null)
+            {
+                value.setName(nameAttribute.getTextContent());
+            }
+
             returnValue.add(value);
         }
 
@@ -304,6 +310,15 @@ public class MappingConfigurationDocumentHelper
             logger.debug("Target value: " + targetConfigurationValues.item(i).getTextContent());
             ManyToManyTargetConfigurationValue value = new ManyToManyTargetConfigurationValue();
             value.setTargetSystemValue(targetConfigurationValues.item(i).getTextContent());
+
+            NamedNodeMap attributes = targetConfigurationValues.item(i).getAttributes();
+
+            Node nameAttribute = attributes.getNamedItem("name");
+
+            if(nameAttribute != null)
+            {
+                value.setName(nameAttribute.getTextContent());
+            }
 
             returnValue.add(value);
         }

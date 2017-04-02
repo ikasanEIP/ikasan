@@ -527,7 +527,9 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             final SourceConfigurationValue value = sourceConfigurationValueItr.next();
 
             final VerticalLayout tableCellLayout = new VerticalLayout();
+            tableCellLayout.setWidth("100%");
             tableCellLayout.setSpacing(true);
+            tableCellLayout.setMargin(true);
 
             if(this.mappingConfiguration.getNumberOfParams() > 1 || this.mappingConfiguration.getIsManyToMany())
             {
@@ -565,6 +567,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     if (mappingConfiguration.getIsManyToMany())
                     {
                         final HorizontalLayout hl = new HorizontalLayout();
+                        hl.setSpacing(true);
                         hl.addComponent(nameTextField);
                         hl.addComponent(sourceSystemValueTextField);
 
@@ -623,6 +626,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                     }
                                 });
 
+                                hl.setSpacing(true);
                                 hl.addComponent(nameTextField);
                                 hl.addComponent(tf);
                                 hl.addComponent(minusTargetValueButton);
@@ -638,6 +642,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     {
                         logger.info("Adding source value, should NOT be adding button");
                         final HorizontalLayout hl = new HorizontalLayout();
+                        hl.setSpacing(true);
 
                         if(mappingConfiguration.getNumberOfParams() > 1)
                         {
@@ -677,6 +682,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             logger.info("Adding source value as partner group");
 
                             final HorizontalLayout hl = new HorizontalLayout();
+                            hl.setSpacing(true);
 
                             final Button minusTargetValueButton = new Button();
                             minusTargetValueButton.setIcon(VaadinIcons.MINUS);
@@ -714,12 +720,25 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     }
 
                     final VerticalLayout targetValueTableCellLayout = new VerticalLayout();
+                    targetValueTableCellLayout.setMargin(true);
+                    targetValueTableCellLayout.setWidth("100%");
                     targetValueTableCellLayout.setSizeUndefined();
                     targetValueTableCellLayout.setImmediate(true);
                     targetValueTableCellLayout.setSpacing(true);
 
                     if(this.mappingConfiguration.getIsManyToMany())
                     {
+                        HorizontalLayout labelHl = new HorizontalLayout();
+                        Label nameLabel = new Label("Name");
+                        nameLabel.setWidth(300, Unit.PIXELS);
+                        labelHl.addComponent(nameLabel);
+
+                        Label valueLabel = new Label("Value");
+                        valueLabel.setWidth(300, Unit.PIXELS);
+                        labelHl.addComponent(valueLabel);
+
+                        targetValueTableCellLayout.addComponent(labelHl);
+
                         List<ManyToManyTargetConfigurationValue> targetValues
                                 = this.mappingConfigurationService.getManyToManyTargetConfigurationValues(value.getSourceConfigGroupId());
 
@@ -739,6 +758,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             tvf.setWidth(300, Unit.PIXELS);
 
                             final HorizontalLayout hl = new HorizontalLayout();
+                            hl.setSpacing(true);
                             hl.addComponent(tvf);
 
                             Button addTargetValueButton = new Button();
@@ -754,6 +774,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 public void buttonClick(ClickEvent clickEvent)
                                 {
                                     final HorizontalLayout hl = new HorizontalLayout();
+                                    hl.setSpacing(true);
                                     hl.setSizeUndefined();
 
                                     final ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
@@ -806,6 +827,9 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 manyToManyTargetConfigurationValues.add(targetValue);
 
                                 Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetValue);
+                                final TextField nameTf = new TextField(tItem.getItemProperty("name"));
+                                nameTf.setReadOnly(true);
+                                nameTf.setWidth(300, Unit.PIXELS);
                                 final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
                                 tvf.setReadOnly(true);
                                 tvf.setWidth(300, Unit.PIXELS);
@@ -814,7 +838,9 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 {
                                     buttonAdded = true;
                                     final HorizontalLayout hl = new HorizontalLayout();
+                                    hl.setSpacing(true);
                                     hl.setSizeUndefined();
+                                    hl.addComponent(nameTf);
                                     hl.addComponent(tvf);
 
                                     Button addTargetValueButton = new Button();
@@ -836,11 +862,15 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                             manyToManyTargetConfigurationValues.add(targetConfigurationValue);
 
                                             Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
+                                            final TextField nameTf = new TextField(tItem.getItemProperty("name"));
+                                            nameTf.setReadOnly(false);
+                                            nameTf.setWidth(300, Unit.PIXELS);
                                             final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
                                             tvf.setReadOnly(false);
                                             tvf.setWidth(300, Unit.PIXELS);
 
                                             final HorizontalLayout hl = new HorizontalLayout();
+                                            hl.setSpacing(true);
 
                                             final Button minusTargetValueButton = new Button();
                                             minusTargetValueButton.setIcon(VaadinIcons.MINUS);
@@ -865,6 +895,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                                 }
                                             });
 
+                                            hl.addComponent(nameTf);
                                             hl.addComponent(tvf);
                                             hl.addComponent(minusTargetValueButton);
 
@@ -896,12 +927,12 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                     });
 
                                     hl.addComponent(addTargetValueButton);
-                                    hl.addComponent(minusTargetValueButton);
                                     targetValueTableCellLayout.addComponent(hl);
                                 } 
                                 else
                                 {
                                     final HorizontalLayout hl = new HorizontalLayout();
+                                    hl.setSpacing(true);
                                     hl.setSizeUndefined();
 
                                     final Button minusTargetValueButton = new Button();
@@ -916,6 +947,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                         @Override
                                         public void buttonClick(ClickEvent clickEvent)
                                         {
+                                            hl.removeComponent(nameTf);
                                             hl.removeComponent(tvf);
                                             hl.removeComponent(minusTargetValueButton);
                                             hl.setImmediate(true);
@@ -927,6 +959,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                         }
                                     });
 
+                                    hl.addComponent(nameTf);
                                     hl.addComponent(tvf);
                                     hl.addComponent(minusTargetValueButton);
 

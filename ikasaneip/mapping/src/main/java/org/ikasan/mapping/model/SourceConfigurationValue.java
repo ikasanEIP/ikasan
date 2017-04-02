@@ -58,7 +58,7 @@ public class SourceConfigurationValue implements Serializable
 
     private String sourceSystemValue;
 
-    private String name;
+    private String name = "";
 
     private Long mappingConfigurationId;
 
@@ -114,7 +114,14 @@ public class SourceConfigurationValue implements Serializable
      */
     public void setSourceSystemValue(String sourceSystemValue)
     {
-        this.sourceSystemValue = sourceSystemValue;
+        if(sourceSystemValue != null)
+        {
+            this.sourceSystemValue = sourceSystemValue.trim();
+        }
+        else
+        {
+            this.sourceSystemValue = sourceSystemValue;
+        }
     }
 
     /**
@@ -159,6 +166,11 @@ public class SourceConfigurationValue implements Serializable
      */
     public String getName()
     {
+        if(name == null)
+        {
+            return "";
+        }
+
         return name;
     }
 
@@ -168,7 +180,14 @@ public class SourceConfigurationValue implements Serializable
      */
     public void setName(String name)
     {
-        this.name = name;
+        if(name != null)
+        {
+            this.name = name.trim();
+        }
+        else
+        {
+            this.name = name;
+        }
     }
 
     /**

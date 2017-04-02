@@ -45,6 +45,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Query;
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
@@ -235,159 +236,159 @@ public class MappingConfigurationServiceTest
 				.addTargetSystemConfiguration("singleValueResult2");
 		
 		// Add same value twice to create exception
-		this.addSourceSystemConfiguration("reverse",
+		this.addSourceSystemConfiguration("reverse", "name1",
 				mappingConfigurationId3, targetId1);
-		this.addSourceSystemConfiguration("singleValueTwice",
+		this.addSourceSystemConfiguration("singleValueTwice","name2",
 				mappingConfigurationId4, targetId15);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId15);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId15);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name5",mappingConfigurationId4,
 				targetId15);
 		
-		this.addSourceSystemConfiguration("singleValueTwice",
+		this.addSourceSystemConfiguration("singleValueTwice","name1",
 				mappingConfigurationId4, targetId16);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name2", mappingConfigurationId4,
 				targetId16);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId16);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId16);
 
-		this.addSourceSystemConfiguration("singleValue",
+		this.addSourceSystemConfiguration("singleValue","name1",
 				mappingConfigurationId4, targetId14);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name2",mappingConfigurationId4,
 				targetId14);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId14);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId14);
 
-		this.addSourceSystemConfiguration("1424", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1424", "name1", mappingConfigurationId4,
 				targetId13);
-		this.addSourceSystemConfiguration("1424", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1424", "name2",mappingConfigurationId4,
 				targetId13);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3", mappingConfigurationId4,
 				targetId13);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4", mappingConfigurationId4,
 				targetId13);
 
-		this.addSourceSystemConfiguration("BARX", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("BARX", "name1",mappingConfigurationId4,
 				targetId1);
-		this.addSourceSystemConfiguration("TRSY", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("TRSY","name2", mappingConfigurationId4,
 				targetId1);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId1);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId1);
 
-		this.addSourceSystemConfiguration("1074", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1074", "name1",mappingConfigurationId4,
 				targetId7);
-		this.addSourceSystemConfiguration("1074", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1074", "name2", mappingConfigurationId4,
 				targetId7);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId7);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4", mappingConfigurationId4,
 				targetId7);
 
-		this.addSourceSystemConfiguration("1254", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1254", "name1",mappingConfigurationId4,
 				targetId10);
-		this.addSourceSystemConfiguration("1254", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1254", "name2",mappingConfigurationId4,
 				targetId10);
-		this.addSourceSystemConfiguration("Libor", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("Libor", "name3",mappingConfigurationId4,
 				targetId10);
-		this.addSourceSystemConfiguration("Libor", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("Libor", "name4", mappingConfigurationId4,
 				targetId10);
 
-		this.addSourceSystemConfiguration("1254", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1254", "name1",mappingConfigurationId4,
 				targetId11);
-		this.addSourceSystemConfiguration("1254", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1254", "name2",mappingConfigurationId4,
 				targetId11);
-		this.addSourceSystemConfiguration("Libor", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("Libor", "name3",mappingConfigurationId4,
 				targetId11);
-		this.addSourceSystemConfiguration("Libor/Libor",
+		this.addSourceSystemConfiguration("Libor/Libor","name4",
 				mappingConfigurationId4, targetId11);
 
-		this.addSourceSystemConfiguration("1208", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1208", "name1",mappingConfigurationId4,
 				targetId12);
-		this.addSourceSystemConfiguration("1208", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1208", "name2",mappingConfigurationId4,
 				targetId12);
-		this.addSourceSystemConfiguration("Libor", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("Libor","name3", mappingConfigurationId4,
 				targetId12);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId12);
 
-		this.addSourceSystemConfiguration("1208", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1208", "name1",mappingConfigurationId4,
 				targetId8);
-		this.addSourceSystemConfiguration("1208", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1208", "name2",mappingConfigurationId4,
 				targetId8);
-		this.addSourceSystemConfiguration("CMS", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("CMS", "name3",mappingConfigurationId4,
 				targetId8);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId8);
 
-		this.addSourceSystemConfiguration("1208", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1208", "name1",mappingConfigurationId4,
 				targetId9);
-		this.addSourceSystemConfiguration("1208", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("1208", "name2",mappingConfigurationId4,
 				targetId9);
-		this.addSourceSystemConfiguration("CMS Spread",
+		this.addSourceSystemConfiguration("CMS Spread","name3",
 				mappingConfigurationId4, targetId9);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId9);
 
-		this.addSourceSystemConfiguration("Myself", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("Myself", "name1",mappingConfigurationId4,
 				targetId2);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name2",mappingConfigurationId4,
 				targetId2);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId2);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId2);
 
-		this.addSourceSystemConfiguration("On My Own", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("On My Own", "name1",mappingConfigurationId4,
 				targetId3);
-		this.addSourceSystemConfiguration("Value2", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("Value2", "name2",mappingConfigurationId4,
 				targetId3);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId3);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId3);
 
-		this.addSourceSystemConfiguration("On My Own", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("On My Own", "name1",mappingConfigurationId4,
 				targetId4);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name2",mappingConfigurationId4,
 				targetId4);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name3",mappingConfigurationId4,
 				targetId4);
-		this.addSourceSystemConfiguration("", mappingConfigurationId4,
+		this.addSourceSystemConfiguration("", "name4",mappingConfigurationId4,
 				targetId4);
 
-		this.addSourceSystemConfiguration("BARX", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("BARX","name1", mappingConfigurationId1,
 				targetId1);
-		this.addSourceSystemConfiguration("TRSY", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("TRSY", "name2",mappingConfigurationId1,
 				targetId1);
-		this.addSourceSystemConfiguration("AGCY", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("AGCY", "name3",mappingConfigurationId1,
 				targetId1);
-		this.addSourceSystemConfiguration("MBS", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("MBS", "name4",mappingConfigurationId1,
 				targetId1);
 
-		this.addSourceSystemConfiguration("BNPP", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("BNPP", "name1",mappingConfigurationId1,
 				targetId2);
-		this.addSourceSystemConfiguration("TRSY", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("TRSY", "name2",mappingConfigurationId1,
 				targetId2);
-		this.addSourceSystemConfiguration("AGCY", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("AGCY", "name3",mappingConfigurationId1,
 				targetId2);
-		this.addSourceSystemConfiguration("MBS", mappingConfigurationId1,
+		this.addSourceSystemConfiguration("MBS", "name4",mappingConfigurationId1,
 				targetId2);
 
-		this.addSourceSystemConfiguration("azehra", mappingConfigurationId2,
+		this.addSourceSystemConfiguration("azehra", "name1",mappingConfigurationId2,
 				targetId3);
-		this.addSourceSystemConfiguration("isabelv", mappingConfigurationId2,
+		this.addSourceSystemConfiguration("isabelv", "name2",mappingConfigurationId2,
 				targetId4);
-		this.addSourceSystemConfiguration("briordan2", mappingConfigurationId2,
+		this.addSourceSystemConfiguration("briordan2", "name3",mappingConfigurationId2,
 				targetId5);
-		this.addSourceSystemConfiguration("vimondi", mappingConfigurationId2,
+		this.addSourceSystemConfiguration("vimondi", "name4",mappingConfigurationId2,
 				targetId6);
 
 		TargetConfigurationValue targetId70 = this
@@ -395,9 +396,9 @@ public class MappingConfigurationServiceTest
 		TargetConfigurationValue targetId80 = this
 				.addTargetSystemConfiguration("YENTBFB");
 
-		this.addSourceSystemConfiguration("false", mappingConfigurationId3,
+		this.addSourceSystemConfiguration("false","name1", mappingConfigurationId3,
 				targetId70);
-		this.addSourceSystemConfiguration("true", mappingConfigurationId3,
+		this.addSourceSystemConfiguration("true","name2", mappingConfigurationId3,
 				targetId80);
 
 
@@ -531,6 +532,39 @@ public class MappingConfigurationServiceTest
 
 		Assert.assertEquals(0, result.size());
 	}
+
+	@Test
+	@DirtiesContext
+	public void test_success_many_to_many_with_ordinality()
+	{
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues.add(this.createQueryParameter("name1", "s1"));
+		sourceSystemValues.add(this.createQueryParameter("name2","s2"));
+		sourceSystemValues.add(this.createQueryParameter("name3","s3"));
+		sourceSystemValues.add(this.createQueryParameter("name4","s4"));
+
+		List<String> result = this.xaMappingConfigurationService.getTargetConfigurationValuesWithOrdinality("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(4, result.size());
+		Assert.assertTrue(result.contains("t1"));
+		Assert.assertTrue(result.contains("t2"));
+		Assert.assertTrue(result.contains("t3"));
+		Assert.assertTrue(result.contains("t4"));
+
+		sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues.add(this.createQueryParameter("name1", "s2"));
+		sourceSystemValues.add(this.createQueryParameter("name2","s2"));
+		sourceSystemValues.add(this.createQueryParameter("name3","s3"));
+		sourceSystemValues.add(this.createQueryParameter("name4","s4"));
+
+		result = this.xaMappingConfigurationService.getTargetConfigurationValuesWithOrdinality("CMI22", "Many to Many", "Tradeweb2",
+				"Bloomberg2", sourceSystemValues);
+
+		Assert.assertEquals(0, result.size());
+
+	}
+
 
 	@Test
 	@DirtiesContext
@@ -891,6 +925,42 @@ public class MappingConfigurationServiceTest
 
 	@Test
 	@DirtiesContext
+	public void test_success_4_paramater_mapping_with_ignores_1_params_with_cardinality()
+	{
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues.add(this.createQueryParameter("name1","Myself"));
+		sourceSystemValues.add(this.createQueryParameter("name2","blah3"));
+		sourceSystemValues.add(this.createQueryParameter("name3","blah"));
+		sourceSystemValues.add(this.createQueryParameter("name4","blah1"));
+
+		String result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("BNPPAR", result);
+	}
+
+	@Test
+	@DirtiesContext
+	public void test_success_4_paramater_mapping_with_ignores_1_params_with_cardinalityBad_name()
+	{
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues.add(this.createQueryParameter("bad name","Myself"));
+		sourceSystemValues.add(this.createQueryParameter("name2","blah3"));
+		sourceSystemValues.add(this.createQueryParameter("name3","blah"));
+		sourceSystemValues.add(this.createQueryParameter("name4","blah1"));
+
+		String result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals(null, result);
+	}
+
+	@Test
+	@DirtiesContext
 	public void test_success_4_paramater_mapping_with_ignores_3_params()
 	{
 		List<String> sourceSystemValues = new ArrayList<String>();
@@ -908,6 +978,7 @@ public class MappingConfigurationServiceTest
 	}
 	
 	@DirtiesContext
+	@Test
 	public void test_success_4_paramater_mapping_with_ignores()
 	{
 		List<String> sourceSystemValues = new ArrayList<String>();
@@ -925,6 +996,52 @@ public class MappingConfigurationServiceTest
 	}
 
 	@DirtiesContext
+	@Test
+	public void test_success_4_paramater_mapping_with_ignores_with_ordinality()
+	{
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues.add(createQueryParameter("name1", "On My Own"));
+		sourceSystemValues.add(createQueryParameter("name2", "ignore1"));
+		sourceSystemValues.add(createQueryParameter("name3", "ignore2"));
+		sourceSystemValues.add(createQueryParameter("name4", "ignore3"));
+
+		String result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals("VIDAUISA", result);
+	}
+
+	@DirtiesContext
+	@Test
+	public void test_success_4_paramater_mapping_with_ignores_with_ordinality_bad_name()
+	{
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues.add(createQueryParameter("bad name", "On My Own"));
+		sourceSystemValues.add(createQueryParameter("name2", "ignore1"));
+		sourceSystemValues.add(createQueryParameter("name3", "ignore2"));
+		sourceSystemValues.add(createQueryParameter("name4", "ignore3"));
+
+		String result = this.xaMappingConfigurationService
+				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg",
+						sourceSystemValues);
+
+		Assert.assertEquals(null, result);
+	}
+
+	private QueryParameter createQueryParameter(String name, String value)
+	{
+		QueryParameter param = new QueryParameter();
+		param.setName(name);
+		param.setValue(value);
+
+		return param;
+	}
+
+	@DirtiesContext
+	@Test
 	public void test_success_4_paramater_mapping_with_ignores2()
 	{
 		List<String> sourceSystemValues = new ArrayList<String>();
@@ -1588,9 +1705,7 @@ public class MappingConfigurationServiceTest
 
 	/**
 	 * Helper method to add the configuration type to the database.
-	 * 
-	 * @param id
-	 * @param name
+	 *
 	 */
 	private Long addConfigurationServiceClient(String name,
 			String keyLocationQueryProcessorType)
@@ -1606,9 +1721,6 @@ public class MappingConfigurationServiceTest
 
 	/**
 	 * Helper method to add the configuration type to the database.
-	 * 
-	 * @param id
-	 * @param name
 	 */
 	private Long addConfigurationType(String name)
 	{
@@ -1637,11 +1749,7 @@ public class MappingConfigurationServiceTest
 
 	/**
 	 * Helper method to add a configuration context to the database.
-	 * 
-	 * @param sourceContext
-	 * @param targetContext
-	 * @param numberOfParams
-	 * @param configurationTypeId
+	 *
 	 */
 	private Long addMappingConfiguration(Long sourceContextId,
 			Long targetContextId, Long numberOfParams,
@@ -1657,18 +1765,21 @@ public class MappingConfigurationServiceTest
 
 	/**
 	 * Helper method to add a source system value to the database.
-	 * 
+	 *
 	 * @param sourceSystemValue
-	 * @param configurationContextId
-	 * @param targetConfigurationValueId
-	 */
-	private Long addSourceSystemConfiguration(String sourceSystemValue,
+	 * @param name
+	 * @param mappingConfigurationId
+	 * @param targetConfigurationValue
+     * @return
+     */
+	private Long addSourceSystemConfiguration(String sourceSystemValue, String name,
 			Long mappingConfigurationId,
 			TargetConfigurationValue targetConfigurationValue)
 	{
 		SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
 		sourceConfigurationValue
 				.setMappingConfigurationId(mappingConfigurationId);
+		sourceConfigurationValue.setName(name);
 		sourceConfigurationValue.setSourceSystemValue(sourceSystemValue);
 		sourceConfigurationValue
 				.setTargetConfigurationValue(targetConfigurationValue);
@@ -1696,6 +1807,7 @@ public class MappingConfigurationServiceTest
 
 	private void addManyToManySourceSystemConfiguration(List<String> sourceSystemValues, List<String> targetSystemValues, Long mappingConfigurationId, Long groupingId)
 	{
+		int i=1;
 		for(String sourceValue: sourceSystemValues)
 		{
 			SourceConfigurationValue value = new SourceConfigurationValue();
@@ -1703,8 +1815,11 @@ public class MappingConfigurationServiceTest
 			value.setMappingConfigurationId(mappingConfigurationId);
 			value.setSourceSystemValue(sourceValue);
 			value.setSourceConfigGroupId(groupingId);
+			value.setName("name"+i);
 
 			this.xaMappingConfigurationDao.storeSourceConfigurationValue(value);
+
+			i++;
 		}
 
 		for(String targetValue: targetSystemValues)

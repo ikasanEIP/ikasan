@@ -6696,6 +6696,10 @@ div.v-layout.v-horizontal.v-widget {
 	filter: alpha(opacity=50) ;
 }
 
+.dashboard .layout-with-border {
+	border: 1px solid blue;
+}
+
 .dashboard .v-datefield-huge.v-disabled [class*="button"] {
 	cursor: default;
 	pointer-events: none;
