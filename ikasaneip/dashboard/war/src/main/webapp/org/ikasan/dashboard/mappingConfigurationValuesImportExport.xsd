@@ -20,7 +20,13 @@
   <xs:element name="sourceConfigurationValues">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="1" maxOccurs="unbounded" ref="sourceConfigurationValue"/>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="sourceConfigurationValue">
+          <xs:complexType>
+            <xs:attribute name="name"
+                          type="xs:string"
+                          use="optional" />
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>

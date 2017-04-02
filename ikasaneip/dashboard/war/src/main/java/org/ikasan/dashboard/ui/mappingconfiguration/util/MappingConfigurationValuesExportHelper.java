@@ -74,10 +74,12 @@ public class MappingConfigurationValuesExportHelper
     private static final String SOURCE_CONFIGURATION_VALUES_START_TAG = "<sourceConfigurationValues>";
     private static final String SOURCE_CONFIGURATION_VALUES_END_TAG = "</sourceConfigurationValues>";
     private static final String SOURCE_CONFIGURATION_VALUE_START_TAG = "<sourceConfigurationValue>";
+    private static final String SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG = "<sourceConfigurationValue name=\"index\">";
     private static final String SOURCE_CONFIGURATION_VALUE_END_TAG = "</sourceConfigurationValue>";
     private static final String TARGET_CONFIGURATION_VALUES_START_TAG = "<targetConfigurationValues>";
     private static final String TARGET_CONFIGURATION_VALUES_END_TAG = "</targetConfigurationValues>";
     private static final String TARGET_CONFIGURATION_VALUE_START_TAG = "<targetConfigurationValue>";
+    private static final String TARGET_CONFIGURATION_VALUE_WITH_NAME_START_TAG = "<targetConfigurationValue name=\"index\">";
     private static final String TARGET_CONFIGURATION_VALUE_END_TAG = "</targetConfigurationValue>";
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
@@ -129,8 +131,18 @@ public class MappingConfigurationValuesExportHelper
 
             for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
             {
-                exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG).append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
-                .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                if(value.getName() != null && !value.getName().isEmpty())
+                {
+                    exportString.append(SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
+                            .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
+                            .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                }
+                else
+                {
+                    exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG)
+                            .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
+                            .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                }
             }
 
             exportString.append(SOURCE_CONFIGURATION_VALUES_END_TAG);
@@ -141,9 +153,18 @@ public class MappingConfigurationValuesExportHelper
 
                 for(ManyToManyTargetConfigurationValue value: mappingConfigurationValue.getTargetConfigurationValues())
                 {
-                    exportString.append(TARGET_CONFIGURATION_VALUE_START_TAG)
-                            .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
-                            .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    if(value.getName() != null && !value.getName().isEmpty())
+                    {
+                        exportString.append(TARGET_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
+                                .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
+                                .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    }
+                    else
+                    {
+                        exportString.append(TARGET_CONFIGURATION_VALUE_START_TAG)
+                                .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
+                                .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    }
                 }
 
                 exportString.append(TARGET_CONFIGURATION_VALUES_END_TAG);

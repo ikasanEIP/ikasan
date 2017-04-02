@@ -67,6 +67,21 @@ public interface MappingConfigurationService
      */
     public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
             final List<String> sourceSystemValues);
+
+    /**
+     * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
+     * based on the following parameters. It ignores non relevant source values:
+     *
+     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
+     * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
+     * @param sourceContext the source context name that we are resolving the configuration value for.
+     * @param targetContext the target context name that we are resolving the configuration value for.
+     * @param sourceSystemValues the values on the source side used to resolve the target configuration value.
+     *
+     * @return the target configuration value mapped to all the above arguments.
+     */
+    public String getTargetConfigurationValueWithIgnoresWithOrdinality(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
+                                                         final List<QueryParameter> sourceSystemValues);
 	
 	/**
      * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
@@ -126,6 +141,18 @@ public interface MappingConfigurationService
      */
     public List<String> getTargetConfigurationValues(final String clientName, String configurationType,
                                                      String sourceContext, String targetContext, List<String> sourceSystemValues);
+
+    /**
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public List<String> getTargetConfigurationValuesWithOrdinality(final String clientName, String configurationType,
+                                                                   String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
 
     /**
      * This method is responsible for returning all {@link ConfigurationType} hibernate

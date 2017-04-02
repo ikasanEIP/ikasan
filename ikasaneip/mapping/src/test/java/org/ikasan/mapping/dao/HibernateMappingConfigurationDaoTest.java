@@ -107,31 +107,31 @@ public class HibernateMappingConfigurationDaoTest
         TargetConfigurationValue targetId1 = this.addTargetSystemConfiguration("BARCLON");
         TargetConfigurationValue targetId2 = this.addTargetSystemConfiguration("BNPPAR");
 
-        this.addSourceSystemConfiguration("BARX", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("TRSY", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("AGCY", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("MBS", configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("BARX", "name1", configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("TRSY", "name2",configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("AGCY", "name3",configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("MBS", "name4", configurationContextId1, targetId1);
 
-        this.addSourceSystemConfiguration("BNPP", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("TRSY", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("AGCY", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("MBS", configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("BNPP", "name1",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("TRSY", "name2",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("AGCY", "name3",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("MBS", "name4",configurationContextId1, targetId2);
 
         TargetConfigurationValue targetId3 = this.addTargetSystemConfiguration("ZEKRAA");
         TargetConfigurationValue targetId4 = this.addTargetSystemConfiguration("VIDAUISA");
         TargetConfigurationValue targetId5 = this.addTargetSystemConfiguration("BEN");
         TargetConfigurationValue targetId6 = this.addTargetSystemConfiguration("IMONDIV");
 
-        this.addSourceSystemConfiguration("azehra", configurationContextId2, targetId3);
-        this.addSourceSystemConfiguration("isabelv", configurationContextId2, targetId4);
-        this.addSourceSystemConfiguration("briordan2", configurationContextId2, targetId5);
-        this.addSourceSystemConfiguration("vimondi", configurationContextId2, targetId6);
+        this.addSourceSystemConfiguration("azehra", "name1",configurationContextId2, targetId3);
+        this.addSourceSystemConfiguration("isabelv", "name2",configurationContextId2, targetId4);
+        this.addSourceSystemConfiguration("briordan2", "name3",configurationContextId2, targetId5);
+        this.addSourceSystemConfiguration("vimondi", "name4",configurationContextId2, targetId6);
 
         TargetConfigurationValue targetId7 = this.addTargetSystemConfiguration("YENGOVT");
         TargetConfigurationValue targetId8 = this.addTargetSystemConfiguration("YENTBFB");
 
-        this.addSourceSystemConfiguration("false", configurationContextId3, targetId7);
-        this.addSourceSystemConfiguration("true", configurationContextId3, targetId8);
+        this.addSourceSystemConfiguration("false", "name1",configurationContextId3, targetId7);
+        this.addSourceSystemConfiguration("true", "name2",configurationContextId3, targetId8);
 
 
         ConfigurationType manyToManyMapping = this.addConfigurationType("Many to Many");
@@ -509,6 +509,46 @@ public class HibernateMappingConfigurationDaoTest
 
     @Test
     @DirtiesContext
+    public void test_success_2_paramater_mapping_with_name()
+    {
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameter param1 = new QueryParameter();
+        param1.setName("name1");
+        param1.setValue("BARX");
+        sourceSystemValues.add(param1);
+        QueryParameter param2 = new QueryParameter();
+        param2.setName("name2");
+        param2.setValue("TRSY");
+        sourceSystemValues.add(param2);
+
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("BARCLON", result);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_2_paramater_mapping_with_name_not_correlating()
+    {
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameter param1 = new QueryParameter();
+        param1.setName("name2");
+        param1.setValue("BARX");
+        sourceSystemValues.add(param1);
+        QueryParameter param2 = new QueryParameter();
+        param2.setName("name1");
+        param2.setValue("TRSY");
+        sourceSystemValues.add(param2);
+
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertNull(result);
+    }
+
+    @Test
+    @DirtiesContext
     public void test_success_2_paramater_mapping_2()
     {
         List<String> sourceSystemValues = new ArrayList<String>();
@@ -858,11 +898,12 @@ public class HibernateMappingConfigurationDaoTest
      * @param targetConfigurationValue
      * @return
      */
-    private Long addSourceSystemConfiguration(String sourceSystemValue, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
+    private Long addSourceSystemConfiguration(String sourceSystemValue, String name, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
     {
         SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
         sourceConfigurationValue.setMappingConfigurationId(mappingConfigurationId);
         sourceConfigurationValue.setSourceSystemValue(sourceSystemValue);
+        sourceConfigurationValue.setName(name);
         sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
 
         return this.xaMappingConfigurationDao.storeSourceConfigurationValue(sourceConfigurationValue);
