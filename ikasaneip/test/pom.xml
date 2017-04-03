@@ -96,6 +96,18 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-scheduler</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-quartz-endpoint</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>

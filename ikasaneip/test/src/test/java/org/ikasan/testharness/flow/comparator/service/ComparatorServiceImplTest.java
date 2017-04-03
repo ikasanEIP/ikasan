@@ -40,8 +40,6 @@
  */
 package org.ikasan.testharness.flow.comparator.service;
 
-import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.testharness.flow.expectation.model.*;
 import org.junit.Assert;
 import org.junit.Test;
