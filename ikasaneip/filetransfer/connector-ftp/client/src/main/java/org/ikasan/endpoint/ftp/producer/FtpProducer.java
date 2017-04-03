@@ -41,22 +41,23 @@
 package org.ikasan.endpoint.ftp.producer;
 
 
+import java.io.ByteArrayInputStream;
+
+import javax.resource.ResourceException;
+import javax.resource.cci.ConnectionFactory;
+
 import org.apache.log4j.Logger;
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
 import org.ikasan.connector.listener.TransactionCommitEvent;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
+import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
-import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-
-import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * FTP Implementation of a producer based on the JCA specification.
@@ -140,19 +141,16 @@ public class FtpProducer implements Producer<Payload>,
     public void invoke(Payload payload) throws EndpointException {
 
             try {
-                // Leave this map empty if the output directory should be used in all cases
-                Map<String, String> outputTargets = new HashMap<String, String>();
-
-                this.activeFileTransferConnectionTemplate.deliverPayload(
-                        payload,
-                        this.configuration.getOutputDirectory(),
-                        outputTargets,
-                        this.configuration.getOverwrite().booleanValue(),
-                        this.configuration.getRenameExtension(),
-                        this.configuration.getChecksumDelivered().booleanValue(),
-                        this.configuration.getUnzip().booleanValue(),
-                        this.configuration.getCleanupJournalOnComplete()
-                );
+				activeFileTransferConnectionTemplate.deliverInputStream(
+						new ByteArrayInputStream(payload.getContent()),
+						payload.getAttribute(FilePayloadAttributeNames.FILE_NAME),
+						configuration.getOutputDirectory(),
+						configuration.getOverwrite(),
+						configuration.getRenameExtension(),
+						configuration.getChecksumDelivered(),
+						configuration.getUnzip(),
+						configuration.getCreateParentDirectory(),
+						configuration.getTempFileName());
             } catch (ResourceException e) {
                 this.switchActiveConnection();
                 throw new EndpointException(e);
