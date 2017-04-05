@@ -45,7 +45,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.hibernate.Query;
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
@@ -537,7 +536,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_many_to_many_with_ordinality()
 	{
-		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
 		sourceSystemValues.add(this.createQueryParameter("name1", "s1"));
 		sourceSystemValues.add(this.createQueryParameter("name2","s2"));
 		sourceSystemValues.add(this.createQueryParameter("name3","s3"));
@@ -552,7 +551,7 @@ public class MappingConfigurationServiceTest
 		Assert.assertTrue(result.contains("t3"));
 		Assert.assertTrue(result.contains("t4"));
 
-		sourceSystemValues = new ArrayList<QueryParameter>();
+		sourceSystemValues = new ArrayList<QueryParameterImpl>();
 		sourceSystemValues.add(this.createQueryParameter("name1", "s2"));
 		sourceSystemValues.add(this.createQueryParameter("name2","s2"));
 		sourceSystemValues.add(this.createQueryParameter("name3","s3"));
@@ -927,7 +926,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_4_paramater_mapping_with_ignores_1_params_with_cardinality()
 	{
-		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
 		sourceSystemValues.add(this.createQueryParameter("name1","Myself"));
 		sourceSystemValues.add(this.createQueryParameter("name2","blah3"));
 		sourceSystemValues.add(this.createQueryParameter("name3","blah"));
@@ -945,7 +944,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_4_paramater_mapping_with_ignores_1_params_with_cardinalityBad_name()
 	{
-		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
 		sourceSystemValues.add(this.createQueryParameter("bad name","Myself"));
 		sourceSystemValues.add(this.createQueryParameter("name2","blah3"));
 		sourceSystemValues.add(this.createQueryParameter("name3","blah"));
@@ -999,7 +998,7 @@ public class MappingConfigurationServiceTest
 	@Test
 	public void test_success_4_paramater_mapping_with_ignores_with_ordinality()
 	{
-		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
 		sourceSystemValues.add(createQueryParameter("name1", "On My Own"));
 		sourceSystemValues.add(createQueryParameter("name2", "ignore1"));
 		sourceSystemValues.add(createQueryParameter("name3", "ignore2"));
@@ -1017,7 +1016,7 @@ public class MappingConfigurationServiceTest
 	@Test
 	public void test_success_4_paramater_mapping_with_ignores_with_ordinality_bad_name()
 	{
-		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
 		sourceSystemValues.add(createQueryParameter("bad name", "On My Own"));
 		sourceSystemValues.add(createQueryParameter("name2", "ignore1"));
 		sourceSystemValues.add(createQueryParameter("name3", "ignore2"));
@@ -1031,9 +1030,9 @@ public class MappingConfigurationServiceTest
 		Assert.assertEquals(null, result);
 	}
 
-	private QueryParameter createQueryParameter(String name, String value)
+	private QueryParameterImpl createQueryParameter(String name, String value)
 	{
-		QueryParameter param = new QueryParameter();
+		QueryParameterImpl param = new QueryParameterImpl();
 		param.setName(name);
 		param.setValue(value);
 

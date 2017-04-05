@@ -66,6 +66,8 @@ public class MappingConfiguration implements Serializable
 
     protected Long numberOfParams = new Long(1);
 
+	protected int numTargetValues = 1;
+
     protected ConfigurationType configurationType;
 
     protected ConfigurationServiceClient configurationServiceClient;
@@ -73,6 +75,8 @@ public class MappingConfiguration implements Serializable
     protected Set<SourceConfigurationValue> sourceConfigurationValues;
 
 	protected boolean isManyToMany = false;
+
+	protected boolean constrainParameterListSizes;
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -132,7 +136,17 @@ public class MappingConfiguration implements Serializable
         this.numberOfParams = numberOfParams;
     }
 
-    /**
+	public int getNumTargetValues()
+	{
+		return numTargetValues;
+	}
+
+	public void setNumTargetValues(int numTargetValues)
+	{
+		this.numTargetValues = numTargetValues;
+	}
+
+	/**
      * @return the description
      */
     public String getDescription()
@@ -239,6 +253,16 @@ public class MappingConfiguration implements Serializable
 	public void setIsManyToMany(boolean manyToMany)
 	{
 		isManyToMany = manyToMany;
+	}
+
+	public boolean getConstrainParameterListSizes()
+	{
+		return constrainParameterListSizes;
+	}
+
+	public void setConstrainParameterListSizes(boolean constrainParameterListSizes)
+	{
+		this.constrainParameterListSizes = constrainParameterListSizes;
 	}
 
 	@Override

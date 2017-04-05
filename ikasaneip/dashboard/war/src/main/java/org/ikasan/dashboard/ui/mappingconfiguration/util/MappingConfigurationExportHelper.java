@@ -76,8 +76,6 @@ public class MappingConfigurationExportHelper
     private static final String NUMBER_OF_SOURCE_PARAMS_END_TAG = "</numberOfSourceParams>";
     private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG = "<sourceConfigurationValueQueries>";
     private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG = "</sourceConfigurationValueQueries>";
-    private static final String SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG = "<sourceConfigurationValueQuery>";
-    private static final String SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG = "</sourceConfigurationValueQuery>";
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
 
@@ -99,7 +97,7 @@ public class MappingConfigurationExportHelper
      * @return
      */
     public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration, 
-            List<KeyLocationQuery> keyLocationQueries, String schemaLocation)
+            String schemaLocation)
     {
         StringBuffer exportString = new StringBuffer();
 
@@ -143,13 +141,6 @@ public class MappingConfigurationExportHelper
             exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
 
             exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG);
-
-            for (KeyLocationQuery query : keyLocationQueries)
-            {
-                exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG);
-                exportString.append(query.getValue());
-                exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG);
-            }
 
             exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG);
         }

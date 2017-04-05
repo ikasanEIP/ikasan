@@ -511,12 +511,12 @@ public class HibernateMappingConfigurationDaoTest
     @DirtiesContext
     public void test_success_2_paramater_mapping_with_name()
     {
-        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
-        QueryParameter param1 = new QueryParameter();
+        List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+        QueryParameterImpl param1 = new QueryParameterImpl();
         param1.setName("name1");
         param1.setValue("BARX");
         sourceSystemValues.add(param1);
-        QueryParameter param2 = new QueryParameter();
+        QueryParameterImpl param2 = new QueryParameterImpl();
         param2.setName("name2");
         param2.setValue("TRSY");
         sourceSystemValues.add(param2);
@@ -531,12 +531,12 @@ public class HibernateMappingConfigurationDaoTest
     @DirtiesContext
     public void test_success_2_paramater_mapping_with_name_not_correlating()
     {
-        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
-        QueryParameter param1 = new QueryParameter();
+        List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+        QueryParameterImpl param1 = new QueryParameterImpl();
         param1.setName("name2");
         param1.setValue("BARX");
         sourceSystemValues.add(param1);
-        QueryParameter param2 = new QueryParameter();
+        QueryParameterImpl param2 = new QueryParameterImpl();
         param2.setName("name1");
         param2.setValue("TRSY");
         sourceSystemValues.add(param2);

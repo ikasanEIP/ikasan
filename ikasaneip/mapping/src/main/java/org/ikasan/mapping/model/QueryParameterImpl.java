@@ -1,9 +1,11 @@
 package org.ikasan.mapping.model;
 
+import org.ikasan.spec.mapping.QueryParameter;
+
 /**
  * Created by stewmi on 02/04/2017.
  */
-public class QueryParameter
+public class QueryParameterImpl implements QueryParameter
 {
     private String name;
     private String value;

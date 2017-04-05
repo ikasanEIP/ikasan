@@ -125,40 +125,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         container.setItemSorter(new DefaultItemSorter(new Comparator<Object>() {
 
             public int compare(Object o1, Object o2) {
-                if (o1 instanceof CheckBox && o2 instanceof CheckBox) 
-                {
-                    Boolean b1 = ((CheckBox) o1).booleanValue();
-                    return b1.compareTo(((CheckBox) o2).booleanValue());
-                } 
-                else if (o1 instanceof Button && o2 instanceof Button) 
-                {
-                    String caption1 = ((Button) o1).getCaption().toLowerCase();
-                    String caption2 = ((Button) o2).getCaption().toLowerCase();
-                    return caption1.compareTo(caption2);
 
-                } 
-                else if (o1 instanceof String && o2 instanceof String) 
-                {
-                    return ((String) o1).toLowerCase().compareTo(
-                            ((String) o2).toLowerCase());
-                }  
-                else if (o1 instanceof TextField && o2 instanceof TextField) 
-                {
-                    return ((TextField) o1).getValue().toLowerCase().compareTo(
-                        ((TextField) o2).getValue().toLowerCase());
-                } 
-                else if (o1 instanceof VerticalLayout && o2 instanceof VerticalLayout) 
-                {
-                    return ((TextField)((VerticalLayout) o1).getComponent(0)).getValue().toLowerCase().compareTo(
-                        ((TextField)((VerticalLayout) o2).getComponent(0)).getValue().toLowerCase());
-                }
-                else if (o1 instanceof HorizontalLayout && o2 instanceof HorizontalLayout)
-                {
-                    return ((TextField)((HorizontalLayout) o1).getComponent(0)).getValue().toLowerCase().compareTo(
-                            ((TextField)((HorizontalLayout) o2).getComponent(0)).getValue().toLowerCase());
-                }
-
-                return 0;
+                return manageTableSorting(o1, o2);
 
             }
         }));
@@ -387,49 +355,52 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
         if(this.mappingConfiguration.getIsManyToMany())
         {
-            ManyToManyTargetConfigurationValue manyToManyTargetConfigurationValue = new ManyToManyTargetConfigurationValue();
-            manyToManyTargetConfigurationValue.setGroupId(fsourceSystemGroupId);
-            manyToManyTargetConfigurationValue.setTargetSystemValue("Add source system value");
-
-            manyToManyTargetConfigurationValues.add(manyToManyTargetConfigurationValue);
-
-            Item item = new BeanItem<ManyToManyTargetConfigurationValue>(manyToManyTargetConfigurationValue);
-            TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
-            tf.setReadOnly(false);
-            tf.setWidth(300, Unit.PIXELS);
-
-            final HorizontalLayout hl = new HorizontalLayout();
-            hl.addComponent(tf);
-
-            Button addTargetValueButton = new Button();
-            addTargetValueButton.setIcon(VaadinIcons.PLUS);
-            addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            addTargetValueButton.setDescription("Add new source value.");
-            addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-            addTargetValueButton.setVisible(false);
-
-            addTargetValueButton.addClickListener(new Button.ClickListener()
+            for(int i=0; i<this.mappingConfiguration.getNumTargetValues(); i++)
             {
-                @Override
-                public void buttonClick(ClickEvent clickEvent)
+                ManyToManyTargetConfigurationValue manyToManyTargetConfigurationValue = new ManyToManyTargetConfigurationValue();
+                manyToManyTargetConfigurationValue.setGroupId(fsourceSystemGroupId);
+                manyToManyTargetConfigurationValue.setTargetSystemValue("Add target system value");
+
+                manyToManyTargetConfigurationValues.add(manyToManyTargetConfigurationValue);
+
+                Item item = new BeanItem<ManyToManyTargetConfigurationValue>(manyToManyTargetConfigurationValue);
+                TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
+                tf.setReadOnly(false);
+                tf.setWidth(300, Unit.PIXELS);
+
+                final HorizontalLayout hl = new HorizontalLayout();
+                hl.addComponent(tf);
+
+                Button addTargetValueButton = new Button();
+                addTargetValueButton.setIcon(VaadinIcons.PLUS);
+                addTargetValueButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                addTargetValueButton.setDescription("Add new target value.");
+                addTargetValueButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                addTargetValueButton.setVisible(false);
+
+                addTargetValueButton.addClickListener(new Button.ClickListener()
                 {
-                    ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
-                    targetConfigurationValue.setGroupId(fsourceSystemGroupId);
-                    targetConfigurationValue.setTargetSystemValue("Add source system value");
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent)
+                    {
+                        ManyToManyTargetConfigurationValue targetConfigurationValue = new ManyToManyTargetConfigurationValue();
+                        targetConfigurationValue.setGroupId(fsourceSystemGroupId);
+                        targetConfigurationValue.setTargetSystemValue("Add source system value");
 
-                    manyToManyTargetConfigurationValues.add(targetConfigurationValue);
+                        manyToManyTargetConfigurationValues.add(targetConfigurationValue);
 
-                    Item item = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
-                    TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
-                    tf.setReadOnly(false);
-                    tf.setWidth(300, Unit.PIXELS);
+                        Item item = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
+                        TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
+                        tf.setReadOnly(false);
+                        tf.setWidth(300, Unit.PIXELS);
 
-                    targetValueTableCellLayout.addComponent(tf);
-                }
-            });
+                        targetValueTableCellLayout.addComponent(tf);
+                    }
+                });
 
-            hl.addComponent(addTargetValueButton);
-            targetValueTableCellLayout.addComponent(hl);
+                hl.addComponent(addTargetValueButton);
+                targetValueTableCellLayout.addComponent(hl);
+            }
         }
         else
         {
@@ -1068,5 +1039,138 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     public ArrayList<ManyToManyTargetConfigurationValue> getDeletedManyToManyTargetConfigurationValues()
     {
         return deletedManyToManyTargetConfigurationValues;
+    }
+
+    private int manageTableSorting(Object o1, Object o2)
+    {
+        logger.info("Sorting: " + o1 + " and " + o2);
+
+        if (o1 instanceof CheckBox && o2 instanceof CheckBox)
+        {
+            Boolean b1 = ((CheckBox) o1).booleanValue();
+            return b1.compareTo(((CheckBox) o2).booleanValue());
+        }
+        else if (o1 instanceof Button && o2 instanceof Button)
+        {
+            String caption1 = ((Button) o1).getCaption().toLowerCase();
+            String caption2 = ((Button) o2).getCaption().toLowerCase();
+            return caption1.compareTo(caption2);
+
+        }
+        else if (o1 instanceof String && o2 instanceof String)
+        {
+            return ((String) o1).toLowerCase().compareTo(
+                    ((String) o2).toLowerCase());
+        }
+        else if (o1 instanceof TextField && o2 instanceof TextField)
+        {
+            return ((TextField) o1).getValue().toLowerCase().compareTo(
+                    ((TextField) o2).getValue().toLowerCase());
+        }
+        else if (o1 instanceof VerticalLayout && o2 instanceof VerticalLayout)
+        {
+            logger.info("Sorting vertical: " + o1 + " and " + o2);
+
+            List<HorizontalLayout> hl1 = new ArrayList<HorizontalLayout>();
+            List<HorizontalLayout> h12 = new ArrayList<HorizontalLayout>();
+
+            TextField t1 = null;
+            TextField t2 = null;
+
+            for (int i=0; i< ((VerticalLayout) o1).getComponentCount() ; i++)
+            {
+                if(((VerticalLayout) o1).getComponent(i) instanceof HorizontalLayout)
+                {
+                    hl1.add((HorizontalLayout)((VerticalLayout) o1).getComponent(i));
+
+                }
+                else if(((VerticalLayout) o1).getComponent(i) instanceof TextField)
+                {
+                    t1 = (TextField)((VerticalLayout    ) o1).getComponent(i);
+                    break;
+                }
+            }
+
+            for (int i=0; i< ((VerticalLayout) o2).getComponentCount() ; i++)
+            {
+                if(((VerticalLayout) o2).getComponent(i) instanceof HorizontalLayout)
+                {
+                    h12.add((HorizontalLayout)((VerticalLayout) o2).getComponent(i));
+
+                }
+                if(((VerticalLayout) o2).getComponent(i) instanceof TextField)
+                {
+                    t2 = (TextField)((VerticalLayout) o2).getComponent(i);
+                    break;
+                }
+            }
+
+            if(t1 != null && t2 != null)
+            {
+                logger.info("t1: " + t1.getValue());
+                logger.info("t2: " + t2.getValue());
+
+                return t1.getValue().toLowerCase().compareTo(
+                        (t2.getValue().toLowerCase()));
+            }
+
+            for(int i=0; i<hl1.size() && i<h12.size(); i++)
+            {
+                int result =  sortHorizontalLayout(hl1.get(i), h12.get(i));
+
+                if(result != 0)
+                {
+                    return result;
+                }
+            }
+        }
+        else if (o1 instanceof HorizontalLayout && o2 instanceof HorizontalLayout)
+        {
+            return sortHorizontalLayout((HorizontalLayout)o1, (HorizontalLayout)o2);
+        }
+
+        return 0;
+    }
+
+    private int sortHorizontalLayout(HorizontalLayout o1, HorizontalLayout o2)
+    {
+        TextField t1 = null;
+        TextField t2 = null;
+
+        logger.info("Sorting horizontal: " + o1 + " and " + o2);
+
+        for (int i=0; i< ((HorizontalLayout) o1).getComponentCount() ; i++)
+        {
+            if(((HorizontalLayout) o1).getComponent(i) instanceof TextField)
+            {
+                t1 = (TextField)((HorizontalLayout) o1).getComponent(i);
+                break;
+            }
+        }
+
+        for (int i=0; i< ((HorizontalLayout) o2).getComponentCount() ; i++)
+        {
+            if(((HorizontalLayout) o2).getComponent(i) instanceof TextField)
+            {
+                t2 = (TextField)((HorizontalLayout) o2).getComponent(i);
+                break;
+            }
+        }
+
+        logger.info("t1: " + t1);
+        logger.info("t2: " + t2);
+
+        if(t1 != null && t2 != null)
+        {
+            logger.info("t1: " + t1.getValue());
+            logger.info("t2: " + t2.getValue());
+
+            return t1.getValue().toLowerCase().compareTo(
+                    (t2.getValue().toLowerCase()));
+        }
+        else
+        {
+            return 0;
+        }
     }
 }

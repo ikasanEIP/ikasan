@@ -62,7 +62,7 @@ public interface MappingConfigurationService
      * @param sourceContext the source context name that we are resolving the configuration value for.
      * @param targetContext the target context name that we are resolving the configuration value for.
      * @param sourceSystemValues the values on the source side used to resolve the target configuration value.
-     * 
+     *
      * @return the target configuration value mapped to all the above arguments.
      */
     public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
@@ -81,8 +81,8 @@ public interface MappingConfigurationService
      * @return the target configuration value mapped to all the above arguments.
      */
     public String getTargetConfigurationValueWithIgnoresWithOrdinality(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
-                                                         final List<QueryParameter> sourceSystemValues);
-	
+                                                         final List<QueryParameterImpl> sourceSystemValues);
+
 	/**
      * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
      * based on the following parameters:
@@ -92,7 +92,7 @@ public interface MappingConfigurationService
      * @param sourceContext the source context name that we are resolving the configuration value for.
      * @param targetContext the target context name that we are resolving the configuration value for.
      * @param sourceSystemValues the values on the source side used to resolve the target configuration value.
-     * 
+     *
      * @return the target configuration value mapped to all the above arguments.
      */
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
@@ -101,13 +101,13 @@ public interface MappingConfigurationService
     /**
      * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
      * based on the following parameters:
-     * 
+     *
      * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
      * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
      * @param sourceContext the source context name that we are resolving the configuration value for.
      * @param targetContext the target context name that we are resolving the configuration value for.
      * @param sourceSystemValue the value on the source side used to resolve the target configuration value.
-     * 
+     *
      * @return the target configuration value mapped to all the above arguments.
      */
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
@@ -116,15 +116,15 @@ public interface MappingConfigurationService
     /**
      * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
      * based on the following parameters:
-     * 
-     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed. 
+     *
+     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
      * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
      * @param sourceContext the source context name that we are resolving the configuration value for.
      * @param targetContext the target context name that we are resolving the configuration value for.
      * @param payload the payload from where the source configuration values will be resolved from using the associated
      * key location queries.
      * @return
-     * @throws MappingConfigurationServiceException 
+     * @throws MappingConfigurationServiceException
      */
     @Deprecated
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
@@ -152,7 +152,7 @@ public interface MappingConfigurationService
      * @return
      */
     public List<String> getTargetConfigurationValuesWithOrdinality(final String clientName, String configurationType,
-                                                                   String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
+                                                                   String sourceContext, String targetContext, List<QueryParameterImpl> sourceSystemValues);
 
     /**
      * This method is responsible for returning all {@link ConfigurationType} hibernate

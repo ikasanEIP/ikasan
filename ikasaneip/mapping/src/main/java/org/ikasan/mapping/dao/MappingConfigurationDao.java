@@ -42,7 +42,6 @@ package org.ikasan.mapping.dao;
 
 import java.util.List;
 
-import org.hibernate.Query;
 import org.ikasan.mapping.model.*;
 import org.springframework.dao.DataAccessException;
 
@@ -77,7 +76,7 @@ public interface MappingConfigurationDao
      * @return
      */
     public String getTargetConfigurationValueWithIgnoresWithOrdinality(final String clientName, final String configurationType, final String sourceSystem
-            , final String targetSystem, final List<QueryParameter> sourceSystemValues, final int numParams);
+            , final String targetSystem, final List<QueryParameterImpl> sourceSystemValues, final int numParams);
 
     /**
      *
@@ -101,7 +100,7 @@ public interface MappingConfigurationDao
      * @return
      */
     public String getTargetConfigurationValueWithOrdinality(final String clientName, String configurationType,
-                                              String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
+                                              String sourceContext, String targetContext, List<QueryParameterImpl> sourceSystemValues);
 
     /**
      *
@@ -125,7 +124,7 @@ public interface MappingConfigurationDao
      * @return
      */
     public List<String> getTargetConfigurationValuesWithOrdinality(final String clientName, String configurationType,
-                                                     String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
+                                                     String sourceContext, String targetContext, List<QueryParameterImpl> sourceSystemValues);
 
     /**
      * 

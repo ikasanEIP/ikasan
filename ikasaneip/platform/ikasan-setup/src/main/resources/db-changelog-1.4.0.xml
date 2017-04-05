@@ -15,6 +15,7 @@
 	<include file="db/alter/db-changeLog-alterMetricRenameToCustomMetric.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterMCSManyToManyTargetConfigValue.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterMCSSourceConfigValue.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMCSMappingConfigurationAddConstrainParamSizes.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.4.0 cardinality creation -->
 

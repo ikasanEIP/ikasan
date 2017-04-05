@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessor;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
@@ -283,26 +282,26 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
      */
     public String getTargetConfigurationValueWithIgnoresWithOrdinality(String clientName,
                                                          String configurationTypeName, String sourceContext,
-                                                         String targetContext, List<QueryParameter> sourceSystemValues)
+                                                         String targetContext, List<QueryParameterImpl> sourceSystemValues)
     {
         String returnValue = this.dao.getTargetConfigurationValueWithIgnoresWithOrdinality(clientName, configurationTypeName, sourceContext,
                 targetContext, sourceSystemValues, sourceSystemValues.size());
 
         boolean resultFound = false;
 
-        SetProducer<QueryParameter> setProducer = new SetProducer<QueryParameter>();
+        SetProducer<QueryParameterImpl> setProducer = new SetProducer<QueryParameterImpl>();
 
         if(returnValue == null)
         {
             for(int i=sourceSystemValues.size() - 1; i>0; i--)
             {
-                List<List<QueryParameter>> subSets = setProducer.combinations(sourceSystemValues, i);
+                List<List<QueryParameterImpl>> subSets = setProducer.combinations(sourceSystemValues, i);
 
                 String result = null;
 
-                for(List<QueryParameter> subSet: subSets)
+                for(List<QueryParameterImpl> subSet: subSets)
                 {
-                    ArrayList<QueryParameter> subList = new ArrayList<QueryParameter>();
+                    ArrayList<QueryParameterImpl> subList = new ArrayList<QueryParameterImpl>();
                     subList.addAll(subSet);
 
                     returnValue = this.dao.getTargetConfigurationValueWithIgnoresWithOrdinality(clientName, configurationTypeName, sourceContext,
@@ -313,7 +312,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
                         StringBuffer sourceSystemValuesSB = new StringBuffer();
 
                         sourceSystemValuesSB.append("[SourceSystemValues = ");
-                        for(QueryParameter sourceSystemValue: sourceSystemValues)
+                        for(QueryParameterImpl sourceSystemValue: sourceSystemValues)
                         {
                             sourceSystemValuesSB.append(sourceSystemValue).append(" ");
                         }
@@ -352,7 +351,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     @Override
-    public List<String> getTargetConfigurationValuesWithOrdinality(String clientName, String configurationType, String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues)
+    public List<String> getTargetConfigurationValuesWithOrdinality(String clientName, String configurationType, String sourceContext, String targetContext, List<QueryParameterImpl> sourceSystemValues)
     {
         return this.dao.getTargetConfigurationValuesWithOrdinality(clientName, configurationType, sourceContext, targetContext, sourceSystemValues);
     }
