@@ -14,6 +14,12 @@
     <description>A library for managing mapping configurations for the Ikasan platform</description>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-spec-mapping</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -122,6 +128,11 @@
 			<artifactId>xercesImpl</artifactId>
 			<scope>compile</scope>
 		</dependency>
-	
-	</dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-mapping</artifactId>
+            <version>1.4.2-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
 </project>

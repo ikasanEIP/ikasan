@@ -1,0 +1,62 @@
+package org.ikasan.dashboard.ui.mappingconfiguration.panel;
+
+import com.vaadin.data.Property;
+import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
+
+/**
+ * Created by stewmi on 04/04/2017.
+ */
+public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
+{
+    private enum ANSWER
+    {
+        YES,
+        NO
+    }
+
+    public NewMappingConfigurationManyToManyNameParamsPanel()
+    {
+        init();
+    }
+
+    private void init()
+    {
+        GridLayout layout = new GridLayout(5, 6);
+        layout.setSpacing(true);
+        layout.setMargin(true);
+        layout.setWidth("100%");
+
+        this.addStyleName(ValoTheme.PANEL_BORDERLESS);
+
+        Label mappingConfigurationLabel = new Label("Names of parameters");
+        mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+        layout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
+
+        OptionGroup nameParamOptionGroup = new OptionGroup( "Specify the name of the parameters:" );
+        nameParamOptionGroup.addItems( ANSWER.YES , ANSWER.NO );
+        nameParamOptionGroup.setItemCaption(ANSWER.YES , "Yes" );
+        nameParamOptionGroup.setItemCaption(ANSWER.NO , "No" );
+        nameParamOptionGroup.setValue(ANSWER.NO);  // Specify which radio button is selected by default.
+
+
+        nameParamOptionGroup.addValueChangeListener( new Property.ValueChangeListener()
+        {
+
+            @Override
+            public void valueChange ( Property.ValueChangeEvent event )
+            {
+                Notification.show( "Radio Button" ,
+                        "You chose: " + event.getProperty().getValue().toString() ,
+                        Notification.Type.HUMANIZED_MESSAGE );
+            }
+        } );
+
+        layout.addComponent(nameParamOptionGroup, 0, 1);
+        layout.setComponentAlignment(nameParamOptionGroup, Alignment.MIDDLE_CENTER);
+
+        this.setContent(layout);
+
+        this.setSizeFull();
+    }
+}

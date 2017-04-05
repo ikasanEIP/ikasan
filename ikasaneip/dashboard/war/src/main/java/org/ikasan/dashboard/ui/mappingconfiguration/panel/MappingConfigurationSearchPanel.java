@@ -40,10 +40,12 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
+import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
+import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationWindow;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
@@ -53,12 +55,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -275,9 +272,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     public void enter(ViewChangeEvent event)
     {
         this.clientComboBox.loadClientSelectValues();
-//        this.sourceContextComboBox.loadContextValues();
-//        this.targetContextComboBox.loadContextValues();
-//        this.typeComboBox.loadClientTypeValues();
+        this.newActions.setMappingConfigurationService(this.mappingConfigurationService);
     }
     
     public void clear()

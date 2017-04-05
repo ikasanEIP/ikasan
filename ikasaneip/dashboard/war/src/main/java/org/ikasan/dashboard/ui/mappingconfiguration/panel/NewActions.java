@@ -45,10 +45,8 @@ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
-import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow;
-import org.ikasan.dashboard.ui.mappingconfiguration.window.NewClientWindow;
-import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationContextWindow;
-import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationTypeWindow;
+import org.ikasan.dashboard.ui.mappingconfiguration.window.*;
+import org.ikasan.mapping.service.MappingConfigurationService;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.Navigator;
@@ -88,6 +86,7 @@ public class NewActions
     protected NewClientWindow newClientWindow;
     protected NewMappingConfigurationContextWindow newMappingConfigurationContextWindow;
     protected NewMappingConfigurationTypeWindow newMappingConfigurationTypeWindow;
+    protected MappingConfigurationService mappingConfigurationService;
 
     /**
      * Constructor
@@ -189,20 +188,11 @@ public class NewActions
         {
             public void buttonClick(ClickEvent event) 
             {
-                newMappingConfigurationPanel.init();
-                
-                Navigator navigator = new Navigator(UI.getCurrent(), uiNavigator.getParentContainer());
-
-        		for (IkasanUIView view : uiNavigator.getIkasanViews())
-        		{
-        			navigator.addView(view.getPath(), view.getView());
-        		}
-        		
-                saveRequiredMonitor.manageSaveRequired("newMappingConfigurationPanel");
-                newMappingConfigurationPanel.setEditable(true);
                 typeRefreshGroup.refresh();
                 clientRefreshGroup.refresh();
                 contextRefreshGroup.refresh();
+
+                UI.getCurrent().addWindow(new NewMappingConfigurationWindow(mappingConfigurationService, null));
             }
         });
 
@@ -306,4 +296,9 @@ public class NewActions
 	{
 		return actionsLabel;
 	}
+
+    public void setMappingConfigurationService(MappingConfigurationService mappingConfigurationService)
+    {
+        this.mappingConfigurationService = mappingConfigurationService;
+    }
 }
