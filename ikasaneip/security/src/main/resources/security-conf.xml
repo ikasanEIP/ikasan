@@ -79,10 +79,12 @@
     <bean id="xaUserDao" class="org.ikasan.security.dao.HibernateUserDao">
         <property name="sessionFactory" ref="xaSecuritySessionFactory"/>
     </bean>
-    
+
+	<!--
     <bean id="xaAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
         <property name="sessionFactory" ref="xaSecuritySessionFactory"/>
     </bean>
+	-->
 
 	<bean id="xaSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="xaSecuritySessionFactory" />
@@ -138,9 +140,11 @@
         <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
     </bean>
     
-    <bean id="localTxAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
+    <!--
+	<bean id="localTxAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
         <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
     </bean>
+	-->
 
 	<bean id="localTxSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="localTxSecuritySessionFactory" />
