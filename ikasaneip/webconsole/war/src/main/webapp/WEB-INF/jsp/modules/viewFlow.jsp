@@ -92,7 +92,7 @@
 						
 						
 					
-					<td><c:out value="${flowElement.flowComponent.class.simpleName}" /></td>
+					<td><c:out value="${flowElement.flowComponent.getClass().simpleName}" /></td>
 				</tr>
 			</c:forEach> 
 	

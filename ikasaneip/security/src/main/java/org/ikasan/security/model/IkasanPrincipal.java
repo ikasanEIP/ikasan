@@ -210,34 +210,24 @@ public class IkasanPrincipal implements Principal
 		}
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        IkasanPrincipal that = (IkasanPrincipal) o;
+        return name != null ? name.equals(that.name) : that.name == null;
+    }
 
-		IkasanPrincipal that = (IkasanPrincipal) o;
+    @Override public int hashCode()
+    {
+        return name != null ? name.hashCode() : 0;
+    }
 
-		if (id != null ? !id.equals(that.id) : that.id != null) return false;
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-		if (type != null ? !type.equals(that.type) : that.type != null) return false;
-		if (description != null ? !description.equals(that.description) : that.description != null) return false;
-		return roles != null ? roles.equals(that.roles) : that.roles == null;
-
-	}
-
-	@Override
-	public int hashCode() {
-		int result = id != null ? id.hashCode() : 0;
-		result = 31 * result + (name != null ? name.hashCode() : 0);
-		result = 31 * result + (type != null ? type.hashCode() : 0);
-		result = 31 * result + (description != null ? description.hashCode() : 0);
-		result = 31 * result + (roles != null ? roles.hashCode() : 0);
-		return result;
-	}
-
-	/* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
+    /* (non-Javadoc)
+                     * @see java.lang.Object#toString()
+                     */
 	@Override
 	public String toString()
 	{

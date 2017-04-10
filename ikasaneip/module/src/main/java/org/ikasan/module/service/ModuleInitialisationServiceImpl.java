@@ -325,7 +325,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
         List<IkasanPrincipal> existingPrinciples = this.securityService.getAllPrincipals();
 
-        IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","Admin user", "The administrator user principle.");
+        IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","user", "The administrator user principle.");
         if (!existingPrinciples.contains(adminPrinciple))
         {
             logger.info("Creating standard admin principle...");
