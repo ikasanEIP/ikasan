@@ -233,6 +233,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected void recover(ExceptionAction action, String componentName, Throwable throwable)
     {
+        if (throwable != null && logger.isInfoEnabled()) {
+            logger.info("recover from exception", throwable);
+        }
+
         if(action instanceof StopAction)
         {
             if(isRecovering())
