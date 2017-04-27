@@ -83,11 +83,23 @@
     </build>
     
     <dependencies>
-	    <dependency>
-	      <groupId>org.ikasan</groupId>
-	      <artifactId>ikasan-eip</artifactId>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder-spring</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip</artifactId>
             <scope>provided</scope>
-	    </dependency>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jmock</groupId>

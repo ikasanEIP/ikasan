@@ -40,89 +40,52 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.module.SimpleModule;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.ikasan.spec.flow.FlowElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple Module builder.
- * 
+ * Default route implemnetation.
+ *
  * @author Ikasan Development Team
  */
-public class ModuleBuilder
+public class RouteImpl implements Route
 {
-	/** name of the module being instantiated */
-	String name;
+    List<FlowElement> flowElements;
+    List<Route> nestedRoutes;
 
-    /** module version */
-    String version;
-
-    /** optional module description */
-	String description;
-
-	/** flow builders for creating flows within this module */
-	List<Flow> flows = new ArrayList<Flow>();
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	ModuleBuilder(String name)
-	{
-		this.name = name;
-		if(name == null)
-		{
-			throw new IllegalArgumentException("module name cannot be 'null'");
-		}
-	}
-
-    /**
-     * Constructor
-     * @param name
-     * @param version
-     */
-	ModuleBuilder(String name, String version)
+    RouteImpl(List<FlowElement> flowElements)
     {
-        this.name = name;
-        if(name == null)
+        this.flowElements = flowElements;
+        if(flowElements == null)
         {
-            throw new IllegalArgumentException("module name cannot be 'null'");
+            throw new IllegalArgumentException("flowELements cannot be 'null'");
         }
 
-        this.version = version;
+        nestedRoutes = new ArrayList<Route>();
     }
 
-    /**
-	 * Add description to the module
-	 * @param description
-	 * @return
-	 */
-	public ModuleBuilder withDescription(String description)
-	{
-		this.description = description;
-		return this;
-	}
+    @Override
+    public void addFlowElement(FlowElement flowElement)
+    {
+        this.flowElements.add(flowElement);
+    }
 
-	/**
-	 * Add a flow to the module
-	 * @param flow
-	 * @return
-	 */
-	public ModuleBuilder addFlow(Flow flow)
-	{
-		this.flows.add(flow);
-		return this;
-	}
-	
-	public Module build()
-	{
-		Module module = new SimpleModule(this.name, this.version, this.flows);
-		module.setDescription(this.description);
-		return module;
-	}
+    @Override
+    public void addNestedRoute(Route route)
+    {
+        nestedRoutes.add(route);
+    }
+
+    @Override
+    public List<FlowElement> getFlowElements() {
+        return this.flowElements;
+    }
+
+    @Override
+    public List<Route> getNestedRoutes() {
+        return nestedRoutes;
+    }
 
 }
-
