@@ -40,9 +40,6 @@
  */
 package org.ikasan.builder;
 
-
-import static org.ikasan.builder.FlowBuilder.newFlow;
-
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -56,10 +53,6 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.annotation.Resource;
-
-import static org.ikasan.builder.FlowBuilder.newFlow;
 
 /**
  * This test class supports the <code>ModuleBuilder</code> class.
@@ -116,15 +109,15 @@ public class ModuleBuilderTest
     @Test
     public void test_successful_flowCreation() 
     {
-    	Module module = ModuleBuilder.newModule("module name").withDescription("module description")
-    	.addFlow(newFlow("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
+        BuilderFactory bf = BuilderFactory.getInstance();
+        bf.flowBuilder();
+    	Module module = BuilderFactory.moduleBuilder("module name").withDescription("module description")
+    	.addFlow( BuilderFactory.flowBuilder("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)
-                .publisher("producer", producer)
-                .build())
-    	.addFlow(newFlow("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
+                .producer("producer", producer).build())
+    	.addFlow( BuilderFactory.flowBuilder("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)
-                .publisher("producer", producer)
-                .build())
+                .producer("producer", producer).build())
     	.build();
 
     	Assert.assertTrue("module name should be 'module name'", "module name".equals(module.getName()));
