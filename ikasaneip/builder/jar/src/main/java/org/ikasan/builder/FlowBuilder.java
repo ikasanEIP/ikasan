@@ -77,8 +77,6 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
