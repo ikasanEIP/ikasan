@@ -40,20 +40,10 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.sample.*;
-import org.ikasan.flow.event.DefaultReplicationFactory;
+import org.ikasan.builder.sample.SampleConsumer;
 import org.ikasan.platform.IkasanEIPTest;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.testharness.flow.FlowObserver;
-import org.ikasan.testharness.flow.FlowSubject;
-import org.ikasan.testharness.flow.FlowTestHarness;
-import org.ikasan.testharness.flow.FlowTestHarnessImpl;
-import org.ikasan.testharness.flow.expectation.model.*;
-import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
-import org.ikasan.testharness.flow.listener.FlowEventListenerSubject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,8 +62,6 @@ import javax.annotation.Resource;
         "/sample-flow-conf.xml",
         "/sample-component-conf.xml",
         "/substitute-components.xml",
-        "/ikasan-transaction-conf.xml",
-        "/replay-service-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })
@@ -83,55 +71,38 @@ public class SampleFlowTest extends IkasanEIPTest
     Flow flow;
 
     /**
-     * Captures the actual components invoked and events created within the flow
-     */
-    FlowSubject testHarnessFlowEventListener = new FlowEventListenerSubject(DefaultReplicationFactory.getInstance());
-
-    /**
      * Test successful flow creation.
      */
     @Test
     public void test_successful_flow_execution() throws InterruptedException
     {
 
-        //
-        // setup expectations
-        FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
-        {
-            {
-                expectation(new ConsumerComponent("consumer"));
-                expectation(new ConverterComponent("converter"));
-                expectation(new TranslatorComponent("translator"));
-                expectation(new BrokerComponent("broker"));
-                expectation(new MultiRecipientRouterComponent("mrRouter"));
-                expectation(new SequencerComponent("sequencerA"));
-                expectation(new ProducerComponent("producerA"));
-                expectation(new ProducerComponent("producerA"));
-                expectation(new SequencerComponent("sequencerB"));
-                expectation(new ProducerComponent("producerB"));
-                expectation(new ProducerComponent("producerB"));
-                expectation(new SingleRecipientRouterComponent("srRouter"));
-                expectation(new SequencerComponent("sequencerA"));
-                expectation(new ProducerComponent("producerA"));
-                expectation(new ProducerComponent("producerA"));
-            }
-        });
-        testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
-        testHarnessFlowEventListener.setIgnoreEventCapture(true);
+        ikasanFlowTestRule.withFlow(flow)
+                .consumer("consumer")
+                .converter("converter")
+                .translator("translator")
+                .broker("broker")
+                .multiRecipientRouter("mrRouter")
+                .sequencer("sequencerA")
+                .producer("producerA")
+                .producer("producerA")
+                .sequencer("sequencerB")
+                .producer("producerB")
+                .producer("producerB")
+                .router("srRouter")
+                .sequencer("sequencerA")
+                .blockStart()
+                    .producer("producerA")
+                    .repeat(2)
+                .blockEnd();
 
-        // start the flow
-        flow.setFlowListener((FlowEventListener)testHarnessFlowEventListener);
-        flow.start();
+        ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
+
         FlowElement flowElement = flow.getFlowElement("consumer");
         SampleConsumer consumer = (SampleConsumer)flowElement.getFlowComponent();
         consumer.onMessage("test");
 
-        Thread.sleep(1);
+        ikasanFlowTestRule.sleep(1L);
 
-        // stop the flow
-        flow.stop();
-
-        // run flow assertions
-        flowTestHarness.assertIsSatisfied();
     }
 }

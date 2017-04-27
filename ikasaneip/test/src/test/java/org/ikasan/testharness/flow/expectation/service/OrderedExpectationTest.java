@@ -40,8 +40,6 @@
  */
 package org.ikasan.testharness.flow.expectation.service;
 
-import junit.framework.Assert;
-
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.FlowElement;
@@ -49,10 +47,11 @@ import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
 import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
-import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -63,29 +62,30 @@ import org.junit.Test;
  */
 public class OrderedExpectationTest
 {
-    Mockery mockery = new Mockery()
+    private Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
     
     /** mocked capture */
-    final Capture<?> capture = mockery.mock(Capture.class, "capture");
+    private final Capture<?> capture = mockery.mock(Capture.class, "capture");
     
     /** mocked flowElement */
-    final FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
+    private final FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     
     /** mocked comparatorService */
     @SuppressWarnings("unchecked")
-    final ComparatorService comparatorService = mockery.mock(ComparatorService.class, "ComparatorService");
+    private final ComparatorService comparatorService = mockery.mock(ComparatorService.class, "ComparatorService");
     
     /** mocked expectationComparator **/
     @SuppressWarnings("unchecked")
-    final ExpectationComparator expectationComparator = mockery.mock(ExpectationComparator.class, "expectationComparator");
+    private final ExpectationComparator expectationComparator = mockery.mock(ExpectationComparator.class, "expectationComparator");
     
     /** mocked expectation */
-    final Object expectation = mockery.mock(Object.class, "ExpectationObject");
+    private final Object expectation = mockery.mock(Object.class, "ExpectationObject");
     
     /**
      * Sanity test of a default OrderedExpectation instance with a single 
@@ -238,7 +238,7 @@ public class OrderedExpectationTest
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.expectation(new String("one"), new TestComparator());
+        flowExpectation.expectation("one", new TestComparator());
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -268,7 +268,7 @@ public class OrderedExpectationTest
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.expectation(new String("one"), new TestComparator(), "another expectation description");
+        flowExpectation.expectation("one", new TestComparator(), "another expectation description");
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -283,6 +283,7 @@ public class OrderedExpectationTest
      * Sanity test of an OrderedExpectation instance with an alternate ComparatorService.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void test_successfulOrderedExpectationWithAlternateComparatorService()
     {
         // expectations
