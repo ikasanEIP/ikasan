@@ -40,22 +40,8 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContextListener;
-import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.replay.ReplayRecordService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +55,6 @@ public class BuilderFactory
 {
     // singleton
     static BuilderFactory builderFactory = new BuilderFactory();
-
-    static String[] flowLoaderDefaultServices = {"src/test/resources/transaction-conf.xml","platform-service-conf.xml","ikasan-transaction-conf.xml","configuration-service-conf.xml","error-reporting-service-conf.xml"};
 
     protected static BuilderFactory getInstance()
     {
@@ -94,25 +78,8 @@ public class BuilderFactory
 
     public static FlowBuilder flowBuilder()
     {
-        ApplicationContext builderContext = new ClassPathXmlApplicationContext(flowLoaderDefaultServices);
-//        BeanDefinitionRegistry registry = ((BeanDefinitionRegistry)builderContext.getAutowireCapableBeanFactory());
-
         // create flowBuilder with default configuration
         FlowBuilder flowBuilder = new FlowBuilder();
-        flowBuilder.withFlowListener(builderContext.getBean(FlowEventListener.class));
-        flowBuilder.withRecoveryManagerFactory(builderContext.getBean(RecoveryManagerFactory.class));
-        flowBuilder.setExceptionResolver(builderContext.getBean(ExceptionResolver.class));
-        flowBuilder.withConfigurationService(builderContext.getBean(ConfigurationService.class));
-        flowBuilder.withExclusionServiceFactory(builderContext.getBean(ExclusionServiceFactory.class));
-        flowBuilder.withExclusionService(builderContext.getBean(ExclusionService.class));
-        flowBuilder.withErrorReportingServiceFactory(builderContext.getBean(ErrorReportingServiceFactory.class));
-        flowBuilder.withErrorReportingService(builderContext.getBean(ErrorReportingService.class));
-        flowBuilder.setMonitor(builderContext.getBean(Monitor.class));
-        // eventFactory ?
-        flowBuilder.withSerialiserFactory(builderContext.getBean(SerialiserFactory.class));
-        flowBuilder.withReplayRecordService(builderContext.getBean(ReplayRecordService.class));
-        flowBuilder.withFlowInvocationContextListener(builderContext.getBean(FlowInvocationContextListener.class));
-
         return flowBuilder;
     }
 

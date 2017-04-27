@@ -126,7 +126,7 @@ public class FlowBuilder
     ExclusionService exclusionService;
 
     /** error reporting service factory */
-    ErrorReportingServiceFactory errorReportingServiceFactory;
+    ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl();
 
     /** error reporting service */
     ErrorReportingService errorReportingService;
@@ -152,9 +152,6 @@ public class FlowBuilder
 	/** List of FlowInvocationListener */
 	List<FlowInvocationContextListener> flowInvocationContextListeners;
 
-    /** FlowELementFactory instance */
-    FlowElementFactory flowElementFactory;
-
     /**
 	 * Constructor
 	 * 
@@ -172,12 +169,6 @@ public class FlowBuilder
         if(moduleName == null)
         {
             throw new IllegalArgumentException("module name cannot be 'null'");
-        }
-
-        this.flowElementFactory = flowElementFactory;
-        if(flowElementFactory == null)
-        {
-            throw new IllegalArgumentException("flowElementFactory cannot be 'null'");
         }
     }
 
