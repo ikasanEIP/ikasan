@@ -40,89 +40,62 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.module.SimpleModule;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.flow.FlowElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple Module builder.
+ * A simple Flow builder.
  * 
  * @author Ikasan Development Team
  */
-public class ModuleBuilder
+public class BuilderFactory
 {
-	/** name of the module being instantiated */
-	String name;
+    // singleton
+    static BuilderFactory builderFactory = new BuilderFactory();
 
-    /** module version */
-    String version;
-
-    /** optional module description */
-	String description;
-
-	/** flow builders for creating flows within this module */
-	List<Flow> flows = new ArrayList<Flow>();
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	ModuleBuilder(String name)
-	{
-		this.name = name;
-		if(name == null)
-		{
-			throw new IllegalArgumentException("module name cannot be 'null'");
-		}
-	}
-
-    /**
-     * Constructor
-     * @param name
-     * @param version
-     */
-	ModuleBuilder(String name, String version)
+    protected static BuilderFactory getInstance()
     {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("module name cannot be 'null'");
-        }
-
-        this.version = version;
+        return builderFactory;
     }
 
-    /**
-	 * Add description to the module
-	 * @param description
-	 * @return
-	 */
-	public ModuleBuilder withDescription(String description)
-	{
-		this.description = description;
-		return this;
-	}
+    public static ModuleBuilder moduleBuilder(String name)
+    {
+        return new ModuleBuilder(name);
+    }
 
-	/**
-	 * Add a flow to the module
-	 * @param flow
-	 * @return
-	 */
-	public ModuleBuilder addFlow(Flow flow)
-	{
-		this.flows.add(flow);
-		return this;
-	}
-	
-	public Module build()
-	{
-		Module module = new SimpleModule(this.name, this.version, this.flows);
-		module.setDescription(this.description);
-		return module;
-	}
+    public static ModuleBuilder moduleBuilder(String name, String version)
+    {
+        return new ModuleBuilder(name, version);
+    }
 
+    public static RouteBuilder routeBuilder()
+    {
+        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
+    }
+
+    public static FlowBuilder flowBuilder()
+    {
+        // create flowBuilder with default configuration
+        FlowBuilder flowBuilder = new FlowBuilder();
+        return flowBuilder;
+    }
+
+    public static FlowBuilder flowBuilder(String name, String module)
+    {
+        return new FlowBuilder(name, module);
+    }
+
+    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
+    {
+        List<FlowElement> flowElements = new ArrayList<FlowElement>();
+        flowElements.add(flowElement);
+        return new RouteImpl(flowElements);
+    }
 }
+
+
+
 

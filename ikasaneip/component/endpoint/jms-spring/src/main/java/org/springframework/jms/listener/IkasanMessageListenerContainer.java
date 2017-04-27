@@ -175,18 +175,48 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
     @Override
     protected Message receiveMessage(MessageConsumer consumer) throws JMSException
     {
-        if(this.configuration.isBatchMode() && exclusionService.isBlackListEmpty())
+        if(this.configuration.isBatchMode())
         {
+            // if we are batching we consistently need to return an IkasanListMessage
             IkasanListMessage listMessage = new IkasanListMessage();
-            while ( !append(listMessage, super.receiveMessage(consumer)) );
+
+            if(exclusionService.isBlackListEmpty())
+            {
+                // no exclusions so batch as normal
+                // batch msgs until no more available or batch size limit hit
+                while ( !append(listMessage, super.receiveMessage(consumer)) );
+            }
+            else
+            {
+                // we have exclusions, and we auto split then send single events until exclusion is cleared
+                if(this.configuration.isAutoSplitBatch())
+                {
+                    Message msg = super.receiveMessage(consumer);
+                    if(msg != null)
+                    {
+                        listMessage.add(msg);
+                    }
+                }
+                else
+                {
+                    // we have exclusions, but are we treating the batch as one event which should not be auto split
+
+                    // batch msgs until no more available or batch size limit hit or it matches an id registered in the exclusion service
+                    while ( !append(listMessage, super.receiveMessage(consumer)) && !exclusionService.isBlackListed(listMessage.get(0).getJMSMessageID() + ":" + listMessage.size()) );
+                }
+            }
 
             if(listMessage.size() == 0) return null;
 
-            // base the jms id off of the first messages jms id + batch size
-            listMessage.setJMSMessageID(listMessage.get(0).getJMSMessageID() + ":" + this.configuration.getBatchSize());
+            // IMPORTANT - base the jms id (which will potentially be the eventLifeIdentifier) off of something which is repeatably constructable
+            // in this case the first messages jms id + the number of messages in the batch
+            // if we are batching and auto-splitting (regardless of exclusion) then it doesn't matter what is set on the listMessage as that is not used later by the invoker
+            listMessage.setJMSMessageID(listMessage.get(0).getJMSMessageID() + ":" + listMessage.size());
+
             return listMessage;
         }
 
+        // batching not turned on so just return a single JMS message instance
         return super.receiveMessage(consumer);
     }
 

@@ -40,89 +40,38 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.module.SimpleModule;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.ikasan.spec.flow.FlowElement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple Module builder.
- * 
+ * Contract for a Route creation.
+ *
  * @author Ikasan Development Team
  */
-public class ModuleBuilder
+public interface Route<T>
 {
-	/** name of the module being instantiated */
-	String name;
-
-    /** module version */
-    String version;
-
-    /** optional module description */
-	String description;
-
-	/** flow builders for creating flows within this module */
-	List<Flow> flows = new ArrayList<Flow>();
-
 	/**
-	 * Constructor
-	 * @param name
-	 */
-	ModuleBuilder(String name)
-	{
-		this.name = name;
-		if(name == null)
-		{
-			throw new IllegalArgumentException("module name cannot be 'null'");
-		}
-	}
-
-    /**
-     * Constructor
-     * @param name
-     * @param version
+	 * Add flow elements to the end of the route.
+	 * @param flowElement
      */
-	ModuleBuilder(String name, String version)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("module name cannot be 'null'");
-        }
-
-        this.version = version;
-    }
-
-    /**
-	 * Add description to the module
-	 * @param description
-	 * @return
-	 */
-	public ModuleBuilder withDescription(String description)
-	{
-		this.description = description;
-		return this;
-	}
+	public void addFlowElement(FlowElement flowElement);
 
 	/**
-	 * Add a flow to the module
-	 * @param flow
+	 * Add a nested route to the existing route.
+	 * @param route
+     */
+	public void addNestedRoute(Route route);
+
+	/**
+	 * Get the flow elements within this route.
 	 * @return
-	 */
-	public ModuleBuilder addFlow(Flow flow)
-	{
-		this.flows.add(flow);
-		return this;
-	}
-	
-	public Module build()
-	{
-		Module module = new SimpleModule(this.name, this.version, this.flows);
-		module.setDescription(this.description);
-		return module;
-	}
+     */
+	public List<FlowElement> getFlowElements();
 
+	/**
+	 * Get the nested routes within this route.
+	 * @return
+     */
+	public List<Route> getNestedRoutes();
 }
-
