@@ -62,6 +62,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -201,7 +202,7 @@ public class SampleFlowBuilderTest
 	/**
      * Test successful flow creation.
      */
-    @Test
+    @Ignore@Test
     public void test_successful_router_transitions()
     {
     	Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
