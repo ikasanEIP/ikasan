@@ -40,8 +40,7 @@
  */
 package org.ikasan.sample.standalone;
 
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.BuilderFactory;
 import org.ikasan.sample.component.consumer.SimpleConsumer;
 import org.ikasan.sample.component.converter.SimpleConverter;
 import org.ikasan.sample.component.producer.SimpleProducer;
@@ -69,13 +68,13 @@ public class SimpleExample
      */
     public Module createModule(String moduleName)
     {
-        return ModuleBuilder.newModule(moduleName)
-                .addFlow(FlowBuilder.newFlow("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
+        return BuilderFactory.moduleBuilder(moduleName)
+                .addFlow(BuilderFactory.flowBuilder("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
                         .singleRecipientRouter("routerName", new SimpleRouter())
-                        .when("odd").publisher("oddValuePublisher", new SimpleProducer())
-                        .otherise().publisher("evenValuePublisher", new SimpleProducer())
+                        .when("odd", BuilderFactory.routeBuilder().producer("oddValuePublisher", new SimpleProducer()))
+                        .otherwise(BuilderFactory.routeBuilder().producer("evenValuePublisher", new SimpleProducer()))
                         .build())
             .build();
     }

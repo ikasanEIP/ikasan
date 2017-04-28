@@ -40,89 +40,59 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.module.SimpleModule;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.ikasan.builder.conditional.Otherwise;
+import org.ikasan.builder.conditional.When;
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.spec.flow.FlowElement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple Module builder.
- * 
+ * Implementation of the Evaluation contract for a Route being built through the builder pattern.
+ *
  * @author Ikasan Development Team
+ *
  */
-public class ModuleBuilder
+public class EvaluationImpl implements Evaluation<Route>
 {
-	/** name of the module being instantiated */
-	String name;
-
-    /** module version */
-    String version;
-
-    /** optional module description */
-	String description;
-
-	/** flow builders for creating flows within this module */
-	List<Flow> flows = new ArrayList<Flow>();
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	ModuleBuilder(String name)
-	{
-		this.name = name;
-		if(name == null)
-		{
-			throw new IllegalArgumentException("module name cannot be 'null'");
-		}
-	}
+	Route route;
 
     /**
      * Constructor
-     * @param name
-     * @param version
+     * @param route
      */
-	ModuleBuilder(String name, String version)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("module name cannot be 'null'");
-        }
+	public EvaluationImpl(Route route)
+	{
+		this.route = route;
+		if(route == null)
+		{
+			throw new IllegalArgumentException("route cannot be 'null'");
+		}
+	}
 
-        this.version = version;
-    }
+	public Evaluation when(String name, Route evaluatedRoute)
+	{
+		List<FlowElement> fes = evaluatedRoute.getFlowElements();
+		fes.add(0, new FlowElementImpl(this.getClass().getName(), new When(name), null));
+		this.route.addNestedRoute(evaluatedRoute);
+		return new EvaluationImpl(route);
+	}
+
+	public Evaluation<Route> otherwise(Route evaluatedRoute)
+	{
+		List<FlowElement> fes = evaluatedRoute.getFlowElements();
+		fes.add(0, new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
+		this.route.addNestedRoute(evaluatedRoute);
+		return new EvaluationImpl(route);
+	}
 
     /**
-	 * Add description to the module
-	 * @param description
-	 * @return
-	 */
-	public ModuleBuilder withDescription(String description)
+     * Return the route thats been built using the builder pattern
+     * @return
+     */
+	public Route build()
 	{
-		this.description = description;
-		return this;
-	}
-
-	/**
-	 * Add a flow to the module
-	 * @param flow
-	 * @return
-	 */
-	public ModuleBuilder addFlow(Flow flow)
-	{
-		this.flows.add(flow);
-		return this;
-	}
-	
-	public Module build()
-	{
-		Module module = new SimpleModule(this.name, this.version, this.flows);
-		module.setDescription(this.description);
-		return module;
+		return route;
 	}
 
 }
-
