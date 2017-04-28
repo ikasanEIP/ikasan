@@ -51,6 +51,7 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -63,6 +64,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -350,18 +352,44 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
 
+        String host = platformContext.getEnvironment().getProperty("server.address");
+        String port = platformContext.getEnvironment().getProperty("server.port");
+        String context = platformContext.getEnvironment().getProperty("server.contextPath");
+        String pid = getPid();
+        String serverName = "http://"+host + ":"+port+context;
+        String serverUrl = "http://"+host ;
+        logger.info("Module host [" + host + ":"+port+context+"] running with PID ["+pid+"]");
+
+        Server server = new Server(serverName,serverName,serverUrl,Integer.parseInt(port));
+
+        List<Server> servers = this.topologyService.getAllServers();
+        if(!servers.contains(server)){
+            this.topologyService.save(server);
+        }
+
         if (moduleDB==null)
         {
             logger.info("module does not exist [" + module.getName() + "], creating...");
             moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
+            moduleDB.setServer(server);
             this.topologyService.save(moduleDB);
-            String host = platformContext.getEnvironment().getProperty("server.address");
-            String port = platformContext.getEnvironment().getProperty("server.port");
 
-
-            logger.info("module host [" + host + ":"+port+"] ");
-
+        }else {
+            moduleDB.setServer(server);
+            this.topologyService.save(moduleDB);
         }
 
+
+
+    }
+
+    private static  String getPid() {
+        try {
+            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            return jvmName.split("@")[0];
+        }
+        catch (Throwable ex) {
+            return null;
+        }
     }
 }

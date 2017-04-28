@@ -207,45 +207,25 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 	/* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((policyLink == null) ? 0 : policyLink.hashCode());
-		return result;
-	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
+	@Override public boolean equals(Object o)
 	{
-		if (this == obj)
+		if (this == o)
 			return true;
-		if (obj == null)
+		if (o == null || getClass() != o.getClass())
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Policy other = (Policy) obj;
-		if (name == null)
-		{
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
+		Policy policy = (Policy) o;
+		return name != null ? name.equals(policy.name) : policy.name == null;
+	}
+
+	@Override public int hashCode()
+	{
+		return name != null ? name.hashCode() : 0;
 	}
 
 	/* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
+             * @see java.lang.Object#toString()
+             */
 	@Override
 	public String toString()
 	{
