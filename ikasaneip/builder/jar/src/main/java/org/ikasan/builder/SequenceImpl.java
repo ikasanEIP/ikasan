@@ -40,89 +40,41 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.module.SimpleModule;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+import org.ikasan.builder.sequential.SequentialOrder;
+import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.spec.flow.FlowElement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple Module builder.
- * 
+ * Default implmentation of a sequence.
+ *
  * @author Ikasan Development Team
  */
-public class ModuleBuilder
+public class SequenceImpl implements Sequence<Route>
 {
-	/** name of the module being instantiated */
-	String name;
+	Route route;
 
-    /** module version */
-    String version;
-
-    /** optional module description */
-	String description;
-
-	/** flow builders for creating flows within this module */
-	List<Flow> flows = new ArrayList<Flow>();
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	ModuleBuilder(String name)
+	public SequenceImpl(Route route)
 	{
-		this.name = name;
-		if(name == null)
+		this.route = route;
+		if(route == null)
 		{
-			throw new IllegalArgumentException("module name cannot be 'null'");
+			throw new IllegalArgumentException("route cannot be 'null'");
 		}
 	}
 
-    /**
-     * Constructor
-     * @param name
-     * @param version
-     */
-	ModuleBuilder(String name, String version)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("module name cannot be 'null'");
-        }
-
-        this.version = version;
-    }
-
-    /**
-	 * Add description to the module
-	 * @param description
-	 * @return
-	 */
-	public ModuleBuilder withDescription(String description)
+	public Sequence<Route> route(String name, Route sequencedRoute)
 	{
-		this.description = description;
-		return this;
+		List<FlowElement> fes = sequencedRoute.getFlowElements();
+		fes.add(0, new FlowElementImpl(this.getClass().getName(), SequentialOrder.to(name), null));
+		this.route.addNestedRoute(sequencedRoute);
+		return new SequenceImpl(route);
 	}
 
-	/**
-	 * Add a flow to the module
-	 * @param flow
-	 * @return
-	 */
-	public ModuleBuilder addFlow(Flow flow)
+	public Route build()
 	{
-		this.flows.add(flow);
-		return this;
+		return route;
 	}
-	
-	public Module build()
-	{
-		Module module = new SimpleModule(this.name, this.version, this.flows);
-		module.setDescription(this.description);
-		return module;
-	}
-
 }
 

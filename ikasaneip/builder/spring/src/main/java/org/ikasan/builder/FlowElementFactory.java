@@ -60,7 +60,7 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -82,14 +82,17 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     COMPONENT component;
 
     /** flow element multiple transitions */
-    Map<String,FlowElement<?>> transitions;
+    LinkedHashMap<String,FlowElement<?>> transitions;
     
     /** flow element single transition */
     FlowElement<?> transition;
-    
+
     /** identifier if the component supported ConfiguredResource */
     String configuredResourceId;
-    
+
+    /** description */
+    String description;
+
     /** The configuration */
     CONFIGURATION configuration;
 
@@ -145,7 +148,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
      * Setter for transitions.
      * @param transitions
      */
-    public void setTransitions(Map<String,FlowElement<?>> transitions)
+    public void setTransitions(LinkedHashMap<String,FlowElement<?>> transitions)
     {
         this.transitions = transitions;
     }
@@ -191,10 +194,14 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         this.ignoreContextInvocation = ignoreContextInvocation;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     /*
-     * (non-Javadoc)
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
-     */
+         * (non-Javadoc)
+         * @see org.springframework.beans.factory.FactoryBean#getObject()
+         */
     public FlowElement<?> getObject()
     {
         // configure component as required
