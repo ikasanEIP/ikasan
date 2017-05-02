@@ -17,7 +17,7 @@ import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 /**
- * Created by stewmi on 04/04/2017.
+ * Created by Ikasan Development Team on 04/04/2017.
  */
 public class NewMappingConfigurationDetailsPanel extends Panel
 {

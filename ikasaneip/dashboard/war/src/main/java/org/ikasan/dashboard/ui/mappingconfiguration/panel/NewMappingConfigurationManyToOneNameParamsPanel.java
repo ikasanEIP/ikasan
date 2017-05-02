@@ -7,7 +7,7 @@ import com.vaadin.ui.themes.ValoTheme;
 /**
  * Created by Ikasan Development Team on 04/04/2017.
  */
-public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
+public class NewMappingConfigurationManyToOneNameParamsPanel extends Panel
 {
     public enum ANSWER
     {
@@ -15,7 +15,9 @@ public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
         NO
     }
 
-    public NewMappingConfigurationManyToManyNameParamsPanel()
+    private OptionGroup nameParamOptionGroup;
+
+    public NewMappingConfigurationManyToOneNameParamsPanel()
     {
         init();
     }
@@ -33,7 +35,7 @@ public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
         mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
         layout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
 
-        OptionGroup nameParamOptionGroup = new OptionGroup( "Specify the name of the parameters:" );
+        nameParamOptionGroup = new OptionGroup( "Specify the name of the parameters:" );
         nameParamOptionGroup.addItems( ANSWER.YES , ANSWER.NO );
         nameParamOptionGroup.setItemCaption(ANSWER.YES , "Yes" );
         nameParamOptionGroup.setItemCaption(ANSWER.NO , "No" );
@@ -58,5 +60,10 @@ public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
         this.setContent(layout);
 
         this.setSizeFull();
+    }
+
+    public ANSWER getAnswer()
+    {
+        return (ANSWER)this.nameParamOptionGroup.getValue();
     }
 }

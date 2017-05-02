@@ -1,13 +1,16 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
+import com.vaadin.data.Validator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Created by stewmi on 04/04/2017.
+ * Created by Ikasan Development Team on 04/04/2017.
  */
 public class NewMappingConfigurationManyToOneSourceParamNamesPanel extends Panel
 {
@@ -58,10 +61,10 @@ public class NewMappingConfigurationManyToOneSourceParamNamesPanel extends Panel
             for (int i = 0; i < this.numSourceParameters; i++)
             {
                 TextField nameField = new TextField();
-                nameField.setCaption("Name" + i);
+                nameField.setCaption("Parameter Name " + (i+1));
                 nameField.setWidth(150, Unit.PIXELS);
                 nameField.removeAllValidators();
-                nameField.addValidator(new StringLengthValidator("You must provide a parameter name!"));
+                nameField.addValidator(new StringLengthValidator("You must provide a parameter name!",1 , null, false));
                 nameField.setValidationVisible(false);
 
                 this.sourceParameterNamesTextField.add(nameField);
@@ -69,5 +72,36 @@ public class NewMappingConfigurationManyToOneSourceParamNamesPanel extends Panel
                 namesLayout.addComponent(nameField);
             }
         }
+    }
+
+    public boolean isValid()
+    {
+        Set<String> setString = new HashSet<String>();
+
+        try
+        {
+            for(TextField tf: this.sourceParameterNamesTextField)
+            {
+                setString.add(tf.getValue());
+                tf.validate();
+            }
+        }
+        catch (Validator.InvalidValueException e)
+        {
+            for(TextField tf: this.sourceParameterNamesTextField)
+            {
+                tf.setValidationVisible(true);
+            }
+
+            return false;
+        }
+
+        if(this.sourceParameterNamesTextField.size() != setString.size())
+        {
+            Notification.show("Parameter names must be unique!", Notification.Type.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
     }
 }
