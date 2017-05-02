@@ -5,7 +5,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
- * Created by stewmi on 04/04/2017.
+ * Created by Ikasan Development Team on 04/04/2017.
  */
 public class NewMappingConfigurationTypePanel extends Panel
 {

@@ -3,7 +3,7 @@ package org.ikasan.mapping.model;
 import org.ikasan.spec.mapping.QueryParameter;
 
 /**
- * Created by stewmi on 02/04/2017.
+ * Created by Ikasan Development Team on 02/04/2017.
  */
 public class QueryParameterImpl implements QueryParameter
 {

@@ -1,7 +1,7 @@
 package org.ikasan.spec.mapping;
 
 /**
- * Created by stewmi on 03/04/2017.
+ * Created by Ikasan Development Team on 03/04/2017.
  */
 public interface QueryParameter
 {

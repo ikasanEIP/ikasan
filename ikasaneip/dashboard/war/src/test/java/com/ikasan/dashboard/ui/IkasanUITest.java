@@ -84,7 +84,7 @@ public class IkasanUITest extends TestBenchTestCase
 	   @Test
 	   public void testLoginFail() 
 	   {
-		   getDriver().get("http://svc-stewmi:8080/ikasan-dashboard/?debug");
+		   getDriver().get("http://svc-Ikasan Development Team:8080/ikasan-dashboard/?debug");
 		   
 		   ButtonElement loginLinkButton = $(ButtonElement.class).caption("Login").first();
 		   loginLinkButton.click();
@@ -97,7 +97,7 @@ public class IkasanUITest extends TestBenchTestCase
 		   PasswordFieldElement passwordPasswordField = $(PasswordFieldElement.class).caption("Password").first();
 		   Assert.assertNotNull(passwordPasswordField);
 		   
-		   usernameTextField.setValue("stewmi");
+		   usernameTextField.setValue("Ikasan Development Team");
 		   passwordPasswordField.setValue("StJean2015");
 		   
 		   ButtonElement loginButton = $$(WindowElement.class).caption("Login")
