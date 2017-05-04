@@ -58,6 +58,7 @@
         <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
         <module>scheduleDrivenSrc</module>
         <module>jboss</module>
+        <module>spring-boot</module>
     </modules>
 
 </project>

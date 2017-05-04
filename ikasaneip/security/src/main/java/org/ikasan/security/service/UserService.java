@@ -43,6 +43,7 @@ package org.ikasan.security.service;
 import java.util.List;
 
 import org.ikasan.security.model.Authority;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -68,7 +69,7 @@ public interface UserService extends UserDetailsManager
      * 
      * @return all Authorities
      */
-    public List<Authority> getAuthorities();
+    public List<Policy> getAuthorities();
 
     /*
      * (non-Javadoc)
@@ -133,13 +134,6 @@ public interface UserService extends UserDetailsManager
      * @throws IllegalArgumentException - if the specified user does not exist
      */
     public void enableUser(String username);
-
-    /**
-     * Creates a new Authority on the system
-     * 
-     * @param newAuthority
-     */
-    public void createAuthority(Authority newAuthority);
 
     /**
      * Retrieves a List of <code>User</code> whose username like username%
