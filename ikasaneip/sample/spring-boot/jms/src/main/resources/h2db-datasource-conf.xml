@@ -24,8 +24,8 @@
     </bean>
 
 
-    <!--<jdbc:initialize-database data-source="dataSource">-->
-        <!--<jdbc:script location="classpath:overwriteDBCreation.sql" />-->
-    <!--</jdbc:initialize-database>-->
+    <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="classpath:overwriteDBCreation.sql" />
+    </jdbc:initialize-database>
 
 </beans>

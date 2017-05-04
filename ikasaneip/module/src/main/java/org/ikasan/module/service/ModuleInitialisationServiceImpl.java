@@ -353,6 +353,11 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
 
         String host = platformContext.getEnvironment().getProperty("server.address");
+        if(host == null)
+        {
+            host = platformContext.getEnvironment().getProperty("service.name");
+        }
+
         String port = platformContext.getEnvironment().getProperty("server.port");
         String context = platformContext.getEnvironment().getProperty("server.contextPath");
         String pid = getPid();
