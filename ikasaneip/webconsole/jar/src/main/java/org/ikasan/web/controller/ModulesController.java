@@ -52,6 +52,7 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -206,6 +207,8 @@ public class ModulesController
      * @return
      */
     @RequestMapping(value = "flow.htm", method = RequestMethod.POST)
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin','ADMIN_'+#moduleName)")
+
     public String controlFlow(@RequestParam("moduleName")String moduleName,
                             @RequestParam("flowName") String flowName,
                             @RequestParam("action") String action)
