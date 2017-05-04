@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+<bean id="jmsConsumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        <property name="messageProvider" ref="jmsListener"/>
+        <property name="configuration" ref="jmsConsumerConfiguration"/>
+        <property name="configuredResourceId" value="jmsConsumer"/>
+    </bean>
+
+    <!--<bean id="jmsListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">-->
+    <bean id="jmsListener" class="org.ikasan.sample.spring.boot.SampleIkasanMessageListenerContainer">
+        <property name="messageListener" ref="jmsConsumer" />
+        <property name="exceptionListener" ref="jmsConsumer" />
+        <property name="errorHandler" ref="jmsConsumer" />
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="localTransactionManager" ref="arjunaTransactionManager" />
+    </bean>
+
+
+    <bean id="jmsProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+        <constructor-arg>
+            <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
+        </constructor-arg>
+        <property name="configuration" ref="jmsProducerConfiguration"/>
+        <property name="configuredResourceId" value="jmsProducerConfiguration"/>
+    </bean>
+
+
+
+    <util:map id="jndiProp">
+        <entry key="java.naming.provider.url" value="remote://svc-majean:4447"/>
+        <entry key="java.naming.factory.initial" value="org.jboss.naming.remote.client.InitialContextFactory"/>
+        <entry key="java.naming.factory.url.pkgs" value="java.naming.factory.url.pkgs"/>
+        <entry key="java.naming.security.principal" value="jmscmidev"/>
+        <entry key="java.naming.security.credentials" value="jmscm1dev!"/>
+
+    </util:map>
+
+
+    <bean id="jmsConsumerConfiguration" class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+
+
+        <property name="connectionFactoryName" value="jms/XARemoteConnectionFactory"/>
+        <!--<property name="connectionFactoryName" value="jms/RemoteConnectionFactory"/>-->
+
+        <property name="destinationJndiName" value="jms/topic/testSource"/>
+        <property name="connectionFactoryJndiProperties" ref="jndiProp"/>
+        <property name="destinationJndiProperties" ref="jndiProp"/>
+        <property name="connectionFactoryUsername" value="jmscmidev"/>
+        <property name="connectionFactoryPassword" value="jmscm1dev!"/>
+
+        <property name="sessionTransacted" value="true"/>
+        <property name="pubSubDomain" value="false"/>
+        <property name="durable" value="true"/>
+        <property name="durableSubscriptionName" value="simpleJmsTest"/>
+        <property name="autoContentConversion" value="true"/>
+
+    </bean>
+
+
+    <bean id="jmsProducerConfiguration" class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+        <property name="connectionFactoryName" value="jms/XARemoteConnectionFactory"/>
+        <!--<property name="connectionFactoryName" value="jms/RemoteConnectionFactory"/>-->
+
+
+        <property name="destinationJndiName" value="jms/topic/testTarget"/>
+
+        <property name="connectionFactoryJndiProperties" ref="jndiProp"/>
+        <property name="destinationJndiProperties" ref="jndiProp"/>
+        <property name="connectionFactoryUsername" value="jmscmidev"/>
+        <property name="connectionFactoryPassword" value="jmscm1dev!"/>
+
+        <property name="sessionTransacted" value="true"/>
+        <property name="pubSubDomain" value="false"/>
+        <property name="messageIdEnabled" value="true"/>
+        <property name="deliveryPersistent" value="true"/>
+        <property name="pubSubNoLocal" value="true"/>
+    </bean>
+
+
+</beans>

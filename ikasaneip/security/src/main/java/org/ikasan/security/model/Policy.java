@@ -78,7 +78,16 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
         this.updatedDateTime = new Date(now);
     }
 
-    /**
+
+	public Policy(String name,String description) {
+		this.description = description;
+		this.name = name;
+		long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
+		this.updatedDateTime = new Date(now);
+	}
+
+	/**
      * @return the id
      */
     public Long getId()
@@ -195,25 +204,20 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 	{
 		this.roles = roles;
 	}
-
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
 	public int hashCode()
 	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((policyLink == null) ? 0 : policyLink.hashCode());
-		result = prime * result
-				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
 		return result;
 	}
 
@@ -230,48 +234,18 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 		if (getClass() != obj.getClass())
 			return false;
 		Policy other = (Policy) obj;
-		if (createdDateTime == null)
-		{
-			if (other.createdDateTime != null)
-				return false;
-		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null)
-		{
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null)
-		{
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
 		if (name == null)
 		{
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (policyLink == null)
-		{
-			if (other.policyLink != null)
-				return false;
-		} else if (!policyLink.equals(other.policyLink))
-			return false;
-		if (updatedDateTime == null)
-		{
-			if (other.updatedDateTime != null)
-				return false;
-		} else if (!updatedDateTime.equals(other.updatedDateTime))
-			return false;
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+         * @see java.lang.Object#toString()
+         */
 	@Override
 	public String toString()
 	{
