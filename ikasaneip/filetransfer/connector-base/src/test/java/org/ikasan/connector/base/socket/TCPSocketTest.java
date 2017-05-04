@@ -40,7 +40,6 @@
  */
 package org.ikasan.connector.base.socket;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -88,15 +87,6 @@ public class TCPSocketTest
      */
     private TCPSocket uut;
 
-    /**
-     * Return the suite of tests
-     *
-     * @return suite of tests
-     */
-    public static junit.framework.Test suite()
-    {
-        return new JUnit4TestAdapter(TCPSocketTest.class);
-    }
 
     /**
      * Setup before each test
