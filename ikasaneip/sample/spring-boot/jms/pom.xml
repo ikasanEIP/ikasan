@@ -17,10 +17,9 @@
     <properties>
         <!--<java.version>1.8</java.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
-
+  
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -48,30 +47,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jta-narayana</artifactId>
             <version>${version.org.springboot}</version>
-            <exclusions>
-
-                <!--<exclusion>-->
-            <!---->
-                    <!--<groupId>ch.qos.logback</groupId>-->
-                    <!--<artifactId>logback-classic</artifactId>-->
-                <!--</exclusion>-->
-
-            </exclusions>
-
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${version.org.springboot}</version>
-            <exclusions>
+        </dependency>
 
-                <!--<exclusion>-->
-                    <!--<groupId>ch.qos.logback</groupId>-->
-                    <!--<artifactId>logback-classic</artifactId>-->
-                <!--</exclusion>-->
-
-            </exclusions>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${version.org.springboot}</version>
         </dependency>
 
         <dependency>
@@ -86,14 +73,6 @@
             <version>${version.org.springframework}</version>
         </dependency>
 
-
-        <!--
-        <dependency>
-            <groupId>sybase</groupId>
-            <artifactId>jconn4</artifactId>
-            <version>7.07_build_26666</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
@@ -140,6 +119,12 @@
             <version>${project.version}</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>

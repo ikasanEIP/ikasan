@@ -101,6 +101,7 @@
 		<intercept-url pattern="/images/*" access="permitAll"/>
 		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
 		<intercept-url pattern="/rest/**" access="permitAll"/>
+		<intercept-url pattern="/manage/**" access="permitAll"/>
 		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
 
 		<form-login login-page="/login.jsp"
