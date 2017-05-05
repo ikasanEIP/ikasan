@@ -8,25 +8,23 @@
 
     <util:list id="module1-config-files">
         <!-- (Optional) Ikasan monitoring service -->
-        <value>monitor-service-conf.xml</value>
-        <value>monitor-conf.xml</value>
+        <!--<value>monitor-service-conf.xml</value>-->
+        <!--<value>monitor-conf.xml</value>-->
 
         <!--&lt;!&ndash; (optional) transaction pointcut for jms driven flows &ndash;&gt;-->
-        <value>ikasan-transaction-pointcut-jms.xml</value>
+        <!--<value>ikasan-transaction-pointcut-jms.xml</value>-->
 
         <!--&lt;!&ndash; (optional) transaction pointcut for any resubmission &ndash;&gt;-->
         <!--<value>ikasan-transaction-pointcut-resubmission.xml</value>-->
 
         <!--&lt;!&ndash; Standard Integration Module configurations &ndash;&gt;-->
-        <value>logger-conf.xml</value>
-        <value>shared-conf.xml</value>
-        <value>exception-conf.xml</value>
-        <value>module-conf.xml</value>
-        <value>jms-conf.xml</value>
-        <value>jms-to-jms-flow-conf.xml</value>
+        <!--<value>logger-conf.xml</value>-->
+        <!--<value>shared-conf.xml</value>-->
+        <!--<value>exception-conf.xml</value>-->
+        <!--<value>module-conf.xml</value>-->
+        <!--<value>jms-conf.xml</value>-->
+        <!--<value>jms-to-jms-flow-conf.xml</value>-->
         <!--<value>test-conf.xml</value>-->
-
-
 
     </util:list>
 
