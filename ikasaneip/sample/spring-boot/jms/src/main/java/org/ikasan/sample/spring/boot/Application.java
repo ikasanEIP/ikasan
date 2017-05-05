@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @SpringBootApplication
 @EnableAutoConfiguration
 
@@ -18,8 +19,6 @@ public class Application
 {
     public static void main(String[] args) throws Exception
     {
-
-
 //        SpringApplication springContext =
 //                new SpringApplication(Application.class);
 //        int randomPort = SocketUtils.findAvailableTcpPort();

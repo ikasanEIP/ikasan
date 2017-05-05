@@ -207,7 +207,6 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 	/* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
-
 	@Override public boolean equals(Object o)
 	{
 		if (this == o)

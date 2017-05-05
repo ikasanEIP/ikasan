@@ -396,6 +396,12 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }else {
             moduleDB.setServer(server);
             this.topologyService.save(moduleDB);
+            String host = platformContext.getEnvironment().getProperty("server.address");
+            String port = platformContext.getEnvironment().getProperty("server.port");
+
+
+            logger.info("module host [" + host + ":"+port+"] ");
+
         }
 
 
