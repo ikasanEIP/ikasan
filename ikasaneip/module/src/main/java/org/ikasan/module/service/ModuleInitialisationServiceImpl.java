@@ -213,20 +213,34 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             // load all modules in this context
             // TODO - should multiple modules share the same application context ?
             Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-            for (Module<Flow> module : moduleBeans.values())
-            {
-                try {
-                    this.initialiseModuleSecurity(module);
-                    // intialise config into db
-                    this.initialiseModuleMetaData(module);
-                    this.moduleContainer.add(module);
-                    this.moduleActivator.activate(module);
-                } catch (RuntimeException re){
-                    logger.error("There was a problem initialising module", re);
-                }
+            if(moduleBeans.isEmpty()){
+                moduleBeans = platformContext.getBeansOfType(Module.class);
+                initialise(moduleBeans);
             }
+            else{
+                initialise(moduleBeans);
+            }
+
         }
     }
+
+    private void initialise(Map<String, Module> moduleBeans)
+    {
+        for (Module<Flow> module : moduleBeans.values())
+        {
+            try {
+                this.initialiseModuleSecurity(module);
+                // intialise config into db
+                this.initialiseModuleMetaData(module);
+                this.moduleContainer.add(module);
+                this.moduleActivator.activate(module);
+            } catch (RuntimeException re){
+                logger.error("There was a problem initialising module", re);
+            }
+        }
+
+    }
+
 
     /**
      * Callback from the container to gracefully stop flows and modules, and stop the inner loaded contexts
