@@ -40,7 +40,6 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
-import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
@@ -49,7 +48,6 @@ import org.ikasan.dashboard.ui.mappingconfiguration.window.*;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.navigator.Navigator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Label;
@@ -64,7 +62,7 @@ public class NewActions
 {
     private static final long serialVersionUID = 9150730301535584905L;
 
-    protected NewMappingConfigurationPanel newMappingConfigurationPanel;
+    protected ExistingMappingConfigurationPanel existingMappingConfigurationPanel;
     protected RefreshGroup typeRefreshGroup;
     protected RefreshGroup clientRefreshGroup;
     protected RefreshGroup contextRefreshGroup;
@@ -91,7 +89,7 @@ public class NewActions
     /**
      * Constructor
      * 
-     * @param newMappingConfigurationPanel
+     * @param existingMappingConfigurationPanel
      * @param typeRefreshGroup
      * @param clientRefreshGroup
      * @param contextRefreshGroup
@@ -105,15 +103,15 @@ public class NewActions
      * @param newTypeLabel
      * @param newMappingConfigurationLabel
      */
-    public NewActions(NewMappingConfigurationPanel newMappingConfigurationPanel, RefreshGroup typeRefreshGroup,
-            RefreshGroup clientRefreshGroup, RefreshGroup contextRefreshGroup, SaveRequiredMonitor saveRequiredMonitor,
-            Button newClientButton, Button newContextButton, Button newTypeButton, Button newMappingConfigurationButton,
-            Button importMappingConfigurationButton, Label newClientLabel, Label newContextLabel, Label newTypeLabel, Label actionsLabel,
-            Label newMappingConfigurationLabel, Label importMappingConfigurationLabel,
-            MappingConfigurationImportWindow mappingConfigurationImportWindow, IkasanUINavigator uiNavigator, NewClientWindow newClientWindow,
-            NewMappingConfigurationContextWindow newMappingConfigurationContextWindow, NewMappingConfigurationTypeWindow newMappingConfigurationTypeWindow)
+    public NewActions(ExistingMappingConfigurationPanel existingMappingConfigurationPanel, RefreshGroup typeRefreshGroup,
+                      RefreshGroup clientRefreshGroup, RefreshGroup contextRefreshGroup, SaveRequiredMonitor saveRequiredMonitor,
+                      Button newClientButton, Button newContextButton, Button newTypeButton, Button newMappingConfigurationButton,
+                      Button importMappingConfigurationButton, Label newClientLabel, Label newContextLabel, Label newTypeLabel, Label actionsLabel,
+                      Label newMappingConfigurationLabel, Label importMappingConfigurationLabel,
+                      MappingConfigurationImportWindow mappingConfigurationImportWindow, IkasanUINavigator uiNavigator, NewClientWindow newClientWindow,
+                      NewMappingConfigurationContextWindow newMappingConfigurationContextWindow, NewMappingConfigurationTypeWindow newMappingConfigurationTypeWindow)
     {
-        this.newMappingConfigurationPanel = newMappingConfigurationPanel;
+        this.existingMappingConfigurationPanel = existingMappingConfigurationPanel;
         this.typeRefreshGroup = typeRefreshGroup;
         this.clientRefreshGroup = clientRefreshGroup;
         this.contextRefreshGroup = contextRefreshGroup;
@@ -192,7 +190,8 @@ public class NewActions
                 clientRefreshGroup.refresh();
                 contextRefreshGroup.refresh();
 
-                UI.getCurrent().addWindow(new NewMappingConfigurationWindow(mappingConfigurationService, null));
+                UI.getCurrent().addWindow(new NewMappingConfigurationWindow(mappingConfigurationService
+                        , null, existingMappingConfigurationPanel, uiNavigator));
             }
         });
 

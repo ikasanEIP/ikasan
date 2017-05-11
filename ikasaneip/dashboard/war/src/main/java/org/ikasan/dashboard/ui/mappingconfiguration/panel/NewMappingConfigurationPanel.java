@@ -49,6 +49,7 @@ import org.ikasan.dashboard.ui.framework.group.Editable;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
+import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
@@ -198,15 +199,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             , createTableLayout(false));
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        paramQueriesLayout.removeAllComponents();
-        paramQueriesLayout.setSpacing(true);
-
-        Panel queryParamsPanel = new Panel();
-        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        queryParamsPanel.setHeight(140, Unit.PIXELS);
-        queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
-        queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 5);
 
         vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);
@@ -353,5 +345,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         this.saveRequiredMonitor.setSaveRequired(true);
         populateMappingConfigurationForm();
     }
+
 
 }

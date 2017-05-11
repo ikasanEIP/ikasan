@@ -9,6 +9,8 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
 {
+    private  OptionGroup nameParamOptionGroup = new OptionGroup( "Specify the name of the parameters:" );
+
     public enum ANSWER
     {
         YES,
@@ -33,7 +35,6 @@ public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
         mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
         layout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
 
-        OptionGroup nameParamOptionGroup = new OptionGroup( "Specify the name of the parameters:" );
         nameParamOptionGroup.addItems( ANSWER.YES , ANSWER.NO );
         nameParamOptionGroup.setItemCaption(ANSWER.YES , "Yes" );
         nameParamOptionGroup.setItemCaption(ANSWER.NO , "No" );
@@ -58,5 +59,10 @@ public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
         this.setContent(layout);
 
         this.setSizeFull();
+    }
+
+    public ANSWER getAnswer()
+    {
+        return (ANSWER)this.nameParamOptionGroup.getValue();
     }
 }

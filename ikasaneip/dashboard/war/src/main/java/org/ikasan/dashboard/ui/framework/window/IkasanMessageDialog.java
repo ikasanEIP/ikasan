@@ -40,15 +40,10 @@
  */
 package org.ikasan.dashboard.ui.framework.window;
 
+import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.framework.action.Action;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -82,17 +77,24 @@ public class IkasanMessageDialog extends Window
      */
     protected void init(String message)
     {
-    	super.setWidth("50%");
+    	super.setWidth("700px");
         super.setModal(true);
         super.setResizable(false);
         super.center();
         
-        FormLayout layout = new FormLayout();
+        VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         layout.setWidth("100%");
         
         Label messageLabel = new Label(message);
-        layout.addComponent(messageLabel);
+        messageLabel.setWidthUndefined();
+        HorizontalLayout messageLabelLayout = new HorizontalLayout();
+        messageLabelLayout.setWidth("100%");
+        messageLabelLayout.setMargin(true);
+        messageLabelLayout.addComponent(messageLabel);
+        messageLabelLayout.setComponentAlignment(messageLabel, Alignment.MIDDLE_CENTER);
+
+        layout.addComponent(messageLabelLayout);
         layout.setComponentAlignment(messageLabel, Alignment.MIDDLE_CENTER);
         
         Button okButton = new Button("OK");
@@ -118,6 +120,7 @@ public class IkasanMessageDialog extends Window
         HorizontalLayout wrapper = new HorizontalLayout();
         wrapper.setWidth(100, Unit.PERCENTAGE);
         HorizontalLayout hlayout = new HorizontalLayout();
+        hlayout.setSpacing(true);
         wrapper.addComponent(hlayout);
         wrapper.setComponentAlignment(hlayout, Alignment.MIDDLE_CENTER);
         hlayout.addComponent(okButton);

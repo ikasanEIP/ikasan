@@ -9,6 +9,7 @@ import org.ikasan.dashboard.ui.framework.validator.IntegerStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.validator.LongStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
+import org.ikasan.mapping.model.MappingConfiguration;
 
 
 /**
@@ -31,14 +32,17 @@ public class NewMappingConfigurationManyToManyNumParamsPanel extends Panel
     private Label numSourceParamsLabel;
     private Label numTargetParamsLabel;
 
-    public NewMappingConfigurationManyToManyNumParamsPanel()
+    private MappingConfiguration mappingConfiguration;
+
+    public NewMappingConfigurationManyToManyNumParamsPanel(MappingConfiguration mappingConfiguration)
     {
+        this.mappingConfiguration = mappingConfiguration;
         init();
     }
 
     private void init()
     {
-        GridLayout layout = new GridLayout(5, 6);
+        GridLayout layout = new GridLayout(2, 6);
         layout.setSpacing(true);
         layout.setMargin(true);
         layout.setWidth("100%");
@@ -87,7 +91,7 @@ public class NewMappingConfigurationManyToManyNumParamsPanel extends Panel
         numTargetParamsLabel.setWidth(175, Unit.PIXELS);
         numTargetParamsLabel.setVisible(false);
 
-        layout.addComponent(numSourceParamsLabel, 2, 2);
+        layout.addComponent(numSourceParamsLabel, 0, 2);
         this.numberOfSourceParametersTextField = new TextField();
         this.numberOfSourceParametersTextField.setWidth(75, Unit.PIXELS);
         this.numberOfSourceParametersTextField.removeAllValidators();
@@ -95,9 +99,9 @@ public class NewMappingConfigurationManyToManyNumParamsPanel extends Panel
                 "must be defined."));
         this.numberOfSourceParametersTextField.setValidationVisible(false);
         this.numberOfSourceParametersTextField.setVisible(false);
-        layout.addComponent(this.numberOfSourceParametersTextField, 3, 2);
+        layout.addComponent(this.numberOfSourceParametersTextField, 1, 2);
 
-        layout.addComponent(numTargetParamsLabel, 2, 3);
+        layout.addComponent(numTargetParamsLabel, 0, 3);
         this.numberOfTargetParametersTextField = new TextField();
         this.numberOfTargetParametersTextField.setWidth(75, Unit.PIXELS);
         this.numberOfTargetParametersTextField.removeAllValidators();
@@ -105,7 +109,7 @@ public class NewMappingConfigurationManyToManyNumParamsPanel extends Panel
                 "must be defined."));
         this.numberOfTargetParametersTextField.setValidationVisible(false);
         this.numberOfTargetParametersTextField.setVisible(false);
-        layout.addComponent(this.numberOfTargetParametersTextField, 3, 3);
+        layout.addComponent(this.numberOfTargetParametersTextField, 1, 3);
 
 
         this.setContent(layout);
@@ -133,6 +137,8 @@ public class NewMappingConfigurationManyToManyNumParamsPanel extends Panel
             return false;
         }
 
+        this.mappingConfiguration.setNumberOfParams(this.getNumberSourceValues());
+        this.mappingConfiguration.setNumTargetValues(this.getNumberTargetValues());
         return true;
     }
 

@@ -7,6 +7,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.validator.IntegerStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.LongStringValidator;
+import org.ikasan.mapping.model.MappingConfiguration;
 
 
 /**
@@ -19,8 +20,11 @@ public class NewMappingConfigurationManyToOneNumParamsPanel extends Panel
     private TextField numberOfSourceParametersTextField;
     private Label numSourceParamsLabel;
 
-    public NewMappingConfigurationManyToOneNumParamsPanel()
+    private MappingConfiguration mappingConfiguration;
+
+    public NewMappingConfigurationManyToOneNumParamsPanel(MappingConfiguration mappingConfiguration)
     {
+        this.mappingConfiguration = mappingConfiguration;
         init();
     }
 
@@ -71,6 +75,9 @@ public class NewMappingConfigurationManyToOneNumParamsPanel extends Panel
 
             return false;
         }
+
+        this.mappingConfiguration.setNumberOfParams(this.getNumberSourceValues());
+        this.mappingConfiguration.setNumTargetValues(1);
 
         return true;
     }

@@ -4,9 +4,11 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.mapping.model.ParameterName;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,8 +21,11 @@ public class NewMappingConfigurationManyToOneSourceParamNamesPanel extends Panel
     private VerticalLayout namesLayout = null;
     private int numSourceParameters = 0;
 
+    private List<ParameterName> parameterNames;
+
     public NewMappingConfigurationManyToOneSourceParamNamesPanel()
     {
+        this.parameterNames = new ArrayList<ParameterName>();
         init();
     }
 
@@ -61,7 +66,7 @@ public class NewMappingConfigurationManyToOneSourceParamNamesPanel extends Panel
             for (int i = 0; i < this.numSourceParameters; i++)
             {
                 TextField nameField = new TextField();
-                nameField.setCaption("Parameter Name " + (i+1));
+                nameField.setCaption("Source Parameter Name " + (i+1));
                 nameField.setWidth(150, Unit.PIXELS);
                 nameField.removeAllValidators();
                 nameField.addValidator(new StringLengthValidator("You must provide a parameter name!",1 , null, false));
@@ -102,6 +107,24 @@ public class NewMappingConfigurationManyToOneSourceParamNamesPanel extends Panel
             return false;
         }
 
+        int i = 1;
+
+        for(TextField tf: this.sourceParameterNamesTextField)
+        {
+            ParameterName parameterName = new ParameterName();
+            parameterName.setContext(ParameterName.SOURCE_CONTEXT);
+            parameterName.setName(tf.getValue());
+            parameterName.setOrdinal(i++);
+            setString.add(tf.getValue());
+
+            this.parameterNames.add(parameterName);
+        }
+
         return true;
+    }
+
+    public List<ParameterName> getParameterNames()
+    {
+        return parameterNames;
     }
 }

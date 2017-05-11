@@ -92,7 +92,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
                 query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceSystem);
                 query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
-                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, new Long(numParams));
+                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, numParams);
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
                 query.setParameter(MappingConfigurationDaoConstants.SIZE, new Long(sourceSystemValues.size()));
 
@@ -160,7 +160,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
                 query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceSystem);
                 query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
-                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, new Long(numParams));
+                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, numParams);
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
                 query.setParameter(MappingConfigurationDaoConstants.SIZE, new Long(sourceSystemValues.size()));
 
@@ -269,7 +269,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
                 query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceSystem);
                 query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
-                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, new Long(sourceSystemValues.size()));
+                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, sourceSystemValues.size());
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
 
                 int i=0;
@@ -305,7 +305,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
                 query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceContext);
                 query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetContext);
-                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, new Long(sourceSystemValues.size()));
+                query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, sourceSystemValues.size());
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
 
                 int i=0;
@@ -487,30 +487,6 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 {
                     return results;
                 }
-            }
-        });
-    }
-
-    /**
-     * (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getKeyLocationQuery(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<String> getKeyLocationQuery(final String configurationType, final String sourceSystem, final String targetSystem,
-            final String configurationServiceClientName)
-    {
-        return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(MappingConfigurationDaoConstants.KEY_LOCATION_QUERY_QUERY);
-                query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_TYPE, configurationType);
-                query.setParameter(MappingConfigurationDaoConstants.SOURCE_CONTEXT, sourceSystem);
-                query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
-                query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, configurationServiceClientName);
-
-                return (List<String>)query.list();
             }
         });
     }
@@ -746,15 +722,15 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeKeyLocationQuery(org.ikasan.mapping.window.KeyLocationQuery)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#storeParameterName(org.ikasan.mapping.window.KeyLocationQuery)
      */
     @Override
-    public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery)
+    public Long storeParameterName(ParameterName parameterName)
     {
-        keyLocationQuery.setUpdatedDateTime(new Date());
-        this.getHibernateTemplate().saveOrUpdate(keyLocationQuery);
+        parameterName.setUpdatedDateTime(new Date());
+        this.getHibernateTemplate().saveOrUpdate(parameterName);
 
-        return keyLocationQuery.getId();
+        return parameterName.getId();
     }
 
     /* (non-Javadoc)
@@ -1057,16 +1033,17 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getKeyLocationQueriesByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.dao.MappingConfigurationDao#getParameterNameByMappingConfigurationId(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId)
+    public List<ParameterName> getParameterNameByMappingConfigurationId(Long mappingConfigurationId)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(KeyLocationQuery.class);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ParameterName.class);
         criteria.add(Restrictions.eq("mappingConfigurationId", mappingConfigurationId));
+        criteria.addOrder(Order.asc("ordinal"));
 
-        return (List<KeyLocationQuery>)this.getHibernateTemplate().findByCriteria(criteria);
+        return (List<ParameterName>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
     /* (non-Javadoc)
@@ -1216,9 +1193,9 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     @Override
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration)
     {
-        List<KeyLocationQuery> keyLocationQueries = this.getKeyLocationQueriesByMappingConfigurationId(mappingConfiguration.getId());
+        List<ParameterName> parameterNames = this.getParameterNameByMappingConfigurationId(mappingConfiguration.getId());
 
-        for(KeyLocationQuery query: keyLocationQueries)
+        for(ParameterName query: parameterNames)
         {
             this.getHibernateTemplate().delete(query);
         }

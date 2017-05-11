@@ -51,7 +51,6 @@ import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
 import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -185,19 +184,19 @@ public class MappingConfigurationServiceTest
 		keyLocationQueries1.add("another xpath");
 
 		Long mappingConfigurationId1 = this.addMappingConfiguration(contextId1,
-				contextId2, new Long(2), dealerToDealerId,
+				contextId2, 2, dealerToDealerId,
 				configurationServiceClientId, "description context 1",
 				keyLocationQueries1);
 		Long mappingConfigurationId2 = this.addMappingConfiguration(contextId1,
-				contextId2, new Long(1), salesPersonToSalesPersonId,
+				contextId2, 1, salesPersonToSalesPersonId,
 				configurationServiceClientId, "description context 2",
 				keyLocationQueries2);
 		Long mappingConfigurationId3 = this.addMappingConfiguration(contextId1,
-				contextId2, new Long(1), productTypeToTradeBookId,
+				contextId2, 1, productTypeToTradeBookId,
 				configurationServiceClientId, "description context 2",
 				keyLocationQueries3);
 		Long mappingConfigurationId4 = this.addMappingConfiguration(contextId1,
-				contextId2, new Long(4), ignoreMappingId,
+				contextId2, 4, ignoreMappingId,
 				configurationServiceClientId, "description",
 				keyLocationQueries4);
 
@@ -409,7 +408,7 @@ public class MappingConfigurationServiceTest
 
 		ConfigurationType manyToManyMapping = this.addConfigurationType2("Many to Many");
 
-		Long configurationContextId4 = this.addMappingConfiguration(context1, context2, new Long(-1),
+		Long configurationContextId4 = this.addMappingConfiguration(context1, context2, -1,
 				manyToManyMapping, configurationServiceClient, "description context 4");
 
 
@@ -1232,42 +1231,6 @@ public class MappingConfigurationServiceTest
 		Assert.assertEquals(2, result.size());
 	}
 
-	@Test
-	@DirtiesContext
-	public void test_get_target_system_value_with_payload_and_client_name_success()
-			throws MappingConfigurationServiceException
-	{
-		String result = this.xaMappingConfigurationService
-				.getTargetConfigurationValue("CMI2",
-						"Salesperson to Salesperson Mapping", "Tradeweb",
-						"Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
-
-		Assert.assertEquals("ZEKRAA", result);
-	}
-
-	@Test(expected = MappingConfigurationServiceException.class)
-	@DirtiesContext
-	public void test_get_target_system_value_with_paylaod_and_client_name_empty_xml_node_fail()
-			throws MappingConfigurationServiceException
-	{
-		String result = this.xaMappingConfigurationService
-				.getTargetConfigurationValue("CMI2",
-						"Salesperson to Salesperson Mapping", "Tradeweb",
-						"Bloomberg",
-						CLEAN_JGB_RAW_XML_EMPTY_SALESPERSON.getBytes());
-	}
-
-	@Test(expected = MappingConfigurationServiceException.class)
-	@DirtiesContext
-	public void test_get_target_system_value_with_paylaod_and_client_name_no_xml_node_fail()
-			throws MappingConfigurationServiceException
-	{
-		String result = this.xaMappingConfigurationService
-				.getTargetConfigurationValue("CMI2",
-						"Salesperson to Salesperson Mapping", "Tradeweb",
-						"Bloomberg",
-						CLEAN_JGB_RAW_XML_NO_SALESPERSON.getBytes());
-	}
 
 	@Test
 	@DirtiesContext
@@ -1588,11 +1551,11 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<KeyLocationQuery> keyLocationQueries = this.xaMappingConfigurationService
-					.getKeyLocationQueriesByMappingConfigurationId(mappingConfiguration
+			List<ParameterName> keyLocationQueries = this.xaMappingConfigurationService
+					.getParameterNamesByMappingConfigurationId(mappingConfiguration
 							.getId());
 
-			for (KeyLocationQuery keyLocationQuery : keyLocationQueries)
+			for (ParameterName keyLocationQuery : keyLocationQueries)
 			{
 				Assert.assertEquals(mappingConfiguration.getId(),
 						keyLocationQuery.getMappingConfigurationId());
@@ -1638,70 +1601,6 @@ public class MappingConfigurationServiceTest
 		}
 	}
 
-	@Test(expected = MappingConfigurationServiceException.class)
-	@DirtiesContext
-	public void test_resolution_of_target_configuration_value_returns_null_string_fail()
-			throws MappingConfigurationServiceException
-	{
-		final List<String> keyLocationQueries = new ArrayList<String>();
-		keyLocationQueries.add("/PTF/SPTM/SLSPRSN");
-		// expectations
-		mockery.checking(new Expectations()
-		{
-			{
-				one(mockMappingConfigurationDao).getKeyLocationQuery(
-						with(any(String.class)), with(any(String.class)),
-						with(any(String.class)), with(any(String.class)));
-				will(returnValue(keyLocationQueries));
-				one(mockMappingConfigurationDao).getTargetConfigurationValue(
-						with(any(String.class)), with(any(String.class)),
-						with(any(String.class)), with(any(String.class)),
-						with(any(ArrayList.class)));
-				will(returnValue(null));
-			}
-		});
-
-		MappingConfigurationService serviceToTest = new MappingConfigurationServiceImpl(
-				mockMappingConfigurationDao, keyLocationQueryProcessorFactory);
-		serviceToTest.getTargetConfigurationValue("CMI2",
-				"Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg",
-				CLEAN_JGB_RAW_XML.getBytes());
-
-		mockery.assertIsSatisfied();
-	}
-
-	@Test(expected = MappingConfigurationServiceException.class)
-	@DirtiesContext
-	public void test_resolution_of_target_configuration_value_returns_empty_string_fail()
-			throws MappingConfigurationServiceException
-	{
-		final List<String> keyLocationQueries = new ArrayList<String>();
-		keyLocationQueries.add("/PTF/SPTM/SLSPRSN");
-		// expectations
-		mockery.checking(new Expectations()
-		{
-			{
-				one(mockMappingConfigurationDao).getKeyLocationQuery(
-						with(any(String.class)), with(any(String.class)),
-						with(any(String.class)), with(any(String.class)));
-				will(returnValue(keyLocationQueries));
-				one(mockMappingConfigurationDao).getTargetConfigurationValue(
-						with(any(String.class)), with(any(String.class)),
-						with(any(String.class)), with(any(String.class)),
-						with(any(ArrayList.class)));
-				will(returnValue(""));
-			}
-		});
-
-		MappingConfigurationService serviceToTest = new MappingConfigurationServiceImpl(
-				mockMappingConfigurationDao, keyLocationQueryProcessorFactory);
-		serviceToTest.getTargetConfigurationValue("CMI2",
-				"Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg",
-				CLEAN_JGB_RAW_XML.getBytes());
-
-		mockery.assertIsSatisfied();
-	}
-
 	/**
 	 * Helper method to add the configuration type to the database.
 	 *
@@ -1730,12 +1629,6 @@ public class MappingConfigurationServiceTest
 				.saveConfigurationType(configurationType);
 	}
 
-	/**
-	 * Helper method to add the configuration type to the database.
-	 * 
-	 * @param id
-	 * @param name
-	 */
 	private Long addConfigurationContext(String name, String description)
 	{
 		ConfigurationContext configurationContext = new ConfigurationContext();
@@ -1751,9 +1644,9 @@ public class MappingConfigurationServiceTest
 	 *
 	 */
 	private Long addMappingConfiguration(Long sourceContextId,
-			Long targetContextId, Long numberOfParams,
-			Long configurationTypeId, Long configurationServiceClientId,
-			String description, List<String> keyLocationQueries)
+										 Long targetContextId, int numberOfParams,
+										 Long configurationTypeId, Long configurationServiceClientId,
+										 String description, List<String> keyLocationQueries)
 	{
 
 		return this.xaMappingConfigurationService.addMappingConfiguration(
@@ -1890,7 +1783,7 @@ public class MappingConfigurationServiceTest
 	 * @param description
 	 * @return
 	 */
-	private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, Long numberOfParams, ConfigurationType configurationType,
+	private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, int	 numberOfParams, ConfigurationType configurationType,
 										 ConfigurationServiceClient configurationServiceClient, String description)
 	{
 		MappingConfiguration configurationContext = new MappingConfiguration();

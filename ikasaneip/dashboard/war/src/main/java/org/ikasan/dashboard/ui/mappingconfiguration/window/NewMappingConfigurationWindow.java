@@ -40,17 +40,23 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.window;
 
+ import com.vaadin.navigator.Navigator;
  import com.vaadin.navigator.View;
  import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
  import com.vaadin.ui.*;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.themes.ValoTheme;
+ import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
+ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
  import org.ikasan.dashboard.ui.mappingconfiguration.panel.*;
  import org.ikasan.mapping.model.MappingConfiguration;
+ import org.ikasan.mapping.model.ParameterName;
  import org.ikasan.mapping.service.MappingConfigurationService;
  import org.ikasan.systemevent.service.SystemEventService;
 
+ import java.util.ArrayList;
  import java.util.LinkedList;
+ import java.util.List;
 
  /**
   * @author Ikasan Development Team
@@ -68,42 +74,54 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
      private NewMappingConfigurationTypePanel newMappingConfigurationTypePanel;
      private NewMappingConfigurationManyToManyNumParamsPanel newMappingConfigurationManyToManyNumParamsPanel;
      private NewMappingConfigurationManyToManyTargetParamNamesPanel newMappingConfigurationManyToManyTargetParamNamesPanel;
-     private NewMappingConfiguratioSummaryPanel newMappingConfiguratioSummaryPanel;
+     private NewMappingConfigurationSummaryPanel existingMappingConfiguratioSummaryPanel;
      private NewMappingConfigurationManyToManySourceParamNamesPanel newMappingConfigurationSourceParamNamesPanel;
      private NewMappingConfigurationManyToManyNameParamsPanel newMappingConfigurationManyToManyNameParamsPanel;
      private NewMappingConfigurationManyToOneNumParamsPanel newMappingConfigurationManyToOneNumParamsPanel;
      private NewMappingConfigurationManyToOneSourceParamNamesPanel newMappingConfigurationManyToOneSourceParamNamesPanel;
      private NewMappingConfigurationManyToOneNameParamsPanel newMappingConfigurationManyToOneNameParamsPanel;
+     private ExistingMappingConfigurationPanel newMappingConfigurationPanel;
 
      private MappingConfiguration mappingConfiguration;
 
      private LinkedList<Panel> previousSteps = new LinkedList<Panel>();
      private Panel currentPanel;
 
+     private List<ParameterName> parameterNames = null;
+
+     private IkasanUINavigator mappingNavigator;
+
 
      public NewMappingConfigurationWindow(MappingConfigurationService mappingConfigurationService,
-                                          SystemEventService systemEventService)
+                                          SystemEventService systemEventService, ExistingMappingConfigurationPanel existingMappingConfigurationPanel,
+                                          IkasanUINavigator mappingNavigator)
      {
          super("New Mapping Configuration");
          this.mappingConfigurationService = mappingConfigurationService;
          this.systemEventService = systemEventService;
 
-         this.newMappingConfigurationDetailsPanel = new NewMappingConfigurationDetailsPanel(mappingConfigurationService);
-
          this.mappingConfiguration = new MappingConfiguration();
+         this.mappingConfiguration.setNumTargetValues(1);
+         this.mappingConfiguration.setNumberOfParams(1);
 
+         this.newMappingConfigurationDetailsPanel = new NewMappingConfigurationDetailsPanel(mappingConfigurationService, mappingConfiguration);
          this.newMappingConfigurationTypePanel = new NewMappingConfigurationTypePanel();
-         this.newMappingConfigurationManyToManyNumParamsPanel = new NewMappingConfigurationManyToManyNumParamsPanel();
-         this.newMappingConfigurationManyToManyTargetParamNamesPanel = new NewMappingConfigurationManyToManyTargetParamNamesPanel();
-         this.newMappingConfiguratioSummaryPanel = new NewMappingConfiguratioSummaryPanel();
+         this.newMappingConfigurationManyToManyNumParamsPanel = new NewMappingConfigurationManyToManyNumParamsPanel(this.mappingConfiguration);
+         this.newMappingConfigurationManyToManyTargetParamNamesPanel = new NewMappingConfigurationManyToManyTargetParamNamesPanel(this.mappingConfiguration);
+         this.existingMappingConfiguratioSummaryPanel = new NewMappingConfigurationSummaryPanel(this.mappingConfiguration);
          this.newMappingConfigurationSourceParamNamesPanel = new NewMappingConfigurationManyToManySourceParamNamesPanel();
          this.newMappingConfigurationManyToManyNameParamsPanel = new NewMappingConfigurationManyToManyNameParamsPanel();
-         this.newMappingConfigurationManyToOneNumParamsPanel = new NewMappingConfigurationManyToOneNumParamsPanel();
+         this.newMappingConfigurationManyToOneNumParamsPanel = new NewMappingConfigurationManyToOneNumParamsPanel(this.mappingConfiguration);
          this.newMappingConfigurationManyToOneSourceParamNamesPanel = new NewMappingConfigurationManyToOneSourceParamNamesPanel();
          this.newMappingConfigurationManyToOneNameParamsPanel = new NewMappingConfigurationManyToOneNameParamsPanel();
 
+         this.newMappingConfigurationPanel = existingMappingConfigurationPanel;
+
+         this.mappingNavigator = mappingNavigator;
+
          this.viewPort = new HorizontalLayout();
-         this.viewPort.setSizeFull();
+         this.viewPort.setWidth("100%");
+         this.viewPort.setHeight("550px");
 
          init();
      }
@@ -115,24 +133,62 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
      {
          this.setStyleName("dashboard");
          this.setModal(true);
-         this.setWidth(80, Unit.PERCENTAGE);
-         this.setHeight(80, Unit.PERCENTAGE);
+         this.setWidth(600, Unit.PIXELS);
+         this.setHeight(700, Unit.PIXELS);
 
-         Button nextButton = new Button("Next");
+         final Button nextButton = new Button("Next");
          nextButton.setDescription("Next step");
          nextButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
          final Button previousButton = new Button("Previous");
          previousButton.setDescription("Previous step");
          previousButton.addStyleName(ValoTheme.BUTTON_SMALL);
-         previousButton.setVisible(false);
+         previousButton.setEnabled(false);
+
+         final Button createButton = new Button("Create");
+         createButton.setDescription("Create new mapping configuration");
+         createButton.addStyleName(ValoTheme.BUTTON_SMALL);
+         createButton.setEnabled(true);
+
+         viewPort.addComponent(this.newMappingConfigurationDetailsPanel);
+         this.currentPanel = this.newMappingConfigurationDetailsPanel;
+
+         final HorizontalLayout buttonsLayout = new HorizontalLayout();
+         buttonsLayout.setWidth("200px");
+         buttonsLayout.setSpacing(true);
+         buttonsLayout.setMargin(true);
+         buttonsLayout.addComponent(previousButton);
+         buttonsLayout.setComponentAlignment(previousButton, Alignment.MIDDLE_LEFT);
+         buttonsLayout.addComponent(nextButton);
+         buttonsLayout.setComponentAlignment(nextButton, Alignment.MIDDLE_RIGHT);
+
+         VerticalLayout wrapperLayout = new VerticalLayout();
+         wrapperLayout.setSizeFull();
+         wrapperLayout.addComponent(viewPort);
+         wrapperLayout.setComponentAlignment(viewPort, Alignment.TOP_CENTER);
+         wrapperLayout.addComponent(buttonsLayout);
+         wrapperLayout.setComponentAlignment(buttonsLayout, Alignment.BOTTOM_CENTER);
 
          nextButton.addClickListener(new Button.ClickListener()
          {
              public void buttonClick(ClickEvent event)
              {
                  setNextPanel();
-                 previousButton.setVisible(true);
+
+                 if(!previousSteps.isEmpty())
+                 {
+                     previousButton.setEnabled(true);
+                 }
+
+                 if(currentPanel.equals(existingMappingConfiguratioSummaryPanel))
+                 {
+                     buttonsLayout.removeAllComponents();
+
+                     buttonsLayout.addComponent(previousButton);
+                     buttonsLayout.setComponentAlignment(previousButton, Alignment.MIDDLE_LEFT);
+                     buttonsLayout.addComponent(createButton);
+                     buttonsLayout.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
+                 }
              }
          });
 
@@ -140,27 +196,56 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
          {
              public void buttonClick(ClickEvent event)
              {
+
+                 if(currentPanel.equals(existingMappingConfiguratioSummaryPanel))
+                 {
+                     buttonsLayout.removeAllComponents();
+
+                     buttonsLayout.addComponent(previousButton);
+                     buttonsLayout.setComponentAlignment(previousButton, Alignment.MIDDLE_LEFT);
+                     buttonsLayout.addComponent(nextButton);
+                     buttonsLayout.setComponentAlignment(nextButton, Alignment.MIDDLE_RIGHT);
+                 }
+
                  setPreviousPanel();
 
                  if(previousSteps.isEmpty())
                  {
-                     previousButton.setVisible(false);
+                     previousButton.setEnabled(false);
                  }
              }
          });
 
-         viewPort.addComponent(this.newMappingConfigurationDetailsPanel);
-         this.currentPanel = this.newMappingConfigurationDetailsPanel;
+         createButton.addClickListener(new Button.ClickListener()
+         {
+             public void buttonClick(ClickEvent event)
+             {
+                 try
+                 {
+                     mappingConfigurationService.addMappingConfiguration(mappingConfiguration, parameterNames);
 
-         HorizontalLayout buttonsLayout = new HorizontalLayout();
-         buttonsLayout.setSizeFull();
-         buttonsLayout.addComponent(previousButton);
-         buttonsLayout.addComponent(nextButton);
+                     Navigator navigator = new Navigator(UI.getCurrent(), mappingNavigator.getParentContainer());
 
-         VerticalLayout wrapperLayout = new VerticalLayout();
-         wrapperLayout.setSizeFull();
-         wrapperLayout.addComponent(viewPort);
-         wrapperLayout.addComponent(buttonsLayout);
+                     for (IkasanUIView view : mappingNavigator.getIkasanViews())
+                     {
+                         navigator.addView(view.getPath(), view.getView());
+                     }
+
+                     UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
+
+                     newMappingConfigurationPanel.setMappingConfiguration(mappingConfiguration);
+                     newMappingConfigurationPanel.populateMappingConfigurationForm();
+
+
+                     close();
+                 }
+                 catch(Exception e)
+                 {
+                     e.printStackTrace();
+                     Notification.show("Error creating Mapping Configuration: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
+                 }
+             }
+         });
 
          this.setContent(wrapperLayout);
      }
@@ -184,14 +269,21 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
 
              if(this.newMappingConfigurationTypePanel.getType() == NewMappingConfigurationTypePanel.TYPE.ONE_TO_ONE)
              {
-                 this.currentPanel = this.newMappingConfiguratioSummaryPanel;
+                 mappingConfiguration.setIsManyToMany(false);
+                 this.currentPanel = this.existingMappingConfiguratioSummaryPanel;
+                 mappingConfiguration.setConstrainParameterListSizes(true);
+
+                 this.existingMappingConfiguratioSummaryPanel.enter(null, null);
              }
              else if(this.newMappingConfigurationTypePanel.getType() == NewMappingConfigurationTypePanel.TYPE.MANY_TO_ONE)
              {
+                 mappingConfiguration.setIsManyToMany(false);
+                 mappingConfiguration.setConstrainParameterListSizes(true);
                  this.currentPanel = this.newMappingConfigurationManyToOneNumParamsPanel;
              }
              else
              {
+                 mappingConfiguration.setIsManyToMany(true);
                  this.currentPanel = this.newMappingConfigurationManyToManyNumParamsPanel;
              }
          }
@@ -207,11 +299,15 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
 
              if(this.newMappingConfigurationManyToManyNumParamsPanel.getAnswer() == NewMappingConfigurationManyToManyNumParamsPanel.ANSWER.YES)
              {
+                 mappingConfiguration.setConstrainParameterListSizes(true);
                  this.currentPanel = this.newMappingConfigurationManyToManyNameParamsPanel;
              }
              else
              {
-                 this.currentPanel = this.newMappingConfiguratioSummaryPanel;
+                 mappingConfiguration.setConstrainParameterListSizes(false);
+                 this.currentPanel = this.existingMappingConfiguratioSummaryPanel;
+
+                 this.existingMappingConfiguratioSummaryPanel.enter(null, null);
              }
          }
          else if(this.currentPanel.equals(this.newMappingConfigurationManyToOneNumParamsPanel))
@@ -238,7 +334,9 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
              }
              else
              {
-                 this.currentPanel = this.newMappingConfiguratioSummaryPanel;
+                 this.currentPanel = this.existingMappingConfiguratioSummaryPanel;
+
+                 this.existingMappingConfiguratioSummaryPanel.enter(null, null);
              }
 
          }
@@ -251,18 +349,43 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
              }
 
              previousSteps.addLast(this.currentPanel);
-             this.currentPanel = this.newMappingConfiguratioSummaryPanel;
+             this.currentPanel = this.existingMappingConfiguratioSummaryPanel;
+
+             this.existingMappingConfiguratioSummaryPanel.enter(this.newMappingConfigurationManyToOneSourceParamNamesPanel.getParameterNames(), null);
+
+             parameterNames = new ArrayList<ParameterName>();
+             if(this.newMappingConfigurationManyToOneSourceParamNamesPanel.getParameterNames() != null)
+             {
+                 parameterNames.addAll(this.newMappingConfigurationManyToOneSourceParamNamesPanel.getParameterNames());
+             }
          }
          else if(this.currentPanel.equals(this.newMappingConfigurationManyToManyNameParamsPanel))
          {
              previousSteps.addLast(this.currentPanel);
-             this.newMappingConfigurationSourceParamNamesPanel.enter
-                     (newMappingConfigurationManyToManyNumParamsPanel.getNumberSourceValues());
 
-             this.currentPanel = this.newMappingConfigurationSourceParamNamesPanel;
+             if(this.newMappingConfigurationManyToManyNameParamsPanel.getAnswer() == NewMappingConfigurationManyToManyNameParamsPanel.ANSWER.YES)
+             {
+                 newMappingConfigurationSourceParamNamesPanel.enter
+                         (this.newMappingConfigurationManyToManyNumParamsPanel.getNumberSourceValues());
+
+                 this.currentPanel = this.newMappingConfigurationSourceParamNamesPanel;
+             }
+             else
+             {
+                 this.currentPanel = this.existingMappingConfiguratioSummaryPanel;
+
+                 this.existingMappingConfiguratioSummaryPanel.enter(null, null);
+             }
+
          }
          else if(this.currentPanel.equals(this.newMappingConfigurationSourceParamNamesPanel))
          {
+             if(!this.newMappingConfigurationSourceParamNamesPanel.isValid())
+             {
+                 // not ready to move on yet.
+                 return;
+             }
+
              previousSteps.addLast(this.currentPanel);
 
              this.newMappingConfigurationManyToManyTargetParamNamesPanel.enter
@@ -272,8 +395,28 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
          }
          else if(this.currentPanel.equals(this.newMappingConfigurationManyToManyTargetParamNamesPanel))
          {
+             if(!this.newMappingConfigurationManyToManyTargetParamNamesPanel.isValid())
+             {
+                 // not ready to move on yet.
+                 return;
+             }
+
              previousSteps.addLast(this.currentPanel);
-             this.currentPanel = this.newMappingConfiguratioSummaryPanel;
+             this.currentPanel = this.existingMappingConfiguratioSummaryPanel;
+
+             this.existingMappingConfiguratioSummaryPanel.enter(this.newMappingConfigurationSourceParamNamesPanel.getParameterNames(),
+                     this.newMappingConfigurationManyToManyTargetParamNamesPanel.getParameterNames());
+
+             parameterNames = new ArrayList<ParameterName>();
+             if(this.newMappingConfigurationSourceParamNamesPanel.getParameterNames() != null)
+             {
+                 parameterNames.addAll(this.newMappingConfigurationSourceParamNamesPanel.getParameterNames());
+             }
+
+             if(this.newMappingConfigurationManyToManyTargetParamNamesPanel.getParameterNames() != null)
+             {
+                 parameterNames.addAll(this.newMappingConfigurationManyToManyTargetParamNamesPanel.getParameterNames());
+             }
          }
          this.viewPort.removeAllComponents();
          this.viewPort.addComponent(this.currentPanel);

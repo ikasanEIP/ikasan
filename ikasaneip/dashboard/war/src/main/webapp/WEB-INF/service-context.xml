@@ -304,7 +304,7 @@
                <value>/org/ikasan/mapping/model/MappingConfigurationLite.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ConfigurationServiceClient.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ConfigurationType.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/KeyLocationQuery.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/ParameterName.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>

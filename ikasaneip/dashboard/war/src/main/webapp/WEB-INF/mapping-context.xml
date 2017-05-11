@@ -87,7 +87,7 @@
     </bean>
 
     <bean id="newActions" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewActions" scope="session">
-        <constructor-arg ref="newMappingConfigurationPanel"/>
+        <constructor-arg ref="existingMappingConfigurationPanel"/>
         <constructor-arg ref="typeComboBoxRefreshGroup"/>
         <constructor-arg ref="clientComboBoxRefreshGroup"/>
         <constructor-arg ref="contextComboBoxRefreshGroup"/>

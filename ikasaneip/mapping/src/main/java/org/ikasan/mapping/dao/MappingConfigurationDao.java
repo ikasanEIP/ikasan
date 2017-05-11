@@ -134,18 +134,6 @@ public interface MappingConfigurationDao
     public ConfigurationServiceClient getConfigurationServiceClientByName(String configurationServiceClientName);
 
     /**
-     * Get a list of key location queries from the database.
-     * 
-     * @param configurationType
-     * @param sourceSystem
-     * @param targetSystem
-     * @param configurationServiceClientName
-     * @return
-     */
-    public List<String> getKeyLocationQuery(final String configurationType, final String sourceSystem, final String targetSystem,
-            final String configurationServiceClientName);
-
-    /**
      * 
      * @return
      */
@@ -204,7 +192,7 @@ public interface MappingConfigurationDao
 
     public void storeSourceValueTargetValueGrouping(SourceValueTargetValueGrouping sourceValueTargetValueGrouping);
 
-    public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery);
+    public Long storeParameterName(ParameterName parameterName);
 
     public Long getNumberOfSourceValuesForGroupId(Long groupId);
 
@@ -323,7 +311,7 @@ public interface MappingConfigurationDao
      * @param mappingConfigurationId
      * @return
      */
-    public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId);
+    public List<ParameterName> getParameterNameByMappingConfigurationId(Long mappingConfigurationId);
 
     /**
      * 

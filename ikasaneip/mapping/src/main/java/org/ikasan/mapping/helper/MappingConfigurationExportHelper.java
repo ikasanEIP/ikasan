@@ -1,7 +1,7 @@
 package org.ikasan.mapping.helper;
 
-import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.ParameterName;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public interface MappingConfigurationExportHelper {
      * @return
      */
     public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration,
-                                                   List<KeyLocationQuery> keyLocationQueries, String schemaLocation);
+                                                   List<ParameterName> parameterNames, String schemaLocation);
 }
