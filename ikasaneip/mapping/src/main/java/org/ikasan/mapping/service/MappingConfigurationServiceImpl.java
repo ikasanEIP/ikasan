@@ -139,76 +139,6 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         return getTargetConfigurationValue(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues);
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, byte[])
-     */
-    @Override
-    @Deprecated
-    public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceContext,
-            final String targetContext, final byte[] payload) throws MappingConfigurationServiceException
-    {
-        String returnValue = null;
-
-        try
-        {
-            // We need to get all the key location queries from the database
-            List<String> keyLocationQueries = this.dao.getKeyLocationQuery(configurationType, sourceContext, targetContext, clientName);
-
-            // We then delegate to the KeyLocationQueryProcessorFactory to get the appropriate KeyLocationQueryProcessor for the
-            // clientName passed in as an argument to this method.
-            KeyLocationQueryProcessor keyLocationQueryProcessor = this.keyLocationQueryProcessorFactory.getKeyLocationQueryProcessor(clientName);
-
-            List<String> sourceSystemValues = new ArrayList<String>();
-
-            // We then want to iterate over the all the key location query strings passed into this method and 
-            // delegate to the KeyLocationQueryProcessor to get the source system values used to get the target
-            // system value related to the mapping configuration.
-            for(String keyLocationQuery: keyLocationQueries)
-            {
-                String queryResult = keyLocationQueryProcessor.getKeyValueFromPayload(keyLocationQuery, payload);
-
-                if(queryResult.length() == 0)
-                {
-                    throw new KeyLocationQueryProcessorException("Evaluation of key location query '" + keyLocationQuery 
-                        +"' returned null or an empty string");
-                }
-                else
-                {
-                    sourceSystemValues.add(queryResult);
-                }
-            }
-
-            // Now delegate to the dao to get the target configuration value from the database.
-            returnValue = this.dao.getTargetConfigurationValue(clientName, configurationType, sourceContext, targetContext, sourceSystemValues);
-
-            if(returnValue == null || returnValue.length() == 0)
-            {
-                StringBuffer sourceSystemValuesSB = new StringBuffer();
-
-                sourceSystemValuesSB.append("[SourceSystemValues = ");
-                for(String sourceSystemValue: sourceSystemValues)
-                {
-                    sourceSystemValuesSB.append(sourceSystemValue).append(" ");
-                }
-                sourceSystemValuesSB.append("]");
-
-                String errorMessage = "The Mapping Configuration Service has been unable to resolve a target configuration value. " +
-                        "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceContext + "] " +
-                        "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString();
-                
-                logger.error(errorMessage);
-                
-                throw new MappingConfigurationServiceException(errorMessage);
-            }
-        }
-        catch (KeyLocationQueryProcessorException e)
-        {
-        	logger.error("An error has occurred trying to get a target configuration value", e);
-            throw new MappingConfigurationServiceException(e);
-        }
-
-        return returnValue;
-    }
     
     /* (non-Javadoc)
 	 * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValueWithIgnores(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
@@ -453,9 +383,9 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
      * @see org.ikasan.mapping.service.MappingConfigurationService#addMappingConfiguration(java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long, java.util.List, java.util.List, java.lang.String)
      */
     @Override
-    public Long addMappingConfiguration(Long sourceContextId, Long targetContextId, Long numberOfParams,
-            Long configurationTypeId, Long configurationServiceClientId, List<String> keyLocationQueries,
-            String description)
+    public Long addMappingConfiguration(Long sourceContextId, Long targetContextId, int numberOfParams,
+                                        Long configurationTypeId, Long configurationServiceClientId, List<String> keyLocationQueries,
+                                        String description)
     {
     	ConfigurationType configurationType = this.getConfigurationTypeById(configurationTypeId);
     	ConfigurationServiceClient configurationServiceClient = this.dao.getConfigurationServiceClientById(configurationServiceClientId);
@@ -474,11 +404,29 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 
         for(String keyLocationQueryString: keyLocationQueries)
         {
-            KeyLocationQuery keyLocationQuery = new KeyLocationQuery();
-            keyLocationQuery.setMappingConfigurationId(mappingConfigurationId);
-            keyLocationQuery.setValue(keyLocationQueryString);
+            ParameterName parameterName = new ParameterName();
+            parameterName.setMappingConfigurationId(mappingConfigurationId);
+            parameterName.setName(keyLocationQueryString);
 
-            this.dao.storeKeyLocationQuery(keyLocationQuery);
+            this.dao.storeParameterName(parameterName);
+        }
+
+        return mappingConfigurationId;
+    }
+
+    @Override
+    public Long addMappingConfiguration(MappingConfiguration mappingConfiguration, List<ParameterName> parameterNames)
+    {
+        Long mappingConfigurationId = this.dao.storeMappingConfiguration(mappingConfiguration);
+
+        if(parameterNames != null)
+        {
+            for (ParameterName parameterName : parameterNames)
+            {
+                parameterName.setMappingConfigurationId(mappingConfigurationId);
+
+                this.dao.storeParameterName(parameterName);
+            }
         }
 
         return mappingConfigurationId;
@@ -582,12 +530,12 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.mapping.service.MappingConfigurationService#getKeyLocationQueriesByMappingConfigurationId(java.lang.Long)
+     * @see org.ikasan.mapping.service.MappingConfigurationService#getParameterNameByMappingConfigurationId(java.lang.Long)
      */
     @Override
-    public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId)
+    public List<ParameterName> getParameterNamesByMappingConfigurationId(Long mappingConfigurationId)
     {
-        return this.dao.getKeyLocationQueriesByMappingConfigurationId(mappingConfigurationId);
+        return this.dao.getParameterNameByMappingConfigurationId(mappingConfigurationId);
     }
 
     /* (non-Javadoc)
@@ -671,9 +619,9 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
      * @see org.ikasan.mapping.service.MappingConfigurationService#saveKeyLocationQuery(org.ikasan.mapping.window.KeyLocationQuery)
      */
     @Override
-    public Long saveKeyLocationQuery(KeyLocationQuery query)
+    public Long saveParameterName(ParameterName parameterName)
     {
-        return this.dao.storeKeyLocationQuery(query);
+        return this.dao.storeParameterName(parameterName);
     }
 
     /* (non-Javadoc)

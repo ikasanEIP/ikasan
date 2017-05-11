@@ -52,7 +52,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -110,15 +109,16 @@ public class MappingConfigurationImportWindow extends Window
     private Label uploadLabel = new Label();
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     private MappingConfigurationPanel mappingConfigurationPanel;
-    private List<KeyLocationQuery> keyLocationQueries;
+    private List<ParameterName> keyLocationQueries;
     private SystemEventService systemEventService;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param mappingConfigurationService
-     * @param mappingConfiguration
      * @param mappingConfigurationConfigurationValuesTable
+     * @param mappingConfigurationPanel
+     * @param systemEventService
      */
     public MappingConfigurationImportWindow(MappingConfigurationService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
@@ -469,11 +469,11 @@ public class MappingConfigurationImportWindow extends Window
                     this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
                 }
 
-                for(KeyLocationQuery query: this.keyLocationQueries)
+                for(ParameterName parameterName: this.keyLocationQueries)
                 {
-                    query.setMappingConfigurationId(id);
+                    parameterName.setMappingConfigurationId(id);
 
-                    this.mappingConfigurationService.saveKeyLocationQuery(query);
+                    this.mappingConfigurationService.saveParameterName(parameterName);
                 }
             }
 

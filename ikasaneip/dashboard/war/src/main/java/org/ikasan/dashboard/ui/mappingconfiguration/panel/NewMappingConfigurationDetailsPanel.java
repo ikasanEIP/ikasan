@@ -12,6 +12,9 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -29,8 +32,10 @@ public class NewMappingConfigurationDetailsPanel extends Panel
     protected TargetContextComboBox targetContextComboBox;
     protected TextArea descriptionTextArea;
 
-    public NewMappingConfigurationDetailsPanel(MappingConfigurationService mappingConfigurationService)
+    public NewMappingConfigurationDetailsPanel(MappingConfigurationService mappingConfigurationService,
+                                               MappingConfiguration mappingConfiguration)
     {
+        this.mappingConfiguration = mappingConfiguration;
         this.clientComboBox = new ClientComboBox(mappingConfigurationService);
         this.typeComboBox = new TypeComboBox(mappingConfigurationService);
         this.sourceContextComboBox = new SourceContextComboBox(mappingConfigurationService, false);
@@ -219,6 +224,12 @@ public class NewMappingConfigurationDetailsPanel extends Panel
 
             return false;
         }
+
+        this.mappingConfiguration.setConfigurationType((ConfigurationType)this.typeComboBox.getValue());
+        this.mappingConfiguration.setConfigurationServiceClient((ConfigurationServiceClient) this.clientComboBox.getValue());
+        this.mappingConfiguration.setSourceContext((ConfigurationContext) this.sourceContextComboBox.getValue());
+        this.mappingConfiguration.setTargetContext((ConfigurationContext) this.targetContextComboBox.getValue());
+        this.mappingConfiguration.setDescription(this.descriptionTextArea.getValue());
 
         return true;
     }

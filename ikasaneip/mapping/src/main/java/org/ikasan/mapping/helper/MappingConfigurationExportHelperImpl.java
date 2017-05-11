@@ -40,8 +40,8 @@
  */
 package org.ikasan.mapping.helper;
 
- import org.ikasan.mapping.model.KeyLocationQuery;
  import org.ikasan.mapping.model.MappingConfiguration;
+ import org.ikasan.mapping.model.ParameterName;
 
  import java.text.DateFormat;
  import java.util.Date;
@@ -71,15 +71,23 @@ package org.ikasan.mapping.helper;
      private static final String NUMBER_OF_SOURCE_PARAMS_END_TAG = "</numberOfSourceParams>";
      private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG = "<sourceConfigurationValueQueries>";
      private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG = "</sourceConfigurationValueQueries>";
-     private static final String SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG = "<sourceConfigurationValueQuery>";
-     private static final String SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG = "</sourceConfigurationValueQuery>";
+     private static final String PARAMETER_NAME_START_TAG = "<parameterName>";
+     private static final String PARAMETER_NAME_END_TAG = "</parameterName>";
+     private static final String NAME_START_TAG = "<name>";
+     private static final String NAME_END_TAG = "</name>";
+     private static final String CONTEXT_START_TAG = "<context>";
+     private static final String CONTEXT_END_TAG = "</context>";
+     private static final String ORDINAL_START_TAG = "<ordinal>";
+     private static final String ORDINAL_END_TAG = "</ordinal>";
      private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
      private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
 
      private MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
 
      /**
-      * @param schemaLocation
+      * Constructor
+      *
+      * @param mappingConfigurationValuesExportHelper
       */
      public MappingConfigurationExportHelperImpl(MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper)
      {
@@ -94,7 +102,7 @@ package org.ikasan.mapping.helper;
       * @return
       */
      public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration,
-             List<KeyLocationQuery> keyLocationQueries, String schemaLocation)
+                                                    List<ParameterName> parameterNames, String schemaLocation)
      {
          StringBuffer exportString = new StringBuffer();
 
@@ -133,11 +141,19 @@ package org.ikasan.mapping.helper;
 
          exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG);
 
-         for(KeyLocationQuery query: keyLocationQueries)
+         for(ParameterName query: parameterNames)
          {
-             exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG);
-             exportString.append(query.getValue());
-             exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG);
+             exportString.append(PARAMETER_NAME_START_TAG);
+             exportString.append(NAME_START_TAG);
+             exportString.append(query.getName());
+             exportString.append(NAME_END_TAG);
+             exportString.append(CONTEXT_START_TAG);
+             exportString.append(query.getContext());
+             exportString.append(CONTEXT_END_TAG);
+             exportString.append(ORDINAL_START_TAG);
+             exportString.append(query.getOrdinal());
+             exportString.append(ORDINAL_END_TAG);
+             exportString.append(PARAMETER_NAME_END_TAG);
          }
 
          exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG);

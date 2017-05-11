@@ -92,17 +92,17 @@ public class HibernateMappingConfigurationDaoTest
         ConfigurationContext context1 = this.addConfigurationContext("Tradeweb", "Tradeweb");
         ConfigurationContext context2 = this.addConfigurationContext("Bloomberg", "Bloomberg");
 
-        Long configurationContextId1 = this.addMappingConfiguration(context1, context2, new Long(2),
+        Long configurationContextId1 = this.addMappingConfiguration(context1, context2, 2,
             dealerToDealer, configurationServiceClient, "description context 1");
-        Long configurationContextId2 = this.addMappingConfiguration(context1, context2, new Long(1),
+        Long configurationContextId2 = this.addMappingConfiguration(context1, context2, 1,
             salesPersonToSalesPerson, configurationServiceClient, "description context 2");
-        Long configurationContextId3 = this.addMappingConfiguration(context1, context2, new Long(1),
+        Long configurationContextId3 = this.addMappingConfiguration(context1, context2, 1,
             productTypeToTradeBook, configurationServiceClient, "description context 2");
 
-        this.addKeyLocationQuery("some xpath", configurationContextId1);
-        this.addKeyLocationQuery("another xpath", configurationContextId1);
-        this.addKeyLocationQuery("some xpath", configurationContextId2);
-        this.addKeyLocationQuery("some xpath", configurationContextId3);
+        this.addParameterName("some xpath", configurationContextId1);
+        this.addParameterName("another xpath", configurationContextId1);
+        this.addParameterName("some xpath", configurationContextId2);
+        this.addParameterName("some xpath", configurationContextId3);
 
         TargetConfigurationValue targetId1 = this.addTargetSystemConfiguration("BARCLON");
         TargetConfigurationValue targetId2 = this.addTargetSystemConfiguration("BNPPAR");
@@ -136,7 +136,7 @@ public class HibernateMappingConfigurationDaoTest
 
         ConfigurationType manyToManyMapping = this.addConfigurationType("Many to Many");
 
-        Long configurationContextId4 = this.addMappingConfiguration(context1, context2, new Long(-1),
+        Long configurationContextId4 = this.addMappingConfiguration(context1, context2, -1,
                 manyToManyMapping, configurationServiceClient, "description context 4");
 
         ArrayList<String> sourceValues = new ArrayList<>();
@@ -450,7 +450,7 @@ public class HibernateMappingConfigurationDaoTest
                     (sourceConfigurationValuesItr.next().getTargetConfigurationValue().getId());
 
                 Assert.assertNotNull(results);
-                Assert.assertEquals(results.size(), mappingConfiguration.getNumberOfParams().intValue());
+                Assert.assertEquals(results.size(), mappingConfiguration.getNumberOfParams());
             }
         }
     }
@@ -660,24 +660,14 @@ public class HibernateMappingConfigurationDaoTest
 
     @Test
     @DirtiesContext
-    public void test_get_key_location_queries_success()
-    {
-        List<String> result = this.xaMappingConfigurationDao.getKeyLocationQuery
-                ("Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", "CMI2");
-
-        Assert.assertEquals(1, result.size());
-    }
-
-    @Test
-    @DirtiesContext
     public void test_get_key_location_queries_buy_mapping_configuration_id_success()
     {
         List<MappingConfiguration> result = this.xaMappingConfigurationDao.getAllMappingConfigurations();
 
         for(MappingConfiguration mappingConfiguration: result)
         {
-            List<KeyLocationQuery> mappingConfigurationResult = this.xaMappingConfigurationDao
-                    .getKeyLocationQueriesByMappingConfigurationId(mappingConfiguration.getId());
+            List<ParameterName> mappingConfigurationResult = this.xaMappingConfigurationDao
+                    .getParameterNameByMappingConfigurationId(mappingConfiguration.getId());
 
 //            Assert.assertTrue(mappingConfigurationResult.size() > 0);
         }
@@ -825,13 +815,13 @@ public class HibernateMappingConfigurationDaoTest
      * @param mappingConfigurationId
      * @return
      */
-    private Long addKeyLocationQuery(String value, Long mappingConfigurationId)
+    private Long addParameterName(String value, Long mappingConfigurationId)
     {
-        KeyLocationQuery keyLocationQuery = new KeyLocationQuery();
-        keyLocationQuery.setValue(value);
+        ParameterName keyLocationQuery = new ParameterName();
+        keyLocationQuery.setName(value);
         keyLocationQuery.setMappingConfigurationId(mappingConfigurationId);
 
-        return this.xaMappingConfigurationDao.storeKeyLocationQuery(keyLocationQuery);
+        return this.xaMappingConfigurationDao.storeParameterName(keyLocationQuery);
     }
 
     /**
@@ -876,7 +866,7 @@ public class HibernateMappingConfigurationDaoTest
      * @param description
      * @return
      */
-    private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, Long numberOfParams, ConfigurationType configurationType,
+    private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, int numberOfParams, ConfigurationType configurationType,
     		ConfigurationServiceClient configurationServiceClient, String description)
     {
         MappingConfiguration configurationContext = new MappingConfiguration();

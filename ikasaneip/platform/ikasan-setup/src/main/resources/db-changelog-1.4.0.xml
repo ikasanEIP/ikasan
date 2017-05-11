@@ -6,6 +6,7 @@
 
 	<!-- 1.4.0 table creation -->
 	<include file="db/tables/db-changeLog-createFlowInvocation.xml" relativeToChangelogFile="true" />
+	<include file="db/tables/db-changeLog-createMCSParameterName.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.4.0 table alterations -->
 	<include file="db/alter/db-changeLog-alterMessageHistoryRemoveFlowInvocationColumns.xml" relativeToChangelogFile="true" />
@@ -16,11 +17,15 @@
 	<include file="db/alter/db-changeLog-alterMCSManyToManyTargetConfigValue.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterMCSSourceConfigValue.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterMCSMappingConfigurationAddConstrainParamSizes.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMCSMappingConfigurationAddLastUpdatedBy.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.4.0 cardinality creation -->
 
 	<!-- 1.4.0 data creation -->
 	
 	<!-- 1.4.0 index creation -->
+
+	<!-- 1.4.0 table drop -->
+	<include file="db/drop/db-changeLog-dropMCSKeyLocationQuery.xml" relativeToChangelogFile="true" />
 	
 </databaseChangeLog>

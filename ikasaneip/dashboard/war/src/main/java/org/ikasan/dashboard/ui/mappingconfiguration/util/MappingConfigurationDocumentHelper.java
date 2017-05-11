@@ -158,7 +158,7 @@ public class MappingConfigurationDocumentHelper
 
         if(isManyToMany.equals("false"))
         {
-            mappingConfiguration.setNumberOfParams(new Long(numberOfParams));
+            mappingConfiguration.setNumberOfParams(new Integer(numberOfParams));
         }
 
         return mappingConfiguration;
@@ -211,7 +211,7 @@ public class MappingConfigurationDocumentHelper
      * @throws SAXException 
      * @throws ParserConfigurationException 
      */
-    public List<KeyLocationQuery> getKeyLocationQueries(byte[] fileContents) throws SAXException
+    public List<ParameterName> getKeyLocationQueries(byte[] fileContents) throws SAXException
         , IOException, ParserConfigurationException
     {
         DocumentBuilderFactory builderFactory =
@@ -325,21 +325,16 @@ public class MappingConfigurationDocumentHelper
 
         return returnValue;
     }
-
-    /**
-     * Gets a list of source configuration values from an XML node list.
-     * @param sourceConfigurationValues
-     * @return
-     */
-    protected ArrayList<KeyLocationQuery> getKeyLocationQueries(NodeList keyLocationQueries)
+    
+    protected ArrayList<ParameterName> getKeyLocationQueries(NodeList keyLocationQueries)
     {
-        ArrayList<KeyLocationQuery> returnValue = new ArrayList<KeyLocationQuery>();
+        ArrayList<ParameterName> returnValue = new ArrayList<ParameterName>();
 
         for(int i=0; i<keyLocationQueries.getLength(); i++)
         {
             logger.debug("KeyLocationQuery: " + keyLocationQueries.item(i).getTextContent());
-            KeyLocationQuery value = new KeyLocationQuery();
-            value.setValue(keyLocationQueries.item(i).getTextContent());
+            ParameterName value = new ParameterName();
+            value.setName(keyLocationQueries.item(i).getTextContent());
 
             returnValue.add(value);
         }

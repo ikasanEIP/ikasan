@@ -75,7 +75,19 @@ public class MappingConfigurationSearchResultsTable extends Table
         addContainerProperty("Type", String.class,  null);
         addContainerProperty("Source Context", String.class,  null);
         addContainerProperty("Target Context", String.class,  null);
+        addContainerProperty("Number of Mappings", String.class,  null);
+        addContainerProperty("Last Updated By", String.class,  null);
+        addContainerProperty("Last Updated", String.class,  null);
         addContainerProperty("Delete", Button.class,  null);
+
+        setColumnExpandRatio("Client", .1f);
+        setColumnExpandRatio("Type", .15f);
+        setColumnExpandRatio("Source Context", .15f);
+        setColumnExpandRatio("Target Context", .15f);
+        setColumnExpandRatio("Number of Mappings", .1f);
+        setColumnExpandRatio("Last Updated By", .1f);
+        setColumnExpandRatio("Last Updated", .10f);
+        setColumnExpandRatio("Delete", .05f);
         
         this.addItemClickListener(listener);
         

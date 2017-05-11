@@ -1,0 +1,18 @@
+<mappingConfigurationValues>
+  <!--Optional:-->
+  <exportDateTime>string</exportDateTime>
+  <!--1 or more repetitions:-->
+  <mappingConfigurationValue>
+    <sourceConfigurationValues>
+      <!--1 or more repetitions:-->
+      <sourceConfigurationValue value="string">string</sourceConfigurationValue>
+    </sourceConfigurationValues>
+    <!--Optional:-->
+    <targetConfigurationValues>
+      <!--1 or more repetitions:-->
+      <targetConfigurationValue value="string">string</targetConfigurationValue>
+    </targetConfigurationValues>
+    <!--Optional:-->
+    <targetConfigurationValue value="string">string</targetConfigurationValue>
+  </mappingConfigurationValue>
+</mappingConfigurationValues>

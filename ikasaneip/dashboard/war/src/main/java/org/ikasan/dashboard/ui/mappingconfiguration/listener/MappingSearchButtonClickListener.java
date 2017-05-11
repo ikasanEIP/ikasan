@@ -40,9 +40,11 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
@@ -172,11 +174,26 @@ public class MappingSearchButtonClickListener implements ClickListener
                 }
             });
 
+            SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+            String timestamp = format.format(mappingConfiguration.getUpdatedDateTime());
+
+            String numberOfMappings = "Not Available";
+            if(mappingConfiguration.getNumberOfMappings() > 0)
+            {
+                numberOfMappings = new Integer(mappingConfiguration.getNumberOfMappings()).toString();
+            }
+
+            String lastUpdatedBy = "Not Available";
+            if(mappingConfiguration.getLastUpdatedBy() != null && mappingConfiguration.getLastUpdatedBy() != "")
+            {
+                lastUpdatedBy = mappingConfiguration.getLastUpdatedBy();
+            }
+
             this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
             this.searchResultsTable.addItem(new Object[] {mappingConfiguration.getConfigurationServiceClient().getName(),
                     mappingConfiguration.getConfigurationType().getName(), mappingConfiguration.getSourceContext().getName(),
-                    mappingConfiguration.getTargetContext().getName(), deleteButton}
-                    , mappingConfiguration.getId());
+                    mappingConfiguration.getTargetContext().getName(), numberOfMappings
+                    , lastUpdatedBy, timestamp, deleteButton}, mappingConfiguration.getId());
         }
         
     }
