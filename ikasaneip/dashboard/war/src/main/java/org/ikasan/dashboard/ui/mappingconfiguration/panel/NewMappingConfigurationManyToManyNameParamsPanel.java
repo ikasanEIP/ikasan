@@ -40,19 +40,6 @@ public class NewMappingConfigurationManyToManyNameParamsPanel extends Panel
         nameParamOptionGroup.setItemCaption(ANSWER.NO , "No" );
         nameParamOptionGroup.setValue(ANSWER.NO);  // Specify which radio button is selected by default.
 
-
-        nameParamOptionGroup.addValueChangeListener( new Property.ValueChangeListener()
-        {
-
-            @Override
-            public void valueChange ( Property.ValueChangeEvent event )
-            {
-                Notification.show( "Radio Button" ,
-                        "You chose: " + event.getProperty().getValue().toString() ,
-                        Notification.Type.HUMANIZED_MESSAGE );
-            }
-        } );
-
         layout.addComponent(nameParamOptionGroup, 0, 1);
         layout.setComponentAlignment(nameParamOptionGroup, Alignment.MIDDLE_CENTER);
 

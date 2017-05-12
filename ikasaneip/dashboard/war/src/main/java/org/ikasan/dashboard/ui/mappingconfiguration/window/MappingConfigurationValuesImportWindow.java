@@ -44,7 +44,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,6 +56,8 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
+import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -178,6 +182,7 @@ public class MappingConfigurationValuesImportWindow extends Window
             {
                 try
                 {
+
                     saveImportedMappingConfigurationValues();
                     
                     IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -250,7 +255,8 @@ public class MappingConfigurationValuesImportWindow extends Window
 
         this.mappingConfigurationValues = new ArrayList<MappingConfigurationValue>();
 
-        try {
+        try
+        {
             builder = builderFactory.newDocumentBuilder();
             SimpleErrorHandler errorHandler = new SimpleErrorHandler();
             builder.setErrorHandler(errorHandler);
@@ -289,17 +295,19 @@ public class MappingConfigurationValuesImportWindow extends Window
                 logger.debug("Number of mapping configuration values = " + mappingConfigurationValues.getLength());
     
                 this.uploadLabel.setValue("Importing " + mappingConfigurationValues.getLength() 
-                    + " configuration values. Press import to procede.");
+                    + " configuration values. Press import to proceed.");
                 progressLayout.setVisible(true);
-    
-                for(int i=0; i<mappingConfigurationValues.getLength(); i++)
-                {
-                    this.mappingConfigurationValues.add(getMappingConfigurationValue((Element)mappingConfigurationValues.item(i)));
-                }
+
+                MappingConfigurationDocumentHelper helper = new MappingConfigurationDocumentHelper();
+
+                this.mappingConfigurationValues = helper.getMappingConfigurationValues(this.receiver.file.toByteArray(), this.mappingConfiguration.getIsManyToMany());
+
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();  
+        }
+        catch (Exception e)
+        {
+            Notification.show("An error has occurred attempting to import mapping values:" + e.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
 
@@ -312,11 +320,53 @@ public class MappingConfigurationValuesImportWindow extends Window
     {
         for(MappingConfigurationValue mappingConfigurationValue: this.mappingConfigurationValues)
         {
-            this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
+            if(mappingConfigurationValue.getTargetConfigurationValue() != null)
+            {
+                this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
+            }
+
+            if(mappingConfigurationValue.getTargetConfigurationValues() != null && mappingConfigurationValue.getTargetConfigurationValues().size() > 0)
+            {
+                for(ManyToManyTargetConfigurationValue value: mappingConfigurationValue.getTargetConfigurationValues())
+                {
+                    this.mappingConfigurationService.storeManyToManyTargetConfigurationValue(value);
+                }
+            }
+
             this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
         }
 
+        this.mappingConfiguration.setNumberOfMappings(this.getNumberOfMappings(mappingConfiguration.getSourceConfigurationValues()));
+
         this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+    }
+
+    private int getNumberOfMappings(Set<SourceConfigurationValue> values)
+    {
+        int num = 0;
+
+        Set<Long> groupKeys = new HashSet<Long>();
+
+        for(SourceConfigurationValue value: values)
+        {
+            if(value.getSourceConfigGroupId() == null)
+            {
+                num++;
+            }
+            else
+            {
+                groupKeys.add(value.getSourceConfigGroupId());
+            }
+        }
+
+        if(num > 0)
+        {
+            return num;
+        }
+        else
+        {
+            return groupKeys.size();
+        }
     }
 
     /**

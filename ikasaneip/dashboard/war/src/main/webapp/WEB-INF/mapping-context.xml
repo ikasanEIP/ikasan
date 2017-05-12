@@ -115,6 +115,7 @@
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="mappingNavigator"/>
     </bean>
 
     <bean id="newConfigurationTypeWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationTypeWindow" scope="session">

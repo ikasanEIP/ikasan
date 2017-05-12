@@ -46,12 +46,17 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import com.vaadin.navigator.Navigator;
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -109,8 +114,10 @@ public class MappingConfigurationImportWindow extends Window
     private Label uploadLabel = new Label();
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     private MappingConfigurationPanel mappingConfigurationPanel;
-    private List<ParameterName> keyLocationQueries;
+    private List<ParameterName> sourceParameterNames;
+    private List<ParameterName> targetParameterNames;
     private SystemEventService systemEventService;
+    private IkasanUINavigator mappingNavigator;
 
     /**
      * Constructor
@@ -119,15 +126,18 @@ public class MappingConfigurationImportWindow extends Window
      * @param mappingConfigurationConfigurationValuesTable
      * @param mappingConfigurationPanel
      * @param systemEventService
+     * @param mappingNavigator
      */
     public MappingConfigurationImportWindow(MappingConfigurationService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationPanel mappingConfigurationPanel, SystemEventService systemEventService)
+            MappingConfigurationPanel mappingConfigurationPanel, SystemEventService systemEventService,
+            IkasanUINavigator mappingNavigator)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.mappingConfigurationPanel = mappingConfigurationPanel;
         this.systemEventService = systemEventService;
+        this.mappingNavigator = mappingNavigator;
         init();
     }
 
@@ -195,12 +205,14 @@ public class MappingConfigurationImportWindow extends Window
             public void buttonClick(ClickEvent event) {
                 try
                 {
+                    IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                            .getAttribute(DashboardSessionValueConstants.USER);
+
+                    mappingConfiguration.setLastUpdatedBy(authentication.getName());
+
                     saveImportedMappingConfiguration();
                     progressLayout.setVisible(false);
                     upload.setVisible(true);
-                    
-                    IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                        	.getAttribute(DashboardSessionValueConstants.USER);
 
                     systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
                     		"Imported mapping configuration: [Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
@@ -332,10 +344,8 @@ public class MappingConfigurationImportWindow extends Window
 
             this.mappingConfigurationValues = helper.getMappingConfigurationValues(receiver.file.toByteArray(), mappingConfiguration.getIsManyToMany());
 
-            if(!mappingConfiguration.getIsManyToMany())
-            {
-                this.keyLocationQueries = helper.getKeyLocationQueries(receiver.file.toByteArray());
-            }
+            this.sourceParameterNames = helper.getSourceParameterNames(receiver.file.toByteArray());
+            this.targetParameterNames = helper.getTargetParameterNames(receiver.file.toByteArray());
     
             this.uploadLabel.setValue("Importing " + mappingConfigurationValues.size()
                 + " configuration values. Press import to procede.");
@@ -469,7 +479,7 @@ public class MappingConfigurationImportWindow extends Window
                     this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
                 }
 
-                for(ParameterName parameterName: this.keyLocationQueries)
+                for(ParameterName parameterName: this.sourceParameterNames)
                 {
                     parameterName.setMappingConfigurationId(id);
 
@@ -477,7 +487,13 @@ public class MappingConfigurationImportWindow extends Window
                 }
             }
 
-            this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+            ArrayList<ParameterName> parameterNames = new ArrayList<ParameterName>(this.sourceParameterNames);
+            parameterNames.addAll(this.targetParameterNames);
+
+            mappingConfiguration.setNumberOfMappings(this.getNumberOfMappings(mappingConfiguration.getSourceConfigurationValues()));
+
+            this.mappingConfigurationService.addMappingConfiguration(this.mappingConfiguration,
+                    parameterNames);
 
             mappingConfiguration = this.mappingConfigurationService.getMappingConfigurationById(id);
 
@@ -489,12 +505,45 @@ public class MappingConfigurationImportWindow extends Window
                 }
             }
 
+            Navigator navigator = new Navigator(UI.getCurrent(), mappingNavigator.getParentContainer());
+
+            for (IkasanUIView view : mappingNavigator.getIkasanViews())
+            {
+                navigator.addView(view.getPath(), view.getView());
+            }
+
             UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
 
-            this.mappingConfigurationPanel.setMappingConfiguration(this.mappingConfiguration);
-            this.mappingConfigurationPanel.populateMappingConfigurationForm();
+            mappingConfigurationPanel.setMappingConfiguration(mappingConfiguration);
+            mappingConfigurationPanel.populateMappingConfigurationForm();
+        }
+    }
 
-            this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
+    private int getNumberOfMappings(Set<SourceConfigurationValue> values)
+    {
+        int num = 0;
+
+        Set<Long> groupKeys = new HashSet<Long>();
+
+        for(SourceConfigurationValue value: values)
+        {
+            if(value.getSourceConfigGroupId() == null)
+            {
+                num++;
+            }
+            else
+            {
+                groupKeys.add(value.getSourceConfigGroupId());
+            }
+        }
+
+        if(num > 0)
+        {
+            return num;
+        }
+        else
+        {
+            return groupKeys.size();
         }
     }
 

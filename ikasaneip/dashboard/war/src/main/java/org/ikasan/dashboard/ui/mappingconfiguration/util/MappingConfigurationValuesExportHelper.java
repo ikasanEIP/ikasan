@@ -41,13 +41,10 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.util;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.hibernate.mapping.Collection;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
@@ -124,6 +121,8 @@ public class MappingConfigurationValuesExportHelper
 
         List<MappingConfigurationValue> mappingConfigurationValues
             = getMappingConfigurationValues(mappingConfiguration.getSourceConfigurationValues(), mappingConfiguration);
+
+        Collections.sort(mappingConfigurationValues);
 
         for(MappingConfigurationValue mappingConfigurationValue: mappingConfigurationValues)
         {
