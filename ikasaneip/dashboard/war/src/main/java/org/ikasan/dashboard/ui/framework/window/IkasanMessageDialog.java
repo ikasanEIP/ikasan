@@ -95,7 +95,7 @@ public class IkasanMessageDialog extends Window
         messageLabelLayout.setComponentAlignment(messageLabel, Alignment.MIDDLE_CENTER);
 
         layout.addComponent(messageLabelLayout);
-        layout.setComponentAlignment(messageLabel, Alignment.MIDDLE_CENTER);
+        layout.setComponentAlignment(messageLabelLayout, Alignment.MIDDLE_CENTER);
         
         Button okButton = new Button("OK");
         okButton.setStyleName(ValoTheme.BUTTON_SMALL);

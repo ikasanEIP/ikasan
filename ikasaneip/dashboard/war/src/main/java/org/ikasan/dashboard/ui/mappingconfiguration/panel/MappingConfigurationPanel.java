@@ -373,14 +373,8 @@ public class MappingConfigurationPanel extends Panel implements View
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
 
-
-        Panel queryParamsPanel = new Panel();
-        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        queryParamsPanel.setHeight(100, Unit.PIXELS);
-        queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
-        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 5);
-
         vpanel.setSplitPosition(350, Unit.PIXELS);
+        vpanel.setMaxSplitPosition(350, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
@@ -592,10 +586,11 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     protected Layout createTableLayout(boolean buttonsVisible)
     {
-        VerticalLayout tableLayout = new VerticalLayout();
+
 
         HorizontalLayout controlsLayout = new HorizontalLayout();
         controlsLayout.setWidth("100%");
+        controlsLayout.setHeight("30px");
 
         this.addNewRecordButton.setIcon(VaadinIcons.PLUS);
         this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -670,8 +665,18 @@ public class MappingConfigurationPanel extends Panel implements View
         controlsLayout.addComponent(this.exportMappingConfigurationValuesButton);
         controlsLayout.setExpandRatio(this.exportMappingConfigurationValuesButton, 0.04f);
 
-        tableLayout.addComponent(controlsLayout);
-        tableLayout.addComponent(this.mappingConfigurationConfigurationValuesTable);
+        VerticalLayout tableLayout = new VerticalLayout();
+        tableLayout.setSpacing(false);
+        tableLayout.setSizeFull();
+
+
+        VerticalSplitPanel vpanel = new VerticalSplitPanel(controlsLayout
+                , this.mappingConfigurationConfigurationValuesTable);
+        vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
+        vpanel.setSplitPosition(30, Unit.PIXELS);
+        vpanel.setLocked(true);
+
+        tableLayout.addComponent(vpanel);
 
         return tableLayout;
     }

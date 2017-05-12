@@ -10,8 +10,11 @@
         <xs:element ref="targetContext" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="description" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="isManyToMany" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="isFixedParameterListSize" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="numberOfSourceParams" minOccurs="0" maxOccurs="1"/>
-        <xs:element ref="sourceConfigurationValueQueries" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="numberOfTargetParams" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="sourceParameterNames" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="targetParameterNames" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="mappingConfigurationValues" minOccurs="1" maxOccurs="1"/>
       </xs:sequence>
     </xs:complexType>
@@ -23,15 +26,25 @@
   <xs:element name="targetContext" type="xs:string"/>
   <xs:element name="description" type="xs:string"/>
   <xs:element name="isManyToMany" type="xs:boolean"/>
+  <xs:element name="isFixedParameterListSize" type="xs:boolean"/>
   <xs:element name="numberOfSourceParams" type="xs:integer"/>
-  <xs:element name="sourceConfigurationValueQueries">
+  <xs:element name="numberOfTargetParams" type="xs:integer"/>
+  <xs:element name="sourceParameterNames">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="1" maxOccurs="unbounded" ref="sourceConfigurationValueQuery"/>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="sourceParameterName"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="sourceConfigurationValueQuery" type="xs:string"/>
+  <xs:element name="targetParameterNames">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="targetParameterName"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sourceParameterName" type="xs:string"/>
+  <xs:element name="targetParameterName" type="xs:string"/>
   <xs:element name="mappingConfigurationValues">
     <xs:complexType>
       <xs:sequence>
