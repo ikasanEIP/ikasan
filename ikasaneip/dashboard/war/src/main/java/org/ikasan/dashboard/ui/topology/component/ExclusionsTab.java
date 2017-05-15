@@ -275,7 +275,7 @@ public class ExclusionsTab extends TopologyTab
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
 		searchLayout.setSpacing(true);
@@ -363,8 +363,7 @@ public class ExclusionsTab extends TopologyTab
 		GridLayout hErrorTable = new GridLayout();
 		hErrorTable.setWidth("100%");
 		
-		
-		vSplitPanel.setSecondComponent(hErrorTable);
+
 		vSplitPanel.setSplitPosition(310, Unit.PIXELS);
 		
 		GridLayout buttons = new GridLayout(6, 1);
@@ -533,9 +532,13 @@ public class ExclusionsTab extends TopologyTab
 		
 		gl.addComponent(searchResultsSizeLayout);
 		gl.addComponent(hl);
-		
-		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.exclusionsTable);
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gl
+				, this.exclusionsTable);
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
+
+		vSplitPanel.setSecondComponent(vpanel);
 		
 		GridLayout wrapper = new GridLayout(1, 2);
 		wrapper.setRowExpandRatio(0, .01f);

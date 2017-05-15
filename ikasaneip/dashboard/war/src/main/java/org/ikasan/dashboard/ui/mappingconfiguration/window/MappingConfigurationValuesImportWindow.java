@@ -57,10 +57,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurati
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
-import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -318,22 +315,53 @@ public class MappingConfigurationValuesImportWindow extends Window
      */
     protected void saveImportedMappingConfigurationValues() throws MappingConfigurationServiceException
     {
-        for(MappingConfigurationValue mappingConfigurationValue: this.mappingConfigurationValues)
+        if(mappingConfiguration.getIsManyToMany())
         {
-            if(mappingConfigurationValue.getTargetConfigurationValue() != null)
+            for (MappingConfigurationValue mappingConfigurationValue : this.mappingConfigurationValues)
             {
-                this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
-            }
+                Long  sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
 
-            if(mappingConfigurationValue.getTargetConfigurationValues() != null && mappingConfigurationValue.getTargetConfigurationValues().size() > 0)
-            {
+                for (SourceConfigurationValue value : mappingConfigurationValue.getSourceConfigurationValues())
+                {
+                    logger.debug("Source value: " + value);
+                    value.setMappingConfigurationId(mappingConfiguration.getId());
+                    value.setSourceConfigGroupId(sourceConfigurationGroupId);
+                }
+
                 for(ManyToManyTargetConfigurationValue value: mappingConfigurationValue.getTargetConfigurationValues())
                 {
+                    value.setGroupId(sourceConfigurationGroupId);
+
                     this.mappingConfigurationService.storeManyToManyTargetConfigurationValue(value);
                 }
-            }
 
-            this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+                this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+
+
+            }
+        }
+        else
+        {
+            for (MappingConfigurationValue mappingConfigurationValue : this.mappingConfigurationValues)
+            {
+                this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
+
+                Long sourceConfigurationGroupId = null;
+
+                if (this.mappingConfiguration.getNumberOfParams() > 1)
+                {
+                    sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
+                }
+
+                for (SourceConfigurationValue value : mappingConfigurationValue.getSourceConfigurationValues())
+                {
+                    logger.debug("Source value: " + value);
+                    value.setMappingConfigurationId(mappingConfiguration.getId());
+                    value.setSourceConfigGroupId(sourceConfigurationGroupId);
+                }
+
+                this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+            }
         }
 
         this.mappingConfiguration.setNumberOfMappings(this.getNumberOfMappings(mappingConfiguration.getSourceConfigurationValues()));

@@ -162,8 +162,6 @@ public class MappingConfigurationDocumentHelper
         mappingConfiguration.setIsManyToMany((isManyToMany.equals("true")) ? true : false);
         mappingConfiguration.setConstrainParameterListSizes((isFixedParameterListSize.equals("true")) ? true : false);
 
-        logger.info("Setting is many to many to: " + isManyToMany);
-
         mappingConfiguration.setNumberOfParams(new Integer(numberOfParams));
         mappingConfiguration.setNumTargetValues(new Integer(numberOfTargetParams));
 
