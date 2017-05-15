@@ -672,7 +672,6 @@ public class MappingConfigurationPanel extends Panel implements View
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(controlsLayout
                 , this.mappingConfigurationConfigurationValuesTable);
-        vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
         vpanel.setSplitPosition(30, Unit.PIXELS);
         vpanel.setLocked(true);
 
