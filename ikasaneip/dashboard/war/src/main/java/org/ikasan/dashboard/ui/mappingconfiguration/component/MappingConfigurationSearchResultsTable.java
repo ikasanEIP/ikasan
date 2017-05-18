@@ -79,6 +79,7 @@ public class MappingConfigurationSearchResultsTable extends Table
         addContainerProperty("Last Updated By", String.class,  null);
         addContainerProperty("Last Updated", String.class,  null);
         addContainerProperty("Delete", Button.class,  null);
+        addContainerProperty("Download", Button.class,  null);
 
         setColumnExpandRatio("Client", .1f);
         setColumnExpandRatio("Type", .15f);
@@ -88,6 +89,7 @@ public class MappingConfigurationSearchResultsTable extends Table
         setColumnExpandRatio("Last Updated By", .1f);
         setColumnExpandRatio("Last Updated", .10f);
         setColumnExpandRatio("Delete", .05f);
+        setColumnExpandRatio("Download", .05f);
         
         this.addItemClickListener(listener);
         

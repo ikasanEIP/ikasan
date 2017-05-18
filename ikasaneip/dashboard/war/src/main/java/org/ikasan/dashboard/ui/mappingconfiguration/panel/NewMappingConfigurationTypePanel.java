@@ -45,18 +45,6 @@ public class NewMappingConfigurationTypePanel extends Panel
         optionGroup.setItemCaption(TYPE.ONE_TO_ONE , "One to one" );
         optionGroup.setValue(TYPE.ONE_TO_ONE);  // Specify which radio button is selected by default.
 
-        optionGroup.addValueChangeListener( new Property.ValueChangeListener()
-        {
-
-            @Override
-            public void valueChange ( Property.ValueChangeEvent event )
-            {
-                Notification.show( "Radio Button" ,
-                        "You chose: " + event.getProperty().getValue().toString() ,
-                        Notification.Type.HUMANIZED_MESSAGE );
-            }
-        } );
-
         layout.addComponent(optionGroup, 0, 1);
         layout.setComponentAlignment(optionGroup, Alignment.MIDDLE_CENTER);
         

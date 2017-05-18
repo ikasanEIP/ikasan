@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewClientFieldGroup;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
@@ -75,7 +75,7 @@ public class NewClientWindow extends Window implements View
     private static final long serialVersionUID = -5772122320534411604L;
 
     private RefreshGroup refreshGroup;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SaveRequiredMonitor saveRequiredMonitor;
     private final TextField nameField = new TextField();
     private SystemEventService systemEventService;
@@ -87,8 +87,8 @@ public class NewClientWindow extends Window implements View
      * @param refreshGroup
      * @param saveRequiredMonitor
      */
-    public NewClientWindow(MappingConfigurationService mappingConfigurationService, RefreshGroup refreshGroup,
-            SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
+    public NewClientWindow(MappingManagementService mappingConfigurationService, RefreshGroup refreshGroup,
+                           SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
     {
         super();
         this.refreshGroup = refreshGroup;

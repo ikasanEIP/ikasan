@@ -348,6 +348,8 @@
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="mappingConfigurationExportHelper"/>
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
 
     <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchResultTableItemClickListener" scope="session">

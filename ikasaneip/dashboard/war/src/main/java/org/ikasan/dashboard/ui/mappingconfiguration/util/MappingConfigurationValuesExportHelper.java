@@ -44,14 +44,12 @@ import java.text.DateFormat;
 import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.hibernate.mapping.Collection;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
-import org.springframework.security.access.method.P;
+import org.ikasan.mapping.service.MappingManagementService;
 
  /**
  * @author Ikasan Development Team
@@ -59,7 +57,7 @@ import org.springframework.security.access.method.P;
  */
 public class MappingConfigurationValuesExportHelper
 {
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
 
     private static final String XML_TAG = "<?xml version=\"1.0\"?>";
     private static final String START_TAG = "<mappingConfigurationValues xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
@@ -86,7 +84,7 @@ public class MappingConfigurationValuesExportHelper
      *
      * @param mappingConfigurationService
      */
-    public MappingConfigurationValuesExportHelper(MappingConfigurationService mappingConfigurationService)
+    public MappingConfigurationValuesExportHelper(MappingManagementService mappingConfigurationService)
     {
         super();
         this.mappingConfigurationService = mappingConfigurationService;

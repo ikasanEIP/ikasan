@@ -40,9 +40,15 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
+import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -55,11 +61,11 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurati
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
+import org.ikasan.mapping.model.*;
+import org.ikasan.mapping.service.MappingManagementService;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -84,11 +90,13 @@ public class MappingSearchButtonClickListener implements ClickListener
     private TypeComboBox typeComboBox;
     private SourceContextComboBox sourceContextComboBox;
     private TargetContextComboBox targetContextComboBox;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private MappingConfigurationSearchResultsTable searchResultsTable;
-    protected SaveRequiredMonitor saveRequiredMonitor;
+    private SaveRequiredMonitor saveRequiredMonitor;
     private VisibilityGroup visibilityGroup;
     private SystemEventService systemEventService;
+    private MappingConfigurationExportHelper mappingConfigurationExportHelper;
+    private PlatformConfigurationService platformConfigurationService;
 
     /**
      * Constructor
@@ -101,10 +109,11 @@ public class MappingSearchButtonClickListener implements ClickListener
      * @param searchResultsTable
      * @param saveRequiredMonitor
      */
-    public MappingSearchButtonClickListener(MappingConfigurationService mappingConfigurationService,
+    public MappingSearchButtonClickListener(MappingManagementService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
             TargetContextComboBox targetContextComboBox, MappingConfigurationSearchResultsTable searchResultsTable,
-            SaveRequiredMonitor saveRequiredMonitor, VisibilityGroup visibilityGroup, SystemEventService systemEventService)
+            SaveRequiredMonitor saveRequiredMonitor, VisibilityGroup visibilityGroup, SystemEventService systemEventService,
+            MappingConfigurationExportHelper mappingConfigurationExportHelper, PlatformConfigurationService platformConfigurationService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.clientComboBox = clientComboBox;
@@ -115,6 +124,8 @@ public class MappingSearchButtonClickListener implements ClickListener
         this.saveRequiredMonitor = saveRequiredMonitor;
         this.visibilityGroup = visibilityGroup;
         this.systemEventService = systemEventService;
+        this.mappingConfigurationExportHelper = mappingConfigurationExportHelper;
+        this.platformConfigurationService = platformConfigurationService;
     }
 
     /* (non-Javadoc)
@@ -154,7 +165,7 @@ public class MappingSearchButtonClickListener implements ClickListener
 
         this.searchResultsTable.removeAllItems();
 
-        for(MappingConfigurationLite mappingConfiguration : mappingConfigurations)
+        for(final MappingConfigurationLite mappingConfiguration : mappingConfigurations)
         {
             final DeleteMappingConfigurationAction action = new DeleteMappingConfigurationAction( mappingConfiguration.getId()
                 , this.searchResultsTable, this.mappingConfigurationService, this.systemEventService);
@@ -189,12 +200,123 @@ public class MappingSearchButtonClickListener implements ClickListener
                 lastUpdatedBy = mappingConfiguration.getLastUpdatedBy();
             }
 
+            final Button exportMappingConfigurationButton = new Button();
+            FileDownloader fd = new FileDownloader(getMappingConfigurationExportStream(mappingConfiguration));
+            fd.extend(exportMappingConfigurationButton);
+
+            exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
+            exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            exportMappingConfigurationButton.setDescription("Export the current mapping configuration");
+            exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
             this.visibilityGroup.registerComponent(SecurityConstants.ALL_AUTHORITY, deleteButton);
             this.searchResultsTable.addItem(new Object[] {mappingConfiguration.getConfigurationServiceClient().getName(),
                     mappingConfiguration.getConfigurationType().getName(), mappingConfiguration.getSourceContext().getName(),
                     mappingConfiguration.getTargetContext().getName(), numberOfMappings
-                    , lastUpdatedBy, timestamp, deleteButton}, mappingConfiguration.getId());
+                    , lastUpdatedBy, timestamp, deleteButton, exportMappingConfigurationButton}, mappingConfiguration.getId());
         }
         
+    }
+
+    /**
+     * Helper method to get the stream associated with the export of the file.
+     *
+     * @return the StreamResource associated with the export.
+     */
+    private StreamResource getMappingConfigurationExportStream(final MappingConfigurationLite lite)
+    {
+        StreamResource.StreamSource source = new StreamResource.StreamSource()
+        {
+
+            public InputStream getStream() {
+                ByteArrayOutputStream stream = null;
+                try
+                {
+                    logger.info("downloading mapping configuration: " + lite.getId());
+                    final MappingConfiguration mappingConfiguration = mappingConfigurationService.getMappingConfigurationById(lite.getId());
+                    stream = getMappingConfigurationExport(mappingConfiguration);
+                }
+                catch (IOException e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+                InputStream input = new ByteArrayInputStream(stream.toByteArray());
+                return input;
+
+            }
+        };
+
+        StringBuffer fileName = new StringBuffer();
+        fileName.append(lite.getConfigurationServiceClient().getName()).append("_");
+        fileName.append(lite.getConfigurationType().getName()).append("_");
+        fileName.append(lite.getSourceContext().getName()).append("_");
+        fileName.append(lite.getTargetContext().getName()).append("_mappingExport.xml");
+
+        StreamResource resource = new StreamResource ( source, fileName.toString());
+        return resource;
+    }
+
+    /**
+     * Helper method to get the ByteArrayOutputStream associated with the export.
+     *
+     * @return
+     * @throws IOException
+     */
+    private ByteArrayOutputStream getMappingConfigurationExport(MappingConfiguration mappingConfiguration) throws IOException
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        String schemaLocation = (String)this.platformConfigurationService.getConfigurationValue("mappingExportSchemaLocation");
+
+        if(schemaLocation == null || schemaLocation.length() == 0)
+        {
+            throw new RuntimeException("Cannot resolve the platform configuration mappingExportSchemaLocation!");
+        }
+
+        logger.debug("Resolved schemaLocation " + schemaLocation);
+
+
+        String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(mappingConfiguration,
+                loadSourceParameterNames(mappingConfiguration), loadTargetParameterNames(mappingConfiguration), schemaLocation);
+
+        out.write(exportXml.getBytes());
+
+        return out;
+    }
+
+    private ArrayList<ParameterName> loadSourceParameterNames(MappingConfiguration mappingConfiguration)
+    {
+        List<ParameterName> parameterNames = this.mappingConfigurationService.getParameterNamesByMappingConfigurationId
+                (mappingConfiguration.getId());
+
+        ArrayList<ParameterName> sourceContextParameterNames = new ArrayList<ParameterName>();
+
+        for(ParameterName parameterName: parameterNames)
+        {
+            if(parameterName.getContext().equals(ParameterName.SOURCE_CONTEXT))
+            {
+                sourceContextParameterNames.add(parameterName);
+            }
+        }
+
+        return sourceContextParameterNames;
+    }
+
+    private ArrayList<ParameterName> loadTargetParameterNames(MappingConfiguration mappingConfiguration)
+    {
+        List<ParameterName> parameterNames = this.mappingConfigurationService.getParameterNamesByMappingConfigurationId
+                (mappingConfiguration.getId());
+
+        ArrayList<ParameterName> targetContextParameterNames = new ArrayList<ParameterName>();
+
+        for(ParameterName parameterName: parameterNames)
+        {
+            if(parameterName.getContext().equals(ParameterName.TARGET_CONTEXT))
+            {
+                targetContextParameterNames.add(parameterName);
+            }
+        }
+
+        return targetContextParameterNames;
     }
 }

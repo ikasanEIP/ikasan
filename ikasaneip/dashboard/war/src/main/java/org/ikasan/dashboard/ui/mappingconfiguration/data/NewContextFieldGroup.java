@@ -48,7 +48,7 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -73,7 +73,7 @@ public class NewContextFieldGroup extends FieldGroup
     public static final String DESCRIPTION = "description";
 
     private RefreshGroup refreshGroup;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SystemEventService systemEventService;
 
     /**
@@ -83,7 +83,7 @@ public class NewContextFieldGroup extends FieldGroup
      * @param mappingConfigurationService
      */
     public NewContextFieldGroup(RefreshGroup refreshGroup
-            , MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
+            , MappingManagementService mappingConfigurationService, SystemEventService systemEventService)
     {
         super();
         this.refreshGroup = refreshGroup;
@@ -99,7 +99,7 @@ public class NewContextFieldGroup extends FieldGroup
      * @param mappingConfigurationService
      */
     public NewContextFieldGroup(Item itemDataSource, RefreshGroup refreshGroup
-            , MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
+            , MappingManagementService mappingConfigurationService, SystemEventService systemEventService)
     {
         super(itemDataSource);
         this.refreshGroup = refreshGroup;

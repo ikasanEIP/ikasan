@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.group.Refreshable;
 import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
@@ -58,7 +58,7 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
 {
     private static final long serialVersionUID = 6959825126925569738L;
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private String clientName = null;
     private String type = null;
     private String sourceContext = null;
@@ -69,7 +69,7 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
      * 
      * @param mappingConfigurationService
      */
-    public TargetContextComboBox(MappingConfigurationService mappingConfigurationService, boolean isFocusRefreshable)
+    public TargetContextComboBox(MappingManagementService mappingConfigurationService, boolean isFocusRefreshable)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.isFocusRefreshable = isFocusRefreshable;

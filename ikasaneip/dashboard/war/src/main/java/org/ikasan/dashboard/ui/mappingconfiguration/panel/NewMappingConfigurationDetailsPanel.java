@@ -4,10 +4,8 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.Sizeable;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
@@ -16,8 +14,7 @@ import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.service.MappingConfigurationService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.mapping.service.MappingManagementService;
 
 /**
  * Created by Ikasan Development Team on 04/04/2017.
@@ -32,7 +29,7 @@ public class NewMappingConfigurationDetailsPanel extends Panel
     protected TargetContextComboBox targetContextComboBox;
     protected TextArea descriptionTextArea;
 
-    public NewMappingConfigurationDetailsPanel(MappingConfigurationService mappingConfigurationService,
+    public NewMappingConfigurationDetailsPanel(MappingManagementService mappingConfigurationService,
                                                MappingConfiguration mappingConfiguration)
     {
         this.mappingConfiguration = mappingConfiguration;
