@@ -45,7 +45,7 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.*;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.ui.Button;
@@ -84,7 +84,7 @@ public class NewActions
     protected NewClientWindow newClientWindow;
     protected NewMappingConfigurationContextWindow newMappingConfigurationContextWindow;
     protected NewMappingConfigurationTypeWindow newMappingConfigurationTypeWindow;
-    protected MappingConfigurationService mappingConfigurationService;
+    protected MappingManagementService mappingConfigurationService;
 
     /**
      * Constructor
@@ -296,7 +296,7 @@ public class NewActions
 		return actionsLabel;
 	}
 
-    public void setMappingConfigurationService(MappingConfigurationService mappingConfigurationService)
+    public void setMappingConfigurationService(MappingManagementService mappingConfigurationService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
     }

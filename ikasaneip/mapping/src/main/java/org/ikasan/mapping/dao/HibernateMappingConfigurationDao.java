@@ -51,6 +51,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.ikasan.mapping.dao.constants.MappingConfigurationDaoConstants;
 import org.ikasan.mapping.model.*;
+import org.ikasan.spec.mapping.NamedResult;
+import org.ikasan.spec.mapping.QueryParameter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
@@ -142,7 +144,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     @Override
-    public String getTargetConfigurationValueWithIgnoresWithOrdinality(final String clientName, final String configurationType, final String sourceSystem, final String targetSystem, final List<QueryParameterImpl> sourceSystemValues, final int numParams)
+    public String getTargetConfigurationValueWithIgnoresWithOrdinality(final String clientName, final String configurationType, final String sourceSystem, final String targetSystem, final List<QueryParameter> sourceSystemValues, final int numParams)
     {
         // We don't want to search on an empty string if we have a mapping with more than 1 source value
         if(sourceSystemValues == null || (sourceSystemValues.size() == 1 && numParams > 1 && sourceSystemValues.get(0).getValue().equals("")))
@@ -165,7 +167,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.SIZE, new Long(sourceSystemValues.size()));
 
                 int i=0;
-                for(QueryParameterImpl sourceSystemValue: sourceSystemValues)
+                for(QueryParameter sourceSystemValue: sourceSystemValues)
                 {
                     if(sourceSystemValue.getValue() == null || sourceSystemValue.getValue().equals(""))
                     {
@@ -188,7 +190,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                     StringBuffer sourceSystemValuesSB = new StringBuffer();
 
                     sourceSystemValuesSB.append("[SourceSystemValues = ");
-                    for(QueryParameterImpl sourceSystemValue: sourceSystemValues)
+                    for(QueryParameter sourceSystemValue: sourceSystemValues)
                     {
                         sourceSystemValuesSB.append(sourceSystemValue).append(" ");
                     }
@@ -294,7 +296,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
     @Override
-    public String getTargetConfigurationValueWithOrdinality(final String clientName, final String configurationType, final String sourceContext, final String targetContext, final List<QueryParameterImpl> sourceSystemValues)
+    public String getTargetConfigurationValueWithOrdinality(final String clientName, final String configurationType, final String sourceContext, final String targetContext, final List<QueryParameter> sourceSystemValues)
     {
         return (String)this.getHibernateTemplate().execute(new HibernateCallback()
         {
@@ -309,7 +311,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
 
                 int i=0;
-                for(QueryParameterImpl sourceSystemValue: sourceSystemValues)
+                for(QueryParameter sourceSystemValue: sourceSystemValues)
                 {
                     query.setParameter(MappingConfigurationDaoConstants.SOURCE_SYSTEM_VALUE + i, sourceSystemValue.getValue());
                     query.setParameter(MappingConfigurationDaoConstants.SOURCE_SYSTEM_VALUE_NAME + i, sourceSystemValue.getName());
@@ -399,7 +401,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 Query query = session.createQuery(MappingConfigurationDaoConstants.MANY_TO_MAPPING_CONFIGURATION_QUERY);
                 query.setParameter(MappingConfigurationDaoConstants.GROUPING_ID, groupingIdParam);
 
-                List<String> results = (List<String>)query.list();
+                List<ManyToManyTargetConfigurationValue> results = (List<ManyToManyTargetConfigurationValue>)query.list();
 
                 if(results.size() == 0)
                 {
@@ -407,20 +409,27 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 }
                 else
                 {
-                    return results;
+                    ArrayList<String> resultList = new ArrayList<String>();
+
+                    for(ManyToManyTargetConfigurationValue result: results)
+                    {
+                        resultList.add(result.getTargetSystemValue());
+                    }
+
+                    return resultList;
                 }
             }
         });
     }
 
     @Override
-    public List<String> getTargetConfigurationValuesWithOrdinality(String clientName, String configurationType, String sourceContext, String targetContext, List<QueryParameterImpl> sourceSystemValues)
+    public List<NamedResult> getTargetConfigurationValuesWithOrdinality(String clientName, String configurationType, String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues)
     {
         MappingConfiguration mappingConfiguration = this.getMappingConfiguration(clientName, configurationType, sourceContext, targetContext);
 
         if(mappingConfiguration == null)
         {
-            return new ArrayList<String>();
+            return new ArrayList<NamedResult>();
         }
 
         final List<SourceConfigurationValue> manyToManySourceConfigurationValues
@@ -428,7 +437,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
         if(manyToManySourceConfigurationValues.size() == 0)
         {
-            return new ArrayList<String>();
+            return new ArrayList<NamedResult>();
         }
 
         Long groupingId = -1l;
@@ -464,12 +473,12 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
 
         if(groupingId == -1l)
         {
-            return new ArrayList<String>();
+            return new ArrayList<NamedResult>();
         }
 
         final Long groupingIdParam = groupingId;
 
-        return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
+        return (List<NamedResult>)this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
@@ -477,7 +486,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 Query query = session.createQuery(MappingConfigurationDaoConstants.MANY_TO_MAPPING_CONFIGURATION_QUERY);
                 query.setParameter(MappingConfigurationDaoConstants.GROUPING_ID, groupingIdParam);
 
-                List<String> results = (List<String>)query.list();
+                List<ManyToManyTargetConfigurationValue> results = (List<ManyToManyTargetConfigurationValue>)query.list();
 
                 if(results.size() == 0)
                 {
@@ -485,7 +494,15 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 }
                 else
                 {
-                    return results;
+                    ArrayList<NamedResult> resultList = new ArrayList<NamedResult>();
+
+                    for(ManyToManyTargetConfigurationValue result: results)
+                    {
+                        NamedResultImpl namedResult = new NamedResultImpl(result.getName(), result.getTargetSystemValue());
+                        resultList.add(namedResult);
+                    }
+
+                    return resultList;
                 }
             }
         });
@@ -517,13 +534,14 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
      * @param sourceSystemValues
      * @return
      */
-    private String buildQueryStringWithNamedParams(List<QueryParameterImpl> sourceSystemValues)
+    private String buildQueryStringWithNamedParams(List<QueryParameter> sourceSystemValues)
     {
         StringBuffer query = new StringBuffer(MappingConfigurationDaoConstants.MAPPING_CONFIGURATION_QUERY);
 
         for(int i=0; i<sourceSystemValues.size(); i++)
         {
-            query.append(MappingConfigurationDaoConstants.NARROW_SOURCE_SYSTEM_WITH_NAME_FRAGMENT.replaceAll("index", Integer.toString(i)));
+            query.append(MappingConfigurationDaoConstants.NARROW_SOURCE_SYSTEM_WITH_NAME_FRAGMENT
+                    .replaceAll("index", Integer.toString(i)));
         }
 
         return query.toString();
@@ -569,7 +587,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
      * @param sourceSystemValues
      * @return
      */
-    private String buildWithIgnoresQueryStringWithNamedParams(List<QueryParameterImpl> sourceSystemValues)
+    private String buildWithIgnoresQueryStringWithNamedParams(List<QueryParameter> sourceSystemValues)
     {
         StringBuffer query = new StringBuffer(MappingConfigurationDaoConstants.MAPPING_CONFIGURATION_QUERY);
 
@@ -686,14 +704,14 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
     }
 
 
-    protected List<SourceConfigurationValue> getSourceConfigurationValuesWithName(Long mappingConfigurationId, List<QueryParameterImpl> values)
+    protected List<SourceConfigurationValue> getSourceConfigurationValuesWithName(Long mappingConfigurationId, List<QueryParameter> values)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(SourceConfigurationValue.class);
         criteria.add(Restrictions.eq("mappingConfigurationId", mappingConfigurationId));
 
         Disjunction or = Restrictions.disjunction();
 
-        for(QueryParameterImpl param: values)
+        for(QueryParameter param: values)
         {
             Conjunction and = Restrictions.conjunction();
 

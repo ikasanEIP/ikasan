@@ -45,11 +45,10 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
-import org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationWindow;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -69,7 +68,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     private TypeComboBox typeComboBox;
     private SourceContextComboBox sourceContextComboBox;
     private TargetContextComboBox targetContextComboBox;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private ClickListener searchButtonClickListener;
     private NewActions newActions;
 
@@ -83,7 +82,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
      * @param targetContextComboBox
      * @param searchButtonClickListener
      */
-    public MappingConfigurationSearchPanel(MappingConfigurationService mappingConfigurationService,
+    public MappingConfigurationSearchPanel(MappingManagementService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
             TargetContextComboBox targetContextComboBox, ClickListener searchButtonClickListener, NewActions newActions)
     {

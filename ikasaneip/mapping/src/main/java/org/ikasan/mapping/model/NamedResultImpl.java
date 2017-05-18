@@ -1,16 +1,16 @@
 package org.ikasan.mapping.model;
 
-import org.ikasan.spec.mapping.QueryParameter;
+import org.ikasan.spec.mapping.NamedResult;
 
 /**
- * Created by Ikasan Development Team on 02/04/2017.
+ * Created by stewmi on 16/05/2017.
  */
-public class QueryParameterImpl implements QueryParameter
+public class NamedResultImpl implements NamedResult
 {
     private String name;
     private String value;
 
-    public QueryParameterImpl(String name, String value)
+    public NamedResultImpl(String name, String value)
     {
         this.name = name;
         this.value = value;
@@ -21,28 +21,15 @@ public class QueryParameterImpl implements QueryParameter
         return name;
     }
 
-
     public String getValue()
     {
         return value;
     }
 
     @Override
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    @Override
-    public void setValue(String value)
-    {
-        this.value = value;
-    }
-
-    @Override
     public String toString()
     {
-        return "QueryParameter{" +
+        return "NamedResultImpl{" +
                 "name='" + name + '\'' +
                 ", value='" + value + '\'' +
                 '}';

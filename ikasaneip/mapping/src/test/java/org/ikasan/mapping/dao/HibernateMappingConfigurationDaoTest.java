@@ -48,6 +48,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.ikasan.mapping.model.*;
+import org.ikasan.spec.mapping.QueryParameter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -511,14 +512,10 @@ public class HibernateMappingConfigurationDaoTest
     @DirtiesContext
     public void test_success_2_paramater_mapping_with_name()
     {
-        List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
-        QueryParameterImpl param1 = new QueryParameterImpl();
-        param1.setName("name1");
-        param1.setValue("BARX");
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameterImpl param1 = new QueryParameterImpl("name1", "BARX");
         sourceSystemValues.add(param1);
-        QueryParameterImpl param2 = new QueryParameterImpl();
-        param2.setName("name2");
-        param2.setValue("TRSY");
+        QueryParameterImpl param2 = new QueryParameterImpl("name2", "TRSY");
         sourceSystemValues.add(param2);
 
         String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
@@ -531,14 +528,10 @@ public class HibernateMappingConfigurationDaoTest
     @DirtiesContext
     public void test_success_2_paramater_mapping_with_name_not_correlating()
     {
-        List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
-        QueryParameterImpl param1 = new QueryParameterImpl();
-        param1.setName("name2");
-        param1.setValue("BARX");
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameterImpl param1 = new QueryParameterImpl("name2", "BARX");
         sourceSystemValues.add(param1);
-        QueryParameterImpl param2 = new QueryParameterImpl();
-        param2.setName("name1");
-        param2.setValue("TRSY");
+        QueryParameterImpl param2 = new QueryParameterImpl("name1", "TRSY");
         sourceSystemValues.add(param2);
 
         String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",

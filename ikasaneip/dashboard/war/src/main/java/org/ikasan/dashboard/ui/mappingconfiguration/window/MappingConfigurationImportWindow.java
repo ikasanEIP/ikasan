@@ -67,8 +67,9 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationCon
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
 import org.ikasan.mapping.model.*;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.mapping.util.MappingConfigurationValidator;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -105,7 +106,7 @@ public class MappingConfigurationImportWindow extends Window
 
     private Logger logger = Logger.getLogger(MappingConfigurationImportWindow.class);
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;
     private List<MappingConfigurationValue> mappingConfigurationValues;
 
@@ -128,7 +129,7 @@ public class MappingConfigurationImportWindow extends Window
      * @param systemEventService
      * @param mappingNavigator
      */
-    public MappingConfigurationImportWindow(MappingConfigurationService mappingConfigurationService,
+    public MappingConfigurationImportWindow(MappingManagementService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
             MappingConfigurationPanel mappingConfigurationPanel, SystemEventService systemEventService,
             IkasanUINavigator mappingNavigator)
@@ -422,7 +423,7 @@ public class MappingConfigurationImportWindow extends Window
             }
             catch(Exception e)
             {
-                Notification.show("An error has occurred imporint a mapping configuration!\n",
+                Notification.show("An error has occurred import a mapping configuration!\n",
                         " It appears that the mapping configuration you are importing already exists.",
                         Notification.Type.ERROR_MESSAGE);
 
@@ -478,13 +479,20 @@ public class MappingConfigurationImportWindow extends Window
 
                     this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
                 }
+            }
 
-                for(ParameterName parameterName: this.sourceParameterNames)
-                {
-                    parameterName.setMappingConfigurationId(id);
+            MappingConfigurationValidator mappingConfigurationValidator = new MappingConfigurationValidator();
 
-                    this.mappingConfigurationService.saveParameterName(parameterName);
-                }
+            if(mappingConfigurationValidator.validate(mappingConfiguration) == false)
+            {
+                Notification.show("An error has occurred importing a mapping! Please rectify.\r\n\r\n" +
+                        "The following source system values are duplicated. This has the effect of calls to the mapping " +
+                        "service resolving multiple results. \r\n\r\n"
+                        + mappingConfigurationValidator.getErrorMessage(), Notification.Type.ERROR_MESSAGE);
+
+                this.mappingConfigurationService.deleteMappingConfiguration(mappingConfiguration);
+
+                return;
             }
 
             ArrayList<ParameterName> parameterNames = new ArrayList<ParameterName>(this.sourceParameterNames);
@@ -545,71 +553,5 @@ public class MappingConfigurationImportWindow extends Window
         {
             return groupKeys.size();
         }
-    }
-
-    /**
-     * Helper method to return a composite mapping configuration value.
-     * 
-     * @param mappingConfigurationValue
-     * @return
-     */
-    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue)
-    {
-        TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
-                (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
-
-        ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
-            .getElementsByTagName("sourceConfigurationValue"));
-
-        for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
-        {
-            logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
-            sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
-            sourceConfigurationValue.setMappingConfigurationId(this.mappingConfiguration.getId());
-        }
-
-        return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
-    }
-
-    /**
-     * Gets a list of source configuration values from an XML node list.
-     * @param sourceConfigurationValues
-     * @return
-     */
-    protected ArrayList<SourceConfigurationValue> getSourceConfigurationValues(NodeList sourceConfigurationValues)
-    {
-        ArrayList<SourceConfigurationValue> returnValue = new ArrayList<SourceConfigurationValue>();
-
-        Long sourceConfigurationGroupId = null;
-        
-        if(this.mappingConfiguration.getNumberOfParams() > 1)
-        {
-            sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
-        }
-
-        for(int i=0; i<sourceConfigurationValues.getLength(); i++)
-        {
-            logger.debug("Source value: " + sourceConfigurationValues.item(i).getTextContent());
-            SourceConfigurationValue value = new SourceConfigurationValue();
-            value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
-            value.setSourceConfigGroupId(sourceConfigurationGroupId);
-
-            returnValue.add(value);
-        }
-
-        return returnValue;
-    }
-
-    /**
-     * Gets a target configuration value from an XML node.
-     * @param targetConfigurationValue
-     * @return
-     */
-    protected TargetConfigurationValue getTargetConfigurationValue(Node targetConfigurationValue)
-    {
-        logger.debug("Target value: " + targetConfigurationValue.getTextContent());
-        TargetConfigurationValue value = new TargetConfigurationValue();
-        value.setTargetSystemValue(targetConfigurationValue.getTextContent());
-        return value;
     }
 }

@@ -52,7 +52,7 @@ import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.*;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -78,7 +78,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     /** Logger instance */
     private static Logger logger = Logger.getLogger(MappingConfigurationConfigurationValuesTable.class);
     
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;
     private IndexedContainer container;
     private VisibilityGroup visibilityGroup;
@@ -88,13 +88,15 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     protected List<ParameterName> sourceContextParameterNames;
     protected List<ParameterName> targetContextParameterNames;
 
+    private ArrayList<Component> neverToBeEdited = null;
+
     /**
      * Constructor
      * 
      * @param mappingConfigurationService
      * @param visibilityGroup
      */
-    public MappingConfigurationConfigurationValuesTable(MappingConfigurationService mappingConfigurationService,
+    public MappingConfigurationConfigurationValuesTable(MappingManagementService mappingConfigurationService,
             VisibilityGroup visibilityGroup, SystemEventService systemEventService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
@@ -167,7 +169,11 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     {
                         Component component = ((HorizontalLayout) layout.getComponent(i)).getComponent(j);
 
-                        if(component instanceof TextField)
+                        if (this.neverToBeEdited.contains(component))
+                        {
+                            continue;
+                        }
+                        else if(component instanceof TextField)
                         {
                             component.setReadOnly(!editable);
                         }
@@ -194,7 +200,11 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     {
                         Component component = ((HorizontalLayout) layout.getComponent(i)).getComponent(j);
 
-                        if(component instanceof TextField)
+                        if (this.neverToBeEdited.contains(component))
+                        {
+                            continue;
+                        }
+                        else if(component instanceof TextField)
                         {
                             component.setReadOnly(!editable);
                         }
@@ -333,6 +343,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             {
                 nameTextField.setValue(this.sourceContextParameterNames.get(i).getName());
                 nameTextField.setReadOnly(true);
+                neverToBeEdited.add(nameTextField);
                 hl.addComponent(nameTextField);
             }
             hl.addComponent(tf);
@@ -447,6 +458,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 {
                     nameTextField.setValue(this.targetContextParameterNames.get(i).getName());
                     nameTextField.setReadOnly(true);
+                    neverToBeEdited.add(nameTextField);
                     hl.addComponent(nameTextField);
                 }
                 hl.addComponent(tf);
@@ -592,6 +604,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
      */
     public void populateTable(final MappingConfiguration mappingConfiguration)
     {
+        neverToBeEdited = new ArrayList<Component>();
         this.mappingConfiguration = mappingConfiguration;
         this.loadParameterNames();
         manyToManyTargetConfigurationValues = new ArrayList<ManyToManyTargetConfigurationValue>();
@@ -649,6 +662,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     nameTextField.setWidth(300, Unit.PIXELS);
 
                     nameTextField.setReadOnly(true);
+
+                    neverToBeEdited.add(nameTextField);
 
                     if (mappingConfiguration.getIsManyToMany())
                     {
@@ -770,6 +785,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             nameTextField2.setWidth(300, Unit.PIXELS);
 
                             nameTextField2.setReadOnly(true);
+
+                            neverToBeEdited.add(nameTextField2);
 
 
                             usedSourceConfigurationValues.add(partnerSourceConfigurationValue);
@@ -938,6 +955,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
                                 tvf.setReadOnly(true);
                                 tvf.setWidth(300, Unit.PIXELS);
+
+                                neverToBeEdited.add(nameTf);
 
                                 if (!buttonAdded)
                                 {

@@ -48,22 +48,12 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <bean id="keyLocationQueryProcessorFactory" class="org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory">
+    <bean id="xaMappingService" class="org.ikasan.mapping.service.MappingServiceImpl">
         <constructor-arg ref="xaMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationProcessorMap"/>
     </bean>
 
-    <util:map id="keyLocationProcessorMap">
-        <entry key="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor" 
-            value-ref="xpathKeyLocationQueryProcessor"/>
-    </util:map>
-
-    <bean id="xpathKeyLocationQueryProcessor" 
-        class="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"/>
-
-    <bean id="xaMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
+    <bean id="xaMappingManagementService" class="org.ikasan.mapping.service.MappingManagementServiceImpl">
         <constructor-arg ref="xaMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="xaMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -90,9 +80,12 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
-    <bean id="localTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
+    <bean id="localTxMappingService" class="org.ikasan.mapping.service.MappingServiceImpl">
         <constructor-arg ref="localTxMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
+    </bean>
+
+    <bean id="localTxMappingManagementService" class="org.ikasan.mapping.service.MappingManagementServiceImpl">
+        <constructor-arg ref="localTxMappingConfigurationDao"/>
     </bean>
 
     <bean id="localTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">

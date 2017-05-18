@@ -48,6 +48,88 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public interface MappingService
+public interface MappingService<CONFIGURATION>
 {
+    /**
+     * For use on One to One mappings.
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceSystem
+     * @param targetSystem
+     * @param sourceSystemValue
+     * @return
+     */
+    public String getTargetConfigurationValue(final String clientName, String configurationType, String sourceSystem, String targetSystem,
+                                              String sourceSystemValue);
+
+    /**
+     * For use on Many to One mappings who do not have source parameter names.
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceSystem
+     * @param targetSystem
+     * @param sourceSystemValues
+     * @return
+     */
+    public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem,
+                                              final String targetSystem, final List<String> sourceSystemValues);
+
+    /**
+     * For use on Many to One mappings who do not have source parameter names and will ignore non parameter matches.
+     *
+     * @param clientName
+     * @param configurationTypeName
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public String getTargetConfigurationValueWithIgnores(String clientName,
+        String configurationTypeName, String sourceContext, String targetContext, List<String> sourceSystemValues);
+
+    /**
+     * For use on Many to One mappings who have source parameter names and will ignore non parameter matches.
+     *
+     * @param clientName
+     * @param configurationTypeName
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public String getTargetConfigurationValueWithIgnoresWithOrdinality(String clientName,
+        String configurationTypeName, String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
+
+    /**
+     * For use on Many to Many mappings that do not have the names defined.
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public List<String> getTargetConfigurationValues(String clientName, String configurationType, String sourceContext, String targetContext, List<String> sourceSystemValues);
+
+    /**
+     * For use on Many to Many mappings that do have the names defined.
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public List<NamedResult> getTargetConfigurationValuesWithOrdinality(String clientName, String configurationType, String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
+
+    /**
+     * Set the configuration on the service.
+     *
+     * @param configuration
+     */
+    public void setConfiguration(CONFIGURATION configuration);
 }

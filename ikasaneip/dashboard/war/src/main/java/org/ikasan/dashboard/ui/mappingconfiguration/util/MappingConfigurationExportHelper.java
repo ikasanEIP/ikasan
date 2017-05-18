@@ -157,8 +157,22 @@ public class MappingConfigurationExportHelper
             exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
 
             exportString.append(NUMBER_OF_TARGET_PARAMS_START_TAG);
-            exportString.append(mappingConfiguration.getNumberOfParams());
+            exportString.append(mappingConfiguration.getNumTargetValues());
             exportString.append(NUMBER_OF_TARGET_PARAMS_END_TAG);
+
+            if(sourceContextParameterNames != null && sourceContextParameterNames.size() > 0)
+            {
+                exportString.append(SOURCE_PARAMETER_NAMES_START_TAG);
+
+                for(ParameterName parameterName: sourceContextParameterNames)
+                {
+                    exportString.append(SOURCE_PARAMETER_NAME_START_TAG);
+                    exportString.append(parameterName.getName());
+                    exportString.append(SOURCE_PARAMETER_NAME_END_TAG);
+                }
+
+                exportString.append(SOURCE_PARAMETER_NAMES_END_TAG);
+            }
         }
         else if(mappingConfiguration.getIsManyToMany() &&
                 mappingConfiguration.getConstrainParameterListSizes())
@@ -168,7 +182,7 @@ public class MappingConfigurationExportHelper
             exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
 
             exportString.append(NUMBER_OF_TARGET_PARAMS_START_TAG);
-            exportString.append(mappingConfiguration.getNumberOfParams());
+            exportString.append(mappingConfiguration.getNumTargetValues());
             exportString.append(NUMBER_OF_TARGET_PARAMS_END_TAG);
 
             if(sourceContextParameterNames != null && sourceContextParameterNames.size() > 0)

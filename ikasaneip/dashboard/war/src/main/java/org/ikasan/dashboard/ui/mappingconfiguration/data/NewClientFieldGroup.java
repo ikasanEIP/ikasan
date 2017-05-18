@@ -48,7 +48,7 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -73,7 +73,7 @@ public class NewClientFieldGroup extends FieldGroup
     public static final String KEY_LOCATION_QUERY_PROCESSOR_TYPE = "keyLocationQueryProcessorType";
 
     private RefreshGroup refreshGroup;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SystemEventService systemEventService;
 
     /**
@@ -82,7 +82,7 @@ public class NewClientFieldGroup extends FieldGroup
      * @param refreshGroup
      * @param mappingConfigurationService
      */
-    public NewClientFieldGroup(RefreshGroup refreshGroup, MappingConfigurationService mappingConfigurationService,
+    public NewClientFieldGroup(RefreshGroup refreshGroup, MappingManagementService mappingConfigurationService,
     		SystemEventService systemEventService)
     {
         super();
@@ -98,7 +98,7 @@ public class NewClientFieldGroup extends FieldGroup
      * @param refreshGroup
      * @param mappingConfigurationService
      */
-    public NewClientFieldGroup(Item itemDataSource, RefreshGroup refreshGroup, MappingConfigurationService mappingConfigurationService,
+    public NewClientFieldGroup(Item itemDataSource, RefreshGroup refreshGroup, MappingManagementService mappingConfigurationService,
     		SystemEventService systemEventService)
     {
         super(itemDataSource);

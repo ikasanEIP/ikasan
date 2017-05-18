@@ -51,7 +51,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
  import org.ikasan.dashboard.ui.mappingconfiguration.panel.*;
  import org.ikasan.mapping.model.MappingConfiguration;
  import org.ikasan.mapping.model.ParameterName;
- import org.ikasan.mapping.service.MappingConfigurationService;
+ import org.ikasan.mapping.service.MappingManagementService;
  import org.ikasan.systemevent.service.SystemEventService;
 
  import java.util.ArrayList;
@@ -68,7 +68,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
 
      private HorizontalLayout viewPort;
 
-     private MappingConfigurationService mappingConfigurationService;
+     private MappingManagementService mappingConfigurationService;
      private SystemEventService systemEventService;
      private NewMappingConfigurationDetailsPanel newMappingConfigurationDetailsPanel;
      private NewMappingConfigurationTypePanel newMappingConfigurationTypePanel;
@@ -92,7 +92,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
      private IkasanUINavigator mappingNavigator;
 
 
-     public NewMappingConfigurationWindow(MappingConfigurationService mappingConfigurationService,
+     public NewMappingConfigurationWindow(MappingManagementService mappingConfigurationService,
                                           SystemEventService systemEventService, ExistingMappingConfigurationPanel existingMappingConfigurationPanel,
                                           IkasanUINavigator mappingNavigator)
      {

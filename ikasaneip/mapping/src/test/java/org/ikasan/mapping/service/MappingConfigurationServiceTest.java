@@ -47,10 +47,11 @@ import javax.annotation.Resource;
 
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
-import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
-import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
 import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
+import org.ikasan.spec.mapping.MappingService;
+import org.ikasan.spec.mapping.NamedResult;
+import org.ikasan.spec.mapping.QueryParameter;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -84,11 +85,12 @@ public class MappingConfigurationServiceTest
 
 	/** Object being tested */
 	@Resource
-	private MappingConfigurationService xaMappingConfigurationService;
+	private MappingManagementService xaMappingManagementService;
+
+	@Resource
+	MappingService xaMappingService;
 	@Resource
 	private MappingConfigurationDao xaMappingConfigurationDao;
-	@Resource
-	private KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory;
 
 	private final MappingConfigurationDao mockMappingConfigurationDao = this.mockery
 			.mock(HibernateMappingConfigurationDao.class,
@@ -471,7 +473,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("s3");
 		sourceSystemValues.add("s4");
 
-		List<String> result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+		List<String> result = this.xaMappingService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(4, result.size());
@@ -486,7 +488,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("s7");
 		sourceSystemValues.add("s8");
 
-		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+		result = this.xaMappingService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(8, result.size());
@@ -497,7 +499,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("s7");
 		sourceSystemValues.add("s8");
 
-		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+		result = this.xaMappingService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(0, result.size());
@@ -505,7 +507,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("alone");
 
-		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+		result = this.xaMappingService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(8, result.size());
@@ -514,7 +516,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("s5");
 		sourceSystemValues.add("s6");
 
-		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+		result = this.xaMappingService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(0, result.size());
@@ -525,7 +527,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("s3");
 		sourceSystemValues.add("s4");
 
-		result = this.xaMappingConfigurationService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
+		result = this.xaMappingService.getTargetConfigurationValues("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(0, result.size());
@@ -535,28 +537,24 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_many_to_many_with_ordinality()
 	{
-		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
 		sourceSystemValues.add(this.createQueryParameter("name1", "s1"));
 		sourceSystemValues.add(this.createQueryParameter("name2","s2"));
 		sourceSystemValues.add(this.createQueryParameter("name3","s3"));
 		sourceSystemValues.add(this.createQueryParameter("name4","s4"));
 
-		List<String> result = this.xaMappingConfigurationService.getTargetConfigurationValuesWithOrdinality("CMI22", "Many to Many", "Tradeweb2",
+		List<NamedResult> result = this.xaMappingService.getTargetConfigurationValuesWithOrdinality("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(4, result.size());
-		Assert.assertTrue(result.contains("t1"));
-		Assert.assertTrue(result.contains("t2"));
-		Assert.assertTrue(result.contains("t3"));
-		Assert.assertTrue(result.contains("t4"));
 
-		sourceSystemValues = new ArrayList<QueryParameterImpl>();
+		sourceSystemValues = new ArrayList<QueryParameter>();
 		sourceSystemValues.add(this.createQueryParameter("name1", "s2"));
 		sourceSystemValues.add(this.createQueryParameter("name2","s2"));
 		sourceSystemValues.add(this.createQueryParameter("name3","s3"));
 		sourceSystemValues.add(this.createQueryParameter("name4","s4"));
 
-		result = this.xaMappingConfigurationService.getTargetConfigurationValuesWithOrdinality("CMI22", "Many to Many", "Tradeweb2",
+		result = this.xaMappingService.getTargetConfigurationValuesWithOrdinality("CMI22", "Many to Many", "Tradeweb2",
 				"Bloomberg2", sourceSystemValues);
 
 		Assert.assertEquals(0, result.size());
@@ -574,7 +572,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("Libor");
 		sourceSystemValues.add("Libor");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -587,7 +585,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("Libor");
 		sourceSystemValues.add("Libor/Libor");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -600,7 +598,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("Libor");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -613,7 +611,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("Libor");
 		sourceSystemValues.add("ignore");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -626,7 +624,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("CMS Spread");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -639,7 +637,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("CMS Spread");
 		sourceSystemValues.add("ignore");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -652,7 +650,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("CMS");
 		sourceSystemValues.add("ignore");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -666,7 +664,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("CMS");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -680,7 +678,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -693,7 +691,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add(null);
 		sourceSystemValues.add(null);
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -706,7 +704,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add("ignore");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -719,7 +717,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -732,7 +730,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add(null);
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -745,7 +743,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -758,7 +756,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -771,7 +769,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("blah2");
 		sourceSystemValues.add("blah3");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -784,7 +782,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -797,7 +795,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("CMS Spread");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -810,7 +808,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore");
 		sourceSystemValues.add("ignore");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -823,7 +821,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("CMS Spread");
 		sourceSystemValues.add("");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -838,7 +836,7 @@ public class MappingConfigurationServiceTest
 			throws MappingConfigurationServiceException
 	{
 		String value = null;
-		this.xaMappingConfigurationService
+		this.xaMappingService
 					.getTargetConfigurationValue("CMI2",
 							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
 							value);
@@ -850,7 +848,7 @@ public class MappingConfigurationServiceTest
 			throws MappingConfigurationServiceException
 	{
 		List<String> values = null;
-		this.xaMappingConfigurationService
+		this.xaMappingService
 					.getTargetConfigurationValue("CMI2",
 							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
 							values);
@@ -862,7 +860,7 @@ public class MappingConfigurationServiceTest
 			throws MappingConfigurationServiceException
 	{
 		List<String> values = new ArrayList<String>();
-		this.xaMappingConfigurationService
+		this.xaMappingService
 					.getTargetConfigurationValue("CMI2",
 							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
 							values);
@@ -875,12 +873,12 @@ public class MappingConfigurationServiceTest
 	{
 		MappingConfigurationServiceConfiguration config = new MappingConfigurationServiceConfiguration();
 		config.setReverseMapping(true);
-		this.xaMappingConfigurationService.setConfiguration(config);
+		this.xaMappingService.setConfiguration(config);
 		
 		List<String> values = new ArrayList<String>();
 		values.add("value1");
 		values.add("value2");
-		this.xaMappingConfigurationService
+		this.xaMappingService
 					.getTargetConfigurationValue("CMI2",
 							"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
 							values);
@@ -893,9 +891,9 @@ public class MappingConfigurationServiceTest
 	{
 		MappingConfigurationServiceConfiguration config = new MappingConfigurationServiceConfiguration();
 		config.setReverseMapping(true);
-		this.xaMappingConfigurationService.setConfiguration(config);
+		this.xaMappingService.setConfiguration(config);
 		
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Product Type to Tradebook Mapping", "Tradeweb", "Bloomberg",
 						"BARCLON");
@@ -913,7 +911,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("blah");
 		sourceSystemValues.add("blah1");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -925,13 +923,13 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_4_paramater_mapping_with_ignores_1_params_with_cardinality()
 	{
-		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
 		sourceSystemValues.add(this.createQueryParameter("name1","Myself"));
 		sourceSystemValues.add(this.createQueryParameter("name2","blah3"));
 		sourceSystemValues.add(this.createQueryParameter("name3","blah"));
 		sourceSystemValues.add(this.createQueryParameter("name4","blah1"));
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -943,13 +941,13 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_4_paramater_mapping_with_ignores_1_params_with_cardinalityBad_name()
 	{
-		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
 		sourceSystemValues.add(this.createQueryParameter("bad name","Myself"));
 		sourceSystemValues.add(this.createQueryParameter("name2","blah3"));
 		sourceSystemValues.add(this.createQueryParameter("name3","blah"));
 		sourceSystemValues.add(this.createQueryParameter("name4","blah1"));
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -967,7 +965,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("Value3");
 		sourceSystemValues.add("blah1");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -985,7 +983,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore2");
 		sourceSystemValues.add("ignore3");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -997,13 +995,13 @@ public class MappingConfigurationServiceTest
 	@Test
 	public void test_success_4_paramater_mapping_with_ignores_with_ordinality()
 	{
-		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
 		sourceSystemValues.add(createQueryParameter("name1", "On My Own"));
 		sourceSystemValues.add(createQueryParameter("name2", "ignore1"));
 		sourceSystemValues.add(createQueryParameter("name3", "ignore2"));
 		sourceSystemValues.add(createQueryParameter("name4", "ignore3"));
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -1015,13 +1013,13 @@ public class MappingConfigurationServiceTest
 	@Test
 	public void test_success_4_paramater_mapping_with_ignores_with_ordinality_bad_name()
 	{
-		List<QueryParameterImpl> sourceSystemValues = new ArrayList<QueryParameterImpl>();
+		List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
 		sourceSystemValues.add(createQueryParameter("bad name", "On My Own"));
 		sourceSystemValues.add(createQueryParameter("name2", "ignore1"));
 		sourceSystemValues.add(createQueryParameter("name3", "ignore2"));
 		sourceSystemValues.add(createQueryParameter("name4", "ignore3"));
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnoresWithOrdinality("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -1029,11 +1027,9 @@ public class MappingConfigurationServiceTest
 		Assert.assertEquals(null, result);
 	}
 
-	private QueryParameterImpl createQueryParameter(String name, String value)
+	private QueryParameter createQueryParameter(String name, String value)
 	{
-		QueryParameterImpl param = new QueryParameterImpl();
-		param.setName(name);
-		param.setValue(value);
+		QueryParameterImpl param = new QueryParameterImpl(name, value);
 
 		return param;
 	}
@@ -1048,7 +1044,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("ignore2");
 		sourceSystemValues.add("ignore3");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg",
 						sourceSystemValues);
@@ -1058,20 +1054,11 @@ public class MappingConfigurationServiceTest
 
 	@Test(expected = IllegalArgumentException.class)
 	@DirtiesContext
-	public void test_null_keyLocationQueryProcessorFactory()
-			throws KeyLocationQueryProcessorException
+	public void test_null_dao()
 	{
-		new MappingConfigurationServiceImpl(this.xaMappingConfigurationDao,
-				null);
+		new MappingManagementServiceImpl(null);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	@DirtiesContext
-	public void test_null_dao() throws KeyLocationQueryProcessorException
-	{
-		new MappingConfigurationServiceImpl(null,
-				this.keyLocationQueryProcessorFactory);
-	}
 
 	@Test
 	@DirtiesContext
@@ -1080,7 +1067,7 @@ public class MappingConfigurationServiceTest
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("no_results");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Salesperson to Salesperson Mapping", "Tradeweb",
 						"Bloomberg", sourceSystemValues);
@@ -1095,7 +1082,7 @@ public class MappingConfigurationServiceTest
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("briordan2");
 
-		MappingConfiguration result = this.xaMappingConfigurationService
+		MappingConfiguration result = this.xaMappingManagementService
 				.getMappingConfiguration("CMI2",
 						"Salesperson to Salesperson Mapping", "Tradeweb",
 						"Bloomberg");
@@ -1110,7 +1097,7 @@ public class MappingConfigurationServiceTest
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("briordan2");
 
-		MappingConfiguration result = this.xaMappingConfigurationService
+		MappingConfiguration result = this.xaMappingManagementService
 				.getMappingConfiguration("BAD CLIENT",
 						"Salesperson to Salesperson Mapping", "Tradeweb",
 						"Bloomberg");
@@ -1125,7 +1112,7 @@ public class MappingConfigurationServiceTest
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("briordan2");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Salesperson to Salesperson Mapping", "Tradeweb",
 						"Bloomberg", sourceSystemValues);
@@ -1137,7 +1124,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_success_1_paramater_mapping_not_passing_list_for_source_system_values()
 	{
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Salesperson to Salesperson Mapping", "Tradeweb",
 						"Bloomberg", "briordan2");
@@ -1153,7 +1140,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("BARX");
 		sourceSystemValues.add("TRSY");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Dealer and Product to Account", "Tradeweb",
 						"Bloomberg", sourceSystemValues);
@@ -1171,7 +1158,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues.add("sfsdf");
 		sourceSystemValues.add("sfsdfsd");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg", sourceSystemValues);
 	}
@@ -1183,7 +1170,7 @@ public class MappingConfigurationServiceTest
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("true");
 
-		String result = this.xaMappingConfigurationService
+		String result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Product Type to Tradebook Mapping", "Tradeweb",
 						"Bloomberg", sourceSystemValues);
@@ -1193,7 +1180,7 @@ public class MappingConfigurationServiceTest
 		sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("false");
 
-		result = this.xaMappingConfigurationService
+		result = this.xaMappingService
 				.getTargetConfigurationValue("CMI2",
 						"Product Type to Tradebook Mapping", "Tradeweb",
 						"Bloomberg", sourceSystemValues);
@@ -1205,7 +1192,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_get_all_configuration_context_success()
 	{
-		List<ConfigurationContext> result = this.xaMappingConfigurationService
+		List<ConfigurationContext> result = this.xaMappingManagementService
 				.getAllConfigurationContexts();
 
 		Assert.assertEquals(4, result.size());
@@ -1215,7 +1202,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_get_all_configuration_types_success()
 	{
-		List<ConfigurationType> result = this.xaMappingConfigurationService
+		List<ConfigurationType> result = this.xaMappingManagementService
 				.getAllConfigurationTypes();
 
 		Assert.assertEquals(5, result.size());
@@ -1225,7 +1212,7 @@ public class MappingConfigurationServiceTest
 	@DirtiesContext
 	public void test_get_all_configuration_service_clients_success()
 	{
-		List<ConfigurationServiceClient> result = this.xaMappingConfigurationService
+		List<ConfigurationServiceClient> result = this.xaMappingManagementService
 				.getAllConfigurationServiceClients();
 
 		Assert.assertEquals(2, result.size());
@@ -1318,7 +1305,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			MappingConfiguration mappingConfigurationSearched = this.xaMappingConfigurationService
+			MappingConfiguration mappingConfigurationSearched = this.xaMappingManagementService
 					.getMappingConfigurationById(mappingConfiguration.getId());
 
 			Assert.assertEquals(mappingConfiguration.getId(),
@@ -1336,7 +1323,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingConfigurationService
+			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingManagementService
 					.getMappingConfigurationsByConfigurationServiceClientId(mappingConfiguration
 							.getConfigurationServiceClient().getId());
 
@@ -1361,7 +1348,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingConfigurationService
+			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingManagementService
 					.getMappingConfigurationsByConfigurationTypeId(mappingConfiguration
 							.getConfigurationType().getId());
 
@@ -1386,7 +1373,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingConfigurationService
+			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingManagementService
 					.getMappingConfigurationsBySourceContextId(mappingConfiguration
 							.getSourceContext().getId());
 
@@ -1411,7 +1398,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingConfigurationService
+			List<MappingConfiguration> mappingConfigurationsSearched = this.xaMappingManagementService
 					.getMappingConfigurationsByTargetContextId(mappingConfiguration
 							.getTargetContext().getId());
 
@@ -1436,7 +1423,7 @@ public class MappingConfigurationServiceTest
 
 		for (ConfigurationContext configurationContext : configurationContexts)
 		{
-			ConfigurationContext configurationContextSearched = this.xaMappingConfigurationService
+			ConfigurationContext configurationContextSearched = this.xaMappingManagementService
 					.getConfigurationContextById(configurationContext.getId());
 
 			Assert.assertEquals(configurationContext,
@@ -1454,7 +1441,7 @@ public class MappingConfigurationServiceTest
 
 		for (ConfigurationServiceClient configurationServiceClient : configurationServiceClients)
 		{
-			ConfigurationServiceClient configurationServiceClientSearched = this.xaMappingConfigurationService
+			ConfigurationServiceClient configurationServiceClientSearched = this.xaMappingManagementService
 					.getConfigurationServiceClientById(configurationServiceClient
 							.getId());
 
@@ -1473,7 +1460,7 @@ public class MappingConfigurationServiceTest
 
 		for (ConfigurationType configurationType : configurationTypes)
 		{
-			ConfigurationType configurationTypeSearched = this.xaMappingConfigurationService
+			ConfigurationType configurationTypeSearched = this.xaMappingManagementService
 					.getConfigurationTypeById(configurationType.getId());
 
 			Assert.assertEquals(configurationType, configurationTypeSearched);
@@ -1485,7 +1472,7 @@ public class MappingConfigurationServiceTest
 	public void test_get_configuration_types_by_client_name()
 			throws MappingConfigurationServiceException
 	{
-		List<ConfigurationType> configurationTypes = this.xaMappingConfigurationService
+		List<ConfigurationType> configurationTypes = this.xaMappingManagementService
 				.getConfigurationTypesByClientName("CMI2");
 
 		Assert.assertNotNull(configurationTypes);
@@ -1496,18 +1483,18 @@ public class MappingConfigurationServiceTest
 	public void test_get_source_configuration_contexts_by_client_name_and_type()
 			throws MappingConfigurationServiceException
 	{
-		List<ConfigurationContext> configurationContexts = this.xaMappingConfigurationService
+		List<ConfigurationContext> configurationContexts = this.xaMappingManagementService
 				.getSourceConfigurationContextsByClientNameAndType("CMI2",
 						"Salesperson to Salesperson Mapping");
 
 		Assert.assertNotNull(configurationContexts);
 
-		configurationContexts = this.xaMappingConfigurationService
+		configurationContexts = this.xaMappingManagementService
 				.getSourceConfigurationContextsByClientNameAndType("CMI2", null);
 
 		Assert.assertNotNull(configurationContexts);
 
-		configurationContexts = this.xaMappingConfigurationService
+		configurationContexts = this.xaMappingManagementService
 				.getSourceConfigurationContextsByClientNameAndType("blah",
 						"Salesperson to Salesperson Mapping");
 
@@ -1521,20 +1508,20 @@ public class MappingConfigurationServiceTest
 	public void test_get_target_configuration_contexts_by_client_name_type_and_source_context()
 			throws MappingConfigurationServiceException
 	{
-		List<ConfigurationContext> configurationContexts = this.xaMappingConfigurationService
+		List<ConfigurationContext> configurationContexts = this.xaMappingManagementService
 				.getTargetConfigurationContextByClientNameTypeAndSourceContext(
 						"CMI2", "Salesperson to Salesperson Mapping",
 						"Tradeweb");
 
 		Assert.assertNotNull(configurationContexts);
 
-		configurationContexts = this.xaMappingConfigurationService
+		configurationContexts = this.xaMappingManagementService
 				.getTargetConfigurationContextByClientNameTypeAndSourceContext(
 						"CMI2", "Salesperson to Salesperson Mapping", null);
 
 		Assert.assertNotNull(configurationContexts);
 
-		configurationContexts = this.xaMappingConfigurationService
+		configurationContexts = this.xaMappingManagementService
 				.getTargetConfigurationContextByClientNameTypeAndSourceContext(
 						"CMI2", null, null);
 
@@ -1551,7 +1538,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<ParameterName> keyLocationQueries = this.xaMappingConfigurationService
+			List<ParameterName> keyLocationQueries = this.xaMappingManagementService
 					.getParameterNamesByMappingConfigurationId(mappingConfiguration
 							.getId());
 
@@ -1573,7 +1560,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<SourceConfigurationValue> sourceConfigutationValues = this.xaMappingConfigurationService
+			List<SourceConfigurationValue> sourceConfigutationValues = this.xaMappingManagementService
 					.getSourceConfigurationValueByMappingConfigurationId(mappingConfiguration
 							.getId());
 
@@ -1595,7 +1582,7 @@ public class MappingConfigurationServiceTest
 
 		for (MappingConfiguration mappingConfiguration : mappingConfigurations)
 		{
-			List<SourceConfigurationValue> sourceConfigutationValues = this.xaMappingConfigurationService
+			List<SourceConfigurationValue> sourceConfigutationValues = this.xaMappingManagementService
 					.getSourceConfigurationValueByMappingConfigurationId(mappingConfiguration
 							.getId());
 		}
@@ -1613,7 +1600,7 @@ public class MappingConfigurationServiceTest
 		configurationServiceClient
 				.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
 
-		return this.xaMappingConfigurationService
+		return this.xaMappingManagementService
 				.saveConfigurationServiceClient(configurationServiceClient);
 	}
 
@@ -1625,7 +1612,7 @@ public class MappingConfigurationServiceTest
 		ConfigurationType configurationType = new ConfigurationType();
 		configurationType.setName(name);
 
-		return this.xaMappingConfigurationService
+		return this.xaMappingManagementService
 				.saveConfigurationType(configurationType);
 	}
 
@@ -1635,7 +1622,7 @@ public class MappingConfigurationServiceTest
 		configurationContext.setName(name);
 		configurationContext.setDescription(description);
 
-		return this.xaMappingConfigurationService
+		return this.xaMappingManagementService
 				.saveConfigurationConext(configurationContext);
 	}
 
@@ -1649,7 +1636,7 @@ public class MappingConfigurationServiceTest
 										 String description, List<String> keyLocationQueries)
 	{
 
-		return this.xaMappingConfigurationService.addMappingConfiguration(
+		return this.xaMappingManagementService.addMappingConfiguration(
 				sourceContextId, targetContextId, numberOfParams,
 				configurationTypeId, configurationServiceClientId,
 				keyLocationQueries, description);

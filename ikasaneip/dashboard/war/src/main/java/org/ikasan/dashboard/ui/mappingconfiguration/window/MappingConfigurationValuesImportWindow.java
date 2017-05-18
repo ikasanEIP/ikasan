@@ -58,7 +58,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationVa
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
 import org.ikasan.mapping.model.*;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -96,7 +96,7 @@ public class MappingConfigurationValuesImportWindow extends Window
 
     private Logger logger = Logger.getLogger(MappingConfigurationValuesImportWindow.class);
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
 
@@ -113,7 +113,7 @@ public class MappingConfigurationValuesImportWindow extends Window
      * @param mappingConfiguration
      * @param mappingConfigurationConfigurationValuesTable
      */
-    public MappingConfigurationValuesImportWindow(MappingConfigurationService mappingConfigurationService
+    public MappingConfigurationValuesImportWindow(MappingManagementService mappingConfigurationService
             , MappingConfiguration mappingConfiguration, MappingConfigurationConfigurationValuesTable 
             mappingConfigurationConfigurationValuesTable, SystemEventService systemEventService)
     {

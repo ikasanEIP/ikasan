@@ -48,7 +48,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -73,8 +72,9 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExp
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationValuesImportWindow;
 import org.ikasan.mapping.model.*;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.mapping.util.MappingConfigurationValidator;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -116,7 +116,7 @@ public class MappingConfigurationPanel extends Panel implements View
     protected TextArea descriptionTextArea;
     protected TextField numberOfSourceParametersTextField;
     protected TextField numberOfTargetParametersTextField;
-    protected MappingConfigurationService mappingConfigurationService;
+    protected MappingManagementService mappingConfigurationService;
     protected SaveRequiredMonitor saveRequiredMonitor;
     protected Button editButton;
     protected Button saveButton;
@@ -143,6 +143,7 @@ public class MappingConfigurationPanel extends Panel implements View
     protected Label numTargetParamsLabel;
     protected List<ParameterName> sourceContextParameterNames;
     protected List<ParameterName> targetContextParameterNames;
+    protected MappingConfigurationValidator mappingConfigurationValidator = new MappingConfigurationValidator();
 	
 
     /**
@@ -167,7 +168,7 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     public MappingConfigurationPanel(MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable
             , ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, String name, MappingConfigurationService mappingConfigurationService,
+            TargetContextComboBox targetContextComboBox, String name, MappingManagementService mappingConfigurationService,
             SaveRequiredMonitor saveRequiredMonitor, Button editButton, Button saveButton, Button addNewRecordButton, 
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup mappingConfigurationFunctionalGroup,
@@ -338,9 +339,6 @@ public class MappingConfigurationPanel extends Panel implements View
             }
         });
 
-
-        FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
-        fd.extend(exportMappingConfigurationButton);
 
         this.exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
         this.exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -650,9 +648,6 @@ public class MappingConfigurationPanel extends Panel implements View
         this.exportMappingConfigurationValuesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.exportMappingConfigurationValuesButton.setVisible(buttonsVisible);
 
-        FileDownloader fd = new FileDownloader(this.getMappingConfigurationValuesExportStream());
-        fd.extend(exportMappingConfigurationValuesButton);
-
         Label spacer = new Label("&nbsp;",  ContentMode.HTML);
         controlsLayout.addComponent(spacer);
         controlsLayout.setExpandRatio(spacer, 0.84f);
@@ -704,9 +699,16 @@ public class MappingConfigurationPanel extends Panel implements View
                       return input;
     
                 }
-            };
-          StreamResource resource = new StreamResource ( source,"mappingConfigurationExport.xml");
-          return resource;
+        };
+
+        StringBuffer fileName = new StringBuffer();
+        fileName.append(this.mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getConfigurationType().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getSourceContext().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getTargetContext().getName()).append("_mappingValuesExport.xml");
+
+        StreamResource resource = new StreamResource ( source, fileName.toString());
+        return resource;
     }
 
     /**
@@ -733,8 +735,15 @@ public class MappingConfigurationPanel extends Panel implements View
                       return input;
     
                 }
-            };
-          StreamResource resource = new StreamResource ( source,"mappingConfigurationExport.xml");
+        };
+
+        StringBuffer fileName = new StringBuffer();
+        fileName.append(this.mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getConfigurationType().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getSourceContext().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getTargetContext().getName()).append("_mappingExport.xml");
+
+        StreamResource resource = new StreamResource ( source, fileName.toString());
           return resource;
     }
 
@@ -799,6 +808,15 @@ public class MappingConfigurationPanel extends Panel implements View
                
                 logger.debug("User: " + principal.getName() + " saving Mapping Configuration: " +
                 		this.mappingConfiguration);
+
+                if(this.mappingConfigurationValidator.validate(mappingConfiguration) == false)
+                {
+                    Notification.show("This mapping has been saved with the following warnings!\r\n\r\n" +
+                            "The following source system values are duplicated. This has the effect of calls to the mapping " +
+                            "service resolving multiple results. \r\n\r\n"
+                            + this.mappingConfigurationValidator.getErrorMessage(), Notification.Type.ERROR_MESSAGE);
+                }
+
                 this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
                 
                 String message = "[Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
@@ -1043,6 +1061,13 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         this.mappingConfiguration = mappingConfiguration;
         this.loadParameterNames();
+
+        FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
+        fd.extend(exportMappingConfigurationButton);
+
+        FileDownloader fdValues = new FileDownloader(this.getMappingConfigurationValuesExportStream());
+        fdValues.extend(exportMappingConfigurationValuesButton);
+        
         this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
     }
 }
