@@ -5,7 +5,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="exclusionServiceFactory" class="org.ikasan.exclusion.service.ExclusionServiceFactory">
-        <constructor-arg ref="exclusionServiceBlacklistDao"/>
+        <constructor-arg ref="exclusionServiceBlacklistDaoFactory"/>
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
         <constructor-arg ref="ikasanSerialiserFactory"/>
     </bean>
@@ -14,12 +14,8 @@
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
     </bean>
 
-    <bean id="exclusionServiceBlacklistDao" class="org.ikasan.exclusion.dao.MapBlackListDao">
-        <constructor-arg>
-            <bean class="org.ikasan.exclusion.model.BlackListLinkedHashMap">
-                <constructor-arg value="1000"/>  <!-- default max entries size -->
-            </bean>
-        </constructor-arg>
+    <bean id="exclusionServiceBlacklistDaoFactory" class="org.ikasan.exclusion.dao.BlackListDaoFactory">
+        <constructor-arg value="1000"/>
     </bean>
 
     <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
