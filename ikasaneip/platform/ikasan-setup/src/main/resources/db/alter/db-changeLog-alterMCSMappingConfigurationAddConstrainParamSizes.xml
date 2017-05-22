@@ -51,6 +51,7 @@
     
     	<preConditions onFail="MARK_RAN">
 			<not><columnExists tableName="MCSMappingConfiguration" columnName="ConstrainParamListSizes"/></not>
+			<not><columnExists tableName="MCSMappingConfiguration" columnName="NumTargetValues"/></not>
 		</preConditions>
 	    
 	    <addColumn tableName="MCSMappingConfiguration">

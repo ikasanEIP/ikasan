@@ -18,6 +18,7 @@
 	<include file="db/alter/db-changeLog-alterMCSSourceConfigValue.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterMCSMappingConfigurationAddConstrainParamSizes.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterMCSMappingConfigurationAddLastUpdatedBy.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterMCSConfigurationClientDropKeyLocationQueryColumn.xml" relativeToChangelogFile="true" />
 
 	<!-- 1.4.0 cardinality creation -->
 
@@ -27,5 +28,10 @@
 
 	<!-- 1.4.0 table drop -->
 	<include file="db/drop/db-changeLog-dropMCSKeyLocationQuery.xml" relativeToChangelogFile="true" />
+
+	<!-- 1.4.0 table modify -->
+	<include file="db/modify/db-changeLog-modifyMappaingConfigurationNumParamsDatatype.xml" relativeToChangelogFile="true" />
+
+
 	
 </databaseChangeLog>

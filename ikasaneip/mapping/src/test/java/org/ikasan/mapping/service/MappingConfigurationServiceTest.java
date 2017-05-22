@@ -158,8 +158,7 @@ public class MappingConfigurationServiceTest
 	public void setup()
 	{
 		Long configurationServiceClientId = this
-				.addConfigurationServiceClient("CMI2",
-						"org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+				.addConfigurationServiceClient("CMI2");
 		Long dealerToDealerId = this
 				.addConfigurationType("Dealer and Product to Account");
 		Long salesPersonToSalesPersonId = this
@@ -402,8 +401,7 @@ public class MappingConfigurationServiceTest
 				targetId80);
 
 
-		ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient2("CMI22",
-				"org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+		ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient2("CMI22");
 
 		ConfigurationContext context1 = this.addConfigurationContext2("Tradeweb2", "Tradeweb2");
 		ConfigurationContext context2 = this.addConfigurationContext2("Bloomberg2", "Bloomberg2");
@@ -1592,13 +1590,10 @@ public class MappingConfigurationServiceTest
 	 * Helper method to add the configuration type to the database.
 	 *
 	 */
-	private Long addConfigurationServiceClient(String name,
-			String keyLocationQueryProcessorType)
+	private Long addConfigurationServiceClient(String name)
 	{
 		ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
 		configurationServiceClient.setName(name);
-		configurationServiceClient
-				.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
 
 		return this.xaMappingManagementService
 				.saveConfigurationServiceClient(configurationServiceClient);
@@ -1729,14 +1724,12 @@ public class MappingConfigurationServiceTest
 	/**
 	 *
 	 * @param name
-	 * @param keyLocationQueryProcessorType
 	 * @return
 	 */
-	private ConfigurationServiceClient addConfigurationServiceClient2(String name, String keyLocationQueryProcessorType)
+	private ConfigurationServiceClient addConfigurationServiceClient2(String name)
 	{
 		ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
 		configurationServiceClient.setName(name);
-		configurationServiceClient.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
 
 		this.xaMappingConfigurationDao.storeConfigurationServiceClient(configurationServiceClient);
 

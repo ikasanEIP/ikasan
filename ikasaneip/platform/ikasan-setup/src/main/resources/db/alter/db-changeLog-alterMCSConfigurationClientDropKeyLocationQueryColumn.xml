@@ -47,17 +47,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="alterMCSMappingConfigurationAddIsManayToMany" context="postBaseline">
+    <changeSet author="ikasan dev" id="db-changeLog-alterMCSConfigurationClientDropKeyLocationQueryColumn" context="postBaseline">
     
     	<preConditions onFail="MARK_RAN">
-			<not><columnExists tableName="MCSMappingConfiguration" columnName="IsManyToMany"/></not>
+			<columnExists tableName="MCSConfigServiceClient" columnName="KeyLocationQueryProcessorType"/>
 		</preConditions>
-	    
-	    <addColumn tableName="MCSMappingConfiguration">
-	        <column defaultValueNumeric="0" name="IsManyToMany" type="BIT">
-                <constraints nullable="false"/>
-            </column>
-	    </addColumn>           
+
+		<dropColumn columnName="KeyLocationQueryProcessorType"
+					tableName="MCSConfigServiceClient"/>
 
     </changeSet>
 

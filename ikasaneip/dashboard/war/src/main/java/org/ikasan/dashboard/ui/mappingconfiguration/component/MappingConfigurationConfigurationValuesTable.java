@@ -261,8 +261,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             {
                 this.manyToManyTargetConfigurationValues.remove(value);
 
-                logger.info("Trying to delete: " + value);
-
                 this.mappingConfigurationService.deleteManyToManyTargetConfigurationValue(value);
             }
 
@@ -362,7 +360,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     @Override
                     public void buttonClick(ClickEvent clickEvent)
                     {
-                        logger.info("Attempting to add text field");
                         final SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
                         sourceConfigurationValue.setSourceSystemValue("Add source system value");
                         sourceConfigurationValue.setSourceConfigGroupId(fsourceSystemGroupId);
@@ -655,7 +652,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             {
                 if(!usedSourceConfigurationValues.contains(value))
                 {
-                    logger.info("Adding source value, should be adding button");
                     groupedSourceSystemValues.add(value);
 
                     BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(value);
@@ -760,7 +756,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     }
                     else
                     {
-                        logger.info("Adding source value, should NOT be adding button");
                         final HorizontalLayout hl = new HorizontalLayout();
                         hl.setSpacing(true);
 
@@ -802,8 +797,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                             usedSourceConfigurationValues.add(partnerSourceConfigurationValue);
                             tableCellLayout.addComponent(sourceSystemValueTextField2);
-
-                            logger.info("Adding source value as partner group");
 
                             final HorizontalLayout hl = new HorizontalLayout();
                             hl.setSpacing(true);
@@ -1195,7 +1188,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent)
             {
-                logger.info("Source system value changed! " + ((String)valueChangeEvent.getProperty().getValue()));
                 if((((String)valueChangeEvent.getProperty().getValue()).startsWith(" ")
                         || ((String)valueChangeEvent.getProperty().getValue()).endsWith(" "))
                         && ((String)valueChangeEvent.getProperty().getValue()).trim().length() > 0)
@@ -1306,8 +1298,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
     private int manageTableSorting(Object o1, Object o2)
     {
-        logger.info("Sorting: " + o1 + " and " + o2);
-
         if (o1 instanceof CheckBox && o2 instanceof CheckBox)
         {
             Boolean b1 = ((CheckBox) o1).booleanValue();
@@ -1332,8 +1322,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         }
         else if (o1 instanceof VerticalLayout && o2 instanceof VerticalLayout)
         {
-            logger.info("Sorting vertical: " + o1 + " and " + o2);
-
             List<HorizontalLayout> hl1 = new ArrayList<HorizontalLayout>();
             List<HorizontalLayout> h12 = new ArrayList<HorizontalLayout>();
 
@@ -1370,9 +1358,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
             if(t1 != null && t2 != null)
             {
-                logger.info("t1: " + t1.getValue());
-                logger.info("t2: " + t2.getValue());
-
                 return t1.getValue().toLowerCase().compareTo(
                         (t2.getValue().toLowerCase()));
             }
@@ -1400,8 +1385,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         TextField t1 = null;
         TextField t2 = null;
 
-        logger.info("Sorting horizontal: " + o1 + " and " + o2);
-
         for (int i=0; i< ((HorizontalLayout) o1).getComponentCount() ; i++)
         {
             if(((HorizontalLayout) o1).getComponent(i) instanceof TextField)
@@ -1420,14 +1403,8 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             }
         }
 
-        logger.info("t1: " + t1);
-        logger.info("t2: " + t2);
-
         if(t1 != null && t2 != null)
         {
-            logger.info("t1: " + t1.getValue());
-            logger.info("t2: " + t2.getValue());
-
             return t1.getValue().toLowerCase().compareTo(
                     (t2.getValue().toLowerCase()));
         }

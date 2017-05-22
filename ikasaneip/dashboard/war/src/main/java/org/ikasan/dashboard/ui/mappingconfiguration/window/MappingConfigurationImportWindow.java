@@ -364,49 +364,57 @@ public class MappingConfigurationImportWindow extends Window
     {
         ConfigurationServiceClient client = this.mappingConfiguration.getConfigurationServiceClient();
         StringBuffer errorMessage = new StringBuffer();
-        
-        client = this.mappingConfigurationService.getAllConfigurationClientByName(client.getName());
-        if(client == null)
+
+        ConfigurationServiceClient existingClient = this.mappingConfigurationService.getAllConfigurationClientByName(client.getName());
+        if(existingClient == null)
         {
-            errorMessage.append("No matching configuration client found.\n");
+//            errorMessage.append("No matching configuration client found.\n");
+
+            this.mappingConfigurationService.saveConfigurationServiceClient(client);
+            this.mappingConfiguration.setConfigurationServiceClient(client);
         }
         else
         {
-            this.mappingConfiguration.setConfigurationServiceClient(client);
+            this.mappingConfiguration.setConfigurationServiceClient(existingClient);
         }
 
         ConfigurationType type = this.mappingConfiguration.getConfigurationType();
-        type = this.mappingConfigurationService.getAllConfigurationTypeByName(type.getName());
+        ConfigurationType existingType = this.mappingConfigurationService.getAllConfigurationTypeByName(type.getName());
 
-        if(type == null)
+        if(existingType == null)
         {
-            errorMessage.append("No matching configuration type found.\n");
+            this.mappingConfigurationService.saveConfigurationType(type);
+            this.mappingConfiguration.setConfigurationType(type);
         }
         else
         {
-            this.mappingConfiguration.setConfigurationType(type);
+            this.mappingConfiguration.setConfigurationType(existingType);
         }
 
         ConfigurationContext sourceContext = this.mappingConfiguration.getSourceContext();
-        sourceContext = this.mappingConfigurationService.getAllConfigurationContextByName(sourceContext.getName());
-        if(sourceContext == null)
+        ConfigurationContext existingtSourceContext = this.mappingConfigurationService.getAllConfigurationContextByName(sourceContext.getName());
+        if(existingtSourceContext == null)
         {
-            errorMessage.append("No source configuration context found.\n");
+            sourceContext.setDescription("Default description for context: " + sourceContext.getName());
+            this.mappingConfigurationService.saveConfigurationConext(sourceContext);
+            this.mappingConfiguration.setSourceContext(sourceContext);
         }
         else
         {
-            this.mappingConfiguration.setSourceContext(sourceContext);
+            this.mappingConfiguration.setSourceContext(existingtSourceContext);
         }
 
         ConfigurationContext targetContext = this.mappingConfiguration.getTargetContext();
-        targetContext = this.mappingConfigurationService.getAllConfigurationContextByName(targetContext.getName());
-        if(targetContext == null)
+        ConfigurationContext existingTargetContext = this.mappingConfigurationService.getAllConfigurationContextByName(targetContext.getName());
+        if(existingTargetContext == null)
         {
-            errorMessage.append("No target configuration context found.\n");
+            targetContext.setDescription("Default description for context: " + sourceContext.getName());
+            this.mappingConfigurationService.saveConfigurationConext(targetContext);
+            this.mappingConfiguration.setTargetContext(targetContext);
         }
         else
         {
-            this.mappingConfiguration.setTargetContext(targetContext);
+            this.mappingConfiguration.setTargetContext(existingTargetContext);
         }
 
         if(errorMessage.length() > 0)

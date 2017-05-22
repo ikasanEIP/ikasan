@@ -84,8 +84,7 @@ public class HibernateMappingConfigurationDaoTest
     @Before
     public void setup()
     {
-    	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2",
-            "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+    	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2");
         ConfigurationType dealerToDealer = this.addConfigurationType("Dealer and Product to Account");
         ConfigurationType salesPersonToSalesPerson = this.addConfigurationType("Salesperson to Salesperson Mapping");
         ConfigurationType productTypeToTradeBook = this.addConfigurationType("Product Type to Tradebook Mapping");
@@ -568,8 +567,6 @@ public class HibernateMappingConfigurationDaoTest
         ConfigurationServiceClient result = this.xaMappingConfigurationDao.getConfigurationServiceClientByName("CMI2");
 
         Assert.assertEquals("CMI2", result.getName());
-        Assert.assertEquals("org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"
-            , result.getKeyLocationQueryProcessorType());
     }
 
 
@@ -791,11 +788,10 @@ public class HibernateMappingConfigurationDaoTest
      * @param keyLocationQueryProcessorType
      * @return
      */
-    private ConfigurationServiceClient addConfigurationServiceClient(String name, String keyLocationQueryProcessorType)
+    private ConfigurationServiceClient addConfigurationServiceClient(String name)
     {
         ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
         configurationServiceClient.setName(name);
-        configurationServiceClient.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
 
         this.xaMappingConfigurationDao.storeConfigurationServiceClient(configurationServiceClient);
 
