@@ -128,7 +128,7 @@ public class MappingConfigurationValuesExportHelper
 
             for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
             {
-                if(value.getName() != null && !value.getName().isEmpty())
+                if(value.getName() != null && !value.getName().trim().isEmpty())
                 {
                     exportString.append(SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
                             .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
