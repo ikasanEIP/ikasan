@@ -4899,6 +4899,10 @@ div.v-layout.v-horizontal.v-widget {
 	width: 125px;
 }
 
+.dashboard .v-textfield-with-whitespace {
+	border:     thin dashed;
+}
+
 .v-ie8 .dashboard .v-textfield, .v-ie9 .dashboard .v-textfield {
 	line-height: 25px;
 	padding-top: 0;

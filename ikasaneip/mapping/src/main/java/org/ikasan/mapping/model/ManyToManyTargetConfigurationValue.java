@@ -122,14 +122,7 @@ public class ManyToManyTargetConfigurationValue implements Serializable
      */
     public void setTargetSystemValue(String targetSystemValue)
     {
-        if(targetSystemValue != null)
-        {
-            this.targetSystemValue = targetSystemValue.trim();
-        }
-        else
-        {
-            this.targetSystemValue = targetSystemValue;
-        }
+        this.targetSystemValue = targetSystemValue;
     }
 
     /**
@@ -152,14 +145,7 @@ public class ManyToManyTargetConfigurationValue implements Serializable
      */
     public void setName(String name)
     {
-        if(name != null)
-        {
-            this.name = name.trim();
-        }
-        else
-        {
-            this.name = name;
-        }
+        this.name = name;
     }
 
     /**

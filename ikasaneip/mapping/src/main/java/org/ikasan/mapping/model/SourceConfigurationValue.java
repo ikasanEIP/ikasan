@@ -114,14 +114,7 @@ public class SourceConfigurationValue implements Serializable, Comparable<Source
      */
     public void setSourceSystemValue(String sourceSystemValue)
     {
-        if(sourceSystemValue != null)
-        {
-            this.sourceSystemValue = sourceSystemValue.trim();
-        }
-        else
-        {
-            this.sourceSystemValue = sourceSystemValue;
-        }
+        this.sourceSystemValue = sourceSystemValue;
     }
 
     /**
@@ -180,14 +173,7 @@ public class SourceConfigurationValue implements Serializable, Comparable<Source
      */
     public void setName(String name)
     {
-        if(name != null)
-        {
-            this.name = name.trim();
-        }
-        else
-        {
-            this.name = name;
-        }
+        this.name = name;
     }
 
     /**
