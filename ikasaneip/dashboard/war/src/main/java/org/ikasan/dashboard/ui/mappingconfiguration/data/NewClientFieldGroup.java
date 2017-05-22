@@ -70,7 +70,6 @@ public class NewClientFieldGroup extends FieldGroup
     private static final long serialVersionUID = -4171297865032531886L;
 
     public static final String NAME = "name";
-    public static final String KEY_LOCATION_QUERY_PROCESSOR_TYPE = "keyLocationQueryProcessorType";
 
     private RefreshGroup refreshGroup;
     private MappingManagementService mappingConfigurationService;
@@ -114,10 +113,9 @@ public class NewClientFieldGroup extends FieldGroup
     public void commit() throws CommitException
     {
         Field<String> name = (Field<String>) this.getField(NAME);
-        Field<String> keyLocationQueryProcessorType = (Field<String>) this.getField(KEY_LOCATION_QUERY_PROCESSOR_TYPE);
+
 
         ConfigurationServiceClient client = new ConfigurationServiceClient();
-        client.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType.getValue());
         client.setName(name.getValue());
 
         try

@@ -144,6 +144,10 @@ public class MappingConfigurationPanel extends Panel implements View
     protected List<ParameterName> sourceContextParameterNames;
     protected List<ParameterName> targetContextParameterNames;
     protected MappingConfigurationValidator mappingConfigurationValidator = new MappingConfigurationValidator();
+    protected Label sourceParamNameLabel;
+    protected TextArea sourceParamNameValueTextArea;
+    protected Label targetParamNameLabel;
+    protected TextArea targetParamNameValueTextArea;
 	
 
     /**
@@ -371,8 +375,8 @@ public class MappingConfigurationPanel extends Panel implements View
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
 
-        vpanel.setSplitPosition(350, Unit.PIXELS);
-        vpanel.setMaxSplitPosition(350, Unit.PIXELS);
+        vpanel.setSplitPosition(400, Unit.PIXELS);
+        vpanel.setMaxSplitPosition(400, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
@@ -504,6 +508,7 @@ public class MappingConfigurationPanel extends Panel implements View
         this.targetContextComboBox.setValidationVisible(false);
         targetContextComboBoxLayout.addComponent(this.targetContextComboBox);
         layout.addComponent(this.targetContextComboBox, 1, 4);
+        layout.setComponentAlignment(this.targetContextComboBox, Alignment.MIDDLE_LEFT);
 
         HorizontalLayout descriptionLabelLayout = new HorizontalLayout();
         descriptionLabelLayout.setHeight(25, Unit.PIXELS);
@@ -567,10 +572,29 @@ public class MappingConfigurationPanel extends Panel implements View
         this.numberOfTargetParametersTextField.setVisible(false);
         layout.addComponent(this.numberOfTargetParametersTextField, 3, 3);
 
-        HorizontalLayout queriesLabelLayout = new HorizontalLayout();
-        queriesLabelLayout.setHeight(25, Unit.PIXELS);
-        queriesLabelLayout.setWidth(250, Unit.PIXELS);
 
+        sourceParamNameLabel = new Label("Source Parameter Names");
+        sourceParamNameLabel.setWidth(175, Unit.PIXELS);
+
+        sourceParamNameValueTextArea = new TextArea();
+        sourceParamNameValueTextArea.setWidth("80%");
+        sourceParamNameValueTextArea.setRows(4);
+        sourceParamNameValueTextArea.setReadOnly(true);
+
+        layout.addComponent(sourceParamNameLabel, 2, 4);
+        layout.addComponent(sourceParamNameValueTextArea, 3, 4);
+
+
+        targetParamNameLabel = new Label("Target Parameter Names");
+        targetParamNameLabel.setWidth(175, Unit.PIXELS);
+
+        targetParamNameValueTextArea = new TextArea();
+        targetParamNameValueTextArea.setWidth("80%");
+        targetParamNameValueTextArea.setRows(4);
+        targetParamNameValueTextArea.setReadOnly(true);
+
+        layout.addComponent(targetParamNameLabel, 2, 5);
+        layout.addComponent(targetParamNameValueTextArea, 3, 5);
 
         return layout;
     }
@@ -996,6 +1020,49 @@ public class MappingConfigurationPanel extends Panel implements View
             numSourceParamsLabel.setVisible(true);
             numberOfSourceParametersTextField.setVisible(true);
         }
+
+        if(sourceContextParameterNames != null && sourceContextParameterNames.size() > 0)
+        {
+            StringBuffer sb = new StringBuffer();
+
+            for(ParameterName name: sourceContextParameterNames)
+            {
+                sb.append(name.getName()).append("\n");
+            }
+
+            sourceParamNameValueTextArea.setReadOnly(false);
+            sourceParamNameValueTextArea.setValue(sb.toString());
+            sourceParamNameValueTextArea.setReadOnly(true);
+            sourceParamNameValueTextArea.setVisible(true);
+            sourceParamNameLabel.setVisible(true);
+        }
+        else
+        {
+            sourceParamNameValueTextArea.setVisible(false);
+            sourceParamNameLabel.setVisible(false);
+        }
+
+        if(targetContextParameterNames != null && targetContextParameterNames.size() > 0)
+        {
+            StringBuffer sb = new StringBuffer();
+
+            for(ParameterName name: targetContextParameterNames)
+            {
+                sb.append(name.getName()).append("\n");
+            }
+
+            targetParamNameValueTextArea.setReadOnly(false);
+            targetParamNameValueTextArea.setValue(sb.toString());
+            targetParamNameValueTextArea.setReadOnly(true);
+            targetParamNameValueTextArea.setVisible(true);
+            targetParamNameLabel.setVisible(true);
+        }
+        else
+        {
+            targetParamNameValueTextArea.setVisible(false);
+            targetParamNameLabel.setVisible(false);
+        }
+
 
 
         this.isManyToManyCheckbox.setReadOnly(true);
