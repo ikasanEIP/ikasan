@@ -41,6 +41,7 @@
 package org.ikasan.exclusion.service;
 
 import org.ikasan.exclusion.dao.BlackListDao;
+import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -78,7 +79,7 @@ public class ExclusionServiceFactoryTest
     }};
 
     @Resource
-    BlackListDao blackListDao;
+    BlackListDaoFactory blackListDaoFactory;
 
     @Resource
     ExclusionEventDao exclusionEventDao;
@@ -95,13 +96,13 @@ public class ExclusionServiceFactoryTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_exclusionEvent_dao()
     {
-        new ExclusionServiceFactory(blackListDao, null, null);
+        new ExclusionServiceFactory(blackListDaoFactory, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_serialiser()
     {
-        new ExclusionServiceFactory(blackListDao, exclusionEventDao, null);
+        new ExclusionServiceFactory(blackListDaoFactory, exclusionEventDao, null);
     }
 
     /**
@@ -110,7 +111,7 @@ public class ExclusionServiceFactoryTest
     @Test
     public void test_exclusionServiceFactory_operations()
     {
-        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(blackListDao, exclusionEventDao, serialiserFactory);
+        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(blackListDaoFactory, exclusionEventDao, serialiserFactory);
         Assert.assertNotNull("Should not be null", exclusionServiceFactory.getExclusionService("moduleName", "flowName"));
         this.mockery.assertIsSatisfied();
     }
