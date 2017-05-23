@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -65,6 +66,8 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapDao
 {
+    /** Logger for this class */
+    private static Logger logger = Logger.getLogger(HibernateWiretapDao.class);
 
     private static final String EXPIRY = "expiry";
     private static final String EVENT_ID = "eventId";
@@ -403,7 +406,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     private void batchHousekeepDelete() 
     {
-        logger.info("Wiretap batched housekeeper called");
+        logger.info("Wiretap batched housekeeper called. [transactionBatchSize: " + transactionBatchSize
+                + "][housekeepingBatchSize: " + housekeepingBatchSize + "]");
 
         int numberDeleted = 0;
 
