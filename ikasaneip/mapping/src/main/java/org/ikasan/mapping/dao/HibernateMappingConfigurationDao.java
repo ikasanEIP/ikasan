@@ -287,6 +287,33 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 {
                     return null;
                 }
+                else if(results.size() > 1)
+                {
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
+                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceSystem
+                            + "] [SourceSystemValues = ";
+
+
+                    for(String sourceSystemValue: sourceSystemValues)
+                    {
+                        errorMessage += sourceSystemValue + " ";
+                    }
+
+                    errorMessage += "]";
+
+                    errorMessage += "[TargetContext = " + targetSystem + "] " + "[TargetSystemValues = ";
+
+                    for(String targetSystemValue:results)
+                    {
+                        errorMessage += targetSystemValue + " ";
+                    }
+
+                    errorMessage += "]";
+
+                    logger.error(errorMessage);
+
+                    throw new RuntimeException(errorMessage);
+                }
                 else
                 {
                     return results.get(0);
@@ -323,6 +350,33 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 if(results.size() == 0)
                 {
                     return null;
+                }
+                else if(results.size() > 1)
+                {
+                    String errorMessage = "Multiple results returned from the mapping configuration service. " +
+                            "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceContext
+                            + "] [SourceSystemValues = ";
+
+
+                    for (QueryParameter sourceSystemValue : sourceSystemValues)
+                    {
+                        errorMessage += "{" + sourceSystemValue.getName() + ", " + sourceSystemValue.getValue() + "}";
+                    }
+
+                    errorMessage += "]";
+
+                    errorMessage += "[TargetContext = " + targetContext + "] " + "[TargetSystemValues = ";
+
+                    for (String targetSystemValue : results)
+                    {
+                        errorMessage += targetSystemValue + " ";
+                    }
+
+                    errorMessage += "]";
+
+                    logger.error(errorMessage);
+
+                    throw new RuntimeException(errorMessage);
                 }
                 else
                 {
