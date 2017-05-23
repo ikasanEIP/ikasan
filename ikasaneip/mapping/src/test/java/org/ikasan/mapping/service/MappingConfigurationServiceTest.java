@@ -1148,7 +1148,7 @@ public class MappingConfigurationServiceTest
 	
 	@Test(expected=RuntimeException.class)
 	@DirtiesContext
-	public void test_exception_duplicateMapping()
+	public void test_exception_duplicateMapping_getTargetConfigurationValueWithIgnores()
 	{
 		List<String> sourceSystemValues = new ArrayList<String>();
 		sourceSystemValues.add("singleValueTwice");
@@ -1158,6 +1158,21 @@ public class MappingConfigurationServiceTest
 
 		String result = this.xaMappingService
 				.getTargetConfigurationValueWithIgnores("CMI2",
+						"Ignore Mapping", "Tradeweb", "Bloomberg", sourceSystemValues);
+	}
+
+	@Test(expected=RuntimeException.class)
+	@DirtiesContext
+	public void test_exception_duplicateMapping_getTargetConfigurationValue()
+	{
+		List<String> sourceSystemValues = new ArrayList<String>();
+		sourceSystemValues.add("singleValueTwice");
+		sourceSystemValues.add("");
+		sourceSystemValues.add("");
+		sourceSystemValues.add("");
+
+		String result = this.xaMappingService
+				.getTargetConfigurationValue("CMI2",
 						"Ignore Mapping", "Tradeweb", "Bloomberg", sourceSystemValues);
 	}
 
