@@ -43,6 +43,8 @@ package org.ikasan.mapping.dao;
 import java.util.List;
 
 import org.ikasan.mapping.model.*;
+import org.ikasan.spec.mapping.NamedResult;
+import org.ikasan.spec.mapping.QueryParameter;
 import org.springframework.dao.DataAccessException;
 
 
@@ -52,19 +54,6 @@ import org.springframework.dao.DataAccessException;
  */
 public interface MappingConfigurationDao
 {
-	/**
-     * 
-     * @param clientName
-     * @param configurationType
-     * @param sourceSystem
-     * @param targetSystem
-     * @param sourceSystemValues
-     * @param numParams
-     * @return
-     */
-    public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceSystem
-            , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
-    
     /**
      * 
      * @param clientName
@@ -77,6 +66,19 @@ public interface MappingConfigurationDao
      */
     public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationType, final String sourceSystem
             , final String targetSystem, final List<String> sourceSystemValues, final int numParams);
+
+    /**
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceSystem
+     * @param targetSystem
+     * @param sourceSystemValues
+     * @param numParams
+     * @return
+     */
+    public String getTargetConfigurationValueWithIgnoresWithOrdinality(final String clientName, final String configurationType, final String sourceSystem
+            , final String targetSystem, final List<QueryParameter> sourceSystemValues, final int numParams);
 
     /**
      *
@@ -99,8 +101,32 @@ public interface MappingConfigurationDao
      * @param sourceSystemValues
      * @return
      */
+    public String getTargetConfigurationValueWithOrdinality(final String clientName, String configurationType,
+                                              String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
+
+    /**
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
     public List<String> getTargetConfigurationValues(final String clientName, String configurationType,
                                               String sourceContext, String targetContext, List<String> sourceSystemValues);
+
+    /**
+     *
+     * @param clientName
+     * @param configurationType
+     * @param sourceContext
+     * @param targetContext
+     * @param sourceSystemValues
+     * @return
+     */
+    public List<NamedResult> getTargetConfigurationValuesWithOrdinality(final String clientName, String configurationType,
+                                                                        String sourceContext, String targetContext, List<QueryParameter> sourceSystemValues);
 
     /**
      * 
@@ -108,18 +134,6 @@ public interface MappingConfigurationDao
      * @return
      */
     public ConfigurationServiceClient getConfigurationServiceClientByName(String configurationServiceClientName);
-
-    /**
-     * Get a list of key location queries from the database.
-     * 
-     * @param configurationType
-     * @param sourceSystem
-     * @param targetSystem
-     * @param configurationServiceClientName
-     * @return
-     */
-    public List<String> getKeyLocationQuery(final String configurationType, final String sourceSystem, final String targetSystem,
-            final String configurationServiceClientName);
 
     /**
      * 
@@ -180,7 +194,7 @@ public interface MappingConfigurationDao
 
     public void storeSourceValueTargetValueGrouping(SourceValueTargetValueGrouping sourceValueTargetValueGrouping);
 
-    public Long storeKeyLocationQuery(KeyLocationQuery keyLocationQuery);
+    public Long storeParameterName(ParameterName parameterName);
 
     public Long getNumberOfSourceValuesForGroupId(Long groupId);
 
@@ -299,7 +313,7 @@ public interface MappingConfigurationDao
      * @param mappingConfigurationId
      * @return
      */
-    public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId);
+    public List<ParameterName> getParameterNameByMappingConfigurationId(Long mappingConfigurationId);
 
     /**
      * 

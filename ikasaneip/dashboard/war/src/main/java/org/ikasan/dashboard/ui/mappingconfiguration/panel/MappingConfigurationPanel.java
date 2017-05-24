@@ -46,10 +46,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -60,6 +58,7 @@ import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
+import org.ikasan.dashboard.ui.framework.validator.IntegerValidator;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.RemoveAllItemsAction;
@@ -72,13 +71,10 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationCon
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationValuesImportWindow;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.model.*;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.mapping.util.MappingConfigurationValidator;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -111,7 +107,6 @@ public class MappingConfigurationPanel extends Panel implements View
 
     private Logger logger = Logger.getLogger(MappingConfigurationPanel.class);
     protected GridLayout layout;
-    protected VerticalLayout paramQueriesLayout = new VerticalLayout();
     protected MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     protected MappingConfiguration mappingConfiguration;
     protected ClientComboBox clientComboBox;
@@ -119,9 +114,9 @@ public class MappingConfigurationPanel extends Panel implements View
     protected SourceContextComboBox sourceContextComboBox;
     protected TargetContextComboBox targetContextComboBox;
     protected TextArea descriptionTextArea;
-    protected TextField numberOfParametersTextField;
-    protected List<TextField> parameterQueryTextFields = new ArrayList<TextField>();
-    protected MappingConfigurationService mappingConfigurationService;
+    protected TextField numberOfSourceParametersTextField;
+    protected TextField numberOfTargetParametersTextField;
+    protected MappingManagementService mappingConfigurationService;
     protected SaveRequiredMonitor saveRequiredMonitor;
     protected Button editButton;
     protected Button saveButton;
@@ -132,7 +127,6 @@ public class MappingConfigurationPanel extends Panel implements View
     protected Button exportMappingConfigurationValuesButton;
     protected Button exportMappingConfigurationButton;
     protected HorizontalLayout toolBarLayout;
-    protected List<KeyLocationQuery> keyLocationQueries;
     protected FunctionalGroup mappingConfigurationFunctionalGroup;
     protected MappingConfigurationExportHelper mappingConfigurationExportHelper;
     protected MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
@@ -144,9 +138,16 @@ public class MappingConfigurationPanel extends Panel implements View
     protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
     protected PlatformConfigurationService platformConfigurationService;
     protected CheckBox isManyToManyCheckbox;
-    protected Label configValueLabels;
-    protected Button addParametersButton = new Button();
-    protected Label numParamsLabel;
+    protected CheckBox constrainParameterListSizesCheckbox;
+    protected Label numSourceParamsLabel;
+    protected Label numTargetParamsLabel;
+    protected List<ParameterName> sourceContextParameterNames;
+    protected List<ParameterName> targetContextParameterNames;
+    protected MappingConfigurationValidator mappingConfigurationValidator = new MappingConfigurationValidator();
+    protected Label sourceParamNameLabel;
+    protected TextArea sourceParamNameValueTextArea;
+    protected Label targetParamNameLabel;
+    protected TextArea targetParamNameValueTextArea;
 	
 
     /**
@@ -171,7 +172,7 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     public MappingConfigurationPanel(MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable
             , ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, String name, MappingConfigurationService mappingConfigurationService,
+            TargetContextComboBox targetContextComboBox, String name, MappingManagementService mappingConfigurationService,
             SaveRequiredMonitor saveRequiredMonitor, Button editButton, Button saveButton, Button addNewRecordButton, 
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup mappingConfigurationFunctionalGroup,
@@ -220,8 +221,7 @@ public class MappingConfigurationPanel extends Panel implements View
         layout.setWidth("100%");
         
         this.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        
-        paramQueriesLayout = new VerticalLayout();
+
 
         toolBarLayout = new HorizontalLayout();
         toolBarLayout.setWidth("100%");
@@ -344,9 +344,6 @@ public class MappingConfigurationPanel extends Panel implements View
         });
 
 
-        FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
-        fd.extend(exportMappingConfigurationButton);
-
         this.exportMappingConfigurationButton.setIcon(VaadinIcons.DOWNLOAD_ALT);
         this.exportMappingConfigurationButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.exportMappingConfigurationButton.setDescription("Export the current mapping configuration");
@@ -377,19 +374,9 @@ public class MappingConfigurationPanel extends Panel implements View
             , createTableLayout(false));
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        paramQueriesLayout.setSpacing(true);
 
-        configValueLabels = new Label("Source Configuration Value Queries:");
-
-        layout.addComponent(configValueLabels, 2, 3, 3, 3);
-        Panel queryParamsPanel = new Panel();
-        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        queryParamsPanel.setHeight(100, Unit.PIXELS);
-        queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
-        queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 4, 3, 5);
-
-        vpanel.setSplitPosition(350, Unit.PIXELS);
+        vpanel.setSplitPosition(400, Unit.PIXELS);
+        vpanel.setMaxSplitPosition(400, Unit.PIXELS);
         this.setContent(vpanel);
         this.setSizeFull();
     }
@@ -420,11 +407,6 @@ public class MappingConfigurationPanel extends Panel implements View
         this.sourceContextComboBox.setReadOnly(!editable);
         this.targetContextComboBox.setReadOnly(!editable);
         this.descriptionTextArea.setReadOnly(!editable);
-
-        for(TextField textField: this.parameterQueryTextFields)
-        {
-            textField.setReadOnly(!editable);
-        }
     }
 
     /**
@@ -526,6 +508,7 @@ public class MappingConfigurationPanel extends Panel implements View
         this.targetContextComboBox.setValidationVisible(false);
         targetContextComboBoxLayout.addComponent(this.targetContextComboBox);
         layout.addComponent(this.targetContextComboBox, 1, 4);
+        layout.setComponentAlignment(this.targetContextComboBox, Alignment.MIDDLE_LEFT);
 
         HorizontalLayout descriptionLabelLayout = new HorizontalLayout();
         descriptionLabelLayout.setHeight(25, Unit.PIXELS);
@@ -552,66 +535,66 @@ public class MappingConfigurationPanel extends Panel implements View
         descriptionTextAreaLayout.addComponent(this.descriptionTextArea);
         layout.addComponent(descriptionTextAreaLayout, 1, 5);
 
-        Label manyToManyLable = new Label("Many to Many:");
-        manyToManyLable.setWidth(175, Unit.PIXELS);
+        numSourceParamsLabel = new Label("Number of source parameters:");
+        numSourceParamsLabel.setWidth(175, Unit.PIXELS);
+        numTargetParamsLabel = new Label("Number of target parameters:");
+        numTargetParamsLabel.setWidth(175, Unit.PIXELS);
+        numTargetParamsLabel.setVisible(false);
 
-        numParamsLabel = new Label("Number of source parameters:");
-        numParamsLabel.setWidth(175, Unit.PIXELS);
+        this.isManyToManyCheckbox = new CheckBox("Many to Many");
+        this.isManyToManyCheckbox.setWidth(175, Unit.PIXELS);
 
-        this.isManyToManyCheckbox = new CheckBox();
+        layout.addComponent(this.isManyToManyCheckbox, 2, 1);
 
-        this.isManyToManyCheckbox.addValueChangeListener(new Property.ValueChangeListener()
-        {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent)
-            {
-                if(isManyToManyCheckbox.getValue() == true)
-                {
-                    numParamsLabel.setVisible(false);
-                    numberOfParametersTextField.setVisible(false);
-                    paramQueriesLayout.setVisible(false);
-                    addParametersButton.setVisible(false);
-                    configValueLabels.setVisible(false);
+        this.constrainParameterListSizesCheckbox = new CheckBox("Fixed parameter list sizes");
+        this.constrainParameterListSizesCheckbox.setVisible(false);
 
-                    for(int i=0; i<paramQueriesLayout.getComponentCount(); i++)
-                    {
-                        paramQueriesLayout.getComponent(i).setVisible(false);
-                    }
-                }
-                else
-                {
-                    numParamsLabel.setVisible(true);
-                    numberOfParametersTextField.setVisible(true);
-                    paramQueriesLayout.setVisible(true);
-                    addParametersButton.setVisible(true);
-                    configValueLabels.setVisible(true);
-
-                    for(int i=0; i<paramQueriesLayout.getComponentCount(); i++)
-                    {
-                        paramQueriesLayout.getComponent(i).setVisible(true);
-                    }
-                }
-            }
-        });
-
-        layout.addComponent(manyToManyLable, 2, 1);
-        layout.addComponent(this.isManyToManyCheckbox, 3, 1);
+        layout.addComponent(this.constrainParameterListSizesCheckbox, 3, 1);
         
 
 
-        layout.addComponent(numParamsLabel, 2, 2);
-        this.numberOfParametersTextField = new TextField();
-        this.numberOfParametersTextField.setWidth(75, Unit.PIXELS);
-        this.numberOfParametersTextField.removeAllValidators();
-        this.numberOfParametersTextField.addValidator(new LongValidator("Number of source parameters " +
-        		"and key location queries must be defined."));
-        this.numberOfParametersTextField.setValidationVisible(false);
-        layout.addComponent(this.numberOfParametersTextField, 3, 2);
+        layout.addComponent(numSourceParamsLabel, 2, 2);
+        this.numberOfSourceParametersTextField = new TextField();
+        this.numberOfSourceParametersTextField.setWidth(75, Unit.PIXELS);
+        this.numberOfSourceParametersTextField.removeAllValidators();
+        this.numberOfSourceParametersTextField.addValidator(new LongValidator("Number of source parameters " +
+        		"must be defined."));
+        this.numberOfSourceParametersTextField.setValidationVisible(false);
+        layout.addComponent(this.numberOfSourceParametersTextField, 3, 2);
 
-        HorizontalLayout queriesLabelLayout = new HorizontalLayout();
-        queriesLabelLayout.setHeight(25, Unit.PIXELS);
-        queriesLabelLayout.setWidth(250, Unit.PIXELS);
+        layout.addComponent(numTargetParamsLabel, 2, 3);
+        this.numberOfTargetParametersTextField = new TextField();
+        this.numberOfTargetParametersTextField.setWidth(75, Unit.PIXELS);
+        this.numberOfTargetParametersTextField.removeAllValidators();
+        this.numberOfTargetParametersTextField.addValidator(new IntegerValidator("Number of target parameters " +
+                "must be defined."));
+        this.numberOfTargetParametersTextField.setValidationVisible(false);
+        this.numberOfTargetParametersTextField.setVisible(false);
+        layout.addComponent(this.numberOfTargetParametersTextField, 3, 3);
 
+
+        sourceParamNameLabel = new Label("Source Parameter Names");
+        sourceParamNameLabel.setWidth(175, Unit.PIXELS);
+
+        sourceParamNameValueTextArea = new TextArea();
+        sourceParamNameValueTextArea.setWidth("80%");
+        sourceParamNameValueTextArea.setRows(4);
+        sourceParamNameValueTextArea.setReadOnly(true);
+
+        layout.addComponent(sourceParamNameLabel, 2, 4);
+        layout.addComponent(sourceParamNameValueTextArea, 3, 4);
+
+
+        targetParamNameLabel = new Label("Target Parameter Names");
+        targetParamNameLabel.setWidth(175, Unit.PIXELS);
+
+        targetParamNameValueTextArea = new TextArea();
+        targetParamNameValueTextArea.setWidth("80%");
+        targetParamNameValueTextArea.setRows(4);
+        targetParamNameValueTextArea.setReadOnly(true);
+
+        layout.addComponent(targetParamNameLabel, 2, 5);
+        layout.addComponent(targetParamNameValueTextArea, 3, 5);
 
         return layout;
     }
@@ -625,16 +608,18 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     protected Layout createTableLayout(boolean buttonsVisible)
     {
-        VerticalLayout tableLayout = new VerticalLayout();
+
 
         HorizontalLayout controlsLayout = new HorizontalLayout();
         controlsLayout.setWidth("100%");
-        
+        controlsLayout.setHeight("30px");
+
         this.addNewRecordButton.setIcon(VaadinIcons.PLUS);
         this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         this.addNewRecordButton.setDescription("Add a mapping configuration value to the table below");
         this.addNewRecordButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.addNewRecordButton.setVisible(buttonsVisible);
+
         this.addNewRecordButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 saveRequiredMonitor.setSaveRequired(true);
@@ -687,9 +672,6 @@ public class MappingConfigurationPanel extends Panel implements View
         this.exportMappingConfigurationValuesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         this.exportMappingConfigurationValuesButton.setVisible(buttonsVisible);
 
-        FileDownloader fd = new FileDownloader(this.getMappingConfigurationValuesExportStream());
-        fd.extend(exportMappingConfigurationValuesButton);
-
         Label spacer = new Label("&nbsp;",  ContentMode.HTML);
         controlsLayout.addComponent(spacer);
         controlsLayout.setExpandRatio(spacer, 0.84f);
@@ -702,8 +684,17 @@ public class MappingConfigurationPanel extends Panel implements View
         controlsLayout.addComponent(this.exportMappingConfigurationValuesButton);
         controlsLayout.setExpandRatio(this.exportMappingConfigurationValuesButton, 0.04f);
 
-        tableLayout.addComponent(controlsLayout);
-        tableLayout.addComponent(this.mappingConfigurationConfigurationValuesTable);
+        VerticalLayout tableLayout = new VerticalLayout();
+        tableLayout.setSpacing(false);
+        tableLayout.setSizeFull();
+
+
+        VerticalSplitPanel vpanel = new VerticalSplitPanel(controlsLayout
+                , this.mappingConfigurationConfigurationValuesTable);
+        vpanel.setSplitPosition(30, Unit.PIXELS);
+        vpanel.setLocked(true);
+
+        tableLayout.addComponent(vpanel);
 
         return tableLayout;
     }
@@ -732,9 +723,16 @@ public class MappingConfigurationPanel extends Panel implements View
                       return input;
     
                 }
-            };
-          StreamResource resource = new StreamResource ( source,"mappingConfigurationExport.xml");
-          return resource;
+        };
+
+        StringBuffer fileName = new StringBuffer();
+        fileName.append(this.mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getConfigurationType().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getSourceContext().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getTargetContext().getName()).append("_mappingValuesExport.xml");
+
+        StreamResource resource = new StreamResource ( source, fileName.toString());
+        return resource;
     }
 
     /**
@@ -761,8 +759,15 @@ public class MappingConfigurationPanel extends Panel implements View
                       return input;
     
                 }
-            };
-          StreamResource resource = new StreamResource ( source,"mappingConfigurationExport.xml");
+        };
+
+        StringBuffer fileName = new StringBuffer();
+        fileName.append(this.mappingConfiguration.getConfigurationServiceClient().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getConfigurationType().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getSourceContext().getName()).append("_");
+        fileName.append(this.mappingConfiguration.getTargetContext().getName()).append("_mappingExport.xml");
+
+        StreamResource resource = new StreamResource ( source, fileName.toString());
           return resource;
     }
 
@@ -786,12 +791,6 @@ public class MappingConfigurationPanel extends Panel implements View
                 this.sourceContextComboBox.validate();
                 this.targetContextComboBox.validate();
                 this.descriptionTextArea.validate();
-                this.numberOfParametersTextField.validate();
-
-                for(TextField tf: this.parameterQueryTextFields)
-                {
-                    tf.validate();
-                }
             } 
             catch (InvalidValueException e) 
             {
@@ -800,22 +799,10 @@ public class MappingConfigurationPanel extends Panel implements View
                 this.sourceContextComboBox.setValidationVisible(true);
                 this.targetContextComboBox.setValidationVisible(true);
                 this.descriptionTextArea.setValidationVisible(true);
-                this.numberOfParametersTextField.setValidationVisible(true);
 
-                for(TextField tf: this.parameterQueryTextFields)
-                {
-                    tf.setValidationVisible(true);
-                }
                 throw e;
             }
 
-            logger.debug("this.parameterQueryTextFields.size() = " + this.parameterQueryTextFields.size());
-            logger.debug("this.mappingConfiguration.getNumberOfParams() = " + this.mappingConfiguration.getNumberOfParams());
-            
-            if(this.isManyToManyCheckbox.getValue() != true && this.parameterQueryTextFields.size() != this.mappingConfiguration.getNumberOfParams())
-            {
-                throw new Exception("You must define the key location queries!");
-            }
 
             logger.debug("Attempting to save mapping configuration.");
             this.mappingConfiguration.setConfigurationServiceClient
@@ -833,13 +820,27 @@ public class MappingConfigurationPanel extends Panel implements View
             this.mappingConfiguration.setTargetContext
                 ((ConfigurationContext)this.targetContextComboBox.getValue());
 
-            this.mappingConfiguration.setIsManyToMany(this.isManyToManyCheckbox.getValue());
+            this.mappingConfiguration.setLastUpdatedBy(principal.getName());
+
+            this.mappingConfiguration.setNumberOfMappings
+                    (this.getNumberOfMappings(mappingConfiguration.getSourceConfigurationValues()));
+
+            logger.info("Number of target values = " + this.mappingConfiguration.getNumTargetValues());
 
             try
             {
                
                 logger.debug("User: " + principal.getName() + " saving Mapping Configuration: " +
                 		this.mappingConfiguration);
+
+                if(this.mappingConfigurationValidator.validate(mappingConfiguration) == false)
+                {
+                    Notification.show("This mapping has been saved with the following warnings!\r\n\r\n" +
+                            "The following source system values are duplicated. This has the effect of calls to the mapping " +
+                            "service resolving multiple results. \r\n\r\n"
+                            + this.mappingConfigurationValidator.getErrorMessage(), Notification.Type.ERROR_MESSAGE);
+                }
+
                 this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
                 
                 String message = "[Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
@@ -857,21 +858,6 @@ public class MappingConfigurationPanel extends Panel implements View
                         "Type, Source and Target Context must be unique!");
             }
 
-            if(!this.isManyToManyCheckbox.getValue())
-            {
-                for (KeyLocationQuery query : this.keyLocationQueries)
-                {
-                    query.setMappingConfigurationId(this.mappingConfiguration.getId());
-
-                    logger.debug("User: " + principal.getName() + " saving Key Location Query: " +
-                            query);
-                    this.mappingConfigurationService.saveKeyLocationQuery(query);
-
-                    systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE,
-                            "Saving Key Location Query: " + query, principal.getName());
-                }
-            }
-
             this.mappingConfigurationConfigurationValuesTable.save();
 
             this.clientComboBox.setValidationVisible(false);
@@ -879,7 +865,7 @@ public class MappingConfigurationPanel extends Panel implements View
             this.sourceContextComboBox.setValidationVisible(false);
             this.targetContextComboBox.setValidationVisible(false);
             this.descriptionTextArea.setValidationVisible(false);
-            this.numberOfParametersTextField.setValidationVisible(false);
+            this.numberOfSourceParametersTextField.setValidationVisible(false);
 
             this.isManyToManyCheckbox.setReadOnly(true);
         }
@@ -890,6 +876,34 @@ public class MappingConfigurationPanel extends Panel implements View
         catch(Exception e)
         {
             throw e;
+        }
+    }
+
+    private int getNumberOfMappings(Set<SourceConfigurationValue> values)
+    {
+        int num = 0;
+
+        Set<Long> groupKeys = new HashSet<Long>();
+
+        for(SourceConfigurationValue value: values)
+        {
+           if(value.getSourceConfigGroupId() == null)
+           {
+               num++;
+           }
+           else
+           {
+               groupKeys.add(value.getSourceConfigGroupId());
+           }
+        }
+
+        if(num > 0)
+        {
+            return num;
+        }
+        else
+        {
+            return groupKeys.size();
         }
     }
 
@@ -940,8 +954,8 @@ public class MappingConfigurationPanel extends Panel implements View
         logger.debug("Resolved schemaLocation " + schemaLocation);
 
 
-        String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
-            , this.keyLocationQueries, schemaLocation);
+        String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration,
+            this.sourceContextParameterNames, this.targetContextParameterNames, schemaLocation);
 
         out.write(exportXml.getBytes());
 
@@ -959,8 +973,9 @@ public class MappingConfigurationPanel extends Panel implements View
         sourceContextComboBox.setReadOnly(false);
         targetContextComboBox.setReadOnly(false);
         this.descriptionTextArea.setReadOnly(false);
-        this.numberOfParametersTextField.setReadOnly(false);
+        this.numberOfSourceParametersTextField.setReadOnly(false);
         this.isManyToManyCheckbox.setReadOnly(false);
+        this.constrainParameterListSizesCheckbox.setReadOnly(false);
 
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
         
@@ -976,49 +991,79 @@ public class MappingConfigurationPanel extends Panel implements View
         this.sourceContextComboBox.setValue(mappingConfiguration.getSourceContext());
         this.targetContextComboBox.setValue(mappingConfiguration.getTargetContext());
         this.isManyToManyCheckbox.setValue(mappingConfiguration.getIsManyToMany());
+        this.constrainParameterListSizesCheckbox.setValue(mappingConfiguration.getConstrainParameterListSizes());
         this.descriptionTextArea.setPropertyDataSource(mappingConfigurationItem.getItemProperty("description"));
-        this.numberOfParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numberOfParams"));
+        this.numberOfSourceParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numberOfParams"));
+        this.numberOfTargetParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numTargetValues"));
 
-        this.keyLocationQueries = this.mappingConfigurationService
-                .getKeyLocationQueriesByMappingConfigurationId(this.mappingConfiguration.getId());
-
-        this.parameterQueryTextFields = new ArrayList<TextField>();
-
-        paramQueriesLayout.removeAllComponents();
-
-        if(!mappingConfiguration.getIsManyToMany())
+        if(isManyToManyCheckbox.getValue() == true)
         {
-            numParamsLabel.setVisible(true);
-            numberOfParametersTextField.setVisible(true);
-            paramQueriesLayout.setVisible(true);
-            configValueLabels.setVisible(true);
+            constrainParameterListSizesCheckbox.setVisible(true);
 
-            for (KeyLocationQuery query : this.keyLocationQueries)
+            if(constrainParameterListSizesCheckbox.getValue() == true)
             {
-                BeanItem<KeyLocationQuery> keyLocationQueryItem
-                        = new BeanItem<KeyLocationQuery>(query);
-                TextField tf = new TextField();
-                tf.addValidator(new StringLengthValidator(
-                        "The key location query cannot be blank!",
-                        1, 256, true));
-                tf.setValidationVisible(false);
-
-                tf.setWidth(350, Unit.PIXELS);
-
-                tf.setPropertyDataSource(keyLocationQueryItem.getItemProperty("value"));
-                this.parameterQueryTextFields.add(tf);
-                tf.setReadOnly(true);
-                paramQueriesLayout.addComponent(tf);
+                numSourceParamsLabel.setVisible(true);
+                numTargetParamsLabel.setVisible(true);
+                numberOfSourceParametersTextField.setVisible(true);
+                numberOfTargetParametersTextField.setVisible(true);
+            }
+            else
+            {
+                numTargetParamsLabel.setVisible(false);
+                numberOfTargetParametersTextField.setVisible(false);
+                numSourceParamsLabel.setVisible(false);
+                numberOfSourceParametersTextField.setVisible(false);
             }
         }
         else
         {
-            numParamsLabel.setVisible(false);
-            numberOfParametersTextField.setVisible(false);
-            paramQueriesLayout.setVisible(false);
-            addParametersButton.setVisible(false);
-            configValueLabels.setVisible(false);
+            numSourceParamsLabel.setVisible(true);
+            numberOfSourceParametersTextField.setVisible(true);
         }
+
+        if(sourceContextParameterNames != null && sourceContextParameterNames.size() > 0)
+        {
+            StringBuffer sb = new StringBuffer();
+
+            for(ParameterName name: sourceContextParameterNames)
+            {
+                sb.append(name.getName()).append("\n");
+            }
+
+            sourceParamNameValueTextArea.setReadOnly(false);
+            sourceParamNameValueTextArea.setValue(sb.toString());
+            sourceParamNameValueTextArea.setReadOnly(true);
+            sourceParamNameValueTextArea.setVisible(true);
+            sourceParamNameLabel.setVisible(true);
+        }
+        else
+        {
+            sourceParamNameValueTextArea.setVisible(false);
+            sourceParamNameLabel.setVisible(false);
+        }
+
+        if(targetContextParameterNames != null && targetContextParameterNames.size() > 0)
+        {
+            StringBuffer sb = new StringBuffer();
+
+            for(ParameterName name: targetContextParameterNames)
+            {
+                sb.append(name.getName()).append("\n");
+            }
+
+            targetParamNameValueTextArea.setReadOnly(false);
+            targetParamNameValueTextArea.setValue(sb.toString());
+            targetParamNameValueTextArea.setReadOnly(true);
+            targetParamNameValueTextArea.setVisible(true);
+            targetParamNameLabel.setVisible(true);
+        }
+        else
+        {
+            targetParamNameValueTextArea.setVisible(false);
+            targetParamNameLabel.setVisible(false);
+        }
+
+
 
         this.isManyToManyCheckbox.setReadOnly(true);
         typeComboBox.setReadOnly(true);
@@ -1026,7 +1071,9 @@ public class MappingConfigurationPanel extends Panel implements View
         sourceContextComboBox.setReadOnly(true);
         targetContextComboBox.setReadOnly(true);
         this.descriptionTextArea.setReadOnly(true);
-        this.numberOfParametersTextField.setReadOnly(true);
+        this.numberOfSourceParametersTextField.setReadOnly(true);
+        this.numberOfTargetParametersTextField.setReadOnly(true);
+        this.constrainParameterListSizesCheckbox.setReadOnly(true);
     }
 
     /* (non-Javadoc)
@@ -1053,11 +1100,41 @@ public class MappingConfigurationPanel extends Panel implements View
     	}
     }
 
+    private void loadParameterNames()
+    {
+        List<ParameterName> parameterNames = this.mappingConfigurationService.getParameterNamesByMappingConfigurationId
+                (this.mappingConfiguration.getId());
+
+        this.sourceContextParameterNames = new ArrayList<ParameterName>();
+        this.targetContextParameterNames = new ArrayList<ParameterName>();
+
+        for(ParameterName parameterName: parameterNames)
+        {
+            if(parameterName.getContext().equals(ParameterName.SOURCE_CONTEXT))
+            {
+                this.sourceContextParameterNames.add(parameterName);
+            }
+            else if(parameterName.getContext().equals(ParameterName.TARGET_CONTEXT))
+            {
+                this.targetContextParameterNames.add(parameterName);
+            }
+        }
+    }
+
     /**
      * @param mappingConfiguration the mappingConfiguration to set
      */
     public void setMappingConfiguration(MappingConfiguration mappingConfiguration)
     {
         this.mappingConfiguration = mappingConfiguration;
+        this.loadParameterNames();
+
+        FileDownloader fd = new FileDownloader(this.getMappingConfigurationExportStream());
+        fd.extend(exportMappingConfigurationButton);
+
+        FileDownloader fdValues = new FileDownloader(this.getMappingConfigurationValuesExportStream());
+        fdValues.extend(exportMappingConfigurationValuesButton);
+        
+        this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
     }
 }
