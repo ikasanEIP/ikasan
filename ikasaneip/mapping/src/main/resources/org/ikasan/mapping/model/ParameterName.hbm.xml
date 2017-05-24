@@ -47,8 +47,8 @@
 <hibernate-mapping>
 
     <class
-        name="org.ikasan.mapping.model.KeyLocationQuery"
-        table="MCSKeyLocationQuery">
+        name="org.ikasan.mapping.model.ParameterName"
+        table="MCSParameterName">
 
         <id name="id"
           type="java.lang.Long"
@@ -57,9 +57,17 @@
           <generator class="identity" />
         </id>
 
-        <property name="value" 
+        <property name="name"
                   type="java.lang.String" 
-                  column="Value" />
+                  column="Name" />
+
+        <property name="ordinal"
+                  type="java.lang.Integer"
+                  column="Ordinal" />
+
+        <property name="context"
+                  type="java.lang.String"
+                  column="Context" />
 
         <property name="mappingConfigurationId"
                   type="java.lang.Long"
