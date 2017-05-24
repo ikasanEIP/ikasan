@@ -161,7 +161,7 @@ public class UserManagementPanel extends Panel implements View
 
 
 		Panel securityAdministrationPanel = new Panel();
-		securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		//securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		securityAdministrationPanel.setSizeFull();
 
 		GridLayout gridLayout = new GridLayout();
@@ -178,8 +178,7 @@ public class UserManagementPanel extends Panel implements View
 		this.tableContainer = this.buildContainer();
 		
 		this.userTable = new FilterTable();
-		this.userTable.setWidth("100%");
-		this.userTable.setHeight("900px");
+		this.userTable.setSizeFull();
 
 		this.userTable.setFilterBarVisible(true);
 		this.userTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -210,10 +209,13 @@ public class UserManagementPanel extends Panel implements View
 			}
 		});
 
-		gridLayout.addComponent(this.userTable);
-		gridLayout.setComponentAlignment(this.userTable, Alignment.MIDDLE_CENTER);
 
-		securityAdministrationPanel.setContent(gridLayout);
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gridLayout
+				, this.userTable);
+		vpanel.setSplitPosition(80, Unit.PIXELS);
+		vpanel.setLocked(true);
+
+		securityAdministrationPanel.setContent(vpanel);
 
 		this.setContent(securityAdministrationPanel);
 	}
