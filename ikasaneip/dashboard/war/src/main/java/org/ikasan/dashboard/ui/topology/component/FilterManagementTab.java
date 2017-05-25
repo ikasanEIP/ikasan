@@ -326,7 +326,7 @@ public class FilterManagementTab extends TopologyTab
 		listSelectLayout.addComponent(super.components, 2, 0);
 				
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout buttonLayout = new GridLayout(2, 1);
 		buttonLayout.setSpacing(true);
@@ -481,11 +481,13 @@ public class FilterManagementTab extends TopologyTab
 		
 		gl.addComponent(searchResultsSizeLayout);
 		gl.addComponent(hl);
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gl
+				, this.filterTable);
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
 		
-		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.filterTable);
-		
-		vSplitPanel.setSecondComponent(hErrorTable);
+		vSplitPanel.setSecondComponent(vpanel);
 		vSplitPanel.setSplitPosition(450, Unit.PIXELS);
 		
 		this.setSizeFull();

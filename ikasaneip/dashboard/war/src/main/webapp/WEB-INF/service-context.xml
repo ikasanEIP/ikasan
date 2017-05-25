@@ -68,22 +68,8 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
-	<bean id="keyLocationQueryProcessorFactory" class="org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory">
+    <bean id="mappingConfigurationService" class="org.ikasan.mapping.service.MappingManagementServiceImpl">
         <constructor-arg ref="mappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationProcessorMap"/>
-    </bean>
-    
-    <util:map id="keyLocationProcessorMap">
-        <entry key="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor" 
-            value-ref="xpathKeyLocationQueryProcessor"/>
-    </util:map>
-
-    <bean id="xpathKeyLocationQueryProcessor" 
-        class="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"/>
-    
-    <bean id="mappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
-        <constructor-arg ref="mappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="mappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -304,7 +290,7 @@
                <value>/org/ikasan/mapping/model/MappingConfigurationLite.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ConfigurationServiceClient.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ConfigurationType.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/KeyLocationQuery.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/ParameterName.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>

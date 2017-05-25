@@ -50,7 +50,7 @@
     <changeSet author="ikasan dev" id="alterMCSMappingConfigurationAddIsManayToMany" context="postBaseline">
     
     	<preConditions onFail="MARK_RAN">
-			<not><columnExists tableName="MCSMappingConfiguration" columnName="IsConfigurable"/></not>
+			<not><columnExists tableName="MCSMappingConfiguration" columnName="IsManyToMany"/></not>
 		</preConditions>
 	    
 	    <addColumn tableName="MCSMappingConfiguration">

@@ -71,7 +71,8 @@ public class HousekeepingJob implements Job
                 {
                     this.batchDeleteSize = new Integer(houseKeepingBatchSize);
                     this.houseKeepService.setHousekeepingBatchSize(this.batchDeleteSize);
-                } catch (NumberFormatException e)
+                }
+                catch (NumberFormatException e)
                 {
                     this.batchDeleteSize = DEFAULT_BATCH_DELETE_SIZE;
                     this.houseKeepService.setHousekeepingBatchSize(DEFAULT_BATCH_DELETE_SIZE);
@@ -147,7 +148,8 @@ public class HousekeepingJob implements Job
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
-        logger.info("Housekeeping job executing: " + this.getJobName());
+        logger.info("Housekeeping job executing: " + this.getJobName()
+                + " [transaction size: " + this.transactionDeleteSize + "][batch delete size: " + this.batchDeleteSize + "]");
         try
         {
             if (houseKeepService.housekeepablesExist())
@@ -173,7 +175,7 @@ public class HousekeepingJob implements Job
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + HousekeepingJob.HOUSE_KEEPING_BATCH_SIZE, this.batchDeleteSize.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + HousekeepingJob.DEFAULT_TRANSACTION_DELETE_SIZE, this.transactionDeleteSize.toString());
+                + HousekeepingJob.TRANSACTION_BATCH_SIZE, this.transactionDeleteSize.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + HousekeepingJob.ENABLED, this.enabled.toString());
 

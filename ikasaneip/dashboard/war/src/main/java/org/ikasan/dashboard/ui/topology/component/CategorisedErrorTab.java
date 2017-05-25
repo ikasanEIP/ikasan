@@ -345,18 +345,16 @@ public class CategorisedErrorTab extends TopologyTab
 		dateSelectLayout.setSizeFull();
 		errorFromDate = new PopupDateField("From date");
 		errorFromDate.setResolution(Resolution.MINUTE);
-//		errorFromDate.setValue(this.getMidnightToday());
 		errorFromDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
 		errorToDate.setResolution(Resolution.MINUTE);
-//		errorToDate.setValue(this.getTwentyThreeFixtyNineToday());
 		errorToDate.setDateFormat(DashboardConstants.DATE_FORMAT_CALENDAR_VIEWS);
 		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
 		searchLayout.setSpacing(true);
@@ -687,9 +685,13 @@ public class CategorisedErrorTab extends TopologyTab
 		
 		gl.addComponent(hl);
 		hErrorTable.addComponent(gl);
-		
-		hErrorTable.addComponent(this.categorizedErrorOccurenceTable);
-		vSplitPanel.setSecondComponent(hErrorTable);
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gl
+				, this.categorizedErrorOccurenceTable);
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
+
+		vSplitPanel.setSecondComponent(vpanel);
 
 		
 		GridLayout wrapper = new GridLayout(1, 2);
