@@ -46,11 +46,18 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class KeyLocationQuery
+public class ParameterName
 {
+    public static final String SOURCE_CONTEXT = "SOURCE";
+    public static final String TARGET_CONTEXT = "TARGET";
+
     private Long id;
 
-    private String value;
+    private String name;
+
+    private int ordinal;
+
+    private String context;
 
     private Long mappingConfigurationId;
 
@@ -60,7 +67,7 @@ public class KeyLocationQuery
     /** The data time stamp when an instance was last updated */
     private Date updatedDateTime;
 
-    public KeyLocationQuery()
+    public ParameterName()
     {
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
@@ -85,19 +92,19 @@ public class KeyLocationQuery
     }
 
     /**
-     * @return the value
+     * @return the name
      */
-    public String getValue()
+    public String getName()
     {
-        return value;
+        return name;
     }
 
     /**
-     * @param value the value to set
+     * @param name the name to set
      */
-    public void setValue(String value)
+    public void setName(String name)
     {
-        this.value = value;
+        this.name = name;
     }
 
     /**
@@ -109,11 +116,31 @@ public class KeyLocationQuery
     }
 
     /**
-     * @param configurationContextId the configurationContextId to set
+     * @param mappingConfigurationId
      */
     public void setMappingConfigurationId(Long mappingConfigurationId)
     {
         this.mappingConfigurationId = mappingConfigurationId;
+    }
+
+    public int getOrdinal()
+    {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal)
+    {
+        this.ordinal = ordinal;
+    }
+
+    public String getContext()
+    {
+        return context;
+    }
+
+    public void setContext(String context)
+    {
+        this.context = context;
     }
 
     /**
@@ -155,7 +182,7 @@ public class KeyLocationQuery
     @Override
     public String toString()
     {
-        return "KeyLocationQuery [id=" + id + ", value=" + value + ", mappingConfigurationId=" + mappingConfigurationId
+        return "KeyLocationQuery [id=" + id + ", name=" + name + ", mappingConfigurationId=" + mappingConfigurationId
                 + ", createdDateTime=" + createdDateTime + ", updatedDateTime=" + updatedDateTime + "]";
     }
 }
