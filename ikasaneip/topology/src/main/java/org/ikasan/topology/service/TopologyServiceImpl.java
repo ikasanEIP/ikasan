@@ -259,12 +259,12 @@ public class TopologyServiceImpl implements TopologyService
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
 			    
-			    logger.debug("Successfully discovered module using URL: " + url 
+			    logger.info("Successfully discovered module using URL: " + url
 		    			+ ". Server =  " + server);
 			    
 			    module.setServer(server);
@@ -304,12 +304,12 @@ public class TopologyServiceImpl implements TopologyService
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
 			    
-			    logger.debug("Successfully discovered module using URL: " + url 
+			    logger.info("Successfully discovered flows using URL: " + url
 		    			+ ". Server =  " + server);
 			    
 			    Set<Flow> flowSet = new HashSet<Flow>();
