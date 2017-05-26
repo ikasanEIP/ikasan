@@ -57,6 +57,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -120,32 +121,14 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.PopupView;
 import com.vaadin.ui.PopupView.Content;
 import com.vaadin.ui.PopupView.PopupVisibilityEvent;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.Tree.TreeDragMode;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -270,6 +253,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	private GridLayout discoverButtonLayout = new GridLayout(3, 1);
 
+	private DiscoveryWindow discoveryWindow;
+
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -279,7 +264,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
 			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,
 			 FlowElementConfigurationWindow flowElementConfigurationWindow, FlowComponentsConfigurationUploadDownloadWindow flowComponentsConfigurationUploadDownloadWindow,
-			 ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow)
+			 ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow, DiscoveryWindow discoveryWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -375,6 +360,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.moduleComponentsConfigurationUploadDownloadWindow == null)
 		{
 			throw new IllegalArgumentException("moduleComponentsConfigurationUploadDownloadWindow cannot be null!");
+		}
+		this.discoveryWindow = discoveryWindow;
+		if(this.discoveryWindow == null)
+		{
+			throw new IllegalArgumentException("discoveryWindow cannot be null!");
 		}
 
 		init();
@@ -636,9 +626,35 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		layout.setSpacing(true);
 		layout.setWidth("100%");
 
+		HorizontalLayout headingLayout = new HorizontalLayout();
+		headingLayout.setWidth("150px");
+		headingLayout.setHeight("40px");
+		headingLayout.setSpacing(true);
+
 		Label roleManagementLabel = new Label("Topology");
  		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
- 		layout.addComponent(roleManagementLabel, 0, 0);
+
+		Button discoverButton = new Button();
+		discoverButton.setIcon(VaadinIcons.GLOBE);
+		discoverButton.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		discoverButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+
+		headingLayout.addComponent(roleManagementLabel);
+		headingLayout.setComponentAlignment(roleManagementLabel, Alignment.MIDDLE_LEFT);
+		headingLayout.addComponent(discoverButton);
+		headingLayout.setComponentAlignment(discoverButton, Alignment.MIDDLE_LEFT);
+
+		discoverButton.addClickListener(new Button.ClickListener()
+		{
+			@SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event)
+			{
+
+				UI.getCurrent().addWindow(discoveryWindow);
+			}
+		});
+
+ 		layout.addComponent(headingLayout, 0, 0);
 
  		filtersPopup.addPopupVisibilityListener(new PopupView.PopupVisibilityListener()
 		{
@@ -883,33 +899,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		// removing businss stream combo until more clearer around functionality.
 		// layout.addComponent(this.treeViewBusinessStreamCombo);
 
-		Button discoverButton = new Button("Discover");
-		discoverButton.setStyleName(ValoTheme.BUTTON_SMALL);
-
-		discoverButton.addClickListener(new Button.ClickListener()
-    	{
-            @SuppressWarnings("unchecked")
-			public void buttonClick(ClickEvent event)
-            {
-            	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-			        	.getAttribute(DashboardSessionValueConstants.USER);
-
-            	try
-				{
-					topologyService.discover(authentication);
-				}
-            	catch (DiscoveryException e)
-				{
-            		logger.error("An error occurred trying to auto discover modules!", e);
-
-					Notification.show("An error occurred trying to auto discover modules: "
-							+ e.getMessage(), Type.ERROR_MESSAGE);
-				}
-
-            	Notification.show("Auto discovery complete!");
-            }
-        });
-
 		Button refreshButton = new Button("Refresh");
 		refreshButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener()
@@ -933,8 +922,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         });
 
 
-		discoverButtonLayout.setSpacing(true);
-		discoverButtonLayout.addComponent(discoverButton);
+		discoverButtonLayout.setSpacing(true);;
 		discoverButtonLayout.addComponent(refreshButton);
 		discoverButtonLayout.addComponent(newServerButton);
 
