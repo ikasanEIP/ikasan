@@ -255,6 +255,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 	private DiscoveryWindow discoveryWindow;
 
+	private Button discoverButton;
+
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -634,7 +636,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		Label roleManagementLabel = new Label("Topology");
  		roleManagementLabel.setStyleName(ValoTheme.LABEL_HUGE);
 
-		Button discoverButton = new Button();
+		discoverButton = new Button();
 		discoverButton.setIcon(VaadinIcons.GLOBE);
 		discoverButton.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		discoverButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -649,7 +651,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			@SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event)
 			{
-
+				discoveryWindow.populate();
 				UI.getCurrent().addWindow(discoveryWindow);
 			}
 		});
@@ -1124,6 +1126,16 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null
+				&& authentication.hasGrantedAuthority(SecurityConstants.DISCOVER_AUTHORITY))
+		{
+			discoverButton.setVisible(true);
+		}
+		else
+		{
+			discoverButton.setVisible(false);
+		}
 
 		if(authentication != null
 				&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)

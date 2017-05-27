@@ -104,7 +104,7 @@ public class DiscoverySchedulerService
     {
         SimpleTrigger trigger = (SimpleTrigger) newTrigger()
                 .withIdentity(jobkey.getName(), jobkey.getGroup())
-                .startAt(new Date(System.currentTimeMillis() + (15 * 1000)))
+                .startAt(new Date(System.currentTimeMillis()))
                 .forJob(jobkey.getName(), jobkey.getGroup()).build();
 
         return trigger;

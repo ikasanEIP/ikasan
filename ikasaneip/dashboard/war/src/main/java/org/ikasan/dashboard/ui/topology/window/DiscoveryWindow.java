@@ -4,9 +4,16 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.discovery.DiscoverySchedulerService;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.systemevent.model.SystemEvent;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Created by stewmi on 25/05/2017.
@@ -14,13 +21,22 @@ import org.vaadin.teemu.VaadinIcons;
 public class DiscoveryWindow extends Window
 {
     private DiscoverySchedulerService discoverySchedulerService;
+    private SystemEventService systemEventService;
+    private Table systemEventTable;
+    private Label stateLabel = new Label();
+    private Button discoverButton;
 
-    public DiscoveryWindow(DiscoverySchedulerService discoverySchedulerService)
+    public DiscoveryWindow(DiscoverySchedulerService discoverySchedulerService,
+                           SystemEventService systemEventService)
     {
         super("Discovery");
         this.discoverySchedulerService = discoverySchedulerService;
-        this.discoverySchedulerService = discoverySchedulerService;
         if(this.discoverySchedulerService == null)
+        {
+            throw new IllegalArgumentException("discoverySchedulerService cannot be null!");
+        }
+        this.systemEventService = systemEventService;
+        if(this.systemEventService == null)
         {
             throw new IllegalArgumentException("discoverySchedulerService cannot be null!");
         }
@@ -30,15 +46,15 @@ public class DiscoveryWindow extends Window
 
     public void init()
     {
-        this.setWidth("300px");
-        this.setHeight("200px");
+        this.setWidth("600px");
+        this.setHeight("400px");
         this.setModal(true);
 
         Panel panel = new Panel();
         panel.setSizeFull();
         panel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 
-        GridLayout layout = new GridLayout(2, 3);
+        GridLayout layout = new GridLayout(2, 4);
         layout.setWidth("100%");
         layout.setSpacing(true);
         layout.setMargin(true);
@@ -64,27 +80,13 @@ public class DiscoveryWindow extends Window
         layout.addComponent(headingLayout, 0, 0, 1, 0);
 
         final Label statusLabel = new Label("Status");
-        final Label stateLabel = new Label();
-
-        if(discoverySchedulerService.isRunnung())
-        {
-            stateLabel.setValue("Running");
-        }
-        else
-        {
-            stateLabel.setValue("Stopped");
-        }
+        stateLabel = new Label();
 
         layout.addComponent(statusLabel, 0, 1);
         layout.addComponent(stateLabel, 1, 1);
 
-        final Button discoverButton = new Button("Discover");
+        discoverButton = new Button("Discover");
         discoverButton.setStyleName(ValoTheme.BUTTON_SMALL);
-
-        if(this.discoverySchedulerService.isRunnung())
-        {
-            discoverButton.setEnabled(false);
-        }
 
         discoverButton.addClickListener(new Button.ClickListener()
         {
@@ -97,8 +99,25 @@ public class DiscoveryWindow extends Window
                 discoverySchedulerService.addJob(authentication);
 
                 discoverButton.setEnabled(false);
+                stateLabel.setValue("Running");
             }
         });
+
+
+        systemEventTable = new Table();
+        systemEventTable.setWidth("100%");
+        systemEventTable.setHeight("200px");
+        systemEventTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+        systemEventTable.addContainerProperty("Subject", String.class,  null);
+        systemEventTable.setColumnExpandRatio("Subject", .3f);
+        systemEventTable.addContainerProperty("Action", String.class,  null);
+        systemEventTable.setColumnExpandRatio("Action", .4f);
+        systemEventTable.addContainerProperty("Actioned By", String.class,  null);
+        systemEventTable.setColumnExpandRatio("Actioned By", .15f);
+        systemEventTable.addContainerProperty("Timestamp", String.class,  null);
+        systemEventTable.setColumnExpandRatio("Timestamp", .15f);
+
+        systemEventTable.setStyleName("wordwrap-table");
 
         refreshButton.addClickListener(new Button.ClickListener()
         {
@@ -122,14 +141,56 @@ public class DiscoveryWindow extends Window
                 {
                     discoverButton.setEnabled(true);
                 }
+
+                populate();
             }
         });
 
-        layout.addComponent(discoverButton, 0, 2, 1, 2);
+        layout.addComponent(systemEventTable, 0, 2, 1, 2);
+        layout.setComponentAlignment(systemEventTable, Alignment.MIDDLE_CENTER);
+
+        layout.addComponent(discoverButton, 0, 3, 1, 3);
         layout.setComponentAlignment(discoverButton, Alignment.MIDDLE_CENTER);
 
         panel.setContent(layout);
 
         this.setContent(panel);
     }
+
+    public void populate()
+    {
+        if(this.discoverySchedulerService.isRunnung())
+        {
+            discoverButton.setEnabled(false);
+        }
+        else
+        {
+            discoverButton.setEnabled(true);
+        }
+
+        if(discoverySchedulerService.isRunnung())
+        {
+            stateLabel.setValue("Running");
+        }
+        else
+        {
+            stateLabel.setValue("Stopped");
+        }
+
+        systemEventTable.removeAllItems();
+
+        PagedSearchResult<SystemEvent> systemEvents = systemEventService.listSystemEvents(0, 100, "timestamp", true, "Discovery", null, null
+                , null, null);
+
+        for(SystemEvent systemEvent: systemEvents.getPagedResults())
+        {
+            SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
+            String timestamp = format.format(systemEvent.getTimestamp());
+
+            systemEventTable.addItem(new Object[]{systemEvent.getSubject(), systemEvent.getAction()
+                    , systemEvent.getActor(), timestamp}, systemEvent);
+        }
+    }
+
+
 }
