@@ -388,6 +388,53 @@ public class TopologyServiceImpl implements TopologyService
 			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
 			}
 		}
+
+		this.cleanUpComponents();
+		this.cleanUpFlows();
+		this.cleanUpModules();
+	}
+
+	protected void cleanUpModules()
+	{
+		List<Module> modules = this.topologyDao.getAllModules();
+
+		for(Module module: modules)
+		{
+			if(module.getServer() == null)
+			{
+				this.topologyDao.delete(module);
+			}
+		}
+	}
+
+	protected void cleanUpFlows()
+	{
+		List<Flow> flows = this.topologyDao.getAllFlows();
+
+		for(Flow flow: flows)
+		{
+			if(flow.getModule() == null)
+			{
+				// we need to delete any references to the flow before deleting it.
+				this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
+				this.topologyDao.delete(flow);
+			}
+		}
+	}
+
+	protected void cleanUpComponents()
+	{
+		List<Component> components = this.topologyDao.getAllComponents();
+
+		for(Component component: components)
+		{
+			if(component.getFlow() == null)
+			{
+				// we need to delete any references to the component before deleting it.
+				this.topologyDao.deleteFilterComponentsByComponentId(component.getId());
+				this.topologyDao.delete(component);
+			}
+		}
 	}
 	
 	

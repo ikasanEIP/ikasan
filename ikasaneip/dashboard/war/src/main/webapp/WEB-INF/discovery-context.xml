@@ -14,6 +14,7 @@
 
 	<bean id="discoveryWindow" class="org.ikasan.dashboard.ui.topology.window.DiscoveryWindow" scope="session">
         <constructor-arg ref="discoverySchedulerService" />
+        <constructor-arg ref="systemEventService" />
     </bean>
 
     <bean id="discoverySchedulerService" class="org.ikasan.dashboard.discovery.DiscoverySchedulerService">
