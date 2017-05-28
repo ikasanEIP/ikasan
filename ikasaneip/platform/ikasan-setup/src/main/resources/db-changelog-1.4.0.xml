@@ -23,6 +23,7 @@
 	<!-- 1.4.0 cardinality creation -->
 
 	<!-- 1.4.0 data creation -->
+	<include file="db/data/db-changelog-insertDiscoveryPolicy.xml" relativeToChangelogFile="true" />
 	
 	<!-- 1.4.0 index creation -->
 	<include file="db/index/db-changeLog-createIndexIkasanWiretapSearch.xml" relativeToChangelogFile="true" />
