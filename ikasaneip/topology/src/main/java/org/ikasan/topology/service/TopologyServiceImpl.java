@@ -259,12 +259,12 @@ public class TopologyServiceImpl implements TopologyService
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
 			    
-			    logger.debug("Successfully discovered module using URL: " + url 
+			    logger.info("Successfully discovered module using URL: " + url
 		    			+ ". Server =  " + server);
 			    
 			    module.setServer(server);
@@ -304,12 +304,12 @@ public class TopologyServiceImpl implements TopologyService
 			    catch(Exception e)
 			    {
 			    	// We may not find the module on the server so just move on to the next module.
-			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url 
+			    	logger.debug("Caught exception attempting to discover module with the following URL: " + url
 			    			+ ". Ignoring and moving on to next module. Exception message: " + e.getMessage());
 			    	continue;
 			    }
 			    
-			    logger.debug("Successfully discovered module using URL: " + url 
+			    logger.info("Successfully discovered flows using URL: " + url
 		    			+ ". Server =  " + server);
 			    
 			    Set<Flow> flowSet = new HashSet<Flow>();
@@ -386,6 +386,53 @@ public class TopologyServiceImpl implements TopologyService
 			    this.topologyDao.save(module);
 			    
 			    this.cleanUpFlows(module, server.getId(), module.getId(), discoveredFlowNames);
+			}
+		}
+
+		this.cleanUpComponents();
+		this.cleanUpFlows();
+		this.cleanUpModules();
+	}
+
+	protected void cleanUpModules()
+	{
+		List<Module> modules = this.topologyDao.getAllModules();
+
+		for(Module module: modules)
+		{
+			if(module.getServer() == null)
+			{
+				this.topologyDao.delete(module);
+			}
+		}
+	}
+
+	protected void cleanUpFlows()
+	{
+		List<Flow> flows = this.topologyDao.getAllFlows();
+
+		for(Flow flow: flows)
+		{
+			if(flow.getModule() == null)
+			{
+				// we need to delete any references to the flow before deleting it.
+				this.topologyDao.deleteBusinessStreamFlowByFlowId(flow.getId());
+				this.topologyDao.delete(flow);
+			}
+		}
+	}
+
+	protected void cleanUpComponents()
+	{
+		List<Component> components = this.topologyDao.getAllComponents();
+
+		for(Component component: components)
+		{
+			if(component.getFlow() == null)
+			{
+				// we need to delete any references to the component before deleting it.
+				this.topologyDao.deleteFilterComponentsByComponentId(component.getId());
+				this.topologyDao.delete(component);
 			}
 		}
 	}

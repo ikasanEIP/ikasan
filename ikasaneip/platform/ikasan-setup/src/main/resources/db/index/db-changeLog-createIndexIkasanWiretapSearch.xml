@@ -46,26 +46,35 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-
-    <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationColumns" context="postBaseline">
     
-    	<preConditions onFail="MARK_RAN">
-			<columnExists tableName="MessageHistory" columnName="Harvested"/>
-			<columnExists tableName="MessageHistory" columnName="Expiry"/>
-			<columnExists tableName="MessageHistory" columnName="FlowName"/>
-			<columnExists tableName="MessageHistory" columnName="ModuleName"/>
-		</preConditions>
+     <changeSet author="ikasan dev" id="createIndexIkasanWiretapSearch" context="postBaseline">
+     
+		 <preConditions onFail="MARK_RAN">
+			 <not><indexExists indexName="IX_IkasanWiretap_Search" /></not>
+			 <not><indexExists indexName="IX_IkasanWiretap_EventId" /></not>
+			 <not><indexExists indexName="IX_IkasanWiretap_CreatedDateTime" /></not>
+		 </preConditions>
 
-		<dropIndex indexName="IX_MessageHistory_Expiry" tableName="MessageHistory"/>
-		<dropIndex indexName="IX_MessageHistory_StartTimeModuleFlow" tableName="MessageHistory"/>
+		 <createIndex
+				 indexName="IX_IkasanWiretap_Search"
+				 tableName="IkasanWiretap">
+			 <column name="ModuleName" type="varchar(128)"/>
+			 <column name="FlowName" type="varchar(128)"/>
+			 <column name="ComponentName" type="varchar(128)"/>
+		 </createIndex>
 
-		<dropDefaultValue tableName="MessageHistory" columnName="Harvested" />
+		 <createIndex
+				 indexName="IX_IkasanWiretap_EventId"
+				 tableName="IkasanWiretap">
+			 <column name="EventId" type="VARCHAR(255)"/>
+		 </createIndex>
 
-		<dropColumn columnName="Harvested" tableName="MessageHistory"/>
-		<dropColumn columnName="Expiry" tableName="MessageHistory"/>
-		<dropColumn columnName="FlowName" tableName="MessageHistory"/>
-		<dropColumn columnName="ModuleName" tableName="MessageHistory"/>
-
+		 <createIndex
+				 indexName="IX_IkasanWiretap_CreatedDateTime"
+				 tableName="IkasanWiretap">
+			 <column name="CreatedDateTime" type="numeric(18)"/>
+		 </createIndex>
+        
     </changeSet>
-
+    
 </databaseChangeLog>

@@ -46,26 +46,19 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-
-    <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationColumns" context="postBaseline">
     
-    	<preConditions onFail="MARK_RAN">
-			<columnExists tableName="MessageHistory" columnName="Harvested"/>
-			<columnExists tableName="MessageHistory" columnName="Expiry"/>
-			<columnExists tableName="MessageHistory" columnName="FlowName"/>
-			<columnExists tableName="MessageHistory" columnName="ModuleName"/>
+     <changeSet author="ikasan dev" id="createIndexCompomnentInvocationMetric" context="postBaseline">
+     
+     	<preConditions onFail="MARK_RAN">
+			<not><indexExists indexName="IX_CompomnentInvocationMetric" /></not>
 		</preConditions>
 
-		<dropIndex indexName="IX_MessageHistory_Expiry" tableName="MessageHistory"/>
-		<dropIndex indexName="IX_MessageHistory_StartTimeModuleFlow" tableName="MessageHistory"/>
-
-		<dropDefaultValue tableName="MessageHistory" columnName="Harvested" />
-
-		<dropColumn columnName="Harvested" tableName="MessageHistory"/>
-		<dropColumn columnName="Expiry" tableName="MessageHistory"/>
-		<dropColumn columnName="FlowName" tableName="MessageHistory"/>
-		<dropColumn columnName="ModuleName" tableName="MessageHistory"/>
-
+		 <createIndex
+				 indexName="IX_CompomnentInvocationMetric"
+				 tableName="CustomMetric">
+			 <column name="CompInvocationMetricId" type="numeric(18)"/>
+		 </createIndex>
+        
     </changeSet>
-
+    
 </databaseChangeLog>
