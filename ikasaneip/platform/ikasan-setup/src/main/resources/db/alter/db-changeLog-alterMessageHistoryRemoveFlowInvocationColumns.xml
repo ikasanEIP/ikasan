@@ -59,6 +59,8 @@
 		<dropIndex indexName="IX_MessageHistory_Expiry" tableName="MessageHistory"/>
 		<dropIndex indexName="IX_MessageHistory_StartTimeModuleFlow" tableName="MessageHistory"/>
 
+		<dropDefaultValue tableName="MessageHistory" columnName="Harvested" />
+
 		<dropColumn columnName="Harvested" tableName="MessageHistory"/>
 		<dropColumn columnName="Expiry" tableName="MessageHistory"/>
 		<dropColumn columnName="FlowName" tableName="MessageHistory"/>
