@@ -133,7 +133,12 @@ public class AuthenticationServiceImpl implements AuthenticationService
 		if(authentication == null)
 		{
 			logger.info("Authentication failed for user " + username + ". Authentication is null!!");
-			throw new AuthenticationServiceException("Error authenticating! Authentication is null!!");
+			throw new AuthenticationServiceException("Invalid user name or password.");
+		}
+		else if(authentication.getAuthorities() == null || authentication.getAuthorities().size() == 0)
+		{
+			logger.info(username + " not authorised for this application!!");
+			throw new AuthenticationServiceException("User not authorised for this application.");
 		}
 
 		return authentication;
@@ -168,7 +173,12 @@ public class AuthenticationServiceImpl implements AuthenticationService
 		if(authentication == null)
 		{
 			logger.info("Authentication failed for user " + username + ". Authentication is null!!");
-			throw new AuthenticationServiceException("Error authenticating! Authentication is null!!");
+			throw new AuthenticationServiceException("Invalid user name or password.");
+		}
+		else if(authentication.getAuthorities() == null || authentication.getAuthorities().size() == 0)
+		{
+			logger.info(username + " not authorised for this application!!");
+			throw new AuthenticationServiceException("User not authorised for this application.");
 		}
 
 		return authentication;

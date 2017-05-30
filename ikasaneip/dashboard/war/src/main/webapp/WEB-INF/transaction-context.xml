@@ -29,8 +29,10 @@
                 expression="execution(* org.ikasan.mapping.service.*.*(..))"/>
         <aop:pointcut id="configurationServiceMethods"
                 expression="execution(* org.ikasan.configurationService.service.*.*(..))"/>
-        <aop:pointcut id="topologyServiceMethods"
-                expression="execution(* org.ikasan.topology.service.*.*(..))"/>
+        <aop:pointcut id="topologyDaoSaveMethods"
+                expression="execution(* org.ikasan.topology.dao.*.save*(..))"/>
+        <aop:pointcut id="topologyDaoDeleteMethods"
+                      expression="execution(* org.ikasan.topology.dao.*.delete*(..))"/>
         <aop:pointcut id="wiretapDaoMethods"
                 expression="execution(* org.ikasan.wiretap.dao.*.*(..))"/>
         <aop:pointcut id="triggerDaoMethods"
@@ -62,7 +64,8 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="mappingServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="configurationServiceMethods"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyDaoSaveMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyDaoDeleteMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="wiretapDaoMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>

@@ -348,7 +348,7 @@ public class ReplayAuditTab extends TopologyTab
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
 		searchLayout.setSpacing(true);
@@ -454,12 +454,16 @@ public class ReplayAuditTab extends TopologyTab
 		
 		gl.addComponent(searchResultsSizeLayout);
 		gl.addComponent(hl);
+
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gl
+				, this.replayEventsTable);
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
 		
-		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.replayEventsTable);
-		
-		vSplitPanel.setSecondComponent(hErrorTable);
+		vSplitPanel.setSecondComponent(vpanel);
 		vSplitPanel.setSplitPosition(350, Unit.PIXELS);
+		vSplitPanel.setMaxSplitPosition(350, Unit.PIXELS);
 		
 		GridLayout wrapper = new GridLayout(1, 2);
 		wrapper.setRowExpandRatio(0, .01f);

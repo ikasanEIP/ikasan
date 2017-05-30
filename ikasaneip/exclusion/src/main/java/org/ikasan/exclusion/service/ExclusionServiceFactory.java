@@ -40,13 +40,9 @@
  */
 package org.ikasan.exclusion.service;
 
-import org.ikasan.exclusion.dao.BlackListDao;
+import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
-import org.ikasan.exclusion.dao.MapBlackListDao;
-import org.ikasan.exclusion.model.BlackListLinkedHashMap;
-import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
@@ -57,7 +53,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 public class ExclusionServiceFactory
 {
     /** blacklist DAO handle */	
-    BlackListDao blackListDao;
+    BlackListDaoFactory blackListDaoFactory;
 
     /** exclusionEvent DAO handle */
     ExclusionEventDao exclusionEventDao;
@@ -68,12 +64,12 @@ public class ExclusionServiceFactory
     /**
      * Constructor
      */
-    public ExclusionServiceFactory(BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, SerialiserFactory serialiserFactory)
+    public ExclusionServiceFactory(BlackListDaoFactory blackListDaoFactory, ExclusionEventDao exclusionEventDao, SerialiserFactory serialiserFactory)
     {
-        this.blackListDao = blackListDao;
-        if(blackListDao == null)
+        this.blackListDaoFactory = blackListDaoFactory;
+        if(blackListDaoFactory == null)
         {
-            throw new IllegalArgumentException("exclusionServiceDao cannot be 'null'");
+            throw new IllegalArgumentException("blackListDaoFactory cannot be 'null'");
         }
 
         this.exclusionEventDao = exclusionEventDao;
@@ -95,6 +91,6 @@ public class ExclusionServiceFactory
      */
     public ExclusionService getExclusionService(String moduleName, String flowName)
     {
-        return new ExclusionServiceDefaultImpl(moduleName, flowName, blackListDao, exclusionEventDao, serialiserFactory.getDefaultSerialiser());
+        return new ExclusionServiceDefaultImpl(moduleName, flowName, blackListDaoFactory.getBlackListDao(), exclusionEventDao, serialiserFactory.getDefaultSerialiser());
     }
 }
