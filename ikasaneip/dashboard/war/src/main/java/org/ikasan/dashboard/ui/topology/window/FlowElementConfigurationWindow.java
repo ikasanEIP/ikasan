@@ -49,6 +49,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -79,17 +80,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -167,7 +159,13 @@ public class FlowElementConfigurationWindow extends AbstractConfigurationWindow
     	    
     	    configuration = this.configurationManagement.getConfiguration(configurationId);
     	}
-    		
+		
+		passwordFields = new HashMap<String, PasswordField>();
+		textFields = new HashMap<String, TextArea>();
+		comboBoxes = new HashMap<String, ComboBox>();
+		descriptionTextFields = new HashMap<String, TextArea>();
+		mapTextFields = new HashMap<String, TextFieldKeyValuePair>();
+		valueTextFields = new HashMap<String, TextArea>();
     	  	
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 		
