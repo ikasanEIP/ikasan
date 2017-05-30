@@ -48,7 +48,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationColumns" context="postBaseline">
-    
+
+		<validCheckSum>any</validCheckSum>
+		
     	<preConditions onFail="MARK_RAN">
 			<columnExists tableName="MessageHistory" columnName="Harvested"/>
 			<columnExists tableName="MessageHistory" columnName="Expiry"/>
