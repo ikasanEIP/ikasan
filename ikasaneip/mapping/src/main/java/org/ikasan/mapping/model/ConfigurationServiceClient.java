@@ -50,7 +50,6 @@ public class ConfigurationServiceClient
 {
     private Long id;
     private String name;
-    private String keyLocationQueryProcessorType;
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -101,22 +100,6 @@ public class ConfigurationServiceClient
     }
 
     /**
-     * @return the keyLocationQueryProcessorType
-     */
-    public String getKeyLocationQueryProcessorType()
-    {
-        return keyLocationQueryProcessorType;
-    }
-
-    /**
-     * @param keyLocationQueryProcessorType the keyLocationQueryProcessorType to set
-     */
-    public void setKeyLocationQueryProcessorType(String keyLocationQueryProcessorType)
-    {
-        this.keyLocationQueryProcessorType = keyLocationQueryProcessorType;
-    }
-
-    /**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()
@@ -155,8 +138,8 @@ public class ConfigurationServiceClient
     @Override
     public String toString()
     {
-        return "ConfigurationServiceClient [id=" + id + ", name=" + name + ", keyLocationQueryProcessorType="
-                + keyLocationQueryProcessorType + ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+        return "ConfigurationServiceClient [id=" + id + ", name=" + name +
+                ", createdDateTime=" + createdDateTime + ", updatedDateTime="
                 + updatedDateTime + "]";
     }
 
@@ -170,8 +153,6 @@ public class ConfigurationServiceClient
         int result = 1;
         result = prime * result + ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((keyLocationQueryProcessorType == null) ? 0 : keyLocationQueryProcessorType.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
         return result;
@@ -197,11 +178,6 @@ public class ConfigurationServiceClient
             if (other.id != null) return false;
         }
         else if (!id.equals(other.id)) return false;
-        if (keyLocationQueryProcessorType == null)
-        {
-            if (other.keyLocationQueryProcessorType != null) return false;
-        }
-        else if (!keyLocationQueryProcessorType.equals(other.keyLocationQueryProcessorType)) return false;
         if (name == null)
         {
             if (other.name != null) return false;

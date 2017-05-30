@@ -340,7 +340,7 @@ public class ReplayTab extends TopologyTab
 		dateSelectLayout.addComponent(this.eventId, 1, 0);				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
 		searchLayout.setSpacing(true);
@@ -515,12 +515,24 @@ public class ReplayTab extends TopologyTab
 		
 		gl.addComponent(searchResultsSizeLayout);
 		gl.addComponent(hl);
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel();
+		vpanel.setFirstComponent(gl);
+		vpanel.setSecondComponent(this.replayEventsTable);
+		vpanel.setImmediate(true);
+		vpanel.setSizeFull();
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
+		vpanel.markAsDirty();
+
+		Panel vpanelContainer = new Panel();
+		vpanelContainer.setStyleName(ValoTheme.PANEL_BORDERLESS);
+		vpanelContainer.setSizeFull();
+		vpanelContainer.setContent(vpanel);
 		
-		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.replayEventsTable);
-		
-		vSplitPanel.setSecondComponent(hErrorTable);
+		vSplitPanel.setSecondComponent(vpanelContainer);
 		vSplitPanel.setSplitPosition(350, Unit.PIXELS);
+		vSplitPanel.setMaxSplitPosition(350, Unit.PIXELS);
 		
 		GridLayout wrapper = new GridLayout(1, 2);
 		wrapper.setRowExpandRatio(0, .01f);
