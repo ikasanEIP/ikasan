@@ -44,8 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewContextFieldGroup;
-import org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationPanel;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
@@ -55,12 +54,10 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -82,7 +79,7 @@ public class NewMappingConfigurationContextWindow extends Window implements View
 	
 	private static final long serialVersionUID = 715001890931201998L;
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private RefreshGroup refreshGroup;
     private SaveRequiredMonitor saveRequiredMonitor;
     private final TextField nameField = new TextField();
@@ -96,7 +93,7 @@ public class NewMappingConfigurationContextWindow extends Window implements View
      * @param refreshGroup
      * @param saveRequiredMonitor
      */
-    public NewMappingConfigurationContextWindow(MappingConfigurationService mappingConfigurationService, 
+    public NewMappingConfigurationContextWindow(MappingManagementService mappingConfigurationService,
             RefreshGroup refreshGroup, SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
     {
         super();

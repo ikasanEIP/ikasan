@@ -140,7 +140,7 @@ public class LoginFieldGroup extends FieldGroup
         catch (AuthenticationServiceException e)
         {
             logger.error("User has supplied invalid password: " + username.getValue());
-            throw new CommitException("Invalid user name or password. Please try again.");
+            throw new CommitException(e.getMessage() + " Please try again.");
         }
         catch(InvalidDataAccessResourceUsageException e)
         {

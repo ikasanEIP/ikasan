@@ -134,7 +134,7 @@ public class ReplayApplication extends IkasanRestApplication
 			
 			if(resubmissionService == null)
 			{
-				throw new RuntimeException("The resubmission service on the flow you are resubmitting to is null. This is most liekly due to " +
+				throw new RuntimeException("The resubmission service on the flow you are resubmitting to is null. This is most likely due to " +
 						"the resubmission service not being set on the flow factory for the flow you are resubmitting to.");
 			}
 			

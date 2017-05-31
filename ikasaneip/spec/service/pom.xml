@@ -96,5 +96,6 @@
 	   <module>hospital</module>
        <module>history</module>
 	   <module>replay</module>
+       <module>mapping</module>
     </modules>
 </project>

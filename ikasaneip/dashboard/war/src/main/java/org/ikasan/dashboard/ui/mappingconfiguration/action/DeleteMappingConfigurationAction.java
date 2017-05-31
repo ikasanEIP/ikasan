@@ -49,7 +49,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -67,7 +67,7 @@ public class DeleteMappingConfigurationAction implements Action
     
     private Long mappingConfigurationId;
     private MappingConfigurationSearchResultsTable searchResultsTable;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SystemEventService systemEventService;
 
     /**
@@ -78,7 +78,7 @@ public class DeleteMappingConfigurationAction implements Action
      * @param mappingConfigurationConfigurationValuesTable
      */
     public DeleteMappingConfigurationAction(Long mappingConfigurationId, MappingConfigurationSearchResultsTable searchResultsTable,
-            MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
+                                            MappingManagementService mappingConfigurationService, SystemEventService systemEventService)
     {
         super();
 

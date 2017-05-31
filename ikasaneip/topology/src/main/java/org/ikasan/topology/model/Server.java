@@ -157,7 +157,7 @@ public class Server
 	 */
 	public void setModules(Set<Module> modules)
 	{
-		this.modules = new TreeSet<>(modules);
+		this.modules = modules;
 	}
 
 	/**

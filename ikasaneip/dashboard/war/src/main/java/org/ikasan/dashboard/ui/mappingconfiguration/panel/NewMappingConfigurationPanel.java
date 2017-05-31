@@ -42,7 +42,6 @@ package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -58,19 +57,16 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextCombo
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
-import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
-import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -80,8 +76,6 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -96,6 +90,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     private static final long serialVersionUID = -9199358319962572807L;
 
     private Logger logger = Logger.getLogger(NewMappingConfigurationPanel.class);
+
 
     /**
      * Constructor
@@ -119,7 +114,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     public NewMappingConfigurationPanel(
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, MappingConfigurationService mappingConfigurationService,
+            TargetContextComboBox targetContextComboBox, MappingManagementService mappingConfigurationService,
             SaveRequiredMonitor saveRequiredMonitor, Button editButton, Button saveButton, Button addNewRecordButton, 
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup newMappingConfigurationFunctionalGroup,
@@ -151,8 +146,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         
         this.addStyleName(ValoTheme.PANEL_BORDERLESS);
     	
-    	this.parameterQueryTextFields = new ArrayList<TextField>();
-    	
     	this.typeComboBox.setReadOnly(false);
         this.clientComboBox.setReadOnly(false);
         this.sourceContextComboBox.setReadOnly(false);
@@ -175,26 +168,21 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         toolBarLayout.addComponent(spacerLabel);
         toolBarLayout.setExpandRatio(spacerLabel, 0.865f);
 
-        this.editButton.setIcon(VaadinIcons.EDIT);
         this.editButton.setDescription("Edit the mapping configuration");
-        this.editButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        this.editButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        this.editButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
         toolBarLayout.addComponent(editButton);
         toolBarLayout.setExpandRatio(editButton, 0.045f);
 
-        this.saveButton.setIcon(VaadinIcons.HARDDRIVE);
-        this.saveButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
         this.saveButton.setDescription("Save the mapping configuration");
-        this.saveButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
 
         toolBarLayout.addComponent(saveButton);
         toolBarLayout.setExpandRatio(saveButton, 0.045f);
 
-        this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE);
-        this.cancelButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        this.cancelButton.addStyleName(ValoTheme.BUTTON_SMALL);
         this.cancelButton.setDescription("Cancel the current edit");
-        this.cancelButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         toolBarLayout.addComponent(this.cancelButton);
         toolBarLayout.setExpandRatio(this.cancelButton, 0.045f);
@@ -209,32 +197,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             , createTableLayout(false));
         vpanel.setStyleName(ValoTheme.SPLITPANEL_LARGE);
 
-        Button addParametersButton = new Button();
-        addParametersButton.setIcon(VaadinIcons.FORM);
-        addParametersButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        addParametersButton.setDescription("Add new key location queries. The number of fields created corresponds to the number of query parameters.");
-        addParametersButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-
-        addParametersButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                addParamQueryFields();
-            }
-        });
-
-        paramQueriesLayout.removeAllComponents();
-//        paramQueriesLayout.addComponent(addParametersButton);
-        paramQueriesLayout.setSpacing(true);
-        
-        Label configValueLabels = new Label("Source Configuration Value Queries:");
-        layout.addComponent(configValueLabels, 2, 2);
-        layout.addComponent(addParametersButton, 3, 2);        
-
-        Panel queryParamsPanel = new Panel();
-        queryParamsPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-        queryParamsPanel.setHeight(140, Unit.PIXELS);
-        queryParamsPanel.setWidth(100, Unit.PERCENTAGE);
-        queryParamsPanel.setContent(paramQueriesLayout);
-        this.layout.addComponent(queryParamsPanel, 2, 3, 3, 5);
 
         vpanel.setSplitPosition(325, Unit.PIXELS);
         this.setContent(vpanel);
@@ -334,45 +296,11 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         	this.targetContextComboBox.setReadOnly(!editable);
         if(this.descriptionTextArea != null)
         	this.descriptionTextArea.setReadOnly(!editable);
-        if(this.numberOfParametersTextField != null)
-        	this.numberOfParametersTextField.setReadOnly(!editable);
+        if(this.numberOfSourceParametersTextField != null)
+        	this.numberOfSourceParametersTextField.setReadOnly(!editable);
 
-        if(this.parameterQueryTextFields != null)
-        {
-	        for(TextField textField: this.parameterQueryTextFields)
-	        {
-	            textField.setReadOnly(!editable);
-	        }
-        }
     }
 
-    /**
-     * Adds key location query fields to the UI. 
-     */
-    public void addParamQueryFields()
-    {
-        paramQueriesLayout.removeAllComponents();
-
-        Long numberOfParams = (Long)super.numberOfParametersTextField.getPropertyDataSource().getValue();
-        for(int i=0; i<numberOfParams; i++)
-        {
-            KeyLocationQuery query = new KeyLocationQuery();
-            query.setMappingConfigurationId(super.mappingConfiguration.getId());
-            query.setValue("");
-            super.keyLocationQueries.add(query);
-            BeanItem<KeyLocationQuery> keyLocationQueryItem 
-                = new BeanItem<KeyLocationQuery>(query);
-            TextField tf = new TextField();
-            tf.addValidator(new StringLengthValidator(
-                "The key location query cannot be blank!",
-                1, 256, true));
-            tf.setValidationVisible(false);
-            tf.setWidth(350, Unit.PIXELS);
-            tf.setPropertyDataSource(keyLocationQueryItem.getItemProperty("value"));
-            this.parameterQueryTextFields.add(tf);
-            paramQueriesLayout.addComponent(tf);
-        }
-    }
     
     /**
      * Method to populate the mapping configuration form.
@@ -385,7 +313,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         sourceContextComboBox.setReadOnly(false);
         targetContextComboBox.setReadOnly(false);
         this.descriptionTextArea.setReadOnly(false);
-        this.numberOfParametersTextField.setReadOnly(false);
+        this.numberOfSourceParametersTextField.setReadOnly(false);
 
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
 
@@ -394,37 +322,16 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         this.sourceContextComboBox.setValue(mappingConfiguration.getSourceContext());
         this.targetContextComboBox.setValue(mappingConfiguration.getTargetContext());
         this.descriptionTextArea.setPropertyDataSource(mappingConfigurationItem.getItemProperty("description"));
-        this.numberOfParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numberOfParams"));
+        this.numberOfSourceParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numberOfParams"));
+        this.numberOfTargetParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numTargetValues"));
 
-        this.keyLocationQueries = this.mappingConfigurationService
-                .getKeyLocationQueriesByMappingConfigurationId(this.mappingConfiguration.getId());
-
-        this.parameterQueryTextFields = new ArrayList<TextField>();
-
-        for(KeyLocationQuery query: this.keyLocationQueries)
-        {
-            BeanItem<KeyLocationQuery> keyLocationQueryItem 
-                = new BeanItem<KeyLocationQuery>(query);
-            TextField tf = new TextField();
-            tf.addValidator(new StringLengthValidator(
-                "The key location query cannot be blank!",
-                1, 256, true));
-            tf.setValidationVisible(false);
-            
-            tf.setWidth(350, Unit.PIXELS);
-         
-            tf.setPropertyDataSource(keyLocationQueryItem.getItemProperty("value"));
-            this.parameterQueryTextFields.add(tf);
-            tf.setReadOnly(true);
-            paramQueriesLayout.addComponent(tf);
-        }
 
         typeComboBox.setReadOnly(true);
         clientComboBox.setReadOnly(true);
         sourceContextComboBox.setReadOnly(true);
         targetContextComboBox.setReadOnly(true);
         this.descriptionTextArea.setReadOnly(true);
-        this.numberOfParametersTextField.setReadOnly(true);
+        this.numberOfSourceParametersTextField.setReadOnly(true);
     }
 
     /* (non-Javadoc)
@@ -436,5 +343,6 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         this.saveRequiredMonitor.setSaveRequired(true);
         populateMappingConfigurationForm();
     }
+
 
 }

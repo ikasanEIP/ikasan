@@ -75,7 +75,7 @@ public class ScheduledFlowSampleTest extends IkasanEIPTest
     {
         // setup the expected component invocations
         ikasanFlowTestRule.withFlow(demoScheduledConverterFlow)
-                          .consumer("Scheduled Consumer")
+                          .scheduledConsumer("Scheduled Consumer")
                           .converter("Scheduled Converter")
                           .producer("Scheduled Publisher");
 

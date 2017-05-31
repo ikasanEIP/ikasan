@@ -56,7 +56,7 @@
         <module>standaloneJVM</module>
         <module>genericTechPriceSrc</module>
         <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
-        <module>scheduleDrivenSrc</module>
+        <!---module>scheduleDrivenSrc</module -->
         <module>jboss</module>
         <module>spring-boot</module>
     </modules>
