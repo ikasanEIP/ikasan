@@ -274,7 +274,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // add to exclusion list
-                exactly(1).of(exclusionService).addBlacklisted("identifier", "errorUri");
+                exactly(1).of(exclusionService).addBlacklisted("identifier", "errorUri", flowInvocationContext);
             }
         });
 

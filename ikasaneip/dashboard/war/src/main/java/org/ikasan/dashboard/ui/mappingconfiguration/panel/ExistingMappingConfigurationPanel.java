@@ -52,7 +52,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextCombo
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -92,7 +92,7 @@ public class ExistingMappingConfigurationPanel extends MappingConfigurationPanel
     public ExistingMappingConfigurationPanel(
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, MappingConfigurationService mappingConfigurationService,
+            TargetContextComboBox targetContextComboBox, MappingManagementService mappingConfigurationService,
             SaveRequiredMonitor saveRequiredMonitor, Button editButton, Button saveButton, Button addNewRecordButton, 
             Button deleteAllRecordsButton, Button importMappingConfigurationButton, Button exportMappingConfigurationValuesButton,
             Button exportMappingConfigurationButton, Button cancelButton, FunctionalGroup existingMappingConfigurationFunctionalGroup,

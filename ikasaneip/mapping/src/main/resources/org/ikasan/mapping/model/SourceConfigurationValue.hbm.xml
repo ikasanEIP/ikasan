@@ -60,6 +60,10 @@
                   type="java.lang.String"
                   column="SourceSystemValue" />
 
+        <property name="name"
+                  type="java.lang.String"
+                  column="Name" />
+
         <property name="mappingConfigurationId"
                   type="java.lang.Long"
                   column="MappingConfigurationId" />
@@ -71,7 +75,7 @@
         <many-to-one name="targetConfigurationValue"
                   class="org.ikasan.mapping.model.TargetConfigurationValue"
                   column="TargetConfigurationValueId"
-                  not-null="true" 	
+                  not-null="false"
                   fetch="select"
                   lazy="false"/>
 
@@ -84,5 +88,6 @@
                   type="java.util.Date"
                   column="UpdatedDateTime"
                   not-null="true" />
+
     </class>
 </hibernate-mapping>

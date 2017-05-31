@@ -573,12 +573,20 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
-        public void addBlacklisted(Object o, String o2) {
+        public void addBlacklisted(Object o, String uri, FlowInvocationContext flowInvocationContext)
+        {
 
         }
 
+
         @Override
         public String getErrorUri(Object o) {
+            return null;
+        }
+
+        @Override
+        public FlowInvocationContext getFlowInvocationContext(Object o)
+        {
             return null;
         }
 
