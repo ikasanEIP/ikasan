@@ -25,9 +25,6 @@
         <value>jms-conf.xml</value>
         <value>jms-to-jms-flow-conf.xml</value>
         <!--<value>test-conf.xml</value>-->
-
-
-
     </util:list>
 
 </beans>
