@@ -43,19 +43,22 @@ package org.ikasan.mapping.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class SourceConfigurationValue implements Serializable
+public class SourceConfigurationValue implements Serializable, Comparable<SourceConfigurationValue>
 {
     private static final long serialVersionUID = 7464033893694959176L;
 
     private Long id;
 
     private String sourceSystemValue;
+
+    private String name = "";
 
     private Long mappingConfigurationId;
 
@@ -89,7 +92,7 @@ public class SourceConfigurationValue implements Serializable
 
     /**
      * It is a Hibernate requirement that all properties of a window object have getter and setter methods. However, the value of
-     * an {@link Id} is part of its primary key and must me immutable. Hence, setter method is private to prevent 
+     * an Id is part of its primary key and must me immutable. Hence, setter method is private to prevent
      * client code from changing the value.
      */
     @SuppressWarnings("unused")
@@ -123,7 +126,7 @@ public class SourceConfigurationValue implements Serializable
     }
 
     /**
-     * @param configurationContextId the configurationContextId to set
+     * @param mappingConfigurationId the mappingConfigurationId to set
      */
     public void setMappingConfigurationId(Long mappingConfigurationId)
     {
@@ -150,7 +153,30 @@ public class SourceConfigurationValue implements Serializable
 		this.targetConfigurationValue = targetConfigurationValue;
 	}
 
-	/**
+    /**
+     *
+     * @return the name
+     */
+    public String getName()
+    {
+        if(name == null)
+        {
+            return "";
+        }
+
+        return name;
+    }
+
+    /**
+     *
+     * @param name the name to set
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()
@@ -207,4 +233,17 @@ public class SourceConfigurationValue implements Serializable
 				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
 				+ "]";
 	}
+
+    @Override
+    public int compareTo(SourceConfigurationValue value)
+    {
+        int result = this.sourceSystemValue.compareTo(value.getSourceSystemValue());
+
+        if(value.getName() != null && this.getName() != null)
+        {
+            result += this.getName().compareTo(value.getName());
+        }
+
+        return result;
+    }
 }

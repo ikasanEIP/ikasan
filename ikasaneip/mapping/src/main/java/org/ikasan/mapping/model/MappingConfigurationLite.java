@@ -57,18 +57,14 @@ public class MappingConfigurationLite implements Serializable
     private static final long serialVersionUID = 2490203288817051966L;
 
     protected Long id;
-
     protected ConfigurationContext sourceContext;
-
     protected ConfigurationContext targetContext;
-
     protected String description = "";
-
-    protected Long numberOfParams = new Long(1);
-
+    protected int numberOfParams = 1;
     protected ConfigurationType configurationType;
-
     protected ConfigurationServiceClient configurationServiceClient;
+	protected String lastUpdatedBy = "";
+	protected int numberOfMappings = 0;
 
 
     /** The data time stamp when an instance was first created */
@@ -115,7 +111,7 @@ public class MappingConfigurationLite implements Serializable
     /**
      * @return the numberOfParams
      */
-    public Long getNumberOfParams()
+    public int getNumberOfParams()
     {
         return numberOfParams;
     }
@@ -123,7 +119,7 @@ public class MappingConfigurationLite implements Serializable
     /**
      * @param numberOfParams the numberOfParams to set
      */
-    public void setNumberOfParams(Long numberOfParams)
+    public void setNumberOfParams(int numberOfParams)
     {
         this.numberOfParams = numberOfParams;
     }
@@ -216,6 +212,26 @@ public class MappingConfigurationLite implements Serializable
 		this.configurationServiceClient = configurationServiceClient;
 	}
 
+	public String getLastUpdatedBy()
+	{
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(String lastUpdatedBy)
+	{
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+	public int getNumberOfMappings()
+	{
+		return numberOfMappings;
+	}
+
+	public void setNumberOfMappings(int numberOfMappings)
+	{
+		this.numberOfMappings = numberOfMappings;
+	}
+
 	@Override
 	public String toString() {
 		return "MappingConfiguration [id=" + id + ", sourceContext="
@@ -237,88 +253,42 @@ public class MappingConfigurationLite implements Serializable
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((configurationServiceClient == null) ? 0
-						: configurationServiceClient.hashCode());
-		result = prime
-				* result
-				+ ((configurationType == null) ? 0 : configurationType
-						.hashCode());
-		result = prime * result
-				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((numberOfParams == null) ? 0 : numberOfParams.hashCode());
-		result = prime * result
-				+ ((sourceContext == null) ? 0 : sourceContext.hashCode());
-		result = prime * result
-				+ ((targetContext == null) ? 0 : targetContext.hashCode());
-		result = prime * result
-				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
-		return result;
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		MappingConfigurationLite that = (MappingConfigurationLite) o;
+
+		if (numberOfParams != that.numberOfParams) return false;
+		if (id != null ? !id.equals(that.id) : that.id != null) return false;
+		if (sourceContext != null ? !sourceContext.equals(that.sourceContext) : that.sourceContext != null)
+			return false;
+		if (targetContext != null ? !targetContext.equals(that.targetContext) : that.targetContext != null)
+			return false;
+		if (description != null ? !description.equals(that.description) : that.description != null) return false;
+		if (configurationType != null ? !configurationType.equals(that.configurationType) : that.configurationType != null)
+			return false;
+		if (configurationServiceClient != null ? !configurationServiceClient.equals(that.configurationServiceClient) : that.configurationServiceClient != null)
+			return false;
+		if (createdDateTime != null ? !createdDateTime.equals(that.createdDateTime) : that.createdDateTime != null)
+			return false;
+		return updatedDateTime != null ? updatedDateTime.equals(that.updatedDateTime) : that.updatedDateTime == null;
+
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MappingConfigurationLite other = (MappingConfigurationLite) obj;
-		if (configurationServiceClient == null) {
-			if (other.configurationServiceClient != null)
-				return false;
-		} else if (!configurationServiceClient
-				.equals(other.configurationServiceClient))
-			return false;
-		if (configurationType == null) {
-			if (other.configurationType != null)
-				return false;
-		} else if (!configurationType.equals(other.configurationType))
-			return false;
-		if (createdDateTime == null) {
-			if (other.createdDateTime != null)
-				return false;
-		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (numberOfParams == null) {
-			if (other.numberOfParams != null)
-				return false;
-		} else if (!numberOfParams.equals(other.numberOfParams))
-			return false;
-		if (sourceContext == null) {
-			if (other.sourceContext != null)
-				return false;
-		} else if (!sourceContext.equals(other.sourceContext))
-			return false;
-		if (targetContext == null) {
-			if (other.targetContext != null)
-				return false;
-		} else if (!targetContext.equals(other.targetContext))
-			return false;
-		if (updatedDateTime == null) {
-			if (other.updatedDateTime != null)
-				return false;
-		} else if (!updatedDateTime.equals(other.updatedDateTime))
-			return false;
-		return true;
-	}    
+	public int hashCode()
+	{
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (sourceContext != null ? sourceContext.hashCode() : 0);
+		result = 31 * result + (targetContext != null ? targetContext.hashCode() : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		result = 31 * result + numberOfParams;
+		result = 31 * result + (configurationType != null ? configurationType.hashCode() : 0);
+		result = 31 * result + (configurationServiceClient != null ? configurationServiceClient.hashCode() : 0);
+		result = 31 * result + (createdDateTime != null ? createdDateTime.hashCode() : 0);
+		result = 31 * result + (updatedDateTime != null ? updatedDateTime.hashCode() : 0);
+		return result;
+	}
 }

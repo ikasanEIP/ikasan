@@ -199,6 +199,25 @@ public class IkasanFlowTestRule implements TestRule
     }
 
     /**
+     * Expect a consumer
+     *
+     * @param name the consumer name
+     * @return this rule
+     */
+    public IkasanFlowTestRule scheduledConsumer(String name)
+    {
+        if (this.flow == null)
+        {
+            Assert.fail("withFlow() should be called first to set the flow on this rule");
+        }
+        addExpectation(new ConsumerComponent(name));
+
+        this.scheduledConsumerName = name;
+
+        return this;
+    }
+
+    /**
      * Expect a splitter
      *
      * @param name the splitter name

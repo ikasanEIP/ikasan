@@ -74,8 +74,12 @@
                   unique-key="multicolumn_unique_key"/>
 
         <property name="numberOfParams"
-                  type="java.lang.Long"
+                  type="java.lang.Integer"
                   column="NumberOfParams"/>
+
+        <property name="numTargetValues"
+                  type="int"
+                  column="NumTargetValues"/>
 
         <property name="description" 
                   type="java.lang.String" 
@@ -101,10 +105,26 @@
              inverse="true" 
              cascade="all,delete-orphan" 
              lazy="false"
-             order-by="sourceConfigGroupId">
+             order-by="sourceSystemValue desc">
              <key column="MappingConfigurationId"/>
              <one-to-many class="org.ikasan.mapping.model.SourceConfigurationValue"/>
         </set>
+
+        <property name="isManyToMany"
+                  type="java.lang.Boolean"
+                  column="IsManyToMany" />
+
+        <property name="constrainParameterListSizes"
+                  type="java.lang.Boolean"
+                  column="ConstrainParamListSizes" />
+
+        <property name="lastUpdatedBy"
+                  type="java.lang.String"
+                  column="LastUpdatedBy" />
+
+        <property name="numberOfMappings"
+                  type="int"
+                  column="NumberOfMappings"/>
 
         <property name="createdDateTime"
                   type="java.util.Date"

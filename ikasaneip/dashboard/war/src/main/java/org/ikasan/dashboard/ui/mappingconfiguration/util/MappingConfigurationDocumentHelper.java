@@ -55,17 +55,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.ikasan.mapping.model.*;
+import org.w3c.dom.*;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -84,10 +75,13 @@ public class MappingConfigurationDocumentHelper
 
     /**
      * Helper method to return a composite mapping configuration value.
-     * 
-     * @param mappingConfigurationValue
+     * @param fileContents
      * @return
-     * @throws XPathExpressionException 
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws XPathExpressionException
+     * @throws MappingConfigurationImportException
      */
     public MappingConfiguration getMappingConfiguration(byte[] fileContents) throws SAXException
         , IOException, ParserConfigurationException, XPathExpressionException, MappingConfigurationImportException
@@ -105,7 +99,10 @@ public class MappingConfigurationDocumentHelper
         String sourceContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.SOURCE_CONTEXT_XPATH, document, XPathConstants.STRING);
         String targetContext = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.TARGET_CONTEXT_XPATH, document, XPathConstants.STRING);
         String description = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.DESCRIPTION_XPATH, document, XPathConstants.STRING);
+        String isManyToMany = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.IS_MANY_TO_MANY_XPATH, document, XPathConstants.STRING);
+        String isFixedParameterListSize = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.IS_FIXED_PARAMETER_LIST_SIZE_XPATH, document, XPathConstants.STRING);
         String numberOfParams = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.NUMBER_OF_SOURCE_PARAMS_XPATH, document, XPathConstants.STRING);
+        String numberOfTargetParams = (String) xpath.evaluate(MappingConfigurationImportXpathConstants.NUMBER_OF_TARGET_PARAMS_XPATH, document, XPathConstants.STRING);
 
         StringBuffer errorMessage = new StringBuffer();
 
@@ -129,14 +126,19 @@ public class MappingConfigurationDocumentHelper
             errorMessage.append("Mapping Configuration Description is missing\n");
         }
 
-        if(numberOfParams == null || numberOfParams.isEmpty())
+        if((numberOfParams == null || numberOfParams.isEmpty()))
         {
-            errorMessage.append("Mapping Configuration Number of Parameters is missing\n");
+            errorMessage.append("Mapping Configuration Number of Source Parameters is missing\n");
+        }
+
+        if((numberOfTargetParams == null || numberOfTargetParams.isEmpty()))
+        {
+            errorMessage.append("Mapping Configuration Number of Target Parameters is missing\n");
         }
 
         if(errorMessage.length() > 0)
         {
-            throw new MappingConfigurationImportException("An error has occurred trying to imprt a Mapping Configuration\n"
+            throw new MappingConfigurationImportException("An error has occurred trying to import a Mapping Configuration\n"
                 + errorMessage.toString());
         }
 
@@ -157,7 +159,12 @@ public class MappingConfigurationDocumentHelper
         mappingConfiguration.setSourceContext(sourceConfigurationContext);
         mappingConfiguration.setTargetContext(targetConfigurationContext);
         mappingConfiguration.setDescription(description);
-        mappingConfiguration.setNumberOfParams(new Long(numberOfParams));
+        mappingConfiguration.setIsManyToMany((isManyToMany.equals("true")) ? true : false);
+        mappingConfiguration.setConstrainParameterListSizes((isFixedParameterListSize.equals("true")) ? true : false);
+
+        mappingConfiguration.setNumberOfParams(new Integer(numberOfParams));
+        mappingConfiguration.setNumTargetValues(new Integer(numberOfTargetParams));
+
 
         return mappingConfiguration;
     }
@@ -170,7 +177,7 @@ public class MappingConfigurationDocumentHelper
      * @throws SAXException 
      * @throws ParserConfigurationException 
      */
-    public List<MappingConfigurationValue> getMappingConfigurationValues(byte[] fileContents) throws SAXException
+    public List<MappingConfigurationValue> getMappingConfigurationValues(byte[] fileContents, boolean isManyToMany) throws SAXException
         , IOException, ParserConfigurationException
     {
         DocumentBuilderFactory builderFactory =
@@ -195,21 +202,22 @@ public class MappingConfigurationDocumentHelper
 
         for(int i=0; i<mappingConfigurationValues.getLength(); i++)
         {
-            this.mappingConfigurationValues.add(getMappingConfigurationValue((Element)mappingConfigurationValues.item(i)));
+            this.mappingConfigurationValues.add(getMappingConfigurationValue((Element)mappingConfigurationValues.item(i), isManyToMany));
         }
 
         return this.mappingConfigurationValues;
     }
 
     /**
-     * 
+     * Get source parameter names.
+     *
      * @param fileContents
      * @return
-     * @throws IOException 
-     * @throws SAXException 
-     * @throws ParserConfigurationException 
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
      */
-    public List<KeyLocationQuery> getKeyLocationQueries(byte[] fileContents) throws SAXException
+    public List<ParameterName> getSourceParameterNames(byte[] fileContents) throws SAXException
         , IOException, ParserConfigurationException
     {
         DocumentBuilderFactory builderFactory =
@@ -222,9 +230,36 @@ public class MappingConfigurationDocumentHelper
 
         Element documentRoot = document.getDocumentElement();
 
-        NodeList keyLocationQueries = documentRoot.getElementsByTagName("sourceConfigurationValueQuery");
+        NodeList parameterNames = documentRoot.getElementsByTagName("sourceParameterName");
 
-        return this.getKeyLocationQueries(keyLocationQueries);
+        return this.getSourceParameterNames(parameterNames, ParameterName.SOURCE_CONTEXT);
+    }
+
+    /**
+     * Get target parameter names.
+     *
+     * @param fileContents
+     * @return
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
+    public List<ParameterName> getTargetParameterNames(byte[] fileContents) throws SAXException
+            , IOException, ParserConfigurationException
+    {
+        DocumentBuilderFactory builderFactory =
+                DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = null;
+
+        builder = builderFactory.newDocumentBuilder();
+        Document document = builder.parse(
+                new ByteArrayInputStream(fileContents));
+
+        Element documentRoot = document.getDocumentElement();
+
+        NodeList parameterNames = documentRoot.getElementsByTagName("targetParameterName");
+
+        return this.getSourceParameterNames(parameterNames, ParameterName.TARGET_CONTEXT);
     }
 
     /**
@@ -233,21 +268,35 @@ public class MappingConfigurationDocumentHelper
      * @param mappingConfigurationValue
      * @return
      */
-    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue)
+    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue, boolean isManyToMany)
     {
-        TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
-                (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
-
-        ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
-            .getElementsByTagName("sourceConfigurationValue"));
-
-        for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
+        if(isManyToMany)
         {
-            logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
-            sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
-        }
+            ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
+                    .getElementsByTagName("sourceConfigurationValue"));
 
-        return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
+            ArrayList<ManyToManyTargetConfigurationValue> targetConfigurationValues = getTargetConfigurationValues(mappingConfigurationValue
+                    .getElementsByTagName("targetConfigurationValue"));
+
+            return new MappingConfigurationValue(sourceConfigurationValues, targetConfigurationValues);
+
+        }
+        else
+        {
+            TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
+                    (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
+
+            ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
+                    .getElementsByTagName("sourceConfigurationValue"));
+
+            for (SourceConfigurationValue sourceConfigurationValue : sourceConfigurationValues)
+            {
+                logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
+                sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
+            }
+
+            return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
+        }
     }
 
     /**
@@ -265,6 +314,15 @@ public class MappingConfigurationDocumentHelper
             SourceConfigurationValue value = new SourceConfigurationValue();
             value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
 
+            NamedNodeMap attributes = sourceConfigurationValues.item(i).getAttributes();
+
+            Node nameAttribute = attributes.getNamedItem("name");
+
+            if(nameAttribute != null)
+            {
+                value.setName(nameAttribute.getTextContent());
+            }
+
             returnValue.add(value);
         }
 
@@ -272,19 +330,45 @@ public class MappingConfigurationDocumentHelper
     }
 
     /**
-     * Gets a list of source configuration values from an XML node list.
-     * @param sourceConfigurationValues
+     *
+     * @param targetConfigurationValues
      * @return
      */
-    protected ArrayList<KeyLocationQuery> getKeyLocationQueries(NodeList keyLocationQueries)
+    protected ArrayList<ManyToManyTargetConfigurationValue> getTargetConfigurationValues(NodeList targetConfigurationValues)
     {
-        ArrayList<KeyLocationQuery> returnValue = new ArrayList<KeyLocationQuery>();
+        ArrayList<ManyToManyTargetConfigurationValue> returnValue = new ArrayList<ManyToManyTargetConfigurationValue>();
+
+        for(int i = 0; i< targetConfigurationValues.getLength(); i++)
+        {
+            logger.debug("Target value: " + targetConfigurationValues.item(i).getTextContent());
+            ManyToManyTargetConfigurationValue value = new ManyToManyTargetConfigurationValue();
+            value.setTargetSystemValue(targetConfigurationValues.item(i).getTextContent());
+
+            NamedNodeMap attributes = targetConfigurationValues.item(i).getAttributes();
+
+            Node nameAttribute = attributes.getNamedItem("name");
+
+            if(nameAttribute != null)
+            {
+                value.setName(nameAttribute.getTextContent());
+            }
+
+            returnValue.add(value);
+        }
+
+        return returnValue;
+    }
+    
+    protected ArrayList<ParameterName> getSourceParameterNames(NodeList keyLocationQueries, String context)
+    {
+        ArrayList<ParameterName> returnValue = new ArrayList<ParameterName>();
 
         for(int i=0; i<keyLocationQueries.getLength(); i++)
         {
             logger.debug("KeyLocationQuery: " + keyLocationQueries.item(i).getTextContent());
-            KeyLocationQuery value = new KeyLocationQuery();
-            value.setValue(keyLocationQueries.item(i).getTextContent());
+            ParameterName value = new ParameterName();
+            value.setName(keyLocationQueries.item(i).getTextContent());
+            value.setContext(context);
 
             returnValue.add(value);
         }

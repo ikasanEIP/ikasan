@@ -42,6 +42,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.model;
 
 import java.util.ArrayList;
 
+import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 
@@ -49,11 +50,12 @@ import org.ikasan.mapping.model.TargetConfigurationValue;
  * @author Ikasan Development Team
  *
  */
-public class MappingConfigurationValue
+public class MappingConfigurationValue implements Comparable<MappingConfigurationValue>
 {
 
     private TargetConfigurationValue targetConfigurationValue;
     private ArrayList<SourceConfigurationValue> sourceConfigurationValues = new ArrayList<SourceConfigurationValue>();
+    private ArrayList<ManyToManyTargetConfigurationValue> targetConfigurationValues = new ArrayList<ManyToManyTargetConfigurationValue>();
 
     /**
      * Default Constructor
@@ -75,6 +77,18 @@ public class MappingConfigurationValue
         super();
         this.targetConfigurationValue = targetConfigurationValue;
         this.sourceConfigurationValues = sourceConfigurationValues;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param sourceConfigurationValues
+     * @param targetConfigurationValues
+     */
+    public MappingConfigurationValue(ArrayList<SourceConfigurationValue> sourceConfigurationValues, ArrayList<ManyToManyTargetConfigurationValue> targetConfigurationValues)
+    {
+        this.sourceConfigurationValues = sourceConfigurationValues;
+        this.targetConfigurationValues = targetConfigurationValues;
     }
 
     /**
@@ -109,11 +123,54 @@ public class MappingConfigurationValue
         this.sourceConfigurationValues = sourceConfigurationValues;
     }
 
+    public ArrayList<ManyToManyTargetConfigurationValue> getTargetConfigurationValues()
+    {
+        return targetConfigurationValues;
+    }
+
     /**
-     * @param sourceConfigurationValues the sourceConfigurationValues to set
+     *
+     * @param sourceConfigurationValue
      */
     public void addSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue)
     {
         this.sourceConfigurationValues.add(sourceConfigurationValue);
+    }
+
+    /**
+     *
+     * @param targetConfigurationValue
+     */
+    public void addTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue)
+    {
+        this.targetConfigurationValues.add(targetConfigurationValue);
+    }
+
+    public String getComparableString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        for(SourceConfigurationValue value: this.sourceConfigurationValues)
+        {
+            sb.append(value.getSourceSystemValue());
+        }
+
+        for(ManyToManyTargetConfigurationValue value: this.getTargetConfigurationValues())
+        {
+            sb.append(value.getTargetSystemValue());
+        }
+
+        if(this.targetConfigurationValue != null)
+        {
+            sb.append(this.targetConfigurationValue);
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public int compareTo(MappingConfigurationValue value)
+    {
+        return this.getComparableString().compareTo(value.getComparableString());
     }
 }

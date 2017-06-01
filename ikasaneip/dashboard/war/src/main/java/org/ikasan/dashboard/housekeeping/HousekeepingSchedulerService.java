@@ -110,6 +110,9 @@ public class HousekeepingSchedulerService
     {
         try
         {
+            // remove the job so we can reschedule it if the cron expression has changed.
+            this.removeJob(jobName);
+
             if(!this.scheduler.checkExists(this.houseKeepingJobDetailsMap.get(jobName).getKey()))
             {
                 JobDetail jobDetail = this.houseKeepingJobDetailsMap.get(jobName);
@@ -119,7 +122,8 @@ public class HousekeepingSchedulerService
                 logger.info("Scheduled consumer for house keeper job ["
                         + jobkey.getName()
                         + "-" + jobkey.getGroup()
-                        + "] starting at [" + scheduledDate + "]");
+                        + "] starting at [" + scheduledDate + "] using cron expression ["
+                        + this.houseKeepingJobs.get(jobkey.toString()).getCronExpression() + "]");
             }
         }
         catch (Exception e)

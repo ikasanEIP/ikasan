@@ -47,13 +47,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.*;
+import org.ikasan.spec.mapping.QueryParameter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,10 +81,10 @@ public class HibernateMappingConfigurationDaoTest
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
      */
-    @Before public void setup()
-    {    	
-    	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2", 
-            "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+    @Before
+    public void setup()
+    {
+    	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2");
         ConfigurationType dealerToDealer = this.addConfigurationType("Dealer and Product to Account");
         ConfigurationType salesPersonToSalesPerson = this.addConfigurationType("Salesperson to Salesperson Mapping");
         ConfigurationType productTypeToTradeBook = this.addConfigurationType("Product Type to Tradebook Mapping");
@@ -97,72 +92,204 @@ public class HibernateMappingConfigurationDaoTest
         ConfigurationContext context1 = this.addConfigurationContext("Tradeweb", "Tradeweb");
         ConfigurationContext context2 = this.addConfigurationContext("Bloomberg", "Bloomberg");
 
-        Long configurationContextId1 = this.addMappingConfiguration(context1, context2, new Long(2), 
+        Long configurationContextId1 = this.addMappingConfiguration(context1, context2, 2,
             dealerToDealer, configurationServiceClient, "description context 1");
-        Long configurationContextId2 = this.addMappingConfiguration(context1, context2, new Long(1), 
+        Long configurationContextId2 = this.addMappingConfiguration(context1, context2, 1,
             salesPersonToSalesPerson, configurationServiceClient, "description context 2");
-        Long configurationContextId3 = this.addMappingConfiguration(context1, context2, new Long(1), 
+        Long configurationContextId3 = this.addMappingConfiguration(context1, context2, 1,
             productTypeToTradeBook, configurationServiceClient, "description context 2");
 
-        this.addKeyLocationQuery("some xpath", configurationContextId1);
-        this.addKeyLocationQuery("another xpath", configurationContextId1);
-        this.addKeyLocationQuery("some xpath", configurationContextId2);
-        this.addKeyLocationQuery("some xpath", configurationContextId3);
+        this.addParameterName("some xpath", configurationContextId1);
+        this.addParameterName("another xpath", configurationContextId1);
+        this.addParameterName("some xpath", configurationContextId2);
+        this.addParameterName("some xpath", configurationContextId3);
 
         TargetConfigurationValue targetId1 = this.addTargetSystemConfiguration("BARCLON");
         TargetConfigurationValue targetId2 = this.addTargetSystemConfiguration("BNPPAR");
 
-        this.addSourceSystemConfiguration("BARX", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("TRSY", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("AGCY", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("MBS", configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("BARX", "name1", configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("TRSY", "name2",configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("AGCY", "name3",configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("MBS", "name4", configurationContextId1, targetId1);
 
-        this.addSourceSystemConfiguration("BNPP", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("TRSY", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("AGCY", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("MBS", configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("BNPP", "name1",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("TRSY", "name2",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("AGCY", "name3",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("MBS", "name4",configurationContextId1, targetId2);
 
         TargetConfigurationValue targetId3 = this.addTargetSystemConfiguration("ZEKRAA");
         TargetConfigurationValue targetId4 = this.addTargetSystemConfiguration("VIDAUISA");
         TargetConfigurationValue targetId5 = this.addTargetSystemConfiguration("BEN");
         TargetConfigurationValue targetId6 = this.addTargetSystemConfiguration("IMONDIV");
 
-        this.addSourceSystemConfiguration("azehra", configurationContextId2, targetId3);
-        this.addSourceSystemConfiguration("isabelv", configurationContextId2, targetId4);
-        this.addSourceSystemConfiguration("briordan2", configurationContextId2, targetId5);
-        this.addSourceSystemConfiguration("vimondi", configurationContextId2, targetId6);
+        this.addSourceSystemConfiguration("azehra", "name1",configurationContextId2, targetId3);
+        this.addSourceSystemConfiguration("isabelv", "name2",configurationContextId2, targetId4);
+        this.addSourceSystemConfiguration("briordan2", "name3",configurationContextId2, targetId5);
+        this.addSourceSystemConfiguration("vimondi", "name4",configurationContextId2, targetId6);
 
         TargetConfigurationValue targetId7 = this.addTargetSystemConfiguration("YENGOVT");
         TargetConfigurationValue targetId8 = this.addTargetSystemConfiguration("YENTBFB");
 
-        this.addSourceSystemConfiguration("false", configurationContextId3, targetId7);
-        this.addSourceSystemConfiguration("true", configurationContextId3, targetId8);
-    
+        this.addSourceSystemConfiguration("false", "name1",configurationContextId3, targetId7);
+        this.addSourceSystemConfiguration("true", "name2",configurationContextId3, targetId8);
+
+
+        ConfigurationType manyToManyMapping = this.addConfigurationType("Many to Many");
+
+        Long configurationContextId4 = this.addMappingConfiguration(context1, context2, -1,
+                manyToManyMapping, configurationServiceClient, "description context 4");
+
+        ArrayList<String> sourceValues = new ArrayList<>();
+        sourceValues.add("s1");
+        sourceValues.add("s2");
+        sourceValues.add("s3");
+        sourceValues.add("s4");
+
+        ArrayList<String> targetValues = new ArrayList<>();
+        targetValues.add("t1");
+        targetValues.add("t2");
+        targetValues.add("t3");
+        targetValues.add("t4");
+
+        this.addManyToManySourceSystemConfiguration(sourceValues, targetValues, configurationContextId4, 1l);
+
+        sourceValues = new ArrayList<>();
+        sourceValues.add("s5");
+        sourceValues.add("s6");
+        sourceValues.add("s7");
+        sourceValues.add("s8");
+
+        targetValues = new ArrayList<>();
+        targetValues.add("t5");
+        targetValues.add("t6");
+        targetValues.add("t7");
+        targetValues.add("t8");
+        targetValues.add("t9");
+        targetValues.add("t10");
+        targetValues.add("t11");
+        targetValues.add("t12");
+
+        this.addManyToManySourceSystemConfiguration(sourceValues, targetValues, configurationContextId4, 2l);
+
+        sourceValues = new ArrayList<>();
+        sourceValues.add("alone");
+
+        targetValues = new ArrayList<>();
+        targetValues.add("t13");
+        targetValues.add("t14");
+        targetValues.add("t15");
+        targetValues.add("t16");
+        targetValues.add("t17");
+        targetValues.add("t18");
+        targetValues.add("t19");
+        targetValues.add("t20");
+
+        this.addManyToManySourceSystemConfiguration(sourceValues, targetValues, configurationContextId4, 3l);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
-    @Test 
+    @Test
+    @DirtiesContext
+    public void test_success_many_to_many()
+    {
+        List<String> sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("s1");
+        sourceSystemValues.add("s2");
+        sourceSystemValues.add("s3");
+        sourceSystemValues.add("s4");
+
+        List<String> result = this.xaMappingConfigurationDao.getTargetConfigurationValues("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals(4, result.size());
+        Assert.assertTrue(result.contains("t1"));
+        Assert.assertTrue(result.contains("t2"));
+        Assert.assertTrue(result.contains("t3"));
+        Assert.assertTrue(result.contains("t4"));
+
+        sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("s5");
+        sourceSystemValues.add("s6");
+        sourceSystemValues.add("s7");
+        sourceSystemValues.add("s8");
+
+        result = this.xaMappingConfigurationDao.getTargetConfigurationValues("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals(8, result.size());
+
+        sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("s1");
+        sourceSystemValues.add("s6");
+        sourceSystemValues.add("s7");
+        sourceSystemValues.add("s8");
+
+        result = this.xaMappingConfigurationDao.getTargetConfigurationValues("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals(0, result.size());
+
+        sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("alone");
+
+        result = this.xaMappingConfigurationDao.getTargetConfigurationValues("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals(8, result.size());
+
+        sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("s5");
+        sourceSystemValues.add("s6");
+
+        result = this.xaMappingConfigurationDao.getTargetConfigurationValues("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals(0, result.size());
+
+        sourceSystemValues = new ArrayList<String>();
+        sourceSystemValues.add("s5");
+        sourceSystemValues.add("s6");
+        sourceSystemValues.add("s3");
+        sourceSystemValues.add("s4");
+
+        result = this.xaMappingConfigurationDao.getTargetConfigurationValues("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals(0, result.size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_many_to_many_get_mapping_configuration()
+    {
+        MappingConfiguration mappingConfiguration = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Many to Many", "Tradeweb",
+                "Bloomberg");
+
+        for(SourceConfigurationValue value: mappingConfiguration.getSourceConfigurationValues())
+        {
+            List<ManyToManyTargetConfigurationValue> values = this.xaMappingConfigurationDao.getManyToManyTargetConfigurationValues(value.getSourceConfigGroupId());
+
+            System.out.println(values.size());
+
+            for(ManyToManyTargetConfigurationValue mv: values)
+            {
+                System.out.println(mv);
+            }
+        }
+    }
+
+    @Test
     @DirtiesContext
     public void test_success_no_results()
     {
         List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("no_results");
 
-        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg", sourceSystemValues);
 
         Assert.assertEquals(null, result);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_1_paramater_mapping()
@@ -170,17 +297,12 @@ public class HibernateMappingConfigurationDaoTest
         List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("briordan2");
 
-        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg", sourceSystemValues);
 
         Assert.assertEquals("BEN", result);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configuration()
@@ -188,17 +310,12 @@ public class HibernateMappingConfigurationDaoTest
         List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("briordan2");
 
-        MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_delete_mapping_configuration()
@@ -206,168 +323,122 @@ public class HibernateMappingConfigurationDaoTest
         List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("briordan2");
 
-        MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
 
-        this.xaMappingConfigurationDao.deleteMappingConfiguration(result);       
+        this.xaMappingConfigurationDao.deleteMappingConfiguration(result);
 
-        result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
                 "Bloomberg");
 
         Assert.assertNull(result);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_null_target_context()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             null);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_empty_string_target_context()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb",
             "");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_null_source_context()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", null, 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", null,
             "Bloomberg");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_empty_string_source_context()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "",
             "Bloomberg");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_null_mapping_configuration_name()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", null, "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", null, "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(result.size(), 4);
     }
- 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
+
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_empty_string_mapping_configuration_name()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "", "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(result.size(), 4);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_null_client_name()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations(null, "Salesperson to Salesperson Mapping", "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations(null, "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_getSourceConfigurationValuesByTargetConfigurationValueId()
     {
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", "Salesperson to Salesperson Mapping", "",
                 "Bloomberg");
-        
+
         for(MappingConfiguration mappingConfiguration: result)
         {
             Set<SourceConfigurationValue> sourceConfigurationValues =  mappingConfiguration.getSourceConfigurationValues();
@@ -379,35 +450,23 @@ public class HibernateMappingConfigurationDaoTest
                     (sourceConfigurationValuesItr.next().getTargetConfigurationValue().getId());
 
                 Assert.assertNotNull(results);
-                Assert.assertEquals(results.size(), mappingConfiguration.getNumberOfParams().intValue());
+                Assert.assertEquals(results.size(), mappingConfiguration.getNumberOfParams());
             }
         }
     }
 
-
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_empty_string_client_name()
     {
 
-        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
     }
 
-
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configurations_narrow_by_client()
@@ -418,14 +477,9 @@ public class HibernateMappingConfigurationDaoTest
         List<MappingConfiguration> result = this.xaMappingConfigurationDao.getMappingConfigurations("CMI2", null, null, null);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(result.size(), 4);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_mapping_configuration_no_result()
@@ -433,17 +487,12 @@ public class HibernateMappingConfigurationDaoTest
         List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("briordan2");
 
-        MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("BAD CLIENT", "Salesperson to Salesperson Mapping", "Tradeweb", 
+        MappingConfiguration result = this.xaMappingConfigurationDao.getMappingConfiguration("BAD CLIENT", "Salesperson to Salesperson Mapping", "Tradeweb",
             "Bloomberg");
 
         Assert.assertNull(result);
     }
 
-     /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_2_paramater_mapping()
@@ -452,17 +501,44 @@ public class HibernateMappingConfigurationDaoTest
         sourceSystemValues.add("BARX");
         sourceSystemValues.add("TRSY");
 
-        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Dealer and Product to Account", "Tradeweb", 
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Dealer and Product to Account", "Tradeweb",
             "Bloomberg", sourceSystemValues);
 
         Assert.assertEquals("BARCLON", result);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
+    @Test
+    @DirtiesContext
+    public void test_success_2_paramater_mapping_with_name()
+    {
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameterImpl param1 = new QueryParameterImpl("name1", "BARX");
+        sourceSystemValues.add(param1);
+        QueryParameterImpl param2 = new QueryParameterImpl("name2", "TRSY");
+        sourceSystemValues.add(param2);
+
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("BARCLON", result);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_2_paramater_mapping_with_name_not_correlating()
+    {
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameterImpl param1 = new QueryParameterImpl("name2", "BARX");
+        sourceSystemValues.add(param1);
+        QueryParameterImpl param2 = new QueryParameterImpl("name1", "TRSY");
+        sourceSystemValues.add(param2);
+
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertNull(result);
+    }
+
     @Test
     @DirtiesContext
     public void test_success_2_paramater_mapping_2()
@@ -470,7 +546,7 @@ public class HibernateMappingConfigurationDaoTest
         List<String> sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("true");
 
-        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb", 
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb",
             "Bloomberg", sourceSystemValues);
 
         Assert.assertEquals("YENTBFB", result);
@@ -478,17 +554,12 @@ public class HibernateMappingConfigurationDaoTest
         sourceSystemValues = new ArrayList<String>();
         sourceSystemValues.add("false");
 
-        result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb", 
+        result = this.xaMappingConfigurationDao.getTargetConfigurationValue("CMI2", "Product Type to Tradebook Mapping", "Tradeweb",
             "Bloomberg", sourceSystemValues);
 
         Assert.assertEquals("YENGOVT", result);
     }
 
-    /**
-     * Putting an instance of StateModel into the StateModel store
-     * 
-     * @throws StateModelDaoException if error accessing state window store
-     */
     @Test
     @DirtiesContext
     public void test_success_get_configuration_service_by_name()
@@ -496,11 +567,9 @@ public class HibernateMappingConfigurationDaoTest
         ConfigurationServiceClient result = this.xaMappingConfigurationDao.getConfigurationServiceClientByName("CMI2");
 
         Assert.assertEquals("CMI2", result.getName());
-        Assert.assertEquals("org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"
-            , result.getKeyLocationQueryProcessorType());
     }
 
-    
+
     @Test
     @DirtiesContext
     public void test_get_all_configuration_context_success()
@@ -533,7 +602,7 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationType> result = this.xaMappingConfigurationDao.getAllConfigurationTypes();
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(4, result.size());
     }
 
     @Test
@@ -542,7 +611,7 @@ public class HibernateMappingConfigurationDaoTest
     {
         List<ConfigurationType> result = this.xaMappingConfigurationDao.getAllConfigurationTypes();
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(4, result.size());
 
         for(ConfigurationType configurationType: result)
         {
@@ -567,7 +636,7 @@ public class HibernateMappingConfigurationDaoTest
     public void test_get_configuration_service_clients_by_id_success()
     {
         List<ConfigurationServiceClient> result = this.xaMappingConfigurationDao.getAllConfigurationServiceClients();
-        
+
         Assert.assertEquals(1, result.size());
 
         for(ConfigurationServiceClient configurationServiceClient: result)
@@ -581,26 +650,16 @@ public class HibernateMappingConfigurationDaoTest
 
     @Test
     @DirtiesContext
-    public void test_get_key_location_queries_success()
-    {
-        List<String> result = this.xaMappingConfigurationDao.getKeyLocationQuery
-                ("Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", "CMI2");
-
-        Assert.assertEquals(1, result.size());
-    }
-
-    @Test
-    @DirtiesContext
     public void test_get_key_location_queries_buy_mapping_configuration_id_success()
     {
         List<MappingConfiguration> result = this.xaMappingConfigurationDao.getAllMappingConfigurations();
 
         for(MappingConfiguration mappingConfiguration: result)
         {
-            List<KeyLocationQuery> mappingConfigurationResult = this.xaMappingConfigurationDao
-                    .getKeyLocationQueriesByMappingConfigurationId(mappingConfiguration.getId());
-            
-            Assert.assertTrue(mappingConfigurationResult.size() > 0);
+            List<ParameterName> mappingConfigurationResult = this.xaMappingConfigurationDao
+                    .getParameterNameByMappingConfigurationId(mappingConfiguration.getId());
+
+//            Assert.assertTrue(mappingConfigurationResult.size() > 0);
         }
     }
 
@@ -614,7 +673,7 @@ public class HibernateMappingConfigurationDaoTest
         {
             MappingConfiguration mappingConfigurationResult = this.xaMappingConfigurationDao
                     .getMappingConfigurationById(mappingConfiguration.getId());
-            
+
             Assert.assertEquals(mappingConfiguration.getId(), mappingConfigurationResult.getId());
         }
     }
@@ -630,7 +689,7 @@ public class HibernateMappingConfigurationDaoTest
         List<MappingConfiguration> mappingConfigurations = this.xaMappingConfigurationDao
                 .getMappingConfigurationsByConfigurationServiceClientId(result.get(0).getId());
 
-        Assert.assertEquals(3, mappingConfigurations.size());
+        Assert.assertEquals(4, mappingConfigurations.size());
     }
 
     @Test
@@ -638,14 +697,14 @@ public class HibernateMappingConfigurationDaoTest
     public void test_get_mapping_configuration_by_configuration_type_id_success()
     {
         List<ConfigurationType> result = this.xaMappingConfigurationDao.getAllConfigurationTypes();
-        
-        Assert.assertEquals(3, result.size());
+
+        Assert.assertEquals(4, result.size());
 
         for(ConfigurationType configurationType: result)
         {
             List<MappingConfiguration> mappingConfigurations = this.xaMappingConfigurationDao
                     .getMappingConfigurationsByConfigurationTypeId(configurationType.getId());
-            
+
             Assert.assertTrue(mappingConfigurations.size() > 0);
         }
     }
@@ -678,8 +737,8 @@ public class HibernateMappingConfigurationDaoTest
         {
             List<SourceConfigurationValue> sourceConfigurationValues = this.xaMappingConfigurationDao
                     .getSourceConfigurationValueByMappingConfigurationId(mappingConfiguration.getId());
-            
-            Assert.assertTrue(sourceConfigurationValues.size() > 0);
+
+//            Assert.assertTrue(sourceConfigurationValues.size() > 0);
         }
     }
 
@@ -693,15 +752,15 @@ public class HibernateMappingConfigurationDaoTest
         {
             List<SourceConfigurationValue> sourceConfigurationValues = this.xaMappingConfigurationDao
                     .getSourceConfigurationValueByMappingConfigurationId(mappingConfiguration.getId());
-            
-            Assert.assertTrue(sourceConfigurationValues.size() > 0);
 
-            for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
-            {
-                TargetConfigurationValue value = sourceConfigurationValue.getTargetConfigurationValue();
-
-                Assert.assertNotNull(value);
-            }
+//            Assert.assertTrue(sourceConfigurationValues.size() > 0);
+//
+//            for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
+//            {
+//                TargetConfigurationValue value = sourceConfigurationValue.getTargetConfigurationValue();
+//
+//                Assert.assertNotNull(value);
+//            }
         }
     }
 
@@ -724,42 +783,40 @@ public class HibernateMappingConfigurationDaoTest
     }
 
     /**
-     * Helper method to add the configuration type to the database.
-     * 
-     * @param id
+     *
      * @param name
+     * @param keyLocationQueryProcessorType
+     * @return
      */
-    private ConfigurationServiceClient addConfigurationServiceClient(String name, String keyLocationQueryProcessorType)
+    private ConfigurationServiceClient addConfigurationServiceClient(String name)
     {
         ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
         configurationServiceClient.setName(name);
-        configurationServiceClient.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
 
         this.xaMappingConfigurationDao.storeConfigurationServiceClient(configurationServiceClient);
-        
+
         return configurationServiceClient;
     }
 
     /**
-     * Helper method to add the configuration type to the database.
-     * 
-     * @param id
-     * @param name
+     *
+     * @param value
+     * @param mappingConfigurationId
+     * @return
      */
-    private Long addKeyLocationQuery(String value, Long mappingConfigurationId)
+    private Long addParameterName(String value, Long mappingConfigurationId)
     {
-        KeyLocationQuery keyLocationQuery = new KeyLocationQuery();
-        keyLocationQuery.setValue(value);
+        ParameterName keyLocationQuery = new ParameterName();
+        keyLocationQuery.setName(value);
         keyLocationQuery.setMappingConfigurationId(mappingConfigurationId);
 
-        return this.xaMappingConfigurationDao.storeKeyLocationQuery(keyLocationQuery);
+        return this.xaMappingConfigurationDao.storeParameterName(keyLocationQuery);
     }
 
     /**
-     * Helper method to add the configuration type to the database.
-     * 
-     * @param id
+     *
      * @param name
+     * @return
      */
     private ConfigurationType addConfigurationType(String name)
     {
@@ -772,10 +829,10 @@ public class HibernateMappingConfigurationDaoTest
     }
 
     /**
-     * Helper method to add the configuration type to the database.
-     * 
-     * @param id
+     *
      * @param name
+     * @param description
+     * @return
      */
     private ConfigurationContext addConfigurationContext(String name, String description)
     {
@@ -784,19 +841,21 @@ public class HibernateMappingConfigurationDaoTest
         configurationContext.setDescription(description);
 
         this.xaMappingConfigurationDao.storeConfigurationContext(configurationContext);
-        
+
         return configurationContext;
     }
 
     /**
-     * Helper method to add a configuration context to the database.
-     * 
+     *
      * @param sourceContext
      * @param targetContext
      * @param numberOfParams
-     * @param configurationTypeId
+     * @param configurationType
+     * @param configurationServiceClient
+     * @param description
+     * @return
      */
-    private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, Long numberOfParams, ConfigurationType configurationType,
+    private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, int numberOfParams, ConfigurationType configurationType,
     		ConfigurationServiceClient configurationServiceClient, String description)
     {
         MappingConfiguration configurationContext = new MappingConfiguration();
@@ -812,16 +871,18 @@ public class HibernateMappingConfigurationDaoTest
 
     /**
      * Helper method to add a source system value to the database.
-     * 
+     *
      * @param sourceSystemValue
-     * @param configurationContextId
-     * @param targetConfigurationValueId
+     * @param mappingConfigurationId
+     * @param targetConfigurationValue
+     * @return
      */
-    private Long addSourceSystemConfiguration(String sourceSystemValue, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
+    private Long addSourceSystemConfiguration(String sourceSystemValue, String name, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
     {
         SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
         sourceConfigurationValue.setMappingConfigurationId(mappingConfigurationId);
         sourceConfigurationValue.setSourceSystemValue(sourceSystemValue);
+        sourceConfigurationValue.setName(name);
         sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
 
         return this.xaMappingConfigurationDao.storeSourceConfigurationValue(sourceConfigurationValue);
@@ -829,7 +890,7 @@ public class HibernateMappingConfigurationDaoTest
 
     /**
      * Helper method to add a target system value to the database.
-     * 
+     *
      * @param targetSystemValue
      */
     private TargetConfigurationValue addTargetSystemConfiguration(String targetSystemValue)
@@ -840,5 +901,29 @@ public class HibernateMappingConfigurationDaoTest
         this.xaMappingConfigurationDao.storeTargetConfigurationValue(targetConfigurationValue);
 
         return targetConfigurationValue;
+    }
+
+
+    private void addManyToManySourceSystemConfiguration(List<String> sourceSystemValues, List<String> targetSystemValues, Long mappingConfigurationId, Long groupingId)
+    {
+        for(String sourceValue: sourceSystemValues)
+        {
+            SourceConfigurationValue value = new SourceConfigurationValue();
+
+            value.setMappingConfigurationId(mappingConfigurationId);
+            value.setSourceSystemValue(sourceValue);
+            value.setSourceConfigGroupId(groupingId);
+
+            this.xaMappingConfigurationDao.storeSourceConfigurationValue(value);
+        }
+
+        for(String targetValue: targetSystemValues)
+        {
+            ManyToManyTargetConfigurationValue value = new ManyToManyTargetConfigurationValue();
+            value.setTargetSystemValue(targetValue);
+            value.setGroupId(groupingId);
+
+            this.xaMappingConfigurationDao.storeManyToManyTargetConfigurationValue(value);
+        }
     }
 }

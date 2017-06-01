@@ -46,6 +46,7 @@ import org.ikasan.sample.component.converter.SimpleConverter;
 import org.ikasan.sample.component.producer.SimpleProducer;
 import org.ikasan.sample.component.router.SimpleRouter;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -116,12 +117,19 @@ public class SimpleExample
         }
 
         @Override
-        public void addBlacklisted(Object o, String uri) {
+        public void addBlacklisted(Object o, String uri, FlowInvocationContext flowInvocationContext)
+        {
 
         }
 
         @Override
         public String getErrorUri(Object o) {
+            return null;
+        }
+
+        @Override
+        public FlowInvocationContext getFlowInvocationContext(Object o)
+        {
             return null;
         }
 

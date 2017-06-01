@@ -46,13 +46,17 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import com.vaadin.navigator.Navigator;
 import org.apache.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
+import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
 import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
@@ -62,15 +66,10 @@ import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPa
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationImportException;
-import org.ikasan.mapping.model.ConfigurationContext;
-import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.model.KeyLocationQuery;
-import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.model.TargetConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.model.*;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.mapping.util.MappingConfigurationValidator;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -107,7 +106,7 @@ public class MappingConfigurationImportWindow extends Window
 
     private Logger logger = Logger.getLogger(MappingConfigurationImportWindow.class);
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private MappingConfiguration mappingConfiguration;
     private List<MappingConfigurationValue> mappingConfigurationValues;
 
@@ -116,24 +115,30 @@ public class MappingConfigurationImportWindow extends Window
     private Label uploadLabel = new Label();
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     private MappingConfigurationPanel mappingConfigurationPanel;
-    private List<KeyLocationQuery> keyLocationQueries;
+    private List<ParameterName> sourceParameterNames;
+    private List<ParameterName> targetParameterNames;
     private SystemEventService systemEventService;
-    
+    private IkasanUINavigator mappingNavigator;
+
     /**
      * Constructor
-     * 
+     *
      * @param mappingConfigurationService
-     * @param mappingConfiguration
      * @param mappingConfigurationConfigurationValuesTable
+     * @param mappingConfigurationPanel
+     * @param systemEventService
+     * @param mappingNavigator
      */
-    public MappingConfigurationImportWindow(MappingConfigurationService mappingConfigurationService,
+    public MappingConfigurationImportWindow(MappingManagementService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationPanel mappingConfigurationPanel, SystemEventService systemEventService)
+            MappingConfigurationPanel mappingConfigurationPanel, SystemEventService systemEventService,
+            IkasanUINavigator mappingNavigator)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
         this.mappingConfigurationPanel = mappingConfigurationPanel;
         this.systemEventService = systemEventService;
+        this.mappingNavigator = mappingNavigator;
         init();
     }
 
@@ -201,19 +206,22 @@ public class MappingConfigurationImportWindow extends Window
             public void buttonClick(ClickEvent event) {
                 try
                 {
+                    IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                            .getAttribute(DashboardSessionValueConstants.USER);
+
+                    mappingConfiguration.setLastUpdatedBy(authentication.getName());
+
                     saveImportedMappingConfiguration();
-                    mappingConfiguration = null;
                     progressLayout.setVisible(false);
                     upload.setVisible(true);
-                    
-                    IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-                        	.getAttribute(DashboardSessionValueConstants.USER);
 
                     systemEventService.logSystemEvent(MappingConfigurationConstants.MAPPING_CONFIGURATION_SERVICE, 
                     		"Imported mapping configuration: [Client=" + mappingConfiguration.getConfigurationServiceClient().getName()
                     		+"] [Source Context=" + mappingConfiguration.getSourceContext().getName() + "] [Target Context=" 
                     		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
                     		+ "]", authentication.getName());
+
+                    mappingConfiguration = null;
                 }
                 catch (MappingConfigurationServiceException e)
                 {
@@ -335,8 +343,10 @@ public class MappingConfigurationImportWindow extends Window
                 return;
             }
 
-            this.mappingConfigurationValues = helper.getMappingConfigurationValues(receiver.file.toByteArray());
-            this.keyLocationQueries = helper.getKeyLocationQueries(receiver.file.toByteArray());
+            this.mappingConfigurationValues = helper.getMappingConfigurationValues(receiver.file.toByteArray(), mappingConfiguration.getIsManyToMany());
+
+            this.sourceParameterNames = helper.getSourceParameterNames(receiver.file.toByteArray());
+            this.targetParameterNames = helper.getTargetParameterNames(receiver.file.toByteArray());
     
             this.uploadLabel.setValue("Importing " + mappingConfigurationValues.size()
                 + " configuration values. Press import to procede.");
@@ -354,49 +364,57 @@ public class MappingConfigurationImportWindow extends Window
     {
         ConfigurationServiceClient client = this.mappingConfiguration.getConfigurationServiceClient();
         StringBuffer errorMessage = new StringBuffer();
-        
-        client = this.mappingConfigurationService.getAllConfigurationClientByName(client.getName());
-        if(client == null)
+
+        ConfigurationServiceClient existingClient = this.mappingConfigurationService.getAllConfigurationClientByName(client.getName());
+        if(existingClient == null)
         {
-            errorMessage.append("No matching configuration client found.\n");
+//            errorMessage.append("No matching configuration client found.\n");
+
+            this.mappingConfigurationService.saveConfigurationServiceClient(client);
+            this.mappingConfiguration.setConfigurationServiceClient(client);
         }
         else
         {
-            this.mappingConfiguration.setConfigurationServiceClient(client);
+            this.mappingConfiguration.setConfigurationServiceClient(existingClient);
         }
 
         ConfigurationType type = this.mappingConfiguration.getConfigurationType();
-        type = this.mappingConfigurationService.getAllConfigurationTypeByName(type.getName());
+        ConfigurationType existingType = this.mappingConfigurationService.getAllConfigurationTypeByName(type.getName());
 
-        if(type == null)
+        if(existingType == null)
         {
-            errorMessage.append("No matching configuration type found.\n");
+            this.mappingConfigurationService.saveConfigurationType(type);
+            this.mappingConfiguration.setConfigurationType(type);
         }
         else
         {
-            this.mappingConfiguration.setConfigurationType(type);
+            this.mappingConfiguration.setConfigurationType(existingType);
         }
 
         ConfigurationContext sourceContext = this.mappingConfiguration.getSourceContext();
-        sourceContext = this.mappingConfigurationService.getAllConfigurationContextByName(sourceContext.getName());
-        if(sourceContext == null)
+        ConfigurationContext existingtSourceContext = this.mappingConfigurationService.getAllConfigurationContextByName(sourceContext.getName());
+        if(existingtSourceContext == null)
         {
-            errorMessage.append("No source configuration context found.\n");
+            sourceContext.setDescription("Default description for context: " + sourceContext.getName());
+            this.mappingConfigurationService.saveConfigurationConext(sourceContext);
+            this.mappingConfiguration.setSourceContext(sourceContext);
         }
         else
         {
-            this.mappingConfiguration.setSourceContext(sourceContext);
+            this.mappingConfiguration.setSourceContext(existingtSourceContext);
         }
 
         ConfigurationContext targetContext = this.mappingConfiguration.getTargetContext();
-        targetContext = this.mappingConfigurationService.getAllConfigurationContextByName(targetContext.getName());
-        if(targetContext == null)
+        ConfigurationContext existingTargetContext = this.mappingConfigurationService.getAllConfigurationContextByName(targetContext.getName());
+        if(existingTargetContext == null)
         {
-            errorMessage.append("No target configuration context found.\n");
+            targetContext.setDescription("Default description for context: " + sourceContext.getName());
+            this.mappingConfigurationService.saveConfigurationConext(targetContext);
+            this.mappingConfiguration.setTargetContext(targetContext);
         }
         else
         {
-            this.mappingConfiguration.setTargetContext(targetContext);
+            this.mappingConfiguration.setTargetContext(existingTargetContext);
         }
 
         if(errorMessage.length() > 0)
@@ -413,117 +431,135 @@ public class MappingConfigurationImportWindow extends Window
             }
             catch(Exception e)
             {
-                Notification.show("An error has occurred imporint a mapping configuration!\n",
+                Notification.show("An error has occurred import a mapping configuration!\n",
                         " It appears that the mapping configuration you are importing already exists.",
                         Notification.Type.ERROR_MESSAGE);
 
                 return;
             }
 
-            for(MappingConfigurationValue mappingConfigurationValue: this.mappingConfigurationValues)
+            ArrayList<ManyToManyTargetConfigurationValue> manyToManyTargetConfigurationValues = new ArrayList<ManyToManyTargetConfigurationValue>();
+
+            if(mappingConfiguration.getIsManyToMany())
             {
-                this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
-                
-                Long sourceConfigurationGroupId = null;
-                
-                if(this.mappingConfiguration.getNumberOfParams() > 1)
+                for (MappingConfigurationValue mappingConfigurationValue : this.mappingConfigurationValues)
                 {
-                    sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
-                }
+                    Long  sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
 
-                for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
+                    for (SourceConfigurationValue value : mappingConfigurationValue.getSourceConfigurationValues())
+                    {
+                        logger.debug("Source value: " + value);
+                        value.setMappingConfigurationId(id);
+                        value.setSourceConfigGroupId(sourceConfigurationGroupId);
+                    }
+
+                    for(ManyToManyTargetConfigurationValue value: mappingConfigurationValue.getTargetConfigurationValues())
+                    {
+                        value.setGroupId(sourceConfigurationGroupId);
+
+                        manyToManyTargetConfigurationValues.add(value);
+                    }
+
+                    this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+
+
+                }
+            }
+            else
+            {
+                for (MappingConfigurationValue mappingConfigurationValue : this.mappingConfigurationValues)
                 {
-                    logger.debug("Source value: " + value);
-                    value.setMappingConfigurationId(id);
-                    value.setSourceConfigGroupId(sourceConfigurationGroupId);
-                }
+                    this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
 
-                this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+                    Long sourceConfigurationGroupId = null;
+
+                    if (this.mappingConfiguration.getNumberOfParams() > 1)
+                    {
+                        sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
+                    }
+
+                    for (SourceConfigurationValue value : mappingConfigurationValue.getSourceConfigurationValues())
+                    {
+                        logger.debug("Source value: " + value);
+                        value.setMappingConfigurationId(id);
+                        value.setSourceConfigGroupId(sourceConfigurationGroupId);
+                    }
+
+                    this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+                }
             }
 
-            for(KeyLocationQuery query: this.keyLocationQueries)
-            {
-                query.setMappingConfigurationId(id);
+            MappingConfigurationValidator mappingConfigurationValidator = new MappingConfigurationValidator();
 
-                this.mappingConfigurationService.saveKeyLocationQuery(query);
+            if(mappingConfigurationValidator.validate(mappingConfiguration) == false)
+            {
+                Notification.show("An error has occurred importing a mapping! Please rectify.\r\n\r\n" +
+                        "The following source system values are duplicated. This has the effect of calls to the mapping " +
+                        "service resolving multiple results. \r\n\r\n"
+                        + mappingConfigurationValidator.getErrorMessage(), Notification.Type.ERROR_MESSAGE);
+
+                this.mappingConfigurationService.deleteMappingConfiguration(mappingConfiguration);
+
+                return;
             }
 
-            this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+            ArrayList<ParameterName> parameterNames = new ArrayList<ParameterName>(this.sourceParameterNames);
+            parameterNames.addAll(this.targetParameterNames);
+
+            mappingConfiguration.setNumberOfMappings(this.getNumberOfMappings(mappingConfiguration.getSourceConfigurationValues()));
+
+            this.mappingConfigurationService.addMappingConfiguration(this.mappingConfiguration,
+                    parameterNames);
 
             mappingConfiguration = this.mappingConfigurationService.getMappingConfigurationById(id);
 
+            if(mappingConfiguration.getIsManyToMany())
+            {
+                for(ManyToManyTargetConfigurationValue value: manyToManyTargetConfigurationValues)
+                {
+                    this.mappingConfigurationService.storeManyToManyTargetConfigurationValue(value);
+                }
+            }
+
+            Navigator navigator = new Navigator(UI.getCurrent(), mappingNavigator.getParentContainer());
+
+            for (IkasanUIView view : mappingNavigator.getIkasanViews())
+            {
+                navigator.addView(view.getPath(), view.getView());
+            }
+
             UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
 
-            this.mappingConfigurationPanel.setMappingConfiguration(this.mappingConfiguration);
-            this.mappingConfigurationPanel.populateMappingConfigurationForm();
-
-            this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
+            mappingConfigurationPanel.setMappingConfiguration(mappingConfiguration);
+            mappingConfigurationPanel.populateMappingConfigurationForm();
         }
     }
 
-    /**
-     * Helper method to return a composite mapping configuration value.
-     * 
-     * @param mappingConfigurationValue
-     * @return
-     */
-    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue)
+    private int getNumberOfMappings(Set<SourceConfigurationValue> values)
     {
-        TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
-                (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
+        int num = 0;
 
-        ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
-            .getElementsByTagName("sourceConfigurationValue"));
+        Set<Long> groupKeys = new HashSet<Long>();
 
-        for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
+        for(SourceConfigurationValue value: values)
         {
-            logger.debug("Source value: " + sourceConfigurationValue.getSourceSystemValue());
-            sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
-            sourceConfigurationValue.setMappingConfigurationId(this.mappingConfiguration.getId());
+            if(value.getSourceConfigGroupId() == null)
+            {
+                num++;
+            }
+            else
+            {
+                groupKeys.add(value.getSourceConfigGroupId());
+            }
         }
 
-        return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
-    }
-
-    /**
-     * Gets a list of source configuration values from an XML node list.
-     * @param sourceConfigurationValues
-     * @return
-     */
-    protected ArrayList<SourceConfigurationValue> getSourceConfigurationValues(NodeList sourceConfigurationValues)
-    {
-        ArrayList<SourceConfigurationValue> returnValue = new ArrayList<SourceConfigurationValue>();
-
-        Long sourceConfigurationGroupId = null;
-        
-        if(this.mappingConfiguration.getNumberOfParams() > 1)
+        if(num > 0)
         {
-            sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
+            return num;
         }
-
-        for(int i=0; i<sourceConfigurationValues.getLength(); i++)
+        else
         {
-            logger.debug("Source value: " + sourceConfigurationValues.item(i).getTextContent());
-            SourceConfigurationValue value = new SourceConfigurationValue();
-            value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
-            value.setSourceConfigGroupId(sourceConfigurationGroupId);
-
-            returnValue.add(value);
+            return groupKeys.size();
         }
-
-        return returnValue;
-    }
-
-    /**
-     * Gets a target configuration value from an XML node.
-     * @param targetConfigurationValue
-     * @return
-     */
-    protected TargetConfigurationValue getTargetConfigurationValue(Node targetConfigurationValue)
-    {
-        logger.debug("Target value: " + targetConfigurationValue.getTextContent());
-        TargetConfigurationValue value = new TargetConfigurationValue();
-        value.setTargetSystemValue(targetConfigurationValue.getTextContent());
-        return value;
     }
 }

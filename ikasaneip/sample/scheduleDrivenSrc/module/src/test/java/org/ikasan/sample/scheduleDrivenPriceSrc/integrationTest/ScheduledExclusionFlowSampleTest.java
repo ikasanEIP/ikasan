@@ -76,7 +76,7 @@ public class ScheduledExclusionFlowSampleTest extends IkasanEIPTest
     {
         // setup the expected component invocations
         ikasanFlowTestRule.withFlow(demoExclusionScheduledConverterFlow)
-                          .consumer("Scheduled Consumer")
+                          .scheduledConsumer("Scheduled Consumer")
                           .converter("Scheduled Converter"); // note no producer since the converter throws exception
 
         // start the flow

@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
-  
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -47,6 +47,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jta-narayana</artifactId>
             <version>${version.org.springboot}</version>
+            <exclusions>
+
+                <!--<exclusion>-->
+            <!---->
+                    <!--<groupId>ch.qos.logback</groupId>-->
+                    <!--<artifactId>logback-classic</artifactId>-->
+                <!--</exclusion>-->
+
+            </exclusions>
         </dependency>
 
         <dependency>

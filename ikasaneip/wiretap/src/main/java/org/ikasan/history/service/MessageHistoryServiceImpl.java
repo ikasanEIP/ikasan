@@ -47,7 +47,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ikasan.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
-import org.ikasan.history.listener.MessageHistoryContextListener;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
 import org.ikasan.history.model.MetricEvent;
@@ -55,21 +54,19 @@ import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.history.MessageHistoryEvent;
+import org.ikasan.spec.history.FlowInvocationMetric;
+import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.history.MessageHistoryService;
-import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.model.WiretapEventFactory;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.ikasan.spec.wiretap.WiretapSerialiser;
 
 /**
  * Implementation of the MessageHistoryService with Housekeeping
  *
  * @author Ikasan Development Team
  */
-public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent, PagedSearchResult<MessageHistoryEvent>, MessageHistoryEvent>
-        , HousekeepService, HarvestService<MessageHistoryEvent>
+public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent<String,Object>, PagedSearchResult<ComponentInvocationMetric>, ComponentInvocationMetric>
+        , HousekeepService, HarvestService<FlowInvocationMetric>
 {
     private static final Logger logger = Logger.getLogger(MessageHistoryServiceImpl.class);
 
@@ -82,23 +79,22 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     protected PlatformConfigurationService platformConfigurationService;
 
     protected Integer messageHistoryDaysToLive = 7;
-    
-    /** The wiretap event factory */
-    private WiretapEventFactory wiretapEventFactory;
+
+    private WiretapSerialiser<Object,String> serialiser;
 
 
-    public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao, WiretapEventFactory wiretapEventFactory)
+    public MessageHistoryServiceImpl(MessageHistoryDao messageHistoryDao,  WiretapSerialiser<Object,String> serialiser)
     {
         if (messageHistoryDao == null)
         {
             throw new IllegalArgumentException("messageHistoryDao cannot be null");
         }
         this.messageHistoryDao = messageHistoryDao;
-        if (wiretapEventFactory == null)
+        if (serialiser == null)
         {
-            throw new IllegalArgumentException("wiretapEventFactory cannot be null");
+            throw new IllegalArgumentException("serialiser cannot be null");
         }
-        this.wiretapEventFactory = wiretapEventFactory;
+        this.serialiser = serialiser;
 
     }
 
@@ -122,18 +118,16 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
             }
         }
 
-        List<MessageHistoryEvent<String, CustomMetric, MetricEvent>> messageHistoryEvents = historyEventFactory.newEvent(moduleName, flowName
+        FlowInvocationMetric<ComponentInvocationMetric<String, CustomMetric, MetricEvent>> flowInvocationMetric = historyEventFactory.newEvent(moduleName, flowName
                 , flowInvocationContext, this.messageHistoryDaysToLive);
-        for (MessageHistoryEvent<String, CustomMetric, MetricEvent > messageHistoryEvent : messageHistoryEvents)
-        {
-            messageHistoryDao.save(messageHistoryEvent);
-        }
+
+        this.messageHistoryDao.save(flowInvocationMetric);
     }
 
     @Override
-    public PagedSearchResult<MessageHistoryEvent> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                         Set<String> moduleNames, String flowName, String componentName,
-                                                         String eventId, String relatedEventId, Date fromDate, Date toDate)
+    public PagedSearchResult<ComponentInvocationMetric> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                                 Set<String> moduleNames, String flowName, String componentName,
+                                                                                 String eventId, String relatedEventId, Date fromDate, Date toDate)
     {
         return messageHistoryDao.findMessageHistoryEvents(pageNo, pageSize, orderBy, orderAscending,
                                                           moduleNames, flowName, componentName,
@@ -141,8 +135,8 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     }
 
     @Override
-    public PagedSearchResult<MessageHistoryEvent> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
-                                                       String eventId, boolean lookupRelatedEventId)
+    public PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+                                                                               String eventId, boolean lookupRelatedEventId)
     {
         return messageHistoryDao.getMessageHistoryEvent(pageNo, pageSize, orderBy, orderAscending, eventId, lookupRelatedEventId ? eventId : null);
     }
@@ -151,20 +145,21 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
 	 * @see org.ikasan.spec.history.MessageHistoryService#snapMetricEvent(java.lang.Object, java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
 	 */
     @Override
-    public void snapMetricEvent(FlowEvent event, String componentName,
+    public void snapMetricEvent(FlowEvent<String,Object> event, String componentName,
                                 String moduleName, String flowName, Long timeToLive)
     {
         long expiry = System.currentTimeMillis() + (timeToLive * 60000);
-        WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
+        MetricEvent wiretapEvent = new MetricEvent(moduleName, flowName, componentName, event.getIdentifier(),
+                event.getRelatedIdentifier(), event.getTimestamp(), serialiser.serialise(event.getPayload()), expiry);
         this.messageHistoryDao.save(wiretapEvent);
     }
 
     @Override
-    public List<MessageHistoryEvent> harvest(int transactionBatchSize)
+    public List<FlowInvocationMetric> harvest(int transactionBatchSize)
     {
-        List<MessageHistoryEvent> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
+        List<FlowInvocationMetric> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
 
-        for(MessageHistoryEvent event: events)
+        for(FlowInvocationMetric event: events)
         {
             event.setHarvested(true);
 
