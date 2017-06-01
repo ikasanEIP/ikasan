@@ -77,7 +77,10 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -88,6 +91,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
+@Component
 public class FlowBuilder
 {
     /** logger */
@@ -103,21 +107,26 @@ public class FlowBuilder
 	String description;
 
 	/** flow event listener */
-	FlowEventListener flowEventListener;
+    @Autowired
+    FlowEventListener flowEventListener;
 
     /** flow recovery manager factory instance */
+    @Autowired
     RecoveryManagerFactory recoveryManagerFactory;
 
     /** flow recovery manager instance */
     RecoveryManager recoveryManager;
 
     /** exception resolver to be registered with recovery manager */
+    @Autowired
     ExceptionResolver exceptionResolver;
 
 	/** configuration service */
-	ConfigurationService configurationService;
+    @Autowired
+    ConfigurationService configurationService;
 
     /** exclusion service factory */
+    @Autowired
     ExclusionServiceFactory exclusionServiceFactory;
 
     /** exclusion service */
@@ -127,6 +136,7 @@ public class FlowBuilder
     ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl();
 
     /** error reporting service */
+
     ErrorReportingService errorReportingService;
 
     /** flow monitor */
@@ -139,16 +149,18 @@ public class FlowBuilder
     FlowElement<?> exclusionFlowHeadElement;
     
     /** handle to the re-submission service */
+    @Autowired
     ResubmissionService resubmissionService;
     
     /** the serialiser factory */
+    @Autowired
     SerialiserFactory serialiserFactory;
     
     /** the replayRecordService **/
     ReplayRecordService replayRecordService;
 
 	/** List of FlowInvocationListener */
-	List<FlowInvocationContextListener> flowInvocationContextListeners;
+    List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     /**
 	 * Constructor

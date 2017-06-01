@@ -230,6 +230,7 @@ public class Role implements Comparable<Role>
     /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
+
 	@Override
 	public String toString()
 	{

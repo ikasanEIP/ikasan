@@ -219,13 +219,10 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 		result = prime * result
 				+ ((policyLink == null) ? 0 : policyLink.hashCode());
 		return result;
+
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
+	@Override public int hashCode()
 	{
 		if (this == obj)
 			return true;
@@ -246,6 +243,7 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
 	/* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
+
 	@Override
 	public String toString()
 	{
