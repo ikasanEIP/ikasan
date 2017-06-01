@@ -354,7 +354,6 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             this.securityService.savePrincipal(userPrinciple);
         }
 
-
     }
 
     /**
@@ -390,10 +389,6 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         {
             logger.info("module does not exist [" + module.getName() + "], creating...");
             moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
-            moduleDB.setServer(server);
-            this.topologyService.save(moduleDB);
-
-        }else {
             moduleDB.setServer(server);
             this.topologyService.save(moduleDB);
             String host = platformContext.getEnvironment().getProperty("server.address");

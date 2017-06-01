@@ -41,24 +41,24 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.util;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
+import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
+import org.ikasan.mapping.service.MappingManagementService;
 
-/**
+ /**
  * @author Ikasan Development Team
  *
  */
 public class MappingConfigurationValuesExportHelper
 {
+    private MappingManagementService mappingConfigurationService;
+
     private static final String XML_TAG = "<?xml version=\"1.0\"?>";
     private static final String START_TAG = "<mappingConfigurationValues xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
     		" xsi:noNamespaceSchemaLocation=\"{$schemaLocation}\">";
@@ -69,18 +69,25 @@ public class MappingConfigurationValuesExportHelper
     private static final String SOURCE_CONFIGURATION_VALUES_START_TAG = "<sourceConfigurationValues>";
     private static final String SOURCE_CONFIGURATION_VALUES_END_TAG = "</sourceConfigurationValues>";
     private static final String SOURCE_CONFIGURATION_VALUE_START_TAG = "<sourceConfigurationValue>";
+    private static final String SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG = "<sourceConfigurationValue name=\"index\">";
     private static final String SOURCE_CONFIGURATION_VALUE_END_TAG = "</sourceConfigurationValue>";
+    private static final String TARGET_CONFIGURATION_VALUES_START_TAG = "<targetConfigurationValues>";
+    private static final String TARGET_CONFIGURATION_VALUES_END_TAG = "</targetConfigurationValues>";
     private static final String TARGET_CONFIGURATION_VALUE_START_TAG = "<targetConfigurationValue>";
+    private static final String TARGET_CONFIGURATION_VALUE_WITH_NAME_START_TAG = "<targetConfigurationValue name=\"index\">";
     private static final String TARGET_CONFIGURATION_VALUE_END_TAG = "</targetConfigurationValue>";
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
 
     /**
-     * @param schemaLocation
+     * Constructor
+     *
+     * @param mappingConfigurationService
      */
-    public MappingConfigurationValuesExportHelper()
+    public MappingConfigurationValuesExportHelper(MappingManagementService mappingConfigurationService)
     {
         super();
+        this.mappingConfigurationService = mappingConfigurationService;
     }
 
     /**
@@ -111,7 +118,9 @@ public class MappingConfigurationValuesExportHelper
         }
 
         List<MappingConfigurationValue> mappingConfigurationValues
-            = getMappingConfigurationValues(mappingConfiguration.getSourceConfigurationValues());
+            = getMappingConfigurationValues(mappingConfiguration.getSourceConfigurationValues(), mappingConfiguration);
+
+        Collections.sort(mappingConfigurationValues);
 
         for(MappingConfigurationValue mappingConfigurationValue: mappingConfigurationValues)
         {
@@ -119,13 +128,52 @@ public class MappingConfigurationValuesExportHelper
 
             for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
             {
-                exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG).append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
-                .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                if(value.getName() != null && !value.getName().trim().isEmpty())
+                {
+                    exportString.append(SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
+                            .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
+                            .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                }
+                else
+                {
+                    exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG)
+                            .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
+                            .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                }
             }
 
-            exportString.append(SOURCE_CONFIGURATION_VALUES_END_TAG).append(TARGET_CONFIGURATION_VALUE_START_TAG)
-            .append(StringEscapeUtils.escapeXml(mappingConfigurationValue.getTargetConfigurationValue().getTargetSystemValue()))
-            .append(TARGET_CONFIGURATION_VALUE_END_TAG).append(MAPPING_CONFIGURATION_END_TAG);
+            exportString.append(SOURCE_CONFIGURATION_VALUES_END_TAG);
+
+            if(mappingConfiguration.getIsManyToMany())
+            {
+                exportString.append(TARGET_CONFIGURATION_VALUES_START_TAG);
+
+                for(ManyToManyTargetConfigurationValue value: mappingConfigurationValue.getTargetConfigurationValues())
+                {
+                    if(value.getName() != null && !value.getName().isEmpty())
+                    {
+                        exportString.append(TARGET_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
+                                .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
+                                .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    }
+                    else
+                    {
+                        exportString.append(TARGET_CONFIGURATION_VALUE_START_TAG)
+                                .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
+                                .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    }
+                }
+
+                exportString.append(TARGET_CONFIGURATION_VALUES_END_TAG);
+            }
+            else
+            {
+                exportString.append(TARGET_CONFIGURATION_VALUE_START_TAG)
+                        .append(StringEscapeUtils.escapeXml(mappingConfigurationValue.getTargetConfigurationValue().getTargetSystemValue()))
+                        .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+            }
+
+            exportString.append(MAPPING_CONFIGURATION_END_TAG);
         }
 
         exportString.append(END_TAG);
@@ -140,7 +188,8 @@ public class MappingConfigurationValuesExportHelper
         }
     }
 
-    protected List<MappingConfigurationValue> getMappingConfigurationValues(Set<SourceConfigurationValue> sourceConfigurationValues)
+    protected List<MappingConfigurationValue> getMappingConfigurationValues(Set<SourceConfigurationValue> sourceConfigurationValues,
+                                                                            MappingConfiguration mappingConfiguration)
     {
         HashMap<Long, MappingConfigurationValue> map = new HashMap<Long, MappingConfigurationValue>();
 
@@ -161,18 +210,36 @@ public class MappingConfigurationValuesExportHelper
             }
             else
             {
-                MappingConfigurationValue mappingConfigurationValue = map.get(value.getSourceConfigGroupId());
-    
-                if(mappingConfigurationValue == null)
+                if(mappingConfiguration.getIsManyToMany())
                 {
-                    mappingConfigurationValue = new MappingConfigurationValue();
-                    mappingConfigurationValue.addSourceConfigurationValue(value);
-                    mappingConfigurationValue.setTargetConfigurationValue(value.getTargetConfigurationValue());
-                    map.put(value.getSourceConfigGroupId(), mappingConfigurationValue);
+                    MappingConfigurationValue mappingConfigurationValue = map.get(value.getSourceConfigGroupId());
+
+                    if(mappingConfigurationValue == null)
+                    {
+                        mappingConfigurationValue = new MappingConfigurationValue();
+                        mappingConfigurationValue.addSourceConfigurationValue(value);
+                        map.put(value.getSourceConfigGroupId(), mappingConfigurationValue);
+                    }
+                    else
+                    {
+                        mappingConfigurationValue.addSourceConfigurationValue(value);
+                    }
                 }
                 else
                 {
-                    mappingConfigurationValue.addSourceConfigurationValue(value);
+                    MappingConfigurationValue mappingConfigurationValue = map.get(value.getSourceConfigGroupId());
+
+                    if (mappingConfigurationValue == null)
+                    {
+                        mappingConfigurationValue = new MappingConfigurationValue();
+                        mappingConfigurationValue.addSourceConfigurationValue(value);
+                        mappingConfigurationValue.setTargetConfigurationValue(value.getTargetConfigurationValue());
+                        map.put(value.getSourceConfigGroupId(), mappingConfigurationValue);
+                    }
+                    else
+                    {
+                        mappingConfigurationValue.addSourceConfigurationValue(value);
+                    }
                 }
             }
         }
@@ -180,6 +247,23 @@ public class MappingConfigurationValuesExportHelper
         if(oneToOneMappingConfigurationValues != null)
         {
             return oneToOneMappingConfigurationValues;
+        }
+        else if(mappingConfiguration.getIsManyToMany())
+        {
+            for(Long groupId: map.keySet())
+            {
+                List<ManyToManyTargetConfigurationValue> values
+                        = this.mappingConfigurationService.getManyToManyTargetConfigurationValues(groupId);
+
+                MappingConfigurationValue value = map.get(groupId);
+
+                for(ManyToManyTargetConfigurationValue mValue: values)
+                {
+                    value.addTargetConfigurationValue(mValue);
+                }
+            }
+
+            return new ArrayList<MappingConfigurationValue>(map.values());
         }
         else
         {

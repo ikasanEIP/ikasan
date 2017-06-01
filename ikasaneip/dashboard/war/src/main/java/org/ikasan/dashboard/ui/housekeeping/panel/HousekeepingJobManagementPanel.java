@@ -151,6 +151,7 @@ public class HousekeepingJobManagementPanel extends Panel
                 housekeepingjob.setBatchDeleteSize(new Integer(tf4.getValue()));
                 housekeepingjob.setTransactionDeleteSize(new Integer(tf5.getValue()));
                 housekeepingjob.setEnabled(enabledCheckbox.getValue());
+                housekeepingjob.save();
 
                 if(housekeepingjob.isEnabled())
                 {
@@ -161,7 +162,7 @@ public class HousekeepingJobManagementPanel extends Panel
                     housekeepingSchedulerService.removeJob(housekeepingjob.getJobName());
                 }
 
-                housekeepingjob.save();
+                housekeepingjob.init();
                 
                 Window window = (Window)getParent();
                 window.close();

@@ -14,7 +14,13 @@
     <description>A library for managing mapping configurations for the Ikasan platform</description>
 
 	<dependencies>
-		
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-spec-mapping</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>

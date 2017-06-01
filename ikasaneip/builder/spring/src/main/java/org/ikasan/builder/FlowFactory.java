@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -52,6 +53,7 @@ import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
+import org.ikasan.history.listener.MessageHistoryContextListener;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -61,6 +63,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
+import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -142,6 +145,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     
     /** persistent flow configuration */
     FlowPersistentConfiguration flowPersistentConfiguration;
+
+    /** the message history service **/
+    MessageHistoryService messageHistoryService;
 
 
 	/**
@@ -298,6 +304,16 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             resubmissionService = (ResubmissionService)this.consumer.getFlowComponent();
         }
 
+        // add a default MessageHistoryContextListener if necessary.
+        if(!this.messageHistoryContextListenerExist())
+        {
+            this.flowInvocationContextListeners = new ArrayList<FlowInvocationContextListener>();
+            MessageHistoryContextListener listener = new MessageHistoryContextListener(this.messageHistoryService,
+                    this.moduleName, this.name);
+
+            this.flowInvocationContextListeners.add(listener);
+        }
+
         final FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(this.consumer, this.configurationService, this.resubmissionService, this.replayRecordService);
 
         if(exclusionService == null)
@@ -396,6 +412,28 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     }
 
     /**
+     * Deteming if a message history context listener is already set.
+     * @return
+     */
+    private boolean messageHistoryContextListenerExist()
+    {
+        if(this.flowInvocationContextListeners == null)
+        {
+            return false;
+        }
+
+        for(FlowInvocationContextListener listener: this.flowInvocationContextListeners)
+        {
+            if(listener instanceof MessageHistoryContextListener)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Helper method to set the exclusion service on the relevant components.
      * 
      * @param flowElements
@@ -448,6 +486,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
         this.ikasanSerialiserFactory = applicationContext.getBean(SerialiserFactory.class);
         this.replayRecordService = applicationContext.getBean(ReplayRecordService.class);
+        this.messageHistoryService = applicationContext.getBean(MessageHistoryService.class);
     }
 
     /**

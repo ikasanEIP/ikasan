@@ -49,9 +49,10 @@ import org.ikasan.dashboard.ui.framework.action.Action;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationConstants;
+import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -70,7 +71,7 @@ public class DeleteRowAction implements Action
     private List<SourceConfigurationValue> sourceConfigurationValues;
     private MappingConfiguration mappingConfiguration;
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SystemEventService systemEventService;
 
     /**
@@ -81,9 +82,9 @@ public class DeleteRowAction implements Action
      * @param mappingConfigurationConfigurationValuesTable
      */
     public DeleteRowAction(List<SourceConfigurationValue> sourceConfigurationValues,
-            MappingConfiguration mappingConfiguration,
-            MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
+                           MappingConfiguration mappingConfiguration,
+                           MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
+                           MappingManagementService mappingConfigurationService, SystemEventService systemEventService)
     {
         super();
         this.sourceConfigurationValues = sourceConfigurationValues;
@@ -107,15 +108,35 @@ public class DeleteRowAction implements Action
         		+ mappingConfiguration.getTargetContext().getName() + "] [Type=" + mappingConfiguration.getConfigurationType().getName()
         		+ "]");
         
+        long groupId = -1l;
+
         for(SourceConfigurationValue sourceConfigurationValue: this.sourceConfigurationValues)
         {
-        	sb.append(" [Src Value=" + sourceConfigurationValue.getSourceSystemValue() 
-        			+ "] [Tgt Value=" + sourceConfigurationValue.getTargetConfigurationValue()
-        			.getTargetSystemValue() + "]");
+            if(mappingConfiguration.getIsManyToMany())
+            {
+                groupId = sourceConfigurationValue.getSourceConfigGroupId();
+            }
+            else
+            {
+                sb.append(" [Src Value=" + sourceConfigurationValue.getSourceSystemValue()
+                        + "] [Tgt Value=" + sourceConfigurationValue.getTargetConfigurationValue()
+                        .getTargetSystemValue() + "]");
+            }
         }
         
         logger.debug("User: " + authentication.getName() 
                 +" attempting to delete: " + this.sourceConfigurationValues.size() + " configuration values.");
+
+        if(mappingConfiguration.getIsManyToMany())
+        {
+            for (ManyToManyTargetConfigurationValue value : mappingConfigurationConfigurationValuesTable.getManyToManyTargetConfigurationValues())
+            {
+                if (value.getGroupId().equals(groupId))
+                {
+                    this.mappingConfigurationConfigurationValuesTable.getDeletedManyToManyTargetConfigurationValues().add(value);
+                }
+            }
+        }
 
         this.mappingConfiguration.getSourceConfigurationValues().removeAll(this.sourceConfigurationValues);
 

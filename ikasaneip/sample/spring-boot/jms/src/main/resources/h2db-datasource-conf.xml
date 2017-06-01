@@ -23,7 +23,6 @@
         <property name="password" value="${datasource.password}" />
     </bean>
 
-
     <jdbc:initialize-database data-source="dataSource">
         <jdbc:script location="classpath:overwriteDBCreation.sql" />
     </jdbc:initialize-database>
