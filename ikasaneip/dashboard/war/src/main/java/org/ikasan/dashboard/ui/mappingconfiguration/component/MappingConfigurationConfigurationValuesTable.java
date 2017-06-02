@@ -333,7 +333,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             final TextField nameTextField = new TextField(item.getItemProperty("name"));
             nameTextField.setWidth(300, Unit.PIXELS);
             final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
-            initTextFiledForWhitespaceVisibility(sourceConfigurationValue.getSourceSystemValue(), tf);
+            initTextFieldForWhitespaceVisibility(sourceConfigurationValue.getSourceSystemValue(), tf);
 
             final HorizontalLayout hl = new HorizontalLayout();
             hl.setSpacing(true);
@@ -371,7 +371,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                         final TextField nameTextField = new TextField(item.getItemProperty("name"));
                         nameTextField.setWidth(300, Unit.PIXELS);
                         final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
-                        initTextFiledForWhitespaceVisibility(sourceConfigurationValue.getSourceSystemValue(), tf);
+                        initTextFieldForWhitespaceVisibility(sourceConfigurationValue.getSourceSystemValue(), tf);
                         tf.setReadOnly(false);
                         tf.setWidth(300, Unit.PIXELS);
 
@@ -447,7 +447,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 final TextField nameTextField = new TextField(item.getItemProperty("name"));
                 nameTextField.setWidth(300, Unit.PIXELS);
                 TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
-                initTextFiledForWhitespaceVisibility(manyToManyTargetConfigurationValue.getTargetSystemValue(), tf);
+                initTextFieldForWhitespaceVisibility(manyToManyTargetConfigurationValue.getTargetSystemValue(), tf);
                 tf.setReadOnly(false);
                 tf.setWidth(300, Unit.PIXELS);
 
@@ -487,7 +487,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             final TextField nameTextField = new TextField(item.getItemProperty("name"));
                             nameTextField.setWidth(300, Unit.PIXELS);
                             final TextField tf = new TextField(item.getItemProperty("targetSystemValue"));
-                            initTextFiledForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tf);
+                            initTextFieldForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tf);
                             tf.setReadOnly(false);
                             tf.setWidth(300, Unit.PIXELS);
 
@@ -533,7 +533,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         {
             BeanItem<TargetConfigurationValue> targetConfigurationItem = new BeanItem<TargetConfigurationValue>(targetConfigurationValue);
             final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
-            initTextFiledForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), targetConfigurationTextField);
+            initTextFieldForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), targetConfigurationTextField);
             targetConfigurationTextField.setReadOnly(true);
             targetConfigurationTextField.setWidth(300, Unit.PIXELS);
 
@@ -657,7 +657,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(value);
                     final TextField sourceSystemValueTextField = new TextField(item.getItemProperty("sourceSystemValue"));
                     sourceSystemValueTextField.setWidth(300, Unit.PIXELS);
-                    initTextFiledForWhitespaceVisibility(value.getSourceSystemValue(), sourceSystemValueTextField);
+                    initTextFieldForWhitespaceVisibility(value.getSourceSystemValue(), sourceSystemValueTextField);
 
 
                     sourceSystemValueTextField.setReadOnly(true);
@@ -782,7 +782,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             item = new BeanItem<SourceConfigurationValue>(partnerSourceConfigurationValue);
                             final TextField sourceSystemValueTextField2 = new TextField(item.getItemProperty("sourceSystemValue"));
                             sourceSystemValueTextField2.setWidth(300, Unit.PIXELS);
-                            initTextFiledForWhitespaceVisibility(partnerSourceConfigurationValue.getSourceSystemValue(), sourceSystemValueTextField2);
+                            initTextFieldForWhitespaceVisibility(partnerSourceConfigurationValue.getSourceSystemValue(), sourceSystemValueTextField2);
 
 
                             sourceSystemValueTextField2.setReadOnly(true);
@@ -877,7 +877,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                             Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
                             final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
-                            initTextFiledForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tvf);
+                            initTextFieldForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tvf);
                             tvf.setReadOnly(false);
                             tvf.setWidth(300, Unit.PIXELS);
 
@@ -911,7 +911,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
                                         Item tItem = new BeanItem<ManyToManyTargetConfigurationValue>(targetConfigurationValue);
                                         final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
-                                        initTextFiledForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tvf);
+                                        initTextFieldForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tvf);
                                         tvf.setReadOnly(false);
                                         tvf.setWidth(300, Unit.PIXELS);
 
@@ -959,7 +959,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                 nameTf.setReadOnly(true);
                                 nameTf.setWidth(300, Unit.PIXELS);
                                 final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
-                                initTextFiledForWhitespaceVisibility(targetValue.getTargetSystemValue(), tvf);
+                                initTextFieldForWhitespaceVisibility(targetValue.getTargetSystemValue(), tvf);
                                 tvf.setReadOnly(true);
                                 tvf.setWidth(300, Unit.PIXELS);
 
@@ -1000,7 +1000,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                                             nameTf.setReadOnly(false);
                                             nameTf.setWidth(300, Unit.PIXELS);
                                             final TextField tvf = new TextField(tItem.getItemProperty("targetSystemValue"));
-                                            initTextFiledForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tvf);
+                                            initTextFieldForWhitespaceVisibility(targetConfigurationValue.getTargetSystemValue(), tvf);
                                             tvf.setReadOnly(false);
                                             tvf.setWidth(300, Unit.PIXELS);
 
@@ -1122,7 +1122,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     {
                         BeanItem<TargetConfigurationValue> targetConfigurationItem = new BeanItem<TargetConfigurationValue>(value.getTargetConfigurationValue());
                         final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
-                        initTextFiledForWhitespaceVisibility(value.getTargetConfigurationValue().getTargetSystemValue(), targetConfigurationTextField);
+                        initTextFieldForWhitespaceVisibility(value.getTargetConfigurationValue().getTargetSystemValue(), targetConfigurationTextField);
                         targetConfigurationTextField.setReadOnly(true);
                         targetConfigurationTextField.setWidth(300, Unit.PIXELS);
 
@@ -1174,7 +1174,7 @@ public class MappingConfigurationConfigurationValuesTable extends Table
         }
     }
 
-    private void initTextFiledForWhitespaceVisibility(String value, final TextField textField)
+    private void initTextFieldForWhitespaceVisibility(String value, final TextField textField)
     {
         if((value.startsWith(" ")
                 || value.endsWith(" "))
