@@ -381,7 +381,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         Server server = new Server(serverName,serverName,serverUrl,Integer.parseInt(port));
 
         List<Server> servers = this.topologyService.getAllServers();
-        if(!servers.contains(server)){
+        if(!servers.contains(server))
+        {
             this.topologyService.save(server);
         }
 
@@ -391,16 +392,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
             moduleDB.setServer(server);
             this.topologyService.save(moduleDB);
-            String host = platformContext.getEnvironment().getProperty("server.address");
-            String port = platformContext.getEnvironment().getProperty("server.port");
-
-
-            logger.info("module host [" + host + ":"+port+"] ");
-
         }
-
-
-
     }
 
     private static  String getPid() {
