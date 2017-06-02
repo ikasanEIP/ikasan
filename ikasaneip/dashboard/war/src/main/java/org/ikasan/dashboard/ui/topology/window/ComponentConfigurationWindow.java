@@ -180,6 +180,13 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
 
 	protected void buildLayout()
 	{
+		passwordFields = new HashMap<String, PasswordField>();
+		textFields = new HashMap<String, TextArea>();
+		comboBoxes = new HashMap<String, ComboBox>();
+		descriptionTextFields = new HashMap<String, TextArea>();
+		mapTextFields = new HashMap<String, TextFieldKeyValuePair>();
+		valueTextFields = new HashMap<String, TextArea>();
+
 		final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)configuration.getParameters();
 		
 		this.layout = new GridLayout(2, parameters.size() + 6);

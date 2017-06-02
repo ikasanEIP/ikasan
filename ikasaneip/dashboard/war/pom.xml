@@ -4,13 +4,13 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-dashboard-war</artifactId>
 	<packaging>war</packaging>
-	<version>1.4.2-SNAPSHOT</version>
+	<version>1.4.3-SNAPSHOT</version>
 	<name>Ikasan Dashboard</name>
 
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-dashboard</artifactId>
-		<version>1.4.2-SNAPSHOT</version>
+		<version>1.4.3-SNAPSHOT</version>
 	</parent>
 
 	<properties>

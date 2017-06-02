@@ -241,7 +241,7 @@ public class SourceConfigurationValue implements Serializable, Comparable<Source
 
         if(value.getName() != null && this.getName() != null)
         {
-            result += this.name.compareTo(value.getName());
+            result += this.getName().compareTo(value.getName());
         }
 
         return result;
