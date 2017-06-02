@@ -219,8 +219,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.roleTable.addStyleName("ikasan");
          this.roleTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.roleTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.roleTable.setWidth("100%");
-         this.roleTable.setHeight("200px");
+         this.roleTable.setSizeFull();
          
          this.associatedPrincipalsTable.addContainerProperty("LDAP Groups", String.class, null);
          this.associatedPrincipalsTable.setColumnExpandRatio("LDAP Groups", .40f);
@@ -231,14 +230,12 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.associatedPrincipalsTable.addStyleName("ikasan");
          this.associatedPrincipalsTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.associatedPrincipalsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.associatedPrincipalsTable.setWidth("100%");
-         this.associatedPrincipalsTable.setHeight("200px");
+         this.associatedPrincipalsTable.setSizeFull();
 
 
-         GridLayout tablesLayout = new GridLayout(2, 4);
-         tablesLayout.setMargin(false);
-         tablesLayout.setHeight("520px");
+         GridLayout tablesLayout = new GridLayout(2, 1);
          tablesLayout.setWidth("100%");
+         tablesLayout.setMargin(false);
          tablesLayout.setSpacing(true);
 
          Label ikasanRolesLabel = new Label("Ikasan Roles");
@@ -288,14 +285,47 @@ package org.ikasan.dashboard.ui.administration.panel;
          tablesLayout.addComponent(addRoleButton, 1, 0);
          tablesLayout.setComponentAlignment(addRoleButton, Alignment.MIDDLE_RIGHT);
 
-         tablesLayout.addComponent(this.roleTable, 0, 1, 1, 1);
+         VerticalSplitPanel rolesVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.roleTable);
+         rolesVpanel.setSizeFull();
+         rolesVpanel.setSplitPosition(40, Unit.PIXELS);
+         rolesVpanel.setLocked(true);
+
+         tablesLayout = new GridLayout(2, 1);
+         tablesLayout.setMargin(false);
+         tablesLayout.setSpacing(true);
 
          Label ldapGroupsLabel = new Label("Ldap Groups");
          ldapGroupsLabel.setStyleName(ValoTheme.LABEL_HUGE);
-         tablesLayout.addComponent(ldapGroupsLabel, 0, 2);
-         tablesLayout.addComponent(this.associatedPrincipalsTable, 0, 3, 1, 3);
+         tablesLayout.addComponent(ldapGroupsLabel, 0, 0);
 
-         gridLayout.addComponent(tablesLayout, 0, 2, 1, 2);
+         VerticalSplitPanel ldapVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.associatedPrincipalsTable);
+         ldapVpanel.setSizeFull();
+         ldapVpanel.setSplitPosition(40, Unit.PIXELS);
+         ldapVpanel.setLocked(true);
+
+         VerticalLayout rolesLayout = new VerticalLayout();
+         rolesLayout.setSizeFull();
+         rolesLayout.setMargin(true);
+         rolesLayout.addComponent(rolesVpanel);
+
+         VerticalLayout ldapLayout = new VerticalLayout();
+         ldapLayout.setSizeFull();
+         ldapLayout.setMargin(true);
+         ldapLayout.addComponent(ldapVpanel);
+
+         VerticalSplitPanel tablesVpanel = new VerticalSplitPanel(rolesLayout
+                 , ldapLayout);
+         tablesVpanel.setSizeFull();
+         tablesVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+         tablesVpanel.setLocked(true);
+
+         VerticalSplitPanel holderVpanel = new VerticalSplitPanel(gridLayout
+                 , tablesVpanel);
+         holderVpanel.setSizeFull();
+         holderVpanel.setSplitPosition(260, Unit.PIXELS);
+         holderVpanel.setLocked(true);
 
          Panel roleMemberPanel = new Panel();
 
@@ -303,42 +333,49 @@ package org.ikasan.dashboard.ui.administration.panel;
          roleMemberPanel.setHeight("100%");
          roleMemberPanel.setWidth("100%");
 
-         GridLayout roleMemberLayout = new GridLayout();
-         roleMemberLayout.setSpacing(true);
-         roleMemberLayout.setWidth("100%");
-
          dashboardActivityTable.addContainerProperty("Action", String.class, null);
          dashboardActivityTable.addContainerProperty("Date/Time", String.class, null);
          dashboardActivityTable.addStyleName("ikasan");
          dashboardActivityTable.addStyleName(ValoTheme.TABLE_SMALL);
          dashboardActivityTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         dashboardActivityTable.setHeight("350px");
-         dashboardActivityTable.setWidth("100%");
+         dashboardActivityTable.setSizeFull();
 
          this.permissionChangeTable.addContainerProperty("Action", String.class, null);
          this.permissionChangeTable.addContainerProperty("Date/Time", String.class, null);
          this.permissionChangeTable.addStyleName("ikasan");
          this.permissionChangeTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.permissionChangeTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.permissionChangeTable.setHeight("350px");
-         this.permissionChangeTable.setWidth("100%");
+         this.permissionChangeTable.setSizeFull();
 
          Label dashboardActivityLabel = new Label("Dashboard Activity");
          dashboardActivityLabel.setStyleName(ValoTheme.LABEL_HUGE);
 
 
-         roleMemberLayout.addComponent(dashboardActivityLabel);
-         roleMemberLayout.addComponent(this.dashboardActivityTable);
+         VerticalSplitPanel activityVpanel = new VerticalSplitPanel(dashboardActivityLabel
+                 , this.dashboardActivityTable);
+         activityVpanel.setSizeFull();
+         activityVpanel.setSplitPosition(40, Unit.PIXELS);
+         activityVpanel.setLocked(true);
 
          Label permissionChangeLabel = new Label("User Security Changes");
          permissionChangeLabel.setStyleName(ValoTheme.LABEL_HUGE);
 
-         roleMemberLayout.addComponent(permissionChangeLabel);
-         roleMemberLayout.addComponent(this.permissionChangeTable);
 
-         roleMemberPanel.setContent(roleMemberLayout);
+         VerticalSplitPanel securityChangeVpanel = new VerticalSplitPanel(permissionChangeLabel
+                 , this.permissionChangeTable);
+         securityChangeVpanel.setSizeFull();
+         securityChangeVpanel.setSplitPosition(40, Unit.PIXELS);
+         securityChangeVpanel.setLocked(true);
 
-         securityAdministrationPanel.setContent(gridLayout);
+         VerticalSplitPanel rightVpanel = new VerticalSplitPanel(activityVpanel
+                 , securityChangeVpanel);
+         rightVpanel.setSizeFull();
+         rightVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+         rightVpanel.setLocked(true);
+
+         roleMemberPanel.setContent(rightVpanel);
+
+         securityAdministrationPanel.setContent(holderVpanel);
          layout.addComponent(securityAdministrationPanel);
 
          VerticalLayout roleMemberPanelLayout = new VerticalLayout();

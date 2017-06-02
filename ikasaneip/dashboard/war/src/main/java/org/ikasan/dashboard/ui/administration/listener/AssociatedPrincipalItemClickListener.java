@@ -41,9 +41,8 @@
 package org.ikasan.dashboard.ui.administration.listener;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.administration.panel.PrincipalManagementPanel;
+import org.ikasan.dashboard.ui.administration.panel.GroupManagementPanel;
 import org.ikasan.dashboard.ui.framework.panel.ViewContext;
-import org.ikasan.security.model.IkasanPrincipal;
 
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -59,7 +58,7 @@ public class AssociatedPrincipalItemClickListener implements ItemClickListener
     
     private static Logger logger = Logger.getLogger(AssociatedPrincipalItemClickListener.class);
 
-    private PrincipalManagementPanel principalManagementPanel;
+    private GroupManagementPanel principalManagementPanel;
     private ViewContext viewContext;
 
     /**
@@ -67,7 +66,7 @@ public class AssociatedPrincipalItemClickListener implements ItemClickListener
      * 
 	 * @param principalManagementPanel
 	 */
-	public AssociatedPrincipalItemClickListener(PrincipalManagementPanel principalManagementPanel,
+	public AssociatedPrincipalItemClickListener(GroupManagementPanel principalManagementPanel,
 			ViewContext viewContext)
 	{
 		super();

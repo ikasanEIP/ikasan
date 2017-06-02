@@ -161,7 +161,7 @@ public class UserManagementPanel extends Panel implements View
 
 
 		Panel securityAdministrationPanel = new Panel();
-		//securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		securityAdministrationPanel.setSizeFull();
 
 		GridLayout gridLayout = new GridLayout();
@@ -217,7 +217,12 @@ public class UserManagementPanel extends Panel implements View
 
 		securityAdministrationPanel.setContent(vpanel);
 
-		this.setContent(securityAdministrationPanel);
+		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
+		layout.setSizeFull();
+		layout.addComponent(securityAdministrationPanel);
+
+		this.setContent(layout);
 	}
 
 	/*

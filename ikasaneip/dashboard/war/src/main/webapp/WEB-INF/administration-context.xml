@@ -87,7 +87,7 @@
 		<constructor-arg ref="navigationPanelProxy"/>
     </bean>   
     
-    <bean id="principalManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PrincipalManagementPanel" scope="session">
+    <bean id="principalManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.GroupManagementPanel" scope="session">
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
         <constructor-arg ref="systemEventService"/>

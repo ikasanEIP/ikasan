@@ -134,7 +134,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          securityAdministrationPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
          securityAdministrationPanel.setSizeFull();
 
-         GridLayout gridLayout = new GridLayout(2, 2);
+         GridLayout gridLayout = new GridLayout(2, 1);
          gridLayout.setMargin(true);
          gridLayout.setSpacing(true);
          gridLayout.setWidth("100%");
@@ -179,8 +179,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.tableContainer = this.buildContainer();
 
          this.roleTable = new FilterTable();
-         this.roleTable.setWidth("100%");
-         this.roleTable.setHeight("900px");
+         this.roleTable.setSizeFull();
 
          this.roleTable.setFilterBarVisible(true);
          this.roleTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -218,12 +217,19 @@ package org.ikasan.dashboard.ui.administration.panel;
              }
          });
 
-         gridLayout.addComponent(this.roleTable, 0, 1, 1, 1);
-         gridLayout.setComponentAlignment(this.roleTable, Alignment.MIDDLE_CENTER);
+         VerticalSplitPanel vpanel = new VerticalSplitPanel(gridLayout
+                 , this.roleTable);
+         vpanel.setSplitPosition(80, Unit.PIXELS);
+         vpanel.setLocked(true);
 
-         securityAdministrationPanel.setContent(gridLayout);
+         securityAdministrationPanel.setContent(vpanel);
 
-         this.setContent(securityAdministrationPanel);
+         VerticalLayout layout = new VerticalLayout();
+         layout.setMargin(true);
+         layout.setSizeFull();
+         layout.addComponent(securityAdministrationPanel);
+
+         this.setContent(layout);
      }
 
      /*
