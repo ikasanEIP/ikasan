@@ -40,8 +40,6 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import com.vaadin.data.Item;
@@ -49,44 +47,27 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
 import org.ikasan.dashboard.ui.administration.window.GroupWindow;
-import org.ikasan.dashboard.ui.administration.window.UserWindow;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.tepi.filtertable.FilterTable;
-import org.vaadin.teemu.VaadinIcons;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
-import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
-import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.themes.ValoTheme;
-import com.zybnet.autocomplete.server.AutocompleteField;
-import com.zybnet.autocomplete.server.AutocompleteQueryListener;
-import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
 
-/**
+ /**
  * @author CMI2 Development Team
  * 
  */
-public class PrincipalManagementPanel extends Panel implements View
+public class GroupManagementPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-	private Logger logger = Logger.getLogger(PrincipalManagementPanel.class);
+	private Logger logger = Logger.getLogger(GroupManagementPanel.class);
 
 	private UserService userService;
 	private SecurityService securityService;
@@ -96,8 +77,8 @@ public class PrincipalManagementPanel extends Panel implements View
 
 	private IndexedContainer tableContainer;
 
-	public PrincipalManagementPanel(UserService userService, SecurityService securityService,
-							   SystemEventService systemEventService)
+	public GroupManagementPanel(UserService userService, SecurityService securityService,
+								SystemEventService systemEventService)
 	{
 		super();
 		this.userService = userService;
@@ -138,6 +119,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		this.setHeight("100%");
 
 		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
 		layout.setSizeFull();
 
 		Panel securityAdministrationPanel = new Panel();
@@ -159,8 +141,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		this.tableContainer = this.buildContainer();
 
 		this.userTable = new FilterTable();
-		this.userTable.setWidth("100%");
-		this.userTable.setHeight("900px");
+		this.userTable.setSizeFull();
 		
 		this.userTable.setFilterBarVisible(true);
 		this.userTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -188,13 +169,16 @@ public class PrincipalManagementPanel extends Panel implements View
 			}
 		});
 
-		gridLayout.addComponent(this.userTable);
-		gridLayout.setComponentAlignment(this.userTable, Alignment.MIDDLE_CENTER);
 
-		securityAdministrationPanel.setContent(gridLayout);
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gridLayout
+				, this.userTable);
+		vpanel.setSplitPosition(80, Unit.PIXELS);
+		vpanel.setLocked(true);
+
+		securityAdministrationPanel.setContent(vpanel);
 		layout.addComponent(securityAdministrationPanel);
 
-		this.setContent(securityAdministrationPanel);
+		this.setContent(layout);
 	}
 
 	/*
