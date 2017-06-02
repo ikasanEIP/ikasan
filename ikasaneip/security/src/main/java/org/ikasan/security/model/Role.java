@@ -197,9 +197,6 @@ public class Role implements Comparable<Role>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
