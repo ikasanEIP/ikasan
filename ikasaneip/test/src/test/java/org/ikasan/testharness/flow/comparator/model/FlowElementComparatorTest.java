@@ -130,7 +130,7 @@ public class FlowElementComparatorTest
      * Sanity test the default FlowElementComparator for an expected and actual 
      * component that have different component types.
      */
-    @Test(expected = junit.framework.AssertionFailedError.class)
+    @Test(expected = org.junit.AssertionFailedError.class)
     public void test_failedFlowElementComparatorDueToDifferentComponentTypes() 
     {
         final RouterComponent routerComponent = new RouterComponent("name");
