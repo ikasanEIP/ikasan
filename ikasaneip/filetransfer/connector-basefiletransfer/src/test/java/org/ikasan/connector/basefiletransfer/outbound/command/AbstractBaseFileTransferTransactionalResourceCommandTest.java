@@ -47,7 +47,7 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;

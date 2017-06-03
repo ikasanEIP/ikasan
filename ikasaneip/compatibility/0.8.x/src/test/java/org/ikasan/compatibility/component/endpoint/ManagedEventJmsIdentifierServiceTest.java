@@ -40,7 +40,7 @@
  */
 package org.ikasan.compatibility.component.endpoint;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;

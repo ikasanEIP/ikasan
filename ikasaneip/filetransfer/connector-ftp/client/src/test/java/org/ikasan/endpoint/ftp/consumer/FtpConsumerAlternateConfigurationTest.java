@@ -42,7 +42,7 @@ package org.ikasan.endpoint.ftp.consumer;
 
 import javax.resource.spi.InvalidPropertyException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

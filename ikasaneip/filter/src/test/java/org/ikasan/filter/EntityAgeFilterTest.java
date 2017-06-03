@@ -1,6 +1,6 @@
 package org.ikasan.filter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.ikasan.filter.configuration.EntityAgeFilterConfiguration;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
