@@ -40,6 +40,7 @@
  */
 package org.ikasan.testharness.flow.comparator.model;
 
+import junit.framework.AssertionFailedError;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.FlowElement;
@@ -130,7 +131,7 @@ public class FlowElementComparatorTest
      * Sanity test the default FlowElementComparator for an expected and actual 
      * component that have different component types.
      */
-    @Test(expected = org.junit.AssertionFailedError.class)
+    @Test(expected = AssertionFailedError.class)
     public void test_failedFlowElementComparatorDueToDifferentComponentTypes() 
     {
         final RouterComponent routerComponent = new RouterComponent("name");
