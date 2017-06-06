@@ -40,12 +40,12 @@
  */
 package org.ikasan.testharness.flow.expectation.service;
 
-import junit.framework.ComparisonFailure;
 import org.apache.log4j.Logger;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 
 /**
  * Implementation of a FlowExpectation based on applying the expectations in
