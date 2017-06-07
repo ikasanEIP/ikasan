@@ -60,6 +60,10 @@
                   type="java.lang.String"
                   column="SourceSystemValue" />
 
+        <property name="name"
+                  type="java.lang.String"
+                  column="Name" />
+
         <property name="mappingConfigurationId"
                   type="java.lang.Long"
                   column="MappingConfigurationId" />

@@ -50,13 +50,15 @@ import java.util.Set;
  * @author Ikasan Development Team
  *
  */
-public class SourceConfigurationValue implements Serializable
+public class SourceConfigurationValue implements Serializable, Comparable<SourceConfigurationValue>
 {
     private static final long serialVersionUID = 7464033893694959176L;
 
     private Long id;
 
     private String sourceSystemValue;
+
+    private String name = "";
 
     private Long mappingConfigurationId;
 
@@ -151,7 +153,30 @@ public class SourceConfigurationValue implements Serializable
 		this.targetConfigurationValue = targetConfigurationValue;
 	}
 
-	/**
+    /**
+     *
+     * @return the name
+     */
+    public String getName()
+    {
+        if(name == null)
+        {
+            return "";
+        }
+
+        return name;
+    }
+
+    /**
+     *
+     * @param name the name to set
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * @return the createdDateTime
      */
     public Date getCreatedDateTime()
@@ -208,4 +233,17 @@ public class SourceConfigurationValue implements Serializable
 				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
 				+ "]";
 	}
+
+    @Override
+    public int compareTo(SourceConfigurationValue value)
+    {
+        int result = this.sourceSystemValue.compareTo(value.getSourceSystemValue());
+
+        if(value.getName() != null && this.getName() != null)
+        {
+            result += this.getName().compareTo(value.getName());
+        }
+
+        return result;
+    }
 }

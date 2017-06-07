@@ -62,7 +62,7 @@
 	<include file="db/cardinality/db-changeLog-createBusinessSteamFlowFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createErrorCategorisationLinkFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createFlowEventTriggerParametersFk.xml" relativeToChangelogFile="true" />
-	<include file="db/cardinality/db-changeLog-createMCSKeyLocationQueryFk.xml" relativeToChangelogFile="true" />
+	<!--include file="db/cardinality/db-changeLog-createMCSKeyLocationQueryFk.xml" relativeToChangelogFile="true" /-->
 	<include file="db/cardinality/db-changeLog-createMCSMappingConfigurationFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createMCSSourceConfigValueFk.xml" relativeToChangelogFile="true" />
 	<include file="db/cardinality/db-changeLog-createPointToPointFlowFk.xml" relativeToChangelogFile="true" />

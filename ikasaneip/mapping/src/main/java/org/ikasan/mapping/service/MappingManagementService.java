@@ -51,82 +51,8 @@ import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfi
  * @author Ikasan Development Team
  *
  */
-public interface MappingConfigurationService
+public interface MappingManagementService
 {
-	/**
-     * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
-     * based on the following parameters. It ignores non relevant source values:
-     *
-     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
-     * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
-     * @param sourceContext the source context name that we are resolving the configuration value for.
-     * @param targetContext the target context name that we are resolving the configuration value for.
-     * @param sourceSystemValues the values on the source side used to resolve the target configuration value.
-     * 
-     * @return the target configuration value mapped to all the above arguments.
-     */
-    public String getTargetConfigurationValueWithIgnores(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
-            final List<String> sourceSystemValues);
-	
-	/**
-     * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
-     * based on the following parameters:
-     *
-     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
-     * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
-     * @param sourceContext the source context name that we are resolving the configuration value for.
-     * @param targetContext the target context name that we are resolving the configuration value for.
-     * @param sourceSystemValues the values on the source side used to resolve the target configuration value.
-     * 
-     * @return the target configuration value mapped to all the above arguments.
-     */
-    public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
-            final List<String> sourceSystemValues);
-
-    /**
-     * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
-     * based on the following parameters:
-     * 
-     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed.
-     * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
-     * @param sourceContext the source context name that we are resolving the configuration value for.
-     * @param targetContext the target context name that we are resolving the configuration value for.
-     * @param sourceSystemValue the value on the source side used to resolve the target configuration value.
-     * 
-     * @return the target configuration value mapped to all the above arguments.
-     */
-    public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
-            final String sourceSystemValue);
-
-    /**
-     * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
-     * based on the following parameters:
-     * 
-     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed. 
-     * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
-     * @param sourceContext the source context name that we are resolving the configuration value for.
-     * @param targetContext the target context name that we are resolving the configuration value for.
-     * @param payload the payload from where the source configuration values will be resolved from using the associated
-     * key location queries.
-     * @return
-     * @throws MappingConfigurationServiceException 
-     */
-    @Deprecated
-    public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
-            byte[] payload) throws MappingConfigurationServiceException;
-
-    /**
-     *
-     * @param clientName
-     * @param configurationType
-     * @param sourceContext
-     * @param targetContext
-     * @param sourceSystemValues
-     * @return
-     */
-    public List<String> getTargetConfigurationValues(final String clientName, String configurationType,
-                                                     String sourceContext, String targetContext, List<String> sourceSystemValues);
-
     /**
      * This method is responsible for returning all {@link ConfigurationType} hibernate
      * mapping objects that are stored in the Mapping Configuration database.
@@ -227,12 +153,12 @@ public interface MappingConfigurationService
     public Long saveTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
 
     /**
-     * This method is responsible for saving a {@link KeyLocationQuery} to the Mapping Configuration database.
+     * This method is responsible for saving a {@link ParameterName} to the Mapping Configuration database.
      *
-     * @param query the {@link KeyLocationQuery} to add to the database.
+     * @param query the {@link ParameterName} to add to the database.
      * @return
      */
-    public Long saveKeyLocationQuery(KeyLocationQuery query);
+    public Long saveParameterName(ParameterName query);
 
     /**
      * This method checks for the existence on a mapping configuration.
@@ -248,7 +174,7 @@ public interface MappingConfigurationService
 
     /**
      * This method is responsible for adding a {@link MappingConfiguration} objects to the database with the appropriate
-     * associations. It also adds the required number of {@link KeyLocationQuery} objects to the database and associates 
+     * associations. It also adds the required number of {@link ParameterName} objects to the database and associates
      * them with the newly created {@link MappingConfiguration} record.
      * 
      * @param sourceContextId the primary key id of the source {@link ConfigurationContext} record we want to associate
@@ -264,9 +190,11 @@ public interface MappingConfigurationService
      * with the MappingConfiguration.
      * @param description the description of the {@link MappingConfiguration}
      */
-    public Long addMappingConfiguration(Long sourceContextId, Long targetContextId, Long numberOfParams,
-            Long configurationTypeId, Long configurationServiceClientId, List<String> keyLocationQueries,
-            String description);
+    public Long addMappingConfiguration(Long sourceContextId, Long targetContextId, int numberOfParams,
+                                        Long configurationTypeId, Long configurationServiceClientId, List<String> keyLocationQueries,
+                                        String description);
+
+    public Long addMappingConfiguration(MappingConfiguration mappingConfiguration, List<ParameterName> parameterNames);
 
     /**
      * This method retrieves a {@link MappingConfiguration} based on its id.
@@ -377,7 +305,7 @@ public interface MappingConfigurationService
      * @param mappingConfigurationId
      * @return
      */
-    public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId);
+    public List<ParameterName> getParameterNamesByMappingConfigurationId(Long mappingConfigurationId);
 
     /**
      * This method retrieves a list of {@link SourceConfigurationValue} based on the mappingConfigurationId

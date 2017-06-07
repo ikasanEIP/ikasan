@@ -91,6 +91,13 @@ public interface TopologyDao
 	public void save(Module module);
 
 	/**
+	 * Delete a module.
+	 *
+	 * @param module
+	 */
+	public void delete(Module module);
+
+	/**
 	 * Get all flows.
 	 * 
 	 * @return
@@ -110,6 +117,13 @@ public interface TopologyDao
 	 * @return
 	 */
 	public Flow getFlowByServerIdModuleIdAndFlowname(Long serverId, Long moduleId, String flowName);
+
+	/**
+	 * Get all components
+	 *
+	 * @return
+     */
+	public List<Component> getAllComponents();
 	
 	/**
 	 * Get a components by server id, module id and flow name and component name not in.
@@ -143,7 +157,7 @@ public interface TopologyDao
 	/**
 	 * Save a component. Will create a new record or update an existing.
 	 * 
-	 * @param flow
+	 * @param component
 	 */
 	public void save(Component component);
 
@@ -272,7 +286,7 @@ public interface TopologyDao
 	
 	/**
 	 * 
-	 * @param componentId
+	 * @param flowId
 	 */
 	public void deleteBusinessStreamFlowByFlowId(Long flowId);
 	
@@ -296,8 +310,7 @@ public interface TopologyDao
 	public Notification getNotificationByName(String name);
 	
 	/**
-	 * 
-	 * @param name
+	 *
 	 * @return
 	 */
 	public List<Notification> getAllNotifications();

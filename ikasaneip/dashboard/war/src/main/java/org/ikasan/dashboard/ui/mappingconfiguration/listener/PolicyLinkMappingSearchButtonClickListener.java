@@ -52,7 +52,7 @@ import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.MappingConfigurationLite;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -72,7 +72,7 @@ public class PolicyLinkMappingSearchButtonClickListener implements ClickListener
     private TypeComboBox typeComboBox;
     private SourceContextComboBox sourceContextComboBox;
     private TargetContextComboBox targetContextComboBox;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private PolicyLinkMappingConfigurationSearchResultsTable searchResultsTable;
 
     /**
@@ -86,7 +86,7 @@ public class PolicyLinkMappingSearchButtonClickListener implements ClickListener
      * @param searchResultsTable
      * @param saveRequiredMonitor
      */
-    public PolicyLinkMappingSearchButtonClickListener(MappingConfigurationService mappingConfigurationService,
+    public PolicyLinkMappingSearchButtonClickListener(MappingManagementService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
             TargetContextComboBox targetContextComboBox, PolicyLinkMappingConfigurationSearchResultsTable searchResultsTable)
     {

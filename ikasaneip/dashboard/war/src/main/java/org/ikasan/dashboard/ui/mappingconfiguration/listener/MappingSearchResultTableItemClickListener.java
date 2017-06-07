@@ -48,7 +48,7 @@ import org.ikasan.dashboard.ui.framework.util.PolicyLinkTypeConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
 import org.ikasan.mapping.model.MappingConfiguration;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -65,7 +65,7 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
     
     private static Logger logger = Logger.getLogger(MappingSearchResultTableItemClickListener.class);
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
     private MappingConfigurationPanel mappingConfigurationPanel;
     private VisibilityGroup visibilityGroup;
@@ -78,7 +78,7 @@ public class MappingSearchResultTableItemClickListener implements ItemClickListe
      * @param mappingConfigurationConfigurationValuesTable
      * @param mappingConfigurationPanel
      */
-    public MappingSearchResultTableItemClickListener(MappingConfigurationService mappingConfigurationService,
+    public MappingSearchResultTableItemClickListener(MappingManagementService mappingConfigurationService,
             MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
             MappingConfigurationPanel mappingConfigurationPanel, VisibilityGroup visibilityGroup,
             IkasanUINavigator mappingNavigator)

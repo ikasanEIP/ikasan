@@ -87,7 +87,7 @@
     </bean>
 
     <bean id="newActions" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewActions" scope="session">
-        <constructor-arg ref="newMappingConfigurationPanel"/>
+        <constructor-arg ref="existingMappingConfigurationPanel"/>
         <constructor-arg ref="typeComboBoxRefreshGroup"/>
         <constructor-arg ref="clientComboBoxRefreshGroup"/>
         <constructor-arg ref="contextComboBoxRefreshGroup"/>
@@ -115,6 +115,7 @@
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="mappingNavigator"/>
     </bean>
 
     <bean id="newConfigurationTypeWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.NewMappingConfigurationTypeWindow" scope="session">
@@ -347,6 +348,8 @@
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
         <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="mappingConfigurationExportHelper"/>
+        <constructor-arg ref="platformConfigurationService"/>
     </bean>
 
     <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchResultTableItemClickListener" scope="session">
