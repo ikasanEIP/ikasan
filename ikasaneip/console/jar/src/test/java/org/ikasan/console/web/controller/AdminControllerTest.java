@@ -42,18 +42,19 @@ package org.ikasan.console.web.controller;
 
 import org.springframework.web.servlet.ModelAndView;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test class for the AdminController
  * 
  * @author Ikasan Development Team
  */
-public class AdminControllerTest extends TestCase
+public class AdminControllerTest
 {
     /**
      * Test the handleRequest method
      */
+    @Test
     public void testHandleRequestView()
     {
         AdminController controller = new AdminController();
