@@ -30,6 +30,6 @@
         </property>
     </bean>
 
-    <bean id="scheduledFailingConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter" scope="prototype" />
+    <bean id="scheduledFailingConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter" />
 
 </beans>

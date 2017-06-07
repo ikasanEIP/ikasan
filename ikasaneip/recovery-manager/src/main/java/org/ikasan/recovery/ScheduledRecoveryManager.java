@@ -129,7 +129,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /** Error Reporting Service */
     private ErrorReportingService errorReportingService;
 
-    private Long jobIdentifier = 0L;
+    private long jobIdentifier = 0L;
 
     /**
      * Constructor
@@ -618,12 +618,15 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     private void cancelScheduledJob() throws SchedulerException
     {
         JobKey jobKey = new JobKey(RECOVERY_JOB_NAME + this.flowName + this.jobIdentifier, this.moduleName);
-        this.scheduler.deleteJob(jobKey);
+        boolean deleteRecoveryJob = this.scheduler.deleteJob(jobKey);
+        logger.info("Tried to remove recovery job " + jobKey + " with result :" + deleteRecoveryJob);
 
         JobKey consumerJobKey = new JobKey(CONSUMER_RECOVERY_JOB_NAME + this.flowName + this.jobIdentifier, this.moduleName);
         if(this.scheduler.checkExists(consumerJobKey))
         {
-            this.scheduler.deleteJob(consumerJobKey);
+
+            boolean deleteConsumerRecoveryJob = this.scheduler.deleteJob(consumerJobKey);
+            logger.info("Tried to remove consumer recovery job " + consumerJobKey + " with result :" + deleteConsumerRecoveryJob);
         }
     }
 
