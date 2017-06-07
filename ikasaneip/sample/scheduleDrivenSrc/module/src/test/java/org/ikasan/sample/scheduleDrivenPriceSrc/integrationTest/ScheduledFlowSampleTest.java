@@ -42,11 +42,15 @@ package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
 import javax.annotation.Resource;
 
+import org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.ikasan.platform.IkasanEIPTest;
@@ -72,11 +76,17 @@ import org.ikasan.platform.IkasanEIPTest;
         "/configuration-service-conf.xml",
         "/hsqldb-conf.xml"
       })
-      
+@DirtiesContext
 public class ScheduledFlowSampleTest extends IkasanEIPTest
 {
     @Resource
     Module<Flow> module;
+
+    @Resource
+    private Flow demoExclusionScheduledConverterFlow;
+
+    @Resource
+    private ScheduleEventFailingConverter scheduleEventFailingConverter;
     
     @Test
     public void test_flow_consumer_translator_producer() throws SchedulerException
@@ -99,5 +109,27 @@ public class ScheduledFlowSampleTest extends IkasanEIPTest
         {
             flow.stop();
         }
+    }
+
+    @Test
+    @Ignore
+    public void test_recovery_flow() throws InterruptedException
+    {
+
+        demoExclusionScheduledConverterFlow.start();
+
+        Thread.sleep(7000L);
+
+        //Assert.assertEquals("recovering", demoExclusionScheduledConverterFlow.getState());
+        //Assert.assertEquals(2, scheduleEventFailingConverter.getInvocationCount());
+        demoExclusionScheduledConverterFlow.stop();
+        Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
+
+
+        Thread.sleep(7000L);
+        //Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
+        // no more invocations
+        //Assert.assertEquals(2, scheduleEventFailingConverter.getInvocationCount());
+
     }
 }
