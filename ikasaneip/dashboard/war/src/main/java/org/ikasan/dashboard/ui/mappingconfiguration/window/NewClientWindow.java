@@ -43,7 +43,7 @@ package org.ikasan.dashboard.ui.mappingconfiguration.window;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewClientFieldGroup;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.systemevent.service.SystemEventService;
 
 import com.vaadin.data.Validator.InvalidValueException;
@@ -75,7 +75,7 @@ public class NewClientWindow extends Window implements View
     private static final long serialVersionUID = -5772122320534411604L;
 
     private RefreshGroup refreshGroup;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SaveRequiredMonitor saveRequiredMonitor;
     private final TextField nameField = new TextField();
     private SystemEventService systemEventService;
@@ -87,8 +87,8 @@ public class NewClientWindow extends Window implements View
      * @param refreshGroup
      * @param saveRequiredMonitor
      */
-    public NewClientWindow(MappingConfigurationService mappingConfigurationService, RefreshGroup refreshGroup,
-            SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
+    public NewClientWindow(MappingManagementService mappingConfigurationService, RefreshGroup refreshGroup,
+                           SaveRequiredMonitor saveRequiredMonitor, SystemEventService systemEventService)
     {
         super();
         this.refreshGroup = refreshGroup;
@@ -110,8 +110,6 @@ public class NewClientWindow extends Window implements View
     	
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(NewClientFieldGroup.NAME, new ObjectProperty<String>(""));
-        item.addItemProperty(NewClientFieldGroup.KEY_LOCATION_QUERY_PROCESSOR_TYPE,
-            new ObjectProperty<String>("org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"));
         
         GridLayout form = new GridLayout(2, 4);
         form.setWidth(100, Unit.PERCENTAGE);
@@ -134,23 +132,9 @@ public class NewClientWindow extends Window implements View
         nameField.setStyleName("ikasan");
         form.addComponent(nameField, 1, 1);
 
-
-        Label keyLocationLabel = new Label("Key Location Query Processor Type:");
-        keyLocationLabel.setSizeUndefined();
-		form.addComponent(keyLocationLabel, 0, 2);
-		form.setComponentAlignment(keyLocationLabel, Alignment.MIDDLE_RIGHT);
-
-        TextField keyLocationQueryProcessorTypeField = new TextField();
-        keyLocationQueryProcessorTypeField.setStyleName("ikasan");
-        keyLocationQueryProcessorTypeField.setWidth(500, Unit.PIXELS);
-        form.addComponent(keyLocationQueryProcessorTypeField, 1, 2);
-
         final NewClientFieldGroup binder = new NewClientFieldGroup(item, this.refreshGroup
         		, this.mappingConfigurationService, this.systemEventService);
         binder.bind(nameField, "name");
-        binder.bind(keyLocationQueryProcessorTypeField, "keyLocationQueryProcessorType");
-
-        keyLocationQueryProcessorTypeField.setReadOnly(true);
 
         HorizontalLayout buttons = new HorizontalLayout();
         buttons.setSpacing(true);

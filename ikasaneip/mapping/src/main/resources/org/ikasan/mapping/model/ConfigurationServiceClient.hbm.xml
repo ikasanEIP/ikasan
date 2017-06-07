@@ -61,10 +61,6 @@
                   type="java.lang.String" 
                   column="Name" />
 
-        <property name="keyLocationQueryProcessorType"
-                  type="java.lang.String"
-                  column="KeyLocationQueryProcessorType" />
-
         <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"

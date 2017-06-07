@@ -59,6 +59,8 @@ public class ManyToManyTargetConfigurationValue implements Serializable
 
     private String targetSystemValue;
 
+    private String name = "";
+
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
 
@@ -121,6 +123,29 @@ public class ManyToManyTargetConfigurationValue implements Serializable
     public void setTargetSystemValue(String targetSystemValue)
     {
         this.targetSystemValue = targetSystemValue;
+    }
+
+    /**
+     *
+     * @return the name
+     */
+    public String getName()
+    {
+        if(name == null)
+        {
+            return "";
+        }
+        
+        return name;
+    }
+
+    /**
+     *
+     * @param name the name to set
+     */
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     /**

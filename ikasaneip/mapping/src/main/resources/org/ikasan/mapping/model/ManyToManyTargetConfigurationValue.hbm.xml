@@ -65,6 +65,10 @@
                   type="java.lang.String"
                   column="TargetSystemValue" />
 
+        <property name="name"
+                  type="java.lang.String"
+                  column="Name" />
+
         <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"

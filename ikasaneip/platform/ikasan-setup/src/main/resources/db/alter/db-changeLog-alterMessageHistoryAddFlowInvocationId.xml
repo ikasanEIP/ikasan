@@ -48,7 +48,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationId" context="postBaseline">
-	    
+
+		<preConditions onFail="MARK_RAN">
+			<not><columnExists tableName="MessageHistory" columnName="FlowInvocationId"/></not>
+		</preConditions>
+
 	    <addColumn tableName="MessageHistory">
 			<column name="FlowInvocationId" type="numeric(18)">
 				<constraints nullable="true"/>

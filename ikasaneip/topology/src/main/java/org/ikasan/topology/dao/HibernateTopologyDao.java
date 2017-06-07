@@ -120,9 +120,15 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 		this.getHibernateTemplate().saveOrUpdate(module);
 	}
 
+	@Override
+	public void delete(Module module)
+	{
+		this.getHibernateTemplate().delete(module);
+	}
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#getAllFlows()
-	 */
+         * @see org.ikasan.topology.dao.TopologyDao#getAllFlows()
+         */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Flow> getAllFlows()
@@ -132,9 +138,17 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
         return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
 
+	@Override
+	public List<Component> getAllComponents()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Component.class);
+
+		return (List<Component>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Flow)
-	 */
+         * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.window.Flow)
+         */
 	@Override
 	public void save(Flow flow)
 	{
