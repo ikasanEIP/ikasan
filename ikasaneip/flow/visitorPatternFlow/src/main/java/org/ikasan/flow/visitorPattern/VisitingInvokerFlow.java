@@ -701,10 +701,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             this.consumerPaused = false;
 
             // stop any active recovery
-            if(this.recoveryManager.isRecovering())
-            {
-                this.recoveryManager.cancel();
-            }
+            this.recoveryManager.cancel();
 
             // stop consumer and remove the listener
             Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();

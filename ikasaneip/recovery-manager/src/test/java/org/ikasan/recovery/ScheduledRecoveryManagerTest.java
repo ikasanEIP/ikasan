@@ -60,6 +60,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -201,6 +202,21 @@ public class ScheduledRecoveryManagerTest
     public void test_successful_instantiation()
     {
         new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService, errorReportingService);
+    }
+
+    /**
+     * Test we can call cancel on the recovery manager even if no recovery jobs are in progress
+     * @throws SchedulerException if the scheduler setup fails
+     */
+    @Test
+    public void test_cancel_no_jobs() throws SchedulerException
+    {
+        System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+        scheduler.start();
+        ScheduledRecoveryManager scheduledRecoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flow", "module", consumer);
+        scheduledRecoveryManager.cancel();
+        Assert.assertTrue("cancel called with no jobs", true);
     }
 
     /**

@@ -109,7 +109,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     private ExceptionResolver exceptionResolver;
     
     /** recovery attempts */
-    protected int recoveryAttempts;
+    volatile int recoveryAttempts;
     
     /** keep a handle on the previous component name comparison */
     private String previousComponentName;
@@ -211,12 +211,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         try
         {
-            if(this.scheduler.isStarted() && recoveryAttempts > 0)
-            {
-                return true;
-            }
-            
-            return false;
+            return this.scheduler.isStarted() && recoveryAttempts > 0;
+
         }
         catch(SchedulerException e)
         {
@@ -548,9 +544,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /**
      * Resolve the incoming component name and exception to an associated action.
      * If the resolver has not been set then return the default stop action.
-     * @param componentName
-     * @param throwable
-     * @return
+     * @param componentName the component the threw the error
+     * @param throwable the exception
+     * @return a resolved ExceptionAction
      */
     private ExceptionAction resolveAction(String componentName, Throwable throwable)
     {
@@ -716,7 +712,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /* (non-Javadoc)
      * @see org.ikasan.spec.recovery.RecoveryManager#setManagedResources(java.lang.Object)
      */
-    public <List> void setManagedResources(List managedResources)
+    @SuppressWarnings("unchecked")
+    public <L> void setManagedResources(L managedResources)
     {
         this.managedResources = (java.util.List) managedResources;
     }
