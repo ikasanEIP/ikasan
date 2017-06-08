@@ -40,8 +40,7 @@
  */
 package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
-import javax.annotation.Resource;
-
+import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -53,7 +52,8 @@ import org.quartz.SchedulerException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.ikasan.platform.IkasanEIPTest;
+
+import javax.annotation.Resource;
 
 /**
  * Test class for <code>PriceFlowSample</code>.
@@ -120,14 +120,14 @@ public class ScheduledFlowSampleTest extends IkasanEIPTest
 
         Thread.sleep(7000L);
 
-        //Assert.assertEquals("recovering", demoExclusionScheduledConverterFlow.getState());
+        Assert.assertEquals("recovering", demoExclusionScheduledConverterFlow.getState());
         //Assert.assertEquals(2, scheduleEventFailingConverter.getInvocationCount());
         demoExclusionScheduledConverterFlow.stop();
         Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
 
 
         Thread.sleep(7000L);
-        //Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
+        Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
         // no more invocations
         //Assert.assertEquals(2, scheduleEventFailingConverter.getInvocationCount());
 

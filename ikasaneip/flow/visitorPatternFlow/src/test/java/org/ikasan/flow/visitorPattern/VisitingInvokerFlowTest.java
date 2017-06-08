@@ -40,12 +40,6 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javassist.bytecode.Descriptor.Iterator;
-
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
@@ -58,14 +52,7 @@ import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.flow.FlowInvocationContextListener;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
@@ -81,6 +68,10 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This test class supports the <code>VisitingInvokerFlow</code> class.
@@ -1456,7 +1447,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                oneOf(recoveryManager).cancel();
+                oneOf(recoveryManager).cancelAll();
 
                 // get the consumer
                 oneOf(flowConfiguration).getConsumerFlowElement();
@@ -1591,7 +1582,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                oneOf(recoveryManager).cancel();
+                oneOf(recoveryManager).cancelAll();
 
                 // get the consumer
                 oneOf(flowConfiguration).getConsumerFlowElement();
@@ -1728,7 +1719,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                oneOf(recoveryManager).cancel();
+                oneOf(recoveryManager).cancelAll();
 
                 // get the consumer
                 oneOf(flowConfiguration).getConsumerFlowElement();
@@ -1864,7 +1855,7 @@ public class VisitingInvokerFlowTest
             {
                 // always check to see if recovery is in progress
                 // in this test case it isn't
-                oneOf(recoveryManager).cancel();
+                oneOf(recoveryManager).cancelAll();
 
                 // get the consumer
                 oneOf(flowConfiguration).getConsumerFlowElement();
@@ -2043,7 +2034,7 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
 
-                // in this test we do not need to cancel recovery
+                // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
             }
@@ -2131,7 +2122,7 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContextListener).endFlow(flowInvocationContext);
 
-                // in this test we do not need to cancel recovery
+                // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
             }
@@ -2216,7 +2207,7 @@ public class VisitingInvokerFlowTest
 
                 exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
 
-                // in this test we do not need to cancel recovery
+                // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
             }
@@ -2306,7 +2297,7 @@ public class VisitingInvokerFlowTest
 
                 oneOf(flowInvocationContextListener).endFlow(flowInvocationContext);
 
-                // in this test we do not need to cancel recovery
+                // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
             }
@@ -3216,7 +3207,7 @@ public class VisitingInvokerFlowTest
     {
 
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                                           RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager, ExclusionService exclusionService)
+                                           RecoveryManager<FlowEvent<?,?>, FlowInvocationContext, ?> recoveryManager, ExclusionService exclusionService)
         {
             super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         }
