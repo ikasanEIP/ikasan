@@ -126,7 +126,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          GridLayout gridLayout = new GridLayout();
          gridLayout.setMargin(true);
          gridLayout.setSpacing(true);
-         gridLayout.setWidth("100%");
+         gridLayout.setSizeFull();
 
          Label rolesLabel = new Label("Select Role");
          rolesLabel.setStyleName(ValoTheme.LABEL_HUGE);
@@ -135,8 +135,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.tableContainer = this.buildContainer();
 
          this.rolesTable = new FilterTable();
-         this.rolesTable.setWidth("100%");
-         this.rolesTable.setHeight("250px");
+         this.rolesTable.setSizeFull();
          
          this.rolesTable.setFilterBarVisible(true);
          this.rolesTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -185,10 +184,17 @@ package org.ikasan.dashboard.ui.administration.panel;
              item.getItemProperty("Description").setValue(role.getDescription());
          }
 
-         gridLayout.addComponent(this.rolesTable);
-         gridLayout.setComponentAlignment(this.rolesTable, Alignment.MIDDLE_CENTER);
+         HorizontalLayout tableLayout = new HorizontalLayout();
+         tableLayout.setMargin(true);
+         tableLayout.addComponent(this.rolesTable);
+         tableLayout.setSizeFull();
 
-         rolePanel.setContent(gridLayout);
+         VerticalSplitPanel vpanel = new VerticalSplitPanel(gridLayout
+                 , tableLayout);
+         vpanel.setSplitPosition(60, Unit.PIXELS);
+         vpanel.setLocked(true);
+
+         rolePanel.setContent(vpanel);
          layout.addComponent(rolePanel);
 
          this.setContent(rolePanel);

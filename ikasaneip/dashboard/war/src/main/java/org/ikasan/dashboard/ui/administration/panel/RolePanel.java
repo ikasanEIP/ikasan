@@ -78,7 +78,7 @@ package org.ikasan.dashboard.ui.administration.panel;
      private Logger logger = Logger.getLogger(RolePanel.class);
 
      private TextField nameField = new TextField();
-     private TextField descriptionField;
+     private TextArea descriptionField;
 
      private FilterTable associatedUsersTable = new FilterTable();
      private FilterTable policyTable = new FilterTable();
@@ -170,44 +170,38 @@ package org.ikasan.dashboard.ui.administration.panel;
          securityAdministrationPanel.setHeight("100%");
          securityAdministrationPanel.setWidth("100%");
 
-         GridLayout gridLayout = new GridLayout(2, 3);
-         gridLayout.setMargin(true);
-         gridLayout.setSpacing(true);
-         gridLayout.setWidth("100%");
-
-         Label mappingConfigurationLabel = new Label("Role");
-         mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
-         gridLayout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
-
 
          nameField.setWidth("65%");
 
-         descriptionField = new TextField();
+         descriptionField = new TextArea();
          descriptionField.setWidth("65%");
+         descriptionField.setRows(5);
          descriptionField.setNullRepresentation("");
 
 
-         GridLayout formLayout = new GridLayout(2, 4);
+         GridLayout formLayout = new GridLayout(2, 5);
          formLayout.setSpacing(true);
          formLayout.setWidth("100%");
          formLayout.setColumnExpandRatio(0, .1f);
          formLayout.setColumnExpandRatio(1, .8f);
 
+         Label mappingConfigurationLabel = new Label("Role");
+         mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+
+         formLayout.addComponent(mappingConfigurationLabel);
+
          Label nameLabel = new Label("Name:");
 
          nameLabel.setSizeUndefined();
-         formLayout.addComponent(nameLabel, 0, 0);
+         formLayout.addComponent(nameLabel, 0, 1);
          formLayout.setComponentAlignment(nameLabel, Alignment.MIDDLE_RIGHT);
-         formLayout.addComponent(nameField, 1, 0);
+         formLayout.addComponent(nameField, 1, 1);
 
          Label descriptionLabel = new Label("Description:");
          descriptionLabel.setSizeUndefined();
-         formLayout.addComponent(descriptionLabel, 0, 1);
-         formLayout.setComponentAlignment(descriptionLabel, Alignment.MIDDLE_RIGHT);
-         formLayout.addComponent(descriptionField, 1, 1);
-
-         gridLayout.addComponent(formLayout, 0, 1, 1, 1);
-         gridLayout.setComponentAlignment(formLayout, Alignment.TOP_CENTER);
+         formLayout.addComponent(descriptionLabel, 0, 2);
+         formLayout.setComponentAlignment(descriptionLabel, Alignment.TOP_RIGHT);
+         formLayout.addComponent(descriptionField, 1, 2);
 
          this.policiesContainer = this.buildPoliciesContainer();
 
@@ -218,8 +212,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.policyTable.addStyleName("ikasan");
          this.policyTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.policyTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.policyTable.setWidth("100%");
-         this.policyTable.setHeight("200px");
+         this.policyTable.setSizeFull();
          this.policyTable.setFilterBarVisible(true);
 
          this.usersContainer = this.buildUsersContainer();
@@ -234,8 +227,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.associatedUsersTable.addStyleName("ikasan");
          this.associatedUsersTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.associatedUsersTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.associatedUsersTable.setWidth("100%");
-         this.associatedUsersTable.setHeight("200px");
+         this.associatedUsersTable.setSizeFull();
          this.associatedUsersTable.setFilterBarVisible(true);
 
          this.associatedUsersTable.addItemClickListener(new ItemClickEvent.ItemClickListener()
@@ -265,15 +257,13 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.groupsTable.addStyleName("ikasan");
          this.groupsTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.groupsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.groupsTable.setWidth("100%");
-         this.groupsTable.setHeight("200px");
+         this.groupsTable.setSizeFull();
          this.groupsTable.setFilterBarVisible(true);
 
 
-         GridLayout tablesLayout = new GridLayout(2, 6);
+         GridLayout tablesLayout = new GridLayout(2, 1);
          tablesLayout.setMargin(false);
-         tablesLayout.setHeight("800px");
-         tablesLayout.setWidth("100%");
+         tablesLayout.setSizeFull();
          tablesLayout.setSpacing(true);
 
          Label ikasanRolesLabel = new Label("Ikasan Policies");
@@ -325,11 +315,20 @@ package org.ikasan.dashboard.ui.administration.panel;
          tablesLayout.addComponent(addPolicyButton, 1, 0);
          tablesLayout.setComponentAlignment(addPolicyButton, Alignment.MIDDLE_RIGHT);
 
-         tablesLayout.addComponent(this.policyTable, 0, 1, 1, 1);
+         VerticalSplitPanel policyVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.policyTable);
+         policyVpanel.setSizeFull();
+         policyVpanel.setSplitPosition(40, Unit.PIXELS);
+         policyVpanel.setLocked(true);
+
+         tablesLayout = new GridLayout(2, 1);
+         tablesLayout.setMargin(false);
+         tablesLayout.setSizeFull();
+         tablesLayout.setSpacing(true);
 
          Label ldapGroupsLabel = new Label("Associated Users");
          ldapGroupsLabel.setStyleName(ValoTheme.LABEL_HUGE);
-         tablesLayout.addComponent(ldapGroupsLabel, 0, 2);
+         tablesLayout.addComponent(ldapGroupsLabel, 0, 0);
 
          final Button addUserButton = new Button("Add user");
          addUserButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -371,14 +370,24 @@ package org.ikasan.dashboard.ui.administration.panel;
              }
          });
 
-         tablesLayout.addComponent(addUserButton, 1, 2);
+         tablesLayout.addComponent(addUserButton, 1, 0);
          tablesLayout.setComponentAlignment(addUserButton, Alignment.MIDDLE_RIGHT);
 
-         tablesLayout.addComponent(this.associatedUsersTable, 0, 3, 1, 3);
+
+         VerticalSplitPanel associatedUsersTableVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.associatedUsersTable);
+         associatedUsersTableVpanel.setSizeFull();
+         associatedUsersTableVpanel.setSplitPosition(40, Unit.PIXELS);
+         associatedUsersTableVpanel.setLocked(true);
+
+         tablesLayout = new GridLayout(2, 1);
+         tablesLayout.setMargin(false);
+         tablesLayout.setSizeFull();
+         tablesLayout.setSpacing(true);
 
          Label groupsLabel = new Label("Associated Groups");
          groupsLabel.setStyleName(ValoTheme.LABEL_HUGE);
-         tablesLayout.addComponent(groupsLabel, 0, 4);
+         tablesLayout.addComponent(groupsLabel, 0, 0);
 
          final Button addGroupButton = new Button("Add group");
          addGroupButton.setStyleName(ValoTheme.BUTTON_SMALL);
@@ -420,12 +429,52 @@ package org.ikasan.dashboard.ui.administration.panel;
              }
          });
 
-         tablesLayout.addComponent(addGroupButton, 1, 4);
+         tablesLayout.addComponent(addGroupButton, 1, 0);
          tablesLayout.setComponentAlignment(addGroupButton, Alignment.MIDDLE_RIGHT);
 
-         tablesLayout.addComponent(this.groupsTable, 0, 5, 1, 5);
+         VerticalSplitPanel groupsTableVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.groupsTable);
+         groupsTableVpanel.setSizeFull();
+         groupsTableVpanel.setSplitPosition(40, Unit.PIXELS);
+         groupsTableVpanel.setLocked(true);
 
-         gridLayout.addComponent(tablesLayout, 0, 2, 1, 2);
+         VerticalLayout formLayoutLayout = new VerticalLayout();
+         formLayoutLayout.setSizeFull();
+         formLayoutLayout.setMargin(true);
+         formLayoutLayout.addComponent(formLayout);
+
+         VerticalLayout policyVpanelLayout = new VerticalLayout();
+         policyVpanelLayout.setSizeFull();
+         policyVpanelLayout.setMargin(true);
+         policyVpanelLayout.addComponent(policyVpanel);
+
+         VerticalSplitPanel topVpanel = new VerticalSplitPanel(formLayoutLayout
+                 , policyVpanelLayout);
+         topVpanel.setSizeFull();
+         topVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+         topVpanel.setLocked(true);
+
+         VerticalLayout associatedUsersTableVpanelLayout = new VerticalLayout();
+         associatedUsersTableVpanelLayout.setSizeFull();
+         associatedUsersTableVpanelLayout.setMargin(true);
+         associatedUsersTableVpanelLayout.addComponent(associatedUsersTableVpanel);
+
+         VerticalLayout groupsTableVpanelLayout = new VerticalLayout();
+         groupsTableVpanelLayout.setSizeFull();
+         groupsTableVpanelLayout.setMargin(true);
+         groupsTableVpanelLayout.addComponent(groupsTableVpanel);
+
+         VerticalSplitPanel bottomVpanel = new VerticalSplitPanel(associatedUsersTableVpanelLayout
+                 , groupsTableVpanelLayout);
+         bottomVpanel.setSizeFull();
+         bottomVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+         bottomVpanel.setLocked(true);
+
+         VerticalSplitPanel holderVpanel = new VerticalSplitPanel(topVpanel
+                 , bottomVpanel);
+         holderVpanel.setSizeFull();
+         holderVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+         holderVpanel.setLocked(true);
 
          Panel roleMemberPanel = new Panel();
 
@@ -436,8 +485,13 @@ package org.ikasan.dashboard.ui.administration.panel;
          GridLayout roleMemberLayout = new GridLayout();
          roleMemberLayout.setSpacing(true);
          roleMemberLayout.setWidth("100%");
+
+         HorizontalLayout holderLayout = new HorizontalLayout();
+         holderLayout.setSizeFull();
+         holderLayout.setMargin(true);
+         holderLayout.addComponent(holderVpanel);
          
-         securityAdministrationPanel.setContent(gridLayout);
+         securityAdministrationPanel.setContent(holderLayout);
          layout.addComponent(securityAdministrationPanel);
 
 

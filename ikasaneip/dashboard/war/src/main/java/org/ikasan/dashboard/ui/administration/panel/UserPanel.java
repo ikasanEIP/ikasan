@@ -40,6 +40,8 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
+ import com.vaadin.data.Item;
+ import com.vaadin.data.util.IndexedContainer;
  import com.vaadin.server.VaadinService;
  import com.vaadin.ui.*;
  import com.vaadin.ui.Button.ClickEvent;
@@ -58,6 +60,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import org.ikasan.security.service.authentication.IkasanAuthentication;
  import org.ikasan.systemevent.model.SystemEvent;
  import org.ikasan.systemevent.service.SystemEventService;
+ import org.tepi.filtertable.FilterTable;
  import org.vaadin.teemu.VaadinIcons;
 
  import java.text.SimpleDateFormat;
@@ -80,14 +83,17 @@ package org.ikasan.dashboard.ui.administration.panel;
      private TextField firstName;
      private TextField surname;
      private Table dashboardActivityTable = new Table();
-     private Table associatedPrincipalsTable = new Table();
+     private FilterTable associatedPrincipalsTable = new FilterTable();
      private TextField department = new TextField();
      private TextField email = new TextField();
-     private Table roleTable = new Table();
+     private FilterTable roleTable = new FilterTable();
      private Table permissionChangeTable = new Table();
      private SystemEventService systemEventService;
      private User user;
      private IkasanPrincipal principal;
+
+     private IndexedContainer associatedPrincipalsTableContainer;
+     private IndexedContainer roleTableTableContainer;
 
 
      public UserPanel(UserService userService, SecurityService securityService,
@@ -210,27 +216,34 @@ package org.ikasan.dashboard.ui.administration.panel;
 //         rolesAndGroupsHintLabel2.setWidth(300, Unit.PIXELS);
 //         gridLayout.addComponent(rolesAndGroupsHintLabel2, 0, 4, 1, 4);
 
-         this.roleTable.addContainerProperty("Ikasan Role", String.class, null);
+         this.associatedPrincipalsTableContainer = new IndexedContainer();
+         this.roleTableTableContainer = new IndexedContainer();
+
+         this.roleTableTableContainer.addContainerProperty("Ikasan Role", String.class, null);
          this.roleTable.setColumnExpandRatio("Ikasan Role", .3f);
-         this.roleTable.addContainerProperty("Description", String.class, null);
+         this.roleTableTableContainer.addContainerProperty("Description", String.class, null);
          this.roleTable.setColumnExpandRatio("Description", .55f);
-         this.roleTable.addContainerProperty("", Button.class, null);
+         this.roleTableTableContainer.addContainerProperty("", Button.class, null);
          this.roleTable.setColumnExpandRatio("", .15f);
          this.roleTable.addStyleName("ikasan");
          this.roleTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.roleTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
          this.roleTable.setSizeFull();
+         this.roleTable.setFilterBarVisible(true);
+         this.roleTable.setContainerDataSource(this.roleTableTableContainer);
          
-         this.associatedPrincipalsTable.addContainerProperty("LDAP Groups", String.class, null);
-         this.associatedPrincipalsTable.setColumnExpandRatio("LDAP Groups", .40f);
-         this.associatedPrincipalsTable.addContainerProperty("Type", String.class, null);
+         this.associatedPrincipalsTableContainer.addContainerProperty("LDAP Group", String.class, null);
+         this.associatedPrincipalsTable.setColumnExpandRatio("LDAP Group", .40f);
+         this.associatedPrincipalsTableContainer.addContainerProperty("Type", String.class, null);
          this.associatedPrincipalsTable.setColumnExpandRatio("Type", .20f);
-         this.associatedPrincipalsTable.addContainerProperty("Description", String.class, null);
+         this.associatedPrincipalsTableContainer.addContainerProperty("Description", String.class, null);
          this.associatedPrincipalsTable.setColumnExpandRatio("Description", .40f);
          this.associatedPrincipalsTable.addStyleName("ikasan");
          this.associatedPrincipalsTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.associatedPrincipalsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
          this.associatedPrincipalsTable.setSizeFull();
+         this.associatedPrincipalsTable.setFilterBarVisible(true);
+         this.associatedPrincipalsTable.setContainerDataSource(this.associatedPrincipalsTableContainer);
 
 
          GridLayout tablesLayout = new GridLayout(2, 1);
@@ -425,8 +438,11 @@ package org.ikasan.dashboard.ui.administration.panel;
          {
              if(!ikasanPrincipal.getType().equals("user"))
              {
-                 associatedPrincipalsTable.addItem(new Object[]
-                         { ikasanPrincipal.getName(), ikasanPrincipal.getType(), ikasanPrincipal.getDescription() }, ikasanPrincipal);
+                 Item item = this.associatedPrincipalsTableContainer.addItem(ikasanPrincipal);
+
+                 item.getItemProperty("LDAP Group").setValue(ikasanPrincipal.getName());
+                 item.getItemProperty("Type").setValue(ikasanPrincipal.getType());
+                 item.getItemProperty("Description").setValue(ikasanPrincipal.getDescription());
              }
          }
 
@@ -500,7 +516,10 @@ package org.ikasan.dashboard.ui.administration.panel;
              }
          });
 
-         roleTable.addItem(new Object[]
-                 { role.getName(), role.getDescription(), deleteButton}, role);
+         Item item = this.roleTableTableContainer.addItem(role);
+
+         item.getItemProperty("Ikasan Role").setValue(role.getName());
+         item.getItemProperty("Description").setValue(role.getDescription());
+         item.getItemProperty("").setValue(deleteButton);
      }
  }

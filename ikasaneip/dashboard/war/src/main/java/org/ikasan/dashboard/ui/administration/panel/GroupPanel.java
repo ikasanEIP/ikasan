@@ -200,8 +200,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.roleTable.addStyleName("ikasan");
          this.roleTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.roleTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.roleTable.setWidth("100%");
-         this.roleTable.setHeight("200px");
+         this.roleTable.setSizeFull();
          
          this.associatedUsersTable.addContainerProperty("Username", String.class, null);
          this.associatedUsersTable.setColumnExpandRatio("Username", .10f);
@@ -216,8 +215,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          this.associatedUsersTable.addStyleName("ikasan");
          this.associatedUsersTable.addStyleName(ValoTheme.TABLE_SMALL);
          this.associatedUsersTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-         this.associatedUsersTable.setWidth("100%");
-         this.associatedUsersTable.setHeight("200px");
+         this.associatedUsersTable.setSizeFull();
 
          this.associatedUsersTable.addItemClickListener(new ItemClickEvent.ItemClickListener()
          {
@@ -243,10 +241,9 @@ package org.ikasan.dashboard.ui.administration.panel;
          });
 
 
-         GridLayout tablesLayout = new GridLayout(2, 4);
+         GridLayout tablesLayout = new GridLayout(2, 1);
          tablesLayout.setMargin(false);
-         tablesLayout.setHeight("520px");
-         tablesLayout.setWidth("100%");
+         tablesLayout.setSizeFull();
          tablesLayout.setSpacing(true);
 
          Label ikasanRolesLabel = new Label("Ikasan Roles");
@@ -294,30 +291,51 @@ package org.ikasan.dashboard.ui.administration.panel;
          tablesLayout.addComponent(addRoleButton, 1, 0);
          tablesLayout.setComponentAlignment(addRoleButton, Alignment.MIDDLE_RIGHT);
 
-         tablesLayout.addComponent(this.roleTable, 0, 1, 1, 1);
+         VerticalSplitPanel roleVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.roleTable);
+         roleVpanel.setSizeFull();
+         roleVpanel.setSplitPosition(40, Unit.PIXELS);
+         roleVpanel.setLocked(true);
+
+         tablesLayout = new GridLayout(2, 1);
+         tablesLayout.setMargin(false);
+         tablesLayout.setSizeFull();
+         tablesLayout.setSpacing(true);
 
          Label ldapGroupsLabel = new Label("Associated Users");
          ldapGroupsLabel.setStyleName(ValoTheme.LABEL_HUGE);
-         tablesLayout.addComponent(ldapGroupsLabel, 0, 2);
-         tablesLayout.addComponent(this.associatedUsersTable, 0, 3, 1, 3);
+         tablesLayout.addComponent(ldapGroupsLabel, 0, 0);
 
-         gridLayout.addComponent(tablesLayout, 0, 2, 1, 2);
+         VerticalSplitPanel userVpanel = new VerticalSplitPanel(tablesLayout
+                 , this.associatedUsersTable);
+         userVpanel.setSizeFull();
+         userVpanel.setSplitPosition(40, Unit.PIXELS);
+         userVpanel.setLocked(true);
 
-         Panel roleMemberPanel = new Panel();
+         VerticalLayout rolesLayout = new VerticalLayout();
+         rolesLayout.setSizeFull();
+         rolesLayout.setMargin(true);
+         rolesLayout.addComponent(roleVpanel);
 
-         roleMemberPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-         roleMemberPanel.setHeight("100%");
-         roleMemberPanel.setWidth("100%");
+         VerticalLayout userLayout = new VerticalLayout();
+         userLayout.setSizeFull();
+         userLayout.setMargin(true);
+         userLayout.addComponent(userVpanel);
 
-         GridLayout roleMemberLayout = new GridLayout();
-         roleMemberLayout.setSpacing(true);
-         roleMemberLayout.setWidth("100%");
+         VerticalSplitPanel tablesVpanel = new VerticalSplitPanel(rolesLayout
+                 , userLayout);
+         tablesVpanel.setSizeFull();
+         tablesVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+         tablesVpanel.setLocked(true);
 
-
-
-         securityAdministrationPanel.setContent(gridLayout);
+         VerticalSplitPanel holderVpanel = new VerticalSplitPanel(gridLayout
+                 , tablesVpanel);
+         holderVpanel.setSizeFull();
+         holderVpanel.setSplitPosition(200, Unit.PIXELS);
+         holderVpanel.setLocked(true);
+         
+         securityAdministrationPanel.setContent(holderVpanel);
          layout.addComponent(securityAdministrationPanel);
-
 
          this.setContent(layout);
      }
