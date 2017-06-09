@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -71,18 +72,18 @@ import com.vaadin.ui.UI;
 public class Menu extends CssLayout
 {
 	private CssLayout menuItemsLayout = new CssLayout();
-	private HashMap<Component, String> menuComponents = new HashMap<Component, String>();
+	private HashMap<Component, List<String>> menuComponents = new HashMap<Component, List<String>>();
 	private HashMap<String, IkasanUINavigator> views;
 	private MenuLayout menuLayout;
 	private Button userItem = new Button();
 	private Label lastLoginTimeLabel = new Label();
-	
-	/**
-	 * @param menuItemsLayout
-	 * @param menuComponents
-	 * @param views
-	 * @param menuLayout
-	 */
+
+    /**
+     * Constructor
+     *
+     * @param views
+     * @param menuLayout
+     */
 	public Menu(HashMap<String, IkasanUINavigator> views, MenuLayout menuLayout)
 	{
 		super();
@@ -156,7 +157,7 @@ public class Menu extends CssLayout
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
         
-        this.menuComponents.put(label, SecurityConstants.ANY_AUTHORITY);               
+        this.menuComponents.put(label, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
         
         final Button topologyMenuItem = new Button("Topology", new ClickListener() 
         {
@@ -172,7 +173,7 @@ public class Menu extends CssLayout
         topologyMenuItem.setPrimaryStyleName("valo-menu-item");
         topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
         menuItemsLayout.addComponent(topologyMenuItem);
-        this.menuComponents.put(topologyMenuItem, SecurityConstants.VIEW_TOPOLOGY_AUTHORITY);
+        this.menuComponents.put(topologyMenuItem, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
         
         final Button mappingMenuItem = new Button("Mapping", new ClickListener()
         {
@@ -190,7 +191,7 @@ public class Menu extends CssLayout
         mappingMenuItem.setPrimaryStyleName("valo-menu-item");
         mappingMenuItem.setIcon(VaadinIcons.COPY_O);
         menuItemsLayout.addComponent(mappingMenuItem);
-        this.menuComponents.put(mappingMenuItem, SecurityConstants.VIEW_MAPPING_AUTHORITY);
+        this.menuComponents.put(mappingMenuItem, SecurityConstants.MAPPING_VIEW_PERMISSIONS);
         
         final Button monitoringMenuItem = new Button("Monitoring", new ClickListener() 
         {
@@ -206,7 +207,7 @@ public class Menu extends CssLayout
         monitoringMenuItem.setPrimaryStyleName("valo-menu-item");
         monitoringMenuItem.setIcon(VaadinIcons.DESKTOP);
         menuItemsLayout.addComponent(monitoringMenuItem);
-        this.menuComponents.put(monitoringMenuItem, SecurityConstants.VIEW_MONITORING_AUTHORITY);
+        this.menuComponents.put(monitoringMenuItem, SecurityConstants.MONITORING_VIEW_PERMISSIONS);
         
         final Button replayMenuItem = new Button("Replay", new ClickListener() 
         {
@@ -222,7 +223,7 @@ public class Menu extends CssLayout
         replayMenuItem.setPrimaryStyleName("valo-menu-item");
         replayMenuItem.setIcon(VaadinIcons.RECYCLE);
         menuItemsLayout.addComponent(replayMenuItem);
-        this.menuComponents.put(replayMenuItem, SecurityConstants.VIEW_REPLAY_AUTHORITY);
+        this.menuComponents.put(replayMenuItem, SecurityConstants.REPLAY_VIEW_PERMISSIONS);
 
         final Button houseKeepingMenuItem = new Button("Housekeeping", new ClickListener()
         {
@@ -238,7 +239,7 @@ public class Menu extends CssLayout
         houseKeepingMenuItem.setPrimaryStyleName("valo-menu-item");
         houseKeepingMenuItem.setIcon(VaadinIcons.TRASH);
         menuItemsLayout.addComponent(houseKeepingMenuItem);
-        this.menuComponents.put(houseKeepingMenuItem, SecurityConstants.VIEW_HOUSEKEEPING_AUTHORITY);
+        this.menuComponents.put(houseKeepingMenuItem, SecurityConstants.HOUSEKEEPING_VIEW_PERMISSIONS);
         
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");
@@ -246,7 +247,7 @@ public class Menu extends CssLayout
         label.setSizeUndefined();
         menuItemsLayout.addComponent(label);
         
-        this.menuComponents.put(label, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(label, SecurityConstants.ADMINISTRATION_VIEW_PERMISSIONS);
         
         final Button usersItem = new Button("Users", new ClickListener() 
         {
@@ -263,7 +264,7 @@ public class Menu extends CssLayout
         usersItem.setIcon(VaadinIcons.USERS);
         menuItemsLayout.addComponent(usersItem);
         
-        this.menuComponents.put(usersItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(usersItem, SecurityConstants.USER_ADMINISTRATION_VIEW_PERMISSIONS);
         
         final Button groupsItem = new Button("Groups", new ClickListener() 
         {

@@ -95,7 +95,7 @@ public class RoleSelectWindow extends Window
 		this.setModal(true);
 		this.setResizable(false);
 
-		this.setWidth("600px");
+		this.setWidth("750px");
 		this.setHeight("400px");
 
 		RoleSelectPanel panel = new RoleSelectPanel(userService, securityService, systemEventService);

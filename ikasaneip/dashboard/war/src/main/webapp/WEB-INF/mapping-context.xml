@@ -522,49 +522,57 @@
         <property name="components" ref="mappingEditVisibilityMap" />
     </bean>
     
-    <util:map id="mappingEditVisibilityMap" value-type="java.lang.String" map-class="java.util.HashMap" scope="session">
-	  <entry value="EditMapping" key-ref="newMappingConfigurationEditButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationSaveButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationCancelButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationValueNewRecordButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationValueDeleteAllButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationValueImportButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationValueExportButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationExportButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationEditButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationSaveButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationCancelButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueNewRecordButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueDeleteAllButton" /> 
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueImportButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueExportButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationExportButton" />
-      <entry value="EditMapping" key-ref="newClientButton" />
-      <entry value="EditMapping" key-ref="newContextButton" />
-      <entry value="EditMapping" key-ref="newTypeButton" />
-      <entry value="EditMapping" key-ref="newClientLabel" />
-      <entry value="EditMapping" key-ref="newContextLabel" />
-      <entry value="EditMapping" key-ref="newTypeLabel" />
-      <entry value="EditMapping" key-ref="actionsLabel" />
-      <entry value="EditMapping" key-ref="importMappingConfigurationButton" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationLabel" />
-      <entry value="EditMapping" key-ref="importMappingConfigurationLabel" />
-      <entry value="EditMapping" key-ref="newMappingConfigurationButton" />
+    <util:map id="mappingEditVisibilityMap" value-type="java.util.List" key-type="com.vaadin.ui.Component" map-class="java.util.HashMap" scope="session">
+	  <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationEditButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationSaveButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationCancelButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationValueNewRecordButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationValueDeleteAllButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationValueImportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationValueExportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationExportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationEditButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationSaveButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationCancelButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueNewRecordButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueDeleteAllButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueImportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueExportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationExportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newClientButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newContextButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newTypeButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newClientLabel" />
+      <entry value-ref="editMappingSecurity" key-ref="newContextLabel" />
+      <entry value-ref="editMappingSecurity" key-ref="newTypeLabel" />
+      <entry value-ref="editMappingSecurity" key-ref="actionsLabel" />
+      <entry value-ref="editMappingSecurity" key-ref="importMappingConfigurationButton" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationLabel" />
+      <entry value-ref="editMappingSecurity" key-ref="importMappingConfigurationLabel" />
+      <entry value-ref="editMappingSecurity" key-ref="newMappingConfigurationButton" />
     </util:map>
+
+    <util:constant id="securityMappingWrite" static-field="org.ikasan.dashboard.ui.framework.constants.SecurityConstants.MAPPING_WRITE"/>
+    <util:constant id="securityMappingAdmin" static-field="org.ikasan.dashboard.ui.framework.constants.SecurityConstants.MAPPING_ADMIN"/>
+
+    <util:list id="editMappingSecurity">
+        <ref local="securityMappingWrite"/>
+        <ref local="securityMappingAdmin"/>
+    </util:list>
     
     <bean id="editMappingConfigurationVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
         <property name="components" ref="mappingModifyExistingVisibilityMap" />
     </bean>
     
      <util:map id="mappingModifyExistingVisibilityMap" value-type="java.lang.String" map-class="java.util.HashMap" scope="session">
-      <entry value="EditMapping" key-ref="existingMappingConfigurationEditButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationSaveButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationCancelButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueNewRecordButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueDeleteAllButton" /> 
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueImportButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationValueExportButton" />
-      <entry value="EditMapping" key-ref="existingMappingConfigurationExportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationEditButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationSaveButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationCancelButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueNewRecordButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueDeleteAllButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueImportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationValueExportButton" />
+      <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationExportButton" />
     </util:map>
     
 </beans>
