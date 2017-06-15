@@ -51,14 +51,16 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 /**
  * Test class for the UsersController
  * 
  * @author Ikasan Development Team
  */
-public class UsersControllerTest extends TestCase
+public class UsersControllerTest
 {
     /** The context that the tests run in, allows for mocking actual concrete classes */
     private Mockery context = new Mockery()
@@ -74,6 +76,7 @@ public class UsersControllerTest extends TestCase
     /**
      * Test the constructor
      */
+    @Test
     public void testConstructor()
     {
         try 
@@ -91,6 +94,7 @@ public class UsersControllerTest extends TestCase
     /**
      * Test the list Users method
      */
+    @Test
     public void testListUsers()
     {
         UsersController controller = new UsersController(userService);
@@ -129,7 +133,7 @@ public class UsersControllerTest extends TestCase
         result = controller.listUsers(model);
         assertNotNull(model.get("user"));
         users = (List<User>)model.get("users");
-        assert(users.isEmpty());
+        assertTrue(users.isEmpty());
         assertEquals("admin/users/users", result.getViewName());
     }
 

@@ -40,7 +40,7 @@
  */
 package org.ikasan.web.converter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.binding.convert.converters.Converter;
 

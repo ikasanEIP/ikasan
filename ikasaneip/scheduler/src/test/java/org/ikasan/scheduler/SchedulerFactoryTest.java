@@ -40,7 +40,7 @@
  */
 package org.ikasan.scheduler;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.jmock.Expectations;

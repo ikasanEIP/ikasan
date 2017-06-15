@@ -43,12 +43,11 @@ package org.ikasan.tools.messaging.serialisation;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.junit.Test;
+import org.junit.Assert;
 
 public class DefaultMessageXmlSerialiserTest {
 

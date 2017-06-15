@@ -40,7 +40,7 @@
  */
 package org.ikasan.compatibility.component.converter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
