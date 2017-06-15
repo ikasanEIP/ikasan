@@ -42,7 +42,7 @@ package org.ikasan.connector.basefiletransfer.net;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests OlderFirstClientListEntryComparator

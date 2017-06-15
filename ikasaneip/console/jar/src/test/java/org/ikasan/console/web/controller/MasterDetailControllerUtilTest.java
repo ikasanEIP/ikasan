@@ -53,18 +53,20 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.springframework.ui.ModelMap;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test class for the MasterDetailControllerUtil class
  * 
  * @author Ikasan Development Team
  */
-public class MasterDetailControllerUtilTest extends TestCase
+public class MasterDetailControllerUtilTest
 {
     /**
      * Test the default constructor
      */
+    @Test
     public void testConstructor()
     {
         new MasterDetailControllerUtil();
@@ -73,6 +75,7 @@ public class MasterDetailControllerUtilTest extends TestCase
     /**
      * Test the defaultFalse method
      */
+    @Test
     public void testDefaultFalse()
     {
         boolean result = MasterDetailControllerUtil.defaultFalse(true);
@@ -86,6 +89,7 @@ public class MasterDetailControllerUtilTest extends TestCase
     /**
      * Test the defaultTrue method
      */
+    @Test
     public void testDefaultTrue()
     {
         boolean result = MasterDetailControllerUtil.defaultTrue(false);
@@ -99,6 +103,7 @@ public class MasterDetailControllerUtilTest extends TestCase
     /**
      * Test the resolveOrderBy method
      */
+    @Test
     public void testResolveOrderBy()
     {
         String result = MasterDetailControllerUtil.resolveOrderBy("foobar");
@@ -110,6 +115,7 @@ public class MasterDetailControllerUtilTest extends TestCase
     /**
      * Test the defaultZero method
      */
+    @Test
     public void testDefaultZero()
     {
         int result = MasterDetailControllerUtil.defaultZero(1);
@@ -121,6 +127,7 @@ public class MasterDetailControllerUtilTest extends TestCase
     /**
      * Test the nullForEmpty method
      */
+    @Test
     public void testNullForEmpty()
     {
         String result = MasterDetailControllerUtil.nullForEmpty("");
@@ -134,6 +141,7 @@ public class MasterDetailControllerUtilTest extends TestCase
     /**
      * Test the addParam method
      */
+    @Test
     public void testAddParam()
     {
         Map<String, Object> searchParams = null;
@@ -164,6 +172,7 @@ public class MasterDetailControllerUtilTest extends TestCase
      * 
      * TODO This unit test could cover the index page algorithm a little more thoroughly
      */
+    @Test
     public void testAddPagedModelAttributes()
     {
         Mockery context = new Mockery()
