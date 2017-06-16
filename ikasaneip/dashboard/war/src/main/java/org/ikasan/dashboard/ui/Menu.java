@@ -281,7 +281,7 @@ public class Menu extends CssLayout
         groupsItem.setIcon(VaadinIcons.GROUP);
         menuItemsLayout.addComponent(groupsItem);
         
-        this.menuComponents.put(groupsItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(groupsItem, SecurityConstants.GROUP_ADMINISTRATION_VIEW_PERMISSIONS);
         
         final Button rolesItem = new Button("Roles", new ClickListener() 
         {
@@ -298,7 +298,7 @@ public class Menu extends CssLayout
         rolesItem.setIcon(VaadinIcons.SPECIALIST);
         menuItemsLayout.addComponent(rolesItem);
         
-        this.menuComponents.put(rolesItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(rolesItem, SecurityConstants.ROLE_ADMINISTRATION_VIEW_PERMISSIONS);
         
         final Button policyItem = new Button("Policies", new ClickListener() 
         {
@@ -315,7 +315,7 @@ public class Menu extends CssLayout
         policyItem.setIcon(VaadinIcons.SAFE);
         menuItemsLayout.addComponent(policyItem);
         
-        this.menuComponents.put(policyItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(policyItem, SecurityConstants.POLICY_ADMINISTRATION_VIEW_PERMISSIONS);
         
         final Button authItem = new Button("User Directories", new ClickListener() 
         {
@@ -332,7 +332,7 @@ public class Menu extends CssLayout
         authItem.setIcon(VaadinIcons.COG);
         menuItemsLayout.addComponent(authItem);
         
-        this.menuComponents.put(authItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(authItem, SecurityConstants.USER_DIRECTORY_VIEW_PERMISSIONS);
         
         final Button platformConfigItem = new Button("Platform Configuration", new ClickListener() 
         {
@@ -349,7 +349,7 @@ public class Menu extends CssLayout
         platformConfigItem.setIcon(VaadinIcons.LIST);
         menuItemsLayout.addComponent(platformConfigItem);
         
-        this.menuComponents.put(platformConfigItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(platformConfigItem, SecurityConstants.PLATFORM_CONFIGURATION_VIEW_PERMISSIONS);
         
         final Button notificationItem = new Button("Notifications", new ClickListener() 
         {
@@ -366,7 +366,7 @@ public class Menu extends CssLayout
         notificationItem.setIcon(VaadinIcons.EXCLAMATION_CIRCLE_O);
         menuItemsLayout.addComponent(notificationItem);
         
-        this.menuComponents.put(notificationItem, SecurityConstants.ALL_AUTHORITY);
+        this.menuComponents.put(notificationItem, SecurityConstants.NOTIFICATION_VIEW_PERMISSIONS);
 
     }
 	
@@ -395,7 +395,7 @@ public class Menu extends CssLayout
 	/**
 	 * @return the menuComponents
 	 */
-	public HashMap<Component, String> getMenuComponents()
+	public HashMap<Component, List<String>> getMenuComponents()
 	{
 		return menuComponents;
 	}
@@ -403,7 +403,7 @@ public class Menu extends CssLayout
 	/**
 	 * @param menuComponents the menuComponents to set
 	 */
-	public void setMenuComponents(HashMap<Component, String> menuComponents)
+	public void setMenuComponents(HashMap<Component, List<String>> menuComponents)
 	{
 		this.menuComponents = menuComponents;
 	}

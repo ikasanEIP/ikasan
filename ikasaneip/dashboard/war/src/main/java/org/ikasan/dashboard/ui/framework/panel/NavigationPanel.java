@@ -40,46 +40,37 @@
  */
 package org.ikasan.dashboard.ui.framework.panel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+ import com.vaadin.server.VaadinService;
+ import com.vaadin.ui.*;
+ import com.vaadin.ui.Button.ClickEvent;
+ import com.vaadin.ui.Button.ClickListener;
+ import org.apache.log4j.Logger;
+ import org.ikasan.dashboard.ui.Menu;
+ import org.ikasan.dashboard.ui.framework.action.LogoutAction;
+ import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
+ import org.ikasan.dashboard.ui.framework.group.EditableGroup;
+ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
+ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+ import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+ import org.ikasan.dashboard.ui.framework.util.CommitHandler;
+ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+ import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
+ import org.ikasan.dashboard.ui.topology.util.FilterMap;
+ import org.ikasan.security.model.IkasanPrincipal;
+ import org.ikasan.security.model.Role;
+ import org.ikasan.security.model.User;
+ import org.ikasan.security.service.AuthenticationService;
+ import org.ikasan.security.service.UserService;
+ import org.ikasan.security.service.authentication.IkasanAuthentication;
+ import org.ikasan.systemevent.service.SystemEventService;
+ import org.ikasan.topology.model.RoleFilter;
+ import org.ikasan.topology.service.TopologyService;
 
-import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.Menu;
-import org.ikasan.dashboard.ui.framework.action.LogoutAction;
-import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
-import org.ikasan.dashboard.ui.framework.group.EditableGroup;
-import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
-import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
-import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
-import org.ikasan.dashboard.ui.framework.util.CommitHandler;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
-import org.ikasan.dashboard.ui.framework.window.LoginDialog;
-import org.ikasan.dashboard.ui.topology.util.FilterMap;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.UserService;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.systemevent.service.SystemEventService;
-import org.ikasan.topology.model.RoleFilter;
-import org.ikasan.topology.service.TopologyService;
-
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
 
 /**
  * @author Ikasan Development Team
@@ -378,7 +369,7 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 	/**
 	 * @param menuComponents the menuComponents to set
 	 */
-	public void setMenuComponents(HashMap<Component, String> menuComponents)
+	public void setMenuComponents(HashMap<Component, List<String>> menuComponents)
 	{
 		this.visibilityGroup.getComponents().putAll(menuComponents);
 	}

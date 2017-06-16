@@ -648,6 +648,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		layout.addComponent(filtersPopup);
 
+		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
+
+		this.treeViewBusinessStreamCombo.setWidth("250px");
+
 		refreshButton = new Button("Refresh");
 		refreshButton.setStyleName(ValoTheme.BUTTON_SMALL);
 		refreshButton.addClickListener(new Button.ClickListener()
@@ -877,7 +881,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.topologyTreeActionHelper = new TopologyTreeActionHelper(authentication);
 
 		if(authentication != null
-				&& authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN))
+				&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)))
 		{
 			this.discoverButton.setVisible(true);
 			this.newServerButton.setVisible(true);
@@ -968,14 +973,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				Set<Module> modules = server.getModules();
 
 				this.moduleTree.addItem(server);
-				this.moduleTree.setCaptionAsHtml(true);
 
-				MonitorIcons icon = MonitorIcons.SERVER;
-	        	icon.setSizePixels(14);
-	        	icon.setColor("green");
-
-	            this.moduleTree.setItemCaption(server, icon.getHtml() + " " + server.getName());
-	            this.moduleTree.setChildrenAllowed(server, true);
+				this.moduleTree.setItemCaption(server, server.getName());
+				this.moduleTree.setItemIcon(server, VaadinIcons.SERVER);
+				this.moduleTree.setChildrenAllowed(server, true);
 
 
 		        for(Module module: modules)
