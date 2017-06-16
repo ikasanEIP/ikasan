@@ -130,7 +130,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
         }
 
         // a broker can also terminate a flow if the payload is empty.
-        flowInvocationContext.setFinalAction(FinalAction.PUBLISH);
+        flowInvocationContext.setFinalAction(FinalAction.FILTER);
         return null;
     }
 
