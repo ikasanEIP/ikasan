@@ -191,8 +191,9 @@ public class CategorisedErrorTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
@@ -676,8 +677,9 @@ public class CategorisedErrorTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
 		{	
 			buttons.addComponent(closeSelectedButton);
 		}
@@ -866,8 +868,9 @@ public class CategorisedErrorTab extends TopologyTab
 			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 		        	.getAttribute(DashboardSessionValueConstants.USER);
 			
-			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
+			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+					|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+					|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
 			{	
 				CheckBox cb = new CheckBox();
 				cb.setValue(false);

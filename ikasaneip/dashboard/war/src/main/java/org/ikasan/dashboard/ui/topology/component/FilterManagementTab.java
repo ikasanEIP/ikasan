@@ -417,11 +417,16 @@ public class FilterManagementTab extends TopologyTab
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
 		if(authentication != null 
-    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					&& !authentication.hasGrantedAuthority(SecurityConstants.CREATE_BUSINESS_STREAM_AUTHORITY)))
+    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+    					|| authentication.hasGrantedAuthority(SecurityConstants.FILTER_WRITE)
+						|| authentication.hasGrantedAuthority(SecurityConstants.FILTER_ADMIN)))
     	{
-			newButton.setVisible(false);
+			newButton.setVisible(true);
     	}
+    	else
+		{
+			newButton.setVisible(false);
+		}
 		
 		controlsLayout.addComponent(newButton, 1, 0);
 		

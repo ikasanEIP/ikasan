@@ -86,7 +86,8 @@ public class TopologyTreeActionHelper
     public Action[] getServerActions()
     {
         if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
-                || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN))
+                || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+                || authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
         {
             return serverActionsWriteAdmin;
         }
@@ -101,7 +102,8 @@ public class TopologyTreeActionHelper
     public Action[] getModuleActions()
     {
         if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
-                || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN))
+                || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+                || authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
         {
             return moduleActionsWriteAdmin;
         }
@@ -115,7 +117,8 @@ public class TopologyTreeActionHelper
 
     public Action[] getFlowActions(String state, boolean isConfigurable)
     {
-        if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN))
+        if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+                || authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
         {
             if(state == null)
             {
@@ -182,7 +185,8 @@ public class TopologyTreeActionHelper
     public Action[] getComponentActions(boolean componentIsConfigurable, boolean flowIsConfigurable)
     {
         if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
-                || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN))
+                || authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+                || authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
         {
             if (componentIsConfigurable && flowIsConfigurable)
             {

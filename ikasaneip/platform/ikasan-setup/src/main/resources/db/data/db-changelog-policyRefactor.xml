@@ -175,20 +175,6 @@
 			<column name="Description" value="Topology admin policy." />
 		</insert>
 
-		<insert tableName="SecurityPolicy">
-			<column name="Name" value="topology-read" />
-			<column name="Description" value="Topology read only policy." />
-		</insert>
-
-		<insert tableName="SecurityPolicy">
-			<column name="Name" value="topology-write" />
-			<column name="Description" value="Topology write policy." />
-		</insert>
-
-		<insert tableName="SecurityPolicy">
-			<column name="Name" value="topology-admin" />
-			<column name="Description" value="Topology admin policy." />
-		</insert>
 
 		<insert tableName="SecurityPolicy">
 			<column name="Name" value="mapping-read" />

@@ -556,15 +556,15 @@
     <util:constant id="securityMappingAdmin" static-field="org.ikasan.dashboard.ui.framework.constants.SecurityConstants.MAPPING_ADMIN"/>
 
     <util:list id="editMappingSecurity">
-        <ref local="securityMappingWrite"/>
-        <ref local="securityMappingAdmin"/>
+        <ref bean="securityMappingWrite"/>
+        <ref bean="securityMappingAdmin"/>
     </util:list>
     
     <bean id="editMappingConfigurationVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
         <property name="components" ref="mappingModifyExistingVisibilityMap" />
     </bean>
     
-     <util:map id="mappingModifyExistingVisibilityMap" value-type="java.lang.String" map-class="java.util.HashMap" scope="session">
+     <util:map id="mappingModifyExistingVisibilityMap" value-type="java.util.List" key-type="com.vaadin.ui.Component" map-class="java.util.HashMap" scope="session">
       <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationEditButton" />
       <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationSaveButton" />
       <entry value-ref="editMappingSecurity" key-ref="existingMappingConfigurationCancelButton" />
