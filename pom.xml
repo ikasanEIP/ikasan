@@ -56,7 +56,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-parent</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent</name>
     <description>Ikasan Projects Parent</description>
