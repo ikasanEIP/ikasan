@@ -54,6 +54,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import org.ikasan.dashboard.ui.administration.window.RoleWindow;
  import org.ikasan.dashboard.ui.administration.window.UserWindow;
  import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -83,6 +84,7 @@ package org.ikasan.dashboard.ui.administration.panel;
      private UserService userService;
      private SecurityService securityService;
      private SystemEventService systemEventService;
+     private Button newButton;
 
      private FilterTable roleTable;
 
@@ -144,7 +146,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          gridLayout.addComponent(mappingConfigurationLabel, 0, 0);
          gridLayout.setComponentAlignment(mappingConfigurationLabel, Alignment.MIDDLE_LEFT);
 
-         Button newButton = new Button();
+         newButton = new Button();
          newButton.setIcon(VaadinIcons.PLUS);
          newButton.setDescription("Create a New Role");
          newButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -247,6 +249,19 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      private void refresh()
      {
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.ROLE_ADMINISTRATION_ADMIN))
+         {
+             newButton.setVisible(true);
+         }
+         else
+         {
+             newButton.setVisible(false);
+         }
+
          logger.info("Loading roles");
 
          List<Role> roles = this.securityService.getAllRoles();
@@ -301,6 +316,19 @@ package org.ikasan.dashboard.ui.administration.panel;
                  }
              }
          });
+
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.ROLE_ADMINISTRATION_ADMIN))
+         {
+             deleteButton.setVisible(true);
+         }
+         else
+         {
+             deleteButton.setVisible(false);
+         }
 
          item.getItemProperty("").setValue(deleteButton);
      }

@@ -418,7 +418,7 @@ public class ProfilePanel extends Panel implements View
 		{
 			if(!ikasanPrincipal.getType().equals("user"))
 			{
-				Item item = this.roleTableTableContainer.addItem(ikasanPrincipal);
+				Item item = this.associatedPrincipalsTableContainer.addItem(ikasanPrincipal);
 
 				item.getItemProperty("LDAP Group").setValue(ikasanPrincipal.getName());
 				item.getItemProperty("Type").setValue(ikasanPrincipal.getType());

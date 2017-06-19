@@ -48,6 +48,7 @@ import java.util.List;
 
 import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -476,6 +477,21 @@ public class ErrorOccurrenceViewPanel extends Panel
         });
 		
 		this.updateNotes(layout);
+
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.ERROR_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+		{
+			commentButtonLayout.setVisible(true);
+		}
+		else
+		{
+			commentButtonLayout.setVisible(false);
+		}
+
 		layout.addComponent(commentButtonLayout);
 		
 		return layout;

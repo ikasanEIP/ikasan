@@ -45,14 +45,18 @@ import java.util.List;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.administration.window.*;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
@@ -86,6 +90,8 @@ public class PolicyManagementPanel extends Panel implements View
 	private FilterTable policyTable;
 
 	private IndexedContainer tableContainer;
+
+	private Button newButton;
 
     /**
      * Constructor
@@ -181,7 +187,7 @@ public class PolicyManagementPanel extends Panel implements View
 		gridLayout.addComponent(mappingConfigurationLabel, 0, 0);
 		gridLayout.setComponentAlignment(mappingConfigurationLabel, Alignment.MIDDLE_LEFT);
 
-		Button newButton = new Button();
+		newButton = new Button();
 		newButton.setIcon(VaadinIcons.PLUS);
 		newButton.setDescription("Create a New Role");
 		newButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -286,6 +292,19 @@ public class PolicyManagementPanel extends Panel implements View
 
 	private void refresh()
 	{
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.POLICY_ADMINISTRATION_ADMIN))
+		{
+			this.newButton.setVisible(true);
+		}
+		else
+		{
+			this.newButton.setVisible(false);
+		}
+
 		logger.info("Loading policies");
 
 		List<Policy> policies = this.securityService.getAllPolicies();
@@ -340,6 +359,19 @@ public class PolicyManagementPanel extends Panel implements View
 				}
 			}
 		});
+
+		final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.POLICY_ADMINISTRATION_ADMIN))
+		{
+			deleteButton.setVisible(true);
+		}
+		else
+		{
+			deleteButton.setVisible(false);
+		}
 
 		item.getItemProperty("").setValue(deleteButton);
 	}

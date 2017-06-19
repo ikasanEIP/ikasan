@@ -71,7 +71,7 @@ public class TopologyTreeActionHelper
     private final Action[] componentActionsConfigurableConfigureMetrics = new Action[] { CONFIGURE, CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigurableConfigure = new Action[] { CONFIGURE, WIRETAP, ERROR_CATEGORISATION };
     private final Action[] componentActionsConfigureMetrics = new Action[] { CONFIGURE_METRICS, WIRETAP, ERROR_CATEGORISATION };
-    private final Action[] componentActions = new Action[] { WIRETAP, ERROR_CATEGORISATION };
+    private final Action[] componentActions = new Action[] { WIRETAP, CONFIGURE };
 
     //Miscellaneous Actions
     private final Action[] actionsEmpty = new Action[]{};
@@ -201,6 +201,11 @@ public class TopologyTreeActionHelper
                 return componentActionsConfigureMetrics;
             }
         }
+        else if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_READ))
+        {
+            return componentActions;
+        }
+
 
         return actionsEmpty;
     }

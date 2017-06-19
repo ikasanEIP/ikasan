@@ -412,6 +412,19 @@ public class ExclusionsTab extends TopologyTab
             	}
             }
         });
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN)))
+		{
+			selectAllButton.setVisible(true);
+		}
+		else
+		{
+			selectAllButton.setVisible(false);
+		}
 		
 		buttons.addComponent(selectAllButton);
 		
@@ -449,9 +462,6 @@ public class ExclusionsTab extends TopologyTab
         });
 		
 		buttons.addComponent(resubmitSelectedButton);
-
-		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-				.getAttribute(DashboardSessionValueConstants.USER);
 
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
 				authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN)))
