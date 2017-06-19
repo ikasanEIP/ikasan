@@ -5,6 +5,7 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -12,10 +13,13 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.housekeeping.window.HousekeepingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.quartz.*;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
@@ -46,6 +50,10 @@ public class HousekeepingPanel extends Panel implements View
     private FilterTable housekeepingTable;
 
     private IndexedContainer container = null;
+
+    private Label controlLabel;
+    private Button startButton;
+    private Button stopButton;
 
     public HousekeepingPanel(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
                              List<HousekeepingJob> houseKeepingJobs, HousekeepingSchedulerService housekeepingSchedulerService)
@@ -176,15 +184,15 @@ public class HousekeepingPanel extends Panel implements View
         }
 
 
-        Label controlLabel = new Label("Schedular Control:");
+        controlLabel = new Label("Schedular Control:");
         controlLabel.addStyleName(ValoTheme.LABEL_LARGE);
         controlLabel.setSizeUndefined();
 
-        final Button startButton = new Button("Start");
+        startButton = new Button("Start");
         startButton.setDescription("Start the scheduler");
         startButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
-        final Button stopButton = new Button("Stop");
+        stopButton = new Button("Stop");
         stopButton.setDescription("Start the scheduler");
         stopButton.addStyleName(ValoTheme.BUTTON_SMALL);
 
@@ -219,6 +227,7 @@ public class HousekeepingPanel extends Panel implements View
                 refresh();
             }
         });
+
 
         try
         {
@@ -313,6 +322,23 @@ public class HousekeepingPanel extends Panel implements View
 
     private void refresh()
     {
+        final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(DashboardSessionValueConstants.USER);
+
+        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                authentication.hasGrantedAuthority(SecurityConstants.HOUSEKEEPING_ADMIN))
+        {
+            controlLabel.setVisible(true);
+            startButton.setVisible(true);
+            stopButton.setVisible(true);
+        }
+        else
+        {
+            controlLabel.setVisible(false);
+            startButton.setVisible(false);
+            stopButton.setVisible(false);
+        }
+
         this.container.removeAllItems();
 
         for(JobDetail jobDetail: this.houseKeepingJobDetails)

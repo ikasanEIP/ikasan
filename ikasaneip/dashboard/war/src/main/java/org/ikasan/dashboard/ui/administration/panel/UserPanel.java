@@ -48,6 +48,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
  import org.ikasan.dashboard.ui.administration.window.RoleSelectWindow;
+ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -94,6 +95,8 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      private IndexedContainer associatedPrincipalsTableContainer;
      private IndexedContainer roleTableTableContainer;
+
+     private Button addRoleButton;
 
 
      public UserPanel(UserService userService, SecurityService securityService,
@@ -256,7 +259,7 @@ package org.ikasan.dashboard.ui.administration.panel;
 
          tablesLayout.addComponent(ikasanRolesLabel, 0, 0);
 
-         final Button addRoleButton = new Button("Add role");
+         addRoleButton = new Button("Add role");
          addRoleButton.setStyleName(ValoTheme.BUTTON_SMALL);
          addRoleButton.addClickListener(new Button.ClickListener()
                {
@@ -413,6 +416,21 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      public void enter(UserLite userLite)
      {
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_ADMIN)
+                 || authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_WRITE))
+         {
+             addRoleButton.setVisible(true);
+         }
+         else
+         {
+             addRoleButton.setVisible(false);
+         }
+
+
          this.dashboardActivityTable.removeAllItems();
 
          user = this.userService.loadUserByUsername(userLite.getUsername());
@@ -515,6 +533,20 @@ package org.ikasan.dashboard.ui.administration.panel;
                  updateRoleChangedEvents();
              }
          });
+
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_ADMIN)
+                 || authentication.hasGrantedAuthority(SecurityConstants.USER_ADMINISTRATION_WRITE))
+         {
+             deleteButton.setVisible(true);
+         }
+         else
+         {
+             deleteButton.setVisible(false);
+         }
 
          Item item = this.roleTableTableContainer.addItem(role);
 

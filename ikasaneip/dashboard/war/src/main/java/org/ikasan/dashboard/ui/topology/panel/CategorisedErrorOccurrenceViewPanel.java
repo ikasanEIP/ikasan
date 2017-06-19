@@ -478,7 +478,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 			
 			if(authentication != null 
 	    			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-	    					|| authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_WRITE)))
+	    					|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)))
 	    	{
 				resubmitButton.setVisible(true);
 				ignoreButton.setVisible(true);
@@ -682,6 +682,20 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 		commentButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		commentButton.setImmediate(true);
 		commentButton.setDescription("Comment on the below errors.");
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
+		{
+			commentButton.setVisible(true);
+		}
+		else
+		{
+			commentButton.setVisible(false);
+		}
 		
 		HorizontalLayout commentButtonLayout = new HorizontalLayout();
 		commentButtonLayout.setSpacing(true);

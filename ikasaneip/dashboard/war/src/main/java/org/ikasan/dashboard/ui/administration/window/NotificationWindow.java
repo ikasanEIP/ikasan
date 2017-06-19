@@ -42,11 +42,15 @@ package org.ikasan.dashboard.ui.administration.window;
 
 import java.util.List;
 
+import com.vaadin.server.VaadinService;
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.dashboard.notification.NotificationConfiguredResource;
 import org.ikasan.dashboard.notification.NotificationContentProducerConfiguration;
 import org.ikasan.dashboard.notification.contentproducer.CategorisedErrorNotificationContentProducer;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -98,11 +102,14 @@ public class NotificationWindow extends Window
 	private NotificationConfiguredResource notificationConfiguredResource;
 	
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
-	private TopologyService topologyService; 
+	private TopologyService topologyService;
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param topologyService
+	 * @param configurationManagement
+     */
 	public NotificationWindow(TopologyService topologyService, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
 		super();
@@ -113,10 +120,14 @@ public class NotificationWindow extends Window
 
 		init();
 	}
-	
+
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param topologyService
+	 * @param configurationManagement
+	 * @param notification
+     */
 	public NotificationWindow(TopologyService topologyService, ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
 			Notification notification)
 	{
@@ -366,6 +377,23 @@ public class NotificationWindow extends Window
                 UI.getCurrent().removeWindow(NotificationWindow.this);
             }
         });
+
+		final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.NOTIFICATION_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.NOTIFICATION_WRITE))
+		{
+			saveButton.setVisible(true);
+			cancelButton.setVisible(true);
+		}
+		else
+		{
+			saveButton.setVisible(false);
+			cancelButton.setVisible(false);
+		}
 		
 		setNotificationFormValues();
 		

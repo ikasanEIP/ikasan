@@ -52,6 +52,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import org.ikasan.dashboard.ui.administration.window.RoleSelectWindow;
  import org.ikasan.dashboard.ui.administration.window.UserSelectWindow;
  import org.ikasan.dashboard.ui.administration.window.UserWindow;
+ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
@@ -89,6 +90,7 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      private IndexedContainer rolesContainer;
 
+     private Button addPolicyButton;
 
      public PolicyPanel(UserService userService, SecurityService securityService,
                         SystemEventService systemEventService)
@@ -194,7 +196,7 @@ package org.ikasan.dashboard.ui.administration.panel;
 
          tablesLayout.addComponent(ikasanRolesLabel, 0, 0);
 
-         final Button addPolicyButton = new Button("Associate with role");
+         addPolicyButton = new Button("Associate with role");
          addPolicyButton.setStyleName(ValoTheme.BUTTON_SMALL);
          addPolicyButton.addClickListener(new Button.ClickListener()
                {
@@ -287,6 +289,21 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      public void enter(Policy policy)
      {
+
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.POLICY_ADMINISTRATION_ADMIN)
+                 || authentication.hasGrantedAuthority(SecurityConstants.POLICY_ADMINISTRATION_WRITE))
+         {
+             this.addPolicyButton.setVisible(true);
+         }
+         else
+         {
+             this.addPolicyButton.setVisible(false);
+         }
+
          this.policy = securityService.getPolicyById(policy.getId());
 
          nameField.setValue(policy.getName());
@@ -331,6 +348,20 @@ package org.ikasan.dashboard.ui.administration.panel;
                  systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, ikasanAuthentication.getName());
              }
          });
+
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.POLICY_ADMINISTRATION_ADMIN)
+                 || authentication.hasGrantedAuthority(SecurityConstants.POLICY_ADMINISTRATION_WRITE))
+         {
+             deleteButton.setVisible(true);
+         }
+         else
+         {
+             deleteButton.setVisible(false);
+         }
 
          Item item = this.rolesContainer.addItem(role);
 

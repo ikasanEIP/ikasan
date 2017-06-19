@@ -89,9 +89,12 @@ public class LdapServiceImpl implements LdapService
     private PasswordEncoder passwordEncoder;
 
 	/**
-	 * @param securityService
-	 * @param userService
-	 */
+	 * Constructor
+	 *
+	 * @param securityDao
+	 * @param userDao
+	 * @param passwordEncoder
+     */
 	public LdapServiceImpl(SecurityDao securityDao,
 			UserDao userDao, PasswordEncoder passwordEncoder)
 	{
@@ -368,8 +371,7 @@ public class LdapServiceImpl implements LdapService
 		}
 
 		List<String> users = getAllLdapUsers();
-		
-		Role role = securityDao.getRoleByName("User");
+
 
 		for (String username : users)
 		{
