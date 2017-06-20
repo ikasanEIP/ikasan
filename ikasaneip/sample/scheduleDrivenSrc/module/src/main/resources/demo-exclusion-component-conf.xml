@@ -2,16 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
         
     <!--  ================================================================== -->
     <!--  Sample component implementations for testing                       -->
     <!--  ================================================================== -->
     <bean id="demoExclusionScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
-        <property name="messageProvider">
-            <bean class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.SimpleMessageProvider"/>
-        </property>
         <property name="jobDetail" >
             <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetObject" ref="scheduledJobFactory" />
@@ -27,18 +24,12 @@
             </bean>
         </property>
         <property name="configuredResourceId" value="sample-demo-exclusion-scheduled-flow-consumer"/>
-        <property name="configuration" ref="scheduledExclusionConsumerConfiguration"/>
-        <property name="managedEventIdentifierService">
+        <property name="configuration" ref="scheduledConsumerConfiguration"/>
+        <!--<property name="managedEventIdentifierService">
             <bean class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.SimpleEventIdentifierServiceImpl"/>
-        </property>
+        </property>-->
     </bean>
 
-    <bean id="scheduledFailingConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter" scope="prototype" />
-
-    <bean id="scheduledExclusionConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
-        <property name="cronExpression" value="0/5 * * * * ?" />
-    </bean>
-
-    <bean id="scheduledExclusionProducer" class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.ScheduleEventProducer"/>
+    <bean id="scheduledFailingConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter" />
 
 </beans>
