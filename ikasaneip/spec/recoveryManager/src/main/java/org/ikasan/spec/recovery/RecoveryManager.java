@@ -45,14 +45,14 @@ package org.ikasan.spec.recovery;
  * 
  * @author Ikasan Development Teams
  */
-public interface RecoveryManager<RESOLVER, CONTEXT>
+public interface RecoveryManager<RESOLVER, CONTEXT, ID>
 {
     /**
      * Set a resolver which translates the incoming exception and component name
      * in to an action to be taken by the recovery manager.
      * @param resolver
      */
-    public void setResolver(RESOLVER resolver);
+    void setResolver(RESOLVER resolver);
     
     /**
      * Set a resolver which translates the incoming exception and component name
@@ -60,13 +60,13 @@ public interface RecoveryManager<RESOLVER, CONTEXT>
      * @param managedResources
      * @param <MANAGED_RESOURCES>
      */
-    public <MANAGED_RESOURCES> void setManagedResources(MANAGED_RESOURCES managedResources);
+    <MANAGED_RESOURCES> void setManagedResources(MANAGED_RESOURCES managedResources);
     
     /**
      * Get the resolver for this recovery manager.
      * @return  resolver
      */
-    public RESOLVER getResolver();
+    RESOLVER getResolver();
 
     /**
      * Start or continue a recovery based on the passed CONTEXT
@@ -75,37 +75,43 @@ public interface RecoveryManager<RESOLVER, CONTEXT>
      * @param event
      * @param identifier
      * @param <EVENT>
-     * @param <IDENTIFIER>
+     * @param <ID>
      */
-    public <EVENT,IDENTIFIER> void recover(CONTEXT context, Throwable throwable, EVENT event, IDENTIFIER identifier);
+    <EVENT> void recover(CONTEXT context, Throwable throwable, EVENT event, ID identifier);
 
     /**
      * Start or continue a recovery based on the passed CRITERIA.
      * @param component
      * @param throwable
      */
-    public void recover(String component, Throwable throwable);
+    void recover(String component, Throwable throwable);
     
     /**
      * Is the recovery manager currently running a recovery.
      * @return
      */
-    public boolean isRecovering();
+    boolean isRecovering();
     
     /**
      * Is the recovery manager in an unrecoverable state.
      * @return
      */
-    public boolean isUnrecoverable();
+    boolean isUnrecoverable();
     
     /**
      * Cancel any recovery currently running in the recovery manager.
      */
-    public void cancel();
+    void cancelAll();
+
+    /**
+     * Cancel a recovery given the current identifier for a flow (flow event id)
+     * @param identifier the identifier
+     */
+    void cancel(ID identifier);
 
     /**
      * Initialize the state of the recovery manager clearing down any previously
      * held states resulting from previous executions.
      */
-    public void initialise();
+    void initialise();
 }

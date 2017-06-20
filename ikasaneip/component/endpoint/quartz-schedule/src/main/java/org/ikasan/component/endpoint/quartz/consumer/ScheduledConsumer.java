@@ -231,6 +231,7 @@ public class ScheduledConsumer<T>
         }
         catch (Throwable thr)
         {
+            thr.printStackTrace();
             managedResourceRecoveryManager.recover(thr);
         }
     }
@@ -262,7 +263,7 @@ public class ScheduledConsumer<T>
             // We need to restart the business schedule PRIOR to cancelling the recovery
             // otherwise the change in state on cancelling recovery reports the
             // consumer as stopped as the business schedule isn't active.
-            // Starting it before the cancel should not cause any issues
+            // Starting it before the cancelAll should not cause any issues
             // as we only allow one quartz callback at a time and so will get
             // blocked until this recovery schedule has completed.
 
@@ -272,7 +273,7 @@ public class ScheduledConsumer<T>
                 this.start();
             }
 
-            // cancel the recovery schedule if still active
+            // cancelAll the recovery schedule if still active
             // could be the flow has already cancelled this, so check
             if(managedResourceRecoveryManager.isRecovering())
             {
@@ -321,7 +322,7 @@ public class ScheduledConsumer<T>
 
         if(isRecovering)
         {
-            // cancel the recovery schedule if still active
+            // cancelAll the recovery schedule if still active
             // could be the flow has already cancelled this, so check
             if(managedResourceRecoveryManager.isRecovering())
             {
