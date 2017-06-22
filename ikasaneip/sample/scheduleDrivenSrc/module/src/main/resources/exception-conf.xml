@@ -23,7 +23,7 @@
 			        </constructor-arg>
 			        <constructor-arg>
 			            <bean class="org.ikasan.exceptionResolver.action.RetryAction">
-			                <property name="delay" value="30000"/>
+			                <property name="delay" value="1000"/>
 			            </bean>
 			        </constructor-arg>
 			    </bean>
