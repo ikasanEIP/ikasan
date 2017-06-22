@@ -40,6 +40,7 @@
  */
 package org.ikasan.sample.scheduleDrivenSrc.component.converter;
 
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.quartz.JobExecutionContext;
@@ -51,14 +52,23 @@ import org.quartz.JobExecutionContext;
  */
 public class ScheduleEventFailingConverter implements Converter<JobExecutionContext,StringBuilder>
 {
+    private volatile int invocationCount = 0;
+
     public StringBuilder convert(JobExecutionContext context) throws TransformationException
     {
+        invocationCount++;
         StringBuilder sb = new StringBuilder();
         sb.append("schedule executed at = ");
         sb.append(context.getFireTime());
         sb.append(" name = ");
         sb.append(context.getJobDetail().getKey().getName());
-        if(true) throw new TransformationException("test exception");
+        if(true) throw new EndpointException("test exception: " + invocationCount);
         return sb;
     }
+
+    public int getInvocationCount()
+    {
+        return invocationCount;
+    }
+
 }

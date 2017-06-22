@@ -52,7 +52,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-connector-sftp-parent</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.4.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
