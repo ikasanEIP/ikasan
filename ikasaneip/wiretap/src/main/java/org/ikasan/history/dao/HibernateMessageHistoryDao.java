@@ -382,19 +382,20 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
                     for(ComponentInvocationMetric<String, CustomMetric, MetricEvent> messageHistoryEvent: messageHistoryEvents)
                     {
-                        MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier());
+                        MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier()
+                            + flowInvocationMetric.getModuleName()+flowInvocationMetric.getFlowName()+messageHistoryEvent.getComponentName());
+
                         if(event != null)
                         {
-                        if(event.getComponentName().equals(messageHistoryEvent.getComponentName())
-                                && event.getFlowName().equals(flowInvocationMetric.getFlowName())
-                                && event.getModuleName().equals(flowInvocationMetric.getModuleName()))
-                        {
-                            messageHistoryEvent.setWiretapFlowEvent(event);
-                        }
+                            if(event.getComponentName().equals(messageHistoryEvent.getComponentName())
+                                    && event.getFlowName().equals(flowInvocationMetric.getFlowName())
+                                    && event.getModuleName().equals(flowInvocationMetric.getModuleName()))
+                            {
+                                messageHistoryEvent.setWiretapFlowEvent(event);
+                            }
                         }
                     }
                 }
-
 
                 return flowInvocationMetrics;
             }
@@ -417,7 +418,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
                 for(MetricEvent event: wiretapEvents)
                 {
-                    results.put(event.getEventId(), event);
+                    results.put(event.getEventId()+event.getModuleName()+event.getFlowName()+event.getComponentName(), event);
                 }
 
                 return results;
