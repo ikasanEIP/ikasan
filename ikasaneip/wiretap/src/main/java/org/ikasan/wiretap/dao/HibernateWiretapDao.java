@@ -40,16 +40,18 @@
  */
 package org.ikasan.wiretap.dao;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.collect.Lists;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.history.model.CustomMetric;
+import org.ikasan.history.model.MetricEvent;
+import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
@@ -460,6 +462,24 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 logger.info(rowCount+", Wiretap housekeepables exist");
                 return new Boolean(rowCount>0);
+            }
+        });
+    }
+
+    public List<WiretapEvent> getHarvestableRecords(final int housekeepingBatchSize)
+    {
+        return (List<WiretapEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(WiretapEvent.class);
+                criteria.add(Restrictions.eq("harvested", false));
+                criteria.setMaxResults(housekeepingBatchSize);
+                criteria.addOrder(Order.asc("timestamp"));
+
+                List<WiretapEvent> flowInvocationMetrics = criteria.list();
+
+                return flowInvocationMetrics;
             }
         });
     }
