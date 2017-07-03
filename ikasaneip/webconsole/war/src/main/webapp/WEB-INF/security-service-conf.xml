@@ -29,17 +29,19 @@
 	
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/security"
-	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+			 xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 
-       <!-- TODO point cuts below are commented out as these methods are called via REST and rest 
+	<!-- TODO point cuts below are commented out as these methods are called via REST and rest
 		supplies its own security. -->
-	<global-method-security
-		access-decision-manager-ref="accessDecisionManager">
+
+
+	<global-method-security authentication-manager-ref="auth-manager"
+							pre-post-annotations="enabled">
 
 		<!-- AspectJ pointcut expression that locates our "post" method and applies 
 			security that way -->
@@ -50,17 +52,19 @@
 		<protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.stopFlow(..))"
 			access="MODULE_ADMIN" / -->
+<!--
 		<protect-pointcut
 			expression="execution(* org.ikasan.security.service.UserService.changeUsersPassword(..))"
-			access="ROLE_ADMIN" />
+				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
 
 		<protect-pointcut
 			expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..))"
-			access="ROLE_ADMIN" />
+				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
 
 		<protect-pointcut
 			expression="execution(* org.ikasan.security.service.UserService.revokeAuthority(..))"
-			access="ROLE_ADMIN" />
+				access="hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin" />
+-->
 
 		<!-- protect-pointcut
 			expression="execution(* org.ikasan.spec.module.ModuleService.setStartupType(..))"
@@ -74,30 +78,47 @@
 			expression="execution(* org.ikasan.spec.module.ModuleService.getModules())"
 			access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" / -->
 
-		<after-invocation-provider
-			ref="moduleCollectionFilteringAfterInvocationProvider" />
-		<after-invocation-provider ref="moduleAfterInvocationProvider" />
+
+		<!--<after-invocation-provider-->
+				<!--ref="moduleCollectionFilteringAfterInvocationProvider" />-->
+		<!--<after-invocation-provider ref="moduleAfterInvocationProvider" />-->
+
 
 	</global-method-security>
 
-	<http pattern="/login.jsp*" security="none" />
-	<http pattern="/css/*" security="none" />
-	<http pattern="/images/*" security="none" />
-	<http pattern="/rest/**" security="none" />
 
-	<http auto-config='false' use-expressions="false" authentication-manager-ref="auth-manager"
-        access-decision-manager-ref="accessDecisionManager">
+	<!--<http auto-config="false" use-expressions="false" authentication-manager-ref="auth-manager"-->
+		  <!--access-decision-manager-ref="accessDecisionManager" >-->
+	<http auto-config="false" use-expressions="true"
+
+		  authentication-manager-ref="auth-manager" access-decision-manager-ref="accessDecisionManager">
+
+
+
 		<access-denied-handler error-page="/accessDenied.jsp"/>
-		<intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
-		<intercept-url pattern="/**" access="ROLE_USER" />
+		<intercept-url pattern="/login.jsp" access="permitAll"/>
+		<intercept-url pattern="/css/*" access="permitAll"/>
+		<intercept-url pattern="/images/*" access="permitAll"/>
+		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
+		<intercept-url pattern="/rest/**" access="permitAll"/>
+		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
+
 		<form-login login-page="/login.jsp"
-					username-parameter="j_username" 
+					default-target-url="/home.htm"
+					username-parameter="j_username"
 					password-parameter="j_password" 
 					login-processing-url="/j_spring_security_check" 
 					authentication-failure-url="/login.jsp?login_error=1" 
 		/>
 		<csrf disabled="true"/>
-		<logout logout-success-url="/" logout-url="/j_spring_security_logout" />
+		<logout logout-success-url="/login.jsp" logout-url="/j_spring_security_logout" />
+		<remember-me
+				remember-me-parameter="_spring_security_remember_me"
+				remember-me-cookie="SPRING_SECURITY_REMEMBER_ME_COOKIE"
+		/>
+		<intercept-url pattern="/**" access="hasAnyAuthority('ALL','ReadBlueConsole','WriteBlueConsole')"/>
+		<http-basic />
+
 	</http>
 	
 	
@@ -153,20 +174,6 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="filterServiceTransactionManager"
-				class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="filterHibernateSessionFactory" />
-		</beans:property>
-	</beans:bean>
-
-	<beans:bean id="messageHistoryTransactionManager"
-				class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<beans:property name="sessionFactory">
-			<beans:ref bean="messageHistoryXaHibernateSessionFactory" />
-		</beans:property>
-	</beans:bean>
-
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
 			expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..)) ||
@@ -177,7 +184,12 @@
 						execution(* org.ikasan.security.service.UserService.enableUser(..)) ||
 						execution(* org.ikasan.security.service.UserService.createAuthority(..)) ||
 						execution(* org.ikasan.security.service.UserService.deleteUser(..)) ||
-						execution(* org.ikasan.security.service.UserService.createUser(..))" />
+						execution(* org.ikasan.security.service.UserService.createUser(..)) ||
+						execution(* org.ikasan.security.service.SecurityService.savePolicy(..)) ||
+						execution(* org.ikasan.security.service.SecurityService.saveRole(..)) ||
+						execution(* org.ikasan.security.service.SecurityService.savePrincipal(..))
+
+						" />
 		<aop:pointcut id="systemEventServiceMethods"
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
@@ -191,15 +203,7 @@
 						execution(* org.ikasan.hospital.service.HospitalService.ignore(..))" />
 		<aop:pointcut id="triggerDaoMethods"
 			expression="execution(* org.ikasan.trigger.dao.TriggerDao.save(..)) ||
-						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..)) ||
-						execution(* org.ikasan.spec.wiretap.WiretapService.tapEvent(..))" />
-
-		<aop:pointcut id="filterServiceMethods"
-					  expression="execution(* org.ikasan.filter.duplicate.service.DuplicateFilterService.persistMessage(..))"/>
-
-		<aop:pointcut id="messageHistoryServiceMethods"
-					  expression="execution(* org.ikasan.spec.history.MessageHistoryService.save(..)) ||
-					  execution(* org.ikasan.spec.history.MessageHistoryService.snapMetricEvent(..))"/>
+						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..))" />
 			
 		<aop:advisor advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
@@ -213,25 +217,7 @@
 			pointcut-ref="hospitalServiceMethods" />
 		<aop:advisor advice-ref="wiretap-required-TransactionAdvice"
 			pointcut-ref="triggerDaoMethods" />
-		<aop:advisor advice-ref="filter-required-TransactionAdvice"
-					 pointcut-ref="filterServiceMethods" />
-		<aop:advisor advice-ref="messageHistory-required-TransactionAdvice"
-					 pointcut-ref="messageHistoryServiceMethods" />
 	</aop:config>
-
-	<tx:advice id="messageHistory-required-TransactionAdvice"
-			   transaction-manager="messageHistoryTransactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<tx:advice id="filter-required-TransactionAdvice"
-			   transaction-manager="filterServiceTransactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
 
 	<tx:advice id="wiretap-required-TransactionAdvice"
 		transaction-manager="wiretapServiceTransactionManager">
@@ -288,7 +274,6 @@
 	<beans:bean id="securityService" class="org.ikasan.security.service.SecurityServiceImpl">
 		<beans:constructor-arg ref="securityDao" />
 	</beans:bean>
-	
 
 	<beans:bean id="securityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<beans:property name="sessionFactory" ref="securitySessionFactory" />
@@ -296,19 +281,13 @@
 
 	<beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
 		<beans:constructor-arg ref="userDao" />
-		<beans:constructor-arg ref="authorityDao" />
+		<beans:constructor-arg ref="securityService" />
 		<beans:constructor-arg ref="sha1PasswordEncoder" />
 	</beans:bean>
 
 	<beans:bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
 		<beans:property name="sessionFactory" ref="securitySessionFactory" />
 	</beans:bean>
-
-	<beans:bean id="authorityDao"
-		class="org.ikasan.security.dao.HibernateAuthorityDao">
-		<beans:property name="sessionFactory" ref="securitySessionFactory" />
-	</beans:bean>
-
 
 	<beans:bean id="securitySessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -319,7 +298,6 @@
 				<beans:value>/org/ikasan/security/model/Role.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/Policy.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/User.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/Authority.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/PolicyLink.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</beans:value>
@@ -335,11 +313,15 @@
 
 	<beans:bean id="accessDecisionManager"
 		class="org.springframework.security.access.vote.UnanimousBased">
-		<beans:constructor-arg>
+		<beans:constructor-arg name="decisionVoters">
 			<beans:list>
-				<beans:bean id="roleVoter"
-					class="org.springframework.security.access.vote.RoleVoter" />
-				<beans:bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />
+				<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+
+				<!--<beans:bean id="moduleAdminVoter" class="org.ikasan.web.security.ModuleAdminVoter" />-->
+
 			</beans:list>
 		</beans:constructor-arg>
 		<beans:property name="allowIfAllAbstainDecisions"

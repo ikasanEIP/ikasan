@@ -56,6 +56,7 @@
         <constructor-arg ref="flowElementConfigurationWindow"/>
         <constructor-arg ref="flowComponentsConfigurationUploadDownloadWindow"/>
         <constructor-arg ref="moduleComponentsConfigurationUploadDownloadWindow"/>
+        <constructor-arg ref="discoveryWindow"/>
     </bean>
     
     <bean id="topologyCacheApplication" class="org.ikasan.dashboard.ui.monitor.rest.TopologyCacheApplication">

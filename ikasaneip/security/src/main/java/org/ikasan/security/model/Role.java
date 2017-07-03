@@ -40,10 +40,7 @@
  */
 package org.ikasan.security.model;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author CMI2 Development Team
@@ -72,7 +69,34 @@ public class Role implements Comparable<Role>
         this.updatedDateTime = new Date(now);
     }
 
-    /**
+	/**
+	 *  extra constructor
+	 */
+	public Role(String name, String description) {
+		this.description = description;
+		this.name = name;
+		long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
+		this.updatedDateTime = new Date(now);
+	}
+
+	public void addPolicy(Policy policy){
+
+		if(policies!=null)
+		{
+			if(!policies.contains(policy))
+			{
+				policies.add(policy);
+			}
+		}
+		else
+		{
+			policies = new HashSet<>();
+			policies.add(policy);
+		}
+	}
+
+	/**
      * @return the id
      */
     public Long getId()
@@ -168,74 +192,42 @@ public class Role implements Comparable<Role>
         this.policies = policies;
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Role other = (Role) obj;
-		if (createdDateTime == null)
-		{
-			if (other.createdDateTime != null)
-				return false;
-		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null)
-		{
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null)
-		{
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (name == null)
-		{
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (updatedDateTime == null)
-		{
-			if (other.updatedDateTime != null)
-				return false;
-		} else if (!updatedDateTime.equals(other.updatedDateTime))
-			return false;
-		return true;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Role other = (Role) obj;
+        if (name == null)
+        {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
+    /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
+
 	@Override
 	public String toString()
 	{

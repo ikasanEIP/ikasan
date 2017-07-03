@@ -52,5 +52,7 @@ public class MappingConfigurationImportXpathConstants
     public static final String TARGET_CONTEXT_XPATH = "/mappingConfiguration/targetContext";
     public static final String DESCRIPTION_XPATH = "/mappingConfiguration/description";
     public static final String IS_MANY_TO_MANY_XPATH = "/mappingConfiguration/isManyToMany";
+    public static final String IS_FIXED_PARAMETER_LIST_SIZE_XPATH = "/mappingConfiguration/isFixedParameterListSize";
     public static final String NUMBER_OF_SOURCE_PARAMS_XPATH = "/mappingConfiguration/numberOfSourceParams";
+    public static final String NUMBER_OF_TARGET_PARAMS_XPATH = "/mappingConfiguration/numberOfTargetParams";
 }

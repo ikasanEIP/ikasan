@@ -40,7 +40,7 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -57,7 +57,7 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
 {
     private static final long serialVersionUID = 5863997626883201511L;
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private Table searchResultsTable;
 
     /**
@@ -66,7 +66,7 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
      * @param mappingConfigurationService
      * @param searchResultsTable
      */
-    public MappingConfigurationSearchResultsPanel(MappingConfigurationService mappingConfigurationService,
+    public MappingConfigurationSearchResultsPanel(MappingManagementService mappingConfigurationService,
             Table searchResultsTable)
     {
         super();

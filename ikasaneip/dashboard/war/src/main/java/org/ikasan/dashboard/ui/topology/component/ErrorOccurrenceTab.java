@@ -287,7 +287,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
 		searchLayout.setSpacing(true);
@@ -650,11 +650,13 @@ public class ErrorOccurrenceTab extends TopologyTab
 		
 		gl.addComponent(searchResultsSizeLayout);
 		gl.addComponent(hl);
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gl
+				, this.errorOccurenceTable);
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
 		
-		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.errorOccurenceTable);
-		
-		vSplitPanel.setSecondComponent(hErrorTable);
+		vSplitPanel.setSecondComponent(vpanel);
 		vSplitPanel.setSplitPosition(310, Unit.PIXELS);
 		
 		GridLayout wrapper = new GridLayout(1, 2);

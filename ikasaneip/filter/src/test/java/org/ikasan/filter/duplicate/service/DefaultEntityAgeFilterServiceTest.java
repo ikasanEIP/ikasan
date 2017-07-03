@@ -1,6 +1,6 @@
 package org.ikasan.filter.duplicate.service;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;

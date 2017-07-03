@@ -47,8 +47,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationColumns" context="postBaseline">
-    
+    <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationColumns" dbms="sybase, h2, mysql" context="postBaseline">
+
+		<validCheckSum>any</validCheckSum>
+		
     	<preConditions onFail="MARK_RAN">
 			<columnExists tableName="MessageHistory" columnName="Harvested"/>
 			<columnExists tableName="MessageHistory" columnName="Expiry"/>
@@ -65,5 +67,28 @@
 		<dropColumn columnName="ModuleName" tableName="MessageHistory"/>
 
     </changeSet>
+
+	<changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationColumns" dbms="mssql" context="postBaseline">
+
+		<validCheckSum>any</validCheckSum>
+
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="MessageHistory" columnName="Harvested"/>
+			<columnExists tableName="MessageHistory" columnName="Expiry"/>
+			<columnExists tableName="MessageHistory" columnName="FlowName"/>
+			<columnExists tableName="MessageHistory" columnName="ModuleName"/>
+		</preConditions>
+
+		<dropIndex indexName="IX_MessageHistory_Expiry" tableName="MessageHistory"/>
+		<dropIndex indexName="IX_MessageHistory_StartTimeModuleFlow" tableName="MessageHistory"/>
+
+		<dropDefaultValue tableName="MessageHistory" columnName="Harvested" />
+
+		<dropColumn columnName="Harvested" tableName="MessageHistory"/>
+		<dropColumn columnName="Expiry" tableName="MessageHistory"/>
+		<dropColumn columnName="FlowName" tableName="MessageHistory"/>
+		<dropColumn columnName="ModuleName" tableName="MessageHistory"/>
+
+	</changeSet>
 
 </databaseChangeLog>

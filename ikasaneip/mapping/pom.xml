@@ -5,7 +5,7 @@
 	<parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 	
     <artifactId>ikasan-mapping</artifactId>
@@ -14,7 +14,13 @@
     <description>A library for managing mapping configurations for the Ikasan platform</description>
 
 	<dependencies>
-		
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-spec-mapping</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>

@@ -7,15 +7,8 @@ import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.testharness.flow.FlowObserver;
-import org.ikasan.testharness.flow.FlowSubject;
-import org.ikasan.testharness.flow.FlowTestHarness;
-import org.ikasan.testharness.flow.FlowTestHarnessImpl;
-import org.ikasan.testharness.flow.expectation.model.*;
-import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
 import org.jmock.Mockery;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -45,10 +38,8 @@ import java.util.Map;
         "/source-filesystem-flow-conf.xml",
         "/filesystem-conf.xml",
         "/jms-conf.xml",
-        "/replay-service-conf.xml",
         "/scheduled-conf.xml",
         "/exception-conf.xml",
-        "/ikasan-transaction-conf.xml",
         "/mock-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
@@ -63,24 +54,9 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
     @Resource
     VisitingInvokerFlow sourceFlow;
 
-    /**
-     * Captures the actual components invoked and events created within the flow
-     */
-    @Resource
-    FlowSubject testHarnessFlowEventListener;
-
     // test file details
     String testFilename = "test.txt";
     File testFile = new File(testFilename);
-
-    /**
-     * Setup will clear down any previously defined observers and ignore all exception transformations.
-     *
-     */
-    private void flowTest_setup()
-    {
-        testHarnessFlowEventListener.removeAllObservers();
-    }
 
     /**
      * Tests flow operation for Sample Flow.
@@ -90,33 +66,22 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
     @DirtiesContext
     public void test_successful_sampleFlow_invocation() throws IOException
     {
-        flowTest_setup();
-
         // create test file
         FileUtils.write(testFile, "test data");
 
-        //
-        // setup expectations
-        FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
-        {
-            {
-                // main request flow
-                expectation(new ConsumerComponent("Consumer Name"), "Consumer Name");
-                expectation(new ProducerComponent("Producer Name"), "Producer Name");
-            }
-        });
-
-        testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
-        testHarnessFlowEventListener.setIgnoreEventCapture(true);
+        // setup the expected component invocations
+        ikasanFlowTestRule.withFlow(sourceFlow)
+                .consumer("Consumer Name")
+                .producer("Producer Name");
 
         FlowElement consumerFlowElement = this.sourceFlow.getFlowElement("Consumer Name");
         FileConsumerConfiguration configuration = ((ConfiguredResource<FileConsumerConfiguration>)consumerFlowElement.getFlowComponent()).getConfiguration();
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = new ArrayList<>();
         filenames.add(testFilename);
         configuration.setFilenames(filenames);
 
         // configure AMQ to provide in-memory destinations for the test
-        Map<String,String> jndiProperties = new HashMap<String,String>();
+        Map<String,String> jndiProperties = new HashMap<>();
         jndiProperties.put("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         jndiProperties.put("java.naming.provider.url", "vm://localhost?broker.persistent=false");
 
@@ -126,33 +91,22 @@ public class SourceScheduledFlowTest extends IkasanEIPTest
         SpringMessageProducerConfiguration producerConfiguration = configuredProducer.getConfiguration();
         producerConfiguration.setConnectionFactoryName("ConnectionFactory");
         producerConfiguration.setConnectionFactoryJndiProperties(jndiProperties);
-        producerConfiguration.setDestinationJndiName("dynamicTopics/queue");
+        producerConfiguration.setDestinationJndiName("dynamicQueues/queue");
         producerConfiguration.setDestinationJndiProperties(jndiProperties);
 
-        // start the flow
-        this.sourceFlow.start();
-        Assert.assertEquals("flow should be running", "running", this.sourceFlow.getState());
+        // start the flow and assert it runs
+        ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
 
-        // wait for the flow to fully execute
-        try
-        {
-            Thread.sleep(4000);
-        }
-        catch(InterruptedException e)
-        {
-            Assert.fail(e.getMessage());
-        }
+        // invoke the scheduled consumer async
+        ikasanFlowTestRule.fireScheduledConsumer();
 
-        // stop the flow
-        this.sourceFlow.stop();
-
-        Assert.assertEquals("flow should be stopped", "stopped", this.sourceFlow.getState());
-
-        // run flow assertions
-        flowTestHarness.assertIsSatisfied();
+        // wait for a brief while to let the flow complete
+        ikasanFlowTestRule.sleep(4000L);
 
         // mocked assertions
         mockery.assertIsSatisfied();
+
+        // no need to stop flow or check harness assertions - that is done by the IkasanFlowTestRule
     }
 
     @After

@@ -68,22 +68,8 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
-	<bean id="keyLocationQueryProcessorFactory" class="org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory">
+    <bean id="mappingConfigurationService" class="org.ikasan.mapping.service.MappingManagementServiceImpl">
         <constructor-arg ref="mappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationProcessorMap"/>
-    </bean>
-    
-    <util:map id="keyLocationProcessorMap">
-        <entry key="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor" 
-            value-ref="xpathKeyLocationQueryProcessor"/>
-    </util:map>
-
-    <bean id="xpathKeyLocationQueryProcessor" 
-        class="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"/>
-    
-    <bean id="mappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
-        <constructor-arg ref="mappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="mappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -113,15 +99,11 @@
 	<bean id="userService"
         class="org.ikasan.security.service.UserServiceImpl">
         <constructor-arg ref="userDao"/>
-        <constructor-arg ref="authorityDao"/>
+        <constructor-arg ref="securityService"/>
         <constructor-arg ref="sha1PasswordEncoder"/>
     </bean>
     
     <bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
-        <property name="sessionFactory" ref="ikasanSessionFactory"/>
-    </bean>
-    
-    <bean id="authorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
 
@@ -304,7 +286,7 @@
                <value>/org/ikasan/mapping/model/MappingConfigurationLite.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ConfigurationServiceClient.hbm.xml</value>
                <value>/org/ikasan/mapping/model/ConfigurationType.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/KeyLocationQuery.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/ParameterName.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
@@ -314,7 +296,6 @@
 			   <value>/org/ikasan/security/model/Policy.hbm.xml</value>
 			   <value>/org/ikasan/security/model/User.hbm.xml</value>
 			   <value>/org/ikasan/security/model/UserPrincipal.hbm.xml</value>
-			   <value>/org/ikasan/security/model/Authority.hbm.xml</value>
 			   <value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 			   <value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
 			   <value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
@@ -354,8 +335,19 @@
 			   <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
            </list>
         </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+        <property name="hibernateProperties" ref="dashboardPlatformHibernateProperties"/>
     </bean>
+
+	<bean id="dashboardPlatformHibernateProperties" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="platformHibernateProperties"/>
+		<property name="targetMethod" value="setProperty"/>
+		<property name="arguments">
+			<list>
+				<value>hibernate.connection.isolation</value>
+				<value>1</value>
+			</list>
+		</property>
+	</bean>
 
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
     
