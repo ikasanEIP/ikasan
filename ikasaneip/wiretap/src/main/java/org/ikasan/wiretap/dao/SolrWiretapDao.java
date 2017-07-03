@@ -3,9 +3,12 @@ package org.ikasan.wiretap.dao;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
@@ -314,30 +317,69 @@ public class SolrWiretapDao implements WiretapDao
 
     public static final void main(String[] args)
     {
-        SolrWiretapDao dao = new SolrWiretapDao();
+//        SolrWiretapDao dao = new SolrWiretapDao();
+//
+//        HashSet<String> moduleNames = new HashSet<>();
+//        moduleNames.add("frontArena-trade");
+//        moduleNames.add("goldenSource-referenceData");
+//        moduleNames.add("cdw-asset");
+//
+//        HashSet<String> flowNames = new HashSet<>();
+//        flowNames.add("Bulk GsEsbApprovedSecurity Transformer Flow");
+//
+//        HashSet<String> componentNames = new HashSet<>();
+//        componentNames.add("after Approved Security Producer");
+//
+//        PagedSearchResult<WiretapEvent> results = dao.findWiretapEvents(0, 2000, null, false, moduleNames, flowNames, componentNames, null, null, new Date(1487041280791L - 1000000000l), new Date(1487041280791L + 10000000000000l), "100001555237");
+//
+////        PagedSearchResult<WiretapEvent> results = dao.findWiretapEvents(0, 2000, null, false, moduleNames, flowNames, componentNames, null, null, null, null, "100001555237");
+//
+//        System.out.println("results: " + results);
+//
+//        for(WiretapEvent event: results.getPagedResults())
+//        {
+//            System.out.println(event);
+//        }
+//
+//        System.out.println("results: " + results.getResultSize());
 
-        HashSet<String> moduleNames = new HashSet<>();
-        moduleNames.add("frontArena-trade");
-        moduleNames.add("goldenSource-referenceData");
-        moduleNames.add("cdw-asset");
+        CloudSolrClient solr = new CloudSolrClient.Builder().withSolrUrl("http://localhost:8983/solr").build();
+        solr.setDefaultCollection("ikasan");
 
-        HashSet<String> flowNames = new HashSet<>();
-        flowNames.add("Bulk GsEsbApprovedSecurity Transformer Flow");
-
-        HashSet<String> componentNames = new HashSet<>();
-        componentNames.add("after Approved Security Producer");
-
-        PagedSearchResult<WiretapEvent> results = dao.findWiretapEvents(0, 2000, null, false, moduleNames, flowNames, componentNames, null, null, new Date(1487041280791L - 1000000000l), new Date(1487041280791L + 10000000000000l), "100001555237");
-
-//        PagedSearchResult<WiretapEvent> results = dao.findWiretapEvents(0, 2000, null, false, moduleNames, flowNames, componentNames, null, null, null, null, "100001555237");
-
-        System.out.println("results: " + results);
-
-        for(WiretapEvent event: results.getPagedResults())
+        for(int i=0; i<500; i++)
         {
-            System.out.println(event);
+            SolrInputDocument document = new SolrInputDocument();
+            document.addField("id", "" + i);
+            document.addField("name", "Gouda cheese wheel " + i);
+            document.addField("price", "49.99");
+
+
+            try
+            {
+                System.out.println("Inserting doc");
+                UpdateResponse response = solr.add(document);
+                System.out.println(response);
+            } catch (SolrServerException e)
+            {
+                e.printStackTrace();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
 
-        System.out.println("results: " + results.getResultSize());
+        try
+        {
+            System.out.println("Committing");
+            solr.commit();
+            System.out.println("Committed");
+        } catch (SolrServerException e)
+        {
+            e.printStackTrace();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }
