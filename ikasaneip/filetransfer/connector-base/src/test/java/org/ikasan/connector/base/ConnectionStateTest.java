@@ -40,8 +40,6 @@
  */
 package org.ikasan.connector.base;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
@@ -115,15 +113,5 @@ public class ConnectionStateTest
         // nothing to tear down
         logger.info("tearDown");
     }
-
-    /**
-     * Return the suite of tests
-     * 
-     * @return suite of tests
-     */
-    public static junit.framework.Test suite() 
-    {
-        return new JUnit4TestAdapter(ConnectionStateTest.class);
-    }    
 
 }

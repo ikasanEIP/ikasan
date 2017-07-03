@@ -41,14 +41,17 @@
 package org.ikasan.module.service;
 
 import org.apache.log4j.Logger;
-import org.ikasan.security.model.Authority;
-import org.ikasan.security.service.UserService;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -61,6 +64,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.ArrayList;
+import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,8 +95,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private ApplicationContext platformContext;
 
-    /** UserService provides access to users and authorities */
-    private UserService userService;
+    /** SecurityService provides access to users and authorities */
+    private SecurityService securityService;
 
     /** TopologyService provides access to module metadata tables */
     private TopologyService topologyService;
@@ -103,10 +108,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * Constructor
      * @param moduleContainer
      * @param moduleActivator
-     * @param userService
+     * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-                                           UserService userService, TopologyService topologyService)
+                                           SecurityService securityService, TopologyService topologyService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -121,16 +126,16 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
         }
 
-        this.userService = userService;
-        if(userService == null)
+        this.securityService = securityService;
+        if(securityService == null)
         {
-            throw new IllegalArgumentException("userService cannot be 'null'");
+            throw new IllegalArgumentException("securityService cannot be 'null'");
         }
 
         this.topologyService = topologyService;
         if(topologyService == null)
         {
-            throw new IllegalArgumentException("userService cannot be 'null'");
+            throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
         innerContexts = new LinkedList<>();
     }
@@ -209,20 +214,34 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             // load all modules in this context
             // TODO - should multiple modules share the same application context ?
             Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-            for (Module<Flow> module : moduleBeans.values())
-            {
-                try {
-                    this.initialiseModuleSecurity(module);
-                    // intialise config into db
-                    this.initialiseModuleMetaData(module);
-                    this.moduleContainer.add(module);
-                    this.moduleActivator.activate(module);
-                } catch (RuntimeException re){
-                    logger.error("There was a problem initialising module", re);
-                }
+            if(moduleBeans.isEmpty()){
+                moduleBeans = platformContext.getBeansOfType(Module.class);
+                initialise(moduleBeans);
             }
+            else{
+                initialise(moduleBeans);
+            }
+
         }
     }
+
+    private void initialise(Map<String, Module> moduleBeans)
+    {
+        for (Module<Flow> module : moduleBeans.values())
+        {
+            try {
+                this.initialiseModuleSecurity(module);
+                // intialise config into db
+                this.initialiseModuleMetaData(module);
+                this.moduleContainer.add(module);
+                this.moduleActivator.activate(module);
+            } catch (RuntimeException re){
+                logger.error("There was a problem initialising module", re);
+            }
+        }
+
+    }
+
 
     /**
      * Callback from the container to gracefully stop flows and modules, and stop the inner loaded contexts
@@ -230,9 +249,16 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     public void destroy() throws Exception
     {
         // shutdown all modules cleanly
+        List<String> modulesToRemove = new ArrayList<>();
         for(Module<Flow> module:this.moduleContainer.getModules())
         {
             this.moduleActivator.deactivate(module);
+            modulesToRemove.add(module.getName());
+        }
+        // remove all modules from container
+        for (String moduleToRemove:modulesToRemove)
+        {
+            moduleContainer.remove(moduleToRemove);
         }
 
         // TODO - find a more generic way of managing this for platform resources
@@ -289,22 +315,53 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleSecurity(Module module)
     {
-        List<Authority> existingAuthorities = this.userService.getAuthorities();
-        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
-                + module.getName() + " module. This is typically assigned to business users");
-        if (!existingAuthorities.contains(moduleUserAuthority))
+        List<Policy> existingAuthorities = this.securityService.getAllPolicies();
+
+        Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module vai BlueConsole.");
+        if (!existingAuthorities.contains(readBlueConsole))
         {
-            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleUserAuthority);
+            logger.info("Creating ReadBlueConsole policy...");
+            this.securityService.savePolicy(readBlueConsole);
         }
-        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
-                "Allows administrator access to the " + module.getName()
-                        + " module. This is typically assigned to business administrators");
-        if (!existingAuthorities.contains(moduleAdminAuthority))
+        Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module vai BlueConsole.");
+
+        if (!existingAuthorities.contains(writeBlueConsole))
         {
-            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleAdminAuthority);
+            logger.info("Creating WriteBlueConsole policy...");
+            this.securityService.savePolicy(writeBlueConsole);
         }
+
+        List<Role> existingRoles = this.securityService.getAllRoles();
+
+        Role userRole = new Role("User", "Users who have a read only view on the system.");
+        if (!existingRoles.contains(userRole))
+        {
+            logger.info("Creating standard User role...");
+            this.securityService.saveRole(userRole);
+        }
+
+        Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
+        if (!existingRoles.contains(adminRole))
+        {
+            logger.info("Creating standard Admin role...");
+            this.securityService.saveRole(adminRole);
+        }
+
+        List<IkasanPrincipal> existingPrinciples = this.securityService.getAllPrincipals();
+
+        IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","user", "The administrator user principle.");
+        if (!existingPrinciples.contains(adminPrinciple))
+        {
+            logger.info("Creating standard admin principle...");
+            this.securityService.savePrincipal(adminPrinciple);
+        }
+        IkasanPrincipal userPrinciple = new IkasanPrincipal("user","user", "The user principle.");
+        if (!existingPrinciples.contains(userPrinciple))
+        {
+            logger.info("Creating standard user principle...");
+            this.securityService.savePrincipal(userPrinciple);
+        }
+
     }
 
     /**
@@ -316,12 +373,43 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
 
+        String host = platformContext.getEnvironment().getProperty("server.address");
+        if(host == null)
+        {
+            host = platformContext.getEnvironment().getProperty("service.name");
+        }
+
+        String port = platformContext.getEnvironment().getProperty("server.port");
+        String context = platformContext.getEnvironment().getProperty("server.contextPath");
+        String pid = getPid();
+        String serverName = "http://"+host + ":"+port+context;
+        String serverUrl = "http://"+host ;
+        logger.info("Module host [" + host + ":"+port+context+"] running with PID ["+pid+"]");
+
+        Server server = new Server(serverName,serverName,serverUrl,Integer.parseInt(port));
+
+        List<Server> servers = this.topologyService.getAllServers();
+        if(!servers.contains(server))
+        {
+            this.topologyService.save(server);
+        }
+
         if (moduleDB==null)
         {
             logger.info("module does not exist [" + module.getName() + "], creating...");
             moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
+            moduleDB.setServer(server);
             this.topologyService.save(moduleDB);
         }
+    }
 
+    private static  String getPid() {
+        try {
+            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            return jvmName.split("@")[0];
+        }
+        catch (Throwable ex) {
+            return null;
+        }
     }
 }

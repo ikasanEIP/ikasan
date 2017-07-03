@@ -38,28 +38,64 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator;
+package org.ikasan.builder;
 
-import junit.framework.Assert;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.flow.FlowElement;
 
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.testharness.flow.comparator.ExpectationComparator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Compares event characteristics.
+ * A simple Flow builder.
  * 
  * @author Ikasan Development Team
- * 
  */
-public class ConverterEventComparator
-    implements ExpectationComparator<FlowEvent<String,StringBuilder>,FlowEvent<String,StringBuilder>>
+public class BuilderFactory
 {
-    /**
-     * Compare the two incoming expected and actual events.
-     */
-    public void compare(FlowEvent<String,StringBuilder> expected, FlowEvent<String,StringBuilder> actual)
+    // singleton
+    static BuilderFactory builderFactory = new BuilderFactory();
+
+    protected static BuilderFactory getInstance()
     {
-        String content = new String(actual.getPayload());
-        Assert.assertTrue(content.startsWith("identifier = abc bid = 10 spread = 10 at "));
+        return builderFactory;
+    }
+
+    public static ModuleBuilder moduleBuilder(String name)
+    {
+        return new ModuleBuilder(name);
+    }
+
+    public static ModuleBuilder moduleBuilder(String name, String version)
+    {
+        return new ModuleBuilder(name, version);
+    }
+
+    public static RouteBuilder routeBuilder()
+    {
+        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
+    }
+
+    public static FlowBuilder flowBuilder()
+    {
+        // create flowBuilder with default configuration
+        FlowBuilder flowBuilder = new FlowBuilder();
+        return flowBuilder;
+    }
+
+    public static FlowBuilder flowBuilder(String name, String module)
+    {
+        return new FlowBuilder(name, module);
+    }
+
+    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
+    {
+        List<FlowElement> flowElements = new ArrayList<FlowElement>();
+        flowElements.add(flowElement);
+        return new RouteImpl(flowElements);
     }
 }
+
+
+
+

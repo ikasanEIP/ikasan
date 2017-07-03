@@ -1,9 +1,9 @@
 package org.ikasan.tools.errormanager.eai;
 
-import junit.framework.Assert;
 
 import org.ikasan.tools.errormanager.model.BusinessError;
 import org.junit.Test;
+import org.junit.Assert;
 
 
 public class BusinessErrorConverterTest {

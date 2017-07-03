@@ -40,19 +40,19 @@
  */
 package org.ikasan.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple Module builder.
  * 
  * @author Ikasan Development Team
  */
-public class ModuleBuilder 
+public class ModuleBuilder
 {
 	/** name of the module being instantiated */
 	String name;
@@ -65,12 +65,12 @@ public class ModuleBuilder
 
 	/** flow builders for creating flows within this module */
 	List<Flow> flows = new ArrayList<Flow>();
-	
+
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	private ModuleBuilder(String name)
+	ModuleBuilder(String name)
 	{
 		this.name = name;
 		if(name == null)
@@ -84,7 +84,7 @@ public class ModuleBuilder
      * @param name
      * @param version
      */
-    private ModuleBuilder(String name, String version)
+	ModuleBuilder(String name, String version)
     {
         this.name = name;
         if(name == null)
@@ -93,27 +93,6 @@ public class ModuleBuilder
         }
 
         this.version = version;
-    }
-
-    /**
-	 * Static moduleBuilder creator
-	 * @param name
-	 * @return ModuleBuilder
-	 */
-	public static ModuleBuilder newModule(String name)
-	{
-		return new ModuleBuilder(name);
-	}
-
-    /**
-     * Static moduleBuilder creator
-     * @param name
-     * @param version
-     * @return ModuleBuilder
-     */
-    public static ModuleBuilder newModule(String name, String version)
-    {
-        return new ModuleBuilder(name, version);
     }
 
     /**

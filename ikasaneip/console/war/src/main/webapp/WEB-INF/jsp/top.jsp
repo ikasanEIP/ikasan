@@ -96,7 +96,7 @@
                     <li><a href="<c:url value='/users/myAccount.htm'/>"><fmt:message key="menu_account_link"/></a></li>
                     </security:authorize>
                     <%-- Spring based security around the admin pages --%>
-                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <security:authorize access="hasAnyAuthority('ALL','WriteBlueConsole')">
                     <li class="last"><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
                     </security:authorize>
                 </ul>

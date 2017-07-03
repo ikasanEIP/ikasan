@@ -38,31 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator;
+package org.ikasan.builder;
 
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.testharness.flow.comparator.ExpectationComparator;
+import org.ikasan.spec.flow.FlowElement;
+
+import java.util.List;
 
 /**
- * Compares event characteristics.
- * 
+ * Contract for a Route creation.
+ *
  * @author Ikasan Development Team
- * 
  */
-public class ConsumerEventComparator
-    implements ExpectationComparator<FlowEvent<String,PriceTechMessage>,FlowEvent<String,PriceTechMessage>>
+public interface Route<T>
 {
-    /**
-     * Compare the two incoming expected and actual events.
+	/**
+	 * Add flow elements to the end of the route.
+	 * @param flowElement
      */
-    public void compare(FlowEvent<String,PriceTechMessage> expected, FlowEvent<String,PriceTechMessage> actual)
-    {
-        compare(expected.getPayload(), actual.getPayload());
-    }
+	public void addFlowElement(FlowElement flowElement);
 
-    protected void compare(PriceTechMessage expected, PriceTechMessage actual)
-    {
-        // do nothing, just a clean invocation of the method is enough to prove we have a price tech message
-    }
+	/**
+	 * Add a nested route to the existing route.
+	 * @param route
+     */
+	public void addNestedRoute(Route route);
+
+	/**
+	 * Get the flow elements within this route.
+	 * @return
+     */
+	public List<FlowElement> getFlowElements();
+
+	/**
+	 * Get the nested routes within this route.
+	 * @return
+     */
+	public List<Route> getNestedRoutes();
 }

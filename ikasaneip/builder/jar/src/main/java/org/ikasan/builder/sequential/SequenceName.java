@@ -38,30 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator;
-
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.testharness.flow.comparator.ExpectationComparator;
+package org.ikasan.builder.sequential;
 
 /**
- * Compares event characteristics.
+ * A simple Flow builder.
  * 
  * @author Ikasan Development Team
- * 
  */
-public class ProducerEventComparator
-    implements ExpectationComparator<FlowEvent<String,StringBuilder>,FlowEvent<String,StringBuilder>>
+public interface SequenceName
 {
     /**
-     * Compare the two incoming expected and actual events.
+     * Get name of the sequence
+     * @return
      */
-    public void compare(FlowEvent<String,StringBuilder> expected, FlowEvent<String,StringBuilder> actual)
-    {
-        compare(expected.getPayload(), actual.getPayload());
-    }
-
-    protected void compare(StringBuilder expected, StringBuilder actual)
-    {
-        // do nothing, just a clean invocation of the method is enough to prove we have a price tech message
-    }
+    public String getName();
 }
