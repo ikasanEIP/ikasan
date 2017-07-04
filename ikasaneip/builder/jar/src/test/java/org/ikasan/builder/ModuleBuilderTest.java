@@ -109,9 +109,7 @@ public class ModuleBuilderTest
     @Test
     public void test_successful_flowCreation() 
     {
-        BuilderFactory bf = BuilderFactory.getInstance();
-        bf.flowBuilder();
-    	Module module = BuilderFactory.moduleBuilder("module name").withDescription("module description")
+    	Module module = IkasanApplicationFactory.getIkasanApplication().getModuleBuilder("module name").withDescription("module description")
     	.addFlow( BuilderFactory.flowBuilder("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)
                 .producer("producer", producer).build())
