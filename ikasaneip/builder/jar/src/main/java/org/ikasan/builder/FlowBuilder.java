@@ -78,6 +78,8 @@ import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -91,7 +93,6 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-@Component
 public class FlowBuilder
 {
     /** logger */
@@ -149,7 +150,7 @@ public class FlowBuilder
     FlowElement<?> exclusionFlowHeadElement;
     
     /** handle to the re-submission service */
-    @Autowired
+    //@Autowired
     ResubmissionService resubmissionService;
     
     /** the serialiser factory */
@@ -164,7 +165,7 @@ public class FlowBuilder
 
     /**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public FlowBuilder(String name, String moduleName)
@@ -202,18 +203,18 @@ public class FlowBuilder
         return this;
     }
 
-	/**
-	 * Add a module name
-	 * 
-	 * @param moduleName
-	 * @return
-	 */
-	public FlowBuilder withModuleName(String moduleName)
-	{
-		this.moduleName = moduleName;
-		return this;
-	}
-
+//	/**
+//	 * Add a module name
+//	 *
+//	 * @param moduleName
+//	 * @return
+//	 */
+//	public FlowBuilder withModuleName(String moduleName)
+//	{
+//		this.moduleName = moduleName;
+//		return this;
+//	}
+//
     /**
      * Add a flow description
      *

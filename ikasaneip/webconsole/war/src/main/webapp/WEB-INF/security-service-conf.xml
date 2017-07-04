@@ -261,7 +261,7 @@
 		</tx:attributes>
 	</tx:advice>
 	
-	<beans:bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+	<!--beans:bean id="authenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
 		<beans:constructor-arg ref="authenticationProviderFactory" />
 		<beans:constructor-arg ref="securityService" />
 	</beans:bean>
@@ -304,7 +304,7 @@
 			</beans:list>
 		</beans:property>
 		<beans:property name="hibernateProperties" ref="platformHibernateProperties" />
-	</beans:bean>
+	</beans:bean-->
 
 	<!-- Automatically receives AuthenticationEvent messages IKASAN-240 Disabled 
 		LoggerListener because it logs everything at WARN and the log messages aren't 

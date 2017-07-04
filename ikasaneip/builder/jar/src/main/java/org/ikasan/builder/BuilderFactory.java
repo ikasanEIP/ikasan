@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.FlowElement;
+import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,32 +55,46 @@ import java.util.List;
 public class BuilderFactory
 {
     // singleton
-    static BuilderFactory builderFactory = new BuilderFactory();
+    static BuilderFactory builderFactory = new BuilderFactory(null);    // FIXME
+
+    ApplicationContext context;
 
     protected static BuilderFactory getInstance()
     {
         return builderFactory;
     }
+//
+//    public static ModuleBuilder moduleBuilder(String name)
+//    {
+//        return new ModuleBuilder(name);
+//    }
 
-    public static ModuleBuilder moduleBuilder(String name)
-    {
-        return new ModuleBuilder(name);
-    }
-
-    public static ModuleBuilder moduleBuilder(String name, String version)
-    {
-        return new ModuleBuilder(name, version);
-    }
+//    public static ModuleBuilder moduleBuilder(String name, String version)
+//    {
+//        return new ModuleBuilder(name);
+//    }
 
     public static RouteBuilder routeBuilder()
     {
         return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
     }
 
-    public static FlowBuilder flowBuilder()
+    public BuilderFactory(ApplicationContext context)
     {
-        // create flowBuilder with default configuration
-        FlowBuilder flowBuilder = new FlowBuilder();
+        this.context = context;
+    }
+//
+//    public static FlowBuilder flowBuilder()
+//    {
+//        // create flowBuilder with default configuration
+//        FlowBuilder flowBuilder = new FlowBuilder();
+//        return flowBuilder;
+//    }
+
+    public FlowBuilder getFlowBuilder(String name)
+    {
+        FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
+        flowBuilder.withName(name);
         return flowBuilder;
     }
 
