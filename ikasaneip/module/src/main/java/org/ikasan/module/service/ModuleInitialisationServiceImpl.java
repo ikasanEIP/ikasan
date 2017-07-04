@@ -64,6 +64,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.ArrayList;
 import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
@@ -248,9 +249,16 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     public void destroy() throws Exception
     {
         // shutdown all modules cleanly
+        List<String> modulesToRemove = new ArrayList<>();
         for(Module<Flow> module:this.moduleContainer.getModules())
         {
             this.moduleActivator.deactivate(module);
+            modulesToRemove.add(module.getName());
+        }
+        // remove all modules from container
+        for (String moduleToRemove:modulesToRemove)
+        {
+            moduleContainer.remove(moduleToRemove);
         }
 
         // TODO - find a more generic way of managing this for platform resources
