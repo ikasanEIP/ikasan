@@ -38,14 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample;
-
-import org.ikasan.builder.*;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
+package org.ikasan.sample.spring.boot.builderpattern;
 
 /**
  * Sample standalone bootstrap application using the builder pattern.

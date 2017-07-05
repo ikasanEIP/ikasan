@@ -352,6 +352,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleSecurity(Module module)
     {
+        if(true) return; // REMOVE ME
         List<Policy> existingAuthorities = this.securityService.getAllPolicies();
 
         Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
