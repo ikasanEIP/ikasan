@@ -76,7 +76,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:h2db-datasource-conf.xml",
 
         //"classpath:security-service-local-conf.xml",
-        //"classpath:springapp-servlet-local.xml",
+        "classpath:springapp-servlet-local.xml",
 
 } )
 

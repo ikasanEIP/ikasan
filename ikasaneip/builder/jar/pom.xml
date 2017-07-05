@@ -84,12 +84,6 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-builder-spring</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jta-narayana</artifactId>
             <version>${version.org.springboot}</version>
@@ -105,12 +99,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
             <version>${version.org.springboot}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

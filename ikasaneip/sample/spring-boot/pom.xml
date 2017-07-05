@@ -52,6 +52,7 @@
     <name>Ikasan Enterprise Integration Spring Boot samples</name>
 
     <modules>
+        <module>builder-pattern</module>
         <module>jms</module>
     </modules>
 
