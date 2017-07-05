@@ -47,7 +47,8 @@ import java.util.List;
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 
 /**
  * 
@@ -62,7 +63,7 @@ public class HospitalManagementServiceImpl implements
 	/**
 	 * Constructor
 	 * 
-	 * @param moduleContainer
+	 * @param hospitalDao
 	 */
 	public HospitalManagementServiceImpl(HospitalDao hospitalDao)
 	{

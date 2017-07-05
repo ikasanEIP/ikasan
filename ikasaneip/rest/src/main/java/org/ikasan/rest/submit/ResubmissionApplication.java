@@ -49,7 +49,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
-import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.rest.IkasanRestApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,5 +1,5 @@
 /*
- * $Id$  
+ * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -38,55 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.hospital.service;
+package org.ikasan.spec.hospital.service;
 
-import java.util.Date;
-import java.util.List;
+import java.security.Principal;
 
 
 /**
+ * Hospital service interface
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public interface HospitalManagementService<ACTION, ACTION_EXCLUSION_COUNT>
+public interface HospitalService<EVENT>
 {
 	/**
-	 * A method to return an ACTION based on the event uri.
-	 * @param errorUri
-	 * @return
-	 */
-	public ACTION getExclusionEventActionByErrorUri(String errorUri);
-	
-	/**
-	 * Get actioned exclusions
+	 * Method to resubmit an event to the appropriate module flow.
 	 * 
-	 * @param moduleName
-	 * @param flowName
-	 * @param startDate
-	 * @param endDate
-	 * @param size
-	 * @return
+	 * @param moduleName The name of the module we are re-submitting to.
+	 * @param flowName The name of the flow we are re-submitting to.
+	 * @param errorUri The error uri of the event being resubmitted.
+	 * @param event The event we are resubmitting.
+	 * @param principal The principal object of the user we are resubmitting on behalf of.
 	 */
-	public List<ACTION> getActionedExclusions(List<String> moduleName, List<String> flowName, Date startDate, Date endDate, int size);
-	
-    /**
-     * 
-     * @param moduleNames
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    public List<ACTION_EXCLUSION_COUNT> getModuleActionedExclusionCount(List<String> moduleNames, Date startDate, Date endDate);
-    
-    /**
-	 * Helper method to return the row count based on the criteria.
-	 *  
-	 * @param moduleName
-	 * @param flowName
-	 * @param startDate
-	 * @param endDate
-	 * @return
+	public void resubmit(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
+
+	/**
+	 * Method to ignore an excluded event
+	 * 
+	 * @param moduleName The name of the module we are re-submitting to.
+	 * @param flowName The name of the flow we are re-submitting to.
+	 * @param errorUri The error uri of the event being resubmitted.
+	 * @param event The event we are resubmitting.
+	 * @param principal The principal object of the user we are resubmitting on behalf of.
 	 */
-    public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate);
+	public void ignore(String moduleName, String flowName, String errorUri, EVENT event, Principal principal);
 }

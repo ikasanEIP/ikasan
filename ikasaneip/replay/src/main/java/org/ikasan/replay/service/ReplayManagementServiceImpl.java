@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;

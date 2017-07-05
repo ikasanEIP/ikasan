@@ -40,6 +40,16 @@
  */
 package org.ikasan.sample.spring.boot.builderpattern;
 
+import org.ikasan.builder.FlowBuilder;
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.builder.IkasanApplicationFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+
 /**
  * Sample standalone bootstrap application using the builder pattern.
  *

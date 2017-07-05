@@ -67,11 +67,21 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-hospital</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
         </dependency>
 		<dependency>
             <groupId>org.ikasan</groupId>
@@ -92,6 +102,12 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- spring web -->
         <dependency>
