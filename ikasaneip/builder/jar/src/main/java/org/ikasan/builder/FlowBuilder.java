@@ -203,18 +203,18 @@ public class FlowBuilder
         return this;
     }
 
-//	/**
-//	 * Add a module name
-//	 *
-//	 * @param moduleName
-//	 * @return
-//	 */
-//	public FlowBuilder withModuleName(String moduleName)
-//	{
-//		this.moduleName = moduleName;
-//		return this;
-//	}
-//
+	/**
+	 * Add a module name
+	 *
+	 * @param moduleName
+	 * @return
+	 */
+	public FlowBuilder withModuleName(String moduleName)
+	{
+		this.moduleName = moduleName;
+		return this;
+	}
+
     /**
      * Add a flow description
      *
