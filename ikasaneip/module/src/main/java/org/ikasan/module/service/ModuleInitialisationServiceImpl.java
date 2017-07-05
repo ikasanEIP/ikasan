@@ -59,10 +59,17 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.FileSystemResource;
 
 import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
@@ -75,7 +82,8 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public class ModuleInitialisationServiceImpl implements ModuleInitialisationService, ApplicationContextAware,
-        InitializingBean, DisposableBean
+        //InitializingBean,
+        DisposableBean
 {
     /** logger instance */
     private final static Logger logger = Logger.getLogger(ModuleInitialisationServiceImpl.class);
@@ -153,6 +161,43 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     public void setLoaderConfiguration(String loaderConfiguration)
     {
         this.loaderConfiguration = loaderConfiguration;
+    }
+
+
+    public void register(Module module)
+    {
+//        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader((BeanDefinitionRegistry)platformContext);
+//        reader.loadBeanDefinitions(new FileSystemResource(xmlConfigFileLocation));
+//
+//        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) this.platformContext;
+//        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(Module.class);
+//        builder.addPropertyValue("flows", module.getFlows());
+//        builder.addPropertyValue("description", module.getDescription());
+//        builder.addPropertyValue("name", module.getName());
+//        registry.registerBeanDefinition(module.getName(), builder.getBeanDefinition());
+
+        this.initialiseModuleSecurity(module);
+        // intialise config into db
+        this.initialiseModuleMetaData(module);
+        this.moduleContainer.add(module);
+        this.moduleActivator.activate(module);
+    }
+
+    public void register(List<Module> modules)
+    {
+        for (Module<Flow> module : modules)
+        {
+            try {
+                this.initialiseModuleSecurity(module);
+                // intialise config into db
+                this.initialiseModuleMetaData(module);
+                this.moduleContainer.add(module);
+                this.moduleActivator.activate(module);
+            } catch (RuntimeException re){
+                logger.error("There was a problem initialising module", re);
+            }
+        }
+
     }
 
     /*
@@ -309,13 +354,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         List<Policy> existingAuthorities = this.securityService.getAllPolicies();
 
-        Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module vai BlueConsole.");
+        Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
         if (!existingAuthorities.contains(readBlueConsole))
         {
             logger.info("Creating ReadBlueConsole policy...");
             this.securityService.savePolicy(readBlueConsole);
         }
-        Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module vai BlueConsole.");
+        Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
 
         if (!existingAuthorities.contains(writeBlueConsole))
         {
