@@ -62,7 +62,7 @@ public class ModuleBuilder
     String version;
 
     /** optional module description */
-	String description;
+	String description = "Unspecified";
 
 	/** flow builders for creating flows within this module */
 	List<Flow> flows = new ArrayList<Flow>();
