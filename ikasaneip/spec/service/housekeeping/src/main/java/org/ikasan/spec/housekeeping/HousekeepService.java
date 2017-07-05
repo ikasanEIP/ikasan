@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.housekeeping;
+package org.ikasan.spec.housekeeping;
 
 /**
  * Interface to serve as the base for all housekeeping activity

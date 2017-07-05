@@ -1,4 +1,4 @@
-package org.ikasan.harvest;
+package org.ikasan.spec.harvest;
 
 import java.util.List;
 

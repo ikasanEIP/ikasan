@@ -45,12 +45,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ikasan.harvest.HarvestService;
+import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.HistoryEventFactory;
 import org.ikasan.history.model.MetricEvent;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;

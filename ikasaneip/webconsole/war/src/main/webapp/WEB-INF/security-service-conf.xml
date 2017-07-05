@@ -199,8 +199,8 @@
 		<aop:pointcut id="moduleServiceServiceMethods"
 			expression="execution(* org.ikasan.module.startup.dao.StartupControlDao.save(..))" />
 		<aop:pointcut id="hospitalServiceMethods"
-			expression="execution(* org.ikasan.hospital.service.HospitalService.resubmit(..)) ||
-						execution(* org.ikasan.hospital.service.HospitalService.ignore(..))" />
+			expression="execution(* HospitalService.resubmit(..)) ||
+						execution(* HospitalService.ignore(..))" />
 		<aop:pointcut id="triggerDaoMethods"
 			expression="execution(* org.ikasan.trigger.dao.TriggerDao.save(..)) ||
 						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..))" />

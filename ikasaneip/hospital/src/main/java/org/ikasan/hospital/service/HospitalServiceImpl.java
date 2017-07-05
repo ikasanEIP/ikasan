@@ -48,6 +48,7 @@ import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.resubmission.ResubmissionService;
