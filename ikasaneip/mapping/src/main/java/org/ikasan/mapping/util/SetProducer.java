@@ -50,7 +50,7 @@ import java.util.Set;
  * @author Ikasan Development Team
  *
  */
-public class SetProducer
+public class SetProducer<TYPE>
 {	
 	/**
 	 * This method takes the parent set and produces a series of unique child subsets
@@ -60,14 +60,14 @@ public class SetProducer
 	 * @param setSize
 	 * @return
 	 */
-	public static List<List<String>> combinations(List<String> parentSet, int setSize) 
+	public List<List<TYPE>> combinations(List<TYPE> parentSet, int setSize)
 	{
 
-	    List<List<String>> allCombos = new ArrayList<List<String>> ();
+	    List<List<TYPE>> allCombos = new ArrayList<List<TYPE>> ();
 	    // base cases for recursion
 	    if (setSize == 0) {
 	        // There is only one combination of size 0, the empty team.
-	        allCombos.add(new ArrayList<String>());
+	        allCombos.add(new ArrayList<TYPE>());
 	        return allCombos;
 	    }
 	    if (setSize > parentSet.size()) {
@@ -77,12 +77,12 @@ public class SetProducer
 	    }
 
 	    // Create a copy of the group with one item removed.
-	    List<String> groupWithoutX = new ArrayList<String> (parentSet);
-	    String x = groupWithoutX.remove(groupWithoutX.size()-1);
+	    List<TYPE> groupWithoutX = new ArrayList<TYPE> (parentSet);
+	    TYPE x = groupWithoutX.remove(groupWithoutX.size()-1);
 
-	    List<List<String>> combosWithoutX = combinations(groupWithoutX, setSize);
-	    List<List<String>> combosWithX = combinations(groupWithoutX, setSize-1);
-	    for (List<String> combo : combosWithX) 
+	    List<List<TYPE>> combosWithoutX = combinations(groupWithoutX, setSize);
+	    List<List<TYPE>> combosWithX = combinations(groupWithoutX, setSize-1);
+	    for (List<TYPE> combo : combosWithX)
 	    {
 	        combo.add(x);
 	    }

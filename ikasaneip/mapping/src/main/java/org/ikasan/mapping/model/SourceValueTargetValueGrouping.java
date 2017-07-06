@@ -3,7 +3,7 @@ package org.ikasan.mapping.model;
 import java.util.Set;
 
 /**
- * Created by stewmi on 25/01/2017.
+ * Created by Ikasan Development Team on 25/01/2017.
  */
 public class SourceValueTargetValueGrouping
 {

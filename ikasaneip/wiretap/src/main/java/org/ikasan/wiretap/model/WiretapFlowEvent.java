@@ -61,6 +61,9 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     /** event created date/time */
     private long eventTimestamp;
 
+    /** has the record been harvested */
+    private boolean harvested;
+
 
     public WiretapFlowEvent()
     {
@@ -105,4 +108,13 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
         this.eventTimestamp = eventTimestamp;
     }
 
+    public boolean isHarvested()
+    {
+        return harvested;
+    }
+
+    public void setHarvested(boolean harvested)
+    {
+        this.harvested = harvested;
+    }
 }

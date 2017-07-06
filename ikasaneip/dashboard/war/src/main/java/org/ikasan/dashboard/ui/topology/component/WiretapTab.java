@@ -392,7 +392,7 @@ public class WiretapTab extends TopologyTab
 				
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
-		vSplitPanel.setHeight("95%");
+		vSplitPanel.setHeight("100%");
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
 		searchLayout.setSpacing(true);
@@ -476,9 +476,7 @@ public class WiretapTab extends TopologyTab
 		filterPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		
 		vSplitPanel.setFirstComponent(filterPanel);
-		
-		GridLayout hErrorTable = new GridLayout();
-		hErrorTable.setWidth("100%");
+
 		
 		GridLayout buttons = new GridLayout(3, 1);
 		buttons.setWidth("80px");
@@ -546,19 +544,29 @@ public class WiretapTab extends TopologyTab
 		
 		GridLayout gl = new GridLayout(2, 1);
 		gl.setWidth("100%");
+		gl.setHeight(30, Unit.PIXELS);
 		
 		searchResultsSizeLayout.setWidth("100%");
+		searchResultsSizeLayout.setHeight(30, Unit.PIXELS);
 		searchResultsSizeLayout.addComponent(this.resultsLabel);
 		searchResultsSizeLayout.setComponentAlignment(this.resultsLabel, Alignment.MIDDLE_LEFT);
 		
 		gl.addComponent(searchResultsSizeLayout);
 		gl.addComponent(hl);
+
+		VerticalSplitPanel vpanel = new VerticalSplitPanel(gl
+				, this.wiretapTable);
+		vpanel.setSplitPosition(30, Unit.PIXELS);
+		vpanel.setLocked(true);
+
+		Panel vpanelContainer = new Panel();
+		vpanelContainer.setStyleName(ValoTheme.PANEL_BORDERLESS);
+		vpanelContainer.setSizeFull();
+		vpanelContainer.setContent(vpanel);
 		
-		hErrorTable.addComponent(gl);
-		hErrorTable.addComponent(this.wiretapTable);
-		
-		vSplitPanel.setSecondComponent(hErrorTable);
+		vSplitPanel.setSecondComponent(vpanelContainer);
 		vSplitPanel.setSplitPosition(350, Unit.PIXELS);
+		vSplitPanel.setMaxSplitPosition(350, Unit.PIXELS);
 		
 		GridLayout wrapper = new GridLayout(1, 2);
 		wrapper.setRowExpandRatio(0, .01f);

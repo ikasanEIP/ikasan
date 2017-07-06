@@ -30,7 +30,7 @@
 
     <bean id="demoExclusionScheduledPublisherFlowElement"    class="org.ikasan.builder.FlowElementFactory">
         <property name="name"               value="Scheduled Publisher"/>
-        <property name="component"          ref="scheduledProducer"/>
+        <property name="component"          ref="scheduledExclusionProducer"/>
     </bean>
     
 </beans>

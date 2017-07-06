@@ -127,7 +127,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     public void save(WiretapEvent wiretapEvent)
     {
-        getHibernateTemplate().save(wiretapEvent);
+        getHibernateTemplate().saveOrUpdate((WiretapFlowEvent)wiretapEvent);
     }
 
     /**
@@ -472,7 +472,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(WiretapEvent.class);
+                Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
                 criteria.add(Restrictions.eq("harvested", false));
                 criteria.setMaxResults(housekeepingBatchSize);
                 criteria.addOrder(Order.asc("timestamp"));

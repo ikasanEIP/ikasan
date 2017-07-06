@@ -40,21 +40,16 @@
  */
 package org.ikasan.builder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.Otherwise;
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.When;
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerRootConfigurationBuilder.Sequence;
+import org.ikasan.builder.conditional.Otherwise;
+import org.ikasan.builder.conditional.When;
+import org.ikasan.builder.sequential.SequenceName;
+import org.ikasan.builder.sequential.SequentialOrder;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -62,6 +57,7 @@ import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
@@ -81,14 +77,22 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple Flow builder.
  * 
  * @author Ikasan Development Team
  */
-@SuppressWarnings(value={"unchecked","javadoc"})
-public class FlowBuilder 
+@Component
+public class FlowBuilder
 {
     /** logger */
     private static Logger logger = Logger.getLogger(FlowBuilder.class);
@@ -103,18 +107,26 @@ public class FlowBuilder
 	String description;
 
 	/** flow event listener */
-	FlowEventListener flowEventListener;
+    @Autowired
+    FlowEventListener flowEventListener;
 
-	/** flow recovery manager instance */
-	RecoveryManager recoveryManager;
+    /** flow recovery manager factory instance */
+    @Autowired
+    RecoveryManagerFactory recoveryManagerFactory;
+
+    /** flow recovery manager instance */
+    RecoveryManager recoveryManager;
 
     /** exception resolver to be registered with recovery manager */
+    @Autowired
     ExceptionResolver exceptionResolver;
 
 	/** configuration service */
-	ConfigurationService configurationService;
+    @Autowired
+    ConfigurationService configurationService;
 
     /** exclusion service factory */
+    @Autowired
     ExclusionServiceFactory exclusionServiceFactory;
 
     /** exclusion service */
@@ -124,13 +136,11 @@ public class FlowBuilder
     ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl();
 
     /** error reporting service */
+
     ErrorReportingService errorReportingService;
 
     /** flow monitor */
     Monitor monitor;
-
-    /** flow element wiriing */
-	FlowConfigurationBuilder flowConfigurationBuilder;
 
 	/** default event factory */
 	EventFactory eventFactory = new FlowEventFactory();
@@ -139,69 +149,90 @@ public class FlowBuilder
     FlowElement<?> exclusionFlowHeadElement;
     
     /** handle to the re-submission service */
+    @Autowired
     ResubmissionService resubmissionService;
     
     /** the serialiser factory */
+    @Autowired
     SerialiserFactory serialiserFactory;
     
     /** the replayRecordService **/
     ReplayRecordService replayRecordService;
 
 	/** List of FlowInvocationListener */
-	List<FlowInvocationContextListener> flowInvocationContextListeners;
+    List<FlowInvocationContextListener> flowInvocationContextListeners;
 
-
-	/**
+    /**
 	 * Constructor
 	 * 
 	 * @param name
 	 */
-	public FlowBuilder(String name, String moduleName) 
+	public FlowBuilder(String name, String moduleName)
 	{
-		this.name = name;
-		if (name == null) 
-		{
-			throw new IllegalArgumentException("Flow name cannot be 'null'");
-		}
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("flow name cannot be 'null'");
+        }
 
+        this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("module name cannot be 'null'");
+        }
+    }
+
+    /**
+     * Default constructor
+     *
+     */
+    public FlowBuilder()
+    {
+    }
+
+    /**
+     * Add a flow name
+     *
+     * @param name
+     * @return
+     */
+    public FlowBuilder withName(String name)
+    {
+        this.name = name;
+        return this;
+    }
+
+	/**
+	 * Add a module name
+	 * 
+	 * @param moduleName
+	 * @return
+	 */
+	public FlowBuilder withModuleName(String moduleName)
+	{
 		this.moduleName = moduleName;
-		if (moduleName == null) 
-		{
-			throw new IllegalArgumentException(
-					"Flow module name cannot be 'null'");
-		}
-	}
-
-	/**
-	 * Get a flow builder
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static FlowBuilder newFlow(String name, String moduleName) 
-	{
-		return new FlowBuilder(name, moduleName);
-	}
-
-	/**
-	 * Add a flow description
-	 * 
-	 * @param description
-	 * @return
-	 */
-	public FlowBuilder withDescription(String description) 
-	{
-		this.description = description;
 		return this;
 	}
 
-	/**
+    /**
+     * Add a flow description
+     *
+     * @param description
+     * @return
+     */
+    public FlowBuilder withDescription(String description)
+    {
+        this.description = description;
+        return this;
+    }
+
+    /**
 	 * Add a flow description
 	 * 
 	 * @param flowEventListener
 	 * @return
 	 */
-	public FlowBuilder withFlowListener(FlowEventListener flowEventListener) 
+	public FlowBuilder withFlowListener(FlowEventListener flowEventListener)
 	{
 		this.flowEventListener = flowEventListener;
 		return this;
@@ -213,7 +244,7 @@ public class FlowBuilder
 	 * @param configurationService
 	 * @return
 	 */
-	public FlowBuilder withConfigurationService(ConfigurationService configurationService) 
+	public FlowBuilder withConfigurationService(ConfigurationService configurationService)
 	{
 		this.configurationService = configurationService;
 		return this;
@@ -222,14 +253,26 @@ public class FlowBuilder
 	/**
 	 * Override the default recovery manager
 	 * 
-	 * @param recoveryManager
+	 * @param recoveryManagerFactory
 	 * @return
 	 */
-	public FlowBuilder withRecoveryManager(RecoveryManager recoveryManager) 
+	public FlowBuilder withRecoveryManagerFactory(RecoveryManagerFactory recoveryManagerFactory)
 	{
-		this.recoveryManager = recoveryManager;
+		this.recoveryManagerFactory = recoveryManagerFactory;
 		return this;
 	}
+
+    /**
+     * Set the error reporting service factory
+     *
+     * @param errorReportingServiceFactory
+     * @return
+     */
+    public FlowBuilder withErrorReportingServiceFactory(ErrorReportingServiceFactory errorReportingServiceFactory)
+    {
+        this.errorReportingServiceFactory = errorReportingServiceFactory;
+        return this;
+    }
 
     /**
      * Override the default exclusion service
@@ -334,7 +377,7 @@ public class FlowBuilder
     /**
 	 * @param replayRecordService the replayRecordService to set
 	 */
-	public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService) 
+	public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService)
 	{
 		this.replayRecordService = replayRecordService;
 		
@@ -356,11 +399,16 @@ public class FlowBuilder
 	 * @param eventFactory
 	 * @return
 	 */
-	public FlowBuilder withEventFactory(EventFactory eventFactory) 
+	public FlowBuilder withEventFactory(EventFactory eventFactory)
 	{
 		this.eventFactory = eventFactory;
 		return this;
 	}
+
+    protected EventFactory getEventFactory()
+    {
+        return this.eventFactory;
+    }
 
 	/**
 	 * Add a consumer
@@ -369,611 +417,352 @@ public class FlowBuilder
 	 * @param consumer
 	 * @return
 	 */
-	public FlowConfigurationBuilder consumer(String name, Consumer consumer) 
-	{
-		return new FlowConfigurationBuilder(this, name, consumer);
-	}
+    public PrimaryRouteBuilder consumer(String name, Consumer consumer)
+    {
+        ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
+        BuilderFactory builderFactory = BuilderFactory.getInstance();
+        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, consumer, invoker) ));
+    }
 
-	/**
-	 * /////////////////////////////////////////////////////////////////////////
-	 * ////////////////////////////////////// Class for wiring the components
-	 * together
-	 * 
-	 * @author Ikasan Development Team
-	 * 
-	 */
-	public class FlowConfigurationBuilder
-	{
-		// keep hold of the flowBuilder isntance
-		FlowBuilder flowBuilder;
-		
-		// flow elements being configured
-		List<FlowElement> flowElements = new ArrayList<>();
+    protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
+    {
+        int count = flowElements.size();
+        FlowElement nextFlowElement = null;
 
-		// last element specified
-		FlowElement lastFlowElement;
-
-        /** allow FE's to have their invoker behaviour configured */
-        Object flowElementInvokerConfiguration;
-
-        /**
-		 * Constructor
-		 * @param flowBuilder
-		 * @param name
-		 * @param consumer
-		 */
-        private FlowConfigurationBuilder(FlowBuilder flowBuilder, String name,
-                Consumer consumer) 
+        while (count > 0)
         {
-            this.flowBuilder = flowBuilder;
-            if(flowBuilder == null)
+            FlowElement flowElement = flowElements.get(--count);
+            if (flowElement.getFlowComponent() instanceof Consumer)
             {
-                throw new IllegalArgumentException("flowBuilder cannot be 'null'");
+                ((Consumer)flowElement.getFlowComponent()).setEventFactory(eventFactory);
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(), nextFlowElement);
             }
-            
-            ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
-            this.flowElements.add(new FlowElementImpl(name, consumer, invoker));
+            else if (flowElement.getFlowComponent() instanceof Router)
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+            }
+            else if (flowElement.getFlowComponent() instanceof MultiRecipientRouter)
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+            }
+            else if (flowElement.getFlowComponent() instanceof SingleRecipientRouter)
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+            }
+            else if (flowElement.getFlowComponent() instanceof Sequencer)
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
+            }
+            else if (flowElement.getFlowComponent() instanceof Producer)
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker());
+            }
+            else
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(),
+                        nextFlowElement);
+            }
         }
 
-		public FlowConfigurationBuilder broker(String name, Broker broker) 
-		{
-			this.flowElements.add(new FlowElementImpl(name, broker, new BrokerFlowElementInvoker()));
-			return this;
-		}
+        return nextFlowElement;
+    }
 
-		public FlowProducerTerminator publisher(String name, Producer producer) 
-		{
-			this.flowElements.add(new FlowElementImpl(name, producer, new ProducerFlowElementInvoker()));
-			return new FlowProducerTerminator();
-		}
+    protected FlowElement connectElements(Route<Flow> route)
+    {
+        List<FlowElement> flowElements = route.getFlowElements();
 
-		public FlowConfigurationBuilder translater(String name, Translator translator) 
-		{
-			this.flowElements.add(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
-			return this;
-		}
-
-        public FlowConfigurationBuilder converter(String name, Converter converter) 
+        if(route.getNestedRoutes().size() > 0)
         {
-            this.flowElements.add(new FlowElementImpl(name, converter, new ConverterFlowElementInvoker()));
+            Map<String,FlowElement> transitions = new LinkedHashMap<>();
+
+            for(Route nestedRoute:route.getNestedRoutes())
+            {
+                FlowElement nestedHead = connectElements(nestedRoute);
+
+
+                if (nestedHead.getFlowComponent() instanceof When)
+                {
+                    transitions.put(((When) nestedHead.getFlowComponent()).getResult(), nestedHead.getTransition(FlowElement.DEFAULT_TRANSITION_NAME));
+                }
+                else if (nestedHead.getFlowComponent() instanceof Otherwise)
+                {
+                    transitions.put(((Otherwise) nestedHead.getFlowComponent()).getResult(), nestedHead.getTransition(FlowElement.DEFAULT_TRANSITION_NAME));
+                }
+                else if (nestedHead.getFlowComponent() instanceof SequenceName)
+                {
+                    transitions.put(((SequenceName) nestedHead.getFlowComponent()).getName(), nestedHead.getTransition(FlowElement.DEFAULT_TRANSITION_NAME));
+                }
+                else
+                {
+                    throw new IllegalStateException("Unsupported FlowElement encountered in the builder [" + nestedHead.getFlowComponent().getClass() + "]");
+                }
+            }
+
+            return connectElements(flowElements, transitions);
+        }
+
+        return connectElements(flowElements, null); // TODO - better way of managing this?
+    }
+
+    protected Flow _build(Route<Flow> _route)
+    {
+        FlowElement headFlowElement = connectElements(_route);
+
+        if (configurationService == null)
+        {
+            configurationService = ConfiguredResourceConfigurationService
+                    .getDefaultConfigurationService();
+        }
+
+        // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
+        if(resubmissionService == null && headFlowElement instanceof ResubmissionService)
+        {
+            resubmissionService = (ResubmissionService)headFlowElement;
+        }
+
+        if (exclusionService == null)
+        {
+            if(exclusionServiceFactory == null)
+            {
+                throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
+            }
+
+            exclusionService = exclusionServiceFactory.getExclusionService(moduleName, name);
+        }
+
+        if (errorReportingService == null)
+        {
+            errorReportingService = errorReportingServiceFactory.getErrorReportingService();
+        }
+
+        if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
+        {
+            ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
+            ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
+        }
+
+        if (recoveryManager == null)
+        {
+            recoveryManager = this.recoveryManagerFactory.getInstance()
+                    .getRecoveryManager(
+                            name,
+                            moduleName,
+                            ((FlowElement<Consumer>) headFlowElement).getFlowComponent(),
+                            exclusionService, errorReportingService);
+        }
+
+        if(exceptionResolver != null)
+        {
+            recoveryManager.setResolver(exceptionResolver);
+        }
+
+        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(headFlowElement, configurationService, resubmissionService, replayRecordService);
+
+        ExclusionFlowConfiguration exclusionFlowConfiguration = null;
+        if(exclusionFlowHeadElement != null)
+        {
+            exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService, replayRecordService);
+        }
+
+        if(name == null)
+        {
+            throw new IllegalArgumentException("flow name cannot be 'null'");
+        }
+
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("module name cannot be 'null'");
+        }
+
+        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
+        flow.setFlowListener(flowEventListener);
+
+        // pass handle to the error reporting service if flow needs to be aware of this
+        if(flow instanceof IsErrorReportingServiceAware)
+        {
+            ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
+        }
+
+        if(monitor != null && flow instanceof MonitorSubject)
+        {
+            if(monitor.getEnvironment() == null)
+            {
+                monitor.setEnvironment("Undefined Environment");
+            }
+
+            if(monitor.getModuleName() == null)
+            {
+                monitor.setModuleName(moduleName);
+            }
+
+            if(monitor.getFlowName() == null)
+            {
+                monitor.setFlowName(name);
+            }
+
+            ((MonitorSubject)flow).setMonitor(monitor);
+        }
+
+        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
+
+        logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
+                + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
+                + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
+                + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
+                + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
+                + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
+                + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
+                + "]");
+
+        return flow;
+
+    }
+
+    public class PrimaryRouteBuilder {
+        Route<Flow> route;
+
+        public PrimaryRouteBuilder(Route route) {
+            this.route = route;
+            if (route == null) {
+                throw new IllegalArgumentException("route cannot be 'null'");
+            }
+        }
+
+        public PrimaryRouteBuilder converter(String name, Converter converter) {
+            this.route.addFlowElement(new FlowElementImpl(name, converter, new ConverterFlowElementInvoker()));
             return this;
         }
 
-		public SequencerRootConfigurationBuilder sequencer(String name, Sequencer sequencer) 
-		{
-			this.flowElements.add(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
-			return new SequencerRootConfigurationBuilder(this);
-		}
-
-		public RouterRootConfigurationBuilder router(String name, Router router) 
-		{
-            if(flowElementInvokerConfiguration == null)
-            {
-                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-            }
-            else
-            {
-                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                {
-                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                }
-            }
-
-            this.flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker( DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
-			return new RouterRootConfigurationBuilder(this);
-		}
-
-        public RouterRootConfigurationBuilder singleRecipientRouter(String name, SingleRecipientRouter router)
-        {
-            this.flowElements.add(new FlowElementImpl(name, router, new SingleRecipientRouterFlowElementInvoker()));
-            return new RouterRootConfigurationBuilder(this);
+        public PrimaryRouteBuilder translator(String name, Translator translator) {
+            this.route.addFlowElement(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
+            return this;
         }
 
-        public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
-        {
-            if(flowElementInvokerConfiguration == null)
-            {
-                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-            }
-            else
-            {
-                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                {
-                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                }
-            }
-
-            this.flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker( DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
-            return new RouterRootConfigurationBuilder(this);
+        public PrimaryRouteBuilder filter(String name, Filter filter) {
+            this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
+            return this;
         }
 
-        /**
-		 * /////////////////////////////////////////////////////////////////////
-		 * /////////////////////////////////////////////////// Sequencer wiring
-		 * 
-		 * @author Ikasan Development Team
-		 * 
-		 */
-		public class SequencerRootConfigurationBuilder 
-		{
-			// keep a handle on the flowConfigurationBuilder
-			FlowConfigurationBuilder flowConfigurationBuilder;
+        public Sequence<Flow> sequencer(String name, Sequencer sequencer) {
+            this.route.addFlowElement(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
+            return new PrimarySequenceImpl(route);
+        }
 
-			/**
-			 * Constructor
-			 * @param flowConfigurationBuilder
-			 */
-			public SequencerRootConfigurationBuilder(FlowConfigurationBuilder flowConfigurationBuilder) 
-			{
-				this.flowConfigurationBuilder = flowConfigurationBuilder;
-			}
+        public PrimaryRouteBuilder broker(String name, Broker broker) {
+            this.route.addFlowElement(new FlowElementImpl(name, broker, new BrokerFlowElementInvoker()));
+            return this;
+        }
 
-			public SequencerConfigurationBuilder sequence(String sequenceName) 
-			{
-				flowElements.add(new FlowElementImpl(sequenceName, new Sequence(), null));
-				return new SequencerConfigurationBuilder(this, flowConfigurationBuilder);
-			}
+        public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter) {
+            this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouter, new SingleRecipientRouterFlowElementInvoker()));
+            return new PrimaryEvaluationImpl(route);
+        }
 
-			public SequencerConfigurationBuilder sequence() 
-			{
-				flowElements.add(new FlowElementImpl("sequence-"  + flowElements.size(), new Sequence(), null));
-                return new SequencerConfigurationBuilder(this, flowConfigurationBuilder);
-			}
+        public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
+            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker()));
+            return new PrimaryEvaluationImpl(route);
+        }
 
-			public class Sequence 
-			{
-			}
-		}
+        public Endpoint<Flow> producer(String name, Producer producer) {
+            this.route.addFlowElement(new FlowElementImpl(name, producer, new ProducerFlowElementInvoker()));
+            return new EndpointImpl();
+        }
 
-        /**
-         * /////////////////////////////////////////////////////////////////////
-         * /////////////////////////////////////////////////// Sequencer wiring
-         * 
-         * @author Ikasan Development Team
-         * 
-         */
-        public class SequencerConfigurationBuilder
+        class EndpointImpl implements Endpoint<Flow>
         {
-            SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder;
-            
-            // keep a handle on the flowConfigurationBuilder
-            FlowConfigurationBuilder flowConfigurationBuilder;
-
-            /**
-             * Constructor
-             * @param flowConfigurationBuilder
-             */
-            public SequencerConfigurationBuilder(SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder, FlowConfigurationBuilder flowConfigurationBuilder) 
+            public Flow build()
             {
-                this.sequencerRootConfigurationBuilder = sequencerRootConfigurationBuilder;
-                this.flowConfigurationBuilder = flowConfigurationBuilder;
+                return _build(route);
             }
+        }
+    }
 
-            public SequencerProducerTerminator publisher(String name, Producer producer) 
+    public class PrimaryEvaluationImpl implements Evaluation<Flow>
+    {
+        Route route;
+
+        public PrimaryEvaluationImpl(Route route)
+        {
+            this.route = route;
+            if(route == null)
             {
-                flowElements.add(new FlowElementImpl(name, producer, new ProducerFlowElementInvoker()));
-                return new SequencerProducerTerminator(sequencerRootConfigurationBuilder);
-            }
-
-            public SequencerConfigurationBuilder broker(String name, Broker broker) 
-            {
-                flowElements.add(new FlowElementImpl(name, broker, new BrokerFlowElementInvoker()));
-                return this;
-            }
-
-            public SequencerConfigurationBuilder translater(String name, Translator translator) 
-            {
-                flowElements.add(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
-                return this;
-            }
-
-            public SequencerConfigurationBuilder converter(String name, Converter converter) 
-            {
-                flowElements.add(new FlowElementImpl(name, converter, new ConverterFlowElementInvoker()));
-                return this;
-            }
-
-            public SequencerConfigurationBuilder sequencer(String name, Sequencer sequencer) 
-            {
-                flowElements.add(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
-                return this;
-            }
-
-            public RouterRootConfigurationBuilder router(String name, Router router) 
-            {
-                if(flowElementInvokerConfiguration == null)
-                {
-                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-                }
-                else
-                {
-                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                    {
-                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                    }
-                }
-
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
-                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
-            }
-
-            public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
-            {
-                if(flowElementInvokerConfiguration == null)
-                {
-                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-                }
-                else
-                {
-                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                    {
-                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                    }
-                }
-
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
-                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
-            }
-
-            public RouterRootConfigurationBuilder singleRecipientRouter(String name, SingleRecipientRouter router)
-            {
-                flowElements.add(new FlowElementImpl(name, router, new SingleRecipientRouterFlowElementInvoker()));
-                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
+                throw new IllegalArgumentException("route cannot be 'null'");
             }
         }
 
-		/**
-		 * /////////////////////////////////////////////////////////////////////
-		 * /////////////////////////////////////////////////// router wiring
-		 * 
-		 * @author Ikasan Development Team
-		 * 
-		 */
-		public class RouterRootConfigurationBuilder 
-		{
-			// keep a handle on the flowConfigurationBuilder
-			FlowConfigurationBuilder flowConfigurationBuilder;
-
-			FlowElement routerFlowElement;
-
-			public RouterRootConfigurationBuilder(FlowConfigurationBuilder flowConfigurationBuilder) 
-			{
-				this.flowConfigurationBuilder = flowConfigurationBuilder;
-			}
-
-			public RouterConfigurationBuilder when(String value) 
-			{
-				flowElements.add(new FlowElementImpl("when", new When(value), null));
-				return new RouterConfigurationBuilder(this, flowConfigurationBuilder);
-			}
-
-			public FlowConfigurationBuilder otherise() 
-			{
-				flowElements.add(new FlowElementImpl("otherwise", new Otherwise(), null));
-                return flowConfigurationBuilder;
-			}
-
-			public class When 
-			{
-				String result;
-
-				public When(String result) 
-				{
-					this.result = result;
-				}
-
-				public String getResult() 
-				{
-					return this.result;
-				}
-			}
-
-			public class Otherwise 
-			{
-				String result = Router.DEFAULT_RESULT;
-
-				public String getResult() 
-				{
-					return this.result;
-				}
-			}
-		}
-
-        public class RouterConfigurationBuilder 
+        public Evaluation<Flow> when(String name, Route evaluatedRoute)
         {
-            RouterRootConfigurationBuilder routerRootConfigurationBuilder;
-            
-            // keep a handle on the flowConfigurationBuilder
-            FlowConfigurationBuilder flowConfigurationBuilder;
+            List<FlowElement> fes = evaluatedRoute.getFlowElements();
+            fes.add(0, new FlowElementImpl(this.getClass().getName(), new When(name), null));
+            this.route.addNestedRoute(evaluatedRoute);
+            return new PrimaryEvaluationImpl(route);
+        }
 
-            FlowElement routerFlowElement;
+        public Evaluation<Flow> otherwise(Route evaluatedRoute)
+        {
+            List<FlowElement> fes = evaluatedRoute.getFlowElements();
+            fes.add(0, new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
+            this.route.addNestedRoute(evaluatedRoute);
+            return new PrimaryEvaluationImpl(route);
+        }
 
-            public RouterConfigurationBuilder(RouterRootConfigurationBuilder routerRootConfigurationBuilder, FlowConfigurationBuilder flowConfigurationBuilder) 
+        public Flow build()
+        {
+            return _build(route);
+        }
+
+    }
+
+    public class PrimarySequenceImpl implements Sequence<Flow>
+    {
+        Route route;
+
+        public PrimarySequenceImpl(Route route)
+        {
+            this.route = route;
+            if(route == null)
             {
-                this.routerRootConfigurationBuilder = routerRootConfigurationBuilder;
-                this.flowConfigurationBuilder = flowConfigurationBuilder;
-            }
-
-            public RouterRootConfigurationBuilder publisher(String name, Producer producer) 
-            {
-                flowElements.add(new FlowElementImpl(name, producer, new ProducerFlowElementInvoker()));
-                return this.routerRootConfigurationBuilder;
-            }
-
-            public RouterConfigurationBuilder broker(String name, Broker broker) 
-            {
-                flowElements.add(new FlowElementImpl(name, broker, new BrokerFlowElementInvoker()));
-                return this;
-            }
-
-            public RouterConfigurationBuilder translater(String name, Translator translator) 
-            {
-                flowElements.add(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
-                return this;
-            }
-
-            public RouterConfigurationBuilder converter(String name, Converter converter) 
-            {
-                flowElements.add(new FlowElementImpl(name, converter, new ConverterFlowElementInvoker()));
-                return this;
-            }
-
-            public SequencerRootConfigurationBuilder sequencer(String name, Sequencer sequencer)
-            {
-                flowElements.add(new FlowElementImpl(name, sequencer, new SequencerFlowElementInvoker()));
-                return new SequencerRootConfigurationBuilder(flowConfigurationBuilder);
-            }
-
-            public RouterRootConfigurationBuilder router(String name, Router router) 
-            {
-                if(flowElementInvokerConfiguration == null)
-                {
-                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-                }
-                else
-                {
-                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                    {
-                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                    }
-                }
-
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration)));
-                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
-            }
-
-            public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
-            {
-                if(flowElementInvokerConfiguration == null)
-                {
-                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-                }
-                else
-                {
-                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                    {
-                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                    }
-                }
-
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration)));
-                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
-            }
-
-            public RouterRootConfigurationBuilder singleRecipientRouter(String name, SingleRecipientRouter router)
-            {
-                flowElements.add(new FlowElementImpl(name, router, new SingleRecipientRouterFlowElementInvoker()));
-                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
+                throw new IllegalArgumentException("route cannot be 'null'");
             }
         }
 
-		public class FlowProducerTerminator 
-		{
+        public Sequence<Flow> route(String name, Route sequencedRoute)
+        {
+            List<FlowElement> fes = sequencedRoute.getFlowElements();
+            fes.add(0, new FlowElementImpl(this.getClass().getName(), SequentialOrder.to(name), null));
+            this.route.addNestedRoute(sequencedRoute);
+            return new PrimarySequenceImpl(route);
+        }
 
-			public Flow build() 
-			{
-				int count = flowElements.size();
-				FlowElement nextFlowElement = null;
-				Map<String, FlowElement> transitions = new HashMap<>();
+        public Flow build()
+        {
+            return _build(route);
+        }
+    }
 
-				while (count > 0) 
-				{
-					FlowElement flowElement = flowElements.get(--count);
-					if (flowElement.getFlowComponent() instanceof Consumer) 
-					{
-						((Consumer)flowElement.getFlowComponent()).setEventFactory(eventFactory);
-						nextFlowElement = new FlowElementImpl(
-								flowElement.getComponentName(),
-								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), nextFlowElement);
-					}
-					else if (flowElement.getFlowComponent() instanceof When)
-					{
-						transitions.put(((When) flowElement.getFlowComponent())
-								.getResult(), nextFlowElement);
-					} 
-					else if (flowElement.getFlowComponent() instanceof Sequence) 
-					{
-						transitions.put(flowElement.getComponentName(), nextFlowElement);
-					} 
-					else if (flowElement.getFlowComponent() instanceof Otherwise) 
-					{
-						transitions.put(((Otherwise) flowElement
-								.getFlowComponent()).getResult(),
-								nextFlowElement);
-					}
-					else if (flowElement.getFlowComponent() instanceof Router) 
-					{
-						nextFlowElement = new FlowElementImpl(
-								flowElement.getComponentName(),
-								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
-						transitions.clear();
-					}
-                    else if (flowElement.getFlowComponent() instanceof MultiRecipientRouter)
-                    {
-                        nextFlowElement = new FlowElementImpl(
-                                flowElement.getComponentName(),
-                                flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
-                        transitions.clear();
-                    }
-                    else if (flowElement.getFlowComponent() instanceof SingleRecipientRouter)
-                    {
-                        nextFlowElement = new FlowElementImpl(
-                                flowElement.getComponentName(),
-                                flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
-                        transitions.clear();
-                    }
-                    else if (flowElement.getFlowComponent() instanceof Sequencer)
-					{
-						nextFlowElement = new FlowElementImpl(
-								flowElement.getComponentName(),
-								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(), new HashMap<>(transitions) );
-						transitions.clear();
-					}
-					else if (flowElement.getFlowComponent() instanceof Producer) 
-					{
-						nextFlowElement = new FlowElementImpl(
-								flowElement.getComponentName(),
-								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker());
-					}
-					else 
-					{
-						nextFlowElement = new FlowElementImpl(
-								flowElement.getComponentName(),
-								flowElement.getFlowComponent(),
-                                flowElement.getFlowElementInvoker(),
-                                nextFlowElement);
-					}
-				}
-
-				if (configurationService == null) 
-				{
-					configurationService = ConfiguredResourceConfigurationService
-							.getDefaultConfigurationService();
-				}
-
-                // if resubmissionService not specifically set then check to see if consumer supports ResubmissionService, if so then set it
-                if(resubmissionService == null && nextFlowElement instanceof ResubmissionService)
-                {
-                    resubmissionService = (ResubmissionService)nextFlowElement;
-                }
-
-                if (exclusionService == null)
-                {
-                    if(exclusionServiceFactory == null)
-                    {
-                        throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
-                    }
-
-                    exclusionService = exclusionServiceFactory.getExclusionService(moduleName, name);
-                }
-
-                if (errorReportingService == null)
-                {
-                    errorReportingService = errorReportingServiceFactory.getErrorReportingService();
-                }
-
-                if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
-                {
-                    ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
-                    ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
-                }
-
-                if (recoveryManager == null)
-				{
-					recoveryManager = RecoveryManagerFactory.getInstance()
-							.getRecoveryManager(
-									name,
-									moduleName,
-									((FlowElement<Consumer>) nextFlowElement).getFlowComponent(),
-                                    exclusionService, errorReportingService);
-				}
-
-                if(exceptionResolver != null)
-                {
-                    recoveryManager.setResolver(exceptionResolver);
-                }
-
-                FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService, resubmissionService, replayRecordService);
-
-                ExclusionFlowConfiguration exclusionFlowConfiguration = null;
-                if(exclusionFlowHeadElement != null)
-                {
-                    exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService, resubmissionService, replayRecordService);
-                }
-
-                Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
-                flow.setFlowListener(flowEventListener);
-
-                // pass handle to the error reporting service if flow needs to be aware of this
-                if(flow instanceof IsErrorReportingServiceAware)
-                {
-                    ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
-                }
-
-                if(monitor != null && flow instanceof MonitorSubject)
-                {
-                    if(monitor.getEnvironment() == null)
-                    {
-                        monitor.setEnvironment("Undefined Environment");
-                    }
-
-                    if(monitor.getModuleName() == null)
-                    {
-                        monitor.setModuleName(moduleName);
-                    }
-                    
-                    if(monitor.getFlowName() == null)
-                    {
-                        monitor.setFlowName(name);
-                    }
-
-                    ((MonitorSubject)flow).setMonitor(monitor);
-                }
-
-                flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
-
-                logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
-                        + "] with ResubmissionService[" + ((resubmissionService != null) ? resubmissionService.getClass().getSimpleName() : "none")
-                        + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
-                        + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
-                        + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
-                        + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
-                        + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
-                        + "]");
-
-                return flow;
-			}
-		}
-
-		public class SequencerProducerTerminator extends FlowProducerTerminator
-		{
-		    SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder;
-			
-			public SequencerProducerTerminator(SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder)
-			{
-				this.sequencerRootConfigurationBuilder = sequencerRootConfigurationBuilder;
-			}
-			
-			public Flow build()
-			{
-				return super.build();
-			}
-			
-			public SequencerConfigurationBuilder sequence()
-			{
-				return this.sequencerRootConfigurationBuilder.sequence();
-			}
-
-			public SequencerConfigurationBuilder sequence(String sequenceName)
-			{
-				return this.sequencerRootConfigurationBuilder.sequence(sequenceName);
-			}
-		}
-	}
 }
+
+
+
+

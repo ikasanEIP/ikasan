@@ -41,9 +41,11 @@
 package org.ikasan.wiretap.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ikasan.harvest.HarvestService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.module.ModuleService;
@@ -59,7 +61,8 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean, HousekeepService
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
+        , InitializingBean, HousekeepService, HarvestService<WiretapEvent>
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
@@ -239,5 +242,23 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         wiretapDao.deleteAllExpired();
         long endTime = System.currentTimeMillis();
         logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
+    }
+
+    @Override
+    public List<WiretapEvent> harvest(int transactionBatchSize)
+    {
+        return this.wiretapDao.getHarvestableRecords(transactionBatchSize);
+    }
+
+    @Override
+    public boolean harvestableRecordsExist()
+    {
+        return true;
+    }
+
+    @Override
+    public void save(WiretapEvent event)
+    {
+        this.wiretapDao.save(event);
     }
 }

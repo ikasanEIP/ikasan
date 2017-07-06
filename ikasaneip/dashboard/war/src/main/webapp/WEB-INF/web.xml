@@ -30,6 +30,8 @@
         			 /WEB-INF/monitor-context.xml,
         			 /WEB-INF/notification-context.xml,
                      /WEB-INF/housekeeping-context.xml,
+                     /WEB-INF/discovery-context.xml,
+                     /WEB-INF/solr-harvesting-context.xml,
         			 classpath:platform-service-conf.xml, 
         			 classpath:serialiser-service-conf.xml, 
         			 classpath:systemevent-service-conf.xml, 

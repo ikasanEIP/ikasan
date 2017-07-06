@@ -42,7 +42,27 @@ public class SolrWiretapDao implements WiretapDao
     @Override
     public void save(WiretapEvent wiretapEvent)
     {
+        CloudSolrClient solr = new CloudSolrClient.Builder().withSolrUrl("http://adl-cmi20:8983/solr").build();
+        solr.setDefaultCollection("ikasan");
 
+        SolrInputDocument document = new SolrInputDocument();
+        document.addField("id", "" + wiretapEvent.getIdentifier());
+        document.addField("type", "wiretap");
+        document.addField("moduleName", wiretapEvent.getModuleName());
+        document.addField("flowName", wiretapEvent.getFlowName());
+        document.addField("event", (String)wiretapEvent.getComponentName());
+        document.addField("payload", wiretapEvent.getEvent());
+        document.addField("timestamp", wiretapEvent.getTimestamp());
+
+        try
+        {
+            UpdateResponse response = solr.add(document);
+            solr.commit();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An exception has occurred attempting to wrie a wiretap to Solr", e);
+        }
     }
 
     @Override
@@ -381,5 +401,11 @@ public class SolrWiretapDao implements WiretapDao
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public List<WiretapEvent> getHarvestableRecords(int housekeepingBatchSize)
+    {
+        return null;
     }
 }

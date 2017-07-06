@@ -72,7 +72,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Ikasan Development Team
  */
 @SuppressWarnings(value={"unchecked", "javadoc"})
-public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware, ConfiguredResource<FlowPersistentConfiguration>
+public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware, ConfiguredResource<FlowPersistentConfiguration>
 {
 	/** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
@@ -112,7 +112,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     private Monitor monitor;
 
     /** stateful recovery manager implementation */
-    private RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager;
+    private RecoveryManager<FlowEvent<?,?>, FlowInvocationContext, ID> recoveryManager;
     
     /** startup failure flag */
     private boolean flowInitialisationFailure = false;
@@ -166,7 +166,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext, ID> recoveryManager,
                                ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this(name, moduleName, flowConfiguration, null, recoveryManager, exclusionService, serialiserFactory);
@@ -182,7 +182,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
-                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>, FlowInvocationContext, ID> recoveryManager,
                                ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this.name = name;
@@ -449,7 +449,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             // stop any active recovery
             if(this.recoveryManager.isRecovering())
             {
-                this.recoveryManager.cancel();
+                this.recoveryManager.cancelAll();
             }
 
             // stop consumer and remove the listener
@@ -701,10 +701,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             this.consumerPaused = false;
 
             // stop any active recovery
-            if(this.recoveryManager.isRecovering())
-            {
-                this.recoveryManager.cancel();
-            }
+            this.recoveryManager.cancelAll();
 
             // stop consumer and remove the listener
             Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
@@ -735,7 +732,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         flowInvocationContext.startFlowInvocation();
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
-        Object originalEventLifeIdentifier = event.getIdentifier();
+        ID originalEventLifeIdentifier = (ID)event.getIdentifier();
 
         try
         {
@@ -766,7 +763,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 updateDynamicConfiguredResources();
                 if(this.recoveryManager.isRecovering())
                 {
-                    this.recoveryManager.cancel();
+                    this.recoveryManager.cancel(originalEventLifeIdentifier); // we successfully executed for THIS identifier only
                 }
             }
             flowInvocationContext.endFlowInvocation();
@@ -800,14 +797,14 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             updateDynamicConfiguredResources();
             if(this.recoveryManager.isRecovering())
             {
-                this.recoveryManager.cancel();
+                this.recoveryManager.cancel((ID)event.getEvent().getIdentifier());
             }
             flowInvocationContext.endFlowInvocation();
         }
         catch(Throwable throwable)
         {
             flowInvocationContext.endFlowInvocation();
-            this.recoveryManager.recover(flowInvocationContext, throwable, event.getEvent(), event.getEvent().getIdentifier());
+            this.recoveryManager.recover(flowInvocationContext, throwable, event.getEvent(), (ID)event.getEvent().getIdentifier());
         }
         finally
         {
@@ -1122,13 +1119,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             /*
              * (non-Javadoc)
-             * @see org.ikasan.spec.management.ManagedResourceRecoveryManager#cancel()
+             * @see org.ikasan.spec.management.ManagedResourceRecoveryManager#cancelAll()
              */
             public void cancel()
             {
                 try
                 {
-                    recoveryManager.cancel();
+                    recoveryManager.cancelAll();
                 }
                 finally
                 {

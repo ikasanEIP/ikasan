@@ -40,8 +40,7 @@
  */
 package org.ikasan.testharness.flow;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -58,7 +57,7 @@ public class CaptureTest
     @Test
     public void test_captureWithStrongTyping() 
     {
-        Capture<String> capture = new Capture<String>("test string");
+        Capture<String> capture = new Capture<>("test string");
         String result = capture.getActual();
         Assert.assertEquals("test string", result);
     }
@@ -82,7 +81,7 @@ public class CaptureTest
     @Test(expected = ClassCastException.class)
     public void test_captureWithFailedTyping() 
     {
-        Capture captureString = new Capture(new Integer(10));
+        Capture captureString = new Capture(10);
         @SuppressWarnings("unused")
         String result = (String) captureString.getActual();
     }

@@ -47,7 +47,9 @@ import org.ikasan.testharness.flow.expectation.model.RouterComponent;
 import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 
 /**
@@ -58,15 +60,16 @@ import org.junit.Test;
  */
 public class FlowElementComparatorTest
 {
-    Mockery mockery = new Mockery()
+    private Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
     
     /** mocked actual flow element */
-    final FlowElement flowElement = mockery.mock(FlowElement.class, "Mock Actual Flow Element");
+    private final FlowElement flowElement = mockery.mock(FlowElement.class, "Mock Actual Flow Element");
     
     /**
      * Sanity test the default FlowElementComparator for an expected and actual 
@@ -102,7 +105,7 @@ public class FlowElementComparatorTest
      * Sanity test the default FlowElementComparator for an expected and actual 
      * component that have different names.
      */
-    @Test(expected = junit.framework.ComparisonFailure.class)
+    @Test(expected = ComparisonFailure.class)
     public void test_failedFlowElementComparatorDueToDifferentNames() 
     {
         final TranslatorComponent translatorComponent = 
@@ -128,7 +131,7 @@ public class FlowElementComparatorTest
      * Sanity test the default FlowElementComparator for an expected and actual 
      * component that have different component types.
      */
-    @Test(expected = junit.framework.AssertionFailedError.class)
+    @Test(expected = AssertionError.class)
     public void test_failedFlowElementComparatorDueToDifferentComponentTypes() 
     {
         final RouterComponent routerComponent = new RouterComponent("name");

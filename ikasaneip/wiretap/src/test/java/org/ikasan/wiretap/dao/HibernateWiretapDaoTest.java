@@ -42,8 +42,10 @@ package org.ikasan.wiretap.dao;
 
 import javax.annotation.Resource;
 
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +54,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 
 
 /**
@@ -87,10 +90,26 @@ public class HibernateWiretapDaoTest
 
 	}
 
-	/**
-	 * Putting an instance of StateModel into the StateModel store
-	 *
-	 */
+	@Test
+	@DirtiesContext
+	public void test_get_harvestableRecords()
+	{
+		List<WiretapEvent> events = wiretapDao.getHarvestableRecords(50);
+
+		Assert.assertEquals("Wiretap events should equal!", events.size(), 50);
+
+		for(WiretapEvent flowEvent: events)
+		{
+			((WiretapFlowEvent)flowEvent).setHarvested(true);
+
+			wiretapDao.save(flowEvent);
+		}
+
+		events = wiretapDao.getHarvestableRecords(10000);
+
+		Assert.assertEquals("Wiretap events should equal!", events.size(), 9950);
+	}
+
 	@Test
 	@DirtiesContext
 	public void test_success_no_results_sybase()

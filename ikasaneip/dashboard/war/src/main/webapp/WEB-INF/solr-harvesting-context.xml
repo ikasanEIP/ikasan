@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security 
+        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+
+	<bean id="harvestPanel" class="org.ikasan.dashboard.ui.harvesting.panel.HarvestingPanel" scope="session">
+        <constructor-arg ref="scheduler" />
+        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="harvestingJobs" />
+        <constructor-arg ref="harvestSchedulerService" />
+    </bean>
+
+    <bean id="harvestSchedulerService" class="org.ikasan.dashboard.harvesting.HarvestingSchedulerService">
+        <constructor-arg ref="scheduler" />
+        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="harvestingJobs" />
+    </bean>
+
+    <util:list id="harvestingJobs">
+        <ref bean="wiretapHarvestingJob" />
+    </util:list>
+
+    <bean id="wiretapHarvestingJob" class="org.ikasan.dashboard.harvesting.WiretapSolrHarvestingJob">
+        <constructor-arg value="wiretapHarvestingJob" />
+        <constructor-arg ref="wiretapService" />
+        <constructor-arg ref="platformConfigurationService" />
+        <constructor-arg ref="solrWiretapService" />
+        <constructor-arg ref="wiretapService" />
+    </bean>
+
+</beans>

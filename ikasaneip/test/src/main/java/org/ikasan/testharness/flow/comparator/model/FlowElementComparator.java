@@ -44,7 +44,7 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.expectation.model.AbstractComponent;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 
 /**

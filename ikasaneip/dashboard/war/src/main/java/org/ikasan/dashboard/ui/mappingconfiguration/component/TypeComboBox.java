@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.group.Refreshable;
 import org.ikasan.mapping.model.ConfigurationType;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
@@ -58,7 +58,7 @@ public class TypeComboBox extends ComboBox implements Refreshable, FocusListener
 {
     private static final long serialVersionUID = -2305511116954830348L;
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private String clientName = null;
 
     /**
@@ -66,7 +66,7 @@ public class TypeComboBox extends ComboBox implements Refreshable, FocusListener
      * 
      * @param mappingConfigurationService
      */
-    public TypeComboBox(MappingConfigurationService mappingConfigurationService)
+    public TypeComboBox(MappingManagementService mappingConfigurationService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.init();
@@ -79,7 +79,6 @@ public class TypeComboBox extends ComboBox implements Refreshable, FocusListener
     protected void init()
     {
         this.setWidth(140, Unit.PIXELS);
-//        loadClientTypeValues();
     }
 
     /**

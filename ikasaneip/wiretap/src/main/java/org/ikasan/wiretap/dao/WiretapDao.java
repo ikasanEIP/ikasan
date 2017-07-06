@@ -41,6 +41,7 @@
 package org.ikasan.wiretap.dao;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.ikasan.spec.search.PagedSearchResult;
@@ -116,23 +117,67 @@ public interface WiretapDao
      */
     public void deleteAllExpired();
 
+    /**
+     * Get flag to indicate if housekeeping is in batch mode.
+     *
+     * @return
+     */
     public boolean isBatchHousekeepDelete();
 
+    /**
+     * Set flag to indicate if housekeeping is in batch mode.
+     *
+     * @param batchHousekeepDelete
+     */
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
 
+    /**
+     * Get the batch size for housekeeping.
+     *
+     * @return
+     */
     public Integer getHousekeepingBatchSize();
 
+    /**
+     * Set the batch size for housekeeping.
+     *
+     * @param housekeepingBatchSize
+     */
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
 
+    /**
+     * Get the transaction bactch size used for housekeeping.
+     *
+     * @return
+     */
     public Integer getTransactionBatchSize();
 
+    /**
+     * Set the transaction bactch size used for housekeeping.
+     *
+     * @param transactionBatchSize
+     */
     public void setTransactionBatchSize(Integer transactionBatchSize);
 
     /**
      * Method to state that there are housekeepable records available.
+     *
      * @return
      */
     public boolean housekeepablesExist();
 
+    /**
+     * Get a List of harvestable wiretaps.
+     *
+     * @param housekeepingBatchSize
+     * @return
+     */
+    public List<WiretapEvent> getHarvestableRecords(final int housekeepingBatchSize);
+
+    /**
+     * Set the housekeeping query.
+     *
+     * @param housekeepQuery
+     */
     void setHousekeepQuery(String housekeepQuery);
 }

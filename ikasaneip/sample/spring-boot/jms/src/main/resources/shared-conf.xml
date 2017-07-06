@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+    <!-- module name -->
+    <bean id="moduleName" class="java.lang.String">
+        <constructor-arg value="jms-spring-boot" />
+    </bean>
+
+
+    <bean id="replayManagementService" class="org.ikasan.replay.service.ReplayManagementServiceImpl">
+        <constructor-arg ref="replayDao" />
+    </bean>
+
+    <bean id="replayService" class="org.ikasan.replay.service.ReplayServiceImpl">
+        <constructor-arg ref="replayDao" />
+    </bean>
+
+    <bean id="replayRecordService" class="org.ikasan.replay.service.ReplayRecordServiceImpl">
+        <constructor-arg ref="replayDao" />
+        <constructor-arg ref="ikasanSerialiserFactory" />
+    </bean>
+
+    <bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">
+        <property name="sessionFactory" ref="replaySessionFactory" />
+    </bean>
+
+    <bean id="replaySessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>/org/ikasan/replay/model/ReplayEvent.hbm.xml</value>
+                <value>/org/ikasan/replay/model/ReplayAudit.hbm.xml</value>
+                <value>/org/ikasan/replay/model/ReplayAuditEvent.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties" />
+    </bean>
+</beans>

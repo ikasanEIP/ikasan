@@ -73,5 +73,36 @@
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
+
+    <bean id="messageHistoryService" class="org.ikasan.history.service.MessageHistoryServiceImpl">
+        <constructor-arg index="0" ref="messageHistoryDao"/>
+        <constructor-arg>
+            <bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+                <constructor-arg>
+                    <bean class="java.util.HashMap" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <property name="platformConfigurationService" ref="platformConfigurationService"/>
+    </bean>
+
+    <bean id="messageHistoryDao"
+          class="org.ikasan.history.dao.HibernateMessageHistoryDao">
+        <property name="sessionFactory" ref="messageHistoryXaHibernateSessionFactory"/>
+    </bean>
+
+    <bean id="messageHistoryXaHibernateSessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
+                <value>org/ikasan/history/model/CustomMetric.hbm.xml</value>
+                <value>org/ikasan/history/model/MetricEvent.hbm.xml</value>
+                <value>org/ikasan/history/model/FlowInvocationMetric.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 	    
 </beans>

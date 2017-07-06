@@ -89,7 +89,7 @@
                 </td>
                 
                 <td>
-                     <c:out value="${flow.flowElements[0].flowComponent.class.simpleName}" />
+                     <c:out value="${flow.flowElements[0].flowComponent.getClass().simpleName}" />
                 </td>
 
                 <td class="initiatorState-<c:out value="${flow.state}" />">
@@ -98,7 +98,8 @@
                 
                 <td>    
                     <!-- FIXME security:authorize ifAllGranted="ADMIN_${moduleName}"-->
-                         <c:choose>
+                    <security:authorize access="hasAnyAuthority('ALL','WriteBlueConsole')">
+                    <c:choose>
                             <c:when test="${flow.state.equalsIgnoreCase('running')}">
                                 <c:url var="pauseControlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
@@ -168,7 +169,7 @@
                                 </form:form>
                             </c:otherwise>
                          </c:choose>
-                    <!--/security:authorize-->
+                    </security:authorize>
                 </td>
             </tr>
         </c:forEach>

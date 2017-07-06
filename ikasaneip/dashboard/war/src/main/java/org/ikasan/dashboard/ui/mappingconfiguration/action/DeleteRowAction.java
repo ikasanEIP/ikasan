@@ -52,7 +52,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationCon
 import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.service.SystemEventService;
 
@@ -71,7 +71,7 @@ public class DeleteRowAction implements Action
     private List<SourceConfigurationValue> sourceConfigurationValues;
     private MappingConfiguration mappingConfiguration;
     private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
     private SystemEventService systemEventService;
 
     /**
@@ -82,9 +82,9 @@ public class DeleteRowAction implements Action
      * @param mappingConfigurationConfigurationValuesTable
      */
     public DeleteRowAction(List<SourceConfigurationValue> sourceConfigurationValues,
-            MappingConfiguration mappingConfiguration,
-            MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
-            MappingConfigurationService mappingConfigurationService, SystemEventService systemEventService)
+                           MappingConfiguration mappingConfiguration,
+                           MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
+                           MappingManagementService mappingConfigurationService, SystemEventService systemEventService)
     {
         super();
         this.sourceConfigurationValues = sourceConfigurationValues;

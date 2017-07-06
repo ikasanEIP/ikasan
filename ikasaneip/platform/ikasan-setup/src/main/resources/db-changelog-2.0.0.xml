@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
+
+	<!-- 2.0.x table creation -->
+
+	<!-- 2.0.x table alterations -->
+	<include file="db/alter/db-changeLog-alterIkasanWiretapAddHarvested.xml" relativeToChangelogFile="true" />
+
+	<!-- 2.0.x cardinality creation -->
+
+	<!-- 2.0.x data creation -->
+	
+	<!-- 2.0.x index creation -->
+
+	<!-- 2.0.x table drop -->
+	
+	<!-- 2.0.x table modify -->
+	
+</databaseChangeLog>
