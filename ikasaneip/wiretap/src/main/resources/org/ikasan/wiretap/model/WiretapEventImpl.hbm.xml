@@ -78,14 +78,6 @@
                   type="java.lang.String"
                   column="EventId"
                   not-null="true" />
-        <!--property name="relatedEventId"
-                  type="java.lang.String"
-                  column="RelatedEventId"
-                  not-null="false" /-->
-        <!--property name="eventTimestamp"
-                  type="long"
-                  column="EventTimestamp"
-                  not-null="true" /-->
         <property name="event"
                   type="java.lang.String"
                   column="PayloadContent"
@@ -98,6 +90,10 @@
                   type="long"
                   column="Expiry"
                   not-null="true" />
+        <property name="harvested"
+                type="boolean"
+                column="Harvested"
+                not-null="true" />
 
   </class>
 

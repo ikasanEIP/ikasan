@@ -137,6 +137,13 @@ public class FlowConfigurationWindow extends AbstractConfigurationWindow
     @SuppressWarnings("unchecked")
 	public void populate(final Flow flow)
     {
+		passwordFields = new HashMap<String, PasswordField>();
+		textFields = new HashMap<String, TextArea>();
+		comboBoxes = new HashMap<String, ComboBox>();
+		descriptionTextFields = new HashMap<String, TextArea>();
+		mapTextFields = new HashMap<String, TextFieldKeyValuePair>();
+		valueTextFields = new HashMap<String, TextArea>();
+
     	configuration = this.configurationManagement.getConfiguration(flow.getConfigurationId());
     	
     	if(configuration == null)

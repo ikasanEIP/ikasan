@@ -50,7 +50,7 @@ import org.ikasan.mapping.model.TargetConfigurationValue;
  * @author Ikasan Development Team
  *
  */
-public class MappingConfigurationValue
+public class MappingConfigurationValue implements Comparable<MappingConfigurationValue>
 {
 
     private TargetConfigurationValue targetConfigurationValue;
@@ -144,5 +144,33 @@ public class MappingConfigurationValue
     public void addTargetConfigurationValue(ManyToManyTargetConfigurationValue targetConfigurationValue)
     {
         this.targetConfigurationValues.add(targetConfigurationValue);
+    }
+
+    public String getComparableString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        for(SourceConfigurationValue value: this.sourceConfigurationValues)
+        {
+            sb.append(value.getSourceSystemValue());
+        }
+
+        for(ManyToManyTargetConfigurationValue value: this.getTargetConfigurationValues())
+        {
+            sb.append(value.getTargetSystemValue());
+        }
+
+        if(this.targetConfigurationValue != null)
+        {
+            sb.append(this.targetConfigurationValue);
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public int compareTo(MappingConfigurationValue value)
+    {
+        return this.getComparableString().compareTo(value.getComparableString());
     }
 }

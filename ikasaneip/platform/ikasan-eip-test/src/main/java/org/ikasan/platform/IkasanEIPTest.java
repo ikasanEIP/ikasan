@@ -40,7 +40,12 @@
  */
 package org.ikasan.platform;
 
+import org.ikasan.testharness.flow.FlowSubject;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.junit.Rule;
 import org.springframework.test.context.ContextConfiguration;
+
+import javax.annotation.Resource;
 
 /**
  * Base test class for convenience of loading of all Ikasan EIP spring resources.
@@ -57,10 +62,19 @@ import org.springframework.test.context.ContextConfiguration;
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",
         "/module-service-conf.xml",
+        "/replay-service-conf.xml",
+        "/ikasan-transaction-conf.xml",
         "/test-service-conf.xml"
         })
 
 public class IkasanEIPTest
 {
+
+    @Resource
+    protected FlowSubject testHarnessFlowEventListener;
+
+    @Rule
+    public IkasanFlowTestRule ikasanFlowTestRule = new IkasanFlowTestRule(); // needs to be public to make JUnit happy
+
     // Just use this class for Spring context loading.
 }

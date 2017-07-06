@@ -22,17 +22,20 @@
     <!-- Baseline change log -->    
 	<include file="db-changelog-baseline.xml" relativeToChangelogFile="true" />
 	
-	<!-- 1.1.0 change log -->
+	<!-- 1.1.x change log -->
 	<include file="db-changelog-1.1.0.xml" relativeToChangelogFile="true" />
 	
-	<!-- 1.2.0 change log -->
+	<!-- 1.2.x change log -->
 	<include file="db-changelog-1.2.0.xml" relativeToChangelogFile="true" />
 
-    <!-- 1.3.0 change log -->
+    <!-- 1.3.x change log -->
     <include file="db-changelog-1.3.0.xml" relativeToChangelogFile="true" />
 
-    <!-- 1.4.0 change log -->
+    <!-- 1.4.x change log -->
     <include file="db-changelog-1.4.0.xml" relativeToChangelogFile="true" />
+
+    <!-- 2.0.x change log -->
+    <include file="db-changelog-2.0.0.xml" relativeToChangelogFile="true" />
 	
 
 </databaseChangeLog>

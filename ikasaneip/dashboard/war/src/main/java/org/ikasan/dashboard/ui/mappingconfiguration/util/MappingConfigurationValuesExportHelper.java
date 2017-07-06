@@ -41,11 +41,7 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.util;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
@@ -53,8 +49,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationVa
 import org.ikasan.mapping.model.ManyToManyTargetConfigurationValue;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
-import org.springframework.security.access.method.P;
+import org.ikasan.mapping.service.MappingManagementService;
 
  /**
  * @author Ikasan Development Team
@@ -62,7 +57,7 @@ import org.springframework.security.access.method.P;
  */
 public class MappingConfigurationValuesExportHelper
 {
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
 
     private static final String XML_TAG = "<?xml version=\"1.0\"?>";
     private static final String START_TAG = "<mappingConfigurationValues xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
@@ -74,10 +69,12 @@ public class MappingConfigurationValuesExportHelper
     private static final String SOURCE_CONFIGURATION_VALUES_START_TAG = "<sourceConfigurationValues>";
     private static final String SOURCE_CONFIGURATION_VALUES_END_TAG = "</sourceConfigurationValues>";
     private static final String SOURCE_CONFIGURATION_VALUE_START_TAG = "<sourceConfigurationValue>";
+    private static final String SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG = "<sourceConfigurationValue name=\"index\">";
     private static final String SOURCE_CONFIGURATION_VALUE_END_TAG = "</sourceConfigurationValue>";
     private static final String TARGET_CONFIGURATION_VALUES_START_TAG = "<targetConfigurationValues>";
     private static final String TARGET_CONFIGURATION_VALUES_END_TAG = "</targetConfigurationValues>";
     private static final String TARGET_CONFIGURATION_VALUE_START_TAG = "<targetConfigurationValue>";
+    private static final String TARGET_CONFIGURATION_VALUE_WITH_NAME_START_TAG = "<targetConfigurationValue name=\"index\">";
     private static final String TARGET_CONFIGURATION_VALUE_END_TAG = "</targetConfigurationValue>";
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
@@ -87,7 +84,7 @@ public class MappingConfigurationValuesExportHelper
      *
      * @param mappingConfigurationService
      */
-    public MappingConfigurationValuesExportHelper(MappingConfigurationService mappingConfigurationService)
+    public MappingConfigurationValuesExportHelper(MappingManagementService mappingConfigurationService)
     {
         super();
         this.mappingConfigurationService = mappingConfigurationService;
@@ -123,14 +120,26 @@ public class MappingConfigurationValuesExportHelper
         List<MappingConfigurationValue> mappingConfigurationValues
             = getMappingConfigurationValues(mappingConfiguration.getSourceConfigurationValues(), mappingConfiguration);
 
+        Collections.sort(mappingConfigurationValues);
+
         for(MappingConfigurationValue mappingConfigurationValue: mappingConfigurationValues)
         {
             exportString.append(MAPPING_CONFIGURATION_START_TAG).append(SOURCE_CONFIGURATION_VALUES_START_TAG);
 
             for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
             {
-                exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG).append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
-                .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                if(value.getName() != null && !value.getName().trim().isEmpty())
+                {
+                    exportString.append(SOURCE_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
+                            .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
+                            .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                }
+                else
+                {
+                    exportString.append(SOURCE_CONFIGURATION_VALUE_START_TAG)
+                            .append(StringEscapeUtils.escapeXml(value.getSourceSystemValue()))
+                            .append(SOURCE_CONFIGURATION_VALUE_END_TAG);
+                }
             }
 
             exportString.append(SOURCE_CONFIGURATION_VALUES_END_TAG);
@@ -141,9 +150,18 @@ public class MappingConfigurationValuesExportHelper
 
                 for(ManyToManyTargetConfigurationValue value: mappingConfigurationValue.getTargetConfigurationValues())
                 {
-                    exportString.append(TARGET_CONFIGURATION_VALUE_START_TAG)
-                            .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
-                            .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    if(value.getName() != null && !value.getName().isEmpty())
+                    {
+                        exportString.append(TARGET_CONFIGURATION_VALUE_WITH_NAME_START_TAG.replaceAll("index", value.getName()))
+                                .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
+                                .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    }
+                    else
+                    {
+                        exportString.append(TARGET_CONFIGURATION_VALUE_START_TAG)
+                                .append(StringEscapeUtils.escapeXml(value.getTargetSystemValue()))
+                                .append(TARGET_CONFIGURATION_VALUE_END_TAG);
+                    }
                 }
 
                 exportString.append(TARGET_CONFIGURATION_VALUES_END_TAG);

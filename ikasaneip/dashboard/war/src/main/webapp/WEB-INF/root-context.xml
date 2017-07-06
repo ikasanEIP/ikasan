@@ -185,6 +185,10 @@
                     <constructor-arg value="housekeepingView"/>
                     <constructor-arg ref="houseKeepingPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="harvestingView"/>
+                    <constructor-arg ref="harvestPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>

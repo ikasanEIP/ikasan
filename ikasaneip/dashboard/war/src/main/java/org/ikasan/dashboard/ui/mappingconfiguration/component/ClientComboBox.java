@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.group.Refreshable;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
-import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingManagementService;
 
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
@@ -58,14 +58,14 @@ public class ClientComboBox extends ComboBox implements Refreshable, FocusListen
 {
     private static final long serialVersionUID = -2820064207169688211L;
 
-    private MappingConfigurationService mappingConfigurationService;
+    private MappingManagementService mappingConfigurationService;
 
     /**
      * Constructor
      * 
      * @param mappingConfigurationService
      */
-    public ClientComboBox(MappingConfigurationService mappingConfigurationService)
+    public ClientComboBox(MappingManagementService mappingConfigurationService)
     {
         this.mappingConfigurationService = mappingConfigurationService;
         this.init();

@@ -76,7 +76,7 @@
 			Component Type
 		</th>
 		<td>
-			<c:out value="${flowElement.flowComponent.class.simpleName}" />
+			<c:out value="${flowElement.flowComponent.getClass().simpleName}" />
 		</td>
 	</tr>
 

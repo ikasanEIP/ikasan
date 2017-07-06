@@ -68,6 +68,5 @@
         <property name="username" value="sa" />
         <property name="password" value="sa" />
     </bean>
-    
   
 </beans>

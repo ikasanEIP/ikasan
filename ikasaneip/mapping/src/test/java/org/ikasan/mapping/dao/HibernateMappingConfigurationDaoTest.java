@@ -48,6 +48,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.ikasan.mapping.model.*;
+import org.ikasan.spec.mapping.QueryParameter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,8 +84,7 @@ public class HibernateMappingConfigurationDaoTest
     @Before
     public void setup()
     {
-    	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2",
-            "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
+    	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2");
         ConfigurationType dealerToDealer = this.addConfigurationType("Dealer and Product to Account");
         ConfigurationType salesPersonToSalesPerson = this.addConfigurationType("Salesperson to Salesperson Mapping");
         ConfigurationType productTypeToTradeBook = this.addConfigurationType("Product Type to Tradebook Mapping");
@@ -92,51 +92,51 @@ public class HibernateMappingConfigurationDaoTest
         ConfigurationContext context1 = this.addConfigurationContext("Tradeweb", "Tradeweb");
         ConfigurationContext context2 = this.addConfigurationContext("Bloomberg", "Bloomberg");
 
-        Long configurationContextId1 = this.addMappingConfiguration(context1, context2, new Long(2),
+        Long configurationContextId1 = this.addMappingConfiguration(context1, context2, 2,
             dealerToDealer, configurationServiceClient, "description context 1");
-        Long configurationContextId2 = this.addMappingConfiguration(context1, context2, new Long(1),
+        Long configurationContextId2 = this.addMappingConfiguration(context1, context2, 1,
             salesPersonToSalesPerson, configurationServiceClient, "description context 2");
-        Long configurationContextId3 = this.addMappingConfiguration(context1, context2, new Long(1),
+        Long configurationContextId3 = this.addMappingConfiguration(context1, context2, 1,
             productTypeToTradeBook, configurationServiceClient, "description context 2");
 
-        this.addKeyLocationQuery("some xpath", configurationContextId1);
-        this.addKeyLocationQuery("another xpath", configurationContextId1);
-        this.addKeyLocationQuery("some xpath", configurationContextId2);
-        this.addKeyLocationQuery("some xpath", configurationContextId3);
+        this.addParameterName("some xpath", configurationContextId1);
+        this.addParameterName("another xpath", configurationContextId1);
+        this.addParameterName("some xpath", configurationContextId2);
+        this.addParameterName("some xpath", configurationContextId3);
 
         TargetConfigurationValue targetId1 = this.addTargetSystemConfiguration("BARCLON");
         TargetConfigurationValue targetId2 = this.addTargetSystemConfiguration("BNPPAR");
 
-        this.addSourceSystemConfiguration("BARX", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("TRSY", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("AGCY", configurationContextId1, targetId1);
-        this.addSourceSystemConfiguration("MBS", configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("BARX", "name1", configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("TRSY", "name2",configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("AGCY", "name3",configurationContextId1, targetId1);
+        this.addSourceSystemConfiguration("MBS", "name4", configurationContextId1, targetId1);
 
-        this.addSourceSystemConfiguration("BNPP", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("TRSY", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("AGCY", configurationContextId1, targetId2);
-        this.addSourceSystemConfiguration("MBS", configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("BNPP", "name1",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("TRSY", "name2",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("AGCY", "name3",configurationContextId1, targetId2);
+        this.addSourceSystemConfiguration("MBS", "name4",configurationContextId1, targetId2);
 
         TargetConfigurationValue targetId3 = this.addTargetSystemConfiguration("ZEKRAA");
         TargetConfigurationValue targetId4 = this.addTargetSystemConfiguration("VIDAUISA");
         TargetConfigurationValue targetId5 = this.addTargetSystemConfiguration("BEN");
         TargetConfigurationValue targetId6 = this.addTargetSystemConfiguration("IMONDIV");
 
-        this.addSourceSystemConfiguration("azehra", configurationContextId2, targetId3);
-        this.addSourceSystemConfiguration("isabelv", configurationContextId2, targetId4);
-        this.addSourceSystemConfiguration("briordan2", configurationContextId2, targetId5);
-        this.addSourceSystemConfiguration("vimondi", configurationContextId2, targetId6);
+        this.addSourceSystemConfiguration("azehra", "name1",configurationContextId2, targetId3);
+        this.addSourceSystemConfiguration("isabelv", "name2",configurationContextId2, targetId4);
+        this.addSourceSystemConfiguration("briordan2", "name3",configurationContextId2, targetId5);
+        this.addSourceSystemConfiguration("vimondi", "name4",configurationContextId2, targetId6);
 
         TargetConfigurationValue targetId7 = this.addTargetSystemConfiguration("YENGOVT");
         TargetConfigurationValue targetId8 = this.addTargetSystemConfiguration("YENTBFB");
 
-        this.addSourceSystemConfiguration("false", configurationContextId3, targetId7);
-        this.addSourceSystemConfiguration("true", configurationContextId3, targetId8);
+        this.addSourceSystemConfiguration("false", "name1",configurationContextId3, targetId7);
+        this.addSourceSystemConfiguration("true", "name2",configurationContextId3, targetId8);
 
 
         ConfigurationType manyToManyMapping = this.addConfigurationType("Many to Many");
 
-        Long configurationContextId4 = this.addMappingConfiguration(context1, context2, new Long(-1),
+        Long configurationContextId4 = this.addMappingConfiguration(context1, context2, -1,
                 manyToManyMapping, configurationServiceClient, "description context 4");
 
         ArrayList<String> sourceValues = new ArrayList<>();
@@ -450,7 +450,7 @@ public class HibernateMappingConfigurationDaoTest
                     (sourceConfigurationValuesItr.next().getTargetConfigurationValue().getId());
 
                 Assert.assertNotNull(results);
-                Assert.assertEquals(results.size(), mappingConfiguration.getNumberOfParams().intValue());
+                Assert.assertEquals(results.size(), mappingConfiguration.getNumberOfParams());
             }
         }
     }
@@ -509,6 +509,38 @@ public class HibernateMappingConfigurationDaoTest
 
     @Test
     @DirtiesContext
+    public void test_success_2_paramater_mapping_with_name()
+    {
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameterImpl param1 = new QueryParameterImpl("name1", "BARX");
+        sourceSystemValues.add(param1);
+        QueryParameterImpl param2 = new QueryParameterImpl("name2", "TRSY");
+        sourceSystemValues.add(param2);
+
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertEquals("BARCLON", result);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_success_2_paramater_mapping_with_name_not_correlating()
+    {
+        List<QueryParameter> sourceSystemValues = new ArrayList<QueryParameter>();
+        QueryParameterImpl param1 = new QueryParameterImpl("name2", "BARX");
+        sourceSystemValues.add(param1);
+        QueryParameterImpl param2 = new QueryParameterImpl("name1", "TRSY");
+        sourceSystemValues.add(param2);
+
+        String result = this.xaMappingConfigurationDao.getTargetConfigurationValueWithOrdinality("CMI2", "Dealer and Product to Account", "Tradeweb",
+                "Bloomberg", sourceSystemValues);
+
+        Assert.assertNull(result);
+    }
+
+    @Test
+    @DirtiesContext
     public void test_success_2_paramater_mapping_2()
     {
         List<String> sourceSystemValues = new ArrayList<String>();
@@ -535,8 +567,6 @@ public class HibernateMappingConfigurationDaoTest
         ConfigurationServiceClient result = this.xaMappingConfigurationDao.getConfigurationServiceClientByName("CMI2");
 
         Assert.assertEquals("CMI2", result.getName());
-        Assert.assertEquals("org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"
-            , result.getKeyLocationQueryProcessorType());
     }
 
 
@@ -620,24 +650,14 @@ public class HibernateMappingConfigurationDaoTest
 
     @Test
     @DirtiesContext
-    public void test_get_key_location_queries_success()
-    {
-        List<String> result = this.xaMappingConfigurationDao.getKeyLocationQuery
-                ("Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", "CMI2");
-
-        Assert.assertEquals(1, result.size());
-    }
-
-    @Test
-    @DirtiesContext
     public void test_get_key_location_queries_buy_mapping_configuration_id_success()
     {
         List<MappingConfiguration> result = this.xaMappingConfigurationDao.getAllMappingConfigurations();
 
         for(MappingConfiguration mappingConfiguration: result)
         {
-            List<KeyLocationQuery> mappingConfigurationResult = this.xaMappingConfigurationDao
-                    .getKeyLocationQueriesByMappingConfigurationId(mappingConfiguration.getId());
+            List<ParameterName> mappingConfigurationResult = this.xaMappingConfigurationDao
+                    .getParameterNameByMappingConfigurationId(mappingConfiguration.getId());
 
 //            Assert.assertTrue(mappingConfigurationResult.size() > 0);
         }
@@ -768,11 +788,10 @@ public class HibernateMappingConfigurationDaoTest
      * @param keyLocationQueryProcessorType
      * @return
      */
-    private ConfigurationServiceClient addConfigurationServiceClient(String name, String keyLocationQueryProcessorType)
+    private ConfigurationServiceClient addConfigurationServiceClient(String name)
     {
         ConfigurationServiceClient configurationServiceClient = new ConfigurationServiceClient();
         configurationServiceClient.setName(name);
-        configurationServiceClient.setKeyLocationQueryProcessorType(keyLocationQueryProcessorType);
 
         this.xaMappingConfigurationDao.storeConfigurationServiceClient(configurationServiceClient);
 
@@ -785,13 +804,13 @@ public class HibernateMappingConfigurationDaoTest
      * @param mappingConfigurationId
      * @return
      */
-    private Long addKeyLocationQuery(String value, Long mappingConfigurationId)
+    private Long addParameterName(String value, Long mappingConfigurationId)
     {
-        KeyLocationQuery keyLocationQuery = new KeyLocationQuery();
-        keyLocationQuery.setValue(value);
+        ParameterName keyLocationQuery = new ParameterName();
+        keyLocationQuery.setName(value);
         keyLocationQuery.setMappingConfigurationId(mappingConfigurationId);
 
-        return this.xaMappingConfigurationDao.storeKeyLocationQuery(keyLocationQuery);
+        return this.xaMappingConfigurationDao.storeParameterName(keyLocationQuery);
     }
 
     /**
@@ -836,7 +855,7 @@ public class HibernateMappingConfigurationDaoTest
      * @param description
      * @return
      */
-    private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, Long numberOfParams, ConfigurationType configurationType,
+    private Long addMappingConfiguration(ConfigurationContext sourceContext, ConfigurationContext targetContext, int numberOfParams, ConfigurationType configurationType,
     		ConfigurationServiceClient configurationServiceClient, String description)
     {
         MappingConfiguration configurationContext = new MappingConfiguration();
@@ -858,11 +877,12 @@ public class HibernateMappingConfigurationDaoTest
      * @param targetConfigurationValue
      * @return
      */
-    private Long addSourceSystemConfiguration(String sourceSystemValue, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
+    private Long addSourceSystemConfiguration(String sourceSystemValue, String name, Long mappingConfigurationId, TargetConfigurationValue targetConfigurationValue)
     {
         SourceConfigurationValue sourceConfigurationValue = new SourceConfigurationValue();
         sourceConfigurationValue.setMappingConfigurationId(mappingConfigurationId);
         sourceConfigurationValue.setSourceSystemValue(sourceSystemValue);
+        sourceConfigurationValue.setName(name);
         sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
 
         return this.xaMappingConfigurationDao.storeSourceConfigurationValue(sourceConfigurationValue);

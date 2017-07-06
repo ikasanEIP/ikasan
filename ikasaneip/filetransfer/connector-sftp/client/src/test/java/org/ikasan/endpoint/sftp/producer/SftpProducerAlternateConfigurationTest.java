@@ -40,7 +40,7 @@
  */
 package org.ikasan.endpoint.sftp.producer;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.junit.Test;

@@ -108,4 +108,11 @@ public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
 	 * @return
 	 */
 	public boolean housekeepablesExist();
+
+    /**
+     * Save the wiretap event.
+     *
+     * @param event
+     */
+    public void save(WiretapEvent event);
 }

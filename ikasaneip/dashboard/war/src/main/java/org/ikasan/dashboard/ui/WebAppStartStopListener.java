@@ -45,6 +45,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.discovery.DiscoverySchedulerService;
+import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.notification.NotifierServiceImpl;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
@@ -79,13 +81,19 @@ public class WebAppStartStopListener implements ServletContextListener
 
         final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
         HousekeepingSchedulerService schedulerService = (HousekeepingSchedulerService)springContext.getBean("housekeepingSchedulerService");
+        HarvestingSchedulerService harvestingSchedulerService = (HarvestingSchedulerService)springContext.getBean("harvestSchedulerService");
+        DiscoverySchedulerService discoverySchedulerService = (DiscoverySchedulerService)springContext.getBean("discoverySchedulerService");
 
         if(schedulerService != null)
         {
             try
             {
                 logger.info("Starting scheduler.");
+                schedulerService.registerJobs();
                 schedulerService.startScheduler();
+                harvestingSchedulerService.registerJobs();
+                harvestingSchedulerService.startScheduler();
+                discoverySchedulerService.startScheduler();
                 logger.info("Successfully registered jobs and started scheduler.");
             }
             catch (Exception e)

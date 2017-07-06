@@ -47,23 +47,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-        <parent>
-          <groupId>org.sonatype.oss</groupId>
-          <artifactId>oss-parent</artifactId>
-          <version>7</version>
-          <relativePath />
-        </parent>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+        <relativePath />
+    </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
 
     <organization>
-      <name>Ikasan</name>
-      <url>http://www.ikasan.org</url>
+        <name>Ikasan</name>
+        <url>http://www.ikasan.org</url>
     </organization>
     <inceptionYear>2007</inceptionYear>
 
@@ -84,7 +84,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>0</timezone>	
+            <timezone>0</timezone>
         </developer>
         <developer>
             <id>magicduncan</id>
@@ -361,16 +361,17 @@
         <version.kryo>3.0.1</version.kryo>
         <version.org.hibernate>4.3.9.Final</version.org.hibernate>
         <version.org.hibernate-validator>4.3.2.Final</version.org.hibernate-validator>
-		<version.org.springframework>4.2.2.RELEASE</version.org.springframework>
-        <version.org.springframework.security>4.0.3.RELEASE</version.org.springframework.security>
-		<version.org.springframework.security.taglibs>3.2.7.RELEASE</version.org.springframework.security.taglibs>
-        <version.org.springframework.security.spring-security-config>4.0.3.RELEASE</version.org.springframework.security.spring-security-config>
-        <version.org.springframework.security.spring-security-web>4.0.3.RELEASE</version.org.springframework.security.spring-security-web>
+        <version.org.springframework>4.3.3.RELEASE</version.org.springframework>
+        <version.org.springframework.security>4.1.3.RELEASE</version.org.springframework.security>
+        <version.org.springframework.security.taglibs>4.1.3.RELEASE</version.org.springframework.security.taglibs>
+        <version.org.springframework.security.spring-security-config>4.1.3.RELEASE</version.org.springframework.security.spring-security-config>
+        <version.org.springframework.security.spring-security-web>4.1.3.RELEASE</version.org.springframework.security.spring-security-web>
         <version.org.springframework.ldap>1.3.1.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.spring-oxm>3.0.0.RELEASE</version.org.springframework.spring-oxm>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
-        <version.org.slf4j>1.7.7</version.org.slf4j>
-        <version.junit>4.11</version.junit>
+        <version.org.springboot>1.4.1.RELEASE</version.org.springboot>
+        <version.org.slf4j>1.7.16</version.org.slf4j>
+        <version.junit>4.12</version.junit>
         <version.org.jmock>2.6.0</version.org.jmock>
         <version.log4j>1.2.16</version.log4j>
         <version.javax.transaction.jta>1.1</version.javax.transaction.jta>
@@ -409,6 +410,7 @@
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
         <version.commons-lang>2.5</version.commons-lang>
         <version.javax.servlet>2.4</version.javax.servlet>
+        <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
         <version.activemq>5.12.1</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
@@ -475,8 +477,8 @@
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
-						<testSource>1.7</testSource>
-						<testTarget>1.7</testTarget>
+                        <testSource>1.7</testSource>
+                        <testTarget>1.7</testTarget>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -517,7 +519,18 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.10</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <additionalparam>${javadoc.opts}</additionalparam>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.jboss.maven.plugins</groupId>
@@ -573,9 +586,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.6</version>
-					<configuration>
-						<argLine>-XX:-UseSplitVerifier</argLine>
-					</configuration>
+                    <configuration>
+                        <argLine>-XX:-UseSplitVerifier</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -593,75 +606,75 @@
                     <version>2.4</version>
                 </plugin>
                 <plugin>
-					<!--TODO TEXT. This plugin's configuration is used in m2e only. -->
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											build-helper-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.7,)
-										</versionRange>
-										<goals>
-											<goal>regex-property</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.vaadin</groupId>
-										<artifactId>
-											vaadin-maven-plugin
-										</artifactId>
-										<versionRange>
-											[7.5.1,)
-										</versionRange>
-										<goals>
-											<goal>
-												update-widgetset
-											</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-plugin-plugin
-										</artifactId>
-										<versionRange>
-											[3.2,)
-										</versionRange>
-										<goals>
-											<goal>descriptor</goal>
-											<goal>helpmojo</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
+                    <!--TODO TEXT. This plugin's configuration is used in m2e only. -->
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            build-helper-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.7,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>regex-property</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.vaadin</groupId>
+                                        <artifactId>
+                                            vaadin-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [7.5.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                update-widgetset
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-plugin-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [3.2,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>descriptor</goal>
+                                            <goal>helpmojo</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -813,106 +826,116 @@
                 </plugins>
             </build>
         </profile>
-    <profile>
-      <id>all</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-       <!-- ikasan eip core -->
-        <module>spec</module>
-        <module>system-event</module>
-        <module>module</module>
-        <module>bootstrap</module>  <!-- TODO - is this still required ? -->
-        <module>scheduler</module>
-        <module>serialiser</module>
-        <module>exclusion</module>
-        <module>error-reporting</module>
-        <module>recovery-manager</module>
-        <module>flow</module>
-        <module>configuration-service</module>
-        <module>wiretap</module>
-        <module>security</module>
-        <module>filter</module>
-		<module>rest</module>
-        <module>test</module>
-        <module>monitor</module>
-        <module>marshaller</module>
-        <module>component</module>
-        <module>jca</module>
-        <module>platform</module>
-        <module>builder</module>
-        <module>compatibility</module>
-   		<module>filetransfer</module>
-        <module>mapping</module>
-        <module>management</module>
-        <module>hospital</module>
-        <module>webconsole</module>
-		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-        <!-- module>console</module -->
-		<module>topology</module>
-        <module>dashboard</module>
-        <module>developer</module>
-        <module>sample</module>
-        <module>transaction</module>
-		<module>replay</module>
-      </modules>
-    </profile>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <!-- ikasan eip core -->
+                <module>spec</module>
+                <module>system-event</module>
+                <module>module</module>
+                <module>bootstrap</module>  <!-- TODO - is this still required ? -->
+                <module>scheduler</module>
+                <module>serialiser</module>
+                <module>exclusion</module>
+                <module>error-reporting</module>
+                <module>recovery-manager</module>
+                <module>flow</module>
+                <module>configuration-service</module>
+                <module>wiretap</module>
+                <module>security</module>
+                <module>filter</module>
+                <module>rest</module>
+                <module>rest-boot</module>
+                <module>test</module>
+                <module>monitor</module>
+                <module>marshaller</module>
+                <module>component</module>
+                <module>jca</module>
+                <module>platform</module>
+                <module>builder</module>
+                <module>compatibility</module>
+                <module>filetransfer</module>
+                <module>mapping</module>
+                <module>management</module>
+                <module>hospital</module>
+                <module>webconsole</module>
+                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+                <!-- module>console</module -->
+                <module>topology</module>
+                <module>developer</module>
+                <module>transaction</module>
+                <module>replay</module>
+                <module>dashboard</module>
+                <module>sample</module>
+            </modules>
+        </profile>
 
-    <profile>
-      <id>core-and-components</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-    	<module>spec</module>
-        <module>system-event</module>
-        <module>module</module>
-        <module>bootstrap</module>
-        <module>scheduler</module>
-        <module>serialiser</module>
-        <module>exclusion</module>
-        <module>error-reporting</module>
-        <module>recovery-manager</module>
-        <module>flow</module>
-        <module>configuration-service</module>
-        <module>wiretap</module>
-        <module>security</module>
-        <module>filter</module>
-		<module>rest</module>
-        <module>test</module>
-        <module>monitor</module>
-        <module>marshaller</module>
-        <module>component</module>
-        <module>jca</module>
-        <module>platform</module>
-        <module>builder</module>
-        <module>compatibility</module>
-		<module>filetransfer</module>
-		<module>replay</module>
-      </modules>
-    </profile>
-    
-    <profile>
-      <id>top-level-services-and-applications</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-        <module>mapping</module>
-        <module>management</module>
-        <module>platform</module>
-		<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. --> 
-        <!-- module>console</module -->
-        <module>hospital</module>
-        <module>webconsole</module>
-        <module>topology</module>
-        <module>dashboard</module>
-        <module>developer</module>
-        <module>sample</module>
-        <module>transaction</module>
-      </modules>
-    </profile>
+        <profile>
+            <id>core-and-components</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>spec</module>
+                <module>system-event</module>
+                <module>module</module>
+                <module>bootstrap</module>
+                <module>scheduler</module>
+                <module>serialiser</module>
+                <module>exclusion</module>
+                <module>error-reporting</module>
+                <module>recovery-manager</module>
+                <module>flow</module>
+                <module>configuration-service</module>
+                <module>wiretap</module>
+                <module>security</module>
+                <module>filter</module>
+                <module>rest</module>
+                <module>test</module>
+                <module>monitor</module>
+                <module>marshaller</module>
+                <module>component</module>
+                <module>jca</module>
+                <module>platform</module>
+                <module>builder</module>
+                <module>compatibility</module>
+                <module>filetransfer</module>
+                <module>replay</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>top-level-services-and-applications</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>mapping</module>
+                <module>management</module>
+                <module>platform</module>
+                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+                <!-- module>console</module -->
+                <module>hospital</module>
+                <module>webconsole</module>
+                <module>topology</module>
+                <module>dashboard</module>
+                <module>developer</module>
+                <module>sample</module>
+                <module>transaction</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencyManagement>
@@ -942,14 +965,14 @@
                 <artifactId>ikasan-spec-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-hospital</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-replay</artifactId>
                 <version>${project.version}</version>
@@ -1065,6 +1088,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-mapping</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-event</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1074,8 +1103,8 @@
                 <artifactId>ikasan-spec-component</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-resubmission</artifactId>
                 <version>${project.version}</version>
@@ -1086,8 +1115,8 @@
                 <artifactId>ikasan-spec-wiretap</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-rest</artifactId>
                 <version>${project.version}</version>
@@ -1146,20 +1175,20 @@
                 <artifactId>ikasan-consumer</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-mapping</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-hospital</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-rest</artifactId>
                 <version>${project.version}</version>
@@ -1244,7 +1273,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-			<!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
+            <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
             <!-- dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>console-jar</artifactId>
@@ -1323,8 +1352,8 @@
                 <artifactId>ikasan-client-filetransfer</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-replay</artifactId>
                 <version>${project.version}</version>
@@ -1360,26 +1389,32 @@
                 <artifactId>spring-orm</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
-			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aspects</artifactId>
-				<version>${version.org.springframework}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-expression</artifactId>
-				<version>${version.org.springframework}</version>
-			</dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jms</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
-			
-			<dependency>
+
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>${version.org.springframework}</version>
@@ -1390,6 +1425,13 @@
                 <artifactId>spring-security-taglibs</artifactId>
                 <version>${version.org.springframework.security.taglibs}</version>
             </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${version.javax.servlet.jstl}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>geronimo-spec</groupId>
@@ -1591,173 +1633,173 @@
                 <artifactId>spring-jdbc</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
-			
-	<!-- Jersey -->
-	
-	<dependency>
-		<groupId>org.glassfish.jersey.core</groupId>
-		<artifactId>jersey-server</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.glassfish.jersey.media</groupId>
-		<artifactId>jersey-media-json-jackson</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-	</dependency>
 
-	<dependency>
-		<groupId>org.glassfish.jersey.containers</groupId>
-		<artifactId>jersey-container-servlet</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.glassfish.jersey.core</groupId>
-		<artifactId>jersey-client</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.glassfish</groupId>
-		<artifactId>javax.json</artifactId>
-		<version>${version.org.glassfish.json}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.glassfish.jersey.media</groupId>
-		<artifactId>jersey-media-moxy</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.glassfish.jersey.media</groupId>
-		<artifactId>jersey-media-json-processing</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-	</dependency>
+            <!-- Jersey -->
 
-	<dependency>
-		<groupId>org.glassfish.jersey.ext</groupId>
-		<artifactId>jersey-spring3</artifactId>
-		<version>${version.org.glassfish.jersey}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-beans</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-	
-	<dependency>
-		<groupId>com.sun.jersey</groupId>
-		<artifactId>jersey-json</artifactId>
-		<version>${version.com.sun.jersey}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>com.sun.jersey.contribs</groupId>
-		<artifactId>jersey-spring</artifactId>
-		<version>${version.com.sun.jersey}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-beans</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+            </dependency>
 
-	<dependency>
-		<groupId>javax.ws.rs</groupId>
-		<artifactId>javax.ws.rs-api</artifactId>
-		<version>${version.javax.ws.rs}</version>
-	</dependency>
-	
-	<!-- Vaadin -->
-	
-	<dependency>
-	   <groupId>com.zybnet</groupId>
-	   <artifactId>vaadin-autocomplete</artifactId>
-	   <version>${version.com.zybnet.vaadin-autocomplete}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>com.vaadin</groupId>
-		<artifactId>vaadin-server</artifactId>
-		<version>${version.vaadin}</version>
-	</dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-jackson</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+            </dependency>
 
-	<dependency>
-		<groupId>com.vaadin</groupId>
-		<artifactId>vaadin-client-compiled</artifactId>
-		<version>${version.vaadin}</version>
-	</dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+            </dependency>
 
-	<dependency>
-		<groupId>com.vaadin</groupId>
-		<artifactId>vaadin-client</artifactId>
-		<version>${version.vaadin}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>com.vaadin</groupId>
-		<artifactId>vaadin-push</artifactId>
-		<version>${version.vaadin}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>com.vaadin</groupId>
-		<artifactId>vaadin-themes</artifactId>
-		<version>${version.vaadin}</version>
-	</dependency>
-	
-	<dependency>
-	   <groupId>com.vaadin</groupId>
-	   <artifactId>vaadin-testbench</artifactId>
-	   <version>4.0.2</version>
-	</dependency>
-	
-	<dependency>
-	   <groupId>org.vaadin.addons</groupId>
-	   <artifactId>aceeditor</artifactId>
-	   <version>${version.org.vaadin.addons.aceeditor}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>com.google.guava</groupId>
-		<artifactId>guava</artifactId>
-		<version>${version.com.google.guava}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>ru.xpoft.vaadin</groupId>
-		<artifactId>spring-vaadin-integration</artifactId>
-		<version>${version.ru.xpoft.vaadin.spring-vaadin-integration}</version>
-	</dependency>
-			
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${version.org.glassfish.json}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-moxy</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-processing</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.ext</groupId>
+                <artifactId>jersey-spring3</artifactId>
+                <version>${version.org.glassfish.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-json</artifactId>
+                <version>${version.com.sun.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-spring</artifactId>
+                <version>${version.com.sun.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${version.javax.ws.rs}</version>
+            </dependency>
+
+            <!-- Vaadin -->
+
+            <dependency>
+                <groupId>com.zybnet</groupId>
+                <artifactId>vaadin-autocomplete</artifactId>
+                <version>${version.com.zybnet.vaadin-autocomplete}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-server</artifactId>
+                <version>${version.vaadin}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-client-compiled</artifactId>
+                <version>${version.vaadin}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-client</artifactId>
+                <version>${version.vaadin}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-push</artifactId>
+                <version>${version.vaadin}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-themes</artifactId>
+                <version>${version.vaadin}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-testbench</artifactId>
+                <version>4.0.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>aceeditor</artifactId>
+                <version>${version.org.vaadin.addons.aceeditor}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.com.google.guava}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.xpoft.vaadin</groupId>
+                <artifactId>spring-vaadin-integration</artifactId>
+                <version>${version.ru.xpoft.vaadin.spring-vaadin-integration}</version>
+            </dependency>
+
             <!-- TODO: Upgrade to 1.8.1.2 at some stage -->
             <dependency>
                 <groupId>org.hsqldb</groupId>

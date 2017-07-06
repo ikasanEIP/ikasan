@@ -74,7 +74,7 @@
                   unique-key="multicolumn_unique_key"/>
 
         <property name="numberOfParams"
-                  type="java.lang.Long"
+                  type="java.lang.Integer"
                   column="NumberOfParams"/>
 
         <property name="description" 
@@ -96,6 +96,14 @@
                   fetch="select"
                   lazy="false"
                   unique-key="multicolumn_unique_key"/>
+
+        <property name="lastUpdatedBy"
+                  type="java.lang.String"
+                  column="LastUpdatedBy" />
+
+        <property name="numberOfMappings"
+                  type="int"
+                  column="NumberOfMappings"/>
 
         <property name="createdDateTime"
                   type="java.util.Date"

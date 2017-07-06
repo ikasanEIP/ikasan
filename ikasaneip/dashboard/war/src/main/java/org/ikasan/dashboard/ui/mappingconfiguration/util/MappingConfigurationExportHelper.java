@@ -46,10 +46,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
-import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.ParameterName;
 
-/**
+ /**
  * @author Ikasan Development Team
  *
  */
@@ -72,19 +72,28 @@ public class MappingConfigurationExportHelper
     private static final String DESCRIPTION_END_TAG = "</description>";
     private static final String IS_MANY_TO_MANY_START_TAG = "<isManyToMany>";
     private static final String IS_MANY_TO_MANY_END_TAG = "</isManyToMany>";
+    private static final String IS_FIXED_PARAMETER_LIST_SIZE_START_TAG = "<isFixedParameterListSize>";
+    private static final String IS_FIXED_PARAMETER_LIST_SIZE_END_TAG = "</isFixedParameterListSize>";
     private static final String NUMBER_OF_SOURCE_PARAMS_START_TAG = "<numberOfSourceParams>";
     private static final String NUMBER_OF_SOURCE_PARAMS_END_TAG = "</numberOfSourceParams>";
-    private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG = "<sourceConfigurationValueQueries>";
-    private static final String SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG = "</sourceConfigurationValueQueries>";
-    private static final String SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG = "<sourceConfigurationValueQuery>";
-    private static final String SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG = "</sourceConfigurationValueQuery>";
+    private static final String NUMBER_OF_TARGET_PARAMS_START_TAG = "<numberOfTargetParams>";
+    private static final String NUMBER_OF_TARGET_PARAMS_END_TAG = "</numberOfTargetParams>";
+    private static final String SOURCE_PARAMETER_NAMES_START_TAG = "<sourceParameterNames>";
+    private static final String SOURCE_PARAMETER_NAMES_END_TAG = "</sourceParameterNames>";
+    private static final String SOURCE_PARAMETER_NAME_START_TAG = "<sourceParameterName>";
+    private static final String SOURCE_PARAMETER_NAME_END_TAG = "</sourceParameterName>";
+    private static final String TARGET_PARAMETER_NAMES_START_TAG = "<targetParameterNames>";
+    private static final String TARGET_PARAMETER_NAMES_END_TAG = "</targetParameterNames>";
+    private static final String TARGET_PARAMETER_NAME_START_TAG = "<targetParameterName>";
+    private static final String TARGET_PARAMETER_NAME_END_TAG = "</targetParameterName>";
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
 
     private MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
 
     /**
-     * @param schemaLocation
+     *
+     * @param mappingConfigurationValuesExportHelper
      */
     public MappingConfigurationExportHelper(MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper)
     {
@@ -98,8 +107,9 @@ public class MappingConfigurationExportHelper
      * @param mappingConfiguration
      * @return
      */
-    public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration, 
-            List<KeyLocationQuery> keyLocationQueries, String schemaLocation)
+    public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration,
+                      List<ParameterName> sourceContextParameterNames, List<ParameterName> targetContextParameterNames,
+                                                   String schemaLocation)
     {
         StringBuffer exportString = new StringBuffer();
 
@@ -136,22 +146,72 @@ public class MappingConfigurationExportHelper
         exportString.append(mappingConfiguration.getIsManyToMany());
         exportString.append(IS_MANY_TO_MANY_END_TAG);
 
+        exportString.append(IS_FIXED_PARAMETER_LIST_SIZE_START_TAG);
+        exportString.append(mappingConfiguration.getConstrainParameterListSizes());
+        exportString.append(IS_FIXED_PARAMETER_LIST_SIZE_END_TAG);
+
         if(!mappingConfiguration.getIsManyToMany())
         {
             exportString.append(NUMBER_OF_SOURCE_PARAMS_START_TAG);
             exportString.append(mappingConfiguration.getNumberOfParams());
             exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
 
-            exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_START_TAG);
+            exportString.append(NUMBER_OF_TARGET_PARAMS_START_TAG);
+            exportString.append(mappingConfiguration.getNumTargetValues());
+            exportString.append(NUMBER_OF_TARGET_PARAMS_END_TAG);
 
-            for (KeyLocationQuery query : keyLocationQueries)
+            if(sourceContextParameterNames != null && sourceContextParameterNames.size() > 0)
             {
-                exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_START_TAG);
-                exportString.append(query.getValue());
-                exportString.append(SOURCE_CONFIGURATION_VALUE_QUERY_END_TAG);
+                exportString.append(SOURCE_PARAMETER_NAMES_START_TAG);
+
+                for(ParameterName parameterName: sourceContextParameterNames)
+                {
+                    exportString.append(SOURCE_PARAMETER_NAME_START_TAG);
+                    exportString.append(parameterName.getName());
+                    exportString.append(SOURCE_PARAMETER_NAME_END_TAG);
+                }
+
+                exportString.append(SOURCE_PARAMETER_NAMES_END_TAG);
+            }
+        }
+        else if(mappingConfiguration.getIsManyToMany() &&
+                mappingConfiguration.getConstrainParameterListSizes())
+        {
+            exportString.append(NUMBER_OF_SOURCE_PARAMS_START_TAG);
+            exportString.append(mappingConfiguration.getNumberOfParams());
+            exportString.append(NUMBER_OF_SOURCE_PARAMS_END_TAG);
+
+            exportString.append(NUMBER_OF_TARGET_PARAMS_START_TAG);
+            exportString.append(mappingConfiguration.getNumTargetValues());
+            exportString.append(NUMBER_OF_TARGET_PARAMS_END_TAG);
+
+            if(sourceContextParameterNames != null && sourceContextParameterNames.size() > 0)
+            {
+                exportString.append(SOURCE_PARAMETER_NAMES_START_TAG);
+
+                for(ParameterName parameterName: sourceContextParameterNames)
+                {
+                    exportString.append(SOURCE_PARAMETER_NAME_START_TAG);
+                    exportString.append(parameterName.getName());
+                    exportString.append(SOURCE_PARAMETER_NAME_END_TAG);
+                }
+
+                exportString.append(SOURCE_PARAMETER_NAMES_END_TAG);
             }
 
-            exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG);
+            if(targetContextParameterNames != null && targetContextParameterNames.size() > 0)
+            {
+                exportString.append(TARGET_PARAMETER_NAMES_START_TAG);
+
+                for(ParameterName parameterName: targetContextParameterNames)
+                {
+                    exportString.append(TARGET_PARAMETER_NAME_START_TAG);
+                    exportString.append(parameterName.getName());
+                    exportString.append(TARGET_PARAMETER_NAME_END_TAG);
+                }
+
+                exportString.append(TARGET_PARAMETER_NAMES_END_TAG);
+            }
         }
 
 

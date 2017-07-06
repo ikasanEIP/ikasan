@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
         
     <!--  ================================================================== -->
     <!--  Sample component implementations for testing                       -->
@@ -25,11 +25,11 @@
         </property>
         <property name="configuredResourceId" value="sample-demo-exclusion-scheduled-flow-consumer"/>
         <property name="configuration" ref="scheduledConsumerConfiguration"/>
-        <property name="managedEventIdentifierService">
+        <!--<property name="managedEventIdentifierService">
             <bean class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.SimpleEventIdentifierServiceImpl"/>
-        </property>
+        </property>-->
     </bean>
 
-    <bean id="scheduledFailingConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter" scope="prototype" />
+    <bean id="scheduledFailingConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter" />
 
 </beans>

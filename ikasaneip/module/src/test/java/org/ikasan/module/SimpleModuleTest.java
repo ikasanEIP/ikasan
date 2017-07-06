@@ -43,7 +43,7 @@ package org.ikasan.module;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.module.Module;

@@ -157,7 +157,7 @@ public class Server
 	 */
 	public void setModules(Set<Module> modules)
 	{
-		this.modules = new TreeSet<>(modules);
+		this.modules = modules;
 	}
 
 	/**
@@ -230,6 +230,25 @@ public class Server
 	public void setPort(Integer port)
 	{
 		this.port = port;
+	}
+
+	@Override public boolean equals(Object o)
+	{
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Server server = (Server) o;
+		if (url != null ? !url.equals(server.url) : server.url != null)
+			return false;
+		return port != null ? port.equals(server.port) : server.port == null;
+	}
+
+	@Override public int hashCode()
+	{
+		int result = url != null ? url.hashCode() : 0;
+		result = 31 * result + (port != null ? port.hashCode() : 0);
+		return result;
 	}
 
 	@Override

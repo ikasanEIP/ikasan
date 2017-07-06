@@ -42,7 +42,7 @@ package org.ikasan.endpoint.sftp.consumer;
 
 import javax.resource.spi.InvalidPropertyException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.junit.Test;
