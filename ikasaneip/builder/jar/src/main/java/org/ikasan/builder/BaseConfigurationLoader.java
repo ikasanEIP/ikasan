@@ -59,7 +59,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:module-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
-        "classpath:security-conf.xml",
+        //"classpath:security-conf.xml",
         "classpath:replay-service-conf.xml",
         //"classpath:rest-service-conf.xml",
         //"classpath:rest-service.xml",
