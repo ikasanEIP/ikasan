@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

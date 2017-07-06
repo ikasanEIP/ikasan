@@ -1,14 +1,8 @@
 package org.ikasan.dashboard.discovery;
 
 import com.ikasan.topology.exception.DiscoveryException;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Notification;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.DisallowConcurrentExecution;

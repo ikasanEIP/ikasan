@@ -45,14 +45,12 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.hospital.service.HospitalManagementService;
-import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.data.Container;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
