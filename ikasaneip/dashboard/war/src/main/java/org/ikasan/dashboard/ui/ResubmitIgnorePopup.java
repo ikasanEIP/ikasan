@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.dashboard.ui.topology.panel.ResubmitIgnoreStatusPanel;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;

@@ -1,7 +1,7 @@
 package org.ikasan.dashboard.housekeeping;
 
 import org.apache.log4j.Logger;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;

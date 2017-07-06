@@ -69,7 +69,7 @@ import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
