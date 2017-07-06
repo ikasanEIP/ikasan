@@ -59,7 +59,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:module-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
-        "classpath:security-conf.xml",
+        //"classpath:security-conf.xml",
         "classpath:replay-service-conf.xml",
         //"classpath:rest-service-conf.xml",
         //"classpath:rest-service.xml",
@@ -75,8 +75,8 @@ import org.springframework.context.annotation.ImportResource;
         //   "classpath:sybase-datasource-conf.xml",
         "classpath:h2db-datasource-conf.xml",
 
-        //"classpath:security-service-local-conf.xml",
-        //"classpath:springapp-servlet-local.xml",
+        "classpath:security-service-local-conf.xml",
+        "classpath:springapp-servlet-local.xml",
 
 } )
 
