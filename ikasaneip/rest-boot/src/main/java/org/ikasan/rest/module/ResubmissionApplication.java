@@ -41,7 +41,7 @@
 package org.ikasan.rest.module;
 
 import org.apache.log4j.Logger;
-import org.ikasan.hospital.service.HospitalService;
+import org.ikasan.spec.hospital.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
