@@ -40,8 +40,6 @@
  */
 package org.ikasan.builder;
 
-import org.springframework.boot.jta.narayana.NarayanaProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -59,10 +57,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:module-service-conf.xml",
         "classpath:configuration-service-conf.xml",
         "classpath:systemevent-service-conf.xml",
-        //"classpath:security-conf.xml",
         "classpath:replay-service-conf.xml",
-        //"classpath:rest-service-conf.xml",
-        //"classpath:rest-service.xml",
         "classpath:wiretap-service-conf.xml",
         "classpath:hospital-conf.xml",
 
@@ -72,19 +67,14 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:topology-tx-conf.xml",
 
         //"classpath:user-conf.xml",
-        //   "classpath:sybase-datasource-conf.xml",
         "classpath:h2db-datasource-conf.xml",
 
-        "classpath:security-service-local-conf.xml",
-        "classpath:springapp-servlet-local.xml",
+        "classpath:security-service-boot-conf.xml",
+        "classpath:springapp-servlet-boot.xml",
 
 } )
 
 @ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*"})
 public class BaseConfigurationLoader {
-    @Bean("narayanaProperties")
-    public NarayanaProperties getNarayanaProperties(){
-        NarayanaProperties narayanaProperties =  new NarayanaProperties();
-        return narayanaProperties;
-    }
+
 }

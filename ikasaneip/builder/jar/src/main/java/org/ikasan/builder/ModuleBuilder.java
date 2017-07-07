@@ -88,6 +88,19 @@ public class ModuleBuilder
 		}
 	}
 
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	ModuleBuilder( String name)
+	{
+
+		this.name = name;
+		if(name == null)
+		{
+			throw new IllegalArgumentException("module name cannot be 'null'");
+		}
+	}
     /**
 	 * Add description to the module
 	 * @param description
