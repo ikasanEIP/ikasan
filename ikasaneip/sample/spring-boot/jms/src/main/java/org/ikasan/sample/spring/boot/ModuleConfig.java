@@ -12,22 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 @Configuration
 @ImportResource( {
 
-/**
- *    <value>monitor-conf.xml</value>
-
- <value>ikasan-transaction-pointcut-jms.xml</value>
-
- <value>logger-conf.xml</value>
- <value>shared-conf.xml</value>
- <value>exception-conf.xml</value>
-
- */
         "classpath:monitor-service-conf.xml",
         "classpath:monitor-conf.xml",
         "classpath:ikasan-transaction-pointcut-jms.xml",

@@ -56,20 +56,11 @@ import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.beans.factory.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.FileSystemResource;
 
 import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
@@ -82,7 +73,7 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public class ModuleInitialisationServiceImpl implements ModuleInitialisationService, ApplicationContextAware,
-        //InitializingBean,
+        InitializingBean,
         DisposableBean
 {
     /** logger instance */
@@ -208,65 +199,68 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     @SuppressWarnings("unchecked")
     public void afterPropertiesSet() throws Exception
     {
-        // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
-        ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
-        Map<String,List> loaderResources = loaderContext.getBeansOfType(List.class);
+        try {
+            // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
+            ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
+            Map<String, List> loaderResources = loaderContext.getBeansOfType(List.class);
 
-        for(List<String> loaderResource : loaderResources.values())
-        {
-            String[] resourcesArray = new String[loaderResource.size()];
-            loaderResource.toArray(resourcesArray);
+            for (List<String> loaderResource : loaderResources.values()) {
+                String[] resourcesArray = new String[loaderResource.size()];
+                loaderResource.toArray(resourcesArray);
 
-            AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
-            innerContexts.add(applicationContext);
+                AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
+                innerContexts.add(applicationContext);
 
-            for(String beanName:applicationContext.getBeanDefinitionNames())
-            {
-                try
-                {
+                for (String beanName : applicationContext.getBeanDefinitionNames()) {
+                    try {
 
-                    if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract())
-                    {
-                        logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                        if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract()) {
+                            logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                        }
+                    } catch (RuntimeException e) {
+                        logger.warn("Failed to access " + beanName, e);
                     }
                 }
-                catch(RuntimeException e)
-                {
-                    logger.warn("Failed to access " + beanName, e);
-                }
+
+                loadModuleFromContext(applicationContext);
+
             }
 
-            // check for moduleActivator overrides and use the first one found
-            try
+        } catch (BeanDefinitionStoreException e){
+            if(e.getMessage().contains("IOException parsing XML document from class path resource [loader-conf.xml]"))
             {
-                Map<String,ModuleActivator> activators = applicationContext.getBeansOfType(ModuleActivator.class);
-                if(activators != null && activators.size() > 0)
-                {
-                    for(ModuleActivator activator : activators.values())
-                    {
-                        this.moduleActivator = activator;
-                        logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
-                        break;  // just use the first one we find
-                    }
-                }
+                logger.info("Default [" + loaderConfiguration + "] not found, loading from main context.");
+                loadModuleFromContext(platformContext);
             }
-            catch(NoSuchBeanDefinitionException e)
-            {
-                // nothing of issue here, move on
-            }
-
-            // load all modules in this context
-            // TODO - should multiple modules share the same application context ?
-            Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-            if(moduleBeans.isEmpty()){
-                moduleBeans = platformContext.getBeansOfType(Module.class);
-                initialise(moduleBeans);
-            }
-            else{
-                initialise(moduleBeans);
-            }
-
         }
+
+    }
+
+
+    private void loadModuleFromContext(ApplicationContext context){
+
+        // check for moduleActivator overrides and use the first one found
+        try {
+            Map<String, ModuleActivator> activators = context.getBeansOfType(ModuleActivator.class);
+            if (activators != null && activators.size() > 0) {
+                for (ModuleActivator activator : activators.values()) {
+                    this.moduleActivator = activator;
+                    logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
+                    break;  // just use the first one we find
+                }
+            }
+        } catch (NoSuchBeanDefinitionException e) {
+            // nothing of issue here, move on
+        }
+
+        // load all modules in this context
+        // TODO - should multiple modules share the same application context ?
+        Map<String, Module> moduleBeans = context.getBeansOfType(Module.class);
+        if (!moduleBeans.isEmpty())
+        {
+            initialise(moduleBeans);
+        }
+
     }
 
     private void initialise(Map<String, Module> moduleBeans)
