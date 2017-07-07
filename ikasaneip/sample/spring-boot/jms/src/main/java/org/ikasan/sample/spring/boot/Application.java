@@ -1,5 +1,10 @@
 package org.ikasan.sample.spring.boot;
 
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.builder.IkasanApplicationFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,15 +21,13 @@ import java.util.Map;
 
 public class Application
 {
+
     public static void main(String[] args) throws Exception
     {
-        ApplicationContext context = SpringApplication.run(Application.class, args);
-        System.out.println("Let's inspect the beans provided by Spring Boot:");
-        String[] beanNames = context.getBeanDefinitionNames();
-        Arrays.sort(beanNames);
-        for (String beanName : beanNames)
-        {
-            System.out.println(beanName);
-        }
+        Application myApplication = new Application();
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+
+
+
     }
 }

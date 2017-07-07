@@ -64,10 +64,10 @@ public class BuilderFactory
         return builderFactory;
     }
 //
-//    public static ModuleBuilder moduleBuilder(String name)
-//    {
-//        return new ModuleBuilder(name);
-//    }
+    public static ModuleBuilder moduleBuilder(String name)
+    {
+        return new ModuleBuilder(name);
+    }
 
 //    public static ModuleBuilder moduleBuilder(String name, String version)
 //    {
