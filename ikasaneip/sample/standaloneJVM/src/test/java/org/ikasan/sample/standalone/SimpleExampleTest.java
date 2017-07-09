@@ -42,6 +42,7 @@ package org.ikasan.sample.standalone;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -49,6 +50,7 @@ import org.junit.Test;
  * 
  * @author Ikasan Development Team
  */
+@Ignore
 public class SimpleExampleTest
 {
     /**
