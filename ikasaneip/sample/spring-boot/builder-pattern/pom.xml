@@ -61,16 +61,8 @@
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>geronimo-spec</groupId>
                     <artifactId>geronimo-spec-j2ee</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
                 </exclusion>
 
             </exclusions>
@@ -187,7 +179,6 @@
             <version>${version.com.h2database}</version>
             <scope>runtime</scope>
         </dependency>
-
 
     </dependencies>
 
