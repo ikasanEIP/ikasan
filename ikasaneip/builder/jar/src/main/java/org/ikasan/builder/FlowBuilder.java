@@ -40,7 +40,6 @@
  */
 package org.ikasan.builder;
 
-import org.apache.log4j.Logger;
 import org.ikasan.builder.conditional.Otherwise;
 import org.ikasan.builder.conditional.When;
 import org.ikasan.builder.sequential.SequenceName;
@@ -77,12 +76,9 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -96,9 +92,9 @@ import java.util.Map;
 public class FlowBuilder
 {
     /** logger */
-    private static Logger logger = Logger.getLogger(FlowBuilder.class);
+    private Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
 
-	/** name of the flow module owner */
+    /** name of the flow module owner */
 	String moduleName;
 
 	/** name of the flow being instantiated */
