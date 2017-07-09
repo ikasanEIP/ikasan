@@ -44,24 +44,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jta-narayana</artifactId>
-            <version>${version.org.springboot}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${version.org.springboot}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${version.org.springboot}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
             <version>${version.org.springframework}</version>
@@ -98,19 +80,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>geronimo-spec</groupId>
-                    <artifactId>geronimo-spec-j2ee</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -125,12 +95,6 @@
             <version>${project.version}</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-builder</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -149,6 +113,19 @@
             <artifactId>ikasan-replay</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>geronimo-spec</groupId>
+                    <artifactId>geronimo-spec-j2ee</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 
         <dependency>
             <groupId>org.hibernate</groupId>
