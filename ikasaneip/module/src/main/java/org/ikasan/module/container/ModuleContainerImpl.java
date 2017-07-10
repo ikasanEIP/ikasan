@@ -75,14 +75,23 @@ public class ModuleContainerImpl implements ModuleContainer
      * @param moduleName - The name of the module to get
      * @return Module
      */
+    @Override
     public Module getModule(String moduleName)
     {
         return this.modules.get(moduleName);
     }
 
+    @Override
     public void add(Module module)
     {
         this.modules.put(module.getName(), module);
         
     }
+
+    @Override
+    public void remove(String moduleName) {
+
+        this.modules.remove(moduleName);
+    }
+
 }
