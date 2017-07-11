@@ -422,10 +422,14 @@ public class FilterManagementTab extends TopologyTab
 						|| authentication.hasGrantedAuthority(SecurityConstants.FILTER_ADMIN)))
     	{
 			newButton.setVisible(true);
+			saveButton.setVisible(true);
+			clearButton.setVisible(true);
     	}
     	else
 		{
 			newButton.setVisible(false);
+			saveButton.setVisible(false);
+			clearButton.setVisible(false);
 		}
 		
 		controlsLayout.addComponent(newButton, 1, 0);
