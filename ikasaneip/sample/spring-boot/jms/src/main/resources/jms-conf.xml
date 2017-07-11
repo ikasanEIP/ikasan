@@ -13,7 +13,7 @@
     </bean>
 
     <!--<bean id="jmsListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">-->
-    <bean id="jmsListener" class="org.ikasan.sample.spring.boot.SampleIkasanMessageListenerContainer">
+    <bean id="jmsListener" class="org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer">
         <property name="messageListener" ref="jmsConsumer" />
         <property name="exceptionListener" ref="jmsConsumer" />
         <property name="errorHandler" ref="jmsConsumer" />
