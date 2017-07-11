@@ -64,7 +64,6 @@
                     <groupId>geronimo-spec</groupId>
                     <artifactId>geronimo-spec-j2ee</artifactId>
                 </exclusion>
-
             </exclusions>
 
         </dependency>
@@ -80,6 +79,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.ikasan</groupId>
