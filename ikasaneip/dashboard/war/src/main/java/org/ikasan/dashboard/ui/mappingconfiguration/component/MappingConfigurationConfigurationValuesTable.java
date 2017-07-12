@@ -564,9 +564,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
     	 
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY))
+    					|| authentication.hasGrantedAuthority(SecurityConstants.MAPPING_ADMIN)
+                        || authentication.hasGrantedAuthority(SecurityConstants.MAPPING_WRITE)
     					|| authentication.canAccessLinkedItem(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE
-    							, mappingConfiguration.getId()))
+    							, mappingConfiguration.getId())))
     	{
     		deleteButton.setVisible(true);
     	}
@@ -1153,9 +1154,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                 	 
                 	if(authentication != null 
                 			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-                					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY))
+                                    || authentication.hasGrantedAuthority(SecurityConstants.MAPPING_ADMIN)
+                                    || authentication.hasGrantedAuthority(SecurityConstants.MAPPING_WRITE)
                 					|| authentication.canAccessLinkedItem(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE
-                							, mappingConfiguration.getId()))
+                							, mappingConfiguration.getId())))
                 	{
                 		deleteButton.setVisible(true);
                 	}

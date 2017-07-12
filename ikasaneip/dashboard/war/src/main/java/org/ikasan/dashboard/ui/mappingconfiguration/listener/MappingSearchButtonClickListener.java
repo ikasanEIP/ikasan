@@ -45,14 +45,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinResponse;
+import com.vaadin.server.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteMappingConfigurationAction;
@@ -65,6 +63,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExp
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.MappingManagementService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.vaadin.teemu.VaadinIcons;
@@ -170,6 +169,9 @@ public class MappingSearchButtonClickListener implements ClickListener
             final DeleteMappingConfigurationAction action = new DeleteMappingConfigurationAction( mappingConfiguration.getId()
                 , this.searchResultsTable, this.mappingConfigurationService, this.systemEventService);
 
+            final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                    .getAttribute(DashboardSessionValueConstants.USER);
+
             final Button deleteButton = new Button();
             deleteButton.setIcon(VaadinIcons.TRASH);
             deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -184,6 +186,16 @@ public class MappingSearchButtonClickListener implements ClickListener
                     UI.getCurrent().addWindow(dialog);
                 }
             });
+
+            if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+                    || authentication.hasGrantedAuthority(SecurityConstants.MAPPING_ADMIN))
+            {
+                deleteButton.setVisible(true);
+            }
+            else
+            {
+                deleteButton.setVisible(false);
+            }
 
             SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
             String timestamp = format.format(mappingConfiguration.getUpdatedDateTime());

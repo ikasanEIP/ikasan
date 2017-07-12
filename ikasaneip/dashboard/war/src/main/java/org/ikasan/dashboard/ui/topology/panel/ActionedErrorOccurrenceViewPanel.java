@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
@@ -63,20 +64,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -129,6 +117,8 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 
 	public void init()
 	{
+		this.setSizeFull();
+
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();
 		layout.setMargin(true);
@@ -141,6 +131,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 	protected Panel createErrorOccurrenceDetailsPanel()
 	{
 		Panel errorOccurrenceDetailsPanel = new Panel();
+		errorOccurrenceDetailsPanel.setSizeFull();
 		
 		GridLayout layout = new GridLayout(4, 6);
 		layout.setSizeFull();
@@ -199,7 +190,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		TextField tf4 = new TextField();
 		tf4.setValue(timestamp);
 		tf4.setReadOnly(true);
-		tf4.setWidth("100%");
+		tf4.setWidth("80%");
 		layout.addComponent(tf4, 1, 4);
 		
 		label = new Label("Error Message:");
@@ -210,7 +201,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		TextArea tf5 = new TextArea();
 		tf5.setValue(this.errorOccurrence.getErrorMessage());
 		tf5.setReadOnly(true);
-		tf5.setWidth("100%");
+		tf5.setWidth("95%");
 		tf5.setRows(4);
 		tf5.setNullRepresentation("");
 		layout.addComponent(tf5, 1, 5, 3, 5);
@@ -223,7 +214,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		TextField actionTf = new TextField();
 		actionTf.setValue(this.errorOccurrence.getUserAction());
 		actionTf.setReadOnly(true);
-		actionTf.setWidth("100%");
+		actionTf.setWidth("80%");
 		layout.addComponent(actionTf, 3, 1);
 		
 		label = new Label("Action Date/Time:");
@@ -237,7 +228,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		TextField actionTimeTf = new TextField();
 		actionTimeTf.setValue(timestamp);
 		actionTimeTf.setReadOnly(true);
-		actionTimeTf.setWidth("100%");
+		actionTimeTf.setWidth("80%");
 		layout.addComponent(actionTimeTf, 3, 2);
 		
 		label = new Label("Action By:");
@@ -248,7 +239,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		TextField actionByTf = new TextField();
 		actionByTf.setValue(this.errorOccurrence.getActionedBy());
 		actionByTf.setReadOnly(true);
-		actionByTf.setWidth("100%");
+		actionByTf.setWidth("80%");
 		layout.addComponent(actionByTf, 3, 3);
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
@@ -263,8 +254,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setTheme(AceTheme.eclipse);
-		editor.setHeight(470, Unit.PIXELS);
-		editor.setWidth("100%");
+		editor.setSizeFull();
 		
 		final AceEditor eventEditor = new AceEditor();
 		
@@ -276,8 +266,7 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
-		eventEditor.setHeight(470, Unit.PIXELS);
-		eventEditor.setWidth("100%");
+		eventEditor.setSizeFull();
 		
 		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
 		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
@@ -298,26 +287,39 @@ public class ActionedErrorOccurrenceViewPanel extends Panel
 		formLayout.setWidth("100%");
 		formLayout.setHeight(300, Unit.PIXELS);
 		formLayout.addComponent(layout);
-		wrapperLayout.addComponent(formLayout, 0, 0);
-		
-		VerticalLayout h1 = new VerticalLayout();
-		h1.setSizeFull();
-		h1.setMargin(true);
-		h1.addComponent(wrapTextCheckBox);
-		h1.addComponent(eventEditor);
-		
-		HorizontalLayout h2 = new HorizontalLayout();
-		h2.setSizeFull();
-		h2.setMargin(true);
-		h2.addComponent(editor);
-		
-		tabsheet.addTab(h2, "Error Details");
-		tabsheet.addTab(h1, "Event Payload");
-		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
-		
-		wrapperLayout.addComponent(tabsheet, 0, 1);
 
-		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
+		VerticalLayout checkBoxLayout2 = new VerticalLayout();
+		checkBoxLayout2.setSizeFull();
+		checkBoxLayout2.setSpacing(true);
+		checkBoxLayout2.addComponent(wrapTextCheckBox);
+		checkBoxLayout2.setComponentAlignment(wrapTextCheckBox, Alignment.MIDDLE_LEFT);
+
+
+		VerticalSplitPanel eventVpanel = new VerticalSplitPanel(checkBoxLayout2
+				, eventEditor);
+		eventVpanel.setSizeFull();
+		eventVpanel.setSplitPosition(40, Unit.PIXELS);
+		eventVpanel.setLocked(true);
+
+
+		VerticalSplitPanel errorVpanel = new VerticalSplitPanel(new VerticalLayout()
+				, editor);
+		errorVpanel.setSizeFull();
+		errorVpanel.setSplitPosition(0, Unit.PIXELS);
+		errorVpanel.setLocked(true);
+
+		tabsheet.addTab(errorVpanel, "Error Details");
+		tabsheet.addTab(eventVpanel, "Event Payload");
+		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
+
+		VerticalSplitPanel wrapperVpanel = new VerticalSplitPanel(formLayout
+				, tabsheet);
+		wrapperVpanel.setSizeFull();
+		wrapperVpanel.setSplitPosition(320, Unit.PIXELS);
+		wrapperVpanel.setLocked(true);
+
+
+		errorOccurrenceDetailsPanel.setContent(wrapperVpanel);
 		return errorOccurrenceDetailsPanel;
 	}
 	

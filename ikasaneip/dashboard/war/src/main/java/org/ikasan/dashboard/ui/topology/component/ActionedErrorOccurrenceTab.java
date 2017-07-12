@@ -147,12 +147,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
-		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
-		{	
-			cont.addContainerProperty("", CheckBox.class,  null);
-		}
+
 
         return cont;
     }
@@ -329,26 +324,14 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		filterPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		
 		vSplitPanel.setFirstComponent(filterPanel);
-		
-		GridLayout hErrorTable = new GridLayout();
-		hErrorTable.setWidth("100%");
-		
+
 		GridLayout buttons = new GridLayout(3, 1);
 		buttons.setWidth("80px");
-		
+
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setWidth("100%");
 		hl.addComponent(buttons);
 		hl.setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
-		
-		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-	        	.getAttribute(DashboardSessionValueConstants.USER);
-		
-		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
-		{	
-			hErrorTable.addComponent(hl);
-		}
 
 		VerticalSplitPanel vpanel = new VerticalSplitPanel(hl
 				, this.errorOccurenceTable);

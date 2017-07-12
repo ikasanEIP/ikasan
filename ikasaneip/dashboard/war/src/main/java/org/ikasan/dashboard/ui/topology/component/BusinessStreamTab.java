@@ -137,13 +137,13 @@ public class BusinessStreamTab extends TopologyTab
 				final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 			        	.getAttribute(DashboardSessionValueConstants.USER);
 				
-				if(authentication != null 
-		    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-		    					&& !authentication.hasGrantedAuthority(SecurityConstants.MODIFY_BUSINESS_STREAM_AUTHORITY)))
-		    	{
-					Notification.show("You do not have the privilege to modify a business stream.");
-					return;
-		    	}
+//				if(authentication != null
+//		    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+//		    					&& !authentication.hasGrantedAuthority(SecurityConstants.MODIFY_BUSINESS_STREAM_AUTHORITY)))
+//		    	{
+//					Notification.show("You do not have the privilege to modify a business stream.");
+//					return;
+//		    	}
 
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
@@ -316,12 +316,12 @@ public class BusinessStreamTab extends TopologyTab
     	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication != null 
-    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					&& !authentication.hasGrantedAuthority(SecurityConstants.CREATE_BUSINESS_STREAM_AUTHORITY)))
-    	{
-			newButton.setVisible(false);
-    	}
+//		if(authentication != null
+//    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+//    					&& !authentication.hasGrantedAuthority(SecurityConstants.CREATE_BUSINESS_STREAM_AUTHORITY)))
+//    	{
+//			newButton.setVisible(false);
+//    	}
 		
 		controlsLayout.addComponent(newButton, 1, 0);
 		
@@ -370,12 +370,12 @@ public class BusinessStreamTab extends TopologyTab
     					final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
     				        	.getAttribute(DashboardSessionValueConstants.USER);
     					
-    					if(authentication != null 
-    			    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    			    					&& !authentication.hasGrantedAuthority(SecurityConstants.MODIFY_BUSINESS_STREAM_AUTHORITY)))
-    			    	{
-    						deleteButton.setVisible(false);
-    			    	}
+//    					if(authentication != null
+//    			    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+//    			    					&& !authentication.hasGrantedAuthority(SecurityConstants.MODIFY_BUSINESS_STREAM_AUTHORITY)))
+//    			    	{
+//    						deleteButton.setVisible(false);
+//    			    	}
     					
     					businessStreamTable.addItem(new Object[]{businessStreamFlow.getFlow().getModule().getServer().getName()
 								, businessStreamFlow.getFlow().getName(), businessStreamFlow.getFlow().getName(), deleteButton}, businessStreamFlow);
@@ -422,12 +422,12 @@ public class BusinessStreamTab extends TopologyTab
             }
         });
     	
-    	if(authentication != null 
-    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					&& !authentication.hasGrantedAuthority(SecurityConstants.DELETE_BUSINESS_STREAM_AUTHORITY)))
-    	{
-    		deleteButton.setVisible(false);
-    	}
+//    	if(authentication != null
+//    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+//    					&& !authentication.hasGrantedAuthority(SecurityConstants.DELETE_BUSINESS_STREAM_AUTHORITY)))
+//    	{
+//    		deleteButton.setVisible(false);
+//    	}
 
     	controlsLayout.addComponent(deleteButton, 2, 1);
     	

@@ -72,14 +72,14 @@
     <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RoleManagementPanel" scope="session">
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
-    	<constructor-arg ref="associatedPrincipalItemClickListener"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
     
     <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="associatedPrincipalItemClickListener"/>
-    	<constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
     
     <bean id="associatedPrincipalItemClickListener" class="org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener" scope="session">
@@ -87,11 +87,12 @@
 		<constructor-arg ref="navigationPanelProxy"/>
     </bean>   
     
-    <bean id="principalManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PrincipalManagementPanel" scope="session">
+    <bean id="principalManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.GroupManagementPanel" scope="session">
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
-    
+
     <bean id="administrationtViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
