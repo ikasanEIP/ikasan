@@ -40,7 +40,7 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.module.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.topology.service.TopologyService;
@@ -75,7 +75,7 @@ public class ModuleInitialisationServiceImplTest {
      */
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     ModuleActivator moduleActivator = mockery.mock(ModuleActivator.class);
-    UserService userService = mockery.mock(UserService.class);
+    SecurityService securityService = mockery.mock(SecurityService.class);
     TopologyService topologyService = mockery.mock(TopologyService.class);
     ApplicationContext platformContext = mockery.mock(ApplicationContext.class);
 
@@ -91,7 +91,7 @@ public class ModuleInitialisationServiceImplTest {
     ModuleInitialisationServiceImpl uut;
     @Before
     public void setup(){
-        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, userService, topologyService);
+        uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator, securityService, topologyService);
 
         List<AbstractApplicationContext> innerContexts = new ArrayList<>();
         ReflectionTestUtils.setField(uut,"platformContext",platformContext);
@@ -100,12 +100,12 @@ public class ModuleInitialisationServiceImplTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleContainer() {
-        new ModuleInitialisationServiceImpl(null, moduleActivator, userService, topologyService);
+        new ModuleInitialisationServiceImpl(null, moduleActivator, securityService, topologyService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_systemEventService() {
-        new ModuleInitialisationServiceImpl(moduleContainer, null, userService, topologyService);
+        new ModuleInitialisationServiceImpl(moduleContainer, null, securityService, topologyService);
     }
 
     @Test(expected = IllegalArgumentException.class)
