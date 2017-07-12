@@ -67,6 +67,7 @@ import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.configurationService.util.ComponentConfigurationExportHelper;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.framework.validation.BooleanValidator;
@@ -472,6 +473,20 @@ public class ComponentConfigurationWindow extends AbstractConfigurationWindow
     	buttonLayout.setSpacing(true);
     	buttonLayout.addComponent(saveButton, 0 , 0);
     	buttonLayout.addComponent(deleteButton, 1 , 0);
+
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+		{
+			buttonLayout.setVisible(true);
+		}
+		else
+		{
+			buttonLayout.setVisible(false);
+		}
     	
     	this.layout.addComponent(buttonLayout, 0, i, 1, i);
     	this.layout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);

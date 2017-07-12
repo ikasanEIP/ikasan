@@ -191,8 +191,9 @@ public class CategorisedErrorTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
@@ -656,6 +657,7 @@ public class CategorisedErrorTab extends TopologyTab
         });
 		
 		buttons.addComponent(selectAllButton);
+		buttons.addComponent(closeSelectedButton);
 		buttons.addComponent(commentSelectedButton);
 		buttons.addComponent(jiraButton);
 		
@@ -676,12 +678,20 @@ public class CategorisedErrorTab extends TopologyTab
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
-		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
-		{	
-			buttons.addComponent(closeSelectedButton);
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
+		{
+			selectAllButton.setVisible(true);
+			closeSelectedButton.setVisible(true);
+			commentSelectedButton.setVisible(true);
 		}
-		
+		else
+		{
+			selectAllButton.setVisible(false);
+			closeSelectedButton.setVisible(false);
+			commentSelectedButton.setVisible(false);
+		}
 		
 		gl.addComponent(hl);
 		hErrorTable.addComponent(gl);
@@ -866,8 +876,9 @@ public class CategorisedErrorTab extends TopologyTab
 			final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 		        	.getAttribute(DashboardSessionValueConstants.USER);
 			
-			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY)))
+			if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+					|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_WRITE)
+					|| authentication.hasGrantedAuthority(SecurityConstants.CATEGORISED_ERROR_ADMIN)))
 			{	
 				CheckBox cb = new CheckBox();
 				cb.setValue(false);

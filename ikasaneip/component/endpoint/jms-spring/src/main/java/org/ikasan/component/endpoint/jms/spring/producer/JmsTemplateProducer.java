@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.jms.spring.producer;
 
-import org.ikasan.component.endpoint.jms.AuthenticatedConnectionFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -48,11 +47,8 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.util.JndiUtils;
-import org.springframework.jndi.JndiObjectFactoryBean;
-import org.springframework.jndi.JndiTemplate;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
+import javax.jms.*;
 
 /**
  * Default JMS Producer component based on Spring JMS template.
@@ -70,8 +66,8 @@ public class JmsTemplateProducer<T>
     /** configuration */
     private SpringMessageProducerConfiguration configuration;
 
-    /** critical to start of flow - default is false */
-    private boolean isCritical;
+    /** critical to start of flow - default is true */
+    private boolean isCritical = true;
 
     /**
      * Constructor
@@ -146,15 +142,52 @@ public class JmsTemplateProducer<T>
             throw new RuntimeException("Check the configuration ConnectionFactoryName [" + configuration.getConnectionFactoryName() + "]", e);
         }
 
-        try
+        if (configuration.getDestinationJndiProperties() == null || configuration.getDestinationJndiProperties().isEmpty())
         {
-            // get destination
-            Destination destination = JndiUtils.getDestination(configuration.getDestinationJndiProperties(), configuration.getDestinationJndiName());
-            this.jmsTemplate.setDefaultDestination(destination);
+            Connection connection = null;
+
+            try
+            {
+                // create session using connection factory
+                boolean sessionTransacted = configuration.getSessionTransacted() == null ? false : configuration.getSessionTransacted();
+                int sessionAcknowledgeMode = configuration.getSessionAcknowledgeMode() == null ? Session.AUTO_ACKNOWLEDGE : configuration.getSessionAcknowledgeMode();
+                connection = this.jmsTemplate.getConnectionFactory().createConnection();
+                Session session = connection.createSession(sessionTransacted, sessionAcknowledgeMode);
+
+                // create destination using session
+                Destination destination = configuration.getPubSubDomain() ? session.createTopic(configuration.getDestinationJndiName()) : session.createQueue(configuration.getDestinationJndiName());
+                this.jmsTemplate.setDefaultDestination(destination);
+            }
+            catch (JMSException e)
+            {
+                throw new RuntimeException("JMS provider fails to create the connection due to some internal error", e);
+            }
+            finally
+            {
+                if (connection != null)
+                {
+                    try
+                    {
+                        connection.close();
+                    } catch (JMSException e)
+                    {
+                        throw new RuntimeException("Unable to close JMS Connection", e);
+                    }
+                }
+            }
         }
-        catch(IllegalArgumentException e)
+        else
         {
-            throw new RuntimeException("Check the configuration DestinationJndiName [" + configuration.getDestinationJndiName() + "]", e);
+            try
+            {
+                // get destination using JNDI lookup
+                Destination destination = JndiUtils.getDestination(configuration.getDestinationJndiProperties(), configuration.getDestinationJndiName());
+                this.jmsTemplate.setDefaultDestination(destination);
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new RuntimeException("Check the configuration DestinationJndiName [" + configuration.getDestinationJndiName() + "]", e);
+            }
         }
 
         this.jmsTemplate.setPubSubDomain(configuration.getPubSubDomain());

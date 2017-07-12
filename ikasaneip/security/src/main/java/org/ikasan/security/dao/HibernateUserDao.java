@@ -43,6 +43,7 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserLite;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
@@ -77,6 +78,15 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     public List<User> getUsers()
     {
         return getHibernateTemplate().loadAll(User.class);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.security.dao.UserDao#getUsers()
+     */
+    @SuppressWarnings("unchecked")
+    public List<UserLite> getUserLites()
+    {
+        return getHibernateTemplate().loadAll(UserLite.class);
     }
 
     public void save(User user)

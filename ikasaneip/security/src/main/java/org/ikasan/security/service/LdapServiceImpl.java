@@ -89,9 +89,12 @@ public class LdapServiceImpl implements LdapService
     private PasswordEncoder passwordEncoder;
 
 	/**
-	 * @param securityService
-	 * @param userService
-	 */
+	 * Constructor
+	 *
+	 * @param securityDao
+	 * @param userDao
+	 * @param passwordEncoder
+     */
 	public LdapServiceImpl(SecurityDao securityDao,
 			UserDao userDao, PasswordEncoder passwordEncoder)
 	{
@@ -368,8 +371,7 @@ public class LdapServiceImpl implements LdapService
 		}
 
 		List<String> users = getAllLdapUsers();
-		
-		Role role = securityDao.getRoleByName("User");
+
 
 		for (String username : users)
 		{
@@ -414,21 +416,10 @@ public class LdapServiceImpl implements LdapService
 				{
 					principal.setDescription(ldapUser.description);
 				}
+
+				securityDao.saveOrUpdatePrincipal(principal);
 			}
 
-			if(principal.getRoles() != null)
-			{
-				principal.getRoles().add(role);
-			}
-			else
-			{
-				Set<Role> roles = new HashSet<Role>();
-				roles.add(role);
-				
-				principal.setRoles(roles);
-			}
-			
-			securityDao.saveOrUpdatePrincipal(principal);				
 			ikasanPrincipals.add(principal);
 			
 			if(ldapUser.memberOf != null)
@@ -456,8 +447,7 @@ public class LdapServiceImpl implements LdapService
 			user.setDepartment(ldapUser.department);
 			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 
-			this.userDao.save(user);
-				
+			this.userDao.save(user);				
 		}
 	}
 

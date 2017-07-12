@@ -177,11 +177,11 @@ public class NewRoleWindow extends Window
             	NewRoleWindow.this.roleName.setValidationVisible(false);
             	NewRoleWindow.this.roleDescription.setValidationVisible(false);
 
-            	UI.getCurrent().removeWindow(NewRoleWindow.this);
-            	
             	securityService.saveRole(role);
             	
             	Notification.show("Role successfully created!");
+
+				UI.getCurrent().removeWindow(NewRoleWindow.this);
             }
         });
 		

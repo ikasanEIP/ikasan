@@ -47,6 +47,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -60,15 +61,6 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -79,20 +71,19 @@ import com.vaadin.ui.themes.ValoTheme;
 public class WiretapPayloadViewPanel extends Panel
 {
 	private Logger logger = Logger.getLogger(WiretapPayloadViewPanel.class);
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -3347325521531925322L;
 	
 	private TextField roleName;
 	private TextField roleDescription;
 	private WiretapEvent<String> wiretapEvent;
-	
+
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param wiretapEvent
+     */
 	public WiretapPayloadViewPanel(WiretapEvent<String> wiretapEvent)
 	{
 		super();
@@ -209,7 +200,7 @@ public class WiretapPayloadViewPanel extends Panel
 		editor.setWordWrap(true);
 		editor.setTheme(AceTheme.eclipse);
 		editor.setWidth("100%");
-		editor.setHeight(550, Unit.PIXELS);
+		editor.setSizeFull();
 		
 		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
 		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
@@ -239,10 +230,14 @@ public class WiretapPayloadViewPanel extends Panel
 		wrapperLayout.addComponent(wrapTextCheckBox, 0, 1);
 		wrapperLayout.addComponent(downloadButton, 1, 1);
 		wrapperLayout.setComponentAlignment(downloadButton, Alignment.MIDDLE_RIGHT);
-		wrapperLayout.addComponent(editor, 0, 2, 1, 2);
-		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 
-		wiretapDetailsPanel.setContent(wrapperLayout);
+		VerticalSplitPanel rightVpanel = new VerticalSplitPanel(wrapperLayout
+				, editor);
+		rightVpanel.setSizeFull();
+		rightVpanel.setSplitPosition(250, Unit.PIXELS);
+		rightVpanel.setLocked(true);
+
+		wiretapDetailsPanel.setContent(rightVpanel);
 		return wiretapDetailsPanel;
 	}
 	

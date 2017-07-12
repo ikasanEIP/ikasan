@@ -34,6 +34,7 @@
     	<constructor-arg ref="policyAssociationFlowSearchWindow"/>
     	<constructor-arg ref="policyAssociationModuleSearchWindow"/>
     	<constructor-arg ref="policyAssociationBusinessStreamSearchWindow"/>
+        <constructor-arg ref="systemEventService"/>
     </bean>
     
     <bean id="policyManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">

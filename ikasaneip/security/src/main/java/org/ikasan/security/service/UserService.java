@@ -45,6 +45,7 @@ import java.util.List;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserLite;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -63,6 +64,13 @@ public interface UserService extends UserDetailsManager
      * @return all Users
      */
     public List<User> getUsers();
+
+    /**
+     * Gets all UserLites in the system
+     *
+     * @return all Users
+     */
+    public List<UserLite> getUserLites();
 
     /**
      * Gets all Authorities in the system

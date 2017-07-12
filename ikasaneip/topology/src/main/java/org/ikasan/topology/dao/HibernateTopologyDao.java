@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -420,6 +421,11 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	@Override
 	public List<RoleFilter> getRoleFiltersByRoleId(List<Long> roleIds)
 	{
+		if(roleIds == null || roleIds.isEmpty())
+		{
+			return new ArrayList<RoleFilter>();
+		}
+
 		DetachedCriteria criteria = DetachedCriteria.forClass(RoleFilter.class);
 		criteria.add(Restrictions.in("id.roleId", roleIds));
 

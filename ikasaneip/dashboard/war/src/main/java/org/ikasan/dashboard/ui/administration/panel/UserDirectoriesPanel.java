@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -90,11 +91,14 @@ public class UserDirectoriesPanel extends Panel implements View
     private LdapService ldapService;
     private GridLayout mainLayout = new GridLayout(1, 4);
     private Table directoryTable;
-	
+	private Button newDirectoryButton;
+
 	/**
-     * Constructor
-     * 
-     * @param ikasanModuleService
+	 * Constructor
+	 *
+	 * @param securityService
+	 * @param authenticationProviderFactory
+	 * @param ldapService
      */
     public UserDirectoriesPanel(SecurityService securityService,
     		AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory,
@@ -146,7 +150,7 @@ public class UserDirectoriesPanel extends Panel implements View
         this.mainLayout.addComponent(parapraphOne);
         this.mainLayout.addComponent(parapraphTwo);
         
-        Button newDirectoryButton = new Button("Add Directory");
+        newDirectoryButton = new Button("Add Directory");
         newDirectoryButton.addClickListener(new Button.ClickListener() 
         {
             public void buttonClick(ClickEvent event) 
@@ -505,10 +509,10 @@ public class UserDirectoriesPanel extends Panel implements View
 		
 		HorizontalLayout orderLayout = new HorizontalLayout();
 		orderLayout.setWidth("50%");
-		
+
+		Button upArrow = new Button(VaadinIcons.ARROW_UP);
 		if(authenticationMethod.getOrder() != 1)
 		{
-			Button upArrow = new Button(VaadinIcons.ARROW_UP);
 			upArrow.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 			upArrow.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			upArrow.addClickListener(new Button.ClickListener() 
@@ -535,10 +539,10 @@ public class UserDirectoriesPanel extends Panel implements View
 		
 		
 		long numberOfAuthMethods = securityService.getNumberOfAuthenticationMethods();
-		
+
+		Button downArrow = new Button(VaadinIcons.ARROW_DOWN);
 		if(authenticationMethod.getOrder() != numberOfAuthMethods)
 		{
-			Button downArrow = new Button(VaadinIcons.ARROW_DOWN);
 			downArrow.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 			downArrow.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 			downArrow.addClickListener(new Button.ClickListener() 
@@ -563,6 +567,46 @@ public class UserDirectoriesPanel extends Panel implements View
 	        });
 			
 			orderLayout.addComponent(downArrow);
+		}
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_ADMIN))
+		{
+			test.setVisible(true);
+			enableDisableButton.setVisible(true);
+			delete.setVisible(true);
+			edit.setVisible(true);
+			synchronise.setVisible(true);
+			upArrow.setVisible(true);
+			downArrow.setVisible(true);
+			newDirectoryButton.setVisible(true);
+		}
+		else if(authentication.hasGrantedAuthority(SecurityConstants.USER_DIRECTORY_WRITE))
+		{
+			test.setVisible(true);
+			enableDisableButton.setVisible(true);
+			synchronise.setVisible(true);
+			upArrow.setVisible(true);
+			downArrow.setVisible(true);
+
+			delete.setVisible(false);
+			edit.setVisible(false);
+			newDirectoryButton.setVisible(false);
+		}
+		else
+		{
+			test.setVisible(false);
+			enableDisableButton.setVisible(false);
+			delete.setVisible(false);
+			edit.setVisible(false);
+			synchronise.setVisible(false);
+			upArrow.setVisible(false);
+			downArrow.setVisible(false);
+			newDirectoryButton.setVisible(false);
 		}
 		
 		this.directoryTable.addItem(new Object[]{authenticationMethod.getName(), "Microsoft Active Directory"

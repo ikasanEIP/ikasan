@@ -44,6 +44,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
 import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
@@ -57,21 +60,13 @@ import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
+import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -90,20 +85,19 @@ public class ProfilePanel extends Panel implements View
 	private TextField firstName;
 	private TextField surname;
 	private Table dashboadActivityTable = new Table();
-	private Table associatedPrincipalsTable = new Table();
+	private FilterTable associatedPrincipalsTable = new FilterTable();
 	private User user;
 	private AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener;
 	private TextField department = new TextField();
 	private TextField email = new TextField();
-	private Table roleTable = new Table();
+	private FilterTable roleTable = new FilterTable();
 	private Table permissionChangeTable = new Table();
 	private SystemEventService systemEventService;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param ikasanModuleService
-	 */
+	private IndexedContainer associatedPrincipalsTableContainer;
+	private IndexedContainer roleTableTableContainer;
+
+
 	public ProfilePanel(UserService userService, SecurityService securityService,
 			AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener,
 			SystemEventService systemEventService)
@@ -136,7 +130,6 @@ public class ProfilePanel extends Panel implements View
 		init();
 	}
 
-	@SuppressWarnings("deprecation")
 	protected void init()
 	{
 		this.setWidth("100%");
@@ -150,19 +143,19 @@ public class ProfilePanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 6);
+		GridLayout gridLayout = new GridLayout(2, 3);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(true);
-		gridLayout.setSizeFull();
-	
+		gridLayout.setWidth("100%");
+
 		Label mappingConfigurationLabel = new Label("User Profile");
- 		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
- 		gridLayout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
- 			 		
+		mappingConfigurationLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		gridLayout.addComponent(mappingConfigurationLabel, 0, 0, 1, 0);
+
 		Label usernameLabel = new Label("Username:");
-		
+
 		usernameField.setWidth("65%");
-		
+
 		firstName = new TextField();
 		firstName.setWidth("65%");
 		firstName.setNullRepresentation("");
@@ -173,26 +166,18 @@ public class ProfilePanel extends Panel implements View
 		department.setNullRepresentation("");
 		email.setWidth("65%");
 		email.setNullRepresentation("");
-		
-		roleTable.addContainerProperty("Role", String.class, null);
-		roleTable.addStyleName("ikasan");
-		roleTable.addStyleName(ValoTheme.TABLE_SMALL);
-		roleTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		roleTable.setHeight("520px");
-		roleTable.setWidth("250px");
-		
-		
+
+
 		GridLayout formLayout = new GridLayout(2, 5);
 		formLayout.setSpacing(true);
 		formLayout.setWidth("100%");
-		
 		formLayout.setColumnExpandRatio(0, .1f);
 		formLayout.setColumnExpandRatio(1, .8f);
 
 		usernameLabel.setSizeUndefined();
 		formLayout.addComponent(usernameLabel, 0, 0);
 		formLayout.setComponentAlignment(usernameLabel, Alignment.MIDDLE_RIGHT);
-		formLayout.addComponent(usernameField, 1, 0);		
+		formLayout.addComponent(usernameField, 1, 0);
 
 		Label firstNameLabel = new Label("First name:");
 		firstNameLabel.setSizeUndefined();
@@ -217,93 +202,167 @@ public class ProfilePanel extends Panel implements View
 		formLayout.addComponent(emailLabel, 0, 4);
 		formLayout.setComponentAlignment(emailLabel, Alignment.MIDDLE_RIGHT);
 		formLayout.addComponent(email, 1, 4);
-		
-		gridLayout.addComponent(formLayout, 0, 2, 1, 2);
-		
-		Label rolesAndGroupsHintLabel1 = new Label();
-		rolesAndGroupsHintLabel1.setCaptionAsHtml(true);
-		rolesAndGroupsHintLabel1.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
-				" The Roles table below displays the Ikasan roles that the user has.");
-		rolesAndGroupsHintLabel1.addStyleName(ValoTheme.LABEL_TINY);
-		rolesAndGroupsHintLabel1.addStyleName(ValoTheme.LABEL_LIGHT);
-		rolesAndGroupsHintLabel1.setWidth(300, Unit.PIXELS);
-		gridLayout.addComponent(rolesAndGroupsHintLabel1, 0, 3, 1, 3);
-		
-		Label rolesAndGroupsHintLabel2 = new Label();
-		rolesAndGroupsHintLabel2.setCaptionAsHtml(true);
-		rolesAndGroupsHintLabel2.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
-				" The Groups table below displays all the LDAP groups that the user is a member of.");
-		
-		rolesAndGroupsHintLabel2.addStyleName(ValoTheme.LABEL_TINY);
-		rolesAndGroupsHintLabel2.addStyleName(ValoTheme.LABEL_LIGHT);
-		rolesAndGroupsHintLabel2.setWidth(300, Unit.PIXELS);
-		gridLayout.addComponent(rolesAndGroupsHintLabel2, 0, 4, 1, 4);
-		
-		dashboadActivityTable.addContainerProperty("Action", String.class, null);
-		dashboadActivityTable.addContainerProperty("Date/Time", String.class, null);
-		dashboadActivityTable.addStyleName("ikasan");
-		dashboadActivityTable.addStyleName(ValoTheme.TABLE_SMALL);
-		dashboadActivityTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		dashboadActivityTable.setHeight("350px");
-		dashboadActivityTable.setWidth("300px");
-		
+
+		gridLayout.addComponent(formLayout, 0, 1, 1, 1);
+		gridLayout.setComponentAlignment(formLayout, Alignment.TOP_CENTER);
+
+//         Label rolesAndGroupsHintLabel1 = new Label();
+//         rolesAndGroupsHintLabel1.setCaptionAsHtml(true);
+//         rolesAndGroupsHintLabel1.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() +
+//                 " The Roles table below displays the Ikasan roles that the user has.");
+//         rolesAndGroupsHintLabel1.addStyleName(ValoTheme.LABEL_TINY);
+//         rolesAndGroupsHintLabel1.addStyleName(ValoTheme.LABEL_LIGHT);
+//         rolesAndGroupsHintLabel1.setWidth(300, Unit.PIXELS);
+//         gridLayout.addComponent(rolesAndGroupsHintLabel1, 0, 3, 1, 3);
+//
+//         Label rolesAndGroupsHintLabel2 = new Label();
+//         rolesAndGroupsHintLabel2.setCaptionAsHtml(true);
+//         rolesAndGroupsHintLabel2.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() +
+//                 " The Groups table below displays all the LDAP groups that the user is a member of.");
+//
+//         rolesAndGroupsHintLabel2.addStyleName(ValoTheme.LABEL_TINY);
+//         rolesAndGroupsHintLabel2.addStyleName(ValoTheme.LABEL_LIGHT);
+//         rolesAndGroupsHintLabel2.setWidth(300, Unit.PIXELS);
+//         gridLayout.addComponent(rolesAndGroupsHintLabel2, 0, 4, 1, 4);
+
+		this.associatedPrincipalsTableContainer = new IndexedContainer();
+		this.roleTableTableContainer = new IndexedContainer();
+
+		this.roleTableTableContainer.addContainerProperty("Ikasan Role", String.class, null);
+		this.roleTable.setColumnExpandRatio("Ikasan Role", .3f);
+		this.roleTableTableContainer.addContainerProperty("Description", String.class, null);
+		this.roleTable.setColumnExpandRatio("Description", .55f);
+		this.roleTable.addStyleName("ikasan");
+		this.roleTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.roleTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		this.roleTable.setSizeFull();
+		this.roleTable.setContainerDataSource(this.roleTableTableContainer);
+		this.roleTable.setFilterBarVisible(true);
+
+		this.associatedPrincipalsTableContainer.addContainerProperty("LDAP Group", String.class, null);
+		this.associatedPrincipalsTable.setColumnExpandRatio("LDAP Group", .40f);
+		this.associatedPrincipalsTableContainer.addContainerProperty("Type", String.class, null);
+		this.associatedPrincipalsTable.setColumnExpandRatio("Type", .20f);
+		this.associatedPrincipalsTableContainer.addContainerProperty("Description", String.class, null);
+		this.associatedPrincipalsTable.setColumnExpandRatio("Description", .40f);
+		this.associatedPrincipalsTable.addStyleName("ikasan");
+		this.associatedPrincipalsTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.associatedPrincipalsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		this.associatedPrincipalsTable.setSizeFull();
+		this.associatedPrincipalsTable.setContainerDataSource(this.associatedPrincipalsTableContainer);
+		this.associatedPrincipalsTable.setFilterBarVisible(true);
+
+
+		GridLayout tablesLayout = new GridLayout(2, 1);
+		tablesLayout.setWidth("100%");
+		tablesLayout.setMargin(false);
+		tablesLayout.setSpacing(true);
+
+		Label ikasanRolesLabel = new Label("Ikasan Roles");
+		ikasanRolesLabel.setStyleName(ValoTheme.LABEL_HUGE);
+
+		tablesLayout.addComponent(ikasanRolesLabel, 0, 0);
+
+		VerticalSplitPanel rolesVpanel = new VerticalSplitPanel(tablesLayout
+				, this.roleTable);
+		rolesVpanel.setSizeFull();
+		rolesVpanel.setSplitPosition(40, Unit.PIXELS);
+		rolesVpanel.setLocked(true);
+
+		tablesLayout = new GridLayout(2, 1);
+		tablesLayout.setMargin(false);
+		tablesLayout.setSpacing(true);
+
+		Label ldapGroupsLabel = new Label("Ldap Groups");
+		ldapGroupsLabel.setStyleName(ValoTheme.LABEL_HUGE);
+		tablesLayout.addComponent(ldapGroupsLabel, 0, 0);
+
+		VerticalSplitPanel ldapVpanel = new VerticalSplitPanel(tablesLayout
+				, this.associatedPrincipalsTable);
+		ldapVpanel.setSizeFull();
+		ldapVpanel.setSplitPosition(40, Unit.PIXELS);
+		ldapVpanel.setLocked(true);
+
+		VerticalLayout rolesLayout = new VerticalLayout();
+		rolesLayout.setSizeFull();
+		rolesLayout.setMargin(true);
+		rolesLayout.addComponent(rolesVpanel);
+
+		VerticalLayout ldapLayout = new VerticalLayout();
+		ldapLayout.setSizeFull();
+		ldapLayout.setMargin(true);
+		ldapLayout.addComponent(ldapVpanel);
+
+		VerticalSplitPanel tablesVpanel = new VerticalSplitPanel(rolesLayout
+				, ldapLayout);
+		tablesVpanel.setSizeFull();
+		tablesVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+		tablesVpanel.setLocked(true);
+
+		VerticalSplitPanel holderVpanel = new VerticalSplitPanel(gridLayout
+				, tablesVpanel);
+		holderVpanel.setSizeFull();
+		holderVpanel.setSplitPosition(260, Unit.PIXELS);
+		holderVpanel.setLocked(true);
+
+		Panel roleMemberPanel = new Panel();
+
+		roleMemberPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+		roleMemberPanel.setHeight("100%");
+		roleMemberPanel.setWidth("100%");
+
+		this.dashboadActivityTable.addContainerProperty("Action", String.class, null);
+		this.dashboadActivityTable.addContainerProperty("Date/Time", String.class, null);
+		this.dashboadActivityTable.addStyleName("ikasan");
+		this.dashboadActivityTable.addStyleName(ValoTheme.TABLE_SMALL);
+		this.dashboadActivityTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
+		this.dashboadActivityTable.setSizeFull();
+
 		this.permissionChangeTable.addContainerProperty("Action", String.class, null);
 		this.permissionChangeTable.addContainerProperty("Date/Time", String.class, null);
 		this.permissionChangeTable.addStyleName("ikasan");
 		this.permissionChangeTable.addStyleName(ValoTheme.TABLE_SMALL);
 		this.permissionChangeTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		this.permissionChangeTable.setHeight("350px");
-		this.permissionChangeTable.setWidth("300px");
+		this.permissionChangeTable.setSizeFull();
 
-				
-		gridLayout.addComponent(roleTable, 0, 5);
-		
-		this.associatedPrincipalsTable.addContainerProperty("Groups", String.class, null);
-		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
-		this.associatedPrincipalsTable.addStyleName("ikasan");
-		this.associatedPrincipalsTable.addStyleName(ValoTheme.TABLE_SMALL);
-		this.associatedPrincipalsTable.setCellStyleGenerator(new IkasanSmallCellStyleGenerator());
-		associatedPrincipalsTable.setHeight("520px");
-		associatedPrincipalsTable.setWidth("400px");
-		
-		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 5);
-					
-		
-		Panel roleMemberPanel = new Panel();
- 		
-		roleMemberPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
-		roleMemberPanel.setHeight("100%");
-		roleMemberPanel.setWidth("100%");
-		
-		GridLayout roleMemberLayout = new GridLayout();
-		roleMemberLayout.setSpacing(true);
-		roleMemberLayout.setWidth("100%");
-		
 		Label dashboardActivityLabel = new Label("Dashboard Activity");
 		dashboardActivityLabel.setStyleName(ValoTheme.LABEL_HUGE);
-		
-		
- 		roleMemberLayout.addComponent(dashboardActivityLabel);
-		roleMemberLayout.addComponent(this.dashboadActivityTable);
-		
+
+
+		VerticalSplitPanel activityVpanel = new VerticalSplitPanel(dashboardActivityLabel
+				, this.dashboadActivityTable);
+		activityVpanel.setSizeFull();
+		activityVpanel.setSplitPosition(40, Unit.PIXELS);
+		activityVpanel.setLocked(true);
+
 		Label permissionChangeLabel = new Label("User Security Changes");
 		permissionChangeLabel.setStyleName(ValoTheme.LABEL_HUGE);
-		
-		roleMemberLayout.addComponent(permissionChangeLabel);
-		roleMemberLayout.addComponent(this.permissionChangeTable);
-		
-		roleMemberPanel.setContent(roleMemberLayout);
 
-		securityAdministrationPanel.setContent(gridLayout);
+
+		VerticalSplitPanel securityChangeVpanel = new VerticalSplitPanel(permissionChangeLabel
+				, this.permissionChangeTable);
+		securityChangeVpanel.setSizeFull();
+		securityChangeVpanel.setSplitPosition(40, Unit.PIXELS);
+		securityChangeVpanel.setLocked(true);
+
+		VerticalSplitPanel rightVpanel = new VerticalSplitPanel(activityVpanel
+				, securityChangeVpanel);
+		rightVpanel.setSizeFull();
+		rightVpanel.setSplitPosition(50, Unit.PERCENTAGE);
+		rightVpanel.setLocked(true);
+
+		roleMemberPanel.setContent(rightVpanel);
+
+		securityAdministrationPanel.setContent(holderVpanel);
 		layout.addComponent(securityAdministrationPanel);
-		
+
 		VerticalLayout roleMemberPanelLayout = new VerticalLayout();
 		roleMemberPanelLayout.setWidth("100%");
 		roleMemberPanelLayout.setHeight("100%");
 		roleMemberPanelLayout.setMargin(true);
 		roleMemberPanelLayout.addComponent(roleMemberPanel);
 		roleMemberPanelLayout.setSizeFull();
-		
+
 		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
 		hsplit.setFirstComponent(layout);
 		hsplit.setSecondComponent(roleMemberPanelLayout);
@@ -312,7 +371,7 @@ public class ProfilePanel extends Panel implements View
 		// Set the position of the splitter as percentage
 		hsplit.setSplitPosition(65, Unit.PERCENTAGE);
 		hsplit.setLocked(true);
-		
+
 		this.setContent(hsplit);
 	}
 
@@ -326,8 +385,6 @@ public class ProfilePanel extends Panel implements View
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
-		List<Role> roles = this.securityService.getAllRoles();
-		
 		this.dashboadActivityTable.removeAllItems();
 		
 		IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
@@ -348,39 +405,25 @@ public class ProfilePanel extends Panel implements View
 
 		for (final Role role : principal.getRoles())
 		{
-			Button deleteButton = new Button();
-			deleteButton.setIcon(VaadinIcons.TRASH);
-			deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-			deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-			
-			
-			deleteButton.addClickListener(new Button.ClickListener() 
-	        {
-	            public void buttonClick(ClickEvent event) 
-	            {
-	            	roleTable.removeItem(role);
-	            	
-	            	principal.getRoles().remove(role);
-	            	
-	            	securityService.savePrincipal(principal);
-	            	
-	            	dashboadActivityTable.removeItem(principal.getName());
-	            }
-	        });
-			
-			roleTable.addItem(new Object[]
-					{ role.getName()}, role);
-			
-			associatedPrincipalsTable.removeAllItems();
-			
-			for(IkasanPrincipal ikasanPrincipal: user.getPrincipals())
-	        {
-	        	if(!ikasanPrincipal.getType().equals("user"))
-	        	{
-		        	associatedPrincipalsTable.addItem(new Object[]
-		        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
-	        	}
-	        }
+			Item item = this.roleTableTableContainer.addItem(role);
+
+			item.getItemProperty("Ikasan Role").setValue(role.getName());
+			item.getItemProperty("Description").setValue(role.getDescription());
+
+		}
+
+		associatedPrincipalsTable.removeAllItems();
+
+		for(IkasanPrincipal ikasanPrincipal: user.getPrincipals())
+		{
+			if(!ikasanPrincipal.getType().equals("user"))
+			{
+				Item item = this.associatedPrincipalsTableContainer.addItem(ikasanPrincipal);
+
+				item.getItemProperty("LDAP Group").setValue(ikasanPrincipal.getName());
+				item.getItemProperty("Type").setValue(ikasanPrincipal.getType());
+				item.getItemProperty("Description").setValue(ikasanPrincipal.getDescription());
+			}
 		}
 		
 		ArrayList<String> subjects = new ArrayList<String>();
