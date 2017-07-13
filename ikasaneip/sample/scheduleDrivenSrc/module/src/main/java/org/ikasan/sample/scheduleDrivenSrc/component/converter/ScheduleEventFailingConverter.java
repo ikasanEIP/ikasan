@@ -40,19 +40,35 @@
  */
 package org.ikasan.sample.scheduleDrivenSrc.component.converter;
 
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.quartz.JobExecutionContext;
 
 /**
  * This class provides a sample implementation of a converter for quartz contexts.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduleEventFailingConverter implements Converter<String, StringBuilder>
+public class ScheduleEventFailingConverter implements Converter<JobExecutionContext,StringBuilder>
 {
-    public StringBuilder convert(String context) throws TransformationException
+    private volatile int invocationCount = 0;
+
+    public StringBuilder convert(JobExecutionContext context) throws TransformationException
     {
-        if(true) throw new TransformationException("test exception");
-        return new StringBuilder(context);
+        invocationCount++;
+        StringBuilder sb = new StringBuilder();
+        sb.append("schedule executed at = ");
+        sb.append(context.getFireTime());
+        sb.append(" name = ");
+        sb.append(context.getJobDetail().getKey().getName());
+        if(true) throw new EndpointException("test exception: " + invocationCount);
+        return sb;
     }
+
+    public int getInvocationCount()
+    {
+        return invocationCount;
+    }
+
 }

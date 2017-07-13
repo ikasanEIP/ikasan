@@ -1092,8 +1092,9 @@ public class MappingConfigurationPanel extends Panel implements View
         	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.EDIT_MAPPING_AUTHORITY)
-    					|| (this.mappingConfiguration != null && authentication.canAccessLinkedItem
+                    || authentication.hasGrantedAuthority(SecurityConstants.MAPPING_ADMIN)
+                    || authentication.hasGrantedAuthority(SecurityConstants.MAPPING_WRITE)
+                    || (this.mappingConfiguration != null && authentication.canAccessLinkedItem
     						(PolicyLinkTypeConstants.MAPPING_CONFIGURATION_LINK_TYPE, this.mappingConfiguration.getId()))))
     	{
     		this.mappingConfigurationFunctionalGroup.initialiseButtonState();

@@ -2,12 +2,16 @@ package org.ikasan.dashboard.ui.housekeeping.panel;
 
 
 import com.vaadin.data.Validator;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.QuartzCronExpressionValidator;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 
 /**
@@ -168,6 +172,20 @@ public class HousekeepingJobManagementPanel extends Panel
                 window.close();
             }
         });
+
+        final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(DashboardSessionValueConstants.USER);
+
+        if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                authentication.hasGrantedAuthority(SecurityConstants.HOUSEKEEPING_ADMIN)
+                || authentication.hasGrantedAuthority(SecurityConstants.HOUSEKEEPING_WRITE))
+        {
+            saveButton.setVisible(true);
+        }
+        else
+        {
+            saveButton.setVisible(false);
+        }
 
         layout.addComponent(saveButton, 0, 6, 1, 6);
         layout.setComponentAlignment(saveButton, Alignment.MIDDLE_CENTER);

@@ -27,7 +27,7 @@
         <constructor-arg ref="roleManagementViewComponentContainer"/>
     </bean>
     
-    <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RoleManagementPanel" scope="session">
+    <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RolePanel" scope="session">
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
     </bean>

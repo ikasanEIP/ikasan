@@ -44,13 +44,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 
 
 /**
@@ -206,6 +200,12 @@ public class SecurityServiceImpl implements SecurityService
     public List<IkasanPrincipal> getAllPrincipals() 
     {
         return this.securityDao.getAllPrincipals();
+    }
+
+    @Override
+    public List<IkasanPrincipalLite> getAllPrincipalLites()
+    {
+        return this.securityDao.getAllPrincipalLites();
     }
 
     /* (non-Javadoc)
@@ -389,4 +389,16 @@ public class SecurityServiceImpl implements SecurityService
 	{
 		return this.securityDao.getUsersAssociatedWithPrincipal(principalId);
 	}
+
+    @Override
+    public Role getRoleById(Long id)
+    {
+        return this.securityDao.getRoleById(id);
+    }
+
+    @Override
+    public Policy getPolicyById(Long id)
+    {
+        return this.securityDao.getPolicyById(id);
+    }
 }

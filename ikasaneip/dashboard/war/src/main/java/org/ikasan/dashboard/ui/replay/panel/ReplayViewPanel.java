@@ -67,6 +67,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.replay.component.ReplayAuditTab;
 import org.ikasan.dashboard.ui.replay.component.ReplayTab;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
+import org.ikasan.dashboard.ui.topology.util.TopologyTreeActionHelper;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorCategorisationWindow;
 import org.ikasan.dashboard.ui.topology.window.FlowConfigurationWindow;
@@ -212,7 +213,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	private boolean initialised = false;
 	
-	private FlowConfigurationWindow flowConfigurationWindow;	
+	private FlowConfigurationWindow flowConfigurationWindow;
+
+	private TopologyTreeActionHelper topologyTreeActionHelper;
 	
 	
 	public ReplayViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
@@ -326,7 +329,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_REPLAY_AUTHORITY)))
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_READ)))
     	{
     		
     		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService, 
@@ -340,7 +345,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     	
     	if(authentication != null 
     			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					|| authentication.hasGrantedAuthority(SecurityConstants.VIEW_REPLAY_AUDIT_AUTHORITY)))
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_READ)))
     	{
     		
     		final ReplayAuditTab replayAuditTab = new ReplayAuditTab(this.replayManagementService, this.replayService, 
@@ -457,14 +464,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		
 		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 	        	.getAttribute(DashboardSessionValueConstants.USER);
-		
-		logger.debug("Authentication = " + authentication);
-		
-		if(authentication != null)
-		{
-			logger.debug("Authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
-			logger.debug("Authentication has topology authority " + authentication.hasGrantedAuthority(SecurityConstants.VIEW_TOPOLOGY_AUTHORITY));
-		}
+
+		this.topologyTreeActionHelper = new TopologyTreeActionHelper(authentication);
+
 		
 		List<Server> servers = this.topologyService.getAllServers();
 		
@@ -583,113 +585,33 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	    
 	    return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.vaadin.event.Action.Handler#getActions(java.lang.Object, java.lang.Object)
-	 */
+
 	@Override
 	public Action[] getActions(Object target, Object sender)
-	{    
-		IkasanAuthentication authentication = null;
-		
-		if(VaadinService.getCurrentRequest() != null
-				&& VaadinService.getCurrentRequest().getWrappedSession() != null)
-		{
-			authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
-		        	.getAttribute(DashboardSessionValueConstants.USER);
-		}
-		
-		logger.debug("authentication fom session = " + authentication);
-		
-		if(authentication != null)
-		{
-			logger.debug("Authentication has all authority " + authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY));
-		}
-
+	{
 		if(target instanceof Server)
-        {
-            return serverActions;
-        }
+		{
+			return this.topologyTreeActionHelper.getServerActions();
+		}
 		else if(target instanceof Module)
-        {
-            return moduleActions;
-        }
+		{
+			return this.topologyTreeActionHelper.getModuleActions();
+		}
 		else if(target instanceof Flow)
-        {
-			if(authentication != null 
-	    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
-			{
-				return this.flowActions;
-			}
-
+		{
 			Flow flow = ((Flow)target);
-			
-			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
-			if(state != null && (state.equals(RUNNING) || state.equals(RECOVERING)))
-			{
-				if(flow.isConfigurable())
-				{
-					return this.flowActionsStartedConfigurable;
-				}
-				else
-				{
-					return this.flowActionsStarted;
-				}
-			}
-			else if (state != null &&(state.equals(STOPPED) || state.equals(STOPPED_IN_ERROR)))
-			{
-				if(flow.isConfigurable())
-				{
-					return this.flowActionsStoppedConfigurable;
-				}
-				else
-				{
-					return this.flowActionsStopped;
-				}
-			}
-			else if (state != null && state.equals(PAUSED))
-			{
-				if(flow.isConfigurable())
-				{
-					return this.flowActionsPausedConfigurable;
-				}
-				else
-				{
-					return this.flowActionsPaused;
-				}
-			}
-			else
-			{
-				if(flow.isConfigurable())
-				{
-					return this.flowActionsConfigurable;
-				}
-				else
-				{
-					return this.flowActions;
-				}
-			}
-        }
-		else if(target instanceof Component)
-        {
-			if(authentication != null 
-	    			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)))
-			{
-				return this.componentActions;
-			}
-	
-			if(((Component)target).isConfigurable())
-			{
-				return componentActionsConfigurable;
-			}
-			else
-			{
-				return componentActions;
-			}
-        }
-        
-           return actionsEmpty;
 
+			String state = this.topologyCache.getState(flow.getModule().getName() + "-" + flow.getName());
+
+			return this.topologyTreeActionHelper.getFlowActions(state, flow.isConfigurable());
+		}
+		else if(target instanceof Component)
+		{
+			return this.topologyTreeActionHelper.getComponentActions(((Component)target).isConfigurable()
+					, ((Component)target).getFlow().isConfigurable());
+		}
+
+		return this.topologyTreeActionHelper.getActionsEmpty();
 	}
 
 	/* (non-Javadoc)

@@ -45,6 +45,7 @@ import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.exclusion.service.IsExclusionServiceAware;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.Configured;
@@ -74,7 +75,7 @@ public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
         Consumer<EventListener<?>,EventFactory>, Converter<Message,Object>,
         ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
-		, ResubmissionService<Message>, IsExclusionServiceAware
+		, ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
 {
     /** Logger instance */
     private Logger logger = LoggerFactory.getLogger(JmsContainerConsumer.class);
