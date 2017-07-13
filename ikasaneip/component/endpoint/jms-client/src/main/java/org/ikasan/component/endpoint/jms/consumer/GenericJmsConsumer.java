@@ -40,29 +40,28 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
-import java.util.*;
-
-import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
+import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
+
+import javax.jms.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.util.Hashtable;
 
 /**
  * Implementation of a generic client consumer based on the JMS specification.
@@ -72,7 +71,7 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>,EventFactory>,
         ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message,Throwable>,
-        ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>, Converter<Message,Object>
+        ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>, Converter<Message,Object>, MultiThreadedCapable
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);

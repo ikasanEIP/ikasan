@@ -52,12 +52,15 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
@@ -496,6 +499,22 @@ public class ReplayTab extends TopologyTab
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
             }
         });
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)))
+		{
+			selectAllButton.setVisible(true);
+			replayButton.setVisible(true);
+		}
+		else
+		{
+			selectAllButton.setVisible(false);
+			replayButton.setVisible(false);
+		}
  
 		
 		HorizontalLayout hl = new HorizontalLayout();

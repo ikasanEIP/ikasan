@@ -41,17 +41,22 @@
 package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
 import org.ikasan.platform.IkasanEIPTest;
+import org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventFailingConverter;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
 /**
- * Test class for sample <code>Scheduler</code> flow.
+ * Test class for <code>PriceFlowSample</code>.
  * 
  * @author Ikasan Development Team
  */
@@ -60,31 +65,71 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations={
         "/demo-flow-conf.xml",
         "/demo-component-conf.xml",
+        "/demo-exclusion-flow-conf.xml",
+        "/demo-exclusion-component-conf.xml",
         "/exclusion-flow-conf.xml",
         "/substitute-components.xml",
-        "/exception-conf.xml",
+        "/ikasan-transaction-conf.xml",
+        "/module-conf.xml",
+        "/exception-conf.xml", 
+        "/replay-service-conf.xml",
+        "/configuration-service-conf.xml",
         "/hsqldb-conf.xml"
       })
+@DirtiesContext
 public class ScheduledFlowSampleTest extends IkasanEIPTest
 {
     @Resource
-    Flow demoScheduledConverterFlow;
+    Module<Flow> module;
+
+    @Resource
+    private Flow demoExclusionScheduledConverterFlow;
+
+    @Resource
+    private ScheduleEventFailingConverter scheduleEventFailingConverter;
     
     @Test
-    public void test_flow_scheduledConsumer() throws SchedulerException
+    public void test_flow_consumer_translator_producer() throws SchedulerException
     {
-        // setup the expected component invocations
-        ikasanFlowTestRule.withFlow(demoScheduledConverterFlow)
-                          .scheduledConsumer("Scheduled Consumer")
-                          .converter("Scheduled Converter")
-                          .producer("Scheduled Publisher");
+        for(Flow flow:module.getFlows())
+        {
+            flow.start();
+        }
+        
+        try
+        {
+            Thread.sleep(5000);
+        }
+        catch(InterruptedException e)
+        {
+            // dont care
+        }
+        
+        for(Flow flow:module.getFlows())
+        {
+            flow.stop();
+        }
+    }
 
-        // start the flow
-        ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
+    @Test
+    @Ignore
+    public void test_recovery_flow() throws InterruptedException
+    {
 
-        // invoke the scheduled consumer
-        ikasanFlowTestRule.fireScheduledConsumerSynchronously(null);
+        demoExclusionScheduledConverterFlow.start();
 
-        // no need to wait for flow to execute - above method is synchronous
+        Thread.sleep(7000L);
+
+        Assert.assertEquals("recovering", demoExclusionScheduledConverterFlow.getState());
+        //Assert.assertEquals(2, scheduleEventFailingConverter.getInvocationCount());
+        demoExclusionScheduledConverterFlow.stop();
+        Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
+
+
+        Thread.sleep(7000L);
+        Assert.assertEquals("stopped", demoExclusionScheduledConverterFlow.getState());
+        // no more invocations
+        //Assert.assertEquals(2, scheduleEventFailingConverter.getInvocationCount());
+
     }
 }

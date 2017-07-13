@@ -461,7 +461,7 @@ public class ExclusionEventViewPanel extends Panel
 		
 		if(authentication != null 
     			&& (!authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-    					&& !authentication.hasGrantedAuthority(SecurityConstants.ACTION_EXCLUSIONS_AUTHORITY)))
+    					&& !authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_WRITE)))
     	{
 			resubmitButton.setVisible(false);
 			ignoreButton.setVisible(false);

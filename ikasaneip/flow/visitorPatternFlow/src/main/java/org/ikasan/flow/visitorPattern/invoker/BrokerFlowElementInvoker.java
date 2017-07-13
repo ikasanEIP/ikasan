@@ -128,6 +128,9 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
             notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
             return nextFlowElement;
         }
+
+        // a broker can also terminate a flow if the payload is empty.
+        flowInvocationContext.setFinalAction(FinalAction.FILTER);
         return null;
     }
 

@@ -42,6 +42,7 @@ package org.ikasan.dashboard.ui.framework.group;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
@@ -60,14 +61,12 @@ public class VisibilityGroup
 {
     private static Logger logger = Logger.getLogger(VisibilityGroup.class);
 
-    private HashMap<Component, String> components = new HashMap<Component, String>();
+    private HashMap<Component, List<String>> components = new HashMap<Component, List<String>>();
     private ArrayList<Table> refreshableTables = new ArrayList<Table>();
 
 
     /**
      * Method to set if the components are visible.
-     * 
-     * @param visible
      */
     public void setVisible()
     {
@@ -76,18 +75,20 @@ public class VisibilityGroup
     	 
         for(Component component: components.keySet())
         {
-        	String policyName = this.components.get(component);
-        	
-        	if(authentication != null 
-        			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-        					|| authentication.hasGrantedAuthority(policyName)
-        					|| policyName.equals(SecurityConstants.ANY_AUTHORITY)))
-        	{
-        		component.setVisible(true);
-        	}
-            else
+            for(String policyName: components.get(component))
             {
-            	component.setVisible(false);
+
+                if (authentication != null
+                        && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+                        || authentication.hasGrantedAuthority(policyName)))
+                {
+                    component.setVisible(true);
+                    break;
+                }
+                else
+                {
+                    component.setVisible(false);
+                }
             }
         }
 
@@ -96,11 +97,12 @@ public class VisibilityGroup
             table.refreshRowCache();
         }
     }
-    
+
     /**
      * Method to set if the components are visible.
-     * 
-     * @param visible
+     *
+     * @param linkedItemType
+     * @param linkedItemId
      */
     public void setVisible(String linkedItemType, Long linkedItemId)
     {
@@ -109,18 +111,20 @@ public class VisibilityGroup
     	 
         for(Component component: components.keySet())
         {
-        	String policyName = this.components.get(component);
-        	
-        	if(authentication != null 
-        			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
-        					|| authentication.hasGrantedAuthority(policyName))
-        					|| authentication.canAccessLinkedItem(linkedItemType, linkedItemId))
-        	{
-        		component.setVisible(true);
-        	}
-            else
+            for(String policyName: components.get(component))
             {
-            	component.setVisible(false);
+                if (authentication != null
+                        && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+                        || authentication.hasGrantedAuthority(policyName))
+                        || authentication.canAccessLinkedItem(linkedItemType, linkedItemId))
+                {
+                    component.setVisible(true);
+                    break;
+                }
+                else
+                {
+                    component.setVisible(false);
+                }
             }
         }
 
@@ -136,7 +140,14 @@ public class VisibilityGroup
      */
     public void registerComponent(String policyName, Component component)
     {
-        this.components.put(component, policyName);
+        if(this.components.containsKey(component))
+        {
+            this.components.get(component).add(policyName);
+        }
+        else
+        {
+
+        }
     }
 
     /**
@@ -151,7 +162,7 @@ public class VisibilityGroup
     /**
      * @return the components
      */
-    public HashMap<Component, String> getComponents()
+    public HashMap<Component, List<String>> getComponents()
     {
         return components;
     }
@@ -159,7 +170,7 @@ public class VisibilityGroup
     /**
      * @param components the components to set
      */
-    public void setComponents(HashMap<Component, String> components)
+    public void setComponents(HashMap<Component, List<String>> components)
     {
         this.components = components;
     }

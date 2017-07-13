@@ -75,31 +75,31 @@ public class ScheduledConsumerTest
     };
 
     /** Mock scheduler */
-    final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
+    private final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
     /** Mock job detail */
-    final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
+    private final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
     /** Mock trigger */
-    final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
+    private final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
 
     /** Mock flowEventFactory */
-    final EventFactory<FlowEvent> flowEventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
+    private final EventFactory<FlowEvent> flowEventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
 
     /** Mock consumerConfiguration */
-    final ScheduledConsumerConfiguration consumerConfiguration = 
+    private final ScheduledConsumerConfiguration consumerConfiguration =
         mockery.mock(ScheduledConsumerConfiguration.class, "mockScheduledConsumerConfiguration");
 
     /** Mock jobExecutionContext **/
-    final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
+    private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
     /** Mock managedResourceRecoveryManager **/
-    final ManagedResourceRecoveryManager mockManagedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class);
+    private final ManagedResourceRecoveryManager mockManagedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class);
 
     /** consumer event listener */
-    final EventListener eventListener = mockery.mock(EventListener.class);
+    private final EventListener eventListener = mockery.mock(EventListener.class);
 
-    final ManagedEventIdentifierService  mockManagedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class);
+    private final ManagedEventIdentifierService  mockManagedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class);
 
 
     /**
@@ -378,7 +378,7 @@ public class ScheduledConsumerTest
                 exactly(2).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
 
-                // cancel recovery
+                // cancelAll recovery
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
 
                 // nope, consumer is not running

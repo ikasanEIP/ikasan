@@ -54,6 +54,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -99,10 +100,13 @@ public class WiretapConfigurationWindow extends Window
 	private Component component;
 	private TriggerManagementService triggerManagementService;
 	private Table triggerTable;
-	
+
 	/**
-	 * @param configurationManagement
-	 */
+	 * Constructor
+	 * 
+	 * @param component
+	 * @param triggerManagementService
+     */
 	public WiretapConfigurationWindow(Component component,
 			TriggerManagementService triggerManagementService)
 	{
@@ -116,8 +120,6 @@ public class WiretapConfigurationWindow extends Window
 
 	/**
      * Helper method to initialise this object.
-     * 
-     * @param message
      */
     protected void init()
     {   	
@@ -312,7 +314,21 @@ public class WiretapConfigurationWindow extends Window
 		
 		buttonLayouts.addComponent(saveButton);
 		buttonLayouts.addComponent(cancelButton);
-		
+
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.TOPOLOGY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+		{
+			buttonLayouts.setVisible(true);
+		}
+		else
+		{
+			buttonLayouts.setVisible(false);
+		}
+
 		layout.addComponent(buttonLayouts, 0, 7, 1, 7);
 		layout.setComponentAlignment(buttonLayouts, Alignment.MIDDLE_CENTER);
 		

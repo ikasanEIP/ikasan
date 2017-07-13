@@ -51,13 +51,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.dao.constants.SecurityConstants;
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -157,7 +151,15 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
     }
 
-    /*
+	@Override
+	public List<IkasanPrincipalLite> getAllPrincipalLites()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipalLite.class);
+
+		return (List<IkasanPrincipalLite>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/*
      * (non-Javadoc)
      * @see org.ikasan.security.dao.SecurityDao#getPolicyByName(java.lang.String)
      */
@@ -186,6 +188,36 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
         return role;
     }
+
+	/*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getRoleByName(java.lang.String)
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Role getRoleById(Long id)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
+		criteria.add(Restrictions.eq("id", id));
+		Role role = (Role) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+		return role;
+	}
+
+	/*
+     * (non-Javadoc)
+     * @see org.ikasan.security.dao.SecurityDao#getRoleByName(java.lang.String)
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Policy getPolicyById(Long id)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
+		criteria.add(Restrictions.eq("id", id));
+		Policy policy = (Policy) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+		return policy;
+	}
 
     /*
      * (non-Javadoc)
@@ -431,6 +463,6 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
             }
         });
 	}
-	
-	
+
+
 }
