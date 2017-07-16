@@ -41,41 +41,41 @@
 package org.ikasan.spec.event;
 
 /**
- * Interface for a ManagedEventIdentifierService providing the contract for any 
- * business event identifier to be added on the creation of a business event.
+ * Interface for a ManagedRelatedEventIdentifierService providing the contract for any
+ * related business event identifier to be added on the creation of a business event.
  * 
- * The Event Identifier is a business identifier immutable for the business
- * life of the event.
+ * The Related Event Identifier is a business identifier immutable for the business
+ * life of the event, allowing it to be tied to a main business event.
+ *
+ * This is commonly used if the business event mutates during a flow, for example in a Splitter, and tracking of the related
+ * business events is required
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ManagedEventIdentifierService<IDENTIFIER,EVENT>
+public interface ManagedRelatedEventIdentifierService<IDENTIFIER,EVENT> extends ManagedEventIdentifierService<IDENTIFIER,EVENT>
 {
     /** provide consistent properties for access */
-    String EVENT_LIFE_ID = "IkasanEventLifeIdentifier";
+    String RELATED_EVENT_LIFE_ID = "IkasanRelatedEventLifeIdentifier";
     
     /**
-     * Set the event life identifier based on the incoming event implementation.
-     * The incoming identifier should always be a valid object - never 'null',
-     * although this is not enforced in the code.
+     * Set the related event life identifier based on the incoming event implementation.
+     * The incoming related identifier could be null.
      * 
-     * @param identifier
-     * @param event
-     * @throws ManagedEventIdentifierException
+     * @param relatedIdentifier the related identifier
+     * @param event the event on which to set
+     * @throws ManagedEventIdentifierException any exception setting the identifier on the event
      */
-    void setEventIdentifier(IDENTIFIER identifier, EVENT event)
+    void setRelatedEventIdentifier(IDENTIFIER relatedIdentifier, EVENT event)
         throws ManagedEventIdentifierException;
 
     /**
-     * Get the life identifier for the incoming event.
-     * This will either return a value for the life identifier or
-     * throw an exception if it cannot be obtained.
-     * This should never return 'null'.
-     * 
-     * @param event
-     * @return IDENTIFIER
+     * Get the related life identifier for the incoming event.
+     * This will either return a value for the related life identifier or null if it cannot be found
+     *
+     * @param event the event from which to obtain the related life identifier
+     * @return IDENTIFIER the related identifier
      */
-    IDENTIFIER getEventIdentifier(EVENT event)
+    IDENTIFIER getRelatedEventIdentifier(EVENT event)
         throws ManagedEventIdentifierException;
 }
