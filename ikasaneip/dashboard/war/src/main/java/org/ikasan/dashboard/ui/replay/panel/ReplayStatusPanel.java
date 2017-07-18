@@ -52,6 +52,7 @@ import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
@@ -331,6 +332,22 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 				Notification.show("Replay cancelled!");
             }
         });
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE))
+		{
+			cancelButton.setVisible(true);
+			replayButton.setVisible(true);
+		}
+		else
+		{
+			cancelButton.setVisible(false);
+			replayButton.setVisible(false);
+		}
             
 		
 		formLayout.addComponent(buttonsLayout, 0, 4, 1, 4);

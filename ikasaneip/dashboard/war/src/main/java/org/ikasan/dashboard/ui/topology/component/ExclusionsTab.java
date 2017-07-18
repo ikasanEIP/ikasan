@@ -174,7 +174,7 @@ public class ExclusionsTab extends TopologyTab
 	        	.getAttribute(DashboardSessionValueConstants.USER);
 		
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-				authentication.hasGrantedAuthority(SecurityConstants.ACTION_EXCLUSIONS_AUTHORITY)))
+				authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN)))
 		{	
 			cont.addContainerProperty("", CheckBox.class,  null);
 		}
@@ -412,6 +412,19 @@ public class ExclusionsTab extends TopologyTab
             	}
             }
         });
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN)))
+		{
+			selectAllButton.setVisible(true);
+		}
+		else
+		{
+			selectAllButton.setVisible(false);
+		}
 		
 		buttons.addComponent(selectAllButton);
 		
@@ -449,8 +462,17 @@ public class ExclusionsTab extends TopologyTab
         });
 		
 		buttons.addComponent(resubmitSelectedButton);
-        
-        
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN)))
+		{
+			resubmitSelectedButton.setVisible(true);
+		}
+		else
+		{
+			resubmitSelectedButton.setVisible(false);
+		}
+
 		Button ignoreSelectedButton = new Button();
 		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		ignoreSelectedButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -487,6 +509,16 @@ public class ExclusionsTab extends TopologyTab
 
 		
 		buttons.addComponent(ignoreSelectedButton);
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN)))
+		{
+			ignoreSelectedButton.setVisible(true);
+		}
+		else
+		{
+			ignoreSelectedButton.setVisible(false);
+		}
 		
 		Button jiraButton = new Button();
 		jiraButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
@@ -701,7 +733,7 @@ public class ExclusionsTab extends TopologyTab
 		        	.getAttribute(DashboardSessionValueConstants.USER);
 			
 			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) || 
-					authentication.hasGrantedAuthority(SecurityConstants.ACTION_ERRORS_AUTHORITY))
+					authentication.hasGrantedAuthority(SecurityConstants.EXCLUSION_ADMIN))
 			{	
 				CheckBox cb = new CheckBox();
 			

@@ -43,6 +43,7 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserLite;
 
 /**
  * Data Access interface for <code>User</code> instances
@@ -59,6 +60,13 @@ public interface UserDao
      * @return List of all <code>Users</code>
      */
     public List<User> getUsers();
+
+    /**
+     * Retrieves all <code>UserLite</code>s known to the system
+     *
+     * @return List of all <code>UserLites</code>
+     */
+    public List<UserLite> getUserLites();
 
     /**
      * Retrieves a specific <code>User</code> by name

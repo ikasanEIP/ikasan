@@ -13,6 +13,7 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.ikasan.wiretap.model.SolrWiretapEvent;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 
 import java.io.IOException;
 import java.util.Date;
@@ -50,7 +51,8 @@ public class SolrWiretapDao implements WiretapDao
         document.addField("type", "wiretap");
         document.addField("moduleName", wiretapEvent.getModuleName());
         document.addField("flowName", wiretapEvent.getFlowName());
-        document.addField("event", (String)wiretapEvent.getComponentName());
+        document.addField("componentName", wiretapEvent.getComponentName());
+        document.addField("event", ((WiretapFlowEvent)wiretapEvent).getEventId());
         document.addField("payload", wiretapEvent.getEvent());
         document.addField("timestamp", wiretapEvent.getTimestamp());
 
@@ -332,74 +334,6 @@ public class SolrWiretapDao implements WiretapDao
     @Override
     public void setHousekeepQuery(String housekeepQuery)
     {
-
-    }
-
-    public static final void main(String[] args)
-    {
-//        SolrWiretapDao dao = new SolrWiretapDao();
-//
-//        HashSet<String> moduleNames = new HashSet<>();
-//        moduleNames.add("frontArena-trade");
-//        moduleNames.add("goldenSource-referenceData");
-//        moduleNames.add("cdw-asset");
-//
-//        HashSet<String> flowNames = new HashSet<>();
-//        flowNames.add("Bulk GsEsbApprovedSecurity Transformer Flow");
-//
-//        HashSet<String> componentNames = new HashSet<>();
-//        componentNames.add("after Approved Security Producer");
-//
-//        PagedSearchResult<WiretapEvent> results = dao.findWiretapEvents(0, 2000, null, false, moduleNames, flowNames, componentNames, null, null, new Date(1487041280791L - 1000000000l), new Date(1487041280791L + 10000000000000l), "100001555237");
-//
-////        PagedSearchResult<WiretapEvent> results = dao.findWiretapEvents(0, 2000, null, false, moduleNames, flowNames, componentNames, null, null, null, null, "100001555237");
-//
-//        System.out.println("results: " + results);
-//
-//        for(WiretapEvent event: results.getPagedResults())
-//        {
-//            System.out.println(event);
-//        }
-//
-//        System.out.println("results: " + results.getResultSize());
-
-        CloudSolrClient solr = new CloudSolrClient.Builder().withSolrUrl("http://localhost:8983/solr").build();
-        solr.setDefaultCollection("ikasan");
-
-        for(int i=0; i<500; i++)
-        {
-            SolrInputDocument document = new SolrInputDocument();
-            document.addField("id", "" + i);
-            document.addField("name", "Gouda cheese wheel " + i);
-            document.addField("price", "49.99");
-
-
-            try
-            {
-                System.out.println("Inserting doc");
-                UpdateResponse response = solr.add(document);
-                System.out.println(response);
-            } catch (SolrServerException e)
-            {
-                e.printStackTrace();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        try
-        {
-            System.out.println("Committing");
-            solr.commit();
-            System.out.println("Committed");
-        } catch (SolrServerException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
 
     }
 

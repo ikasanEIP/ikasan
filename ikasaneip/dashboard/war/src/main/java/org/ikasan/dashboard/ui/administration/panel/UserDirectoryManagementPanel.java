@@ -130,11 +130,14 @@ public class UserDirectoryManagementPanel extends Panel
     private ComboBox authenticationMethodCombo = new ComboBox();
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
     private LdapService ldapService;
-    
+
     /**
      * Constructor
-     * 
-     * @param ikasanModuleService
+     *
+     * @param authenticationMethod
+     * @param securityService
+     * @param authenticationProviderFactory
+     * @param ldapService
      */
     public UserDirectoryManagementPanel(AuthenticationMethod authenticationMethod, SecurityService securityService,
     		AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory,

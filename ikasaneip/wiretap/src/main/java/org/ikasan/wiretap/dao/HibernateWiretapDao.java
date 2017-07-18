@@ -234,7 +234,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
              */
             private Criteria getCriteria(Session session)
             {
-                Criteria criteria = session.createCriteria(WiretapEvent.class);
+                Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
 
                 if (restrictionExists(moduleNames))
                 {
@@ -319,7 +319,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
              */
             private Criteria getCriteria(Session session)
             {
-                Criteria criteria = session.createCriteria(WiretapEvent.class);
+                Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
 
                 if (restrictionExists(moduleNames))
                 {

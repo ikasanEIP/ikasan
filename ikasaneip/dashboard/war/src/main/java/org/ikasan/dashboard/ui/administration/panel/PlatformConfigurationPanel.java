@@ -46,13 +46,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.vaadin.server.VaadinService;
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
 import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -104,9 +108,9 @@ public class PlatformConfigurationPanel extends Panel implements View
 
 	/**
 	 * Constructor
-	 * 
-	 * @param ikasanModuleService
-	 */
+	 *
+	 * @param configurationManagement
+     */
 	public PlatformConfigurationPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
 	{
 		super();
@@ -120,7 +124,7 @@ public class PlatformConfigurationPanel extends Panel implements View
 		init();
 	}
 
-	@SuppressWarnings("deprecation")
+
 	protected void init()
 	{
 		
@@ -359,6 +363,20 @@ public class PlatformConfigurationPanel extends Panel implements View
 	            	mapTextFields.remove(mapKey);
 	            }
 	        });
+
+			final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+					.getAttribute(DashboardSessionValueConstants.USER);
+
+
+			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+					authentication.hasGrantedAuthority(SecurityConstants.PLATORM_CONFIGURATON_ADMIN))
+			{
+				removeButton.setVisible(true);
+			}
+			else
+			{
+				removeButton.setVisible(false);
+			}
 			
 			mapLayout.addComponent(removeButton, 4, i);
 			
@@ -419,6 +437,20 @@ public class PlatformConfigurationPanel extends Panel implements View
     	            	mapTextFields.remove(mapKey);
     	            }
     	        });
+
+				final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+						.getAttribute(DashboardSessionValueConstants.USER);
+
+
+				if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+						authentication.hasGrantedAuthority(SecurityConstants.PLATORM_CONFIGURATON_ADMIN))
+				{
+					removeButton.setVisible(true);
+				}
+				else
+				{
+					removeButton.setVisible(false);
+				}
     			
     			mapLayout.addComponent(removeButton, 4, mapLayout.getRows() -2);
     			
@@ -512,6 +544,32 @@ public class PlatformConfigurationPanel extends Panel implements View
             	refresh();
             }
     	});
+
+		final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.PLATORM_CONFIGURATON_ADMIN))
+		{
+			addButton.setVisible(true);
+			deleteButton.setVisible(true);
+			saveButton.setVisible(true);
+
+		}
+		else if(authentication.hasGrantedAuthority(SecurityConstants.PLATORM_CONFIGURATON_WRITE))
+		{
+			saveButton.setVisible(true);
+
+			addButton.setVisible(false);
+			deleteButton.setVisible(false);
+		}
+		else
+		{
+			addButton.setVisible(false);
+			deleteButton.setVisible(false);
+			saveButton.setVisible(false);
+		}
     	
     	HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setHeight("100%");

@@ -51,7 +51,10 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayService;
 import org.vaadin.aceeditor.AceEditor;
@@ -216,6 +219,20 @@ public class ReplayEventViewPanel extends Panel
          		 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("platformConfigurationService", platformConfigurationService);
             }
         });
+
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)))
+		{
+			replayButton.setVisible(true);
+		}
+		else
+		{
+			replayButton.setVisible(false);
+		}
         
         layout.addComponent(replayButton, 0, 6, 1, 6);
 		layout.setComponentAlignment(replayButton, Alignment.MIDDLE_CENTER);
