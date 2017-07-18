@@ -360,34 +360,38 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 List<FlowInvocationMetric> flowInvocationMetrics = criteria.list();
                 ArrayList<String> eventIds = new ArrayList<String>();
 
+                Set<ComponentInvocationMetric> messageHistoryEvents = new HashSet<ComponentInvocationMetric>();
+                Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
+
                 for(FlowInvocationMetric<ComponentInvocationMetric> flowInvocationMetric : flowInvocationMetrics)
                 {
-                    Set<ComponentInvocationMetric> messageHistoryEvents = flowInvocationMetric.getFlowInvocationEvents();
+                    messageHistoryEvents.addAll(flowInvocationMetric.getFlowInvocationEvents());
+                }
 
-                    List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<ComponentInvocationMetric>(messageHistoryEvents), 200);
+                List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<ComponentInvocationMetric>(messageHistoryEvents), 200);
 
-                    Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
-
-                    for(List<ComponentInvocationMetric> list: smallerLists)
+                for(List<ComponentInvocationMetric> list: smallerLists)
+                {
+                    for (ComponentInvocationMetric event: list)
                     {
-                        for (ComponentInvocationMetric event: list)
-                        {
-                            eventIds.add((String)event.getBeforeEventIdentifier());
-                        }
-
-                        eventsMap.putAll(getWiretapFlowEvents(eventIds));
-
-                        eventIds = new ArrayList<String>();
+                        eventIds.add((String)event.getBeforeEventIdentifier());
                     }
 
-                    for(ComponentInvocationMetric<String, CustomMetric, MetricEvent> messageHistoryEvent: messageHistoryEvents)
+                    eventsMap.putAll(getWiretapFlowEvents(eventIds));
+
+                    eventIds = new ArrayList<String>();
+                }
+
+                for(FlowInvocationMetric<ComponentInvocationMetric> flowInvocationMetric : flowInvocationMetrics)
+                {
+                    for (ComponentInvocationMetric<String, CustomMetric, MetricEvent> messageHistoryEvent : flowInvocationMetric.getFlowInvocationEvents())
                     {
                         MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier()
-                            + flowInvocationMetric.getModuleName()+flowInvocationMetric.getFlowName()+messageHistoryEvent.getComponentName());
+                                + flowInvocationMetric.getModuleName() + flowInvocationMetric.getFlowName() + messageHistoryEvent.getComponentName());
 
-                        if(event != null)
+                        if (event != null)
                         {
-                            if(event.getComponentName().equals(messageHistoryEvent.getComponentName())
+                            if (event.getComponentName().equals(messageHistoryEvent.getComponentName())
                                     && event.getFlowName().equals(flowInvocationMetric.getFlowName())
                                     && event.getModuleName().equals(flowInvocationMetric.getModuleName()))
                             {
