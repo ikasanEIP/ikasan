@@ -49,6 +49,7 @@ import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * 
@@ -104,11 +105,6 @@ public class AuthenticationServiceImpl implements AuthenticationService
 					AuthenticationProvider authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
 					
 					authentication = authProvider.authenticate(auth);
-					
-					if(authentication != null)
-					{
-						return authentication;
-					}
 				}
 				catch (Exception e)
 				{
@@ -117,17 +113,20 @@ public class AuthenticationServiceImpl implements AuthenticationService
 			}
 		}
 
-		AuthenticationProvider authProvider = authenticationProviderFactory.getLocalAuthenticationProvider();
-			
-		try
+		if(authentication == null)
 		{
-			authentication = authProvider.authenticate(auth);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			logger.info("Authentication failed for user " + username);
-			throw new AuthenticationServiceException("Error authenticating!" + e);
+			AuthenticationProvider authProvider = authenticationProviderFactory.getLocalAuthenticationProvider();
+
+			try
+			{
+				authentication = authProvider.authenticate(auth);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				logger.info("Authentication failed for user " + username);
+				throw new AuthenticationServiceException("Error authenticating!" + e);
+			}
 		}
 
 		if(authentication == null)

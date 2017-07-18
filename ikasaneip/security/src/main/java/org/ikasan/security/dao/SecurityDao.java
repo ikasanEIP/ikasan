@@ -42,13 +42,7 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 
 
 /**
@@ -139,6 +133,12 @@ public interface SecurityDao
     public List<IkasanPrincipal> getAllPrincipals();
 
     /**
+     *
+     * @return
+     */
+    public List<IkasanPrincipalLite> getAllPrincipalLites();
+
+    /**
      * 
      * @return     
      */
@@ -162,6 +162,13 @@ public interface SecurityDao
      * @return    
      */
     public Role getRoleByName(String name);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Role getRoleById(Long id);
 
     /**
      * 
@@ -241,4 +248,11 @@ public interface SecurityDao
      * @return
      */
     public List<User> getUsersAssociatedWithPrincipal(long principalId);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Policy getPolicyById(Long id);
 }

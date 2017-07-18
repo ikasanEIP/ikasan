@@ -47,6 +47,7 @@ import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserLite;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
@@ -99,6 +100,16 @@ public class UserServiceImpl implements UserService
     public List<User> getUsers()
     {
         return userDao.getUsers();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.ikasan.framework.security.service.UserService#getUserLites()
+     */
+    public List<UserLite> getUserLites()
+    {
+        return userDao.getUserLites();
     }
 
     /*

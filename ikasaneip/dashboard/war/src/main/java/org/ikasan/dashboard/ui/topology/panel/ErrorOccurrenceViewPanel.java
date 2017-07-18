@@ -46,7 +46,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.vaadin.ui.*;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -68,21 +70,8 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -99,8 +88,12 @@ public class ErrorOccurrenceViewPanel extends Panel
 	private PlatformConfigurationService platformConfigurationService;
 
 	/**
-	 * @param policy
-	 */
+	 * Constructor
+	 *
+	 * @param errorOccurrence
+	 * @param errorReportingManagementService
+	 * @param platformConfigurationService
+     */
 	public ErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
 			PlatformConfigurationService platformConfigurationService)
@@ -263,10 +256,6 @@ public class ErrorOccurrenceViewPanel extends Panel
 		tf5.setNullRepresentation("");
 		layout.addComponent(tf5, 1, 7, 3, 7);
 		
-		GridLayout wrapperLayout = new GridLayout(1, 4);
-		wrapperLayout.setMargin(true);
-		wrapperLayout.setWidth("100%");
-		
 		TabSheet tabsheet = new TabSheet();
 		tabsheet.setSizeFull();
 		
@@ -275,23 +264,22 @@ public class ErrorOccurrenceViewPanel extends Panel
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setTheme(AceTheme.eclipse);
-		editor.setHeight(470, Unit.PIXELS);
-		editor.setWidth("100%");
-		
-		CheckBox eventWrapTextCheckBox = new CheckBox("Wrap text");
-		eventWrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
+		editor.setSizeFull();
+
+		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
+		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener()
 		{
-            @Override
-            public void valueChange(ValueChangeEvent event)
-            {
-                Object value = event.getProperty().getValue();
-                boolean isCheck = (null == value) ? false : (Boolean) value;
-               
-                editor.setWordWrap(isCheck);
-            }
-        });
-		
-		eventWrapTextCheckBox.setValue(true);
+			@Override
+			public void valueChange(ValueChangeEvent event)
+			{
+				Object value = event.getProperty().getValue();
+				boolean isCheck = (null == value) ? false : (Boolean) value;
+
+				editor.setWordWrap(isCheck);
+			}
+		});
+
+
 		
 		final AceEditor eventEditor = new AceEditor();
 		
@@ -307,25 +295,28 @@ public class ErrorOccurrenceViewPanel extends Panel
 				eventEditor.setValue(new String((byte[])this.errorOccurrence.getEvent()));
 			}
 		}
-		
+
+		CheckBox eventWrapTextCheckBox = new CheckBox("Wrap text");
+		eventWrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener()
+		{
+			@Override
+			public void valueChange(ValueChangeEvent event)
+			{
+				Object value = event.getProperty().getValue();
+				boolean isCheck = (null == value) ? false : (Boolean) value;
+
+				eventEditor.setWordWrap(isCheck);
+			}
+		});
+
+
+		eventWrapTextCheckBox.setValue(true);
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
-		eventEditor.setHeight(470, Unit.PIXELS);
-		eventEditor.setWidth("100%");
+		eventEditor.setSizeFull();
 		
-		CheckBox wrapTextCheckBox = new CheckBox("Wrap text");
-		wrapTextCheckBox.addValueChangeListener(new Property.ValueChangeListener() 
-		{
-            @Override
-            public void valueChange(ValueChangeEvent event)
-            {
-                Object value = event.getProperty().getValue();
-                boolean isCheck = (null == value) ? false : (Boolean) value;
-               
-                eventEditor.setWordWrap(isCheck);
-            }
-        });
+
 		
 		wrapTextCheckBox.setValue(true);
 
@@ -333,27 +324,44 @@ public class ErrorOccurrenceViewPanel extends Panel
 		formLayout.setWidth("100%");
 		formLayout.setHeight(320, Unit.PIXELS);
 		formLayout.addComponent(layout);
-		wrapperLayout.addComponent(formLayout, 0, 0);
-		
-		VerticalLayout h1 = new VerticalLayout();
-		h1.setSizeFull();
-		h1.setMargin(true);
-		h1.addComponent(wrapTextCheckBox);
-		h1.addComponent(eventEditor);
-		
-		VerticalLayout h2 = new VerticalLayout();
-		h2.setSizeFull();
-		h2.setMargin(true);
-		h2.addComponent(eventWrapTextCheckBox);
-		h2.addComponent(editor);
-		
-		tabsheet.addTab(h2, "Error Details");
-		tabsheet.addTab(h1, "Event Payload");
-		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
-		
-		wrapperLayout.addComponent(tabsheet, 0, 1);
 
-		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
+
+		VerticalLayout checkBoxLayout = new VerticalLayout();
+		checkBoxLayout.setSizeFull();
+		checkBoxLayout.setSpacing(true);
+		checkBoxLayout.addComponent(eventWrapTextCheckBox);
+		checkBoxLayout.setComponentAlignment(eventWrapTextCheckBox, Alignment.MIDDLE_LEFT);
+
+		VerticalSplitPanel eventVpanel = new VerticalSplitPanel(checkBoxLayout
+				, eventEditor);
+		eventVpanel.setSizeFull();
+		eventVpanel.setSplitPosition(40, Unit.PIXELS);
+		eventVpanel.setLocked(true);
+
+		VerticalLayout checkBoxLayout2 = new VerticalLayout();
+		checkBoxLayout2.setSizeFull();
+		checkBoxLayout2.setSpacing(true);
+		checkBoxLayout2.addComponent(wrapTextCheckBox);
+		checkBoxLayout2.setComponentAlignment(wrapTextCheckBox, Alignment.MIDDLE_LEFT);
+
+		VerticalSplitPanel errorVpanel = new VerticalSplitPanel(checkBoxLayout2
+				, editor);
+		errorVpanel.setSizeFull();
+		errorVpanel.setSplitPosition(40, Unit.PIXELS);
+		errorVpanel.setLocked(true);
+		
+		tabsheet.addTab(errorVpanel, "Error Details");
+		tabsheet.addTab(eventVpanel, "Event Payload");
+		tabsheet.addTab(createCommentsTabsheet(), "Notes / Links");
+
+		VerticalSplitPanel wrapperVpanel = new VerticalSplitPanel(formLayout
+				, tabsheet);
+		wrapperVpanel.setSizeFull();
+		wrapperVpanel.setSplitPosition(320, Unit.PIXELS);
+		wrapperVpanel.setLocked(true);
+
+
+		errorOccurrenceDetailsPanel.setContent(wrapperVpanel);
 		return errorOccurrenceDetailsPanel;
 	}
 	
@@ -469,6 +477,21 @@ public class ErrorOccurrenceViewPanel extends Panel
         });
 		
 		this.updateNotes(layout);
+
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ERROR_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.ERROR_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+		{
+			commentButtonLayout.setVisible(true);
+		}
+		else
+		{
+			commentButtonLayout.setVisible(false);
+		}
+
 		layout.addComponent(commentButtonLayout);
 		
 		return layout;

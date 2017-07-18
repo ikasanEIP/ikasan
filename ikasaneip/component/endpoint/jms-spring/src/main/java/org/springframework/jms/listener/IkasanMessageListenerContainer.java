@@ -120,15 +120,53 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
             throw new RuntimeException("Check the configuration ConnectionFactoryName [" + configuration.getConnectionFactoryName() + "]", e);
         }
 
-        try
+        if (configuration.getDestinationJndiProperties() == null || configuration.getDestinationJndiProperties().isEmpty())
         {
-            // get destination
-            Destination destination = JndiUtils.getDestination(configuration.getDestinationJndiProperties(), configuration.getDestinationJndiName());
-            setDestination(destination);
+            Connection connection = null;
+
+            try
+            {
+                // create session using connection factory
+                boolean sessionTransacted = configuration.getSessionTransacted() == null ? false : configuration.getSessionTransacted();
+                int sessionAcknowledgeMode = configuration.getSessionAcknowledgeMode() == null ? Session.AUTO_ACKNOWLEDGE : configuration.getSessionAcknowledgeMode();
+                connection = this.getConnectionFactory().createConnection();
+                Session session = connection.createSession(sessionTransacted, sessionAcknowledgeMode);
+
+                // create destination using session
+                Destination destination = configuration.getPubSubDomain() ? session.createTopic(configuration.getDestinationJndiName()) : session.createQueue(configuration.getDestinationJndiName());
+                setDestination(destination);
+            }
+            catch (JMSException e)
+            {
+                throw new RuntimeException("JMS provider fails to create the connection due to some internal error", e);
+            }
+            finally
+            {
+                if (connection != null)
+                {
+                    try
+                    {
+                        connection.close();
+                    }
+                    catch (JMSException e)
+                    {
+                        throw new RuntimeException("Unable to close JMS Connection", e);
+                    }
+                }
+            }
         }
-        catch(IllegalArgumentException e)
+        else
         {
-            throw new RuntimeException("Check the configuration DestinationJndiName [" + configuration.getDestinationJndiName() + "]", e);
+            try
+            {
+                // get destination using JNDI lookup
+                Destination destination = JndiUtils.getDestination(configuration.getDestinationJndiProperties(), configuration.getDestinationJndiName());
+                setDestination(destination);
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new RuntimeException("Check the configuration DestinationJndiName [" + configuration.getDestinationJndiName() + "]", e);
+            }
         }
 
         // get other stuff

@@ -201,7 +201,7 @@ public class MessageHistoryServiceImplTest
     @DirtiesContext
     public void test_harvest()
     {
-        for(int i=0; i<1000; i++)
+        for(int i=0; i<100; i++)
         {
             Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
 
@@ -241,18 +241,18 @@ public class MessageHistoryServiceImplTest
 
         Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
 
-        this.messageHistoryService.setTransactionBatchSize(10500);
+        this.messageHistoryService.setTransactionBatchSize(1050);
         this.messageHistoryService.setHousekeepingBatchSize(500);
 
-        List events = this.messageHistoryService.harvest(1000);
+        List events = this.messageHistoryService.harvest(100);
 
-        Assert.assertEquals("Harvestable events should equal!", events.size(), 1000);
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 100);
 
         this.messageHistoryService.housekeep();
 
         System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
 
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 100000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
 
         System.out.println("Delete completed records: " + results.getResultSize());
 
@@ -263,7 +263,7 @@ public class MessageHistoryServiceImplTest
     @DirtiesContext
     public void test_harvest_batch_delete_false()
     {
-        for(int i=0; i<1000; i++)
+        for(int i=0; i<100; i++)
         {
             Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
 
@@ -306,17 +306,17 @@ public class MessageHistoryServiceImplTest
         Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
 
         this.messageHistoryService.setTransactionBatchSize(10500);
-        this.messageHistoryService.setHousekeepingBatchSize(500);
+        this.messageHistoryService.setHousekeepingBatchSize(50);
 
-        List events = this.messageHistoryService.harvest(1000);
+        List events = this.messageHistoryService.harvest(100);
 
-        Assert.assertEquals("Harvestable events should equal!", events.size(), 1000);
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 100);
 
         this.messageHistoryService.housekeep();
 
         System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
 
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 100000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
 
         System.out.println("Delete completed records: " + results.getResultSize());
 

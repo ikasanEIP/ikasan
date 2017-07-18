@@ -42,12 +42,16 @@ package org.ikasan.dashboard.ui.administration.panel;
 
 import java.util.List;
 
+import com.vaadin.server.VaadinService;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.notification.NotifierService;
 import org.ikasan.dashboard.notification.contentproducer.CategorisedErrorNotificationContentProducer;
 import org.ikasan.dashboard.ui.administration.window.NotificationWindow;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -99,11 +103,17 @@ public class NotificationsConfigurationPanel extends Panel implements View
 	
 	private Label notificationIntervalLabel;
 
+	private Label controlLabel;
+	private Button startButton;
+	private Button stopButton;
+
 	/**
 	 * Constructor
-	 * 
-	 * @param ikasanModuleService
-	 */
+	 *
+	 * @param configurationManagement
+	 * @param topologyService
+	 * @param notifierService
+     */
 	public NotificationsConfigurationPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
 			TopologyService topologyService, NotifierService notifierService)
 	{
@@ -181,7 +191,7 @@ public class NotificationsConfigurationPanel extends Panel implements View
 		configLabel.setSizeUndefined();
 		
 		this.newButton.setIcon(VaadinIcons.PLUS);
-		this.newButton.setDescription("Create a new filter");
+		this.newButton.setDescription("Create a new notification");
     	this.newButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
     	this.newButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);	
     	this.newButton.addClickListener(new Button.ClickListener() 
@@ -249,15 +259,15 @@ public class NotificationsConfigurationPanel extends Panel implements View
 		layout.addComponent(notificationIntervalLabel, 1, 2);
 		layout.setComponentAlignment(statusIconLabel, Alignment.MIDDLE_LEFT);
 		
-		Label controlLabel = new Label("Control:");
+		controlLabel = new Label("Control:");
 		controlLabel.addStyleName(ValoTheme.LABEL_LARGE);
 		controlLabel.setSizeUndefined();
 		
-		final Button startButton = new Button("Start");
+		startButton = new Button("Start");
 		startButton.setDescription("Start the notifier");
 		startButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		
-		final Button stopButton = new Button("Stop");
+		stopButton = new Button("Stop");
 		stopButton.setDescription("Start the notifier");
 		stopButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		
@@ -290,6 +300,7 @@ public class NotificationsConfigurationPanel extends Panel implements View
     			statusIconLabel.setCaption(stoppedIcon.getHtml());
             }
         });
+
 		
 		if(this.notifierService.getState().equals(NotifierService.STATE_RUNNING))
 		{
@@ -337,6 +348,35 @@ public class NotificationsConfigurationPanel extends Panel implements View
 	
 	private void refresh()
 	{
+		final IkasanAuthentication authentication = (IkasanAuthentication) VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+
+		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+				authentication.hasGrantedAuthority(SecurityConstants.NOTIFICATION_ADMIN))
+		{
+			stopButton.setVisible(true);
+			startButton.setVisible(true);
+			controlLabel.setVisible(true);
+			newButton.setVisible(true);
+
+		}
+		else if(authentication.hasGrantedAuthority(SecurityConstants.NOTIFICATION_WRITE))
+		{
+			newButton.setVisible(true);
+			stopButton.setVisible(false);
+			startButton.setVisible(false);
+			controlLabel.setVisible(false);
+
+		}
+		else
+		{
+			newButton.setVisible(false);
+			stopButton.setVisible(false);
+			startButton.setVisible(false);
+			controlLabel.setVisible(false);
+		}
+
 		this.container.removeAllItems();
 		
 		List<Notification> notifications = this.topologyService.getAllNotifications();
@@ -370,6 +410,17 @@ public class NotificationsConfigurationPanel extends Panel implements View
 	            	container.removeItem(notification);
 	            }
 	        });
+			
+
+			if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+					authentication.hasGrantedAuthority(SecurityConstants.NOTIFICATION_ADMIN))
+			{
+				deleteButton.setVisible(true);
+			}
+			else
+			{
+				deleteButton.setVisible(false);
+			}
 			
 			item.getItemProperty("").setValue(deleteButton);
 		}

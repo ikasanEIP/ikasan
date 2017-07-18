@@ -107,6 +107,8 @@ public class SpringMessageConsumerConfiguration
      **/
     private int cacheLevel = 1;
 
+    private Integer sessionAcknowledgeMode;
+
     public String getDestinationJndiName()
     {
         return destinationJndiName;
@@ -282,6 +284,16 @@ public class SpringMessageConsumerConfiguration
         this.cacheLevel = cacheLevel;
     }
 
+    public Integer getSessionAcknowledgeMode()
+    {
+        return sessionAcknowledgeMode;
+    }
+
+    public void setSessionAcknowledgeMode(Integer sessionAcknowledgeMode)
+    {
+        this.sessionAcknowledgeMode = sessionAcknowledgeMode;
+    }
+
     @Override
     public String toString()
     {
@@ -303,6 +315,7 @@ public class SpringMessageConsumerConfiguration
                 ", maxConcurrentConsumers=" + maxConcurrentConsumers +
                 ", concurrentConsumers=" + concurrentConsumers +
                 ", cacheLevel=" + cacheLevel +
+                ", sessionAcknowledgeMode=" + sessionAcknowledgeMode +
                 '}';
     }
 }
