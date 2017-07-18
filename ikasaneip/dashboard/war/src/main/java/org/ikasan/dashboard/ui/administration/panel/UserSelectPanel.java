@@ -130,7 +130,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          gridLayout.setSpacing(true);
          gridLayout.setWidth("100%");
 
-         Label policyLabel = new Label("Select Policy");
+         Label policyLabel = new Label("Select User");
          policyLabel.setStyleName(ValoTheme.LABEL_HUGE);
          gridLayout.addComponent(policyLabel);
          gridLayout.setComponentAlignment(policyLabel, Alignment.MIDDLE_LEFT);
