@@ -218,7 +218,7 @@ public class HibernateMessageHistoryDaoTest
             }
         }
 
-    	
+
     	PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
 
         messageHistoryDao.deleteHarvestableRecords(events);
