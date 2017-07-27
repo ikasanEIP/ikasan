@@ -1,4 +1,4 @@
-package org.ikasan.sample.spring.boot;
+package org.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;

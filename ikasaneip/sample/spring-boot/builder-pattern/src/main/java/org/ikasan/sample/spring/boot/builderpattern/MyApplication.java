@@ -80,11 +80,6 @@ public class MyApplication
 
     }
 
-//    public IkasanApplication getIkasanModule(String[] args)
-//    {
-//        return IkasanApplication.getIkasanModule(args);
-//    }
-
     public Flow getFlow(ModuleBuilder moduleBuilder)
     {
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName");
@@ -97,6 +92,7 @@ public class MyApplication
     private class MyConsumer implements Consumer
     {
 
+        private boolean isRunning;
         @Override
         public void setListener(Object o) {
 
@@ -113,18 +109,19 @@ public class MyApplication
         }
 
         @Override
-        public void start() {
-
+        public void start()
+        {
+            this.isRunning = true;
         }
 
         @Override
         public boolean isRunning() {
-            return false;
+            return isRunning;
         }
 
         @Override
         public void stop() {
-
+            this.isRunning = false;
         }
     }
 
