@@ -8,7 +8,7 @@
         <constructor-arg ref="narayanaProperties"/>
     </bean-->
 
-    <bean id="narayanaConfiguration" class="org.springframework.boot.jta.narayana.NarayanaProperties">
+    <bean id="narayanaProperties" class="org.springframework.boot.jta.narayana.NarayanaProperties">
     </bean>
 
     <bean id="arjunaTransactionManager" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple"/>
