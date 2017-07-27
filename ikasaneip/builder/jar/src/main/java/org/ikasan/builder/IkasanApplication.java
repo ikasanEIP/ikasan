@@ -54,11 +54,27 @@ public interface IkasanApplication
      * @param moduleName
      * @return
      */
-    public ModuleBuilder getModuleBuilder(String moduleName);
+    ModuleBuilder getModuleBuilder(String moduleName);
 
     /**
      * Execute the module
      * @param module
      */
-    public void run(Module module);
+    void run(Module module);
+
+    /**
+     * Get bean by given name.
+     *
+     * @param beanName
+     * @return
+     */
+    Object getBean(String beanName);
+
+    /**
+     * Get bean by given class.
+     *
+     * @param className
+     * @return
+     */
+    Object getBean(Class className);
 }

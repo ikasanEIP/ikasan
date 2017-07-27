@@ -75,12 +75,17 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
 
     public void run(Module module)
     {
-//        addModuleName((BeanDefinitionRegistry) context,module);
         ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
         service.register(module);
-        //service.run();
-        // not sure
     }
 
+    @Override public Object getBean(String beanName)
+    {
+        return context.getBean(beanName);
+    }
 
+    @Override public Object getBean(Class className)
+    {
+        return context.getBean(className);
+    }
 }
