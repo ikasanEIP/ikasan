@@ -168,26 +168,14 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 //        builder.addPropertyValue("name", module.getName());
 //        registry.registerBeanDefinition(module.getName(), builder.getBeanDefinition());
 
-        this.initialiseModuleSecurity(module);
-        // intialise config into db
-        this.initialiseModuleMetaData(module);
-        this.moduleContainer.add(module);
-        this.moduleActivator.activate(module);
+        initialise(module);
     }
 
     public void register(List<Module> modules)
     {
         for (Module<Flow> module : modules)
         {
-            try {
-                this.initialiseModuleSecurity(module);
-                // intialise config into db
-                this.initialiseModuleMetaData(module);
-                this.moduleContainer.add(module);
-                this.moduleActivator.activate(module);
-            } catch (RuntimeException re){
-                logger.error("There was a problem initialising module", re);
-            }
+            initialise(module);
         }
 
     }
@@ -268,17 +256,22 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         for (Module<Flow> module : moduleBeans.values())
         {
-            try {
-                this.initialiseModuleSecurity(module);
-                // intialise config into db
-                this.initialiseModuleMetaData(module);
-                this.moduleContainer.add(module);
-                this.moduleActivator.activate(module);
-            } catch (RuntimeException re){
-                logger.error("There was a problem initialising module", re);
-            }
+            initialise(module);
         }
 
+    }
+
+    private void initialise(Module module)
+    {
+        try {
+            this.initialiseModuleSecurity(module);
+            // intialise config into db
+            this.initialiseModuleMetaData(module);
+            this.moduleContainer.add(module);
+            this.moduleActivator.activate(module);
+        } catch (RuntimeException re){
+            logger.error("There was a problem initialising module", re);
+        }
     }
 
 

@@ -78,7 +78,12 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -89,7 +94,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public class FlowBuilder
+public class FlowBuilder implements ApplicationContextAware
 {
     /** logger */
     private Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
@@ -158,6 +163,9 @@ public class FlowBuilder
 
 	/** List of FlowInvocationListener */
     List<FlowInvocationContextListener> flowInvocationContextListeners;
+
+    /** Ensure the spring context is available for registering additional beans */
+    ApplicationContext applicationContext;
 
     /**
 	 * Constructor
@@ -416,9 +424,21 @@ public class FlowBuilder
 	 */
     public PrimaryRouteBuilder consumer(String name, Consumer consumer)
     {
+        registerComponent(name, consumer);
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
         BuilderFactory builderFactory = BuilderFactory.getInstance();
         return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, consumer, invoker) ));
+    }
+
+    protected void registerComponent(String name, Consumer consumer)
+    {
+        if(applicationContext != null)
+        {
+            ((ConfigurableApplicationContext)applicationContext).getBeanFactory().registerSingleton(name, consumer);
+            //((ConfigurableApplicationContext)applicationContext).refresh();
+            Consumer c = applicationContext.getBean(Consumer.class);
+            c.toString();
+        }
     }
 
     protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
@@ -634,6 +654,11 @@ public class FlowBuilder
 
         return flow;
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     public class PrimaryRouteBuilder {
