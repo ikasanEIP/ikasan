@@ -43,6 +43,7 @@ package org.ikasan.builder;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
@@ -141,11 +142,14 @@ public class ModuleBuilder
 		return module;
 	}
 
-	public FlowBuilder getFlowBuilder(String name)
+	public FlowBuilder getFlowBuilder(String flowName)
 	{
-		FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
-		flowBuilder.withName(name);
-		flowBuilder.withModuleName(this.name);
+	//	FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
+
+		AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
+		FlowBuilder flowBuilder = new FlowBuilder(flowName,this.name);
+		beanFactory.autowireBean(flowBuilder);
+		flowBuilder.setApplicationContext(this.context);
 		return flowBuilder;
 	}
 

@@ -1,6 +1,5 @@
 package org.ikasan.sample.spring.boot.builderpattern;
 
-import org.junit.Assert;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 

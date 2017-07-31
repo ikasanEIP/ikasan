@@ -78,16 +78,15 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A simple Flow builder.
@@ -424,21 +423,47 @@ public class FlowBuilder implements ApplicationContextAware
 	 */
     public PrimaryRouteBuilder consumer(String name, Consumer consumer)
     {
-        registerComponent(name, consumer);
+        Consumer c = registerComponent(name, consumer);
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
         BuilderFactory builderFactory = BuilderFactory.getInstance();
-        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, consumer, invoker) ));
+        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, c, invoker) ));
     }
 
-    protected void registerComponent(String name, Consumer consumer)
+    protected Consumer registerComponent(String name, Consumer consumer)
     {
         if(applicationContext != null)
         {
-            ((ConfigurableApplicationContext)applicationContext).getBeanFactory().registerSingleton(name, consumer);
-            //((ConfigurableApplicationContext)applicationContext).refresh();
-            Consumer c = applicationContext.getBean(Consumer.class);
-            c.toString();
+            List<? extends Class<?>> consumerInterfaces = Arrays.asList(consumer.getClass().getInterfaces());
+            //consumerInterfaces.add(consumer.getClass());
+
+            Map<String,DefaultBeanFactoryPointcutAdvisor> allAopFactories =  applicationContext.getBeansOfType(DefaultBeanFactoryPointcutAdvisor.class);
+            if(allAopFactories!=null && !allAopFactories.isEmpty()){
+                for (String key :allAopFactories.keySet())
+                {
+                    DefaultBeanFactoryPointcutAdvisor aopFactory = allAopFactories.get(key);
+
+                    for(Class consumerInterface :consumerInterfaces)
+                    {
+                        if (aopFactory.getPointcut().getClassFilter().matches(consumerInterface))
+                        {
+                            logger.info("Matched consumer [" + consumer.getClass().getCanonicalName() + "] with poincut");
+
+                            ProxyFactory factory = new ProxyFactory(consumer);
+                            factory.addInterface(consumerInterface);
+                            factory.addAdvice(aopFactory.getAdvice());
+
+                            Consumer proxy = (Consumer) factory.getProxy();
+                            ((ConfigurableApplicationContext)applicationContext).getBeanFactory().registerSingleton(name, proxy);
+                            return proxy;
+                        }
+                    }
+
+                }
+            }
+
+
         }
+        return consumer;
     }
 
     protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
