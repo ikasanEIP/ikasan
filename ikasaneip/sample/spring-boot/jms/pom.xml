@@ -20,27 +20,6 @@
         <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
     
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${version.org.springboot}</version>
-                <type>pom</type>
-                <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                </exclusions>
-
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-
     <dependencies>
 
         <dependency>
@@ -63,6 +42,14 @@
                 <exclusion>
                     <groupId>geronimo-spec</groupId>
                     <artifactId>geronimo-spec-j2ee</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-rest</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
                 </exclusion>
             </exclusions>
 
@@ -115,12 +102,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-replay</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -185,10 +166,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-databind</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -202,7 +183,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
