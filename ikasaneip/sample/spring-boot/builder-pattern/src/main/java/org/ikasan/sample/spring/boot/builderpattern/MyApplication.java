@@ -50,6 +50,9 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
 /**
  * Sample standalone bootstrap application using the builder pattern.
  *
@@ -69,14 +72,7 @@ public class MyApplication
 
         ikasanApplication.run(module);
 
-
-//
-//        moduleBuilder.getFlowBuilder("flowName").
-//        ikasanModule..getModuleBuilder().moduleBuilder("moduleName").
-//        Module module = myApplication.getModule( ikasanApplication.getBuilderFactory() );
-
-        //ikasanApplication.run( module );
-        System.out.println("Let's inspect the beans provided by Spring Boot:");
+       System.out.println("Let's inspect the beans provided by Spring Boot:");
 
     }
 
@@ -89,7 +85,7 @@ public class MyApplication
 
     }
 
-    private class MyConsumer implements Consumer
+    private class MyConsumer implements Consumer,MessageListener
     {
 
         private boolean isRunning;
@@ -122,6 +118,11 @@ public class MyApplication
         @Override
         public void stop() {
             this.isRunning = false;
+        }
+
+        @Override public void onMessage(Message message)
+        {
+            System.out.print("Message");
         }
     }
 

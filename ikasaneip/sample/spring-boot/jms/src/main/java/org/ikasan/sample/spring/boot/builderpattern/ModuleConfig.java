@@ -2,6 +2,7 @@ package org.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
+import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.spec.flow.Flow;
@@ -68,7 +69,6 @@ public class ModuleConfig {
      */
     @Bean
     public Module getModule(){
-
 
         FlowBuilder fb = BuilderFactory.flowBuilder("flowName", "sample-module");
         beanFactory.autowireBean(fb);
