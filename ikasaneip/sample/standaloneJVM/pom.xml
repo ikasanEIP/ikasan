@@ -49,7 +49,6 @@
     <artifactId>ikasan-sample-standaloneJVM</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Ikasan Enterprise Integration Sample StandaloneJVM</name>
 
     <properties>
         <!--<java.version>1.8</java.version>-->
@@ -94,20 +93,17 @@
             <artifactId>ikasan-eip</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>geronimo-spec</groupId>
                     <artifactId>geronimo-spec-j2ee</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-rest</artifactId>
                 </exclusion>
+
                 <exclusion>
-                    <groupId>org.glassfish.jersey.media</groupId>
-                    <artifactId>jersey-media-json-jackson</artifactId>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -119,46 +115,21 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-topology</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-              <exclusion>
-                    <groupId>org.glassfish.jersey.media</groupId>
-                    <artifactId>jersey-media-json-jackson</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest-boot</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.jersey.media</groupId>
-                    <artifactId>jersey-media-json-jackson</artifactId>
-                </exclusion>
-            </exclusions>
-
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-monitor</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-replay</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.jersey.media</groupId>
-                    <artifactId>jersey-media-json-jackson</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- web console -->
@@ -172,6 +143,13 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-webconsole-boot-war</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.com.h2database}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -191,6 +169,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 </project>
