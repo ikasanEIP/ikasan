@@ -101,6 +101,14 @@
           <artifactId>geronimo-spec-j2ee</artifactId>
           <groupId>geronimo-spec</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>ikasan-rest</artifactId>
+          <groupId>org.ikasan</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>validation-api</artifactId>
+          <groupId>javax.validation</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -118,12 +126,6 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-jms-spring-arjuna</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-topology</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
@@ -152,21 +154,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-replay</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>4.3.2.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>4.3.9.Final</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -212,21 +202,11 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.8.3</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <version>1.4.1.RELEASE</version>
       <scope>test</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>spring-boot-test</artifactId>
           <groupId>org.springframework.boot</groupId>
@@ -302,23 +282,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${version.org.springboot}</version>
-        <type>pom</type>
-        <scope>import</scope>
-        <exclusions>
-          <exclusion>
-            <artifactId>logback-classic</artifactId>
-            <groupId>ch.qos.logback</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <properties>
     <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
