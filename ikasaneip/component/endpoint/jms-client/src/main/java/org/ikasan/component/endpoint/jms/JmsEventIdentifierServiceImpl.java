@@ -43,6 +43,7 @@ package org.ikasan.component.endpoint.jms;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -54,7 +55,7 @@ import javax.jms.MessageNotWriteableException;
  * @author Ikasan Development Team
  *
  */
-public class JmsEventIdentifierServiceImpl implements ManagedEventIdentifierService<String,Message>
+public class JmsEventIdentifierServiceImpl implements ManagedRelatedEventIdentifierService<String, Message>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(JmsEventIdentifierServiceImpl.class);
@@ -99,8 +100,49 @@ public class JmsEventIdentifierServiceImpl implements ManagedEventIdentifierServ
         }
         catch (JMSException e)
         {
-            throw new ManagedEventIdentifierException("Failed to set " + ManagedEventIdentifierService.EVENT_LIFE_ID + " from JMS message", e);
+            throw new ManagedEventIdentifierException("Failed to set " + ManagedEventIdentifierService.EVENT_LIFE_ID + " on JMS message", e);
         }
     }
 
+    @Override
+    public void setRelatedEventIdentifier(String relatedIdentifier, Message message) throws ManagedEventIdentifierException
+    {
+        if (relatedIdentifier == null)
+        {
+            return;  // nothing to set
+        }
+        try
+        {
+            message.setStringProperty(ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID, relatedIdentifier);
+        }
+        // this must be a Message pass through
+        catch (MessageNotWriteableException e)
+        {
+            logger.info("Unable to set the related event life identifier", e);
+        }
+        catch (JMSException e)
+        {
+            throw new ManagedEventIdentifierException("Failed to set " + ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID + " on JMS message", e);
+        }
+    }
+
+    @Override
+    public String getRelatedEventIdentifier(Message message) throws ManagedEventIdentifierException
+    {
+        try
+        {
+            if (message.propertyExists(ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID))
+            {
+                return message.getStringProperty(ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch (JMSException e)
+        {
+            throw new ManagedEventIdentifierException("Failed to get " + ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID + " from JMS message", e);
+        }
+    }
 }

@@ -49,10 +49,7 @@ import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.event.Resubmission;
+import org.ikasan.spec.event.*;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
@@ -70,7 +67,7 @@ import java.util.Hashtable;
  */
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>,EventFactory>,
-        ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message,Throwable>,
+        ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<Message,Throwable>,
         ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>, Converter<Message,Object>, MultiThreadedCapable
 {
     /** class logger */
@@ -95,7 +92,7 @@ public class GenericJmsConsumer
     protected EventListener eventListener;
 
     /** default event identifier service - can be overridden via the setter */
-    protected ManagedEventIdentifierService<?,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
+    protected ManagedRelatedEventIdentifierService<?,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** configured resource id */
     protected String configuredResourceId;
@@ -350,7 +347,8 @@ public class GenericJmsConsumer
      * Override the default consumer event life identifier service
      * @param managedEventIdentifierService
      */
-    public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
+    @SuppressWarnings("unchecked")
+    public void setManagedIdentifierService(ManagedRelatedEventIdentifierService managedEventIdentifierService)
     {
         this.managedEventIdentifierService = managedEventIdentifierService;
     }
@@ -367,7 +365,9 @@ public class GenericJmsConsumer
             throw new RuntimeException("No active eventListeners registered!");
         }
 
-        FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( this.managedEventIdentifierService.getEventIdentifier(message), message);
+        FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(this.managedEventIdentifierService.getEventIdentifier(message),
+                                                             this.managedEventIdentifierService.getRelatedEventIdentifier(message),
+                                                             message);
         this.eventListener.invoke(flowEvent);
     }
     
