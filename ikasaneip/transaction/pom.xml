@@ -55,6 +55,7 @@
     <description>Ikasan Transaction Support Parent</description>
 
     <modules>
+        <module>arjuna</module>
         <module>spring</module>
     </modules>
 

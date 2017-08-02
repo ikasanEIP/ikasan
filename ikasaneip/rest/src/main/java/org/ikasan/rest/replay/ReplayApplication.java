@@ -78,7 +78,7 @@ public class ReplayApplication extends IkasanRestApplication
 	private ModuleContainer moduleContainer;
 
 	/**
-	 * @param hospitalService
+	 * @param
 	 */
 	public ReplayApplication()
 	{

@@ -45,7 +45,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
