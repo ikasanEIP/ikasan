@@ -42,9 +42,8 @@ package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.configuration.Configured;
-import org.ikasan.spec.management.HousekeeperService;
 
 /**
  * The default implementation for {@link DuplicateFilterService}

@@ -182,6 +182,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
@@ -198,21 +204,8 @@
 		  <artifactId>junit</artifactId>
 		  <scope>provided</scope>
 		</dependency>
-	 
-		<dependency>
-		  <groupId>log4j</groupId>
-		  <artifactId>log4j</artifactId>
-		  <scope>provided</scope>
-		</dependency>
-	 
-		<dependency>
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>slf4j-log4j12</artifactId>
-		  <scope>provided</scope>
-		</dependency>
-	 
-	 
-		<dependency>
+
+        <dependency>
 		  <groupId>commons-io</groupId>
 		  <artifactId>commons-io</artifactId>
 		  <scope>test</scope>

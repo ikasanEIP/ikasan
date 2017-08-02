@@ -53,7 +53,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -72,6 +71,8 @@ import org.ikasan.topology.model.Server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ikasan.topology.exception.DiscoveryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -80,8 +81,8 @@ import com.ikasan.topology.exception.DiscoveryException;
  */
 public class TopologyServiceImpl implements TopologyService
 {
-	private static Logger logger = Logger.getLogger(TopologyServiceImpl.class);
-	
+	private Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
+
 	private TopologyDao topologyDao;
 
 	/**
