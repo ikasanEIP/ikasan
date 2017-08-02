@@ -836,7 +836,6 @@
                 <module>spec</module>
                 <module>system-event</module>
                 <module>module</module>
-                <module>bootstrap</module>  <!-- TODO - is this still required ? -->
                 <module>scheduler</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
@@ -862,8 +861,6 @@
                 <module>management</module>
                 <module>hospital</module>
                 <module>webconsole</module>
-                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-                <!-- module>console</module -->
                 <module>topology</module>
                 <module>developer</module>
                 <module>transaction</module>
@@ -882,7 +879,6 @@
                 <module>spec</module>
                 <module>system-event</module>
                 <module>module</module>
-                <module>bootstrap</module>
                 <module>scheduler</module>
                 <module>serialiser</module>
                 <module>exclusion</module>
@@ -916,8 +912,6 @@
                 <module>mapping</module>
                 <module>management</module>
                 <module>platform</module>
-                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-                <!-- module>console</module -->
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
