@@ -44,6 +44,7 @@ import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -111,14 +112,15 @@ public class ModuleBuilderTest
     @Ignore // FIXME - remove this ignore to reinstate the test
     public void test_successful_flowCreation() 
     {
-    	Module module = IkasanApplicationFactory.getIkasanApplication().getModuleBuilder("module name").withDescription("module description")
-    	.addFlow( BuilderFactory.flowBuilder("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
+    	ModuleBuilder moduleBuilder = IkasanApplicationFactory.getIkasanApplication().getModuleBuilder("module name").withDescription("module description");
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName1").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService);
+        Flow flow1 = flowBuilder.consumer("consumer", flowBuilder.getComponentBuilder().scheduledConsumer().getInstance()).producer("producer", producer).build();
+
+    	Flow flow2 = moduleBuilder.getFlowBuilder("flowName2").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)
-                .producer("producer", producer).build())
-    	.addFlow( BuilderFactory.flowBuilder("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
-                .consumer("consumer", consumer)
-                .producer("producer", producer).build())
-    	.build();
+                .producer("producer", producer).build();
+
+    	Module module = moduleBuilder.addFlow(flow1).addFlow(flow2).build();
 
     	Assert.assertTrue("module name should be 'module name'", "module name".equals(module.getName()));
     	Assert.assertTrue("module description should be 'module description'", "module description".equals(module.getDescription()));

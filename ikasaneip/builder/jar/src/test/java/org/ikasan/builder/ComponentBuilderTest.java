@@ -40,77 +40,52 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.flow.FlowElement;
-import org.springframework.context.ApplicationContext;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
+import org.junit.Test;
+import org.quartz.Scheduler;
 
 /**
- * A simple Flow builder.
+ * This test class supports the <code>ComponentBuilder</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class BuilderFactory
+public class ComponentBuilderTest
 {
-    // singleton
-    static BuilderFactory builderFactory = new BuilderFactory(null);    // FIXME
-
-    ApplicationContext context;
-
-    protected static BuilderFactory getInstance()
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
     {
-        return builderFactory;
-    }
-//
-    public static ModuleBuilder moduleBuilder(String name)
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
+    /** Mock scheduler */
+    final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_scheduledConsumer()
     {
-        return new ModuleBuilder(name);
-    }
+        ComponentBuilder componentBuilder = new ComponentBuilder("flowName", "moduleName");
+        Consumer scheduledConsumer = componentBuilder.scheduledConsumer().setCronExpression("121212").setEager(true).setIgnoreMisfire(true).setTimezone("UTC").getInstance();
 
-//    public static ModuleBuilder moduleBuilder(String name, String version)
-//    {
-//        return new ModuleBuilder(name);
-//    }
+        Assert.assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
 
-    public static RouteBuilder routeBuilder()
-    {
-        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
-    }
-
-    public BuilderFactory(ApplicationContext context)
-    {
-        this.context = context;
-    }
-//
-//    public static FlowBuilder flowBuilder()
-//    {
-//        // create flowBuilder with default configuration
-//        FlowBuilder flowBuilder = new FlowBuilder();
-//        return flowBuilder;
-//    }
-
-//    public FlowBuilder getFlowBuilder(String name)
-//    {
-//        FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
-//        flowBuilder.withName(name);
-//        return flowBuilder;
-//    }
-
-    public static FlowBuilder flowBuilder(String name, String module)
-    {
-        return new FlowBuilder(name, module);
-    }
-
-    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
-    {
-        List<FlowElement> flowElements = new ArrayList<FlowElement>();
-        flowElements.add(flowElement);
-        return new RouteImpl(flowElements);
+        ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>)scheduledConsumer).getConfiguration();
+        Assert.assertTrue("cronExpression should be '121212'", configuration.isEager() == true);
+        Assert.assertTrue("eager should be 'true'", configuration.isEager() == true);
+        Assert.assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
+        Assert.assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
     }
 }
-
-
-
-

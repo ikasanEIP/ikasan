@@ -40,9 +40,11 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
@@ -68,6 +70,7 @@ public class ModuleBuilder
 	/** flow builders for creating flows within this module */
 	List<Flow> flows = new ArrayList<Flow>();
 
+	/** application context */
 	ApplicationContext context;
 
 	/**
@@ -93,7 +96,7 @@ public class ModuleBuilder
 	 * Constructor
 	 * @param name
 	 */
-	ModuleBuilder( String name)
+	ModuleBuilder(String name)
 	{
 
 		this.name = name;
@@ -144,14 +147,11 @@ public class ModuleBuilder
 
 	public FlowBuilder getFlowBuilder(String flowName)
 	{
-	//	FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
-
 		AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
 		FlowBuilder flowBuilder = new FlowBuilder(flowName,this.name);
 		beanFactory.autowireBean(flowBuilder);
 		flowBuilder.setApplicationContext(this.context);
 		return flowBuilder;
 	}
-
 }
 

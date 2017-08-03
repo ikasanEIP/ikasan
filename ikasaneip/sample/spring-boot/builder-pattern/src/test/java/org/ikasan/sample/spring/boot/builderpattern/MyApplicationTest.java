@@ -72,21 +72,28 @@ public class MyApplicationTest
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
         ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
-        Flow flow = myApplication.getFlow(moduleBuilder);
-        moduleBuilder.addFlow(flow);
-        Module module = moduleBuilder.build();
+        Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder);
+        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder);
+
+        Module module = moduleBuilder.addFlow(scheduldeFlow).addFlow(jmsFlow).build();
 
         ikasanApplication.run(module);
 
         System.out.println("Check is module healthy.");
-        //
-        // pause(120000);
-        flow.start();
+
+        scheduldeFlow.start();
         pause(2000);
-        assertEquals("running",flow.getState());
-        flow.stop();
+        assertEquals("running",scheduldeFlow.getState());
+        scheduldeFlow.stop();
         pause(2000);
-        assertEquals("stopped",flow.getState());
+        assertEquals("stopped",scheduldeFlow.getState());
+
+        jmsFlow.start();
+        pause(2000);
+        assertEquals("running",jmsFlow.getState());
+        jmsFlow.stop();
+        pause(2000);
+        assertEquals("stopped",jmsFlow.getState());
 
     }
 

@@ -49,6 +49,7 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -62,30 +63,48 @@ public class MyApplication
 {
     public static void main(String[] args) throws Exception
     {
-        MyApplication myApplication = new MyApplication();
+        new MyApplication().executeIM(args);
+    }
+
+    public void executeIM(String[] args)
+    {
+        // get an ikasanApplication instance
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
-        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
-        Flow flow = myApplication.getFlow(moduleBuilder);
-        moduleBuilder.addFlow(flow);
-        Module module = moduleBuilder.build();
+        // get a module builder from the ikasanApplication
+        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName").withDescription("Example module with pattern builder");
 
+        // get an instance of flowBuilder from the moduleBuilder and create a flow
+        Flow scheduledFlow = getScheduledFlow(moduleBuilder);
+
+        // get an instance of flowBuilder from the moduleBuilder and create a flow
+        Flow jmsFlow = getJmsFlow(moduleBuilder);
+
+        // add flows to the module
+        Module module = moduleBuilder.addFlow(scheduledFlow).addFlow(jmsFlow).build();
+
+        // pass the module to Ikasan to run
         ikasanApplication.run(module);
 
-       System.out.println("Let's inspect the beans provided by Spring Boot:");
-
     }
 
-    public Flow getFlow(ModuleBuilder moduleBuilder)
+    public Flow getScheduledFlow(ModuleBuilder moduleBuilder)
     {
-        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName");
-         return flowBuilder.withDescription("flowDescription")
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Scheduled Flow Name");
+        return flowBuilder.withDescription("scheduled flow description")
+                .consumer("consumer", flowBuilder.getComponentBuilder().scheduledConsumer().setCronExpression("0/5 * * * * ?").getInstance())
+                .producer("producer", new MyProducer()).build();
+    }
+
+    public Flow getJmsFlow(ModuleBuilder moduleBuilder)
+    {
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Jms Flow Name");
+        return flowBuilder.withDescription("Jms flow description")
                 .consumer("consumer", new MyConsumer())
                 .producer("producer", new MyProducer()).build();
-
     }
 
-    private class MyConsumer implements Consumer,MessageListener
+    private class MyConsumer implements Consumer,MessageListener,ResubmissionService
     {
 
         private boolean isRunning;
@@ -123,6 +142,11 @@ public class MyApplication
         @Override public void onMessage(Message message)
         {
             System.out.print("Message");
+        }
+
+        @Override
+        public void submit(Object o) {
+
         }
     }
 

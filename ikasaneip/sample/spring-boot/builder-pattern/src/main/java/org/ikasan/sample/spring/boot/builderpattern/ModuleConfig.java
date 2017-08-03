@@ -6,7 +6,8 @@ import org.springframework.context.annotation.ImportResource;
 
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-jms.xml"
+        "classpath:ikasan-transaction-pointcut-jms.xml",
+        "classpath:ikasan-transaction-pointcut-resubmission.xml"
 
 } )
 public class ModuleConfig

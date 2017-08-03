@@ -38,52 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.builder.component;
 
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleInitialisationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
-@SpringBootApplication
-public class IkasanApplicationSpringBoot implements IkasanApplication
+/**
+ * Contract for a default scheduledConsumerBuilder.
+ *
+ * @author Ikasan Development Team.
+ */
+public interface ScheduledConsumerBuilder
 {
-    /** logger */
-    private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
+    public ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
-    ApplicationContext context;
+    public ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    public IkasanApplicationSpringBoot(String[] args)
-    {
-        this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
-    }
+    public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
 
-    IkasanApplicationSpringBoot()
-    {
-    }
+    public ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
 
-    public ModuleBuilder getModuleBuilder(String name)
-    {
-        return new ModuleBuilder(this.context, name);
-    }
+    public ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
 
-    public void run(Module module)
-    {
-        ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
-        service.register(module);
-        logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
-    }
+    public ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
-    @Override public Object getBean(String beanName)
-    {
-        return context.getBean(beanName);
-    }
+    public ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
 
-    @Override public Object getBean(Class className)
-    {
-        return context.getBean(className);
-    }
+    public ScheduledConsumerBuilder setCronExpression(String cronExpression);
+
+    public ScheduledConsumerBuilder setEager(boolean eager);
+
+    public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
+
+    public ScheduledConsumerBuilder setTimezone(String timezone);
+
+    public ScheduledConsumer getInstance();
 }
+
