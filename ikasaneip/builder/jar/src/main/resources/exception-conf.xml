@@ -12,7 +12,6 @@
         <constructor-arg>
             <list>
 
-
                 <bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
                     <constructor-arg>
                         <bean class="org.hamcrest.core.IsInstanceOf">
@@ -30,19 +29,6 @@
                     <constructor-arg>
                         <bean class="org.hamcrest.core.IsInstanceOf">
                             <constructor-arg value="javax.resource.ResourceException"/>
-                        </bean>
-                    </constructor-arg>
-                    <constructor-arg>
-                        <bean class="org.ikasan.exceptionResolver.action.RetryAction">
-                            <property name="delay" value="10000"/>
-                        </bean>
-                    </constructor-arg>
-                </bean>
-
-                <bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
-                    <constructor-arg>
-                        <bean class="org.hamcrest.core.IsInstanceOf">
-                            <constructor-arg value="javax.jms.JMSException"/>
                         </bean>
                     </constructor-arg>
                     <constructor-arg>

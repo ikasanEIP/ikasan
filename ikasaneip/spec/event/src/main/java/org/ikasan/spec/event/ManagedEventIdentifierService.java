@@ -53,7 +53,7 @@ package org.ikasan.spec.event;
 public interface ManagedEventIdentifierService<IDENTIFIER,EVENT>
 {
     /** provide consistent properties for access */
-    public static final String EVENT_LIFE_ID = "IkasanEventLifeIdentifier";
+    String EVENT_LIFE_ID = "IkasanEventLifeIdentifier";
     
     /**
      * Set the event life identifier based on the incoming event implementation.
@@ -64,7 +64,7 @@ public interface ManagedEventIdentifierService<IDENTIFIER,EVENT>
      * @param event
      * @throws ManagedEventIdentifierException
      */
-    public void setEventIdentifier(IDENTIFIER identifier, EVENT event)
+    void setEventIdentifier(IDENTIFIER identifier, EVENT event)
         throws ManagedEventIdentifierException;
 
     /**
@@ -76,6 +76,6 @@ public interface ManagedEventIdentifierService<IDENTIFIER,EVENT>
      * @param event
      * @return IDENTIFIER
      */
-    public IDENTIFIER getEventIdentifier(EVENT event)
+    IDENTIFIER getEventIdentifier(EVENT event)
         throws ManagedEventIdentifierException;
 }

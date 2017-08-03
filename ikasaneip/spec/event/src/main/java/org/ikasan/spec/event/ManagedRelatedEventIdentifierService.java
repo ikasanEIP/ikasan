@@ -1,7 +1,7 @@
-/* 
- * $Id: SchedulerFactoryTest.java 3629 2011-04-18 10:00:52Z mitcje $
- * $URL: http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler/src/test/java/org/ikasan/scheduler/SchedulerFactoryTest.java $
- *
+/*
+ * $Id$
+ * $URL$
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,48 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.standalone;
-
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.junit.Ignore;
-import org.junit.Test;
+package org.ikasan.spec.event;
 
 /**
- * This test class supports the <code>SimpleExample</code> class.
+ * Interface for a ManagedRelatedEventIdentifierService providing the contract for any
+ * related business event identifier to be added on the creation of a business event.
+ * 
+ * The Related Event Identifier is a business identifier immutable for the business
+ * life of the event, allowing it to be tied to a main business event.
+ *
+ * This is commonly used if the business event mutates during a flow, for example in a Splitter, and tracking of the related
+ * business events is required
  * 
  * @author Ikasan Development Team
+ *
  */
-public class SimpleExampleTest
+public interface ManagedRelatedEventIdentifierService<IDENTIFIER,EVENT> extends ManagedEventIdentifierService<IDENTIFIER,EVENT>
 {
+    /** provide consistent properties for access */
+    String RELATED_EVENT_LIFE_ID = "IkasanRelatedEventLifeIdentifier";
+    
     /**
-     * Test simple invocation.
+     * Set the related event life identifier based on the incoming event implementation.
+     * The incoming related identifier could be null.
+     * 
+     * @param relatedIdentifier the related identifier
+     * @param event the event on which to set
+     * @throws ManagedEventIdentifierException any exception setting the identifier on the event
      */
-    @Test
-    public void test_createModule_start_and_stop_flow()
-    {
-        SimpleExample simpleExample = new SimpleExample();
-        Module<Flow> module = simpleExample.createModule("simpleModule");
-        Flow flow = module.getFlow("flowName");
-
-        flow.start();
-        pause(2000);
-        flow.stop();
-    }
+    void setRelatedEventIdentifier(IDENTIFIER relatedIdentifier, EVENT event)
+        throws ManagedEventIdentifierException;
 
     /**
-     * Sleep for value in millis
-     * @param value
+     * Get the related life identifier for the incoming event.
+     * This will either return a value for the related life identifier or null if it cannot be found
+     *
+     * @param event the event from which to obtain the related life identifier
+     * @return IDENTIFIER the related identifier
      */
-    private void pause(long value)
-    {
-        try
-        {
-            Thread.sleep(value);
-        }
-        catch(Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+    IDENTIFIER getRelatedEventIdentifier(EVENT event)
+        throws ManagedEventIdentifierException;
 }

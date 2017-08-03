@@ -74,8 +74,8 @@ import java.util.List;
 public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
         Consumer<EventListener<?>,EventFactory>, Converter<Message,Object>,
-        ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
-		, ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
+        ManagedIdentifierService<ManagedRelatedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>,
+		ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
 {
     /** Logger instance */
     private Logger logger = LoggerFactory.getLogger(JmsContainerConsumer.class);
@@ -93,7 +93,7 @@ public class JmsContainerConsumer
     MessageProvider messageProvider;
 
     /** Service for stamping the event with a unique identifier */
-    protected ManagedEventIdentifierService<?,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
+    protected ManagedRelatedEventIdentifierService<?,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** handle to the configuration */
     private SpringMessageConsumerConfiguration configuration;
@@ -180,19 +180,36 @@ public class JmsContainerConsumer
             if(message instanceof IkasanListMessage && configuration.isAutoSplitBatch())
             {
                 IkasanListMessage msgs = (IkasanListMessage)message;
-                for(Message msg:msgs)
+                for(Message msg : msgs)
                 {
-                    FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-                            ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(msg) : msg.hashCode()),
-                            msg);
+                    Object lifeIdentifier, relatedLifeIdentifier = null;
+                    if (this.managedEventIdentifierService != null)
+                    {
+                        lifeIdentifier = this.managedEventIdentifierService.getEventIdentifier(msg);
+                        relatedLifeIdentifier = this.managedEventIdentifierService.getRelatedEventIdentifier(msg);
+                    }
+                    else
+                    {
+                        lifeIdentifier = msg.hashCode();
+                    }
+
+                    FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(lifeIdentifier, relatedLifeIdentifier, msg);
                     invoke(flowEvent);
                 }
             }
             else
             {
-                FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-                        ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
-                        message);
+                Object lifeIdentifier, relatedLifeIdentifier = null;
+                if (this.managedEventIdentifierService != null)
+                {
+                    lifeIdentifier = this.managedEventIdentifierService.getEventIdentifier(message);
+                    relatedLifeIdentifier = this.managedEventIdentifierService.getRelatedEventIdentifier(message);
+                }
+                else
+                {
+                    lifeIdentifier = message.hashCode();
+                }
+                FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(lifeIdentifier, relatedLifeIdentifier, message);
                 invoke(flowEvent);
             }
         }
@@ -238,7 +255,8 @@ public class JmsContainerConsumer
 	}
 
     @Override
-    public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
+    @SuppressWarnings("unchecked")
+    public void setManagedIdentifierService(ManagedRelatedEventIdentifierService managedEventIdentifierService)
     {
         this.managedEventIdentifierService = managedEventIdentifierService;
     }
@@ -308,6 +326,7 @@ public class JmsContainerConsumer
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public SpringMessageConsumerConfiguration getConfiguration()
     {
         if(this.messageProvider != null && this.messageProvider instanceof Configured)
@@ -319,6 +338,7 @@ public class JmsContainerConsumer
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setConfiguration(SpringMessageConsumerConfiguration configuration)
     {
         this.configuration = configuration;
@@ -340,7 +360,7 @@ public class JmsContainerConsumer
 
             if(message instanceof IkasanListMessage)
             {
-                List msgs = new ArrayList();
+                List<Object> msgs = new ArrayList<>();
                 for(Message msg:(IkasanListMessage)message)
                 {
                     msgs.add( JmsMessageConverter.extractContent(msg) );
