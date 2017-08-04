@@ -11,20 +11,26 @@ public class SolrWiretapEvent implements WiretapEvent<String>
     @Field("id")
     private String id;
 
-    @Field("PayloadContent")
+    @Field("payload")
     private String event;
 
-    @Field("ModuleName")
+    @Field("moduleName")
     private String moduleName;
 
-    @Field("FlowName")
+    @Field("flowName")
     private String flowName;
 
-    @Field("ComponentName")
+    @Field("componentName")
     private String componentName;
 
-    @Field("CreatedDateTime")
+    @Field("timestamp")
     private long timeStamp;
+
+    @Field("expiry")
+    private long expiry;
+
+    @Field("event")
+    private String eventId;
 
 
     @Override
@@ -66,7 +72,13 @@ public class SolrWiretapEvent implements WiretapEvent<String>
     @Override
     public long getExpiry()
     {
-        return 0;
+        return this.getExpiry();
+    }
+
+    @Override
+    public String getEventId()
+    {
+        return this.eventId;
     }
 
     public void setId(String id)
@@ -97,6 +109,16 @@ public class SolrWiretapEvent implements WiretapEvent<String>
     public void setTimeStamp(long timeStamp)
     {
         this.timeStamp = timeStamp;
+    }
+
+    public void setExpiry(long expiry)
+    {
+        this.expiry = expiry;
+    }
+
+    public void setEventId(String eventId)
+    {
+        this.eventId = eventId;
     }
 
     @Override

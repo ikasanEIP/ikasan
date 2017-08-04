@@ -27,12 +27,12 @@ public class HarvestingSchedulerService
 
     private List<JobDetail> houseKeepingJobDetails;
 
-    private Map<String, WiretapSolrHarvestingJob> houseKeepingJobs;
+    private Map<String, SolrHarvestingJob> houseKeepingJobs;
 
     private Map<String, JobDetail> houseKeepingJobDetailsMap;
 
     public HarvestingSchedulerService(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
-                                      List<WiretapSolrHarvestingJob> houseKeepingJobs)
+                                      List<SolrHarvestingJob> houseKeepingJobs)
     {
         this.scheduler = scheduler;
         if(this.scheduler == null)
@@ -45,14 +45,14 @@ public class HarvestingSchedulerService
             throw new IllegalArgumentException("scheduledJobFactory cannot be null!");
         }
 
-        this.houseKeepingJobs = new HashMap<String, WiretapSolrHarvestingJob>();
+        this.houseKeepingJobs = new HashMap<String, SolrHarvestingJob>();
         this.houseKeepingJobDetailsMap = new HashMap<String, JobDetail>();
         this.houseKeepingJobDetails = new ArrayList<JobDetail>();
 
-        for(WiretapSolrHarvestingJob job: houseKeepingJobs)
+        for(SolrHarvestingJob job: houseKeepingJobs)
         {
             JobDetail jobDetail = this.scheduledJobFactory.createJobDetail
-                    (job, WiretapSolrHarvestingJob.class, job.getJobName(), "housekeeping");
+                    (job, SolrHarvestingJob.class, job.getJobName(), "harvest");
 
             houseKeepingJobDetails.add(jobDetail);
             houseKeepingJobDetailsMap.put(job.getJobName(), jobDetail);
@@ -69,7 +69,7 @@ public class HarvestingSchedulerService
                 // create trigger
                 JobKey jobkey = jobDetail.getKey();
 
-                WiretapSolrHarvestingJob harvestingJob = this.houseKeepingJobs.get(jobkey.toString());
+                SolrHarvestingJob harvestingJob = this.houseKeepingJobs.get(jobkey.toString());
                 harvestingJob.init();
 
                 if(harvestingJob.isInitialised() && harvestingJob.isEnabled()
@@ -77,10 +77,10 @@ public class HarvestingSchedulerService
                 {
                     Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
                     Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                    logger.info("Scheduled consumer for house keeper job ["
-                            + jobkey.getName()
-                            + "-" + jobkey.getGroup()
-                            + "] starting at [" + scheduledDate + "]");
+                    logger.info("Scheduled harvesting job ["
+                            + jobkey.toString()
+                            + "] starting at [" + scheduledDate + "] using cron expression ["
+                            + this.houseKeepingJobs.get(jobkey.toString()).getCronExpression() + "]");
                 }
 
             }
@@ -119,9 +119,8 @@ public class HarvestingSchedulerService
                 JobKey jobkey = jobDetail.getKey();
                 Trigger trigger = getCronTrigger(jobkey, this.houseKeepingJobs.get(jobkey.toString()).getCronExpression());
                 Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                logger.info("Scheduled consumer for house keeper job ["
-                        + jobkey.getName()
-                        + "-" + jobkey.getGroup()
+                logger.info("Scheduled harvesting job ["
+                        + jobkey.toString()
                         + "] starting at [" + scheduledDate + "] using cron expression ["
                         + this.houseKeepingJobs.get(jobkey.toString()).getCronExpression() + "]");
             }

@@ -51,6 +51,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
 		</dependency>
@@ -214,6 +220,11 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-mapping</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-spec-solr</artifactId>
 		</dependency>
 		
 		<dependency>
@@ -458,12 +469,7 @@
 			<artifactId>hsqldb</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<scope>test</scope>
-		</dependency>
+
 		
 	</dependencies>
 	<build>

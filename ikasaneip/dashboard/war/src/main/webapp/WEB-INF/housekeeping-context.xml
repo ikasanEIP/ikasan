@@ -13,16 +13,42 @@
 
 
 	<bean id="houseKeepingPanel" class="org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel" scope="session">
-        <constructor-arg ref="scheduler" />
-        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="houseKeepingScheduler" />
+        <constructor-arg ref="houseKeepingScheduledJobFactory" />
         <constructor-arg ref="housekeepingJobs" />
         <constructor-arg ref="housekeepingSchedulerService" />
     </bean>
 
     <bean id="housekeepingSchedulerService" class="org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService">
-        <constructor-arg ref="scheduler" />
-        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="houseKeepingScheduler" />
+        <constructor-arg ref="houseKeepingScheduledJobFactory" />
         <constructor-arg ref="housekeepingJobs" />
+    </bean>
+
+    <bean id="houseKeepingScheduler"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="houseKeepingSchedulerFactory" />
+        <property name="targetMethod" value="getScheduler" />
+    </bean>
+
+    <bean id="houseKeepingSchedulerFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.SchedulerFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
+    </bean>
+
+    <bean id="houseKeepingScheduledJobFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.CachingScheduledJobFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
     </bean>
 
     <util:list id="housekeepingJobs">
@@ -33,6 +59,7 @@
         <ref bean="systemEventServiceHousekeepingJob" />
         <ref bean="duplicateFilterHousekeepingJob" />
         <ref bean="messageHistoryHousekeepingJob" />
+        <ref bean="solrWiretapHousekeepingJob" />
     </util:list>
 
     <bean id="replyHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
@@ -74,6 +101,12 @@
     <bean id="messageHistoryHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
         <constructor-arg value="messageHistoryHousekeepingJob" />
         <constructor-arg ref="messageHistoryService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+
+    <bean id="solrWiretapHousekeepingJob" class="org.ikasan.dashboard.housekeeping.HousekeepingJob">
+        <constructor-arg value="solrWiretapHousekeepingJob" />
+        <constructor-arg ref="solrWiretapService" />
         <constructor-arg ref="platformConfigurationService" />
     </bean>
 

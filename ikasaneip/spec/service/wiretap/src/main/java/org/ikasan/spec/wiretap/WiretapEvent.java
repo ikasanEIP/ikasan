@@ -88,4 +88,11 @@ public interface WiretapEvent<TAPPED_EVENT>
      * @return long
      */
     public long getExpiry();
+
+    /**
+     * Get the event identifier
+     *
+     * @return
+     */
+    public String getEventId();
 }

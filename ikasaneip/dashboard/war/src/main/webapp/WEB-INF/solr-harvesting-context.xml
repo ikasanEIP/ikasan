@@ -12,23 +12,49 @@
 
 
 	<bean id="harvestPanel" class="org.ikasan.dashboard.ui.harvesting.panel.HarvestingPanel" scope="session">
-        <constructor-arg ref="scheduler" />
-        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="harvestingScheduler" />
+        <constructor-arg ref="harvestingScheduledJobFactory" />
         <constructor-arg ref="harvestingJobs" />
         <constructor-arg ref="harvestSchedulerService" />
     </bean>
 
     <bean id="harvestSchedulerService" class="org.ikasan.dashboard.harvesting.HarvestingSchedulerService">
-        <constructor-arg ref="scheduler" />
-        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="harvestingScheduler" />
+        <constructor-arg ref="harvestingScheduledJobFactory" />
         <constructor-arg ref="harvestingJobs" />
+    </bean>
+
+    <bean id="harvestingScheduler"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="harvestingSchedulerFactory" />
+        <property name="targetMethod" value="getScheduler" />
+    </bean>
+
+    <bean id="harvestingSchedulerFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.SchedulerFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
+    </bean>
+
+    <bean id="harvestingScheduledJobFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.CachingScheduledJobFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
     </bean>
 
     <util:list id="harvestingJobs">
         <ref bean="wiretapHarvestingJob" />
     </util:list>
 
-    <bean id="wiretapHarvestingJob" class="org.ikasan.dashboard.harvesting.WiretapSolrHarvestingJob">
+    <bean id="wiretapHarvestingJob" class="org.ikasan.dashboard.harvesting.SolrHarvestingJob">
         <constructor-arg value="wiretapHarvestingJob" />
         <constructor-arg ref="wiretapService" />
         <constructor-arg ref="platformConfigurationService" />

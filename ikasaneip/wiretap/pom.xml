@@ -72,6 +72,12 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-solr</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-wiretap</artifactId>
               <scope>compile</scope>
         </dependency>
@@ -96,6 +102,11 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-housekeeping</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-solr</artifactId>
         </dependency>
         
         <dependency>
@@ -167,6 +178,20 @@
         </dependency>
 
         <!-- required for unit tests -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>6.6.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-test-framework</artifactId>
+            <version>6.6.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>

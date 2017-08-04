@@ -1,14 +1,12 @@
 package org.ikasan.wiretap.dao;
 
-import org.apache.solr.client.solrj.SolrClient;
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.ikasan.solr.dao.SolrDaoBase;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
@@ -20,46 +18,45 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by stewmi on 14/02/2017.
+ * Created by Ikasan Development Team on 14/02/2017.
  */
-public class SolrWiretapDao implements WiretapDao
+public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 {
-    public static final String MODULE_NAME = "ModuleName:";
-    public static final String FLOW_NAME = "FlowName:";
-    public static final String COMPONENT_NAME = "ComponentName:";
-    public static final String CREATED_DATE_TIME = "CreatedDateTime:";
-    public static final String PAYLOAD_CONTENT = "PayloadContent:";
+    /** Logger for this class */
+    private static Logger logger = Logger.getLogger(SolrWiretapDao.class);
 
-    public static final String AND = "AND";
-    public static final String OR = "OR ";
-
-    public static final String OPEN_BRACKET = "(";
-    public static final String CLOSE_BRACKET = ")";
-
-    private SolrClient client = new HttpSolrClient.Builder("http://adl-cmi20:8983/solr/db").build();
+    /**
+     * We need to give this dao it's context.
+     */
+    public static final String WIRETAP = "wiretap";
 
     @Override
     public void save(WiretapEvent wiretapEvent)
     {
-        CloudSolrClient solr = new CloudSolrClient.Builder().withSolrUrl("http://adl-cmi20:8983/solr").build();
-        solr.setDefaultCollection("ikasan");
+        long millisecondsInDay = (this.daysToKeep * TimeUnit.DAYS.toMillis(1));
+        long expiry = millisecondsInDay + System.currentTimeMillis();
 
         SolrInputDocument document = new SolrInputDocument();
-        document.addField("id", "" + wiretapEvent.getIdentifier());
-        document.addField("type", "wiretap");
-        document.addField("moduleName", wiretapEvent.getModuleName());
-        document.addField("flowName", wiretapEvent.getFlowName());
-        document.addField("componentName", wiretapEvent.getComponentName());
-        document.addField("event", ((WiretapFlowEvent)wiretapEvent).getEventId());
-        document.addField("payload", wiretapEvent.getEvent());
-        document.addField("timestamp", wiretapEvent.getTimestamp());
+        document.addField(ID, "" + wiretapEvent.getIdentifier());
+        document.addField(TYPE, "wiretap");
+        document.addField(MODULE_NAME, wiretapEvent.getModuleName());
+        document.addField(FLOW_NAME, wiretapEvent.getFlowName());
+        document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
+        document.addField(EVENT, ((WiretapFlowEvent)wiretapEvent).getEventId());
+        document.addField(PAYLOAD_CONTENT, wiretapEvent.getEvent());
+        document.addField(CREATED_DATE_TIME, wiretapEvent.getTimestamp());
+        document.setField(EXPIRY, expiry);
+
+        logger.info("this.daysToKeep = " + this.daysToKeep + " Setting expiry to: " + expiry);
 
         try
         {
-            UpdateResponse response = solr.add(document);
-            solr.commit();
+            logger.debug("Adding document: " + document);
+            solrClient.add(document);
+            solrClient.commit();
         }
         catch (Exception e)
         {
@@ -84,23 +81,24 @@ public class SolrWiretapDao implements WiretapDao
             componentNames.add(moduleFlow);
         }
 
-        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent);
+        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
 
-        System.out.println("queryString: " + queryString);
+        logger.info("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
         query.setStart(pageNo * pageSize);
         query.setRows(pageSize);
-        query.setSort("CreatedDateTime", SolrQuery.ORDER.desc);
+        query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
+        query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT);
 
         try
         {
-            QueryResponse rsp = client.query( query );
+            QueryResponse rsp = this.solrClient.query(query);
 
             List<SolrWiretapEvent> beans = rsp.getBeans(SolrWiretapEvent.class);
 
-            results = new ArrayListPagedSearchResult(beans, beans.size(), beans.size());
+            results = new ArrayListPagedSearchResult(beans, beans.size(), rsp.getResults().getNumFound());
         }
         catch (SolrServerException e)
         {
@@ -120,161 +118,37 @@ public class SolrWiretapDao implements WiretapDao
     {
         PagedSearchResult results = null;
 
-        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent);
+        String queryString = this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, WIRETAP);
 
-        System.out.println("queryString: " + queryString);
+        logger.info("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
         query.setStart(pageNo * pageSize);
         query.setRows(pageSize);
-        query.setSort("CreatedDateTime", SolrQuery.ORDER.desc);
+        query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
+        query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT);
 
         try
         {
-            QueryResponse rsp = client.query( query );
+            QueryResponse rsp = this.solrClient.query( query );
 
             List<SolrWiretapEvent> beans = rsp.getBeans(SolrWiretapEvent.class);
 
-            results = new ArrayListPagedSearchResult(beans, beans.size(), beans.size());
+            results = new ArrayListPagedSearchResult(beans, beans.size(), rsp.getResults().getNumFound());
         }
         catch (SolrServerException e)
         {
             System.out.println(e.getMessage());
             e.printStackTrace();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
 
         return results;
-    }
-
-    private String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate, Date untilDate, String payloadContent)
-    {
-        StringBuffer moduleNamesBuffer = new StringBuffer();
-        StringBuffer flowNamesBuffer = new StringBuffer();
-        StringBuffer componentNamesBuffer = new StringBuffer();
-        StringBuffer dateBuffer = new StringBuffer();
-        StringBuffer payloadBuffer = new StringBuffer();
-
-        String delim = "";
-
-        if(moduleNames != null && moduleNames.size() > 0)
-        {
-            moduleNamesBuffer.append(MODULE_NAME);
-
-            moduleNamesBuffer.append(OPEN_BRACKET);
-
-            for (String moduleName : moduleNames)
-            {
-                moduleNamesBuffer.append(delim).append("\"").append(moduleName).append("\" ");
-                delim = OR;
-            }
-
-            moduleNamesBuffer.append(CLOSE_BRACKET);
-        }
-
-        if(flowNames != null && flowNames.size() > 0)
-        {
-            delim = "";
-
-            flowNamesBuffer.append(FLOW_NAME);
-
-            flowNamesBuffer.append(OPEN_BRACKET);
-
-            for (String moduleFlowName : flowNames)
-            {
-                flowNamesBuffer.append(delim).append("\"").append(moduleFlowName).append("\" ");
-                delim = OR;
-            }
-
-            flowNamesBuffer.append(CLOSE_BRACKET);
-        }
-
-        if(componentNames != null)
-        {
-            delim = "";
-
-            componentNamesBuffer.append(COMPONENT_NAME);
-
-            componentNamesBuffer.append(OPEN_BRACKET);
-
-            for (String componentName : componentNames)
-            {
-                componentNamesBuffer.append(delim).append("\"").append(componentName).append("\" ");
-                delim = OR;
-            }
-
-            componentNamesBuffer.append(CLOSE_BRACKET);
-        }
-
-        if(fromDate != null && untilDate != null)
-        {
-            dateBuffer.append(CREATED_DATE_TIME).append("[").append(fromDate.getTime()).append(" TO ").append(untilDate.getTime()).append("]");
-        }
-
-        if(payloadContent != null)
-        {
-            payloadBuffer.append(PAYLOAD_CONTENT).append("").append(payloadContent).append("");
-
-        }
-
-        StringBuffer bufferFinalQuery = new StringBuffer();
-
-        boolean hasPrevious = false;
-
-        if(moduleNames != null && moduleNames.size() > 0)
-        {
-            bufferFinalQuery.append(moduleNamesBuffer);
-            hasPrevious = true;
-        }
-
-        if(flowNames != null && flowNames.size() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(" ").append(AND).append(" ");
-            }
-
-            bufferFinalQuery.append(flowNamesBuffer);
-            hasPrevious = true;
-        }
-
-        if(componentNames != null && componentNames.size() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(" ").append(AND).append(" ");
-            }
-
-            bufferFinalQuery.append(componentNamesBuffer);
-            hasPrevious = true;
-        }
-
-        if(payloadContent != null && payloadContent.length() > 0)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(" ").append(AND).append(" ");
-            }
-
-            bufferFinalQuery.append(payloadBuffer);
-            hasPrevious = true;
-        }
-
-        if(fromDate != null && untilDate != null)
-        {
-            if(hasPrevious)
-            {
-                bufferFinalQuery.append(" ").append(AND).append(" ");
-            }
-
-            bufferFinalQuery.append(dateBuffer);
-        }
-
-        return bufferFinalQuery.toString();
     }
 
     @Override
@@ -286,7 +160,7 @@ public class SolrWiretapDao implements WiretapDao
     @Override
     public void deleteAllExpired()
     {
-
+        super.removeExpired(WIRETAP);
     }
 
     @Override
@@ -298,48 +172,51 @@ public class SolrWiretapDao implements WiretapDao
     @Override
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
     {
-
+        // Not implemented.
     }
 
     @Override
     public Integer getHousekeepingBatchSize()
     {
+        // Not implemented.
         return null;
     }
 
     @Override
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
     {
-
+        // Not implemented.
     }
 
     @Override
     public Integer getTransactionBatchSize()
     {
+        // Not implemented.
         return null;
     }
 
     @Override
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
-
+        // Not implemented.
     }
 
     @Override
     public boolean housekeepablesExist()
     {
-        return false;
+        return true;
     }
 
     @Override
     public void setHousekeepQuery(String housekeepQuery)
     {
-
+        // Not implemented.
     }
 
     @Override
     public List<WiretapEvent> getHarvestableRecords(int housekeepingBatchSize)
     {
+        // Not implemented.
         return null;
     }
 }

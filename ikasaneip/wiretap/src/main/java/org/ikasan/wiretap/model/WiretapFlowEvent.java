@@ -52,9 +52,6 @@ import java.io.Serializable;
  */
 public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable
 {
-    /** event id */
-    private String eventId;
-
     /** related event id */
     private String relatedEventId;
 
@@ -73,7 +70,7 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
             final String eventId, final String relatedEventId, final long eventTimestamp, final String event, final Long expiry)
     {
         super(moduleName, flowName, componentName, event, expiry);
-        this.eventId = eventId;
+        super.eventId = eventId;
         this.relatedEventId = relatedEventId;
         this.eventTimestamp = eventTimestamp;
     }

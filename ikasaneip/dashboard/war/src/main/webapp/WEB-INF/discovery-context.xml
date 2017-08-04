@@ -18,9 +18,36 @@
     </bean>
 
     <bean id="discoverySchedulerService" class="org.ikasan.dashboard.discovery.DiscoverySchedulerService">
-        <constructor-arg ref="scheduler" />
-        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg ref="discoveryScheduler" />
+        <constructor-arg ref="discoveryScheduledJobFactory" />
         <constructor-arg ref="discoveryJob" />
+    </bean>
+
+
+    <bean id="discoveryScheduler"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="discoverySchedulerFactory" />
+        <property name="targetMethod" value="getScheduler" />
+    </bean>
+
+    <bean id="discoverySchedulerFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.SchedulerFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
+    </bean>
+
+    <bean id="discoveryScheduledJobFactory"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.ikasan.scheduler.CachingScheduledJobFactory</value>
+        </property>
+        <property name="targetMethod">
+            <value>getInstance</value>
+        </property>
     </bean>
 
 

@@ -37,7 +37,6 @@
         			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
         			 classpath:module-service-conf.xml,
-                     classpath:scheduler-service-conf.xml
         </param-value>
     </context-param>
 

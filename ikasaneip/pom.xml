@@ -844,6 +844,7 @@
                 <module>recovery-manager</module>
                 <module>flow</module>
                 <module>configuration-service</module>
+                <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
                 <module>filter</module>
@@ -890,6 +891,7 @@
                 <module>recovery-manager</module>
                 <module>flow</module>
                 <module>configuration-service</module>
+                <module>solr</module>
                 <module>wiretap</module>
                 <module>security</module>
                 <module>filter</module>
@@ -916,8 +918,6 @@
                 <module>mapping</module>
                 <module>management</module>
                 <module>platform</module>
-                <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-                <!-- module>console</module -->
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
@@ -981,6 +981,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-history</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-solr</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1125,6 +1131,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-scheduler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-solr</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
