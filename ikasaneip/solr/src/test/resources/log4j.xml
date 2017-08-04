@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!--
+ * $Id: log4j.xml 31361 2014-01-24 14:21:26Z jeffmitchell $
+ * $URL: http://svc-vcs:18080/svn/MSUSA/middleware/trunk/mceb-platform-maintenance/conf/log4j.xml $
+ *
+ * ====================================================================
+ *
+ * Copyright (c) 2000-2011 by Mizuho International.
+ * All Rights Reserved.
+ *
+ * ====================================================================
+ *
+ * Purpose: This XML document contains Log4j configuration.
+ *          For more configuration information and examples,
+ *          see the Jakarta Log4j website: http://jakarta.apache.org/log4j.
+ *
+ * Note:  N/A
+ *
+ * Author:  Jeff Mitchell
+ *
+ *
+-->
+<log4j:configuration debug="false" xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyyMMdd HH:mm:ss SSS} %-5p [%t]: %x %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- Limit the org.apache category  -->
+    <category name="org.apache">
+        <priority value="ERROR"/>
+    </category>
+
+
+    <!-- Limit the org.quartz category  -->
+    <category name="org.quartz">
+        <priority value="ERROR"/>
+    </category>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</log4j:configuration>

@@ -17,10 +17,10 @@ import java.util.List;
  * Created by Ikasan Development Team on 09/08/2016.
  */
 @DisallowConcurrentExecution
-public class WiretapSolrHarvestingJob implements Job
+public class SolrHarvestingJob implements Job
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(WiretapSolrHarvestingJob.class);
+    private static Logger logger = Logger.getLogger(SolrHarvestingJob.class);
 
     public static final String HARVEST_BATCH_SIZE = "-harvestBatchSize";
     public static final String TRANSACTION_BATCH_SIZE = "-transactionBatchSize";
@@ -28,7 +28,7 @@ public class WiretapSolrHarvestingJob implements Job
     public static final String ENABLED = "-enabled";
 
 
-    public static final String DEFAULT_CRON_EXPRESSION = "0 0/1 * * * ?";
+    public static final String DEFAULT_CRON_EXPRESSION = "0/10 * * * * ?";
     public static final Integer DEFAULT_BATCH_DELETE_SIZE = 200;
     public static final Integer DEFAULT_TRANSACTION_DELETE_SIZE = 2500;
 
@@ -46,9 +46,9 @@ public class WiretapSolrHarvestingJob implements Job
     private Boolean initialised = false;
 
 
-    public WiretapSolrHarvestingJob(String jobName, HarvestService<WiretapEvent> harvestService,
-                                    PlatformConfigurationService platformConfigurationService,
-                                    WiretapService solrWiretapService, WiretapService wiretapService)
+    public SolrHarvestingJob(String jobName, HarvestService<WiretapEvent> harvestService,
+                             PlatformConfigurationService platformConfigurationService,
+                             WiretapService solrWiretapService, WiretapService wiretapService)
     {
         this.jobName = jobName;
         if(this.jobName == null)
@@ -168,11 +168,11 @@ public class WiretapSolrHarvestingJob implements Job
     public void save()
     {
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + WiretapSolrHarvestingJob.CRON_EXPRESSION, this.cronExpression);
+                + SolrHarvestingJob.CRON_EXPRESSION, this.cronExpression);
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + WiretapSolrHarvestingJob.HARVEST_BATCH_SIZE, this.harvestSize.toString());
+                + SolrHarvestingJob.HARVEST_BATCH_SIZE, this.harvestSize.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
-                + WiretapSolrHarvestingJob.ENABLED, this.enabled.toString());
+                + SolrHarvestingJob.ENABLED, this.enabled.toString());
 
     }
 

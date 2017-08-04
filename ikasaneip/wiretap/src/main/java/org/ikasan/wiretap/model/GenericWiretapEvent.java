@@ -79,6 +79,9 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
     /** Previous GenericWiretapEvent (if any) for this event */
     private transient Long previousByEventId;
 
+    /** event id */
+    protected String eventId;
+
     /**
      * Silly requirement from the ORM-that-shall-not-be-named!!
      */
@@ -90,7 +93,12 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
 
     /**
      * Constructor
-     * @param identifier2
+     *
+     * @param moduleName
+     * @param flowName
+     * @param componentName
+     * @param event
+     * @param expiry
      */
     public GenericWiretapEvent(final String moduleName, final String flowName, final String componentName,
             final String event, final Long expiry)
@@ -136,6 +144,12 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
     public long getExpiry()
     {
         return this.expiry;
+    }
+
+    @Override
+    public String getEventId()
+    {
+        return eventId;
     }
 
     /**

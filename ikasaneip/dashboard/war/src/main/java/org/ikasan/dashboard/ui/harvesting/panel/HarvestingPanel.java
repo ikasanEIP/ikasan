@@ -10,11 +10,9 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
-import org.ikasan.dashboard.harvesting.WiretapSolrHarvestingJob;
+import org.ikasan.dashboard.harvesting.SolrHarvestingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
-import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.housekeeping.window.HousekeepingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -45,14 +43,14 @@ public class HarvestingPanel extends Panel implements View
     private HarvestingSchedulerService harvestSchedulerService;
 
     private List<JobDetail> harvestJobDetails;
-    private Map<String, WiretapSolrHarvestingJob> harvestJobs;
+    private Map<String, SolrHarvestingJob> harvestJobs;
 
     private FilterTable harvestingTable;
 
     private IndexedContainer container = null;
 
     public HarvestingPanel(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
-                           List<WiretapSolrHarvestingJob> harvestJobs, HarvestingSchedulerService harvestSchedulerService)
+                           List<SolrHarvestingJob> harvestJobs, HarvestingSchedulerService harvestSchedulerService)
     {
         this.scheduler = scheduler;
         if(this.scheduler == null)
@@ -70,13 +68,13 @@ public class HarvestingPanel extends Panel implements View
             throw new IllegalArgumentException("harvestSchedulerService cannot be null!");
         }
 
-        this.harvestJobs = new HashMap<String, WiretapSolrHarvestingJob>();
+        this.harvestJobs = new HashMap<String, SolrHarvestingJob>();
         this.harvestJobDetails = new ArrayList<JobDetail>();
 
-        for(WiretapSolrHarvestingJob job: harvestJobs)
+        for(SolrHarvestingJob job: harvestJobs)
         {
             JobDetail jobDetail = this.scheduledJobFactory.createJobDetail
-                    (job, HousekeepingJob.class, job.getJobName(), "harvest");
+                    (job, SolrHarvestingJob.class, job.getJobName(), "harvest");
 
             harvestJobDetails.add(jobDetail);
             this.harvestJobs.put(jobDetail.getKey().toString(), job);
@@ -316,11 +314,13 @@ public class HarvestingPanel extends Panel implements View
 
     private void refresh()
     {
+        logger.info("Refreshing scheduled job table.");
+
         this.container.removeAllItems();
 
         for(JobDetail jobDetail: this.harvestJobDetails)
         {
-            WiretapSolrHarvestingJob job = this.harvestJobs.get(jobDetail.getKey().toString());
+            SolrHarvestingJob job = this.harvestJobs.get(jobDetail.getKey().toString());
 
             Item item = container.addItem(job);
 
@@ -336,6 +336,10 @@ public class HarvestingPanel extends Panel implements View
                 {
                     previousFireTime = scheduler.getTriggersOfJob(jobDetail.getKey()).get(0).getPreviousFireTime();
                     nextFireTime = scheduler.getTriggersOfJob(jobDetail.getKey()).get(0).getNextFireTime();
+                }
+                else
+                {
+                    logger.info("Could not get trigger for job key: " + jobDetail.getKey());
                 }
             }
             catch (Exception e)
