@@ -63,6 +63,10 @@ public interface IkasanApplication
     void run(Module module);
 
     /**
+     * This method forces Ikassan application shutdown.
+     */
+    void close();
+    /**
      * Get bean by given name.
      *
      * @param beanName

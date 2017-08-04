@@ -44,6 +44,8 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ExitCodeEvent;
+import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -59,6 +61,7 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     public IkasanApplicationSpringBoot(String[] args)
     {
         this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
+
     }
 
     IkasanApplicationSpringBoot()
@@ -75,6 +78,15 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
         ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
         service.register(module);
         logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
+    }
+
+    public void close(){
+        SpringApplication.exit(this.context, new ExitCodeGenerator(){
+            @Override public int getExitCode()
+            {
+                return 0;
+            }
+        });
     }
 
     @Override public Object getBean(String beanName)
