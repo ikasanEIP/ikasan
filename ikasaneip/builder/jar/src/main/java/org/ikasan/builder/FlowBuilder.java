@@ -463,8 +463,10 @@ public class FlowBuilder implements ApplicationContextAware
                         }
                     }
                 }
-
-                return (T)factory.getProxy();
+                if(factory.getAdvisors().length>0)
+                {
+                    return (T) factory.getProxy();
+                }
             }
         }
 

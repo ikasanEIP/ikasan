@@ -104,7 +104,7 @@ public class MyApplication
                 .producer("producer", new MyProducer()).build();
     }
 
-    private class MyConsumer implements Consumer,MessageListener,ResubmissionService
+    private class MyConsumer implements Consumer,ResubmissionService
     {
 
         private boolean isRunning;
@@ -139,10 +139,10 @@ public class MyApplication
             this.isRunning = false;
         }
 
-        @Override public void onMessage(Message message)
-        {
-            System.out.print("Message");
-        }
+//        @Override public void onMessage(Message message)
+//        {
+//            System.out.print("Message");
+//        }
 
         @Override
         public void submit(Object o) {

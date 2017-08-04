@@ -45,9 +45,14 @@ import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -60,22 +65,32 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class MyApplicationTest
 {
+    private IkasanApplication ikasanApplication;
+    private MyApplication myApplication;
+
+    @Before
+    public void setup(){
+        String[] args = {""};
+
+        myApplication = new MyApplication();
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+    }
+
+    @After
+    public void shutdown(){
+        ikasanApplication.close();
+    }
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_createModule_start_and_stop_flow() throws Exception
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void test_scheduled_start_and_stop_flow() throws Exception
     {
-        String[] args = {""};
-
-        MyApplication myApplication = new MyApplication();
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-
         ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
         Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder);
-        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder);
 
-        Module module = moduleBuilder.addFlow(scheduldeFlow).addFlow(jmsFlow).build();
+        Module module = moduleBuilder.addFlow(scheduldeFlow).build();
 
         ikasanApplication.run(module);
 
@@ -88,15 +103,31 @@ public class MyApplicationTest
         pause(2000);
         assertEquals("stopped",scheduldeFlow.getState());
 
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void test_jmsFlow_start_and_stop_flow() throws Exception
+    {
+
+        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
+        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder);
+
+        Module module = moduleBuilder.addFlow(jmsFlow).build();
+
+        ikasanApplication.run(module);
+
+        System.out.println("Check is module healthy.");
+
         jmsFlow.start();
-        pause(2000);
+        pause(4000);
         assertEquals("running",jmsFlow.getState());
         jmsFlow.stop();
         pause(2000);
         assertEquals("stopped",jmsFlow.getState());
 
     }
-
     /**
      * Sleep for value in millis
      * @param value
