@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by stewmi on 17/05/2017.
+ * Created by Ikasan Development Team on 17/05/2017.
  */
 public class MappingConfigurationValidatorTest
 {

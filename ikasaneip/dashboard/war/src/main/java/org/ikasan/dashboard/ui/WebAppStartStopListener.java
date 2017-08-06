@@ -184,8 +184,11 @@ public class WebAppStartStopListener implements ServletContextListener
                     logger.info("Could not initialise solr days to live, Using default of " + daysToLive);
                 }
 
-                SolrInitialisationService solrWiretapDao = (SolrInitialisationService)springContext.getBean("solrWiretapDao");
-                solrWiretapDao.init(solrUrlsList, daysToLive);
+                SolrInitialisationService solrDao = (SolrInitialisationService)springContext.getBean("solrWiretapDao");
+                solrDao.init(solrUrlsList, daysToLive);
+
+                solrDao = (SolrInitialisationService)springContext.getBean("solrGeneralSearchDao");
+                solrDao.init(solrUrlsList, daysToLive);
 
                 return true;
             }

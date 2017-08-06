@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.harvesting;
 
+import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 import org.ikasan.harvest.HarvestService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -12,6 +13,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ikasan Development Team on 09/08/2016.
@@ -23,14 +27,14 @@ public class SolrHarvestingJob implements Job
     private static Logger logger = Logger.getLogger(SolrHarvestingJob.class);
 
     public static final String HARVEST_BATCH_SIZE = "-harvestBatchSize";
-    public static final String TRANSACTION_BATCH_SIZE = "-transactionBatchSize";
+    public static final String THREAD_COUNT = "-threadCount";
     public static final String CRON_EXPRESSION = "-cronExpression";
     public static final String ENABLED = "-enabled";
 
 
     public static final String DEFAULT_CRON_EXPRESSION = "0/10 * * * * ?";
     public static final Integer DEFAULT_BATCH_DELETE_SIZE = 200;
-    public static final Integer DEFAULT_TRANSACTION_DELETE_SIZE = 2500;
+    public static final Integer DEFAULT_THREAD_COUNT = 1;
 
 
     private String jobName;
@@ -39,6 +43,7 @@ public class SolrHarvestingJob implements Job
     private WiretapService wiretapService;
     private PlatformConfigurationService platformConfigurationService;
     private Integer harvestSize;
+    private Integer threadCount;
     private String cronExpression;
     private Boolean enabled = true;
     private Boolean lastExecutionSuccessful = true;
@@ -104,6 +109,29 @@ public class SolrHarvestingJob implements Job
                         + " is not available. Using default house keeping batch size: " + DEFAULT_BATCH_DELETE_SIZE);
             }
 
+            String threadCountString = this.platformConfigurationService.getConfigurationValue(this.jobName + THREAD_COUNT);
+            if (threadCountString != null && threadCountString.length() > 0)
+            {
+                try
+                {
+                    this.threadCount = new Integer(threadCountString);
+                }
+                catch (NumberFormatException e)
+                {
+                    this.threadCount = DEFAULT_THREAD_COUNT;
+                    this.platformConfigurationService.saveConfigurationValue(this.getJobName() + THREAD_COUNT, DEFAULT_THREAD_COUNT.toString());
+                    logger.warn("The value configured for " + this.jobName + THREAD_COUNT
+                            + " is not a number. Using default house keeping batch size: " + DEFAULT_THREAD_COUNT);
+                }
+            }
+            else
+            {
+                this.threadCount = DEFAULT_THREAD_COUNT;
+                this.platformConfigurationService.saveConfigurationValue(this.getJobName() + THREAD_COUNT, DEFAULT_THREAD_COUNT.toString());
+                logger.warn("The value configured for " + this.jobName + THREAD_COUNT
+                        + " is not a number. Using default house keeping batch size: " + DEFAULT_THREAD_COUNT);
+            }
+
             String enabled = this.platformConfigurationService.getConfigurationValue(this.jobName + ENABLED);
             if (enabled != null && enabled.length() > 0)
             {
@@ -138,21 +166,33 @@ public class SolrHarvestingJob implements Job
     {
         logger.info("Harvesting job executing: " + this.getJobName()
                 + " [batch delete size: " + this.harvestSize + "]");
+
+        ExecutorService executor = Executors.newFixedThreadPool(this.threadCount);
+
         try
         {
             if (harvestService.harvestableRecordsExist())
             {
                 List<WiretapEvent> events = this.harvestService.harvest(this.harvestSize);
 
-                for(WiretapEvent event: events)
+                if(events.size() > 0)
                 {
-                    this.solrWiretapService.save(event);
+                    List<List<WiretapEvent>> partitionedEvents = Lists.partition(events, events.size() / threadCount);
 
-                    ((WiretapFlowEvent)event).setHarvested(true);
+                    for (List<WiretapEvent> smallerEvents : partitionedEvents)
+                    {
+                        SaveRunnable saveRunnable = new SaveRunnable(smallerEvents);
 
-                    this.wiretapService.save(event);
+                        executor.execute(saveRunnable);
+                    }
                 }
             }
+
+            // This will make the executor accept no new threads
+            // and finish all existing threads in the queue
+            executor.shutdown();
+            // Wait until all threads are finished
+            executor.awaitTermination(300, TimeUnit.SECONDS);
         }
         catch(Exception e)
         {
@@ -243,5 +283,28 @@ public class SolrHarvestingJob implements Job
     public void setInitialised(Boolean initialised)
     {
         this.initialised = initialised;
+    }
+
+    private class SaveRunnable implements Runnable
+    {
+        private List<WiretapEvent> events;
+
+        public SaveRunnable(List<WiretapEvent> events)
+        {
+            this.events = events;
+        }
+
+        @Override
+        public void run()
+        {
+            for(WiretapEvent event: events)
+            {
+                solrWiretapService.save(event);
+
+                ((WiretapFlowEvent)event).setHarvested(true);
+
+                wiretapService.save(event);
+            }
+        }
     }
 }

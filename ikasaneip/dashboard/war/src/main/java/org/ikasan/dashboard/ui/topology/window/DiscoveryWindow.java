@@ -16,7 +16,7 @@ import org.vaadin.teemu.VaadinIcons;
 import java.text.SimpleDateFormat;
 
 /**
- * Created by stewmi on 25/05/2017.
+ * Created by Ikasan Development Team on 25/05/2017.
  */
 public class DiscoveryWindow extends Window
 {

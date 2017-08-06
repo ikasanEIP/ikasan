@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by stewmi on 16/05/2017.
+ * Created by Ikasan Development Team on 16/05/2017.
  */
 public class MappingServiceImpl implements MappingService<MappingConfigurationServiceConfiguration>
 {
