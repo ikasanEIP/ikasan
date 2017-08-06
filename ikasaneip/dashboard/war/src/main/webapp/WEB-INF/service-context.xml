@@ -165,6 +165,10 @@
 		class="org.ikasan.wiretap.dao.SolrWiretapDao">
 	</bean>
 
+	<bean id="solrGeneralSearchDao"
+		  class="org.ikasan.solr.dao.SolrGeneralSearchDaoImpl">
+	</bean>
+
 	<bean id="wiretapDao"
 		  class="org.ikasan.wiretap.dao.HibernateWiretapDao">
 		<constructor-arg value="true"/>

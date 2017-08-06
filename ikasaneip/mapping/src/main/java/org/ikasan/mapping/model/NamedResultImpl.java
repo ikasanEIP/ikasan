@@ -3,7 +3,7 @@ package org.ikasan.mapping.model;
 import org.ikasan.spec.mapping.NamedResult;
 
 /**
- * Created by stewmi on 16/05/2017.
+ * Created by Ikasan Development Team on 16/05/2017.
  */
 public class NamedResultImpl implements NamedResult
 {

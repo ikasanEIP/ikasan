@@ -1,7 +1,7 @@
 package org.ikasan.dashboard.ui.framework.constants;
 
 /**
- * Created by stewmi on 02/08/2017.
+ * Created by Ikasan Development Team on 02/08/2017.
  */
 public class ConfigurationConstants
 {

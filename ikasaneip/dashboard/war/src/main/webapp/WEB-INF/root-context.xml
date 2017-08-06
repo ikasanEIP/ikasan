@@ -100,7 +100,11 @@
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="topologyViewPanel"/>
-                </bean> 
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                    <constructor-arg value="searchView"/>
+                    <constructor-arg ref="searchPanel"/>
+                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
                    <constructor-arg value="monitorView"/>
                    <constructor-arg ref="monitorViewPanel"/>

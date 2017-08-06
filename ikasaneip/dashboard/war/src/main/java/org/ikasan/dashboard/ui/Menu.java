@@ -174,6 +174,22 @@ public class Menu extends CssLayout
         topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
         menuItemsLayout.addComponent(topologyMenuItem);
         this.menuComponents.put(topologyMenuItem, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
+
+        final Button searchMenuItem = new Button("Search", new ClickListener()
+        {
+            @Override
+            public void buttonClick(final ClickEvent event)
+            {
+                loadTopLevelNavigator();
+                UI.getCurrent().getNavigator().navigateTo("searchView");
+            }
+        });
+
+        searchMenuItem.setHtmlContentAllowed(true);
+        searchMenuItem.setPrimaryStyleName("valo-menu-item");
+        searchMenuItem.setIcon(VaadinIcons.SEARCH);
+        menuItemsLayout.addComponent(searchMenuItem);
+        this.menuComponents.put(searchMenuItem, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
         
         final Button mappingMenuItem = new Button("Mapping", new ClickListener()
         {
@@ -253,7 +269,7 @@ public class Menu extends CssLayout
 
         harvestingMenuItem.setHtmlContentAllowed(true);
         harvestingMenuItem.setPrimaryStyleName("valo-menu-item");
-        harvestingMenuItem.setIcon(VaadinIcons.TRASH);
+        harvestingMenuItem.setIcon(VaadinIcons.TRUCK);
         menuItemsLayout.addComponent(harvestingMenuItem);
         this.menuComponents.put(harvestingMenuItem, SecurityConstants.HOUSEKEEPING_VIEW_PERMISSIONS);
         

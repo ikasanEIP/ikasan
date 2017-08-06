@@ -9,7 +9,7 @@ import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.model.Component;
 
 /**
- * Created by stewmi on 07/06/2017.
+ * Created by Ikasan Development Team on 07/06/2017.
  */
 public class TopologyTreeActionHelper
 {

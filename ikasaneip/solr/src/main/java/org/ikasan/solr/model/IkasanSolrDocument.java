@@ -1,4 +1,4 @@
-package org.ikasan.wiretap.model;
+package org.ikasan.solr.model;
 
 import org.apache.solr.client.solrj.beans.Field;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -6,13 +6,16 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 /**
  * Created by Ikasan Development Team on 14/02/2017.
  */
-public class SolrWiretapEvent implements WiretapEvent<String>
+public class IkasanSolrDocument
 {
     @Field("id")
     private String id;
 
     @Field("payload")
     private String event;
+
+    @Field("type")
+    private String type;
 
     @Field("moduleName")
     private String moduleName;
@@ -32,53 +35,59 @@ public class SolrWiretapEvent implements WiretapEvent<String>
     @Field("event")
     private String eventId;
 
-
-    @Override
     public long getIdentifier()
     {
         return new Long(id);
     }
 
-    @Override
     public String getModuleName()
     {
         return this.moduleName;
     }
 
-    @Override
     public String getFlowName()
     {
         return this.flowName;
     }
 
-    @Override
     public String getComponentName()
     {
         return this.componentName;
     }
 
-    @Override
     public long getTimestamp()
     {
         return this.timeStamp;
     }
 
-    @Override
     public String getEvent()
     {
         return event;
     }
 
-    @Override
     public long getExpiry()
     {
         return this.getExpiry();
     }
 
-    @Override
     public String getEventId()
     {
         return this.eventId;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
+    public long getTimeStamp()
+    {
+        return timeStamp;
     }
 
     public void setId(String id)

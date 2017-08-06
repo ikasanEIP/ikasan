@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by stewmi on 27/02/2017.
+ * Created by Ikasan Development Team on 27/02/2017.
  */
 public class SolrWiretapQueryBuilderTest
 {

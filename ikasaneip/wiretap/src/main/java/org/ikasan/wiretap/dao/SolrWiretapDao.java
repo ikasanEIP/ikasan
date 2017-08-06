@@ -50,8 +50,6 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         document.addField(CREATED_DATE_TIME, wiretapEvent.getTimestamp());
         document.setField(EXPIRY, expiry);
 
-        logger.info("this.daysToKeep = " + this.daysToKeep + " Setting expiry to: " + expiry);
-
         try
         {
             logger.debug("Adding document: " + document);
@@ -154,7 +152,34 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     @Override
     public WiretapEvent findById(Long id)
     {
-        return null;
+        String queryString = "id:" + id;
+
+        logger.info("queryString: " + queryString);
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
+
+        List<SolrWiretapEvent> beans = null;
+
+        try
+        {
+            QueryResponse rsp = this.solrClient.query( query );
+
+            beans = rsp.getBeans(SolrWiretapEvent.class);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error resolving wiretap by id [" + id + "] from ikasan solr index!", e);
+        }
+
+        if(beans.size() > 0)
+        {
+            return beans.get(0);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override

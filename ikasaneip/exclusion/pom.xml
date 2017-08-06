@@ -120,6 +120,18 @@
       </dependency>
 
       <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-solr</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-solr</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
           <scope>provided</scope>
@@ -149,7 +161,28 @@
           <scope>provided</scope>
       </dependency>
 
+      <dependency>
+          <groupId>org.apache.solr</groupId>
+          <artifactId>solr-solrj</artifactId>
+          <version>6.6.0</version>
+      </dependency>
+
+
       <!-- Test dependencies -->
+      <dependency>
+          <groupId>org.apache.solr</groupId>
+          <artifactId>solr-core</artifactId>
+          <version>6.6.0</version>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.solr</groupId>
+          <artifactId>solr-test-framework</artifactId>
+          <version>6.6.0</version>
+          <scope>test</scope>
+      </dependency>
+
       <!-- logging -->
       <dependency>
           <groupId>commons-logging</groupId>
