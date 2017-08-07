@@ -110,25 +110,9 @@ public class ConnectionTemplateTest
      */
     @Test public void testConnectionTemplate()
     {
-        new ConnectionTemplate(connectionFactory, connectionSpec);
+        new ConnectionTemplate(connectionSpec);
     }
 
-    /**
-     * Test method for
-     * {@link org.ikasan.client.ConnectionTemplate#ConnectionTemplate(javax.resource.cci.ConnectionFactory, javax.resource.cci.ConnectionSpec)}.
-     */
-    @Test public void testConnectionTemplate_withNullConnectionFactoryThrowsIllegalArgumentException()
-    {
-        try
-        {
-            new ConnectionTemplate(null, connectionSpec);
-            fail("IllegalArgumentException should have been thrown for null ConnectionFactory");
-        }
-        catch (Throwable th)
-        {
-            assertTrue("throwable should have been IllegalArgumentException", th instanceof IllegalArgumentException);
-        }
-    }
 
     /**
      * Test method for
@@ -147,7 +131,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, null);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate( null);
         connectionTemplate.execute(connectionCallback);
         mockery.assertIsSatisfied();
     }
@@ -169,7 +153,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, connectionSpec);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionSpec);
         connectionTemplate.execute(connectionCallback);
         mockery.assertIsSatisfied();
     }
@@ -194,7 +178,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, connectionSpec);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate( connectionSpec);
         ResourceException caughtResourceException = null;
         try
         {
@@ -229,7 +213,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, connectionSpec);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate( connectionSpec);
         Throwable caughtThrowable = null;
         try
         {

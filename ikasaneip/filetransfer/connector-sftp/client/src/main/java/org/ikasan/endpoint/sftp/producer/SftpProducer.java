@@ -273,11 +273,11 @@ public class SftpProducer implements Producer<Payload>,
      * @return
      */
     private void getEndpoint(final SFTPConnectionSpec spec, final SFTPConnectionSpec alternateSpec) {
-        activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
+        activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec);
         activeFileTransferConnectionTemplate.addListener(this);
 
         if (alternateSpec != null) {
-            alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
+            alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec);
             alternateFileTransferConnectionTemplate.addListener(this);
 
         }

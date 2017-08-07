@@ -111,7 +111,7 @@ public class FileTransferConnectionTemplateTest
                 one(connection).close(); 
             }
         });
-        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory,null);
+        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(null);
         
         fileTransferConnectionTemplate.deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered, unzip, cleanup);
         mockery.assertIsSatisfied();
@@ -152,7 +152,7 @@ public class FileTransferConnectionTemplateTest
                 one(connection).close(); 
             }
         });
-        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory,null);
+        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(null);
         
         
         fileTransferConnectionTemplate.getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
@@ -176,7 +176,7 @@ public class FileTransferConnectionTemplateTest
                 one(connection).close(); 
             }
         });
-        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory, null);
+        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate( null);
         fileTransferConnectionTemplate.housekeep(99, 99);
         mockery.assertIsSatisfied();
     }

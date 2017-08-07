@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--  ================================================================== -->
+    <!--  component implementations                                          -->
+    <!--  ================================================================== -->
+
+    <bean id="sftpConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <constructor-arg ref="scheduler"/>
+        <property name="messageProvider" ref="sftpMessageProvider"/>
+        <property name="jobDetail">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory"/>
+                <property name="targetMethod" value="createJobDetail"/>
+                <property name="arguments">
+                    <list>
+                        <ref bean="sftpConsumer"/>
+                        <value type="java.lang.Class">
+                            org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
+                        </value>
+                        <value>sftpConsumer</value>
+                        <value>sftpToJbossHornetQFlow</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuration" ref="sftpConsumerConfiguration"/>
+        <property name="configuredResourceId" value="sftpConsumerConfiguration"/>
+    </bean>
+
+    <bean id="sftpConsumerConfiguration" class="org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration">
+        <property name="cronExpression" value="0/10 * * * * ?"/>
+        <property name="clientID" value="ftpToLogFlow"/>
+        <property name="username" value="test"/>
+        <property name="password" value="test"/>
+        <property name="remoteHost" value="localhost"/>
+        <property name="remotePort" value="22999"/>
+        <property name="sourceDirectory" value="."/>
+        <property name="filenamePattern" value=".*.txt"/>
+        <property name="chronological" value="true"/>
+        <property name="cleanupJournalOnComplete" value="false"/>
+        <property name="ageOfFiles" value="30"/>
+        <property name="filterOnLastModifiedDate" value="false"/>
+        <property name="renameOnSuccess" value="true"/>
+        <property name="renameOnSuccessExtension" value=".tmp"/>
+        <property name="destructive" value="false"/>
+        <property name="chunking" value="false"/>
+    </bean>
+
+
+    <bean id="sftpMessageProvider" class="org.ikasan.endpoint.sftp.consumer.SftpMessageProvider">
+        <property name="configuration" ref="sftpConsumerConfiguration"/>
+        <property name="fileChunkDao" ref="fileChunkDao"/>
+        <property name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+    </bean>
+
+    <bean id="payloadToStringConverter" class="org.ikasan.sample.converter.PayloadToStringConverter"/>
+
+</beans>

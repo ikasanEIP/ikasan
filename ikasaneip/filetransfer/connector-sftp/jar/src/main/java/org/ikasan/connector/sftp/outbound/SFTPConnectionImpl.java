@@ -52,14 +52,11 @@ import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
 import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.base.command.*;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
 import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
 import org.ikasan.connector.ConnectorException;
-import org.ikasan.connector.base.command.ExecutionContext;
-import org.ikasan.connector.base.command.ExecutionOutput;
-import org.ikasan.connector.base.command.TransactionalCommandConnection;
-import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
@@ -127,16 +124,22 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
      */
     private Long chunkableThreshold = 1024 * 1024l; // ie 1MB
 
+    private FileChunkDao fileChunkDao;
+    private BaseFileTransferDao baseFileTransferDao;
+
     /**
      * Constructor which takes ManagedConnection as a parameter
      * 
      * @param mc The ManagedConnection
      */
-    public SFTPConnectionImpl(ManagedConnection mc)
+    public SFTPConnectionImpl(ManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
     {
         super(mc);
         this.managedConnection = (SFTPManagedConnection) mc;
         this.clientId = managedConnection.getClientID();
+        this.fileChunkDao = fileChunkDao;
+        this.baseFileTransferDao = baseFileTransferDao;
+
     }
 
     /**
@@ -241,8 +244,6 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         logger.debug("Source = [" + sourceDir+ "] moveOnSuccess = [" + moveOnSuccess + "] and archive dir = [" + moveOnSuccessNewPath + "].");
         executionContext.put(ExecutionContext.CLIENT_ID, clientId);
 
-        BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
-
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern,
             baseFileTransferDao, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate, isRecursive);
 
@@ -305,7 +306,6 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
             {
                 throw new ConnectorException("Could not get pk from deserialized payload content"); //$NON-NLS-1$
             }
-            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
 
             FileChunkHeader fileChunkHeader;
             try
@@ -429,7 +429,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
     {
         try
         {
-            BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
+            //BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
             baseFileTransferDao.housekeep(clientId, ageOfFiles, maxRows);
         }
         catch (Exception e)
@@ -512,7 +512,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
         if (chunking && shouldChunk(entry))
         {
-            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
+            //FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
 
             // chunking specific
             logger.debug("About to call ChunkingRetrieveFileCommand"); //$NON-NLS-1$

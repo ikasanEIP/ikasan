@@ -42,7 +42,6 @@ package org.ikasan.client;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
 import org.apache.log4j.Logger;
@@ -64,10 +63,6 @@ public class ConnectionTemplate
      */
     private static Logger logger = Logger.getLogger(ConnectionTemplate.class);
     /**
-     * ConnectionFactory from which to retrieve connections
-     */
-    private ConnectionFactory connectionFactory;
-    /**
      * Connection specifics
      */
     private ConnectionSpec connectionSpec;
@@ -75,20 +70,12 @@ public class ConnectionTemplate
     /**
      * Constructor
      * 
-     * @param connectionFactory The factory for the connections
      * @param connectionSpec The connection spec
      */
-    public ConnectionTemplate(ConnectionFactory connectionFactory,
-            ConnectionSpec connectionSpec)
+    public ConnectionTemplate(ConnectionSpec connectionSpec)
     {
         super();
-        this.connectionFactory = connectionFactory;
         this.connectionSpec = connectionSpec;
-        if (connectionFactory == null)
-        {
-            throw new IllegalArgumentException(
-                "ConnectionTemplate requires a non null ConnectionFactory");
-        }
     }
 
     /**
@@ -104,14 +91,7 @@ public class ConnectionTemplate
         Connection connection = null;
         try
         {
-            if (connectionSpec != null)
-            {
-                connection = connectionFactory.getConnection(connectionSpec);
-            }
-            else
-            {
-                connection = connectionFactory.getConnection();
-            }
+
             return action.doInConnection(connection);
         }
         finally

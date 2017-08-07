@@ -80,13 +80,13 @@ public class SFTPConnectionFactory extends EISConnectionFactoryImpl
      * to the connection manager. The connection manager will, in
      * practice, be a class passed into the resource adapter by the
      * Application Server.
-     * 
-     * It then calls passes this off to the another constructor passing in 
-     * null for a SFTPConnectionRequestInfo (because at this stage in the 
+     *
+     * It then calls passes this off to the another constructor passing in
+     * null for a SFTPConnectionRequestInfo (because at this stage in the
      * Application Server startup, we haven't got one)
-     * 
-     * @param managedConnectionFactory The SFTP managed connection factory 
-     * @param connectionManager The connection Manager 
+     *
+     * @param managedConnectionFactory The SFTP managed connection factory
+     * @param connectionManager The connection Manager
      */
     public SFTPConnectionFactory(ManagedConnectionFactory managedConnectionFactory,
                                  ConnectionManager connectionManager)

@@ -41,11 +41,13 @@
 package org.ikasan.endpoint.sftp.consumer;
 
 import org.apache.log4j.Logger;
-import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitEvent;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -54,7 +56,6 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.JobExecutionContext;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 import javax.resource.spi.InvalidPropertyException;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,30 +90,17 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     protected SftpConsumerConfiguration configuration;
 
     /**
-     * Connection factory
-     */
-    private final ConnectionFactory connectionFactory;
-
-    /**
      * Directory URL factory
      */
     private DirectoryURLFactory directoryURLFactory;
 
     private ManagedResourceRecoveryManager managedResourceRecoveryManager;
 
-    /**
-     * Constructor
-     *
-     * @param connectionFactory FTP connection factory
-     */
-    public SftpMessageProvider(final ConnectionFactory connectionFactory)
-    {
-        this.connectionFactory = connectionFactory;
-        if (this.connectionFactory == null)
-        {
-            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
-        }
-    }
+    private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
+
+    private FileChunkDao fileChunkDao;
+
+    private BaseFileTransferDao baseFileTransferDao;
 
     @Override public Payload invoke(JobExecutionContext context)
     {
@@ -332,12 +320,19 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
      */
     private void getEndpoint(final SFTPConnectionSpec spec, final SFTPConnectionSpec alternateSpec)
     {
-        activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-        activeFileTransferConnectionTemplate.addListener(this);
-        if (alternateSpec != null)
-        {
-            alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-            alternateFileTransferConnectionTemplate.addListener(this);
+        try {
+            activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
+                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao);
+
+            activeFileTransferConnectionTemplate.addListener(this);
+            if (alternateSpec != null)
+            {
+                alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(alternateSpec,
+                        transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao);
+                alternateFileTransferConnectionTemplate.addListener(this);
+            }
+        } catch (ResourceException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -368,5 +363,17 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     {
         logger.info("Logging error: " + event.getException().getMessage());
         this.managedResourceRecoveryManager.recover(event.getException());
+    }
+
+    public void setTransactionalResourceCommandDAO(TransactionalResourceCommandDAO transactionalResourceCommandDAO) {
+        this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
+    }
+
+    public void setFileChunkDao(FileChunkDao fileChunkDao) {
+        this.fileChunkDao = fileChunkDao;
+    }
+
+    public void setBaseFileTransferDao(BaseFileTransferDao baseFileTransferDao) {
+        this.baseFileTransferDao = baseFileTransferDao;
     }
 }

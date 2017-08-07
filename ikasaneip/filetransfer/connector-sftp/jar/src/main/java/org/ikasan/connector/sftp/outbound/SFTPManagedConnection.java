@@ -45,9 +45,12 @@ import org.apache.log4j.Logger;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
 import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.sftp.net.SFTPClient;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -85,12 +88,6 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     /** Common library used by both inbound and outbound connectors */
     private SFTPClient sftpClient;
 
-    /**
-     * Handle to the managed connection factory, overrides the default
-     * ManagedConnectipnFactory provided by the EISManagedConnection so that we
-     * don't have to cast back lots of times
-     */
-    protected SFTPManagedConnectionFactory managedConnectionFactory;
 
     /**
      * The client specific connection spec used to override the MFC values where 
@@ -110,33 +107,11 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     public SFTPManagedConnection(SFTPManagedConnectionFactory managedConnectionFactory, SFTPConnectionRequestInfo scri)
     {
         logger.debug("Called constructor."); //$NON-NLS-1$
-        this.managedConnectionFactory = managedConnectionFactory;
         this.scri = scri;
         this.clientID = this.scri.getClientID();
 
         instanceCount++;
         instanceOrdinal = instanceCount;
-    }
-
-    /**
-     * Set the managed connection factory
-     * 
-     * @param managedConnectionFactory
-     */
-    @Override
-    public void setManagedConnectionFactory(ManagedConnectionFactory managedConnectionFactory)
-    {
-        this.managedConnectionFactory = (SFTPManagedConnectionFactory) managedConnectionFactory;
-    }
-
-    /**
-     * Get the SFTP managed connection factory
-     */
-    @Override
-    public SFTPManagedConnectionFactory getManagedConnectionFactory()
-    {
-        logger.debug("Called getManagedConnectionFactory"); //$NON-NLS-1$
-        return this.managedConnectionFactory;
     }
 
     /**
@@ -165,7 +140,19 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
     {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new SFTPConnectionImpl(this);
+        BaseFileTransferConnection connection = new SFTPConnectionImpl(this,null,null);
+        addConnection(connection);
+        return connection;
+    }
+
+    /**
+     * Create a virtual connection (a BaseFileTransferConnection object) and
+     * add it to the list of managed instances before returning it to the client.
+     */
+    public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    {
+        logger.debug("Called getConnection()"); //$NON-NLS-1$
+        BaseFileTransferConnection connection = new SFTPConnectionImpl(this, fileChunkDao, baseFileTransferDao);
         addConnection(connection);
         return connection;
     }
@@ -365,11 +352,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
             throw new ResourceException("max retry attempts is null"); //$NON-NLS-1$
         }
         //Local hostname
-        String localHostname = null;
-        if(this.managedConnectionFactory.getLocalHostname() != null)
-        {
-            localHostname = this.managedConnectionFactory.getLocalHostname();
-        }
+        String localHostname = "localhost";
 
         String preferredAuthentications = this.scri.getPreferredAuthentications();
 

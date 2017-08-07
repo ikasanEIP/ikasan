@@ -38,42 +38,79 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.client;
+package org.ikasan.endpoint.sftp.consumer;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.ConnectionSpec;
-
-import org.ikasan.filetransfer.Payload;
+import org.apache.log4j.Logger;
+import org.ikasan.client.ConnectionCallback;
+import org.ikasan.client.ConnectionTemplate;
 import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.base.journal.TransactionJournal;
+import org.ikasan.connector.base.journal.TransactionJournalImpl;
+import org.ikasan.connector.basefiletransfer.DataAccessUtil;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
+import org.ikasan.connector.sftp.outbound.SFTPConnectionRequestInfo;
+import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.connector.sftp.outbound.SFTPManagedConnection;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.filetransfer.Payload;
+
+import javax.annotation.Resource;
+import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.ConnectionSpec;
+import javax.resource.spi.ConnectionRequestInfo;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test the FileTRansferConnectionTempalte class
  *
  * @author Ikasan Development Team
  */
-public class FileTransferConnectionTemplate extends ConnectionTemplate implements TransactionCommitFailureObserverable
+public class FileTransferConnectionTemplate implements TransactionCommitFailureObserverable
 {
+
+    private static Logger logger = Logger.getLogger(FileTransferConnectionTemplate.class);
 
     protected List<TransactionCommitFailureListener> listeners = new ArrayList<TransactionCommitFailureListener>();
 
     /**
+     * Connection specifics
+     */
+    private ConnectionSpec connectionSpec;
+
+    /** Journal for logging activity of this connector */
+    private TransactionJournal transactionJournal = null;
+
+    private SFTPManagedConnection sftpManagedConnection;
+
+    private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
+    private FileChunkDao fileChunkDao;
+    private BaseFileTransferDao baseFileTransferDao;
+    /**
      * Constructor
      *
-     * @param connectionFactory - The connection factory
      * @param connectionSpec - THe connection spec
      */
-    public FileTransferConnectionTemplate(ConnectionSpec connectionSpec)
+    public FileTransferConnectionTemplate(ConnectionSpec connectionSpec,TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)  throws ResourceException
     {
-        super(connectionSpec);
+        this.connectionSpec = connectionSpec;
+        this.fileChunkDao = fileChunkDao;
+        this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
+        this.baseFileTransferDao = baseFileTransferDao;
+
+        sftpManagedConnection = new SFTPManagedConnection(null, connectionSpecToCRI(connectionSpec));
+        sftpManagedConnection.setTransactionJournal(getTransactionJournal(transactionalResourceCommandDAO,fileChunkDao));
+        // Open a session on the managed connection
+        sftpManagedConnection.openSession();
+        // Return the managed connection (with an open session)
     }
 
     /**
@@ -97,7 +134,8 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                addListenersToConnection((BaseFileTransferConnection) connection);
+                //addListenersToConnection((BaseFileTransferConnection) connection);
+
                 ((BaseFileTransferConnection) connection).deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered,
                         unzip, cleanup);
                 return null;
@@ -127,7 +165,7 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                addListenersToConnection((BaseFileTransferConnection) connection);
+                //addListenersToConnection((BaseFileTransferConnection) connection);
                 ((BaseFileTransferConnection) connection).deliverInputStream(inputStream, fileName, outputDir,  overwrite, renameExtension, checksumDelivered,unzip, createParentDirectory, tempFileName);
                 return null;
             }
@@ -166,8 +204,11 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                addListenersToConnection((BaseFileTransferConnection) connection);
-                Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
+                //addListenersToConnection((BaseFileTransferConnection) connection);
+                Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir,
+                        filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath,
+                        chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename,
+                        filterOnLastModifedDate, chronological,isRecursive);
                 return discoveredFile;
             }
         });
@@ -216,4 +257,105 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
         this.listeners.add(listener);
     }
 
+
+    /**
+     * Execute the action specified by the given action object with a
+     * Connection.
+     *
+     * @param action callback object that exposes the Connection
+     * @return the result object from working with the Connection
+     * @throws ResourceException if there is any problem
+     */
+    public Object execute(ConnectionCallback action) throws ResourceException
+    {
+        Connection connection = null;
+        try
+        {
+            connection = (Connection) sftpManagedConnection.getConnection(this.fileChunkDao,baseFileTransferDao);
+            return action.doInConnection(connection);
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+    }
+
+    /**
+     * Closes the connection, suppressing any exceptions
+     *
+     * @param connection - possibly null, not necessarily open
+     */
+    public static void closeConnection(Connection connection)
+    {
+        if (connection != null)
+        {
+            try
+            {
+                logger.debug("Attempting to close EIS Connection");
+                connection.close();
+            }
+            catch (ResourceException ex)
+            {
+                logger.warn("Could not close EIS Connection", ex);
+            }
+            catch (Throwable ex)
+            {
+                // We don't trust the EIS provider: It might throw
+                // RuntimeException or Error.
+                logger.debug("Unexpected exception on closing EIS Connection",
+                        ex);
+            }
+        }
+    }
+
+    /**
+     * Lazily instantiates the TransactionJournal
+     *
+     * @return TransactionJournal
+     */
+    protected TransactionJournal getTransactionJournal(TransactionalResourceCommandDAO transactionalResourceCommandDAO,
+                                                       FileChunkDao fileChunkDao)
+    {
+        if (transactionJournal == null)
+        {
+
+            Map<String, Object> beanFactory = new HashMap<String, Object>();
+            beanFactory.put("fileChunkDao", fileChunkDao);
+            transactionJournal = new TransactionJournalImpl(transactionalResourceCommandDAO, "SFTPCLient",
+                    beanFactory);
+        }
+        return transactionJournal;
+    }
+
+    /**
+     * Converts the connection spec into a connection request info
+     *
+     * @param spec The client connection details
+     * @return The connection request info
+     */
+    private SFTPConnectionRequestInfo connectionSpecToCRI(ConnectionSpec spec)
+    {
+        logger.debug("Converting Connection Spec to CRI"); //$NON-NLS-1$
+        SFTPConnectionSpec sftpConnectionSpec = (SFTPConnectionSpec)spec;
+        SFTPConnectionRequestInfo scri = new SFTPConnectionRequestInfo();
+        if (sftpConnectionSpec != null)
+        {
+            scri.setCleanupJournalOnComplete(sftpConnectionSpec.getCleanupJournalOnComplete());
+            scri.setClientID(sftpConnectionSpec.getClientID());
+            scri.setRemoteHostname(sftpConnectionSpec.getRemoteHostname());
+            scri.setKnownHostsFilename(sftpConnectionSpec.getKnownHostsFilename());
+            scri.setMaxRetryAttempts(sftpConnectionSpec.getMaxRetryAttempts());
+            scri.setRemotePort(sftpConnectionSpec.getRemotePort());
+            scri.setPrivateKeyFilename(sftpConnectionSpec.getPrivateKeyFilename());
+            scri.setUsername(sftpConnectionSpec.getUsername());
+            scri.setPassword(sftpConnectionSpec.getPassword());
+            scri.setRemoteHostname(sftpConnectionSpec.getRemoteHostname());
+            scri.setRemotePort(sftpConnectionSpec.getRemotePort());
+            scri.setPollTime(sftpConnectionSpec.getPollTime());
+            scri.setPreferredAuthentications(sftpConnectionSpec.getPreferredAuthentications());
+            scri.setConnectionTimeout(sftpConnectionSpec.getConnectionTimeout());
+            scri.setPreferredKeyExchangeAlgorithm(sftpConnectionSpec.getPreferredKeyExchangeAlgorithm());
+        }
+        return scri;
+    }
 }

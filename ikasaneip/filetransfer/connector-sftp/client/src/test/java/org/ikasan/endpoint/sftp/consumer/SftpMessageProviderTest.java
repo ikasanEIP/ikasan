@@ -86,13 +86,8 @@ public class SftpMessageProviderTest
 
     @Before
     public void setup() {
-        uut = new SftpMessageProvider(connectionFactory);
+        uut = new SftpMessageProvider();
         uut.setConfiguration(configuration);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failed_constructor_when_connectionFactory_is_null() {
-        new SftpMessageProvider(null);
     }
 
     @Test
