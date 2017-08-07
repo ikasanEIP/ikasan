@@ -2,11 +2,11 @@ package org.ikasan.dashboard.harvesting;
 
 import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
+import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.harvest.HarvestService;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.ikasan.spec.solr.SolrInitialisationService;
+import org.ikasan.spec.solr.SolrService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -38,9 +38,8 @@ public class SolrHarvestingJob implements Job
 
 
     private String jobName;
-    private HarvestService<WiretapEvent> harvestService;
-    private WiretapService solrWiretapService;
-    private WiretapService wiretapService;
+    private HarvestService harvestService;
+    private SolrService solrService;
     private PlatformConfigurationService platformConfigurationService;
     private Integer harvestSize;
     private Integer threadCount;
@@ -51,9 +50,9 @@ public class SolrHarvestingJob implements Job
     private Boolean initialised = false;
 
 
-    public SolrHarvestingJob(String jobName, HarvestService<WiretapEvent> harvestService,
+    public SolrHarvestingJob(String jobName, HarvestService harvestService,
                              PlatformConfigurationService platformConfigurationService,
-                             WiretapService solrWiretapService, WiretapService wiretapService)
+                             SolrService solrService)
     {
         this.jobName = jobName;
         if(this.jobName == null)
@@ -65,15 +64,10 @@ public class SolrHarvestingJob implements Job
         {
             throw new IllegalArgumentException("harvestService cannot be null!");
         }
-        this.solrWiretapService = solrWiretapService;
-        if(this.solrWiretapService == null)
+        this.solrService = solrService;
+        if(this.solrService == null)
         {
-            throw new IllegalArgumentException("solrWiretapService cannot be null!");
-        }
-        this.wiretapService = wiretapService;
-        if(this.wiretapService == null)
-        {
-            throw new IllegalArgumentException("wiretapService cannot be null!");
+            throw new IllegalArgumentException("solrService cannot be null!");
         }
         this.platformConfigurationService = platformConfigurationService;
         if(this.platformConfigurationService == null)
@@ -173,13 +167,13 @@ public class SolrHarvestingJob implements Job
         {
             if (harvestService.harvestableRecordsExist())
             {
-                List<WiretapEvent> events = this.harvestService.harvest(this.harvestSize);
+                List<HarvestEvent> events = this.harvestService.harvest(this.harvestSize);
 
                 if(events.size() > 0)
                 {
-                    List<List<WiretapEvent>> partitionedEvents = Lists.partition(events, events.size() / threadCount);
+                    List<List<HarvestEvent>> partitionedEvents = Lists.partition(events, events.size() / threadCount);
 
-                    for (List<WiretapEvent> smallerEvents : partitionedEvents)
+                    for (List<HarvestEvent> smallerEvents : partitionedEvents)
                     {
                         SaveRunnable saveRunnable = new SaveRunnable(smallerEvents);
 
@@ -287,9 +281,9 @@ public class SolrHarvestingJob implements Job
 
     private class SaveRunnable implements Runnable
     {
-        private List<WiretapEvent> events;
+        private List<HarvestEvent> events;
 
-        public SaveRunnable(List<WiretapEvent> events)
+        public SaveRunnable(List<HarvestEvent> events)
         {
             this.events = events;
         }
@@ -297,13 +291,13 @@ public class SolrHarvestingJob implements Job
         @Override
         public void run()
         {
-            for(WiretapEvent event: events)
+            for(HarvestEvent event: events)
             {
-                solrWiretapService.save(event);
+                solrService.save(event);
 
-                ((WiretapFlowEvent)event).setHarvested(true);
+                event.setHarvested(true);
 
-                wiretapService.save(event);
+                harvestService.saveHarvestedRecord(event);
             }
         }
     }

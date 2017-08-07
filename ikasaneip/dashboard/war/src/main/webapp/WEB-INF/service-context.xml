@@ -191,6 +191,14 @@
     <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
+
+	<bean id="solrErrorReportingService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
+		<constructor-arg ref="errorManagementDao"/>
+		<constructor-arg ref="solrErrorReportingServiceDao"/>
+	</bean>
+
+	<bean id="solrErrorReportingServiceDao" class="org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao">
+	</bean>
     
     <bean id="exclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>

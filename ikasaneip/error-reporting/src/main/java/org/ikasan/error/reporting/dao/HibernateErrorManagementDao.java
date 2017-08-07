@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -96,9 +97,15 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 		this.getHibernateTemplate().saveOrUpdate(errorOccurrenceAction);
 	}
 
+	@Override
+	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence)
+	{
+		this.getHibernateTemplate().saveOrUpdate(errorOccurrence);
+	}
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
-	 */
+         * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
+         */
 	@Override
 	public void saveNote(Note note)
 	{
@@ -404,4 +411,22 @@ public class HibernateErrorManagementDao  extends HibernateDaoSupport implements
 		});
 	}
 
+	@Override
+	public List<ErrorOccurrence<byte[]>> getHarvestableRecords(final int harvestingBatchSize)
+	{
+		return (List<ErrorOccurrence<byte[]>>) this.getHibernateTemplate().execute(new HibernateCallback()
+		{
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+				criteria.add(Restrictions.eq("harvested", false));
+				criteria.setMaxResults(harvestingBatchSize);
+				criteria.addOrder(Order.asc("timestamp"));
+
+				List<ErrorOccurrence> flowInvocationMetrics = criteria.list();
+
+				return flowInvocationMetrics;
+			}
+		});
+	}
 }

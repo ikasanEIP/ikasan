@@ -190,6 +190,9 @@ public class WebAppStartStopListener implements ServletContextListener
                 solrDao = (SolrInitialisationService)springContext.getBean("solrGeneralSearchDao");
                 solrDao.init(solrUrlsList, daysToLive);
 
+                solrDao = (SolrInitialisationService)springContext.getBean("solrErrorReportingServiceDao");
+                solrDao.init(solrUrlsList, daysToLive);
+
                 return true;
             }
         }

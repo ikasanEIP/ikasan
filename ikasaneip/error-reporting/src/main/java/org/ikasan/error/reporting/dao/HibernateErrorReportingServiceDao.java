@@ -50,6 +50,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -327,4 +328,5 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 
         return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
 	}
+
 }

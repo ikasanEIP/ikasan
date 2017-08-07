@@ -51,15 +51,18 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.harvest.HarvestService;
 import org.ikasan.housekeeping.HousekeepService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
+import org.ikasan.spec.solr.SolrService;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>, HousekeepService
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
+		HousekeepService, HarvestService<ErrorOccurrence<byte[]>>, SolrService<ErrorOccurrence<byte[]>>
 {
 	private static Logger logger = Logger.getLogger(ErrorReportingManagementServiceImpl.class);
 	
@@ -306,5 +309,29 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 
 			deleted = deleted + this.batchSize;
 		}
+	}
+
+	@Override
+	public List<ErrorOccurrence<byte[]>> harvest(int transactionBatchSize)
+	{
+		return this.errorManagementDao.getHarvestableRecords(transactionBatchSize);
+	}
+
+	@Override
+	public boolean harvestableRecordsExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void saveHarvestedRecord(ErrorOccurrence<byte[]> harvestedRecord)
+	{
+		this.errorManagementDao.saveErrorOccurrence(harvestedRecord);
+	}
+
+	@Override
+	public void save(ErrorOccurrence<byte[]> entity)
+	{
+		this.errorReportingServiceDao.save(entity);
 	}
 }

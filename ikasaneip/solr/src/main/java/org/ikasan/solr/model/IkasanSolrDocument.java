@@ -35,6 +35,9 @@ public class IkasanSolrDocument
     @Field("event")
     private String eventId;
 
+    @Field("errorUri")
+    private String errorUri;
+
     public long getIdentifier()
     {
         return new Long(id);
@@ -128,6 +131,16 @@ public class IkasanSolrDocument
     public void setEventId(String eventId)
     {
         this.eventId = eventId;
+    }
+
+    public String getErrorUri()
+    {
+        return errorUri;
+    }
+
+    public void setErrorUri(String errorUri)
+    {
+        this.errorUri = errorUri;
     }
 
     @Override

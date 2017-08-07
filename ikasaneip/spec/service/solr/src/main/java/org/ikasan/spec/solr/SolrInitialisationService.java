@@ -43,7 +43,8 @@ package org.ikasan.spec.solr;
 import java.util.List;
 
 /**
- * This Service allows solr related clases to be initialised.
+ * This Service allows solr related classes to be initialised as well
+ * as providing some general methods.
  * 
  * @author Ikasan Development Team
  */
