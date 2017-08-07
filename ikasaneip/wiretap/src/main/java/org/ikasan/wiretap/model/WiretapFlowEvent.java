@@ -40,6 +40,7 @@
  */
 package org.ikasan.wiretap.model;
 
+import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.wiretap.WiretapEvent;
 
 import java.io.Serializable;
@@ -50,7 +51,7 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
-public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable
+public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable, HarvestEvent
 {
     /** related event id */
     private String relatedEventId;

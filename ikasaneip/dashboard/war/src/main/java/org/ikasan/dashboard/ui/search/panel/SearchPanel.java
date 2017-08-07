@@ -25,7 +25,11 @@ import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel;
 import org.ikasan.dashboard.ui.housekeeping.window.HousekeepingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
+import org.ikasan.error.reporting.dao.ErrorManagementDao;
+import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.dao.SolrGeneralSearchDao;
@@ -61,14 +65,16 @@ public class SearchPanel extends Panel implements View
     private PopupDateField fromDate;
     private PopupDateField toDate;
     private WiretapDao wiretapDao;
+    private ErrorReportingServiceDao<ErrorOccurrence<byte[]>, String> errorReportingServiceDao;
 
 
     public SearchPanel(SolrGeneralSearchDao dao, PlatformConfigurationService platformConfigurationService,
-                       WiretapDao wiretapDao)
+                       WiretapDao wiretapDao, ErrorReportingServiceDao<ErrorOccurrence<byte[]>, String> errorReportingServiceDao)
     {
         this.dao = dao;
         this.platformConfigurationService =platformConfigurationService;
         this.wiretapDao = wiretapDao;
+        this.errorReportingServiceDao = errorReportingServiceDao;
         init();
     }
 
@@ -99,13 +105,24 @@ public class SearchPanel extends Panel implements View
             {
                 if (itemClickEvent.isDoubleClick())
                 {
-                    IkasanSolrDocument ikasanSolrDocument = (IkasanSolrDocument)itemClickEvent.getItemId();
+                    IkasanSolrDocument ikasanSolrDocument = (IkasanSolrDocument) itemClickEvent.getItemId();
 
-                    WiretapEvent event = wiretapDao.findById(ikasanSolrDocument.getIdentifier());
+                    if(ikasanSolrDocument.getType().equals("wiretap"))
+                    {
+                        WiretapEvent event = wiretapDao.findById(ikasanSolrDocument.getIdentifier());
+                        WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(event);
+                        UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+                    }
+                    else if(ikasanSolrDocument.getType().equals("error"))
+                    {
+                        ErrorOccurrence errorOccurrence = errorReportingServiceDao.find(ikasanSolrDocument.getErrorUri());
+                        ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, null,
+                                platformConfigurationService);
 
-                    WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(event);
+                        UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+                    }
 
-                    UI.getCurrent().addWindow(wiretapPayloadViewWindow);
+
                 }
             }
         });
@@ -286,13 +303,21 @@ public class SearchPanel extends Panel implements View
             item.getItemProperty("Details").setValue((doc.getEvent().length() > 150) ? doc.getEvent().substring(0, 150) : doc.getEvent());
             item.getItemProperty("Timestamp").setValue(timestamp);
 
-            Button wiretap = new Button();
-            wiretap.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            wiretap.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-            wiretap.setIcon(VaadinIcons.BOLT);
-            wiretap.setDisableOnClick(true);
+            Button icon = new Button();
+            icon.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            icon.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
-            item.getItemProperty("").setValue(wiretap);
+            if(doc.getType().equals("wiretap"))
+            {
+                icon.setIcon(VaadinIcons.BOLT);
+            }
+            if(doc.getType().equals("error"))
+            {
+                icon.setIcon(VaadinIcons.EXCLAMATION);
+            }
+
+
+            item.getItemProperty("").setValue(icon);
         }
     }
 

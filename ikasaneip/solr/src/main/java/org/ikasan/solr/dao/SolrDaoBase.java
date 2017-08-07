@@ -19,6 +19,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     private static Logger logger = Logger.getLogger(SolrDaoBase.class);
 
     public static final String ID = "id";
+    public static final String ERROR_URI = "errorUri";
     public static final String TYPE = "type";
     public static final String MODULE_NAME = "moduleName";
     public static final String FLOW_NAME = "flowName";
@@ -26,7 +27,12 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     public static final String CREATED_DATE_TIME = "timestamp";
     public static final String PAYLOAD_CONTENT = "payload";
     public static final String EVENT = "event";
+    public static final String RELATED_EVENT = "relatedEventId";
     public static final String EXPIRY = "expiry";
+    public static final String ERROR_DETAIL = "errorDetail";
+    public static final String ERROR_MESSAGE = "errorMessage";
+    public static final String EXCEPTION_CLASS = "exceptionClass";
+
 
     public static final String AND = " AND ";
     public static final String OR = " OR ";

@@ -40,6 +40,8 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import org.ikasan.spec.wiretap.WiretapEvent;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -119,4 +121,5 @@ public interface ErrorReportingServiceDao<EVENT, IDENTIFIER> {
      * Support delete of expired error reporting events.
      */
     public void deleteExpired();
+
 }

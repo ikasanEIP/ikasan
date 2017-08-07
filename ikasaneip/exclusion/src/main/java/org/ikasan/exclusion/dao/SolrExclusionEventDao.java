@@ -1,10 +1,12 @@
 package org.ikasan.exclusion.dao;
 
+import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.solr.dao.SolrDaoBase;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ikasan Development Team on 05/08/2017.

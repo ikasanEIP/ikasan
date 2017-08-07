@@ -24,4 +24,11 @@ public interface HarvestService<RECORD>
      * @return
      */
     public boolean harvestableRecordsExist();
+
+    /**
+     * Save the harvested record.
+     *
+     * @param harvestedRecord
+     */
+    public void saveHarvestedRecord(RECORD harvestedRecord);
 }
