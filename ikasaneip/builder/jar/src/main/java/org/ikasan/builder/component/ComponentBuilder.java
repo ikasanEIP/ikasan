@@ -44,9 +44,11 @@ import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,10 +59,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ComponentBuilder
 {
-    String moduleName;
-
-    String flowName;
-
     /** the scheduler */
     @Autowired
     Scheduler scheduler;
@@ -69,22 +67,20 @@ public class ComponentBuilder
     @Autowired
     ScheduledJobFactory scheduledJobFactory;
 
-    public ComponentBuilder(String flowName, String moduleName)
-    {
-        this.flowName = flowName;
-        this.moduleName = moduleName;
-    }
-
     public ScheduledConsumerBuilder scheduledConsumer()
     {
         ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer(scheduler);
-        scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, ScheduledConsumer.class, "scheduledConsumer", this.flowName + this.moduleName) ); //FIXME - dont hard code scheduledConsumer name
         return new ScheduledConsumerBuilderImpl(scheduledConsumer);
     }
 
-    class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder
+    class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresComponentName, RequiresFlowName, RequiresModuleName
     {
+        Job proxiedConsumer;
+
         ScheduledConsumer scheduledConsumer;
+        String componentName = "unspecifiedScheduledComponentName";
+        String moduleName = "unspecifiedModuleName";
+        String flowName = "unspecifiedFlowName";
 
         public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer)
         {
@@ -165,7 +161,18 @@ public class ComponentBuilder
             return scheduledConsumerConfiguration;
         }
 
-        public ScheduledConsumer getInstance()
+        public void setTargetComponent(Consumer scheduledConsumer)
+        {
+            proxiedConsumer = (Job)scheduledConsumer;           // FIXME
+            this.scheduledConsumer = this.scheduledConsumer;  // FIXME - dont cast
+        }
+
+        public Consumer getTargetComponent()
+        {
+            return this.scheduledConsumer;
+        }
+
+        public Consumer build()
         {
             if(this.scheduledConsumer.getConfiguration() == null)
             {
@@ -174,10 +181,27 @@ public class ComponentBuilder
 
             if(this.scheduledConsumer.getConfiguredResourceId() == null)
             {
-                this.scheduledConsumer.setConfiguredResourceId("scheduledConsumer" + flowName + moduleName);
+                this.scheduledConsumer.setConfiguredResourceId(this.componentName + flowName + moduleName);
             }
 
+            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(this.proxiedConsumer, ScheduledConsumer.class, this.componentName, this.flowName + this.moduleName) );
+
             return this.scheduledConsumer;
+        }
+
+        public void setComponentName(String componentName)
+        {
+            this.componentName = componentName;
+        }
+
+        public void setFlowName(String flowName)
+        {
+            this.flowName = flowName;
+        }
+
+        public void setModuleName(String moduleName)
+        {
+            this.moduleName = moduleName;
         }
     }
 

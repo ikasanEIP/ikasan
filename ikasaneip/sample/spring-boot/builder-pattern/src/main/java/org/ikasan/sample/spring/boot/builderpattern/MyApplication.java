@@ -92,7 +92,7 @@ public class MyApplication
     {
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Scheduled Flow Name");
         return flowBuilder.withDescription("scheduled flow description")
-                .consumer("consumer", flowBuilder.getComponentBuilder().scheduledConsumer().setCronExpression("0/5 * * * * ?").getInstance())
+                .consumer("consumer", flowBuilder.getComponentBuilder().scheduledConsumer().setCronExpression("0/5 * * * * ?"))
                 .producer("producer", new MyProducer()).build();
     }
 

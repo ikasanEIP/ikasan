@@ -77,8 +77,8 @@ public class ComponentBuilderTest
     @Test
     public void test_successful_scheduledConsumer()
     {
-        ComponentBuilder componentBuilder = new ComponentBuilder("flowName", "moduleName");
-        Consumer scheduledConsumer = componentBuilder.scheduledConsumer().setCronExpression("121212").setEager(true).setIgnoreMisfire(true).setTimezone("UTC").getInstance();
+        ComponentBuilder componentBuilder = new ComponentBuilder();
+        Consumer scheduledConsumer = componentBuilder.scheduledConsumer().setCronExpression("121212").setEager(true).setIgnoreMisfire(true).setTimezone("UTC").build();
 
         Assert.assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
 

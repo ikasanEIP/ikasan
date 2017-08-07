@@ -45,6 +45,7 @@ import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.quartz.Scheduler;
+import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
@@ -148,7 +149,7 @@ public class ModuleBuilder
 	public FlowBuilder getFlowBuilder(String flowName)
 	{
 		AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-		FlowBuilder flowBuilder = new FlowBuilder(flowName,this.name);
+		FlowBuilder flowBuilder = new FlowBuilder(flowName, this.name);
 		beanFactory.autowireBean(flowBuilder);
 		flowBuilder.setApplicationContext(this.context);
 		return flowBuilder;

@@ -40,40 +40,14 @@
  */
 package org.ikasan.builder.component;
 
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Builder contract.
  *
  * @author Ikasan Development Team.
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public interface Builder<T>
 {
-    public ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
-
-    public ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
-
-    public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
-
-    public ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
-
-    public ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
-
-    public ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
-
-    public ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
-
-    public ScheduledConsumerBuilder setCronExpression(String cronExpression);
-
-    public ScheduledConsumerBuilder setEager(boolean eager);
-
-    public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    public ScheduledConsumerBuilder setTimezone(String timezone);
+    public void setTargetComponent(T targetComponent);
+    public T getTargetComponent();
+    public T build();
 }
-

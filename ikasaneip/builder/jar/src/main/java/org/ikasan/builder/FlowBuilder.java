@@ -40,7 +40,7 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.builder.component.*;
 import org.ikasan.builder.conditional.Otherwise;
 import org.ikasan.builder.conditional.When;
 import org.ikasan.builder.sequential.SequenceName;
@@ -54,7 +54,6 @@ import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -78,7 +77,6 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -88,7 +86,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.*;
 
@@ -167,7 +164,6 @@ public class FlowBuilder implements ApplicationContextAware
 	/** List of FlowInvocationListener */
     List<FlowInvocationContextListener> flowInvocationContextListeners;
 
-    /** Ensure the spring context is available for registering additional beans */
     ApplicationContext context;
 
     /**
@@ -363,10 +359,42 @@ public class FlowBuilder implements ApplicationContextAware
         return this;
     }
 
+    protected <T> T applyPointcut(String name, T component)
+    {
+        if(context != null)
+        {
+            List<? extends Class<?>> componentInterfaces = Arrays.asList(component.getClass().getInterfaces());
+
+            Map<String,DefaultBeanFactoryPointcutAdvisor> allAopFactories =  context.getBeansOfType(DefaultBeanFactoryPointcutAdvisor.class);
+            if(allAopFactories!=null && !allAopFactories.isEmpty())
+            {
+                ProxyFactory factory = new ProxyFactory(component);
+
+                for (String key : allAopFactories.keySet())
+                {
+                    DefaultBeanFactoryPointcutAdvisor aopFactory = allAopFactories.get(key);
+                    for(Class componentInterface :componentInterfaces)
+                    {
+                        if (aopFactory.getPointcut().getClassFilter().matches(componentInterface))
+                        {
+                            logger.info("Applying pointcut [" + key + "] on component [" + name + "] class [" + component.getClass().getCanonicalName() + "] interface [" + componentInterface.getCanonicalName() + "]");
+                            factory.addInterface(componentInterface);
+                            factory.addAdvice(aopFactory.getAdvice());
+                        }
+                    }
+                }
+
+                return (T)factory.getProxy();
+            }
+        }
+
+        return component;
+    }
+
     public ComponentBuilder getComponentBuilder()
     {
         AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-        ComponentBuilder componentBuilder = new ComponentBuilder(this.name, this.moduleName);
+        ComponentBuilder componentBuilder = new ComponentBuilder();
         beanFactory.autowireBean(componentBuilder);
         return componentBuilder;
     }
@@ -425,6 +453,29 @@ public class FlowBuilder implements ApplicationContextAware
         return this.eventFactory;
     }
 
+
+    public PrimaryRouteBuilder consumer(String name, Builder<Consumer> consumerBuilder)
+    {
+        if(consumerBuilder instanceof RequiresComponentName)
+        {
+            ((RequiresComponentName)consumerBuilder).setComponentName(name);
+        }
+
+        if(consumerBuilder instanceof RequiresFlowName)
+        {
+            ((RequiresFlowName)consumerBuilder).setFlowName(this.name);
+        }
+
+        if(consumerBuilder instanceof RequiresModuleName)
+        {
+            ((RequiresModuleName)consumerBuilder).setModuleName(this.moduleName);
+        }
+
+        consumerBuilder.setTargetComponent( applyPointcut(name, consumerBuilder.getTargetComponent() ) );
+
+        return this.consumer(name, consumerBuilder.build() );
+    }
+
 	/**
 	 * Add a consumer
 	 * 
@@ -439,40 +490,6 @@ public class FlowBuilder implements ApplicationContextAware
         return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, consumer, invoker) ));
     }
 
-    protected <T> T applyPointcut(String name, T component)
-    {
-        if(context != null)
-        {
-            List<? extends Class<?>> componentInterfaces = Arrays.asList(component.getClass().getInterfaces());
-
-            Map<String,DefaultBeanFactoryPointcutAdvisor> allAopFactories =  context.getBeansOfType(DefaultBeanFactoryPointcutAdvisor.class);
-            if(allAopFactories!=null && !allAopFactories.isEmpty())
-            {
-                ProxyFactory factory = new ProxyFactory(component);
-
-                for (String key : allAopFactories.keySet())
-                {
-                    DefaultBeanFactoryPointcutAdvisor aopFactory = allAopFactories.get(key);
-                    for(Class componentInterface :componentInterfaces)
-                    {
-                        if (aopFactory.getPointcut().getClassFilter().matches(componentInterface))
-                        {
-                            logger.info("Applying pointcut [" + key + "] on component [" + name + "] class [" + component.getClass().getCanonicalName() + "] interface [" + componentInterface.getCanonicalName() + "]");
-                            factory.addInterface(componentInterface);
-                            factory.addAdvice(aopFactory.getAdvice());
-                        }
-                    }
-                }
-                if(factory.getAdvisors().length>0)
-                {
-                    return (T) factory.getProxy();
-                }
-            }
-        }
-
-        return component;
-    }
-
     protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
     {
         int count = flowElements.size();
@@ -482,8 +499,8 @@ public class FlowBuilder implements ApplicationContextAware
         {
             FlowElement flowElement = flowElements.get(--count);
             if (flowElement.getFlowComponent() instanceof Consumer)
-            {
-                Consumer consumer = (Consumer)applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent());
+            {   //FIXME - need to check to see if already pointcut.
+                Consumer consumer = (Consumer) applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent());
                 consumer.setEventFactory(eventFactory);
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
