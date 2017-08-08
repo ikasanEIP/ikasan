@@ -106,6 +106,10 @@ public class SecurityConstants
 	public static String HOUSEKEEPING_WRITE = "housekeeping-write";
 	public static String HOUSEKEEPING_ADMIN = "housekeeping-admin";
 
+	public static String HARVESTING_READ = "harvesting-read";
+	public static String HARVESTING_WRITE = "harvesting-write";
+	public static String HARVESTING_ADMIN = "harvesting-admin";
+
 	public static String USER_ADMINISTRATION_READ = "user_administration-read";
 	public static String USER_ADMINISTRATION_WRITE = "user_administration-write";
 	public static String USER_ADMINISTRATION_ADMIN = "user_administration-admin";
@@ -143,6 +147,8 @@ public class SecurityConstants
 	public static List<String> MONITORING_VIEW_PERMISSIONS;
 
 	public static List<String> HOUSEKEEPING_VIEW_PERMISSIONS;
+
+	public static List<String> HARVESTING_VIEW_PERMISSIONS;
 
 	public static List<String> REPLAY_VIEW_PERMISSIONS;
 
@@ -205,6 +211,9 @@ public class SecurityConstants
 		SERVICE_VIEW_PERMISSIONS.add(HOUSEKEEPING_ADMIN);
 		SERVICE_VIEW_PERMISSIONS.add(HOUSEKEEPING_READ);
 		SERVICE_VIEW_PERMISSIONS.add(HOUSEKEEPING_WRITE);
+		SERVICE_VIEW_PERMISSIONS.add(HARVESTING_ADMIN);
+		SERVICE_VIEW_PERMISSIONS.add(HARVESTING_READ);
+		SERVICE_VIEW_PERMISSIONS.add(HARVESTING_WRITE);
 
 		TOPOLOGY_VIEW_PERMISSIONS = new ArrayList<String>();
 		TOPOLOGY_VIEW_PERMISSIONS.add(WIRETAP_READ);
@@ -252,6 +261,12 @@ public class SecurityConstants
 		HOUSEKEEPING_VIEW_PERMISSIONS.add(HOUSEKEEPING_WRITE);
 		HOUSEKEEPING_VIEW_PERMISSIONS.add(HOUSEKEEPING_READ);
 		HOUSEKEEPING_VIEW_PERMISSIONS.add(HOUSEKEEPING_ADMIN);
+
+		HARVESTING_VIEW_PERMISSIONS = new ArrayList<String>();
+
+		HARVESTING_VIEW_PERMISSIONS.add(HARVESTING_WRITE);
+		HARVESTING_VIEW_PERMISSIONS.add(HARVESTING_READ);
+		HARVESTING_VIEW_PERMISSIONS.add(HARVESTING_ADMIN);
 
 		REPLAY_VIEW_PERMISSIONS = new ArrayList<String>();
 

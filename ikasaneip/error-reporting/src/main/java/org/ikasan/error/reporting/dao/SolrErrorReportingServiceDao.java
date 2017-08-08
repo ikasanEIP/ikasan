@@ -23,7 +23,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
     @Override
     public ErrorOccurrence<byte[]> find(String uri)
     {
-        String queryString = ERROR_URI + COLON + uri;
+        String queryString = ERROR_URI + COLON + "\"" + uri + "\"";
 
         logger.info("queryString: " + queryString);
 

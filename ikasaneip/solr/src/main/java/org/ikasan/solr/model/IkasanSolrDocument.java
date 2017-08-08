@@ -38,6 +38,15 @@ public class IkasanSolrDocument
     @Field("errorUri")
     private String errorUri;
 
+    @Field("errorDetail")
+    private String errorDetail;
+
+    @Field("errorMessage")
+    private String errorMessage;
+
+    @Field("exceptionClass")
+    private String exceptionClass;
+
     public long getIdentifier()
     {
         return new Long(id);
@@ -141,6 +150,36 @@ public class IkasanSolrDocument
     public void setErrorUri(String errorUri)
     {
         this.errorUri = errorUri;
+    }
+
+    public String getErrorDetail()
+    {
+        return errorDetail;
+    }
+
+    public void setErrorDetail(String errorDetail)
+    {
+        this.errorDetail = errorDetail;
+    }
+
+    public String getErrorMessage()
+    {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage)
+    {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getExceptionClass()
+    {
+        return exceptionClass;
+    }
+
+    public void setExceptionClass(String exceptionClass)
+    {
+        this.exceptionClass = exceptionClass;
     }
 
     @Override

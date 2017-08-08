@@ -5,48 +5,33 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.datefield.Resolution;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.housekeeping.HousekeepingJob;
-import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel;
-import org.ikasan.dashboard.ui.housekeeping.window.HousekeepingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
-import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
+import org.ikasan.dashboard.ui.search.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
-import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.solr.dao.SolrGeneralSearchDao;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.dao.WiretapDao;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -116,7 +101,7 @@ public class SearchPanel extends Panel implements View
                     else if(ikasanSolrDocument.getType().equals("error"))
                     {
                         ErrorOccurrence errorOccurrence = errorReportingServiceDao.find(ikasanSolrDocument.getErrorUri());
-                        ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, null,
+                        ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence,
                                 platformConfigurationService);
 
                         UI.getCurrent().addWindow(errorOccurrenceViewWindow);
@@ -299,8 +284,18 @@ public class SearchPanel extends Panel implements View
             item.getItemProperty("Module Name").setValue(doc.getModuleName());
             item.getItemProperty("Flow Name").setValue(doc.getFlowName());
             item.getItemProperty("Component Name").setValue(doc.getComponentName());
-            item.getItemProperty("Event Id / Error URI").setValue(doc.getEventId());
-            item.getItemProperty("Details").setValue((doc.getEvent().length() > 150) ? doc.getEvent().substring(0, 150) : doc.getEvent());
+
+            if(doc.getType().equals("error"))
+            {
+                item.getItemProperty("Event Id / Error URI").setValue(doc.getErrorUri());
+                item.getItemProperty("Details").setValue((doc.getErrorDetail().length() > 150) ? doc.getErrorDetail().substring(0, 150) : doc.getErrorDetail());
+            }
+            else if(doc.getType().equals("wiretap"))
+            {
+                item.getItemProperty("Event Id / Error URI").setValue(doc.getEventId());
+                item.getItemProperty("Details").setValue((doc.getEvent().length() > 150) ? doc.getEvent().substring(0, 150) : doc.getEvent());
+            }
+
             item.getItemProperty("Timestamp").setValue(timestamp);
 
             Button icon = new Button();

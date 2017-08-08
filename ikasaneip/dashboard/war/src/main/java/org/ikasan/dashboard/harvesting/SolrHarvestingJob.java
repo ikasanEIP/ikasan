@@ -171,7 +171,7 @@ public class SolrHarvestingJob implements Job
 
                 if(events.size() > 0)
                 {
-                    List<List<HarvestEvent>> partitionedEvents = Lists.partition(events, events.size() / threadCount);
+                    List<List<HarvestEvent>> partitionedEvents = Lists.partition(events, threadCount);
 
                     for (List<HarvestEvent> smallerEvents : partitionedEvents)
                     {
@@ -205,6 +205,8 @@ public class SolrHarvestingJob implements Job
                 + SolrHarvestingJob.CRON_EXPRESSION, this.cronExpression);
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + SolrHarvestingJob.HARVEST_BATCH_SIZE, this.harvestSize.toString());
+        getPlatformConfigurationService().saveConfigurationValue(getJobName()
+                + SolrHarvestingJob.THREAD_COUNT, this.threadCount.toString());
         getPlatformConfigurationService().saveConfigurationValue(getJobName()
                 + SolrHarvestingJob.ENABLED, this.enabled.toString());
 
@@ -277,6 +279,16 @@ public class SolrHarvestingJob implements Job
     public void setInitialised(Boolean initialised)
     {
         this.initialised = initialised;
+    }
+
+    public Integer getThreadCount()
+    {
+        return threadCount;
+    }
+
+    public void setThreadCount(Integer threadCount)
+    {
+        this.threadCount = threadCount;
     }
 
     private class SaveRunnable implements Runnable
