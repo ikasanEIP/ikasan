@@ -46,10 +46,13 @@ import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 
 import org.apache.log4j.Logger;
-import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitEvent;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -57,6 +60,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * SFTP Implementation of a producer based on the JCA specification.
@@ -69,11 +73,6 @@ public class SftpProducer implements Producer<Payload>,
      * class logger
      */
     private static Logger logger = Logger.getLogger(SftpProducer.class);
-
-    /**
-     * Connection factory
-     */
-    private final ConnectionFactory connectionFactory;
 
     /**
      * configured resource id
@@ -108,17 +107,21 @@ public class SftpProducer implements Producer<Payload>,
      */
     protected boolean isCriticalOnStartup = true;
 
-    /**
-     * Constructor
-     *
-     * @param connectionFactory FTP connection factory
-     */
-    public SftpProducer(final ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
-        if (this.connectionFactory == null) {
-            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
-        }
+    private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
 
+    private FileChunkDao fileChunkDao;
+
+    private BaseFileTransferDao baseFileTransferDao;
+
+    private JtaTransactionManager transactionManager;
+
+    public SftpProducer(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
+            FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+    {
+        this.transactionManager = transactionManager;
+        this.baseFileTransferDao = baseFileTransferDao;
+        this.fileChunkDao = fileChunkDao;
+        this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
     }
 
     public SftpProducerConfiguration getConfiguration() {
@@ -273,13 +276,19 @@ public class SftpProducer implements Producer<Payload>,
      * @return
      */
     private void getEndpoint(final SFTPConnectionSpec spec, final SFTPConnectionSpec alternateSpec) {
-        activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec);
-        activeFileTransferConnectionTemplate.addListener(this);
+        try{
+            activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,transactionalResourceCommandDAO,fileChunkDao,
+                    baseFileTransferDao,transactionManager);
+            activeFileTransferConnectionTemplate.addListener(this);
 
-        if (alternateSpec != null) {
-            alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec);
-            alternateFileTransferConnectionTemplate.addListener(this);
+            if (alternateSpec != null) {
+                alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(alternateSpec,transactionalResourceCommandDAO,fileChunkDao,
+                        baseFileTransferDao,transactionManager);
+                alternateFileTransferConnectionTemplate.addListener(this);
 
+            }
+        } catch (ResourceException e) {
+            throw new RuntimeException(e);
         }
     }
 

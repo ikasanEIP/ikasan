@@ -43,9 +43,11 @@ package org.ikasan.endpoint.sftp.producer;
 import java.io.ByteArrayInputStream;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 
-import org.ikasan.client.FileTransferConnectionTemplate;
+
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
+import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -55,6 +57,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
  * Test class for {@link SftpProducer}
@@ -77,24 +80,17 @@ public class SftpProducerTest
     /** Mock ftpConfiguration */
     private final SftpProducerConfiguration sftpConfiguration = this.mockery.mock(SftpProducerConfiguration.class, "mockSftpProducerConfiguration");
 
-    private final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
-
     private final FileTransferConnectionTemplate activeFileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class,"mockactiveFileTransferConnectionTemplate");
 
     private final FileTransferConnectionTemplate alternateFileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class,"mockalternateFileTransferConnectionTemplate");
 
+	private final JtaTransactionManager transactionManager = mockery.mock(JtaTransactionManager.class,"mocktransactionManager");
+	private final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class,"mockbaseFileTransferDao");
+	//private final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class,"mockFileChunkDao");
+	private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
+
     /** Object being tested */
-    private SftpProducer uut = new SftpProducer(connectionFactory);
-
-    /**
-     * Test failed constructor due to null fileTransferConnectionTemplate.
-     */    
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failedConstructor_nullFileTransferConnectionTemplate()
-    {
-        new SftpProducer(null);
-    }
-
+    private SftpProducer uut = new SftpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
 
     /**
      * Test successful invocation based on a single file.

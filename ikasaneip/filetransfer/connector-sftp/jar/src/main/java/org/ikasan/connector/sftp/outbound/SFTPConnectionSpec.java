@@ -101,40 +101,6 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     }
 
     /**
-     * Default Constructor
-     * 
-     * @param bundle
-     */
-    public SFTPConnectionSpec(ResourceBundle bundle)
-    {
-        super(bundle);
-        String prop = null;
-        prop = bundle.getString(SFTPConnectionProperties.KNOWN_HOSTS.toString());
-        this.setKnownHostsFilename(prop);
-        prop = bundle.getString(SFTPConnectionProperties.MAX_RETRIES.toString());
-        this.setMaxRetryAttempts(new Integer(prop));
-        prop = bundle.getString(SFTPConnectionProperties.PRIVATE_KEY.toString());
-        this.setPrivateKeyFilename(prop);
-        prop = bundle.getString(SFTPConnectionProperties.USERNAME.toString());
-        this.setUsername(prop);
-        prop = bundle.getString(SFTPConnectionProperties.PASSWORD.toString());
-        this.setPassword(prop);
-        prop = bundle.getString(SFTPConnectionProperties.HOST.toString());
-        this.setRemoteHostname(prop);
-        prop = bundle.getString(SFTPConnectionProperties.PORT.toString());
-        this.setRemotePort(new Integer(prop));
-        prop = bundle.getString(SFTPConnectionProperties.CLEANUP_JOURNAL_ON_COMPLETE.toString());
-        this.setCleanupJournalOnComplete(new Boolean(prop));
-        prop = bundle.getString(SFTPConnectionProperties.POLLTIME.toString());
-        if (prop != null)
-        {
-            this.setPollTime(new Integer(prop));
-        }
-        prop = bundle.getString(SFTPConnectionProperties.PREFERRED_DEX.toString());
-        this.setPreferredKeyExchangeAlgorithm(prop);
-    }
-
-    /**
      * Getter for cleanupJournalOnComplete
      * 
      * @return cleanupJournalOnComplete

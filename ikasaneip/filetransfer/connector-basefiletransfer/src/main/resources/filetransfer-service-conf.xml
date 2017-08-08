@@ -13,8 +13,8 @@
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>
-                <value>TransactionalResourceCommand.hbm.xml</value>
-                <value>XidImpl.hbm.xml</value>
+                <value>org/ikasan/connector/TransactionalResourceCommand.hbm.xml</value>
+                <value>org/ikasan/connector/XidImpl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -25,11 +25,11 @@
     </bean>
 
     <bean id="fileChunkDaoHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.xads" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
-                <value>connector/util/chunking/model/FileChunk.hbm.xml</value>
-                <value>connector/util/chunking/model/FileChunkHeader.hbm.xml</value>
+                <value>org/ikasan/connector/util/chunking/model/FileChunk.hbm.xml</value>
+                <value>org/ikasan/connector/util/chunking/model/FileChunkHeader.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -43,7 +43,7 @@
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
             <list>
-                <value>connector/basefiletransfer/persistence/FileFilter.hbm.xml</value>
+                <value>org/ikasan/connector/basefiletransfer/persistence/FileFilter.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

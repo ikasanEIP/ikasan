@@ -53,10 +53,10 @@
 
     <bean id="sftpMessageProvider" class="org.ikasan.endpoint.sftp.consumer.SftpMessageProvider">
         <property name="configuration" ref="sftpConsumerConfiguration"/>
-        <property name="fileChunkDao" ref="fileChunkDao"/>
-        <property name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
-        <property name="baseFileTransferDao" ref="baseFileTransferDao"/>
-        <property name="transactionManager" ref="transactionManager"/>
+        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
+        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
+        <constructor-arg name="transactionManager" ref="transactionManager"/>
     </bean>
 
     <bean id="payloadToStringConverter" class="org.ikasan.sample.converter.PayloadToStringConverter"/>

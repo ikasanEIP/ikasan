@@ -42,8 +42,7 @@
 
 	<modules>
 		<module>jar</module>
-		<module>rar</module>
-        <module>client</module>
+	    <module>client</module>
 	</modules>
 
 </project>

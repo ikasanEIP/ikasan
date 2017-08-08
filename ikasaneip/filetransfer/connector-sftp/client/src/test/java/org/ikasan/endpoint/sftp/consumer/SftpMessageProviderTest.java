@@ -41,7 +41,11 @@
 package org.ikasan.endpoint.sftp.consumer;
 
 
-import org.ikasan.client.FileTransferConnectionTemplate;
+
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -50,6 +54,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
@@ -73,8 +78,6 @@ public class SftpMessageProviderTest
     };
 
 
-    private final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
-
     private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
     private final SftpConsumerConfiguration configuration = mockery.mock(SftpConsumerConfiguration.class);
@@ -83,10 +86,15 @@ public class SftpMessageProviderTest
 
     private final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class,"mockfileTransferConnectionTemplate");
 
+    private final JtaTransactionManager transactionManager = mockery.mock(JtaTransactionManager.class,"mocktransactionManager");
+    private final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class,"mockbaseFileTransferDao");
+    //private final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class,"mockFileChunkDao");
+    private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
+
 
     @Before
     public void setup() {
-        uut = new SftpMessageProvider();
+        uut = new SftpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
         uut.setConfiguration(configuration);
     }
 

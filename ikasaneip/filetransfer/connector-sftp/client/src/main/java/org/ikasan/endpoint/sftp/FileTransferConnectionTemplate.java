@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.endpoint.sftp.consumer;
+package org.ikasan.endpoint.sftp;
 
 import org.apache.log4j.Logger;
 import org.ikasan.client.ConnectionCallback;
@@ -102,7 +102,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         this.baseFileTransferDao = baseFileTransferDao;
         this.transactionManager = transactionManager;
 
-        sftpManagedConnection = new SFTPManagedConnection(null, connectionSpecToCRI(connectionSpec));
+        sftpManagedConnection = new SFTPManagedConnection(connectionSpecToCRI(connectionSpec));
         sftpManagedConnection.setTransactionJournal(getTransactionJournal(transactionalResourceCommandDAO,fileChunkDao));
         // Open a session on the managed connection
         sftpManagedConnection.openSession();

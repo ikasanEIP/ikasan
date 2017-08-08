@@ -102,9 +102,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
      * 
      * client ID sits on EISManagedConnection
      * 
-     * @param managedConnectionFactory
+     * @param scri
      */
-    public SFTPManagedConnection(SFTPManagedConnectionFactory managedConnectionFactory, SFTPConnectionRequestInfo scri)
+    public SFTPManagedConnection(SFTPConnectionRequestInfo scri)
     {
         logger.debug("Called constructor."); //$NON-NLS-1$
         this.scri = scri;

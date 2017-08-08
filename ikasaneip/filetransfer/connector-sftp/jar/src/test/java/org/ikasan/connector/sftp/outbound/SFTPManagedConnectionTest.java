@@ -94,7 +94,7 @@ public class SFTPManagedConnectionTest
             }
         });
         // setup the managed connection
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
         // execute the recover method
         Xid[] executedTransactions = managedConnection.recover(XAResource.TMSTARTRSCAN);
@@ -124,7 +124,7 @@ public class SFTPManagedConnectionTest
             }
         });
         // setup the managed connection
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
         // execute the recover method
         try
@@ -146,7 +146,7 @@ public class SFTPManagedConnectionTest
      */
     @Test public void testRecover_handlesInvalidFlag()
     {
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedConnectionRequestInfo());
         int invalidFlag = 99;
         boolean xaExceptionFound = false;
         try
@@ -171,24 +171,12 @@ public class SFTPManagedConnectionTest
      */
     @Test public void testRecover_WithTimerEndScanFlag() throws XAException
     {
-        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
+        TransactionalCommandConnection managedConnection = new SFTPManagedConnection(getMockedConnectionRequestInfo());
         int flag = XAResource.TMENDRSCAN;
         Xid[] xids = managedConnection.recover(flag);
         assertEquals("No Xids should be returned when TimerEndScan flag is passed to recover", 0, xids.length); //$NON-NLS-1$
     }
 
-    /**
-     * Simply mocks the SFTPManagedConnectioFactory
-     *
-     * @return SFTPManagedConnectionFactory
-     */
-    private SFTPManagedConnectionFactory getMockedManagedConnectionFactory()
-    {
-
-        final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
-                .mock(SFTPManagedConnectionFactory.class);
-        return managedConnectionFactory;
-    }
 
     private SFTPConnectionRequestInfo getMockedConnectionRequestInfo()
     {

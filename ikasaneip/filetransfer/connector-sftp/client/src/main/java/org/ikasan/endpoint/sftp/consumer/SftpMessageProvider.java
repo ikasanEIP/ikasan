@@ -48,6 +48,7 @@ import org.ikasan.connector.listener.TransactionCommitEvent;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -104,6 +105,15 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     private BaseFileTransferDao baseFileTransferDao;
 
     private JtaTransactionManager transactionManager;
+
+    public SftpMessageProvider(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
+            FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO)
+    {
+        this.transactionManager = transactionManager;
+        this.baseFileTransferDao = baseFileTransferDao;
+        this.fileChunkDao = fileChunkDao;
+        this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
+    }
 
     @Override public Payload invoke(JobExecutionContext context)
     {
@@ -366,22 +376,5 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     {
         logger.info("Logging error: " + event.getException().getMessage());
         this.managedResourceRecoveryManager.recover(event.getException());
-    }
-
-    public void setTransactionalResourceCommandDAO(TransactionalResourceCommandDAO transactionalResourceCommandDAO) {
-        this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
-    }
-
-    public void setFileChunkDao(FileChunkDao fileChunkDao) {
-        this.fileChunkDao = fileChunkDao;
-    }
-
-    public void setBaseFileTransferDao(BaseFileTransferDao baseFileTransferDao) {
-        this.baseFileTransferDao = baseFileTransferDao;
-    }
-
-    public void setTransactionManager(JtaTransactionManager transactionManager)
-    {
-        this.transactionManager = transactionManager;
     }
 }
