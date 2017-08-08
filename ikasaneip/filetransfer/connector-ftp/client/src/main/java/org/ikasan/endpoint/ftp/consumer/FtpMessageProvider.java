@@ -41,8 +41,11 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 import org.apache.log4j.Logger;
-import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitEvent;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
@@ -53,6 +56,7 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.JobExecutionContext;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
@@ -90,11 +94,6 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
      */
     protected FtpConsumerConfiguration configuration;
 
-    /**
-     * Connection factory
-     */
-    private final ConnectionFactory connectionFactory;
-
     private FileBasedPasswordHelper fileBasedPasswordHelper;
 
     /**
@@ -104,19 +103,22 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
 
     private ManagedResourceRecoveryManager managedResourceRecoveryManager;
 
-    /**
-     * Constructor
-     *
-     * @param connectionFactory FTP connection factory
-     */
-    public FtpMessageProvider(final ConnectionFactory connectionFactory,
+    private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
+
+    private FileChunkDao fileChunkDao;
+
+    private BaseFileTransferDao baseFileTransferDao;
+
+    private JtaTransactionManager transactionManager;
+
+    public FtpMessageProvider(JtaTransactionManager transactionManager, BaseFileTransferDao baseFileTransferDao,
+            FileChunkDao fileChunkDao, TransactionalResourceCommandDAO transactionalResourceCommandDAO,
             FileBasedPasswordHelper fileBasedPasswordHelper)
     {
-        this.connectionFactory = connectionFactory;
-        if (this.connectionFactory == null)
-        {
-            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
-        }
+        this.transactionManager = transactionManager;
+        this.baseFileTransferDao = baseFileTransferDao;
+        this.fileChunkDao = fileChunkDao;
+        this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
         this.fileBasedPasswordHelper = fileBasedPasswordHelper;
         if (this.fileBasedPasswordHelper == null)
         {
@@ -374,12 +376,18 @@ public class FtpMessageProvider implements ManagedResource, MessageProvider<Payl
      */
     private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec)
     {
-        activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-        activeFileTransferConnectionTemplate.addListener(this);
-        if (alternateSpec != null)
-        {
-            alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-            alternateFileTransferConnectionTemplate.addListener(this);
+        try{
+            activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
+                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
+            activeFileTransferConnectionTemplate.addListener(this);
+            if (alternateSpec != null)
+            {
+                alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
+                        transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
+                alternateFileTransferConnectionTemplate.addListener(this);
+            }
+        } catch (ResourceException e) {
+            throw new RuntimeException(e);
         }
     }
 

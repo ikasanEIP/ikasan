@@ -2,7 +2,6 @@ package org.ikasan.connector.ftp.net;
 
 import org.ikasan.connector.ftp.outbound.FTPConnectionRequestInfo;
 import org.ikasan.connector.ftp.outbound.FTPManagedConnection;
-import org.ikasan.connector.ftp.outbound.FTPManagedConnectionFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -31,10 +30,8 @@ public class FTPManagedConnectionTest {
         info.setFtpsKeyStoreFilePath("/home2/gulese/ftps/sftu03ftp.jks");
         info.setFtpsKeyStoreFilePassword("MHI555");
 
-        FTPManagedConnectionFactory factory = new FTPManagedConnectionFactory();
-        factory.setLocalHostname("adl-swiftgw01");
 
-        FTPManagedConnection connection = new FTPManagedConnection(factory, info);
+        FTPManagedConnection connection = new FTPManagedConnection(info);
 
         System.out.println("################ Opening Session ################################");
         connection.openSession();

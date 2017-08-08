@@ -57,9 +57,11 @@ import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
 import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.ftp.net.FileTransferProtocol;
 import org.ikasan.connector.ftp.net.FileTransferProtocolClient;
 import org.ikasan.connector.ftp.net.FileTransferProtocolSSLClient;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 
 /**
  * This EJB implements the ManagedConnection for the FTP resource adapter. This
@@ -87,13 +89,6 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     private FileTransferProtocol ftpClient;
 
     /**
-     * Handle to the managed connection factory, overrides the default
-     * ManagedConnectipnFactory provided by the EISManagedConnection so that we
-     * don't have to cast back lots of times
-     */
-    protected FTPManagedConnectionFactory managedConnectionFactory;
-
-    /**
      * The client specific connection spec used to override the MFC values where 
      * necessary.
      */
@@ -105,39 +100,15 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      * 
      * client ID sits on EISManagedConnection
      * 
-     * @param managedConnectionFactory The managed connection factory providing
-     *            this managed connection
+     * @param fcri connection request info
      */
-    public FTPManagedConnection(FTPManagedConnectionFactory managedConnectionFactory, FTPConnectionRequestInfo fcri)
+    public FTPManagedConnection(FTPConnectionRequestInfo fcri)
     {
         logger.debug("Called constructor."); //$NON-NLS-1$
-        this.managedConnectionFactory = managedConnectionFactory;
         this.fcri = fcri;
         this.clientID = this.fcri.getClientID();
         instanceCount++;
         instanceOrdinal = instanceCount;
-    }
-
-    /**
-     * Set the managed connection factory
-     * 
-     * @param managedConnectionFactory Set the managed connection factory
-     *            providing this managed connection
-     */
-    @Override
-    public void setManagedConnectionFactory(ManagedConnectionFactory managedConnectionFactory)
-    {
-        this.managedConnectionFactory = (FTPManagedConnectionFactory) managedConnectionFactory;
-    }
-
-    /**
-     * Get the FTP managed connection factory
-     */
-    @Override
-    public FTPManagedConnectionFactory getManagedConnectionFactory()
-    {
-        logger.debug("Called getManagedConnectionFactory"); //$NON-NLS-1$
-        return this.managedConnectionFactory;
     }
 
     /**
@@ -166,11 +137,22 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
     {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new FTPConnectionImpl(this);
+        BaseFileTransferConnection connection = new FTPConnectionImpl(this,null,null);
         addConnection(connection);
         return connection;
     }
 
+    /**
+     * Create a virtual connection (a BaseFileTransferConnection object) and
+     * add it to the list of managed instances before returning it to the client.
+     */
+    public Object getConnection( FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    {
+        logger.debug("Called getConnection()"); //$NON-NLS-1$
+        BaseFileTransferConnection connection = new FTPConnectionImpl(this, fileChunkDao, baseFileTransferDao);
+        addConnection(connection);
+        return connection;
+    }
     /**
      * This method is called by the application server when it wants to remove
      * this resource adapter completely.
@@ -338,11 +320,8 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         {
             throw new ResourceException("username is null"); //$NON-NLS-1$
         }
-        String localHostname = null;
-        if(this.managedConnectionFactory.getLocalHostname() != null)
-        {
-            localHostname = this.managedConnectionFactory.getLocalHostname();
-        }
+        String localHostname = "localhost";
+
         String systemKey = this.fcri.getSystemKey();
         Integer connectionTimeout = this.fcri.getConnectionTimeout();
         Integer dataTimeout = this.fcri.getDataTimeout();

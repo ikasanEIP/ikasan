@@ -58,7 +58,6 @@
 
     <modules>
         <module>jar</module>
-        <module>rar</module>
         <module>client</module>
     </modules>
 
@@ -77,21 +76,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-rar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>rarCreation</id>
-                        <goals>
-                            <goal>rar</goal>
-                        </goals>
-                        <configuration>
-                            <includeJar>true</includeJar>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 

@@ -59,7 +59,6 @@ import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
-import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
@@ -103,7 +102,7 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements BaseFileTransferConnection
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(FTPConnection.class);
+    private static Logger logger = Logger.getLogger(FTPConnectionImpl.class);
 
     /** Id for Client of this connector */
     private String clientId;
@@ -123,18 +122,24 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
      */
     private Long chunkableThreshold = 1024 * 1024l; // ie 1MB
 
+    private FileChunkDao fileChunkDao;
+
+    private BaseFileTransferDao baseFileTransferDao;
+
     /**
      * Constructor which takes ManagedConnection as a parameter
-     * 
+     *
      * @param mc The ManagedConnection
      */
-    public FTPConnectionImpl(ManagedConnection mc)
+    public FTPConnectionImpl(ManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
     {
         super(mc);
         this.managedConnection = (FTPManagedConnection) mc;
         this.clientId = managedConnection.getClientID();
-    }
+        this.fileChunkDao = fileChunkDao;
+        this.baseFileTransferDao = baseFileTransferDao;
 
+    }
     /**
      * getManagedConnection is called by the FTPManagedConnection when the
      * application server wants to re-associate a virtual connection with a new
@@ -232,7 +237,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         // Pass through the client Id
         logger.debug("Got clientId [" + this.clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         executionContext.put(ExecutionContext.CLIENT_ID, this.clientId);
-        BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern, baseFileTransferDao, minAge, filterDuplicates,
             filterOnFilename, filterOnLastModifiedDate,isRecursive);
 
@@ -304,7 +308,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             {
                 throw new ConnectorException("Could not get pk from deserialized payload content"); //$NON-NLS-1$
             }
-            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             FileChunkHeader fileChunkHeader;
             try
             {
@@ -355,7 +358,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
                 CleanupChunksCommand cleanupChunksCommand = new CleanupChunksCommand();
                 
                 Map<String, Object> beanFactory = new HashMap<String,Object>();
-                beanFactory.put("fileChunkDao", DataAccessUtil.getFileChunkDao());
+                beanFactory.put("fileChunkDao", fileChunkDao);
                 
                 cleanupChunksCommand.setBeanFactory(beanFactory);
                 executeCommand(cleanupChunksCommand, executionContext);
@@ -471,7 +474,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
         if(chunking && shouldChunk(entry))
         {
-            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             // chunking specific
             logger.debug("About to call ChunkingRetrieveFileCommand"); //$NON-NLS-1$
             ChunkingRetrieveFileCommand chunkingRetrieveFileCommand = new ChunkingRetrieveFileCommand(baseFileTransferDao, clientID, renameOnSuccess,
@@ -526,7 +528,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
     {
         try
         {
-            BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
             baseFileTransferDao.housekeep(clientId, ageOfFiles, maxRows);
         }
         catch (Exception e)

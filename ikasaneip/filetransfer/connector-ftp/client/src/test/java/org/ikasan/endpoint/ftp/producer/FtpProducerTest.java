@@ -8,7 +8,9 @@ import java.io.ByteArrayInputStream;
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 
-import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
+import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -20,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 public class FtpProducerTest {
 
@@ -41,23 +44,20 @@ public class FtpProducerTest {
 
 	final Payload payload = mockery.mock(Payload.class);
 
+	private final JtaTransactionManager transactionManager = mockery.mock(JtaTransactionManager.class,"mocktransactionManager");
+	private final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class,"mockbaseFileTransferDao");
+	//private final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class,"mockFileChunkDao");
+	private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
+
 	@Before
 	public void setup() {
-		ftpProducer = new FtpProducer(connectionFactory);
+		ftpProducer = new FtpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
 		ftpProducer.setConfiguration(configuration);
 	}
 
 	@After
 	public void tearDown() {
 		mockery.assertIsSatisfied();
-	}
-
-	/**
-	 * Test failed constructor due to null fileTransferConnectionTemplate.
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void constructor_fails_when_connectionFactory_is_null() {
-		new FtpProducer(null);
 	}
 
 	/**

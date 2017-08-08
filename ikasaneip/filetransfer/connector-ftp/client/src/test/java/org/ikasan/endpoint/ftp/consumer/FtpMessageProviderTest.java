@@ -41,7 +41,9 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 
-import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
+import org.ikasan.endpoint.ftp.FileTransferConnectionTemplate;
 import org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper;
 import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
@@ -51,6 +53,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
@@ -73,8 +76,6 @@ public class FtpMessageProviderTest {
     };
 
 
-    private final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
-
     private final FileBasedPasswordHelper fileBasedPasswordHelper = mockery.mock(FileBasedPasswordHelper.class, "mockFileBasedPasswordHelper");
 
     private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
@@ -85,26 +86,25 @@ public class FtpMessageProviderTest {
 
     private final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class,"mockfileTransferConnectionTemplate");
 
+    private final JtaTransactionManager transactionManager = mockery.mock(JtaTransactionManager.class,"mocktransactionManager");
+    private final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class,"mockbaseFileTransferDao");
+    //private final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class,"mockFileChunkDao");
+    private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
 
     @Before
     public void setup() {
-        uut = new FtpMessageProvider(connectionFactory, fileBasedPasswordHelper);
+        uut = new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, fileBasedPasswordHelper);
         uut.setConfiguration(configuration);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failed_constructor_when_both_arg_are_null() {
-        new FtpMessageProvider(null, null);
+        new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failed_constructor_when_fileBasedPasswordHelper_is_null() {
-        new FtpMessageProvider(connectionFactory, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failed_constructor_when_connectionFactory_is_null() {
-        new FtpMessageProvider(null, fileBasedPasswordHelper);
+        new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, null);
     }
 
     @Test
