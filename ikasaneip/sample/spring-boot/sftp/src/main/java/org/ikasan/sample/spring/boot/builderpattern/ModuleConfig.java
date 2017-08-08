@@ -4,6 +4,7 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.util.producer.DevNull;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -33,7 +34,15 @@ public class ModuleConfig {
     private ScheduledConsumer sftpConsumer;
 
     @Resource
+    private ScheduledConsumer fileGeneratorScheduledConsumer;
+
+    @Resource
     private Converter payloadToStringConverter;
+    @Resource
+    private Converter filePayloadGeneratorConverter;
+
+    @Resource
+    private Producer sftpProducer;
 
     @Resource
     private AutowireCapableBeanFactory beanFactory;
@@ -41,15 +50,24 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        FlowBuilder fb = BuilderFactory.flowBuilder("sftpToLogFlow", "sample-module");
-        beanFactory.autowireBean(fb);
-        Flow flow = fb
+        FlowBuilder sftpToLogFlowBuilder = BuilderFactory.flowBuilder("sftpToLogFlow", "sample-module");
+        beanFactory.autowireBean(sftpToLogFlowBuilder);
+        Flow sftpToLogFlow = sftpToLogFlowBuilder
                 .withDescription("Sftp to Log")
                 .consumer("Sftp Consumer", sftpConsumer)
                 .converter("SFTP payload to String Converter",payloadToStringConverter)
                 .producer("Log", new DevNull()).build();
 
-        Module module = BuilderFactory.moduleBuilder("sftp-sample-module").withDescription("SFTP Sample Module").addFlow(flow).build();
+        FlowBuilder timeGeneratorToSftpFlowBuilder = BuilderFactory.flowBuilder("timeGeneratorToSftpFlow", "sample-module");
+        beanFactory.autowireBean(timeGeneratorToSftpFlowBuilder);
+        Flow timeGeneratorToSftpFlow = timeGeneratorToSftpFlowBuilder
+                .withDescription("Generates random string and send it to sftp as file")
+                .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)
+                .converter("Random String Generator",filePayloadGeneratorConverter)
+                .producer("Sftp Producer", sftpProducer).build();
+
+        Module module = BuilderFactory.moduleBuilder("sftp-sample-module").withDescription("SFTP Sample Module")
+                .addFlow(sftpToLogFlow).addFlow(timeGeneratorToSftpFlow).build();
         return module;
     }
 

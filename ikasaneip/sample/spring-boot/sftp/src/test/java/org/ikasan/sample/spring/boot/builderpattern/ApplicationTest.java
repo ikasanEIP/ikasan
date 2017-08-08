@@ -59,6 +59,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -161,7 +162,7 @@ public class ApplicationTest {
      * The SFTP test does not work on windows
      */
     @Test
-    public void test_createModule_start_and_stop_flow() throws Exception {
+    public void test_sftpConsumer_flow() throws Exception {
         String[] args = {""};
 
         Application myApplication = new Application();
@@ -185,6 +186,35 @@ public class ApplicationTest {
 
     }
 
+
+    /**
+     * The SFTP test does not work on windows
+     */
+    @Ignore
+    @Test
+    public void test_sftpProducer_flow() throws Exception {
+        String[] args = {""};
+
+        Application myApplication = new Application();
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+        System.out.println("Check is module healthy.");
+
+
+        // / you cannot lookup flow directly from context as only Module is injected through @Bean
+        Module module = (Module) ikasanApplication.getBean(Module.class);
+        Flow flow = (Flow) module.getFlow("timeGeneratorToSftpFlow");
+
+        // start flow
+        flow.start();
+        pause(20000);
+        assertEquals("running", flow.getState());
+
+        pause(5000);
+        flow.stop();
+        pause(2000);
+        assertEquals("stopped", flow.getState());
+
+    }
     /**
      * Sleep for value in millis
      *
