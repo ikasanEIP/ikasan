@@ -110,9 +110,25 @@ public class ConnectionTemplateTest
      */
     @Test public void testConnectionTemplate()
     {
-        new ConnectionTemplate(connectionSpec);
+        new ConnectionTemplate(connectionFactory, connectionSpec);
     }
 
+    /**
+     * Test method for
+     * {@link org.ikasan.client.ConnectionTemplate#ConnectionTemplate(javax.resource.cci.ConnectionFactory, javax.resource.cci.ConnectionSpec)}.
+     */
+    @Test public void testConnectionTemplate_withNullConnectionFactoryThrowsIllegalArgumentException()
+    {
+        try
+        {
+            new ConnectionTemplate(null, connectionSpec);
+            fail("IllegalArgumentException should have been thrown for null ConnectionFactory");
+        }
+        catch (Throwable th)
+        {
+            assertTrue("throwable should have been IllegalArgumentException", th instanceof IllegalArgumentException);
+        }
+    }
 
     /**
      * Test method for
@@ -131,7 +147,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate( null);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, null);
         connectionTemplate.execute(connectionCallback);
         mockery.assertIsSatisfied();
     }
@@ -153,7 +169,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionSpec);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, connectionSpec);
         connectionTemplate.execute(connectionCallback);
         mockery.assertIsSatisfied();
     }
@@ -178,7 +194,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate( connectionSpec);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, connectionSpec);
         ResourceException caughtResourceException = null;
         try
         {
@@ -213,7 +229,7 @@ public class ConnectionTemplateTest
                 one(connection).close();
             }
         });
-        ConnectionTemplate connectionTemplate = new ConnectionTemplate( connectionSpec);
+        ConnectionTemplate connectionTemplate = new ConnectionTemplate(connectionFactory, connectionSpec);
         Throwable caughtThrowable = null;
         try
         {
@@ -249,7 +265,7 @@ public class ConnectionTemplateTest
      * Test method for
      * {@link org.ikasan.client.ConnectionTemplate#closeConnection(javax.resource.cci.Connection)}.
      *
-     * TODO This test fails on Hudson as it expects a printStackTrace() on resourceException, 
+     * TODO This test fails on Hudson as it expects a printStackTrace() on resourceException,
      * not sure why!
      *
      * @throws ResourceException Exception thrown by Connector

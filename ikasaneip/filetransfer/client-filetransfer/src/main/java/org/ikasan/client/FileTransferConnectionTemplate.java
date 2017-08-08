@@ -71,9 +71,9 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
      * @param connectionFactory - The connection factory
      * @param connectionSpec - THe connection spec
      */
-    public FileTransferConnectionTemplate(ConnectionSpec connectionSpec)
+    public FileTransferConnectionTemplate(ConnectionFactory connectionFactory, ConnectionSpec connectionSpec)
     {
-        super(connectionSpec);
+        super(connectionFactory, connectionSpec);
     }
 
     /**
@@ -115,7 +115,7 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
      * @param renameExtension - The extension for the temp file rename
      * @param checksumDelivered - Flag for whether we perform checksumming
      * @param unzip - Flag for whether we unzip the delivered file
-     * @param createParentDirectory -  
+     * @param createParentDirectory -
      * @param tempFileName -
      * @throws ResourceException - Exception if JCA connector fails
      */
@@ -145,8 +145,8 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
      * @param moveOnSuccessNewPath - Where we move the file to
      * @param chunking - Whether we are chunking enabled
      * @param chunkSize - The size of the chunks
-     * @param checksum - Whether we checksum the pickup 
-     * @param minAge - The minimum age the file has to be in order to be picked up 
+     * @param checksum - Whether we checksum the pickup
+     * @param minAge - The minimum age the file has to be in order to be picked up
      * @param destructive - Whether we pick up destructively
      * @param filterDuplicates - Whether we filter duplicates
      * @param filterOnFilename - Whether we filter duplicates based on file name
@@ -177,7 +177,7 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate implement
      * Housekeep the FileFilter table
      *
      * @param maxRows Max rows the housekeeper will deal with
-     * @param ageOfFiles How old the files have to be in days to 
+     * @param ageOfFiles How old the files have to be in days to
      * be considered for housekeeping
      * @throws ResourceException - Exception if JCA connector fails
      */

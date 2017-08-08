@@ -42,6 +42,7 @@ package org.ikasan.client;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
+import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
 import org.apache.log4j.Logger;
@@ -51,10 +52,10 @@ import org.apache.log4j.Logger;
  * mean to run against a JCA connection will be supplied with a Connection from
  * the ConnectionFactory, ensuring that that Connection is safely closed when
  * done, regardless of the way the routine completes
- * 
- * 
+ *
+ *
  * @author Ikasan Development Team
- * 
+ *
  */
 public class ConnectionTemplate
 {
@@ -63,25 +64,37 @@ public class ConnectionTemplate
      */
     private static Logger logger = Logger.getLogger(ConnectionTemplate.class);
     /**
+     * ConnectionFactory from which to retrieve connections
+     */
+    private ConnectionFactory connectionFactory;
+    /**
      * Connection specifics
      */
     private ConnectionSpec connectionSpec;
 
     /**
      * Constructor
-     * 
+     *
+     * @param connectionFactory The factory for the connections
      * @param connectionSpec The connection spec
      */
-    public ConnectionTemplate(ConnectionSpec connectionSpec)
+    public ConnectionTemplate(ConnectionFactory connectionFactory,
+            ConnectionSpec connectionSpec)
     {
         super();
+        this.connectionFactory = connectionFactory;
         this.connectionSpec = connectionSpec;
+        if (connectionFactory == null)
+        {
+            throw new IllegalArgumentException(
+                    "ConnectionTemplate requires a non null ConnectionFactory");
+        }
     }
 
     /**
      * Execute the action specified by the given action object with a
      * Connection.
-     * 
+     *
      * @param action callback object that exposes the Connection
      * @return the result object from working with the Connection
      * @throws ResourceException if there is any problem
@@ -91,7 +104,14 @@ public class ConnectionTemplate
         Connection connection = null;
         try
         {
-
+            if (connectionSpec != null)
+            {
+                connection = connectionFactory.getConnection(connectionSpec);
+            }
+            else
+            {
+                connection = connectionFactory.getConnection();
+            }
             return action.doInConnection(connection);
         }
         finally
@@ -102,7 +122,7 @@ public class ConnectionTemplate
 
     /**
      * Closes the connection, suppressing any exceptions
-     * 
+     *
      * @param connection - possibly null, not necessarily open
      */
     public static void closeConnection(Connection connection)
@@ -123,7 +143,7 @@ public class ConnectionTemplate
                 // We don't trust the EIS provider: It might throw
                 // RuntimeException or Error.
                 logger.debug("Unexpected exception on closing EIS Connection",
-                    ex);
+                        ex);
             }
         }
     }

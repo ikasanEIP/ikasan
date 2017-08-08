@@ -61,31 +61,31 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Ikasan Development Team
- * 
+ *
  */
 public class FileTransferConnectionTemplateTest
 {
-    
+
     /**
      * Mockery for interfaces
      */
     private Mockery mockery = new Mockery();
-    
+
     /**
      * Mocked ConnectionFactory
      */
     ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class);
-    
+
     /**
      * Mocked BaseFileTransferConnection
      */
     BaseFileTransferConnection connection = mockery.mock(BaseFileTransferConnection.class);
-  
+
     /**
      * Mocked Payload
      */
     Payload payload = mockery.mock(Payload.class);
-    
+
     /**
      * Test method for
      * {@link org.ikasan.client.FileTransferConnectionTemplate#deliverPayload(org.ikasan.filetransfer.Payload, java.lang.String, java.util.Map, boolean, java.lang.String, boolean, boolean, boolean)}.
@@ -101,18 +101,18 @@ public class FileTransferConnectionTemplateTest
         final boolean checksumDelivered = false;
         final boolean unzip = false;
         final boolean cleanup = false;
-        
+
         mockery.checking(new Expectations()
         {
             {
                 one(connectionFactory).getConnection();
                 will(returnValue(connection));
                 one(connection).deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered, unzip, cleanup);
-                one(connection).close(); 
+                one(connection).close();
             }
         });
-        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(null);
-        
+        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory,null);
+
         fileTransferConnectionTemplate.deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered, unzip, cleanup);
         mockery.assertIsSatisfied();
     }
@@ -125,21 +125,21 @@ public class FileTransferConnectionTemplateTest
     @Test
     public void testGetDiscoveredFile() throws ResourceException
     {
-        
-        final String sourceDir="sourceDir"; 
-        final String filenamePattern="filenamePattern";       
+
+        final String sourceDir="sourceDir";
+        final String filenamePattern="filenamePattern";
         final boolean renameOnSuccess = false;
-        final String renameOnSuccessExtension="renameOnSuccessExtension";     
-        final boolean moveOnSuccess = false;       
-        final String moveOnSuccessNewPath="moveOnSuccessNewPath";            
+        final String renameOnSuccessExtension="renameOnSuccessExtension";
+        final boolean moveOnSuccess = false;
+        final String moveOnSuccessNewPath="moveOnSuccessNewPath";
         final boolean chunking = false;
-        final int chunkSize = 100;       
+        final int chunkSize = 100;
         final boolean checksum = false;
-        final int minAge = 100;  
+        final int minAge = 100;
         final boolean destructive = false;
         final boolean filterDuplicates = false;
-        final boolean filterOnFilename=true; 
-        final boolean filterOnLastModifedDate=true; 
+        final boolean filterOnFilename=true;
+        final boolean filterOnLastModifedDate=true;
         final boolean chronological = false;
         final boolean isRecursive = false;
 
@@ -149,20 +149,20 @@ public class FileTransferConnectionTemplateTest
                 one(connectionFactory).getConnection();
                 will(returnValue(connection));
                 one(connection).getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum,minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
-                one(connection).close(); 
+                one(connection).close();
             }
         });
-        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(null);
-        
-        
+        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory,null);
+
+
         fileTransferConnectionTemplate.getDiscoveredFile(sourceDir, filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath, chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename, filterOnLastModifedDate, chronological,isRecursive);
         mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test method for
      * {@link org.ikasan.client.FileTransferConnectionTemplate#housekeep(int, int) }.
-     * @throws ResourceException Exception thrown by connector 
+     * @throws ResourceException Exception thrown by connector
      */
     @Test
     public void testHousekeep() throws ResourceException
@@ -173,12 +173,12 @@ public class FileTransferConnectionTemplateTest
                 one(connectionFactory).getConnection();
                 will(returnValue(connection));
                 one(connection).housekeep(99, 99);
-                one(connection).close(); 
+                one(connection).close();
             }
         });
-        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate( null);
+        FileTransferConnectionTemplate fileTransferConnectionTemplate = new FileTransferConnectionTemplate(connectionFactory, null);
         fileTransferConnectionTemplate.housekeep(99, 99);
         mockery.assertIsSatisfied();
     }
-    
+
 }
