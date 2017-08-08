@@ -370,7 +370,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		rightLayout.setMargin(true);
 		rightLayout.addComponent(this.tabsheetPanel);
 		hsplit.setSecondComponent(rightLayout);
-		hsplit.setSplitPosition(30, Unit.PERCENTAGE);
+		hsplit.setSplitPosition(300, Unit.PIXELS);
 
 		this.flowStates = this.topologyCache.getStateMap();
 

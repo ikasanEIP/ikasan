@@ -271,7 +271,7 @@ public class Menu extends CssLayout
         harvestingMenuItem.setPrimaryStyleName("valo-menu-item");
         harvestingMenuItem.setIcon(VaadinIcons.TRUCK);
         menuItemsLayout.addComponent(harvestingMenuItem);
-        this.menuComponents.put(harvestingMenuItem, SecurityConstants.HOUSEKEEPING_VIEW_PERMISSIONS);
+        this.menuComponents.put(harvestingMenuItem, SecurityConstants.HARVESTING_VIEW_PERMISSIONS);
         
         label = new Label("Administration", ContentMode.HTML);
         label.setPrimaryStyleName("valo-menu-subtitle");

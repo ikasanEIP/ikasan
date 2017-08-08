@@ -13,6 +13,7 @@ import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.harvesting.SolrHarvestingJob;
 import org.ikasan.dashboard.housekeeping.HousekeepingJob;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.harvesting.window.HarvestingJobManagementWindow;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.monitor.component.MonitorIcons;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -111,18 +112,20 @@ public class HarvestingPanel extends Panel implements View
             {
                 if (itemClickEvent.isDoubleClick())
                 {
-//                    final HousekeepingJobManagementWindow housekeepingJobManagementWindow = new HousekeepingJobManagementWindow((HousekeepingJob)itemClickEvent.getItemId(),
-//                            harvestSchedulerService);
-//                    UI.getCurrent().addWindow(housekeepingJobManagementWindow);
-//
-//                    housekeepingJobManagementWindow.addCloseListener(new Window.CloseListener()
-//                    {
-//                        @Override
-//                        public void windowClose(Window.CloseEvent e)
-//                        {
-//                            refresh();
-//                        }
-//                    });
+                    final HarvestingJobManagementWindow harvestingJobManagementWindow
+                            = new HarvestingJobManagementWindow((SolrHarvestingJob)itemClickEvent.getItemId(),
+                            harvestSchedulerService);
+
+                    UI.getCurrent().addWindow(harvestingJobManagementWindow);
+
+                    harvestingJobManagementWindow.addCloseListener(new Window.CloseListener()
+                    {
+                        @Override
+                        public void windowClose(Window.CloseEvent e)
+                        {
+                            refresh();
+                        }
+                    });
                 }
             }
         });

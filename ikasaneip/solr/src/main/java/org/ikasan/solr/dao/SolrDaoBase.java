@@ -145,7 +145,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
             componentNamesBuffer.append(CLOSE_BRACKET);
         }
 
-        if(eventId != null && !eventId.isEmpty())
+        if(eventId != null && !eventId.trim().isEmpty())
         {
             delim = "";
 
@@ -154,7 +154,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
             eventIdBuffer.append(delim).append("\"").append(eventId).append("\" ");
         }
 
-        if(type != null && !type.isEmpty())
+        if(type != null && !type.trim().isEmpty())
         {
             delim = "";
 
@@ -168,7 +168,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
             dateBuffer.append(CREATED_DATE_TIME + COLON).append("[").append(fromDate.getTime()).append(TO).append(untilDate.getTime()).append("]");
         }
 
-        if(payloadContent != null)
+        if(payloadContent != null && !payloadContent.trim().isEmpty())
         {
             payloadBuffer.append(PAYLOAD_CONTENT + COLON).append("").append(payloadContent).append("");
 
