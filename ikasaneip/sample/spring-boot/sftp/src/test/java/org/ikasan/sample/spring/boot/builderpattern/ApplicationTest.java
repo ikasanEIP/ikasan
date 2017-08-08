@@ -40,6 +40,10 @@
  */
 package org.ikasan.sample.spring.boot.builderpattern;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.server.Command;
@@ -59,7 +63,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.ByteArrayInputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -78,7 +86,7 @@ public class ApplicationTest {
     public void beforeTestSetup() throws Exception {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(22999);
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
+        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("target/hostkey.ser"));
         sshd.setPasswordAuthenticator(new PasswordAuthenticator() {
 
             @Override
@@ -100,15 +108,57 @@ public class ApplicationTest {
         sshd.setSubsystemFactories(namedFactoryList);
         sshd.start();
 
+        putFile();
+    }
+
+    public void putFile() throws Exception {
+        // Make sure to delete all files created by sftp
+        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
+        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
+
+        JSch jsch = new JSch();
+
+        Hashtable config = new Hashtable();
+        config.put("StrictHostKeyChecking", "no");
+        JSch.setConfig(config);
+
+        Session session = jsch.getSession("test", "localhost", 22999);
+        session.setPassword("test");
+
+        session.connect();
+
+        Channel channel = session.openChannel("sftp");
+        channel.connect();
+
+        ChannelSftp sftpChannel = (ChannelSftp) channel;
+
+        final String testFileContents = "some file contents";
+
+        String uploadedFileName = "test.txtb";
+        sftpChannel.put(new ByteArrayInputStream(testFileContents.getBytes()), uploadedFileName);
+
+        if (sftpChannel.isConnected()) {
+            sftpChannel.exit();
+        }
+
+        if (session.isConnected()) {
+            session.disconnect();
+        }
+
     }
 
     @After
     public void teardown() throws Exception {
         sshd.stop();
+
+        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txtb"));
+        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
+        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
+
     }
 
     /**
-     * Test simple invocation.
+     * The SFTP test does not work on windows
      */
     @Test
     public void test_createModule_start_and_stop_flow() throws Exception {

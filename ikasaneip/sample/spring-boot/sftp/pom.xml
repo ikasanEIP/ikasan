@@ -17,6 +17,7 @@
 
     <properties>
         <!--<java.version>1.8</java.version>-->
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
@@ -87,24 +88,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-sftp-classes</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-filetransfer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-basefiletransfer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- web console -->
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -160,13 +143,6 @@
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
             <version>${version.org.apache.sshd}</version>
-            <scope>test</scope>
-
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.49</version>
             <scope>test</scope>
         </dependency>
 

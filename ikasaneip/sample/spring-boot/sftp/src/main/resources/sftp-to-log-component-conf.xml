@@ -21,7 +21,7 @@
                             org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
                         </value>
                         <value>sftpConsumer</value>
-                        <value>sftpToJbossHornetQFlow</value>
+                        <value>sftpToLogFlow</value>
                     </list>
                 </property>
             </bean>
@@ -31,17 +31,18 @@
     </bean>
 
     <bean id="sftpConsumerConfiguration" class="org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration">
-        <property name="cronExpression" value="0/10 * * * * ?"/>
-        <property name="clientID" value="ftpToLogFlow"/>
-        <property name="username" value="test"/>
-        <property name="password" value="test"/>
-        <property name="remoteHost" value="localhost"/>
-        <property name="remotePort" value="22999"/>
-        <property name="sourceDirectory" value="."/>
-        <property name="filenamePattern" value=".*.txt"/>
+        <property name="cronExpression" value="${sftp.consumer.cronExpression}"/>
+        <property name="clientID" value="${sftp.consumer.clientID}"/>
+        <property name="username" value="${sftp.consumer.username}"/>
+        <property name="password" value="${sftp.consumer.password}"/>
+        <property name="remoteHost" value="${sftp.consumer.remoteHost}"/>
+        <property name="remotePort" value="${sftp.consumer.remotePort}"/>
+        <property name="sourceDirectory" value="${sftp.consumer.sourceDirectory}"/>
+        <property name="filenamePattern" value="${sftp.consumer.filenamePattern}"/>
         <property name="chronological" value="true"/>
         <property name="cleanupJournalOnComplete" value="false"/>
         <property name="ageOfFiles" value="30"/>
+        <property name="minAge" value="1"/>
         <property name="filterOnLastModifiedDate" value="false"/>
         <property name="renameOnSuccess" value="true"/>
         <property name="renameOnSuccessExtension" value=".tmp"/>
@@ -54,6 +55,8 @@
         <property name="configuration" ref="sftpConsumerConfiguration"/>
         <property name="fileChunkDao" ref="fileChunkDao"/>
         <property name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+        <property name="baseFileTransferDao" ref="baseFileTransferDao"/>
+        <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
     <bean id="payloadToStringConverter" class="org.ikasan.sample.converter.PayloadToStringConverter"/>

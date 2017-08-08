@@ -42,12 +42,11 @@ package org.ikasan.endpoint.sftp.consumer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.client.ConnectionCallback;
-import org.ikasan.client.ConnectionTemplate;
 import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalImpl;
-import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
@@ -56,12 +55,12 @@ import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.connector.sftp.outbound.SFTPManagedConnection;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filetransfer.Payload;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.annotation.Resource;
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionSpec;
-import javax.resource.spi.ConnectionRequestInfo;
+import javax.transaction.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,11 +79,6 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
 
     protected List<TransactionCommitFailureListener> listeners = new ArrayList<TransactionCommitFailureListener>();
 
-    /**
-     * Connection specifics
-     */
-    private ConnectionSpec connectionSpec;
-
     /** Journal for logging activity of this connector */
     private TransactionJournal transactionJournal = null;
 
@@ -93,24 +87,27 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
     private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
     private FileChunkDao fileChunkDao;
     private BaseFileTransferDao baseFileTransferDao;
+
+    private JtaTransactionManager transactionManager;
     /**
      * Constructor
      *
      * @param connectionSpec - THe connection spec
      */
     public FileTransferConnectionTemplate(ConnectionSpec connectionSpec,TransactionalResourceCommandDAO transactionalResourceCommandDAO,
-                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)  throws ResourceException
+                                          FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao,JtaTransactionManager transactionManager)  throws ResourceException
     {
-        this.connectionSpec = connectionSpec;
         this.fileChunkDao = fileChunkDao;
         this.transactionalResourceCommandDAO = transactionalResourceCommandDAO;
         this.baseFileTransferDao = baseFileTransferDao;
+        this.transactionManager = transactionManager;
 
         sftpManagedConnection = new SFTPManagedConnection(null, connectionSpecToCRI(connectionSpec));
         sftpManagedConnection.setTransactionJournal(getTransactionJournal(transactionalResourceCommandDAO,fileChunkDao));
         // Open a session on the managed connection
         sftpManagedConnection.openSession();
         // Return the managed connection (with an open session)
+
     }
 
     /**
@@ -272,7 +269,29 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         try
         {
             connection = (Connection) sftpManagedConnection.getConnection(this.fileChunkDao,baseFileTransferDao);
-            return action.doInConnection(connection);
+            try
+            {
+                if (connection instanceof BaseFileTransferConnection)
+                {
+                    BaseFileTransferConnection sc = (BaseFileTransferConnection) connection;
+                    TransactionalCommandConnection smc = sc.getManagedConnection();
+                    transactionManager.getTransactionManager().getTransaction().enlistResource(smc);
+                }
+
+                Object toreturn =  action.doInConnection(connection);
+
+                return toreturn;
+            }
+            catch (SystemException e)
+            {
+                e.printStackTrace();
+                return null;
+            }
+            catch (RollbackException e)
+            {
+                e.printStackTrace();
+                return null;
+            }
         }
         finally
         {
@@ -358,4 +377,5 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         }
         return scri;
     }
+
 }

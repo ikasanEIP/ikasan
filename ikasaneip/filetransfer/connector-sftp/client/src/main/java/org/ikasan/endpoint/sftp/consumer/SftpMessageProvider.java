@@ -54,6 +54,7 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.JobExecutionContext;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.InvalidPropertyException;
@@ -101,6 +102,8 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     private FileChunkDao fileChunkDao;
 
     private BaseFileTransferDao baseFileTransferDao;
+
+    private JtaTransactionManager transactionManager;
 
     @Override public Payload invoke(JobExecutionContext context)
     {
@@ -322,13 +325,13 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     {
         try {
             activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(spec,
-                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao);
+                    transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
 
             activeFileTransferConnectionTemplate.addListener(this);
             if (alternateSpec != null)
             {
                 alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(alternateSpec,
-                        transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao);
+                        transactionalResourceCommandDAO,fileChunkDao,baseFileTransferDao,transactionManager);
                 alternateFileTransferConnectionTemplate.addListener(this);
             }
         } catch (ResourceException e) {
@@ -375,5 +378,10 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
 
     public void setBaseFileTransferDao(BaseFileTransferDao baseFileTransferDao) {
         this.baseFileTransferDao = baseFileTransferDao;
+    }
+
+    public void setTransactionManager(JtaTransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
     }
 }
