@@ -52,6 +52,7 @@ import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
 import org.ikasan.connector.BaseFileTransferConnection;
+import org.ikasan.connector.base.ConnectionState;
 import org.ikasan.connector.base.command.*;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
@@ -97,7 +98,7 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
  * 
  * @author Ikasan Development Team
  */
-public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implements BaseFileTransferConnection
+public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
 {
     /** The logger instance. */
     private static Logger logger = Logger.getLogger(SFTPConnectionImpl.class);
@@ -132,10 +133,9 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
      * 
      * @param mc The ManagedConnection
      */
-    public SFTPConnectionImpl(ManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    public SFTPConnectionImpl(SFTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
     {
-        super(mc);
-        this.managedConnection = (SFTPManagedConnection) mc;
+        this.managedConnection = mc;
         this.clientId = managedConnection.getClientID();
         this.fileChunkDao = fileChunkDao;
         this.baseFileTransferDao = baseFileTransferDao;
@@ -189,10 +189,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         // Close the physical session
         logger.debug("Calling closeSession."); //$NON-NLS-1$
         this.managedConnection.closeSession();
-        // Remove and nullify this virtual connection
-        this.managedConnection.removeConnection(this);
-        // This can trigger managed connection cleanup()
-        this.managedConnection.sendClosedEvent(this);
+
         // Set the managed connection to null if not already done
         if (this.managedConnection != null)
         {
@@ -204,20 +201,6 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         {
             logger.debug("Managed Connection was already set to null."); //$NON-NLS-1$
         }
-    }
-
-    // //////////////////////////////////////////////////////////
-    // Client virtual connection methods
-    // //////////////////////////////////////////////////////////
-    /**
-     * Validate - If there is validation to be done in the future then pass that
-     * validation to the manager.
-     */
-    @Override
-    public void validate() //throws ResourceException
-    {
-        logger.debug("Called validate()..."); //$NON-NLS-1$
-        // this.managedConnection.validate();
     }
 
     // /////////////////////////////////////////////////////

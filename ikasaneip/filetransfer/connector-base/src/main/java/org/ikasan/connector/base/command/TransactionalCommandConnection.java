@@ -40,12 +40,11 @@
  */
 package org.ikasan.connector.base.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import java.util.*;
 import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionEvent;
+import javax.resource.spi.ConnectionEventListener;
+import javax.resource.spi.ResourceAdapterInternalException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -53,7 +52,7 @@ import javax.transaction.xa.Xid;
 import org.apache.log4j.Logger;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
-import org.ikasan.connector.base.outbound.xa.EISXALRCOManagedConnection;
+import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
 
@@ -73,7 +72,7 @@ import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
  * @author Ikasan Development Team
  * 
  */
-public abstract class TransactionalCommandConnection extends EISXALRCOManagedConnection implements TransactionCommitFailureObserverable
+public abstract class TransactionalCommandConnection implements LastResourceCommitOptimisation,TransactionCommitFailureObserverable
 {
 
     /** The logger instance. */
@@ -497,6 +496,8 @@ public abstract class TransactionalCommandConnection extends EISXALRCOManagedCon
      */
     protected abstract TransactionalResource getTransactionalResource();
 
+    public abstract XAResource getXAResource() throws ResourceException;
+
     /**
      * Hook method to allow any connector specific pre rollback functionality
      * 
@@ -625,4 +626,34 @@ public abstract class TransactionalCommandConnection extends EISXALRCOManagedCon
             listeners.add(listener);
         }
     }
+
+    /**
+     * Completely removes this connection and destroys it so it cannot be reused
+     * in the future.
+     *
+     * @param thrown - The throwable (error) that we're sending
+     */
+    protected void sendErrorEvent(Throwable thrown)
+    {
+        logger.debug("Called sendErrorEvent"); //$NON-NLS-1$
+
+        Exception e = null;
+        if (thrown instanceof Exception)
+        {
+            e = (Exception) thrown;
+        }
+        else
+        {
+            e = new ResourceAdapterInternalException("Unexpected error", thrown); //$NON-NLS-1$
+        }
+//        Iterator<ConnectionEventListener> it = this.connectionListeners.iterator();
+//        while (it.hasNext())
+//        {
+//            ConnectionEventListener listener = it.next();
+//            ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, e);
+//            listener.connectionErrorOccurred(ce);
+//        }
+    }
 }
+
+

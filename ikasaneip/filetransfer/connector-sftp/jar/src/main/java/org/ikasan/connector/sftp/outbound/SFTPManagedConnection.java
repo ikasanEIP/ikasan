@@ -88,7 +88,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     /** Common library used by both inbound and outbound connectors */
     private SFTPClient sftpClient;
 
-
+    private  String clientID;
     /**
      * The client specific connection spec used to override the MFC values where 
      * necessary.
@@ -114,36 +114,6 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         instanceOrdinal = instanceCount;
     }
 
-    /**
-     * Set the connection request info
-     * @param scri
-     */
-    public void setConnectionRequestInfo(SFTPConnectionRequestInfo scri)
-    {
-        this.scri = scri;
-    }
-
-    /**
-     * GEt the SFTP connection request info
-     * @return SFTPConnectionRequestInfo
-     */
-    public SFTPConnectionRequestInfo getConnectionRequestInfo()
-    {
-        return this.scri;
-    }
-
-    /**
-     * Create a virtual connection (a BaseFileTransferConnection object) and 
-     * add it to the list of managed instances before returning it to the client.
-     */
-    @Override
-    public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
-    {
-        logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new SFTPConnectionImpl(this,null,null);
-        addConnection(connection);
-        return connection;
-    }
 
     /**
      * Create a virtual connection (a BaseFileTransferConnection object) and
@@ -153,65 +123,13 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
         BaseFileTransferConnection connection = new SFTPConnectionImpl(this, fileChunkDao, baseFileTransferDao);
-        addConnection(connection);
         return connection;
     }
 
-    /**
-     * This method is called by the application server when it wants to remove
-     * this resource adapter completely.
-     * 
-     * It must free any physical resources. So this is where we will shut down
-     * the real connection to the EIS.
-     */
-    @Override
-    public void destroy() throws ResourceException
+    public String getClientID()
     {
-        logger.debug("Called destroy()"); //$NON-NLS-1$
-
-        // Don't destroy twice
-        if (this.destroyed)
-        {
-            logger.debug("Already destroyed, returning"); //$NON-NLS-1$
-            return;
-        }
-
-        // TODO Doesn't the app server already call this first?
-        cleanup();
-
-        // TODO: This is a badly named worded method, closeSession kills the
-        // physical connection
-        closeSession();
-
-        this.destroyed = true;
+        return clientID;
     }
-
-    /**
-     * This method is called by the application server to inform this
-     * ManagedConnection that it is about to be repooled. It won't do this while
-     * it has active virtual connections, but it may do it at any other time. We
-     * must indicate that our virtual connections are defunct.
-     * 
-     * One of situations this gets called in is when close() is called on a
-     * virtual connection and it is the last virtual connection in the pool
-     */
-    @Override
-    public void cleanup() throws ResourceException
-    {
-        logger.debug("Called cleanup()"); //$NON-NLS-1$
-        throwIfDestroyed();
-        Iterator<?> it = this.connections.iterator();
-        while (it.hasNext())
-        {
-            BaseFileTransferConnection sc = (BaseFileTransferConnection) it.next();
-            // We have no specific implementation for invalidate at this stage
-            // It therefore defaults to EISManagedConnection.invalidate()
-            // which sets the managedConnection to null
-            sc.invalidate();
-        }
-        this.connections.clear();
-    }
-
     // ////////////////////////////////////////
     // Connection API Calls
     // ////////////////////////////////////////
@@ -398,43 +316,6 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     // TXN API calls
     // /////////////////////////////////////
 
-    /**
-     * Get any MetaData associated with this managed connection, e.g. The
-     * maximum number of connections allowed
-     */
-    @Override
-    public SFTPManagedConnectionMetaData getMetaData()
-    {
-        logger.debug("Called getMetaData()"); //$NON-NLS-1$
-        return new SFTPManagedConnectionMetaData(this);
-    }
-
-    /**
-     * Associate a connection with this managed connection
-     */
-    @Override
-    public void associateConnection(Object connection) throws ResourceException
-    {
-        logger.debug("Called associateConnection()"); //$NON-NLS-1$
-        this.throwIfDestroyed();
-        if (connection instanceof BaseFileTransferConnection)
-        {
-            BaseFileTransferConnection sc = (BaseFileTransferConnection) connection;
-            TransactionalCommandConnection smc = sc.getManagedConnection();
-            // If it's already associated with us then leave
-            if (smc == this)
-            {
-                return;
-            }
-            smc.removeConnection(sc);
-            addConnection(sc);
-            sc.setManagedConnection(this);
-        }
-        else
-        {
-            throw new javax.resource.spi.IllegalStateException("Invalid connection object [" + connection + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
 
     /**
      * Deal with forgetting this unti of work as a txn, in this case do nothing

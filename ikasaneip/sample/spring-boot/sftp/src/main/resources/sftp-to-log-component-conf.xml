@@ -44,7 +44,8 @@
         <property name="ageOfFiles" value="30"/>
         <property name="minAge" value="1"/>
         <property name="filterOnLastModifiedDate" value="false"/>
-        <property name="renameOnSuccess" value="true"/>
+        <property name="filterDuplicates" value="true"/>
+        <property name="renameOnSuccess" value="false"/>
         <property name="renameOnSuccessExtension" value=".tmp"/>
         <property name="destructive" value="false"/>
         <property name="chunking" value="false"/>

@@ -131,7 +131,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                //addListenersToConnection((BaseFileTransferConnection) connection);
+                addListenersToConnection((BaseFileTransferConnection) connection);
 
                 ((BaseFileTransferConnection) connection).deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered,
                         unzip, cleanup);
@@ -162,7 +162,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                //addListenersToConnection((BaseFileTransferConnection) connection);
+                addListenersToConnection((BaseFileTransferConnection) connection);
                 ((BaseFileTransferConnection) connection).deliverInputStream(inputStream, fileName, outputDir,  overwrite, renameExtension, checksumDelivered,unzip, createParentDirectory, tempFileName);
                 return null;
             }
@@ -201,7 +201,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                //addListenersToConnection((BaseFileTransferConnection) connection);
+                addListenersToConnection((BaseFileTransferConnection) connection);
                 Payload discoveredFile = ((BaseFileTransferConnection) connection).getDiscoveredFile(sourceDir,
                         filenamePattern, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, moveOnSuccessNewPath,
                         chunking, chunkSize, checksum, minAge, destructive, filterDuplicates, filterOnFilename,

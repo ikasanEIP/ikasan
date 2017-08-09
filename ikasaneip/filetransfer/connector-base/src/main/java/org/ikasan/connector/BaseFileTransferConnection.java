@@ -55,7 +55,7 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public interface
-        BaseFileTransferConnection extends EISConnection, TransactionCommitFailureObserverable
+        BaseFileTransferConnection extends TransactionCommitFailureObserverable
 {
 
     /**

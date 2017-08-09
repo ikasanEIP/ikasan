@@ -43,11 +43,12 @@ package org.ikasan.connector.basefiletransfer.outbound;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
+import javax.resource.cci.*;
 
 import org.apache.log4j.Logger;
+import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.factory.PayloadFactory;
@@ -68,7 +69,7 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
  * A Base implementation for File transfer connections
  * @author Ikasan Development Team
  */
-public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl implements TransactionCommitFailureObserverable
+public abstract class BaseFileTransferConnectionImpl implements BaseFileTransferConnection,Connection
 {
     /** The logger instance. */
     private static Logger logger = Logger.getLogger(BaseFileTransferConnectionImpl.class);
@@ -78,16 +79,6 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl i
 	private PayloadFactory payloadFactory = new PayloadFactoryImpl();
 
 	protected List<TransactionCommitFailureListener> listeners = new ArrayList<TransactionCommitFailureListener>();
-	
-    /**
-     * Constructor which takes ManagedConnection as a parameter
-     * 
-     * @param mc The ManagedConnection
-     */
-    public BaseFileTransferConnectionImpl(ManagedConnection mc)
-    {
-        super(mc);
-    }
 
     /**
      * Deliver the InputStream
@@ -213,5 +204,31 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl i
             logger.info("Adding listener to connection: " + listener);
             this.listeners.add(listener);
         }
+    }
+
+    /**
+     * Connection Methods
+     *
+     */
+    public Interaction createInteraction()
+    {
+        return null;
+    }
+
+    public LocalTransaction getLocalTransaction() throws ResourceException
+    {
+        throw new NotSupportedException("CCI Local Transaction is not supported."); //$NON-NLS-1$
+    }
+
+    public ConnectionMetaData getMetaData()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public ResultSetInfo getResultSetInfo()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
