@@ -320,7 +320,7 @@
 		 <constructor-arg ref="ldapService"/>
     </bean>
     
-    <bean id="platformConfigurationPanel" class="org.ikasan.dashboard.ui.administration.panel.PlatformConfigurationPanel" scope="session">
+    <bean id="platformConfigurationPanel" class="org.ikasan.dashboard.ui.administration.panel.PlatformConfigurationTabPanel" scope="session">
 		 <constructor-arg ref="configurationService"/>
     </bean>
     

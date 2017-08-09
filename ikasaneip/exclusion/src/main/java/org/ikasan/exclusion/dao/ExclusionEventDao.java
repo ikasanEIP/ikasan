@@ -40,6 +40,8 @@
  */
 package org.ikasan.exclusion.dao;
 
+import org.ikasan.spec.wiretap.WiretapEvent;
+
 import java.util.Date;
 import java.util.List;
 
@@ -121,4 +123,17 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public EVENT find(String errorUri);
+
+    /**
+     * Get (housekeepingBatchSize) harvestable records.
+     *
+     * @param housekeepingBatchSize
+     * @return
+     */
+    public List<EVENT> getHarvestableRecords(final int housekeepingBatchSize);
+
+    /**
+     * Delete all e
+     */
+    public void deleteAllExpired();
 }

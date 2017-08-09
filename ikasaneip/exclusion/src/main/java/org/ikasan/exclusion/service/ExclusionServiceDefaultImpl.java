@@ -45,10 +45,15 @@ import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.harvest.HarvestService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.solr.SolrService;
+import org.ikasan.spec.wiretap.WiretapEvent;
+
+import java.util.List;
 
 /**
  * Default implementation of the ExclusionService.
@@ -199,4 +204,6 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
         return new ExclusionEvent(moduleName, flowName, identifier, eventBytes, errorUri);
 
     }
+
+
 }

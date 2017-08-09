@@ -9,11 +9,12 @@
 	<!-- 2.0.x table alterations -->
 	<include file="db/alter/db-changeLog-alterIkasanWiretapAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterErrorOccurrenceAddHarvested.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterExclusionEventAddHarvested.xml" relativeToChangelogFile="true" />
 
 	<!-- 2.0.x cardinality creation -->
 
 	<!-- 2.0.x data creation -->
-	<include file="db/alter/db-changelog-policies-harvesting.xml" relativeToChangelogFile="true" />
+	<include file="db/data/db-changelog-policies-harvesting.xml" relativeToChangelogFile="true" />
 	
 	<!-- 2.0.x index creation -->
 
