@@ -54,7 +54,7 @@ public class ModuleConfig {
         beanFactory.autowireBean(ftpToLogFlowBuilder);
         Flow ftpToLogFlow = ftpToLogFlowBuilder
                 .withDescription("Ftp to Log")
-                .consumer("Sftp Consumer", ftpConsumer)
+                .consumer("Ftp Consumer", ftpConsumer)
                 .converter("FTP payload to String Converter",payloadToStringConverter)
                 .producer("Log", new DevNull()).build();
 
@@ -66,7 +66,7 @@ public class ModuleConfig {
                 .converter("Random String Generator",filePayloadGeneratorConverter)
                 .producer("Ftp Producer", ftpProducer).build();
 
-        Module module = BuilderFactory.moduleBuilder("sftp-sample-module").withDescription("FTP Sample Module")
+        Module module = BuilderFactory.moduleBuilder("sample-boot-ftp").withDescription("Sample Spring Boot FTP Module")
                 .addFlow(ftpToLogFlow).addFlow(timeGeneratorToFtpFlow).build();
         return module;
     }
