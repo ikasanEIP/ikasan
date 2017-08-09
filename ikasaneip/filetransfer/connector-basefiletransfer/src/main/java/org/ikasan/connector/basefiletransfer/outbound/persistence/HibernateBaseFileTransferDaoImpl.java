@@ -44,7 +44,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -89,7 +90,7 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
     protected static final String filterTableName = "FileFilter";
 
     /** Logger */
-    private static Logger logger = Logger.getLogger(HibernateBaseFileTransferDaoImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(HibernateBaseFileTransferDaoImpl.class);
     
     /**
      * Constructor must provide a persistence handle

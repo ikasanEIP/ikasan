@@ -44,7 +44,8 @@ import java.util.HashMap;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to capture the invocational context of a Command
@@ -84,7 +85,7 @@ public class ExecutionContext extends HashMap<String, Object>
     public static final String FILE_CHUNK_HEADER = "fileChunkHeader";
     
     /** Logger */
-    private static Logger logger = Logger.getLogger(ExecutionContext.class);
+    private static Logger logger = LoggerFactory.getLogger(ExecutionContext.class);
     
     @Override
     public Object put(String arg0, Object arg1)

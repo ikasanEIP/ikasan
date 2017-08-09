@@ -44,11 +44,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.NamingException;
-import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
@@ -85,7 +84,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
             + STATE_PARAMETER;
 
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(HibernateTransactionalResourceCommandDAO.class);
+    private static Logger logger = LoggerFactory.getLogger(HibernateTransactionalResourceCommandDAO.class);
 
     /** Session Factory for a local transactional datasource */
     private SessionFactory sessionFactory;
@@ -154,7 +153,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         }
         catch (HibernateException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new TransactionalResourceCommandPersistenceException(e);
         }
         finally
@@ -192,7 +191,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         }
         catch (HibernateException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new TransactionalResourceCommandPersistenceException(e);
         }
         finally
@@ -235,7 +234,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         }
         catch (HibernateException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new TransactionalResourceCommandPersistenceException(e);
         }
         finally
@@ -289,7 +288,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         }
         catch (HibernateException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new TransactionalResourceCommandPersistenceException(e);
         }
         finally

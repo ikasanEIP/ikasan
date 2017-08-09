@@ -40,8 +40,8 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
@@ -50,6 +50,7 @@ import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.sftp.net.SFTPClient;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.slf4j.event.Level;
 
 import javax.resource.ResourceException;
 import javax.transaction.xa.XAResource;
@@ -78,7 +79,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     private static final long serialVersionUID = -4346795065043603050L;
 
     /** The logger instance. */
-    public static Logger logger = Logger.getLogger(SFTPManagedConnection.class);
+    public static Logger logger = LoggerFactory.getLogger(SFTPManagedConnection.class);
 
     /** Common library used by both inbound and outbound connectors */
     private SFTPClient sftpClient;
@@ -145,7 +146,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     {
         logger.debug("Called openSession."); //$NON-NLS-1$
         createSFTPClient();
-        this.sftpClient.echoConfig(Level.INFO);
+        this.sftpClient.echoConfig();
     }
 
     /* **************************************************************************

@@ -42,7 +42,8 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.ConnectorException;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -58,7 +59,7 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 public class CleanupChunksCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(CleanupChunksCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(CleanupChunksCommand.class);
 
     /**
      * FileChunkHeader that we will be cleaning up

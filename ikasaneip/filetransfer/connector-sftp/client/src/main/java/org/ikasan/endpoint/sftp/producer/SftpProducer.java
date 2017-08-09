@@ -43,9 +43,9 @@ package org.ikasan.endpoint.sftp.producer;
 import java.io.ByteArrayInputStream;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitEvent;
@@ -72,7 +72,7 @@ public class SftpProducer implements Producer<Payload>,
     /**
      * class logger
      */
-    private static Logger logger = Logger.getLogger(SftpProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(SftpProducer.class);
 
     /**
      * configured resource id

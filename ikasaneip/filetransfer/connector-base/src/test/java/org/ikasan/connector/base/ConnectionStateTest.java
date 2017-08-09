@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -55,7 +55,7 @@ import org.junit.Test;
 public class ConnectionStateTest
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(ConnectionStateTest.class);
+    private static Logger logger = LoggerFactory.getLogger(ConnectionStateTest.class);
     
     /**
      * Setup before each test

@@ -55,8 +55,8 @@ import java.util.StringTokenizer;
 import javax.resource.ResourceException;
 
 import org.apache.commons.net.ftp.*;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferUtils;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
@@ -71,6 +71,7 @@ import org.ikasan.connector.basefiletransfer.net.ClientException;
 import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
+import org.slf4j.event.Level;
 
 /**
  * <p>
@@ -88,7 +89,7 @@ import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
 public class FileTransferProtocolClient implements FileTransferProtocol {
 
     /** Initialising the logger */
-    private static Logger logger = Logger.getLogger(FileTransferProtocolClient.class);
+    private static Logger logger = LoggerFactory.getLogger(FileTransferProtocolClient.class);
 
     /** Whether we should transmit in Active mode (passive by default) */
     private boolean active;
@@ -230,7 +231,7 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
      * @throws ClientConnectionException Exception thrown when we can't connect
      */
     public void connect() throws ClientConnectionException {
-        echoConfig(Level.DEBUG);
+        echoConfig();
         // Checking the connection state,
         String msg = new String("Checking connection status... "); //$NON-NLS-1$
         logger.debug(msg + "[" + (isConnected() ? "connected" : "disconnected") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -294,7 +295,7 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
      */
     public void login() throws ClientConnectionException
     {
-        echoConfig(Level.DEBUG);
+        echoConfig();
         // Checking the connection state,
         String msg = new String("Checking connection status... "); //$NON-NLS-1$
         logger.debug(msg + "[" + (isConnected() ? "connected" : "disconnected") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -480,7 +481,7 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
      * 
      * @param logLevel The log level at which to log the information
      */
-    public void echoConfig(Level logLevel)
+    public void echoConfig()
     {
         StringBuilder sb = new StringBuilder(256);
         sb.append("FTP configuration information:"); //$NON-NLS-1$
@@ -497,7 +498,7 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
         sb.append("]\nUsername         = [");
         sb.append(username);
         sb.append("]"); //$NON-NLS-1$
-        logger.log(logLevel, sb.toString());
+        logger.debug(sb.toString());
     }
 
     public void ensureConnection() throws ResourceException

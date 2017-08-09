@@ -59,7 +59,8 @@ import javax.resource.spi.ResourceAdapterInternalException;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.ConnectionState;
 
 /**
@@ -78,7 +79,7 @@ import org.ikasan.connector.base.ConnectionState;
 public abstract class EISManagedConnection implements ManagedConnection
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(EISManagedConnection.class);
+    private static Logger logger = LoggerFactory.getLogger(EISManagedConnection.class);
 
     /** Print Writer */
     private PrintWriter writer = null;

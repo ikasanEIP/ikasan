@@ -47,7 +47,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This calss implements this interface
@@ -64,7 +65,7 @@ public class DefaultURIResolver
     /**
      * The logger instance.
      */
-    private static Logger logger = Logger.getLogger(DefaultURIResolver.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultURIResolver.class);
 
     /**
      * The mapping table to map URIs to <code>Source</code>.

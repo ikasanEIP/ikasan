@@ -49,7 +49,8 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandGetException;
@@ -72,7 +73,7 @@ import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
 public class ChunkingRetrieveFileCommand extends RetrieveFileCommand implements ChunkableDataProvider
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(RetrieveFileCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(RetrieveFileCommand.class);
 
     /** The chunker for large files */
     private Chunker chunker;

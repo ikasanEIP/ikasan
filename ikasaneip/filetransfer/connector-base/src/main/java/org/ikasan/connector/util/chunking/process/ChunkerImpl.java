@@ -47,7 +47,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.util.checksum.DigestChecksum;
 import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.io.ChunkingInputStreamConsumer;
@@ -71,7 +72,7 @@ public class ChunkerImpl implements Chunker, ChunkHandler
 {
 
     /** Logger */
-    private static Logger logger = Logger.getLogger(ChunkerImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(ChunkerImpl.class);
 
     /**
      * Underlying chunk data provider

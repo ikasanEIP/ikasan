@@ -45,7 +45,8 @@ import java.io.ByteArrayInputStream;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
@@ -72,7 +73,7 @@ public class FtpProducer implements Producer<Payload>,
     /**
      * class logger
      */
-    private static Logger logger = Logger.getLogger(FtpProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(FtpProducer.class);
 
     /**
      * configured resource id

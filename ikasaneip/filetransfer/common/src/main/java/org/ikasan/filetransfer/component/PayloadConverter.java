@@ -41,7 +41,8 @@
 package org.ikasan.filetransfer.component;
 
 // Imported xstream classes
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.CommonRuntimeException;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.factory.PayloadFactory;
@@ -65,7 +66,7 @@ public class PayloadConverter
      * The logger instance.
      */
     @SuppressWarnings("unused")
-    private static Logger logger = Logger.getLogger(PayloadConverter.class);
+    private static Logger logger = LoggerFactory.getLogger(PayloadConverter.class);
 
     /**
      * The CDATA begin token.

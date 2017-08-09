@@ -41,7 +41,8 @@
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
@@ -66,7 +67,7 @@ import java.util.regex.Pattern;
 public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(RetrieveFileCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(RetrieveFileCommand.class);
 
     /** Data Access Object for Base File Transfer */
     protected BaseFileTransferDao dao;

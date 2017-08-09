@@ -40,7 +40,8 @@
  */
 package org.ikasan.endpoint.sftp;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.client.ConnectionCallback;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -75,7 +76,7 @@ import java.util.Map;
 public class FileTransferConnectionTemplate implements TransactionCommitFailureObserverable
 {
 
-    private static Logger logger = Logger.getLogger(FileTransferConnectionTemplate.class);
+    private static Logger logger = LoggerFactory.getLogger(FileTransferConnectionTemplate.class);
 
     protected List<TransactionCommitFailureListener> listeners = new ArrayList<TransactionCommitFailureListener>();
 

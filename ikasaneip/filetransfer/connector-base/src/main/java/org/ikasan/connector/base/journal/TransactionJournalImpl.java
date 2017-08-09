@@ -40,19 +40,18 @@
  */
 package org.ikasan.connector.base.journal;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.transaction.xa.Xid;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.command.TransactionalResourceCommandPersistenceException;
 import org.ikasan.connector.base.command.XidImpl;
-import org.springframework.beans.factory.BeanFactory;
 
 /**
  * @author Ikasan Development Team
@@ -61,7 +60,7 @@ import org.springframework.beans.factory.BeanFactory;
 public class TransactionJournalImpl implements TransactionJournal
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(TransactionJournalImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(TransactionJournalImpl.class);
 
     /** Data Access Object for persisting Transactional Resource Commands */
     private TransactionalResourceCommandDAO dao;
@@ -123,7 +122,7 @@ public class TransactionJournalImpl implements TransactionJournal
         }
         catch (TransactionalResourceCommandPersistenceException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
 
             throw new TransactionJournalingException("Exception finding commands for Xid [" + xid + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
         }

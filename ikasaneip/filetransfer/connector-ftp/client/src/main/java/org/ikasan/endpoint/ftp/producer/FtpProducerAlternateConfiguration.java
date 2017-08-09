@@ -40,7 +40,8 @@
  */
 package org.ikasan.endpoint.ftp.producer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FTP Producer Configuration window providing alternate connection details
@@ -81,7 +82,7 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
     private String alternateSystemKey = "";
 
     /** Logger instance */
-    private static final Logger logger = Logger.getLogger(FtpProducerAlternateConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(FtpProducerAlternateConfiguration.class);
 
     /**
      * @return the alternateActive

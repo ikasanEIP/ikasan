@@ -46,7 +46,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MD5 implementation of the Md5ChecksumSupplier
@@ -60,7 +61,7 @@ public class Md5ChecksumSupplier implements ChecksumSupplier
 {
 	
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(Md5ChecksumSupplier.class);
+    private static Logger logger = LoggerFactory.getLogger(Md5ChecksumSupplier.class);
 
     /** Name of the algorithm, used by external callers */
 	public static final String MD5 = "MD5";

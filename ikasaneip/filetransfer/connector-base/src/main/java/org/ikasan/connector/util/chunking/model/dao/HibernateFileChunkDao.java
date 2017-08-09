@@ -47,7 +47,8 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -67,7 +68,7 @@ import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 public class HibernateFileChunkDao implements FileChunkDao
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(HibernateFileChunkDao.class);
+    private static Logger logger = LoggerFactory.getLogger(HibernateFileChunkDao.class);
     /**
      * Hibernate fileName parameter
      */
@@ -369,7 +370,7 @@ public class HibernateFileChunkDao implements FileChunkDao
         }
         catch (HibernateException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw e;
         }
         finally

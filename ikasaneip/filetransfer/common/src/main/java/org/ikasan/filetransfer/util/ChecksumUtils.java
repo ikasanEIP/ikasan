@@ -49,7 +49,8 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for Checksum activities
@@ -60,7 +61,7 @@ public class ChecksumUtils
 {
     
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(ChecksumUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(ChecksumUtils.class);
    
     /** Default algorithm is MD5 */
     private static final String defaultAlgorithm = "MD5"; //$NON-NLS-1$

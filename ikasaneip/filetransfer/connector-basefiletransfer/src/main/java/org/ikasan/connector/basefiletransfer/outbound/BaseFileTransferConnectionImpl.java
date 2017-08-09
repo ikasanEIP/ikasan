@@ -47,7 +47,8 @@ import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.cci.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
@@ -72,7 +73,7 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 public abstract class BaseFileTransferConnectionImpl implements BaseFileTransferConnection,Connection
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(BaseFileTransferConnectionImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(BaseFileTransferConnectionImpl.class);
 
 	protected static final String REFERENCE_PAYLOAD_ATTRIBUTE = "referencePayload";
 	

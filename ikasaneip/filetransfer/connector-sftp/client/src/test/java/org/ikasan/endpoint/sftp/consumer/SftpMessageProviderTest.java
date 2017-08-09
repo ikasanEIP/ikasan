@@ -44,7 +44,6 @@ package org.ikasan.endpoint.sftp.consumer;
 
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
-import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
 import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
@@ -57,7 +56,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 
 /**
  * Test class for {@link org.ikasan.endpoint.sftp.consumer.SftpMessageProvider}

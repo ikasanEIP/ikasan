@@ -46,7 +46,8 @@ import java.util.UUID;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.BatchedFileProvider;
@@ -62,7 +63,7 @@ import org.ikasan.connector.listener.TransactionCommitException;
 public class DeliverBatchCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(DeliverBatchCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(DeliverBatchCommand.class);
 
     /** Directory on remote FS to deliver into */
     private String outputDirectory;

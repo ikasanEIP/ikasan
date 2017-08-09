@@ -42,7 +42,8 @@ package org.ikasan.connector.basefiletransfer.outbound;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.factory.PayloadFactory;
@@ -58,7 +59,7 @@ import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 public class BaseFileTransferMappedRecordTransformer
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(BaseFileTransferMappedRecordTransformer.class);
+    private static Logger logger = LoggerFactory.getLogger(BaseFileTransferMappedRecordTransformer.class);
     
     private static PayloadFactory payloadFactory = new PayloadFactoryImpl();
     

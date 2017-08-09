@@ -47,7 +47,8 @@ import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for general resource IO activities
@@ -57,7 +58,7 @@ import org.apache.log4j.Logger;
 public class ResourceUtils
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(ResourceUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(ResourceUtils.class);
 
     /**
      * Load properties from the given name. Try loading these properties in the following order, (1) load as XML

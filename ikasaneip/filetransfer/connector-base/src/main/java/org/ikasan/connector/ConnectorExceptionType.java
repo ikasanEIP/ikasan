@@ -40,7 +40,8 @@
  */
 package org.ikasan.connector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.ExceptionType;
 
 /**
@@ -68,7 +69,7 @@ public enum ConnectorExceptionType implements ExceptionType
     CONNECTION_TIMED_OUT("The connection timed out", 3004), //$NON-NLS-1$
     ;
     /** Logger */
-    private Logger logger = Logger.getLogger(ConnectorExceptionType.class);
+    private Logger logger = LoggerFactory.getLogger(ConnectorExceptionType.class);
 
     /** exception type description */
     private String description = null;

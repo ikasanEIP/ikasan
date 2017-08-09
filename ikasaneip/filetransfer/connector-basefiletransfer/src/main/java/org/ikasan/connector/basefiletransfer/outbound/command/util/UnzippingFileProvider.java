@@ -46,7 +46,8 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that provides <code>Iterator</code> type access to the entries in a
@@ -61,7 +62,7 @@ public class UnzippingFileProvider implements BatchedFileProvider
     /**
      * Logger
      */
-    private static Logger logger = Logger.getLogger(UnzippingFileProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(UnzippingFileProvider.class);
 
     /**
      * The next entry (if any)
@@ -109,7 +110,7 @@ public class UnzippingFileProvider implements BatchedFileProvider
         }
         catch (IOException ioe)
         {
-            logger.error(ioe);
+            logger.error(ioe.getMessage(),ioe);
             throw new RuntimeException("Exception writting decompressed output", ioe); //$NON-NLS-1$
         }
     }

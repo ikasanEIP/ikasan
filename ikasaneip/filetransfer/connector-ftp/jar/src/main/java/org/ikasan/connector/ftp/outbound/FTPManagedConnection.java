@@ -47,8 +47,8 @@ import javax.resource.ResourceException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
@@ -59,6 +59,7 @@ import org.ikasan.connector.ftp.net.FileTransferProtocol;
 import org.ikasan.connector.ftp.net.FileTransferProtocolClient;
 import org.ikasan.connector.ftp.net.FileTransferProtocolSSLClient;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.slf4j.event.Level;
 
 /**
  * This EJB implements the ManagedConnection for the FTP resource adapter. This
@@ -80,7 +81,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     private static final long serialVersionUID = 8623781620439053263L;
 
     /** The logger instance. */
-    public static Logger logger = Logger.getLogger(FTPManagedConnection.class);
+    public static Logger logger = LoggerFactory.getLogger(FTPManagedConnection.class);
 
     /** Common library used by both inbound and outbound connectors */
     private FileTransferProtocol ftpClient;
@@ -144,7 +145,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     {
         logger.debug("Called openSession."); //$NON-NLS-1$
         createFTPClient();
-        this.ftpClient.echoConfig(Level.DEBUG);
+        this.ftpClient.echoConfig();
     }
 
     /*

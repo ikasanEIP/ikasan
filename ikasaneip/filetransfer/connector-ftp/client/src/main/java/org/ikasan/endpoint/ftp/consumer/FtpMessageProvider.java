@@ -40,7 +40,8 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.listener.TransactionCommitEvent;
@@ -59,7 +60,6 @@ import org.quartz.JobExecutionContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 import javax.resource.spi.InvalidPropertyException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ import java.util.List;
  */
 public class FtpMessageProvider implements ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
 {
-    private static Logger logger = Logger.getLogger(FtpMessageProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(FtpMessageProvider.class);
 
     /**
      * Currently active connection template

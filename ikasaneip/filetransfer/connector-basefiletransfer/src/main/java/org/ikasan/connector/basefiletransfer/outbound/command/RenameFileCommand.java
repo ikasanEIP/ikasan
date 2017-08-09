@@ -42,7 +42,8 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 
@@ -54,7 +55,7 @@ import org.ikasan.connector.base.command.ExecutionOutput;
 public class RenameFileCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(RenameFileCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(RenameFileCommand.class);
 
     /** The old path of the file we are persisting */
     private String oldFilePath;

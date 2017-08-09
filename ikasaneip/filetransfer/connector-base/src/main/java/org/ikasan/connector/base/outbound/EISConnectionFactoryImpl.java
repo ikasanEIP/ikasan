@@ -52,7 +52,8 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.ConnectorRuntimeException;
 
 /**
@@ -69,7 +70,7 @@ public abstract class EISConnectionFactoryImpl implements EISConnectionFactory, 
     private static final long serialVersionUID = 1L;
 
     /** Logger */
-    private Logger logger = Logger.getLogger(EISConnectionFactoryImpl.class);
+    private Logger logger = LoggerFactory.getLogger(EISConnectionFactoryImpl.class);
 
     /** Reference */
     private Reference reference;

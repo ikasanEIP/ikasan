@@ -48,7 +48,8 @@ import java.util.Map;
 import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.state.State;
 import org.ikasan.connector.base.command.state.StateManager;
 import org.ikasan.connector.base.command.state.Transition;
@@ -66,7 +67,7 @@ import org.springframework.beans.factory.BeanFactory;
 public abstract class AbstractTransactionalResourceCommand implements TransactionalResourceCommand
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(AbstractTransactionalResourceCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractTransactionalResourceCommand.class);
 
     /**
      * Transient Reference to a bean factory, used to resolve singleton

@@ -53,7 +53,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.CommonXMLParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -105,7 +106,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DefaultXMLParser implements CommonXMLParser
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(DefaultXMLParser.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultXMLParser.class);
 
     /** The document builder factory */
     private DocumentBuilderFactory factory;

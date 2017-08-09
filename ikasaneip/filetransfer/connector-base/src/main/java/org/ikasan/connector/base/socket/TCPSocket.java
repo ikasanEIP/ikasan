@@ -47,7 +47,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Socket based class with commonly used send and receive socket operations.
@@ -57,7 +58,7 @@ import org.apache.log4j.Logger;
 public class TCPSocket extends java.net.Socket
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(TCPSocket.class);
+    private static Logger logger = LoggerFactory.getLogger(TCPSocket.class);
 
     /** Buffer to be used for socket input */
     private BufferedInputStream bins = null;

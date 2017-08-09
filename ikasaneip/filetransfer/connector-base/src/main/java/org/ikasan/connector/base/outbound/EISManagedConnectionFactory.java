@@ -52,7 +52,8 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the abstract factory class which extends the ManagedConnectionFactory
@@ -72,7 +73,7 @@ import org.apache.log4j.Logger;
 public abstract class EISManagedConnectionFactory implements ManagedConnectionFactory, Serializable
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(EISManagedConnectionFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(EISManagedConnectionFactory.class);
 
     /** default serial version uid */
     private static final long serialVersionUID = 1L;

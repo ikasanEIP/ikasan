@@ -42,7 +42,8 @@ package org.ikasan.connector.basefiletransfer.persistence;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Object to be used for persistence/filtering. It reflects the basic fields
@@ -59,7 +60,7 @@ import org.apache.log4j.Logger;
 public class FileFilter
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(FileFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(FileFilter.class);
 
     /** id */
     private int id;

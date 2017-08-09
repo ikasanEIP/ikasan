@@ -48,7 +48,8 @@ import java.util.Set;
 
 import javax.resource.cci.MappedRecord;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class holds the file, its checksum and some meta data
@@ -84,7 +85,7 @@ public class BaseFileTransferMappedRecord implements MappedRecord
     private HashMap<String, Object> mappedRecord;
 
     /** Initialising the logger */
-    private static Logger logger = Logger.getLogger(BaseFileTransferMappedRecord.class);
+    private static Logger logger = LoggerFactory.getLogger(BaseFileTransferMappedRecord.class);
 
     /**
      * Default constructor

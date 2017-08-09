@@ -43,7 +43,8 @@ package org.ikasan.connector.base.command;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to capture the result of the execution of a command
@@ -57,7 +58,7 @@ public class ExecutionOutput extends HashMap<String, Object>
     private static final long serialVersionUID = -7723907118124829388L;
 
     /** Logger */
-    private static Logger logger = Logger.getLogger(ExecutionOutput.class);
+    private static Logger logger = LoggerFactory.getLogger(ExecutionOutput.class);
 
     /** key for single object output */
     protected final String DEFAULT_SINGLE = "defaultSingle";

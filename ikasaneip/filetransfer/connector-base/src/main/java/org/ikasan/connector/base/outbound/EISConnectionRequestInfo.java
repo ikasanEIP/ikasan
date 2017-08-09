@@ -42,7 +42,8 @@ package org.ikasan.connector.base.outbound;
 
 import javax.resource.spi.ConnectionRequestInfo;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Ikasan Development Team
@@ -50,7 +51,7 @@ import org.apache.log4j.Logger;
 public abstract class EISConnectionRequestInfo implements ConnectionRequestInfo
 {
     /** logger */
-    private static Logger logger = Logger.getLogger(EISConnectionRequestInfo.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionRequestInfo.class);
 
     /** All sessions require a clientID */
     private String clientID;

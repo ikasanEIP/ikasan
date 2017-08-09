@@ -48,7 +48,8 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResource;
@@ -80,7 +81,7 @@ import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
 public abstract class AbstractBaseFileTransferTransactionalResourceCommand extends AbstractTransactionalResourceCommand implements TransactionCommitFailureObserverable
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(AbstractBaseFileTransferTransactionalResourceCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractBaseFileTransferTransactionalResourceCommand.class);
 
     /** EOL character */
     protected final static String EOL = System.getProperty("line.separator");

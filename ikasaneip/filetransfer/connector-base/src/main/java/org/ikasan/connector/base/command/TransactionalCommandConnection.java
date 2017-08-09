@@ -42,14 +42,13 @@ package org.ikasan.connector.base.command;
 
 import java.util.*;
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
 import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
@@ -76,7 +75,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
 {
 
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(TransactionalCommandConnection.class);
+    private static Logger logger = LoggerFactory.getLogger(TransactionalCommandConnection.class);
 
     /** A list of method calls that the command has gone through */
     private List<String> methodCalls = new ArrayList<String>();
@@ -132,7 +131,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
             }
             catch (TransactionJournalingException e)
             {
-                logger.error(e);
+                logger.error(e.getMessage(),e);
                 throw new XAException("Exception caught on XA.start :" + e.getMessage()); //$NON-NLS-1$
             }
         }
@@ -170,7 +169,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         }
         catch (TransactionJournalingException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new XAException("Exception caught on XA.end :" + e.getMessage()); //$NON-NLS-1$
         }
     }
@@ -279,7 +278,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         }
         catch (TransactionJournalingException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new XAException("Exception caught on XA.rollback :" + e.getMessage()); //$NON-NLS-1$
         }
 
@@ -347,7 +346,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         }
         catch (TransactionJournalingException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             XAException exception = new XAException("Exception caught on XA.commit :" + e.getMessage());
             logger.warn("Setting the error code to XAException.XA_RBROLLBACK: " + XAException.XA_RBROLLBACK);
             exception.errorCode = XAException.XA_RBROLLBACK;
@@ -583,7 +582,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         }
         catch (TransactionJournalingException e)
         {
-            logger.error(e);
+            logger.error(e.getMessage(),e);
             throw new XAException("Exception caught on XA.prepare :" + e.getMessage()); //$NON-NLS-1$
         }
         return XA_OK;

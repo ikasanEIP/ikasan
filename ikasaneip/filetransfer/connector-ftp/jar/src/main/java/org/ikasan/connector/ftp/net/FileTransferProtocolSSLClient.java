@@ -3,8 +3,8 @@ package org.ikasan.connector.ftp.net;
 import org.apache.commons.net.ftp.*;
 import org.apache.commons.net.io.Util;
 import org.apache.commons.net.util.TrustManagerUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.basefiletransfer.net.*;
 
 import javax.net.ssl.X509TrustManager;
@@ -19,7 +19,7 @@ import java.util.*;
 public class FileTransferProtocolSSLClient implements FileTransferProtocol
 {
     /** Initialising the logger */
-    private static Logger logger = Logger.getLogger(FileTransferProtocolSSLClient.class);
+    private static Logger logger = LoggerFactory.getLogger(FileTransferProtocolSSLClient.class);
 
     /** Whether we should transmit in Active mode (passive by default) */
     private boolean active;
@@ -187,7 +187,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
      * @throws org.ikasan.connector.basefiletransfer.net.ClientConnectionException Exception thrown when we can't connect
      */
     public void connect() throws ClientConnectionException {
-        echoConfig(Level.DEBUG);
+        echoConfig();
         // Checking the connection state,
         String msg = new String("Checking connection status... "); //$NON-NLS-1$
         logger.debug(msg + "[" + (isConnected() ? "connected" : "disconnected") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -251,7 +251,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
      */
     public void login() throws ClientConnectionException
     {
-        echoConfig(Level.DEBUG);
+        echoConfig();
         // Checking the connection state,
         String msg = new String("Checking connection status... "); //$NON-NLS-1$
         logger.debug(msg + "[" + (isConnected() ? "connected" : "disconnected") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -466,7 +466,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
      *
      * @param logLevel The log level at which to log the information
      */
-    public void echoConfig(Level logLevel)
+    public void echoConfig()
     {
         StringBuilder sb = new StringBuilder(256);
         sb.append("FTP configuration information:"); //$NON-NLS-1$
@@ -483,7 +483,7 @@ public class FileTransferProtocolSSLClient implements FileTransferProtocol
         sb.append("]\nUsername         = [");
         sb.append(username);
         sb.append("]"); //$NON-NLS-1$
-        logger.log(logLevel, sb.toString());
+        logger.debug(sb.toString());
     }
 
     public void ensureConnection() throws ResourceException

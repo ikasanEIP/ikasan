@@ -45,7 +45,8 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
@@ -63,7 +64,7 @@ import org.ikasan.connector.listener.TransactionCommitException;
 public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(DeliverFileCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(DeliverFileCommand.class);
 
     /** we are dealing with pathnames so make sure we stay platform independent */
     final String FILE_SEPARATOR = System.getProperty("file.separator");
@@ -311,7 +312,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             }
             catch (ResourceException e)
             {
-                logger.warn(e);
+                logger.warn(e.getMessage(),e);
             }
 
             renameFile(this.tempFileName, this.fileName);

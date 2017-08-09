@@ -42,7 +42,8 @@ package org.ikasan.endpoint.ftp.consumer;
 
 import javax.resource.spi.InvalidPropertyException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 
@@ -158,7 +159,7 @@ public class FtpConsumerConfiguration extends ScheduledConsumerConfiguration
     private String  ftpsKeyStoreFilePassword = "";
 
     /** Logger instance */
-    private final static Logger logger = Logger.getLogger(FtpConsumerConfiguration.class);
+    private final static Logger logger = LoggerFactory.getLogger(FtpConsumerConfiguration.class);
 
     /**
      * Validate configured properties.

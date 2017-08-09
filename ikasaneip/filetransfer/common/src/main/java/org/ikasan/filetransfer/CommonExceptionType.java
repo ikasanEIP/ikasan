@@ -41,7 +41,8 @@
 package org.ikasan.filetransfer;
 
 // Imported log4j classes
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an enumeration of common exception types providing 
@@ -76,7 +77,7 @@ public enum CommonExceptionType
     ;
 
     /** Logger */
-    private Logger logger = Logger.getLogger(CommonExceptionType.class);
+    private Logger logger = LoggerFactory.getLogger(CommonExceptionType.class);
 
     /** exception type description */
     private String description = null;

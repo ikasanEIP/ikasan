@@ -42,8 +42,9 @@ package org.ikasan.connector.sftp.net;
 
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.basefiletransfer.net.*;
 
 import javax.resource.ResourceException;
@@ -73,7 +74,7 @@ public class SFTPClient implements FileTransferClient
     private final static String PARENT_DIRECTORY = ".."; //$NON-NLS-1$
 
     /** Initialising the logger */
-    private static Logger logger = Logger.getLogger(SFTPClient.class);
+    private static Logger logger = LoggerFactory.getLogger(SFTPClient.class);
 
     /** User name */
     private String username;
@@ -240,7 +241,7 @@ public class SFTPClient implements FileTransferClient
         //if (this.prvKey.exists() && this.knownHosts.exists() && this.username != null && this.remoteHostname != null)
         if ( this.username != null && this.remoteHostname != null)
         {
-            echoConfig(Level.DEBUG);
+            echoConfig();
             return;
         }
 
@@ -400,7 +401,7 @@ public class SFTPClient implements FileTransferClient
            // this.session.connect(this.connectionTimeout);
             if (this.localHostname != null)
             {
-                echoConfig(Level.DEBUG);
+                echoConfig();
                 for (int i = 0; i < DEFAULT_MAXIMUM_LOCAL_PORT; i++)
                 {
                     try
@@ -614,7 +615,7 @@ public class SFTPClient implements FileTransferClient
         // Get the list of absolute source paths
         // Note: Directory absSrcPaths are expected to end with a '/' !!
         List<String> absSrcPaths = listAbsoluteSourcePaths(src, filter, recurse);
-        if (logger.getLevel() == Level.DEBUG)
+        if (logger.isDebugEnabled())
         {
             for (String s : absSrcPaths)
             {
@@ -634,7 +635,7 @@ public class SFTPClient implements FileTransferClient
 
         List<String> relSrcPaths = listRelativeSourcePaths(src, absSrcPaths, formatter);
 
-        if (logger.getLevel() == Level.DEBUG)
+        if (logger.isDebugEnabled())
         {
             for (String s : relSrcPaths)
             {
@@ -692,9 +693,10 @@ public class SFTPClient implements FileTransferClient
             absDstPaths.add(adp);
         }
 
-        if (logger.getLevel() == Level.DEBUG) for (String s : absDstPaths)
+        if (logger.isDebugEnabled())
         {
-            logger.debug("absDstPath [" + s + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            for (String s : absDstPaths)
+                logger.debug("absDstPath [" + s + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // If force directory creation is on, find the directories that need be
@@ -1790,9 +1792,8 @@ public class SFTPClient implements FileTransferClient
      * Method used to log the configuration information used to initialise the
      * client.
      *
-     * @param logLevel The log level at which to log the information
      */
-    public void echoConfig(Level logLevel)
+    public void echoConfig()
     {
         StringBuilder sb = new StringBuilder(256);
         sb.append("SFTP configuration information:"); //$NON-NLS-1$
@@ -1815,7 +1816,7 @@ public class SFTPClient implements FileTransferClient
         sb.append("]\nUsername         = ["); //$NON-NLS-1$
         sb.append(username);
         sb.append("]"); //$NON-NLS-1$
-        logger.log(logLevel, sb.toString());
+        logger.debug(sb.toString());
     }
 
     /**
@@ -1823,9 +1824,8 @@ public class SFTPClient implements FileTransferClient
      *
      * As of 28/06/2007 - Used by Test Clients only
      *
-     * @param logLevel The log level at which to log the information
      */
-    public void echoStatus(Level logLevel)
+    public void echoStatus()
     {
         String s1 = (session == null) ? "null" : "" + session.isConnected(); //$NON-NLS-1$ //$NON-NLS-2$
         String s2 = (channel == null) ? "null" : "" + channel.isConnected(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1842,7 +1842,7 @@ public class SFTPClient implements FileTransferClient
         sb.append("]\nIsConnected()          = ["); //$NON-NLS-1$
         sb.append(isConnected());
         sb.append("]"); //$NON-NLS-1$
-        logger.log(logLevel, sb.toString());
+        logger.info( sb.toString());
     }
 
     public void ensureConnection() throws ResourceException

@@ -42,7 +42,8 @@ package org.ikasan.connector.base;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connection state defining standard JCA connector states. These states simply
@@ -59,7 +60,7 @@ public class ConnectionState implements Serializable
     private static final long serialVersionUID = 1L;
 
     /** Logger */
-    private static Logger logger = Logger.getLogger(ConnectionState.class);
+    private static Logger logger = LoggerFactory.getLogger(ConnectionState.class);
 
     /** internal id of the state */
     protected final Integer id;

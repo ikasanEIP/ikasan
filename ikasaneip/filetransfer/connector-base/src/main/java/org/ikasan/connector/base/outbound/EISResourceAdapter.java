@@ -44,7 +44,8 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.AbstractResourceAdapter;
 
 /**
@@ -60,7 +61,7 @@ public class EISResourceAdapter
     /**
      * The logger instance.
      */
-    private static Logger logger = Logger.getLogger(EISResourceAdapter.class);
+    private static Logger logger = LoggerFactory.getLogger(EISResourceAdapter.class);
 
     /**
      * This is a call back method invoked by the application

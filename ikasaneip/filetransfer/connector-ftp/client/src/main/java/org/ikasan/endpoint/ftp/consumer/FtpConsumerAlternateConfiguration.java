@@ -42,7 +42,8 @@ package org.ikasan.endpoint.ftp.consumer;
 
 import javax.resource.spi.InvalidPropertyException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FTP Consumer Configuration window providing alternate connection details
@@ -84,7 +85,7 @@ public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration
 
 
     /** Logger instance */
-    private final static Logger logger = Logger.getLogger(FtpConsumerAlternateConfiguration.class);
+    private final static Logger logger = LoggerFactory.getLogger(FtpConsumerAlternateConfiguration.class);
 
     /**
      * @return the alternateRemoteHost

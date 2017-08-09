@@ -40,7 +40,8 @@
  */
 package org.ikasan.endpoint.sftp.consumer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
@@ -69,7 +70,7 @@ import java.util.List;
  */
 public class SftpMessageProvider implements ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
 {
-    private static Logger logger = Logger.getLogger(SftpMessageProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(SftpMessageProvider.class);
 
     /**
      * Currently active connection template

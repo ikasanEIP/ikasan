@@ -45,7 +45,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.CommonEnvironment;
 
 /**
@@ -59,7 +60,7 @@ public class Env implements CommonEnvironment
     private static final long serialVersionUID = 1L;
 
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(Env.class);
+    private static Logger logger = LoggerFactory.getLogger(Env.class);
 
     /** The default start variable marker <code>${</code>. */
     public static final String START_MARKER = "${";

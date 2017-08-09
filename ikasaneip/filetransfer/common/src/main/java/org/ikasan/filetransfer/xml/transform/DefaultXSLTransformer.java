@@ -67,7 +67,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.CommonXSLTransformer;
 import org.w3c.dom.Document;
 
@@ -118,7 +119,7 @@ public class DefaultXSLTransformer
      * The logger instance.
      */
     private static Logger logger =
-        Logger.getLogger(DefaultXSLTransformer.class);
+        LoggerFactory.getLogger(DefaultXSLTransformer.class);
 
     /**
      * The quite handy debugging flag to get more information

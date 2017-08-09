@@ -43,7 +43,8 @@ package org.ikasan.connector.basefiletransfer.net;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Symbolic Link filter
@@ -54,7 +55,7 @@ public class ClientSymLinkFilter implements ClientFilter
 {
     /** logger */
     private static Logger logger = 
-        Logger.getLogger(ClientSymLinkFilter.class);
+        LoggerFactory.getLogger(ClientSymLinkFilter.class);
     
     /**
      * Constructor

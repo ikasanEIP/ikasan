@@ -48,7 +48,8 @@ import javax.resource.cci.LocalTransaction;
 import javax.resource.cci.ResultSetInfo;
 import javax.resource.spi.ManagedConnection;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.ConnectionState;
 
 /**
@@ -65,7 +66,7 @@ public abstract class EISConnectionImpl
     implements EISConnection
 { 
     /** Logger */
-    private static Logger logger = Logger.getLogger(EISConnectionImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionImpl.class);
 
     /**
      * The ManagedConnection instance that controls this virtual

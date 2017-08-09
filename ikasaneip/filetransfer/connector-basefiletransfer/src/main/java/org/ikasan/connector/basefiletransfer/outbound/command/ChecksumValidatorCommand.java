@@ -48,7 +48,8 @@ import java.net.URISyntaxException;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.util.ChecksumUtils;
 import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
@@ -68,7 +69,7 @@ public class ChecksumValidatorCommand extends AbstractBaseFileTransferTransactio
 {
 
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(FileDiscoveryCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(FileDiscoveryCommand.class);
 
     /** Parser used to consume checksum foreign checksum file */
     private ChecksumSupplier checksumSupplier;

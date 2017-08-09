@@ -40,7 +40,8 @@
  */
 package org.ikasan.filetransfer.component;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class used to report the status of a generic runtime component.
@@ -65,7 +66,7 @@ public enum ComponentState
             "Component is running, but in an error state. It needs attention"), //$NON-NLS-1$
     ;
     /** Logger */
-    private static Logger logger = Logger.getLogger(ComponentState.class);
+    private static Logger logger = LoggerFactory.getLogger(ComponentState.class);
 
     /** unique id of the state */
     private final Integer id;

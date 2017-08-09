@@ -43,7 +43,8 @@ package org.ikasan.connector.basefiletransfer.net;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Ikasan Development Team 
@@ -52,7 +53,7 @@ public class ClientDirectoryFilter implements ClientFilter
 {
     /** Logger */
     private static Logger logger = 
-        Logger.getLogger(ClientDirectoryFilter.class);
+        LoggerFactory.getLogger(ClientDirectoryFilter.class);
     
     /**
      * Constructor

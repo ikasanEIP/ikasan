@@ -47,7 +47,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.filetransfer.util.ResourceUtils;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -92,7 +93,7 @@ public class DefaultEntityResolver
      * The logger instance.
      */
     private static Logger logger =
-        Logger.getLogger(DefaultEntityResolver.class);
+        LoggerFactory.getLogger(DefaultEntityResolver.class);
 
     /**
      * Create a new instance of <code>DefaultEntityResolver</code>

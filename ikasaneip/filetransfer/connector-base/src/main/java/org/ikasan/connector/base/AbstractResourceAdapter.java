@@ -54,7 +54,8 @@ import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.xa.XAResource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the abstract implementation of ResourceAdapter interface. All the
@@ -89,7 +90,7 @@ import org.apache.log4j.Logger;
 public abstract class AbstractResourceAdapter implements ResourceAdapter
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(AbstractResourceAdapter.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractResourceAdapter.class);
 
     /**
      * The boot strap context reference obtained from ApplicationServer to get
@@ -135,7 +136,7 @@ public abstract class AbstractResourceAdapter implements ResourceAdapter
         catch (UnavailableException e)
         {
             String err = "Exception while creating the timer."; //$NON-NLS-1$
-            logger.fatal(err, e);
+            logger.error(err, e);
             throw new ResourceAdapterInternalException(err, e);
         }
     }

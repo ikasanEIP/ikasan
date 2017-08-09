@@ -40,7 +40,8 @@
  */
 package org.ikasan.endpoint.ftp.producer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FTP Producer Configuration window.
@@ -106,7 +107,7 @@ public class FtpProducerConfiguration
     private String systemKey = "";
 
     /** Logger instance */
-    private static final Logger logger = Logger.getLogger(FtpProducerConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(FtpProducerConfiguration.class);
 
     /**
      * @param active the active to set

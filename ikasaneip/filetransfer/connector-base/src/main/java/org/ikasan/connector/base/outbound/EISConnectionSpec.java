@@ -40,16 +40,13 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.naming.NamingException;
 import javax.resource.cci.ConnectionSpec;
 
-import org.apache.log4j.Logger;
-import org.ikasan.connector.ConnectorExceptionType;
-import org.ikasan.connector.ConnectorRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an abstract class representing the connection specific application
@@ -63,7 +60,7 @@ import org.ikasan.connector.ConnectorRuntimeException;
 public abstract class EISConnectionSpec implements ConnectionSpec, EISConnectionProperties
 {
     /** logger */
-    private static Logger logger = Logger.getLogger(EISConnectionSpec.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionSpec.class);
 
     /** Name of the default session properties file */
     private static final String DEFAULT_SESSION_PROPERTIES = "session"; //$NON-NLS-1$

@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Ikasan Development Team 
@@ -55,7 +56,7 @@ public class ClientFilenameFilter implements ClientFilter
 {
     /** Logger */
     private static Logger logger =
-        Logger.getLogger(ClientFilenameFilter.class);
+        LoggerFactory.getLogger(ClientFilenameFilter.class);
 
     /** The Pattern as a String for the filter */
     private String patternString = null;

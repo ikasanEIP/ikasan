@@ -49,7 +49,8 @@ import java.util.Map;
 
 import javax.resource.ResourceException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.connector.base.command.*;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
@@ -96,7 +97,7 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(SFTPConnectionImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(SFTPConnectionImpl.class);
 
     /**
      * Id for Client of this connector
