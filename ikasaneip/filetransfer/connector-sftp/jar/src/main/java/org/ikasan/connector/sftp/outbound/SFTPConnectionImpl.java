@@ -48,21 +48,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
-import org.ikasan.connector.BaseFileTransferConnection;
-import org.ikasan.connector.base.ConnectionState;
 import org.ikasan.connector.base.command.*;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
 import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
 import org.ikasan.connector.ConnectorException;
-import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
-
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferMappedRecordTransformer;
 import org.ikasan.connector.basefiletransfer.outbound.command.ChecksumDeliveredCommand;
@@ -243,6 +238,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
         // TODO this should be configurable
         if (!entries.isEmpty())
         {
+            logger.debug("Got [" + entries.size() + "] entries.");
             ClientListEntry entry = (ClientListEntry) entries.get(0);
             String fullMovePath = moveOnSuccessNewPath;
             //if moveOnSuccess is true, then the path is appended to include the file name.
@@ -434,6 +430,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl
             throws ResourceException
     {
         command.setExecutionContext(executionContext);
+        super.addListenersToCommand(command);
         return executeCommand(command);
     }
 

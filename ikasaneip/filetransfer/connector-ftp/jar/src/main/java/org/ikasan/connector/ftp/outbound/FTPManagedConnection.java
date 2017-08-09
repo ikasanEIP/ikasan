@@ -41,12 +41,9 @@
 package org.ikasan.connector.ftp.outbound;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.security.auth.Subject;
+
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -94,6 +91,8 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      */
     private FTPConnectionRequestInfo fcri;
 
+    private  String clientID;
+
     /**
      * Constructor, sets the managed connection factory and the hibernate filter
      * table
@@ -112,37 +111,6 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     }
 
     /**
-     * Set the connection request info
-     * @param fcri
-     */
-    public void setConnectionRequestInfo(FTPConnectionRequestInfo fcri)
-    {
-        this.fcri = fcri;
-    }
-
-    /**
-     * Get the FTP connection request info
-     * @return fcri
-     */
-    public FTPConnectionRequestInfo getConnectionRequestInfo()
-    {
-        return this.fcri;
-    }
-
-    /**
-     * Create a virtual connection (a FTPConnection object) and add it to the
-     * list of managed instances before returning it to the client.
-     */
-    @Override
-    public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
-    {
-        logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new FTPConnectionImpl(this,null,null);
-        addConnection(connection);
-        return connection;
-    }
-
-    /**
      * Create a virtual connection (a BaseFileTransferConnection object) and
      * add it to the list of managed instances before returning it to the client.
      */
@@ -150,60 +118,13 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
         BaseFileTransferConnection connection = new FTPConnectionImpl(this, fileChunkDao, baseFileTransferDao);
-        addConnection(connection);
         return connection;
     }
-    /**
-     * This method is called by the application server when it wants to remove
-     * this resource adapter completely.
-     * 
-     * It must free any physical resources. So this is where we will shut down
-     * the real connection to the EIS.
-     */
-    @Override
-    public void destroy() throws ResourceException
-    {
-        logger.debug("Called destroy()"); //$NON-NLS-1$
-        // Don't destroy twice
-        if(this.destroyed)
-        {
-            logger.debug("Already destroyed, returning"); //$NON-NLS-1$
-            return;
-        }
-        // TODO Doesn't the app server already call this first?
-        cleanup();
-        // TODO: This is a badly named worded method, closeSession kills the
-        // physical connection
-        closeSession();
-        this.destroyed = true;
-    }
 
-    /**
-     * This method is called by the application server to inform this
-     * ManagedConnection that it is about to be repooled. It won't do this while
-     * it has active virtual connections, but it may do it at any other time. We
-     * must indicate that our virtual connections are defunct.
-     * 
-     * One of situations this gets called in is when close() is called on a
-     * virtual connection and it is the last virtual connection in the pool
-     */
-    @Override
-    public void cleanup() throws ResourceException
+    public String getClientID()
     {
-        logger.debug("Called cleanup()"); //$NON-NLS-1$
-        throwIfDestroyed();
-        Iterator<?> it = this.connections.iterator();
-        while (it.hasNext())
-        {
-            BaseFileTransferConnection fc = (BaseFileTransferConnection) it.next();
-            // We have no specific implementation for invalidate at this stage
-            // It therefore defaults to EISManagedConnection.invalidate()
-            // which sets the managedConnection to null
-            fc.invalidate();
-        }
-        this.connections.clear();
+        return clientID;
     }
-
     // ////////////////////////////////////////
     // Connection API Calls
     // ////////////////////////////////////////
@@ -376,43 +297,6 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     // /////////////////////////////////////
     // TXN API calls
     // /////////////////////////////////////
-    /**
-     * Get any MetaData associated with this managed connection, e.g. The
-     * maximum number of connections allowed
-     */
-    @Override
-    public FTPManagedConnectionMetaData getMetaData()
-    {
-        logger.debug("Called getMetaData()"); //$NON-NLS-1$
-        return new FTPManagedConnectionMetaData(this);
-    }
-
-    /**
-     * Associate a connection with this managed connection
-     */
-    @Override
-    public void associateConnection(Object connection) throws ResourceException
-    {
-        logger.debug("Called associateConnection()"); //$NON-NLS-1$
-        this.throwIfDestroyed();
-        if(connection instanceof FTPConnection)
-        {
-            BaseFileTransferConnection fc = (BaseFileTransferConnection) connection;
-            TransactionalCommandConnection fmc = fc.getManagedConnection();
-            // If it's already associated with us then leave
-            if(fmc == this)
-            {
-                return;
-            }
-            fmc.removeConnection(fc);
-            addConnection(fc);
-            fc.setManagedConnection(this);
-        }
-        else
-        {
-            throw new javax.resource.spi.IllegalStateException("Invalid connection object [" + connection + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
 
     /**
      * Deal with forgetting this unit of work as a txn, in this case do nothing

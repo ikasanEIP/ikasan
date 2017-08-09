@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
 import org.ikasan.filetransfer.Payload;
@@ -62,7 +61,6 @@ import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
-import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferMappedRecordTransformer;
 import org.ikasan.connector.basefiletransfer.outbound.command.ChecksumDeliveredCommand;
@@ -99,7 +97,7 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
  * 
  * @author Ikasan Development Team
  */
-public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements BaseFileTransferConnection
+public class FTPConnectionImpl extends BaseFileTransferConnectionImpl
 {
     /** The logger instance. */
     private static Logger logger = Logger.getLogger(FTPConnectionImpl.class);
@@ -131,9 +129,8 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
      *
      * @param mc The ManagedConnection
      */
-    public FTPConnectionImpl(ManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
+    public FTPConnectionImpl(FTPManagedConnection mc, FileChunkDao fileChunkDao, BaseFileTransferDao baseFileTransferDao)
     {
-        super(mc);
         this.managedConnection = (FTPManagedConnection) mc;
         this.clientId = managedConnection.getClientID();
         this.fileChunkDao = fileChunkDao;
@@ -187,11 +184,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         // Close the physical session
         logger.debug("Calling closeSession."); //$NON-NLS-1$
         this.managedConnection.closeSession();
-        // Remove and nullify this virtual connection
-        this.managedConnection.removeConnection(this);
-        // This can trigger managed connection cleanup()
-        this.managedConnection.sendClosedEvent(this);
-        // Set the managed connection to null if not already done
+        /// Set the managed connection to null if not already done
         if(this.managedConnection != null)
         {
             this.managedConnection = null;
@@ -202,20 +195,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         {
             logger.debug("Managed Connection was already set to null."); //$NON-NLS-1$
         }
-    }
-
-    // //////////////////////////////////////////////////////////
-    // Client virtual connection methods
-    // //////////////////////////////////////////////////////////
-    /**
-     * Validate - If there is validation to be done in the future then pass that
-     * validation to the manager.
-     */
-    @Override
-    public void validate()
-    {
-        logger.debug("Called validate()..."); //$NON-NLS-1$
-        // this.managedConnection.validate();
     }
 
     // /////////////////////////////////////////////////////
@@ -236,6 +215,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         ExecutionContext executionContext = new ExecutionContext();
         // Pass through the client Id
         logger.debug("Got clientId [" + this.clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("Source = [" + sourceDir+ "] moveOnSuccess = [" + moveOnSuccess + "] and archive dir = [" + moveOnSuccessNewPath + "].");
         executionContext.put(ExecutionContext.CLIENT_ID, this.clientId);
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern, baseFileTransferDao, minAge, filterDuplicates,
             filterOnFilename, filterOnLastModifiedDate,isRecursive);
@@ -248,7 +228,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             logger.info("Sorting entries list by chronological order.");
             Collections.sort(list, new OlderFirstClientListEntryComparator());
         }
-        //        logger.debug("got entries from FileDiscoveryCommand: [" + entries + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("got entries from FileDiscoveryCommand: [" + entries + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         // If there are any new files, only source the first one
         // TODO this should be configurable
         if(!entries.isEmpty())

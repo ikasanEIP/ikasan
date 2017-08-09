@@ -42,8 +42,6 @@ package org.ikasan.connector.sftp.outbound;
 
 import org.ikasan.connector.base.outbound.EISConnectionSpec;
 
-import java.util.ResourceBundle;
-
 /**
  * This is an class representing the connection specific application properties passed to the getConnection method.
  * 

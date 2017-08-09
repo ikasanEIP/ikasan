@@ -45,7 +45,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
-import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
 import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
@@ -53,14 +52,10 @@ import org.ikasan.connector.sftp.net.SFTPClient;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.io.File;
 import java.io.Serializable;
-import java.util.Iterator;
 
 /**
  * This EJB implements the ManagedConnection for the SFTP resource adapter. This
