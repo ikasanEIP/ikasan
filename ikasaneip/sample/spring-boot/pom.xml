@@ -55,6 +55,7 @@
         <module>builder-pattern</module>
         <module>jms</module>
         <module>sftp</module>
+        <module>ftp</module>
     </modules>
 
 </project>
