@@ -52,6 +52,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -252,5 +253,29 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 
         return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
+
+    public List<ExclusionEvent> getHarvestableRecords(final int housekeepingBatchSize)
+    {
+        return (List<ExclusionEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                criteria.add(Restrictions.eq("harvested", false));
+                criteria.setMaxResults(housekeepingBatchSize);
+                criteria.addOrder(Order.asc("timestamp"));
+
+                List<WiretapEvent> flowInvocationMetrics = criteria.list();
+
+                return flowInvocationMetrics;
+            }
+        });
+    }
+
+    @Override
+    public void deleteAllExpired()
+    {
+        throw new UnsupportedOperationException();
+    }
 
 }

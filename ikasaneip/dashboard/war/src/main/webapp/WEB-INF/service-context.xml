@@ -199,7 +199,11 @@
 
 	<bean id="solrErrorReportingServiceDao" class="org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao">
 	</bean>
-    
+
+	<bean id="solrExclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
+		<constructor-arg ref="solrExclusionServiceExclusionEventDao"/>
+	</bean>
+
     <bean id="exclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
     </bean>
@@ -207,6 +211,9 @@
     <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
+
+	<bean id="solrExclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.SolrExclusionEventDao">
+	</bean>
     
     <bean id="startupControlService" class="org.ikasan.module.service.StartupControlServiceImpl">
         <constructor-arg ref="systemEventService" />

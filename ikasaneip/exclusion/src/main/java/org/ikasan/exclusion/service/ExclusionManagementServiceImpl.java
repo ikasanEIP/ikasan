@@ -46,14 +46,19 @@ import java.util.Map;
 
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.harvest.HarvestService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.management.HousekeeperService;
+import org.ikasan.spec.solr.SolrService;
+import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>
+public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>, HarvestService<ExclusionEvent>, HousekeeperService, SolrService<ExclusionEvent>
 {
 	private ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
@@ -134,5 +139,41 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 	{
 		return this.exclusionEventDao.find(errorUri);
 	}
+
+	@Override
+	public List<ExclusionEvent> harvest(int transactionBatchSize)
+	{
+		return this.exclusionEventDao.getHarvestableRecords(transactionBatchSize);
+	}
+
+	@Override
+	public boolean harvestableRecordsExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void saveHarvestedRecord(ExclusionEvent harvestedRecord)
+	{
+		this.exclusionEventDao.save(harvestedRecord);
+	}
+
+	@Override
+	public void housekeep()
+	{
+		this.exclusionEventDao.deleteAllExpired();
+	}
+
+	@Override
+	public boolean housekeepablesExist()
+	{
+		return false;
+	}
+
+    @Override
+    public void save(ExclusionEvent save)
+    {
+        this.exclusionEventDao.save(save);
+    }
 }
  

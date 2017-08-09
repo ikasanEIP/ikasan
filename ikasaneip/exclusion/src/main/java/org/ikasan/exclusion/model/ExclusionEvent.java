@@ -40,6 +40,8 @@
  */
 package org.ikasan.exclusion.model;
 
+import org.ikasan.harvest.HarvestEvent;
+
 import java.util.Arrays;
 
 /**
@@ -47,7 +49,7 @@ import java.util.Arrays;
  *
  * @author Ikasan Development Team
  */
-public class ExclusionEvent
+public class ExclusionEvent implements HarvestEvent
 {
     /** surrogate id assigned from ORM */
     long id;
@@ -69,6 +71,9 @@ public class ExclusionEvent
 
     /** error uri reported as part of this excluded event */
     String errorUri;
+
+    /** flag to indicate if the record has been harvested */
+    boolean harvested;
 
     /**
      * Constructor
@@ -165,6 +170,16 @@ public class ExclusionEvent
 
     protected void setErrorUri(String errorUri) {
         this.errorUri = errorUri;
+    }
+
+    public boolean isHarvested()
+    {
+        return harvested;
+    }
+
+    public void setHarvested(boolean harvested)
+    {
+        this.harvested = harvested;
     }
 
     @Override

@@ -216,8 +216,8 @@ public class SearchPanel extends Panel implements View
 
         cont.addContainerProperty("", Button.class,  null);
         cont.addContainerProperty("Module Name", String.class,  null);
-        cont.addContainerProperty("Component Name", String.class,  null);
         cont.addContainerProperty("Flow Name", String.class,  null);
+        cont.addContainerProperty("Component Name", String.class,  null);
         cont.addContainerProperty("Event Id / Error URI", String.class,  null);
         cont.addContainerProperty("Details", String.class,  null);
         cont.addContainerProperty("Timestamp", String.class,  null);
@@ -290,7 +290,7 @@ public class SearchPanel extends Panel implements View
                 item.getItemProperty("Event Id / Error URI").setValue(doc.getErrorUri());
                 item.getItemProperty("Details").setValue((doc.getErrorDetail().length() > 150) ? doc.getErrorDetail().substring(0, 150) : doc.getErrorDetail());
             }
-            else if(doc.getType().equals("wiretap"))
+            else if(doc.getType().equals("wiretap") || doc.getType().equals("exclusion"))
             {
                 item.getItemProperty("Event Id / Error URI").setValue(doc.getEventId());
                 item.getItemProperty("Details").setValue((doc.getEvent().length() > 150) ? doc.getEvent().substring(0, 150) : doc.getEvent());
@@ -306,9 +306,14 @@ public class SearchPanel extends Panel implements View
             {
                 icon.setIcon(VaadinIcons.BOLT);
             }
-            if(doc.getType().equals("error"))
+            else if(doc.getType().equals("error"))
             {
                 icon.setIcon(VaadinIcons.EXCLAMATION);
+            }
+            else if(doc.getType().equals("exclusion"))
+            {
+                icon.setIcon(VaadinIcons.DOCTOR);
+                item.getItemProperty("Component Name").setValue("Not applicable");
             }
 
 
