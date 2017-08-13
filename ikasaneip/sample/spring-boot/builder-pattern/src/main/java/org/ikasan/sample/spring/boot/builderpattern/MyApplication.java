@@ -65,7 +65,7 @@ public class MyApplication
         MyApplication myApplication = new MyApplication();
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
-        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
+        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("sample-builder-pattern");
         Flow flow = myApplication.getFlow(moduleBuilder);
         moduleBuilder.addFlow(flow);
         Module module = moduleBuilder.build();

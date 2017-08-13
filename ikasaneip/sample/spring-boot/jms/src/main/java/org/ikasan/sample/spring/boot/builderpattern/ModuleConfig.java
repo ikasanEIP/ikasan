@@ -70,14 +70,14 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        FlowBuilder fb = BuilderFactory.flowBuilder("flowName", "sample-module");
+        FlowBuilder fb = BuilderFactory.flowBuilder("flowName", "sample-boot-jms");
         beanFactory.autowireBean(fb);
         Flow flow = fb
                 .withDescription("flowDescription")
                 .consumer("consumer", jmsConsumer)
                 .producer("producer", jmsProducer).build();
 
-        Module module = BuilderFactory.moduleBuilder("sample-module").withDescription("Sample Module").addFlow(flow).build();
+        Module module = BuilderFactory.moduleBuilder("sample-boot-jms").withDescription("Sample Module").addFlow(flow).build();
         return module;
     }
 

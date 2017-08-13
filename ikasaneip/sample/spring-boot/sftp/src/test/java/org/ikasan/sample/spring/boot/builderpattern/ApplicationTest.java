@@ -114,6 +114,7 @@ public class ApplicationTest {
 
     public void putFile() throws Exception {
         // Make sure to delete all files created by sftp
+        Files.deleteIfExists(FileSystems.getDefault().getPath("test.txtb"));
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
 
@@ -179,7 +180,6 @@ public class ApplicationTest {
         pause(20000);
         assertEquals("running", flow.getState());
 
-        pause(5000);
         flow.stop();
         pause(2000);
         assertEquals("stopped", flow.getState());

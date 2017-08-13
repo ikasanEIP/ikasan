@@ -50,7 +50,7 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        FlowBuilder sftpToLogFlowBuilder = BuilderFactory.flowBuilder("sftpToLogFlow", "sample-module");
+        FlowBuilder sftpToLogFlowBuilder = BuilderFactory.flowBuilder("sftpToLogFlow", "sample-boot-sftp");
         beanFactory.autowireBean(sftpToLogFlowBuilder);
         Flow sftpToLogFlow = sftpToLogFlowBuilder
                 .withDescription("Sftp to Log")
@@ -58,7 +58,7 @@ public class ModuleConfig {
                 .converter("SFTP payload to String Converter",payloadToStringConverter)
                 .producer("Log", new DevNull()).build();
 
-        FlowBuilder timeGeneratorToSftpFlowBuilder = BuilderFactory.flowBuilder("timeGeneratorToSftpFlow", "sample-module");
+        FlowBuilder timeGeneratorToSftpFlowBuilder = BuilderFactory.flowBuilder("timeGeneratorToSftpFlow", "sample-boot-sftp");
         beanFactory.autowireBean(timeGeneratorToSftpFlowBuilder);
         Flow timeGeneratorToSftpFlow = timeGeneratorToSftpFlowBuilder
                 .withDescription("Generates random string and send it to sftp as file")
@@ -66,7 +66,7 @@ public class ModuleConfig {
                 .converter("Random String Generator",filePayloadGeneratorConverter)
                 .producer("Sftp Producer", sftpProducer).build();
 
-        Module module = BuilderFactory.moduleBuilder("sftp-sample-module").withDescription("SFTP Sample Module")
+        Module module = BuilderFactory.moduleBuilder("sample-boot-sftp").withDescription("SFTP Sample Module")
                 .addFlow(sftpToLogFlow).addFlow(timeGeneratorToSftpFlow).build();
         return module;
     }

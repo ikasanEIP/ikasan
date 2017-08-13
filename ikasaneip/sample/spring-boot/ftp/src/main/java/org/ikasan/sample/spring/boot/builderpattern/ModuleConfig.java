@@ -50,7 +50,7 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        FlowBuilder ftpToLogFlowBuilder = BuilderFactory.flowBuilder("ftpToLogFlow", "sample-module");
+        FlowBuilder ftpToLogFlowBuilder = BuilderFactory.flowBuilder("ftpToLogFlow", "sample-boot-ftp");
         beanFactory.autowireBean(ftpToLogFlowBuilder);
         Flow ftpToLogFlow = ftpToLogFlowBuilder
                 .withDescription("Ftp to Log")
@@ -58,7 +58,7 @@ public class ModuleConfig {
                 .converter("FTP payload to String Converter",payloadToStringConverter)
                 .producer("Log", new DevNull()).build();
 
-        FlowBuilder timeGeneratorToFtpFlowBuilder = BuilderFactory.flowBuilder("timeGeneratorToFtpFlow", "sample-module");
+        FlowBuilder timeGeneratorToFtpFlowBuilder = BuilderFactory.flowBuilder("timeGeneratorToFtpFlow", "sample-boot-ftp");
         beanFactory.autowireBean(timeGeneratorToFtpFlowBuilder);
         Flow timeGeneratorToFtpFlow = timeGeneratorToFtpFlowBuilder
                 .withDescription("Generates random string and send it to ftp as file")
