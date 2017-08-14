@@ -58,16 +58,6 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-uber-spec</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-filetransfer</artifactId>
-        </dependency>
-
         <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
