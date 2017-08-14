@@ -162,7 +162,7 @@ public class SftpMessageProvider implements ManagedResource, MessageProvider<Pay
     /**
      * Apply any configured housekeeping on this connection template.
      *
-     * @throws javax.resource.ResourceException - Exception if the JCA connector fails
+     * @throws ResourceException - Exception if the JCA connector fails
      */
     protected void housekeep() throws ResourceException
     {

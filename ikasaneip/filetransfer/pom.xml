@@ -57,7 +57,7 @@
         <module>client-filetransfer</module>
         <module>connector-basefiletransfer</module>
         <module>connector-ftp</module>
-        <module>connector-sftp</module>
+        <module>sftp</module>
     </modules>
 
     <dependencies>

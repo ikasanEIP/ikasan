@@ -58,7 +58,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import javax.resource.ResourceException;
 
 /**
- * Test class for {@link org.ikasan.endpoint.sftp.consumer.SftpMessageProvider}
+ * Test class for {@link SftpMessageProvider}
  *
  * @author Ikasan Development Team
  */
