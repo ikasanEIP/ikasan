@@ -41,6 +41,8 @@
 package org.ikasan.sample;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -64,9 +66,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -79,7 +79,7 @@ import java.util.List;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
 		"/exclusion-service-conf.xml",
-		"/h2db-datasource-conf.xml"
+		"/datasource-conf.xml"
 })
 public class SampleFlowBuilderTest
 {
@@ -147,7 +147,9 @@ public class SampleFlowBuilderTest
 	@Test
 	public void test_successful_simple_transitions()
 	{
-		Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+		IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+		Flow flow = ikasanApplication.getFlowBuilder("flowName")
 				.withDescription("flowDescription")
 				.withFlowInvocationContextListener(flowInvocationContextListener)
 				.withFlowInvocationContextListener(flowInvocationContextListener)
@@ -205,7 +207,9 @@ public class SampleFlowBuilderTest
     @Ignore@Test
     public void test_successful_router_transitions()
     {
-    	Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+		IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+		Flow flow = ikasanApplication.getFlowBuilder("flowName")
             .consumer("consumer", consumer)
     	    .converter("converter", converter)
     	    .translator("translator", translator)

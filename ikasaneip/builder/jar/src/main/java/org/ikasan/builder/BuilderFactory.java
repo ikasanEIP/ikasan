@@ -55,52 +55,16 @@ import java.util.List;
 public class BuilderFactory
 {
     // singleton
-    static BuilderFactory builderFactory = new BuilderFactory(null);    // FIXME
-
-    ApplicationContext context;
+    static BuilderFactory builderFactory = new BuilderFactory();
 
     protected static BuilderFactory getInstance()
     {
         return builderFactory;
     }
-//
-    public static ModuleBuilder moduleBuilder(String name)
-    {
-        return new ModuleBuilder(name);
-    }
-
-//    public static ModuleBuilder moduleBuilder(String name, String version)
-//    {
-//        return new ModuleBuilder(name);
-//    }
 
     public static RouteBuilder routeBuilder()
     {
         return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
-    }
-
-    public BuilderFactory(ApplicationContext context)
-    {
-        this.context = context;
-    }
-//
-//    public static FlowBuilder flowBuilder()
-//    {
-//        // create flowBuilder with default configuration
-//        FlowBuilder flowBuilder = new FlowBuilder();
-//        return flowBuilder;
-//    }
-
-//    public FlowBuilder getFlowBuilder(String name)
-//    {
-//        FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
-//        flowBuilder.withName(name);
-//        return flowBuilder;
-//    }
-
-    public static FlowBuilder flowBuilder(String name, String module)
-    {
-        return new FlowBuilder(name, module);
     }
 
     protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)

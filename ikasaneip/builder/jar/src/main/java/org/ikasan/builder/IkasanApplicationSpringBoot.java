@@ -40,10 +40,12 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
@@ -61,7 +63,6 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     public IkasanApplicationSpringBoot(String[] args)
     {
         this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
-
     }
 
     IkasanApplicationSpringBoot()
@@ -71,6 +72,23 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     public ModuleBuilder getModuleBuilder(String name)
     {
         return new ModuleBuilder(this.context, name);
+    }
+
+    public FlowBuilder getFlowBuilder(String flowName)
+    {
+        AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
+        FlowBuilder flowBuilder = new FlowBuilder(flowName, null);
+        beanFactory.autowireBean(flowBuilder);
+        flowBuilder.setApplicationContext(this.context);
+        return flowBuilder;
+    }
+
+    public ComponentBuilder getComponentBuilder()
+    {
+        AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
+        ComponentBuilder componentBuilder = new ComponentBuilder();
+        beanFactory.autowireBean(componentBuilder);
+        return componentBuilder;
     }
 
     public void run(Module module)

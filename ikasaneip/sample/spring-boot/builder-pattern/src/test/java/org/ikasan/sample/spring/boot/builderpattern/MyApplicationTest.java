@@ -46,12 +46,9 @@ import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -88,7 +85,7 @@ public class MyApplicationTest
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
         ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
-        Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder);
+        Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder, ikasanApplication.getComponentBuilder());
 
         Module module = moduleBuilder.addFlow(scheduldeFlow).build();
 

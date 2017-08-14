@@ -136,7 +136,9 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_transitions() 
     {
-		Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+		Flow flow = ikasanApplication.getFlowBuilder("flowName")
     	    .withDescription("flowDescription")
             .withFlowInvocationContextListener(flowInvocationContextListener)
             .withFlowInvocationContextListener(flowInvocationContextListener)
@@ -195,7 +197,9 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_router_transitions()
     {
-        Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+        Flow flow = ikasanApplication.getFlowBuilder("flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -264,7 +268,9 @@ public class FlowBuilderTest
                 .when("nestedRoute2", nestedRoute2)
                 .otherwise(nestedRoute3).build();
 
-        Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+        Flow flow = ikasanApplication.getFlowBuilder("flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -345,7 +351,9 @@ public class FlowBuilderTest
 				.when("nestedRoute2", nestedRoute2)
 				.otherwise(nestedRoute3).build();
 
-        Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+        Flow flow = ikasanApplication.getFlowBuilder("flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -431,7 +439,9 @@ public class FlowBuilderTest
     @Test
     public void test_successful_sequencer_transitions()
     {
-    	Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+        Flow flow = ikasanApplication.getFlowBuilder("flowName")
     	.withDescription("flowDescription")
         .withExclusionServiceFactory(exclusionServiceFactory)
         .withSerialiserFactory(serialiserFactory)
@@ -487,7 +497,9 @@ public class FlowBuilderTest
 		Route nestedRoute1 = BuilderFactory.routeBuilder().producer("name1", producer);
 		Route nestedRoute2 = BuilderFactory.routeBuilder().producer("name2", producer);
 
-		Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+
+        Flow flow = ikasanApplication.getFlowBuilder("flowName")
 				.withDescription("flowDescription")
 				.withExclusionServiceFactory(exclusionServiceFactory)
 				.withSerialiserFactory(serialiserFactory)

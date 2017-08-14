@@ -73,7 +73,7 @@ public class SimpleExample
     {
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(new String[0]);
         return ikasanApplication.getModuleBuilder(moduleName)
-                .addFlow(BuilderFactory.flowBuilder("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
+                .addFlow(ikasanApplication.getFlowBuilder("flowName").withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
                         .singleRecipientRouter("routerName", new SimpleRouter())

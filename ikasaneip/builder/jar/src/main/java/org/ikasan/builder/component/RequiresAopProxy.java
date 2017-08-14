@@ -38,60 +38,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
-
-import org.ikasan.builder.component.ComponentBuilder;
-import org.ikasan.spec.module.Module;
+package org.ikasan.builder.component;
 
 /**
- * IkasanApplication contract
+ * Contract to allow flow element access to be proxied via AOP.
  *
- * @author Ikasan Development Team
+ * @author Ikasan Development Team.
  */
-public interface IkasanApplication
+public interface RequiresAopProxy<COMPONENT>
 {
     /**
-     * Get instance of a module builder
-     * @param moduleName
-     * @return
+     * Set the AOP proxy object
+     * @param component
      */
-    ModuleBuilder getModuleBuilder(String moduleName);
+    public void setAopProxyTarget(COMPONENT component);
 
     /**
-     * Get instance of a flow builder
+     * Get the AOP proxy object or the object on which the AOP proxy will be applied
      * @return
      */
-    FlowBuilder getFlowBuilder(String flowName);
-
-    /**
-     * Get instance of a component builder
-     * @return
-     */
-    ComponentBuilder getComponentBuilder();
-
-    /**
-     * Execute the module
-     * @param module
-     */
-    void run(Module module);
-
-    /**
-     * This method forces Ikassan application shutdown.
-     */
-    void close();
-    /**
-     * Get bean by given name.
-     *
-     * @param beanName
-     * @return
-     */
-    Object getBean(String beanName);
-
-    /**
-     * Get bean by given class.
-     *
-     * @param className
-     * @return
-     */
-    Object getBean(Class className);
+    public COMPONENT getAopProxyTarget();
 }

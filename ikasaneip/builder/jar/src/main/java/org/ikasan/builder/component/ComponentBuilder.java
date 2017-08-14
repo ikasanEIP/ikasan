@@ -40,15 +40,8 @@
  */
 package org.ikasan.builder.component;
 
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,139 +63,8 @@ public class ComponentBuilder
     public ScheduledConsumerBuilder scheduledConsumer()
     {
         ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer(scheduler);
-        return new ScheduledConsumerBuilderImpl(scheduledConsumer);
-    }
-
-    class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresComponentName, RequiresFlowName, RequiresModuleName
-    {
-        Job proxiedConsumer;
-
-        ScheduledConsumer scheduledConsumer;
-        String componentName = "unspecifiedScheduledComponentName";
-        String moduleName = "unspecifiedModuleName";
-        String flowName = "unspecifiedFlowName";
-
-        public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer)
-        {
-            this.scheduledConsumer = scheduledConsumer;
-        }
-
-        public ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup)
-        {
-            this.scheduledConsumer.setCriticalOnStartup(criticalOnStartup);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId)
-        {
-            this.scheduledConsumer.setConfiguredResourceId(configuredResourceId);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration)
-        {
-            this.scheduledConsumer.setConfiguration(scheduledConsumerConfiguration);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider)
-        {
-            this.scheduledConsumer.setMessageProvider(messageProvider);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
-        {
-            this.scheduledConsumer.setManagedEventIdentifierService(managedEventIdentifierService);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
-        {
-            this.scheduledConsumer.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory) {
-            this.scheduledConsumer.setEventFactory(eventFactory);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setCronExpression(String cronExpression)
-        {
-            getConfiguration().setCronExpression(cronExpression);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setEager(boolean eager) {
-            getConfiguration().setEager(eager);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire) {
-            getConfiguration().setIgnoreMisfire(ignoreMisfire);
-            return this;
-        }
-
-        public ScheduledConsumerBuilder setTimezone(String timezone) {
-            getConfiguration().setTimezone(timezone);
-            return this;
-        }
-
-        private ScheduledConsumerConfiguration getConfiguration()
-        {
-            ScheduledConsumerConfiguration scheduledConsumerConfiguration = this.scheduledConsumer.getConfiguration();
-            if(scheduledConsumerConfiguration == null)
-            {
-                scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
-                this.scheduledConsumer.setConfiguration(scheduledConsumerConfiguration);
-            }
-
-            return scheduledConsumerConfiguration;
-        }
-
-        public void setTargetComponent(Consumer scheduledConsumer)
-        {
-            proxiedConsumer = (Job)scheduledConsumer;           // FIXME
-            this.scheduledConsumer = this.scheduledConsumer;  // FIXME - dont cast
-        }
-
-        public Consumer getTargetComponent()
-        {
-            return this.scheduledConsumer;
-        }
-
-        public Consumer build()
-        {
-            if(this.scheduledConsumer.getConfiguration() == null)
-            {
-                this.scheduledConsumer.setConfiguration( new ScheduledConsumerConfiguration() );
-            }
-
-            if(this.scheduledConsumer.getConfiguredResourceId() == null)
-            {
-                this.scheduledConsumer.setConfiguredResourceId(this.componentName + flowName + moduleName);
-            }
-
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(this.proxiedConsumer, ScheduledConsumer.class, this.componentName, this.flowName + this.moduleName) );
-
-            return this.scheduledConsumer;
-        }
-
-        public void setComponentName(String componentName)
-        {
-            this.componentName = componentName;
-        }
-
-        public void setFlowName(String flowName)
-        {
-            this.flowName = flowName;
-        }
-
-        public void setModuleName(String moduleName)
-        {
-            this.moduleName = moduleName;
-        }
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer, scheduledJobFactory);
+        return scheduledConsumerBuilder;
     }
 
 }

@@ -109,12 +109,11 @@ public class ModuleBuilderTest
      * Test successful flow creation.
      */
     @Test
-    @Ignore // FIXME - remove this ignore to reinstate the test
-    public void test_successful_flowCreation() 
+    public void test_successful_flowCreation()
     {
     	ModuleBuilder moduleBuilder = IkasanApplicationFactory.getIkasanApplication().getModuleBuilder("module name").withDescription("module description");
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName1").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService);
-        Flow flow1 = flowBuilder.consumer("consumer", flowBuilder.getComponentBuilder().scheduledConsumer()).producer("producer", producer).build();
+        Flow flow1 = flowBuilder.consumer("consumer", IkasanApplicationFactory.getIkasanApplication().getComponentBuilder().scheduledConsumer()).producer("producer", producer).build();
 
     	Flow flow2 = moduleBuilder.getFlowBuilder("flowName2").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)

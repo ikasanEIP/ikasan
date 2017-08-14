@@ -78,7 +78,7 @@ public class ModuleBuilder
 	 * Constructor
 	 * @param name
 	 */
-	ModuleBuilder(ApplicationContext context, String name)
+	public ModuleBuilder(ApplicationContext context, String name)
 	{
 		this.context = context;
 		if(context == null)

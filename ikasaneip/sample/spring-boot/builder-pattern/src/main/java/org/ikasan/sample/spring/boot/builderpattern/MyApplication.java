@@ -44,6 +44,7 @@ import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -75,7 +76,7 @@ public class MyApplication
         ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName").withDescription("Example module with pattern builder");
 
         // get an instance of flowBuilder from the moduleBuilder and create a flow
-        Flow scheduledFlow = getScheduledFlow(moduleBuilder);
+        Flow scheduledFlow = getScheduledFlow(moduleBuilder, ikasanApplication.getComponentBuilder());
 
         // get an instance of flowBuilder from the moduleBuilder and create a flow
         Flow jmsFlow = getJmsFlow(moduleBuilder);
@@ -88,11 +89,11 @@ public class MyApplication
 
     }
 
-    public Flow getScheduledFlow(ModuleBuilder moduleBuilder)
+    public Flow getScheduledFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
     {
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Scheduled Flow Name");
         return flowBuilder.withDescription("scheduled flow description")
-                .consumer("consumer", flowBuilder.getComponentBuilder().scheduledConsumer().setCronExpression("0/5 * * * * ?"))
+                .consumer("consumer", componentBuilder.scheduledConsumer().setCronExpression("0/5 * * * * ?"))
                 .producer("producer", new MyProducer()).build();
     }
 

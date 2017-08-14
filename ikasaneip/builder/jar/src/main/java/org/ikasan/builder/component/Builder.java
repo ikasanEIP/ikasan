@@ -41,13 +41,19 @@
 package org.ikasan.builder.component;
 
 /**
- * Builder contract.
+ * Builder contract which provisions access into the specific component builder
+ * to get or set the target component object. Typically these getter/setters are
+ * used to update aspects of the component object such as AOP proxies.
+ *
+ * To retrieve the fully functional built component get the object via the build() method.
  *
  * @author Ikasan Development Team.
  */
-public interface Builder<T>
+public interface Builder<COMPONENT>
 {
-    public void setTargetComponent(T targetComponent);
-    public T getTargetComponent();
-    public T build();
+    /**
+     * Get the component in a fully built form.
+     * @return
+     */
+    public COMPONENT build();
 }
