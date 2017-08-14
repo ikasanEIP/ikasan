@@ -3,8 +3,7 @@ package org.ikasan.exclusion.dao;
 import org.apache.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.ikasan.solr.dao.SolrDaoBase;
-import org.ikasan.spec.management.HousekeeperService;
+import org.ikasan.spec.solr.SolrDaoBase;
 
 import java.util.Date;
 import java.util.List;

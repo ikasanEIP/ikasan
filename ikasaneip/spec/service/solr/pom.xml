@@ -56,4 +56,20 @@
     <packaging>jar</packaging>
     <name>Ikasan Specification Solr Resource Contracts</name>
     <description>The specification solr contracts for the Ikasan Enterprise Integration Platform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>6.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>

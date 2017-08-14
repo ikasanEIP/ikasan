@@ -1,10 +1,9 @@
-package org.ikasan.solr.dao;
+package org.ikasan.spec.solr;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.response.UpdateResponse;
-import org.ikasan.spec.solr.SolrInitialisationService;
 
 import java.util.Date;
 import java.util.List;
