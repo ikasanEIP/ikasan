@@ -55,8 +55,6 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-filetransfer-common</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Enterprise Integration File Transfer / Common</name>
-    <description>The common file transfer library for the Ikasan</description>
 
     <dependencies>
         <!-- Needed for XML to Object serialisiation -->
