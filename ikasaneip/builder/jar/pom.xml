@@ -104,6 +104,12 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-rest-boot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-transaction-arjuna</artifactId>
             <version>${project.version}</version>
         </dependency>

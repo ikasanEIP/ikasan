@@ -46,7 +46,6 @@ import org.ikasan.spec.module.ModuleInitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -77,7 +76,7 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     public FlowBuilder getFlowBuilder(String flowName)
     {
         AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-        FlowBuilder flowBuilder = new FlowBuilder(flowName, null);
+        FlowBuilder flowBuilder = new FlowBuilder(flowName, "undefinedModuleName");
         beanFactory.autowireBean(flowBuilder);
         flowBuilder.setApplicationContext(this.context);
         return flowBuilder;
