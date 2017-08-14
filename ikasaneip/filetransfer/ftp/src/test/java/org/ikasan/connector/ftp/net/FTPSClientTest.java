@@ -48,7 +48,7 @@ public class FTPSClientTest {
             System.out.println("################ Connect Call ################################");
             client.connect(server, port);
 
-            System.out.println("Connected to " + server + ".");
+            System.out.println("Connected to " + server + "");
             reply = client.getReplyCode();
 
             if (!FTPReply.isPositiveCompletion(reply))

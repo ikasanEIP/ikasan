@@ -56,7 +56,7 @@
         <module>connector-base</module>
         <module>client-filetransfer</module>
         <module>connector-basefiletransfer</module>
-        <module>connector-ftp</module>
+        <module>ftp</module>
         <module>sftp</module>
     </modules>
 
