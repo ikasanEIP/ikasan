@@ -4,9 +4,8 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.solr.dao.SolrDaoBase;
+import org.ikasan.spec.solr.SolrDaoBase;
 
 import java.util.Date;
 import java.util.List;

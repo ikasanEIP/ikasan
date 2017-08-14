@@ -2,12 +2,11 @@ package org.ikasan.solr.dao;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
+import org.ikasan.spec.solr.SolrDaoBase;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
