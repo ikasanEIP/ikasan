@@ -148,11 +148,7 @@
             <artifactId>ikasan-replay</artifactId>
          </dependency>
 
-        <!--dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-rest</artifactId>
-        </dependency-->
-        <dependency>
+       <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest-boot</artifactId>
         </dependency>
@@ -260,11 +256,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
          </dependency>
-
-        <!--dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-        </dependency-->
 
         <!-- For point cut transaction management -->
         <dependency>

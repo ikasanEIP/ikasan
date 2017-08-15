@@ -135,7 +135,7 @@ public class SampleFlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
-                oneOf(exclusionServiceFactory).getExclusionService("moduleName", "flowName");
+                oneOf(exclusionServiceFactory).getExclusionService("undefinedModuleName", "flowName");
                 will(returnValue(exclusionService));
             }
         });
@@ -162,7 +162,7 @@ public class SampleFlowBuilderTest
 				.producer("producer", producer).build();
 
 		Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-		Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+		Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
 		List<FlowElement<?>> flowElements = flow.getFlowElements();
 		Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
 

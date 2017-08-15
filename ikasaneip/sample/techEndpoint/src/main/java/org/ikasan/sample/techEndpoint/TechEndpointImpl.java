@@ -87,8 +87,14 @@ public class TechEndpointImpl implements TechEndpoint
         }
         catch(NullPointerException e)
         {
-            // listener stopped listening, just dump the stacktrace
-            e.printStackTrace();
+            if(this.techEndpointListener == null)
+            {
+                System.out.print("Listener stopped listening for events.\n");
+            }
+            else
+            {
+                e.printStackTrace();
+            }
         }
         finally
         {

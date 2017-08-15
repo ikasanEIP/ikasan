@@ -111,9 +111,10 @@ public class ModuleBuilderTest
     @Test
     public void test_successful_flowCreation()
     {
-    	ModuleBuilder moduleBuilder = IkasanApplicationFactory.getIkasanApplication().getModuleBuilder("module name").withDescription("module description");
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+    	ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName").withDescription("module description");
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName1").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService);
-        Flow flow1 = flowBuilder.consumer("consumer", IkasanApplicationFactory.getIkasanApplication().getComponentBuilder().scheduledConsumer()).producer("producer", producer).build();
+        Flow flow1 = flowBuilder.consumer("consumer", ikasanApplication.getComponentBuilder().scheduledConsumer()).producer("producer", producer).build();
 
     	Flow flow2 = moduleBuilder.getFlowBuilder("flowName2").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)
@@ -121,7 +122,7 @@ public class ModuleBuilderTest
 
     	Module module = moduleBuilder.addFlow(flow1).addFlow(flow2).build();
 
-    	Assert.assertTrue("module name should be 'module name'", "module name".equals(module.getName()));
+    	Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
     	Assert.assertTrue("module description should be 'module description'", "module description".equals(module.getDescription()));
     	Assert.assertNotNull("module should contain a flow named 'flowName1''", module.getFlow("flowName1"));
     	Assert.assertNotNull("module should contain a flow named 'flowName2''", module.getFlow("flowName2"));

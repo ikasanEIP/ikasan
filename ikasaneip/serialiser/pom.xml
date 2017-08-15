@@ -112,12 +112,11 @@
       </dependency>
 
       <dependency>
-          <groupId>geronimo-spec</groupId>
-          <artifactId>geronimo-spec-j2ee</artifactId>
-          <scope>provided</scope>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jms_1.1_spec</artifactId>
+          <version>${version.geronimo.jms.spec}</version>
       </dependency>
 
-      <!-- IKASAN-822 FIXME - remove this dependency and implement our own Message concrete classes for JMS -->
       <dependency>
           <groupId>org.apache.activemq</groupId>
           <artifactId>activemq-all</artifactId>
