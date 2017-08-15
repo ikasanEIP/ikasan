@@ -62,6 +62,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -403,35 +405,135 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleMetaData(Module module)
     {
+        String host = getHost();
+        Server existingServer = null;
+        if(host != null)
+        {
+            Integer port = getPort();
+            String pid = getPid();
+            String context = getContext(module);
+            String serverName = "http://" + host + ":" + port+"/"+context;
+            String serverUrl = "http://" + host;
+            logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
+            Server server = new Server(host, serverName, serverUrl, port);
+            List<Server> servers = this.topologyService.getAllServers();
+            boolean foundMatchingServer = false;
+            for (Server s : servers)
+            {
+                if (s.getUrl().equals(server.getUrl()) && s.getPort().equals(server.getPort()))
+                {
+                    foundMatchingServer = true;
+                    existingServer = s;
+                }
+            }
+            if (!foundMatchingServer)
+            {
+                logger.info("Server instance  [" + server + "], creating...");
+                this.topologyService.save(server);
+                existingServer = server;
+            }
+        }
         org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
 
-        String host = platformContext.getEnvironment().getProperty("server.address");
-        if(host == null)
-        {
-            host = platformContext.getEnvironment().getProperty("service.name");
-        }
-
-        String port = platformContext.getEnvironment().getProperty("server.port");
-        String context = platformContext.getEnvironment().getProperty("server.contextPath");
-        String pid = getPid();
-        String serverName = "http://"+host + ":"+port+context;
-        String serverUrl = "http://"+host ;
-        logger.info("Module host [" + host + ":"+port+context+"] running with PID ["+pid+"]");
-
-        Server server = new Server(serverName,serverName,serverUrl,Integer.parseInt(port));
-
-        List<Server> servers = this.topologyService.getAllServers();
-        if(!servers.contains(server))
-        {
-            this.topologyService.save(server);
-        }
-
-        if (moduleDB==null)
+        if (moduleDB == null)
         {
             logger.info("module does not exist [" + module.getName() + "], creating...");
-            moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
-            moduleDB.setServer(server);
+            moduleDB = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
+                    module.getDescription(), module.getVersion(), null, null);
+            if(existingServer!=null)
+            {
+                moduleDB.setServer(existingServer);
+            }
             this.topologyService.save(moduleDB);
+        }
+        else if(existingServer != null)
+        {
+            logger.info("Updating [" + module.getName() + "] server instance to  [" + existingServer.getUrl() + "].");
+            moduleDB.setServer(existingServer);
+            this.topologyService.save(moduleDB);
+        }
+
+
+    }
+
+    private Integer getPort() {
+        try
+        {
+            String port = platformContext.getEnvironment().getProperty("server.port");
+            if(port!=null)
+            {
+                return Integer.valueOf(port);
+            }
+            Object portObject;
+            try
+            {
+                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=full-ha-sockets,socket-binding=http"), "port");
+            }catch (InstanceNotFoundException e){
+                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=full-sockets,socket-binding=http"), "port");
+            }
+
+            if(portObject!=null)
+            {
+                return (Integer) portObject;
+            }
+            return 8080;
+        }
+        catch (Throwable ex) {
+            return 8080;
+        }
+    }
+
+    private String getHost()
+    {
+        try
+        {
+            String host = platformContext.getEnvironment().getProperty("server.address");
+            if (host != null)
+            {
+                return host;
+            }
+            host = platformContext.getEnvironment().getProperty("service.name");
+            if (host != null)
+            {
+                return host;
+            }
+            Object portHost;
+            try
+            {
+                portHost = ManagementFactory.getPlatformMBeanServer()
+                        .getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+            }
+            catch (InstanceNotFoundException e)
+            {
+                portHost = System.getProperty("jboss.bind.address");
+            }
+            if (portHost != null)
+            {
+                return (String) portHost;
+            }
+            return null;
+        }
+        catch (Throwable ex)
+        {
+            return null;
+        }
+    }
+
+    private String getContext(Module module)
+    {
+        try
+        {
+            String context = platformContext.getEnvironment().getProperty("server.contextPath");
+
+            if (context != null)
+            {
+                return context;
+            }
+            return module.getName();
+        }
+        catch (Throwable ex)
+        {
+            return null;
         }
     }
 
