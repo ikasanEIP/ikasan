@@ -120,11 +120,14 @@
             </exclusions>
         </dependency>
         <!-- TODO Investigate wrapping this string day, used to interact with LastResourceCommit -->
+
         <dependency>
-            <groupId>org.jboss.transaction</groupId>
-            <artifactId>jboss-jta</artifactId>
+            <groupId>org.jboss.narayana.jta</groupId>
+            <artifactId>jta</artifactId>
+            <version>5.3.4.Final</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
