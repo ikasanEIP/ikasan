@@ -9,10 +9,9 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-sample-sftp-ear</artifactId>
+    <artifactId>ikasan-sample-jboss-sftp-ear</artifactId>
     <packaging>ear</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>ikasan-sample-sftp Integration Module EAR</name>
 
 	<build>
 		<plugins>
@@ -27,35 +26,20 @@
 						<webModule>
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-webconsole-skinny-war</artifactId>
-							<contextRoot>/ikasan-sample-sftp</contextRoot>
+							<contextRoot>/ikasan-sample-jboss-sftp</contextRoot>
 						</webModule>
 					</modules>
 					<archive>
 						<manifestEntries>
-							<Dependencies>deployment.ikasan-sample-sftp-ear-${project.version}.ear,
+							<Dependencies>deployment.ikasan-sample-jboss-sftp-ear-${project.version}.ear,
                                 org.ikasan.${dashed.project.version}.configuration,
-                                javax.servlet.jsp.api,javax.servlet.jstl.api,javax.servlet.api, org.apache.log4j,
-                                org.ikasan.sftp.ra,
-                                org.ikasan.ikasan-sample-sftp.conf</Dependencies>
+                                javax.servlet.jsp.api,
+                                javax.servlet.jstl.api,
+                                javax.servlet.api,
+                                org.jboss.jts,
+                                org.ikasan.ikasan-sample-jboss-sftp.conf</Dependencies>
 						</manifestEntries>
 					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jboss.as.plugins</groupId>
-				<artifactId>jboss-as-maven-plugin</artifactId>
-				<version>7.5.Final</version>
-				<configuration>
-					<domain>
-						<server-groups>
-							<server-group>eai-default-group</server-group>
-						</server-groups>
-					</domain>
-					<hostname>${jbossHostname}</hostname>
-					<port>${jbossPort}</port>
-					<username>${jbossUsername}</username>
-					<password>${jbossPassword}</password>
-					<ignoreMissingDeployment>true</ignoreMissingDeployment>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -66,25 +50,9 @@
         <!-- jar for this integration module -->
 		<dependency>
 			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-sample-sftp</artifactId>
+			<artifactId>ikasan-sample-jboss-sftp</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
-
-        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -101,30 +69,12 @@
             <artifactId>dom4j</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-filetransfer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- web console -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-webconsole-skinny-war</artifactId>
             <version>${project.version}</version>
             <type>war</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
@@ -132,12 +82,6 @@
             <artifactId>ikasan-webconsole-war</artifactId>
             <version>${project.version}</version>
             <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -155,9 +99,5 @@
             <artifactId>spring-tx</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
-        </dependency>
     </dependencies>
 </project>

@@ -16,6 +16,7 @@
         <value>monitor-conf.xml</value>
 
         <!-- available in the binaries -->
+        <value>filetransfer-service-conf.xml</value>
         <value>logger-conf.xml</value>
         <value>shared-conf.xml</value>
         <value>exception-conf.xml</value>

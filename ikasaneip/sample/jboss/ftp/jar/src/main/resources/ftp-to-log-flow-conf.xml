@@ -80,15 +80,16 @@
 
     <bean id="fileBasedPasswordHelper" class="org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper"></bean>
 
-    <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ftp/SimpleFtpConnectionFactory"/>
-    </bean>
 
     <bean id="ftpMessageProvider" class="org.ikasan.endpoint.ftp.consumer.FtpMessageProvider">
-        <constructor-arg name="connectionFactory" ref="connectionFactory"/>
-        <constructor-arg name="fileBasedPasswordHelper" ref="fileBasedPasswordHelper"/>
         <property name="configuration" ref="ftpConsumerConfiguration"/>
+        <constructor-arg name="fileBasedPasswordHelper" ref="fileBasedPasswordHelper"/>
+        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
+        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
+        <constructor-arg name="transactionManager" ref="transactionManager"/>
     </bean>
+
 
     <bean id="payloadToStringConverter" class="org.ikasan.sample.sftp.component.converter.PayloadToStringConverter"/>
 
