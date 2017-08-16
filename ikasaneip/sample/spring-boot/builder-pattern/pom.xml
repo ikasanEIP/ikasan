@@ -17,7 +17,6 @@
     <properties>
         <!--<java.version>1.8</java.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
 
     <dependencies>
@@ -108,7 +107,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${version.org.hibernate-validator}</version>
         </dependency>
 
         <!-- web console -->
@@ -127,7 +125,6 @@
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
-            <version>${version.org.apache.tomcat}</version>
         </dependency>
 
         <dependency>

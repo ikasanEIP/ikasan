@@ -1969,6 +1969,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${version.org.apache.tomcat}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-js</artifactId>
                 <version>${version.org.springframework.webflow}</version>
