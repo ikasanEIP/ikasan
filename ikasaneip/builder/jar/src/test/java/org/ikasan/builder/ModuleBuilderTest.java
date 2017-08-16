@@ -51,9 +51,9 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -88,6 +88,8 @@ public class ModuleBuilderTest
     /** Mock serialiserFactory */
     final ReplayRecordService replayRecordService = mockery.mock(ReplayRecordService.class, "mockReplayRecordService");
 
+    IkasanApplication ikasanApplication;
+
     @Before
     public void setup()
     {
@@ -103,15 +105,22 @@ public class ModuleBuilderTest
                 exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName2");
             }
         });
+
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
     }
-    
+
+    @After
+    public void teardown()
+    {
+        ikasanApplication.close();
+    }
+
     /**
      * Test successful flow creation.
      */
     @Test
     public void test_successful_flowCreation()
     {
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
     	ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName").withDescription("module description");
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName1").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService);
         Flow flow1 = flowBuilder.consumer("consumer", ikasanApplication.getComponentBuilder().scheduledConsumer()).producer("producer", producer).build();

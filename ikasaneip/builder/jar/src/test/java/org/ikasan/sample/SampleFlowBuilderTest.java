@@ -62,10 +62,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
@@ -126,7 +123,9 @@ public class SampleFlowBuilderTest
 
     final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "serialiserFactory");
 
-    @Before
+	IkasanApplication ikasanApplication;
+
+	@Before
     public void setup()
     {
         // expectations
@@ -139,7 +138,15 @@ public class SampleFlowBuilderTest
                 will(returnValue(exclusionService));
             }
         });
-    }
+
+		ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+	}
+
+	@After
+	public void teardown()
+	{
+		ikasanApplication.close();
+	}
 
 	/**
 	 * Test successful flow creation.
@@ -147,7 +154,6 @@ public class SampleFlowBuilderTest
 	@Test
 	public void test_successful_simple_transitions()
 	{
-		IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
 
 		Flow flow = ikasanApplication.getFlowBuilder("flowName")
 				.withDescription("flowDescription")
@@ -207,8 +213,6 @@ public class SampleFlowBuilderTest
     @Ignore@Test
     public void test_successful_router_transitions()
     {
-		IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
-
 		Flow flow = ikasanApplication.getFlowBuilder("flowName")
             .consumer("consumer", consumer)
     	    .converter("converter", converter)
