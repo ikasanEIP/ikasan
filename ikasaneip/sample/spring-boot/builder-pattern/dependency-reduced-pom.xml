@@ -235,7 +235,6 @@
     </dependency>
   </dependencies>
   <properties>
-    <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>
