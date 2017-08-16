@@ -45,9 +45,7 @@ import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -62,19 +60,19 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class MyApplicationTest
 {
-    private IkasanApplication ikasanApplication;
-    private MyApplication myApplication;
+    private static IkasanApplication ikasanApplication;
+    private static MyApplication myApplication;
 
-    @Before
-    public void setup(){
+    @BeforeClass
+    public static void setup(){
         String[] args = {""};
 
         myApplication = new MyApplication();
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
     }
 
-    @After
-    public void shutdown(){
+    @AfterClass
+    public static void shutdown(){
         ikasanApplication.close();
     }
     /**
@@ -84,6 +82,7 @@ public class MyApplicationTest
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
+
         ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
         Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder, ikasanApplication.getComponentBuilder());
 
