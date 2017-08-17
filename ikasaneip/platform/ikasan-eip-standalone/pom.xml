@@ -193,7 +193,6 @@
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
-            <version>${version.org.apache.tomcat}</version>
         </dependency>
 
         <!-- Hibernate ORM -->
