@@ -40,57 +40,51 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
-public class IkasanApplicationSpringBoot extends AbstractIkasanApplication implements IkasanApplication
+public class IkasanApplicationSpringBoot implements IkasanApplication
 {
     /** logger */
     private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
 
     ApplicationContext context;
 
+    Map<String, Module> modules = new HashMap<String,Module>();
+
     public IkasanApplicationSpringBoot(String[] args)
     {
-        super(new HashMap<String,ModuleBuilder>() );
         this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
     }
 
     IkasanApplicationSpringBoot()
     {
-        super(new HashMap<String,ModuleBuilder>() );
     }
 
-    protected ModuleBuilder createModuleBuilder(String name)
+    public BuilderFactory getBuilderFactory()
     {
-        return new ModuleBuilder(this.context, name);
-    }
-
-    public ComponentBuilder getComponentBuilder()
-    {
-        AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-        ComponentBuilder componentBuilder = new ComponentBuilder();
-        beanFactory.autowireBean(componentBuilder);
-        return componentBuilder;
+        return new BuilderFactoryImpl(context, new HashMap<String,ModuleBuilder>());
     }
 
     public void run(Module module)
     {
+        this.modules.put(module.getName(), module);
         ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
         service.register(module);
         logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
     }
+
+    // TODO - add close or shutdown per module ?
 
     public void close()
     {

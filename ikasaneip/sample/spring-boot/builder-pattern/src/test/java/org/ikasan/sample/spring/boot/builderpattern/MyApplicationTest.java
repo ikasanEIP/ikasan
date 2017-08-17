@@ -41,6 +41,7 @@
 package org.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
+import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
@@ -51,7 +52,6 @@ import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.jta.JtaTransactionManager;
 
 import static org.junit.Assert.assertEquals;
 
@@ -95,9 +95,9 @@ public class MyApplicationTest
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
-
-        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
-        Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder, ikasanApplication.getComponentBuilder());
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName");
+        Flow scheduldeFlow = myApplication.getScheduledFlow(moduleBuilder, builderFactory.getComponentBuilder());
 
         Module module = moduleBuilder.addFlow(scheduldeFlow).build();
 
@@ -119,10 +119,10 @@ public class MyApplicationTest
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_jmsFlow_start_and_stop_flow() throws Exception
     {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName");
 
-        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
-
-        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder,ikasanApplication.getComponentBuilder() );
+        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder, builderFactory.getComponentBuilder() );
 
         Module module = moduleBuilder.addFlow(jmsFlow).build();
 

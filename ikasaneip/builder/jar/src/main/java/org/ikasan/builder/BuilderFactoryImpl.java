@@ -40,15 +40,39 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.spec.flow.FlowElement;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+
+import java.util.ArrayList;
 import java.util.Map;
 
-public abstract class AbstractIkasanApplication
+/**
+ * Builder Factory implementation.
+ *
+ * @author Ikasan Development Team
+ */
+public class BuilderFactoryImpl implements BuilderFactory
 {
+    /** handle to the spring application context */
+    ApplicationContext applicationContext;
+
     /** Keep a handle on any named module builders associated with this application */
     protected Map<String, ModuleBuilder> moduleBuilders;
 
-    public AbstractIkasanApplication(Map<String,ModuleBuilder> moduleBuilders)
+    /**
+     * Constructor
+     * @param applicationContext
+     */
+    protected BuilderFactoryImpl(ApplicationContext applicationContext, Map<String, ModuleBuilder> moduleBuilders)
     {
+        this.applicationContext = applicationContext;
+        if(applicationContext == null)
+        {
+            throw new IllegalArgumentException("applicationContext cannot be 'null'");
+        }
+
         this.moduleBuilders = moduleBuilders;
         if(moduleBuilders == null)
         {
@@ -70,7 +94,7 @@ public abstract class AbstractIkasanApplication
             return this.moduleBuilders.get(name);
         }
 
-        ModuleBuilder moduleBuilder = createModuleBuilder(name);
+        ModuleBuilder moduleBuilder = new ModuleBuilder(this.applicationContext, name);
         this.moduleBuilders.put(name, moduleBuilder);
         return moduleBuilder;
     }
@@ -86,5 +110,22 @@ public abstract class AbstractIkasanApplication
         return getModuleBuilder(moduleName).getFlowBuilder(flowName);
     }
 
-    protected abstract ModuleBuilder createModuleBuilder(String name);
+    /**
+     * Get an instance of a component builder for the creation of Ikasan components.
+     * @return
+     */
+    public ComponentBuilder getComponentBuilder()
+    {
+        return new ComponentBuilder(this.applicationContext);
+    }
+
+    /**
+     * Get an instance of a route builder for creating nested routes within a flow.
+     * @return
+     */
+    public RouteBuilder getRouteBuilder()
+    {
+        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
+    }
+
 }

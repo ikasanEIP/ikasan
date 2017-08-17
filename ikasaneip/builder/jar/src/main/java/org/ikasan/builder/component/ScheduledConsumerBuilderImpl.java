@@ -59,12 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy<Job>, RequiresComponentName, RequiresFlowName, RequiresModuleName
 {
-    /** the scheduler */
-    @Autowired
-    Scheduler scheduler;
-
-    /** the scheduler */
-    @Autowired
+    /** the scheduledJobFactory */
     ScheduledJobFactory scheduledJobFactory;
 
     /** default scheduled consumer instance */
@@ -74,13 +69,13 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
     Job aopProxiedJob;
 
     /** default value for component name - will be overridden at runtime */
-    String componentName = "unspecifiedScheduledComponentName";
+    String componentName;
 
     /** default value for module name - will be overridden at runtime */
-    String moduleName = "unspecifiedModuleName";
+    String moduleName;
 
     /** default value for flow name - will be overridden at runtime */
-    String flowName = "unspecifiedFlowName";
+    String flowName;
 
     /**
      * Constructor

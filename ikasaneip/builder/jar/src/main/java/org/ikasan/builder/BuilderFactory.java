@@ -40,36 +40,41 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.spec.flow.FlowElement;
-
-import java.util.ArrayList;
+import org.ikasan.builder.component.ComponentBuilder;
 
 /**
- * A simple Flow builder.
+ * Contract for an Ikasan Builder Factory.
+ * This builder factory provides all the builders needed to create an Ikasan module, flow, or component.
  * 
  * @author Ikasan Development Team
  */
-public class BuilderFactory
+public interface BuilderFactory
 {
-    // singleton
-    static BuilderFactory builderFactory = new BuilderFactory();
+    /**
+     * Get instance of a module builder
+     * @param moduleName
+     * @return
+     */
+    ModuleBuilder getModuleBuilder(String moduleName);
 
-    protected static BuilderFactory getInstance()
-    {
-        return builderFactory;
-    }
+    /**
+     * Get instance of a flow builder
+     * @return
+     */
+    FlowBuilder getFlowBuilder(String moduleName, String flowName);
 
-    public static RouteBuilder routeBuilder()
-    {
-        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
-    }
+    /**
+     * Get instance of a component builder
+     * @return
+     */
+    ComponentBuilder getComponentBuilder();
 
-//    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
-//    {
-//        List<FlowElement> flowElements = new ArrayList<FlowElement>();
-//        flowElements.add(flowElement);
-//        return new RouteImpl(flowElements);
-//    }
+    /**
+     * Get an instance of a nested route builder.
+     * @return
+     */
+    RouteBuilder getRouteBuilder();
+
 }
 
 

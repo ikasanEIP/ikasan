@@ -45,6 +45,8 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
 
 /**
  * A simple Component builder.
@@ -53,21 +55,37 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ComponentBuilder
 {
-    /** the scheduler */
-    @Autowired
-    Scheduler scheduler;
+    /** handle to spring context */
+    ApplicationContext applicationContext;
 
-    /** the scheduler */
-    @Autowired
-    ScheduledJobFactory scheduledJobFactory;
+    /**
+     * Constructor
+     * @param applicationContext
+     */
+    public ComponentBuilder(ApplicationContext applicationContext)
+    {
+        this.applicationContext = applicationContext;
+        if(applicationContext == null)
+        {
+            throw new IllegalArgumentException("applicationContext cannot be 'null'");
+        }
+    }
 
+    /**
+     * Get an instance of an Ikasan default scheduledConsumer
+     * @return
+     */
     public ScheduledConsumerBuilder scheduledConsumer()
     {
-        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer(scheduler);
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer, scheduledJobFactory);
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer, this.applicationContext.getBean(ScheduledJobFactory.class) );
         return scheduledConsumerBuilder;
     }
 
+    /**
+     * Get an instance of an Ikasan default jmsConsumer
+     * @return
+     */
     public JmsConsumerBuilder jmsConsumer()
     {
         JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();

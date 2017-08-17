@@ -147,7 +147,8 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_transitions() 
     {
-        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
     	    .withDescription("flowDescription")
             .withFlowInvocationContextListener(flowInvocationContextListener)
             .withFlowInvocationContextListener(flowInvocationContextListener)
@@ -206,15 +207,16 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_router_transitions()
     {
-        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
                 .withSerialiserFactory(serialiserFactory)
                 .consumer("consumer", consumer)
                 .singleRecipientRouter("router", singleRecipientRouter)
-                .when("route1", BuilderFactory.routeBuilder().producer("whenPublisher", producer))
-                .otherwise(BuilderFactory.routeBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+                .when("route1", builderFactory.getRouteBuilder().producer("whenPublisher", producer))
+                .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -267,24 +269,25 @@ public class FlowBuilderTest
     @Test
     public void test_successful_nested_router_transitions()
     {
-        Route nestedRoute1 = BuilderFactory.routeBuilder().producer("nestedRoute1-publisher1", producer);
-        Route nestedRoute2 = BuilderFactory.routeBuilder().producer("nestedRoute2-publisher2", producer);
-        Route nestedRoute3 = BuilderFactory.routeBuilder().producer("nestedRoute3-publisher3", producer);
-        Route route2 = BuilderFactory.routeBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Route nestedRoute1 = builderFactory.getRouteBuilder().producer("nestedRoute1-publisher1", producer);
+        Route nestedRoute2 = builderFactory.getRouteBuilder().producer("nestedRoute2-publisher2", producer);
+        Route nestedRoute3 = builderFactory.getRouteBuilder().producer("nestedRoute3-publisher3", producer);
+        Route route2 = builderFactory.getRouteBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
                 .when("nestedRoute1", nestedRoute1)
                 .when("nestedRoute2", nestedRoute2)
                 .otherwise(nestedRoute3).build();
 
-        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
                 .withSerialiserFactory(serialiserFactory)
                 .consumer("consumer", consumer)
                 .singleRecipientRouter("router", singleRecipientRouter)
-                .when("route1", BuilderFactory.routeBuilder().producer("whenPublisher1", producer))
+                .when("route1", builderFactory.getRouteBuilder().producer("whenPublisher1", producer))
                 .when("route2", route2)
-                .otherwise(BuilderFactory.routeBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -347,16 +350,18 @@ public class FlowBuilderTest
     @Test
     public void test_successful_router_transitions()
     {
-		Route route1 = BuilderFactory.routeBuilder().producer("producer", producer);
-		Route nestedRoute1 = BuilderFactory.routeBuilder().translator("nestedRoute1-name1",translator).producer("nestedRoute1-publisher1", producer);
-		Route nestedRoute2 = BuilderFactory.routeBuilder().translator("nestedRoute2-name2",translator).producer("nestedRoute2-publisher2", producer);
-		Route nestedRoute3 = BuilderFactory.routeBuilder().translator("nestedRoute3-name3",translator).producer("nestedRoute3-publisher3", producer);
-		Route route2 = BuilderFactory.routeBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        Route route1 = builderFactory.getRouteBuilder().producer("producer", producer);
+		Route nestedRoute1 = builderFactory.getRouteBuilder().translator("nestedRoute1-name1",translator).producer("nestedRoute1-publisher1", producer);
+		Route nestedRoute2 = builderFactory.getRouteBuilder().translator("nestedRoute2-name2",translator).producer("nestedRoute2-publisher2", producer);
+		Route nestedRoute3 = builderFactory.getRouteBuilder().translator("nestedRoute3-name3",translator).producer("nestedRoute3-publisher3", producer);
+		Route route2 = builderFactory.getRouteBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
 				.when("nestedRoute1", nestedRoute1)
 				.when("nestedRoute2", nestedRoute2)
 				.otherwise(nestedRoute3).build();
 
-        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -365,7 +370,7 @@ public class FlowBuilderTest
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", route1)
                 .when("route2", route2)
-                .otherwise(BuilderFactory.routeBuilder().translator("name4", translator).producer("publisher4", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer)).build();
 
 		Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
     	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -442,14 +447,16 @@ public class FlowBuilderTest
     @Test
     public void test_successful_sequencer_transitions()
     {
-        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
     	.withDescription("flowDescription")
         .withExclusionServiceFactory(exclusionServiceFactory)
         .withSerialiserFactory(serialiserFactory)
         .consumer("consumer", consumer)
     	.sequencer("sequencer", sequencer)
-    		.route("sequence name 1", BuilderFactory.routeBuilder().producer("name1", producer))
-    		.route("sequence name 2", BuilderFactory.routeBuilder().producer("name2", producer)).build();
+    		.route("sequence name 1", builderFactory.getRouteBuilder().producer("name1", producer))
+    		.route("sequence name 2", builderFactory.getRouteBuilder().producer("name2", producer)).build();
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
     	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -495,20 +502,22 @@ public class FlowBuilderTest
 	@Test
 	public void test_successful_sequencer_nested_transitions()
 	{
-		Route nestedRoute1 = BuilderFactory.routeBuilder().producer("name1", producer);
-		Route nestedRoute2 = BuilderFactory.routeBuilder().producer("name2", producer);
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
-        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+        Route nestedRoute1 = builderFactory.getRouteBuilder().producer("name1", producer);
+		Route nestedRoute2 = builderFactory.getRouteBuilder().producer("name2", producer);
+
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
 				.withDescription("flowDescription")
 				.withExclusionServiceFactory(exclusionServiceFactory)
 				.withSerialiserFactory(serialiserFactory)
 				.consumer("consumer", consumer)
 				.sequencer("sequencer", sequencer)
 					.route("sequence name 1",
-							BuilderFactory.routeBuilder().sequencer("sequencerNested1",sequencer)
+                            builderFactory.getRouteBuilder().sequencer("sequencerNested1",sequencer)
 								.route("nestedSeq1", nestedRoute1)
 								.route("nestedSeq2", nestedRoute2).build())
-					.route("sequence name 2", BuilderFactory.routeBuilder().producer("name3", producer))
+					.route("sequence name 2", builderFactory.getRouteBuilder().producer("name3", producer))
 				.build();
 
 		Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));

@@ -154,8 +154,9 @@ public class SampleFlowBuilderTest
 	@Test
 	public void test_successful_simple_transitions()
 	{
+		BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
-		Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+		Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
 				.withDescription("flowDescription")
 				.withFlowInvocationContextListener(flowInvocationContextListener)
 				.withFlowInvocationContextListener(flowInvocationContextListener)
@@ -213,14 +214,16 @@ public class SampleFlowBuilderTest
     @Ignore@Test
     public void test_successful_router_transitions()
     {
-		Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
+		BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+		Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .consumer("consumer", consumer)
     	    .converter("converter", converter)
     	    .translator("translator", translator)
 			.singleRecipientRouter("routerName", singleRecipientRouter)
-				.when("a", BuilderFactory.routeBuilder().producer("end",producer) )
-				.when("b", BuilderFactory.routeBuilder().producer("end",producer) )
-				.otherwise(BuilderFactory.routeBuilder().producer("end",producer) )
+				.when("a", builderFactory.getRouteBuilder().producer("end",producer) )
+				.when("b", builderFactory.getRouteBuilder().producer("end",producer) )
+				.otherwise(builderFactory.getRouteBuilder().producer("end",producer) )
     	    .build();
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));

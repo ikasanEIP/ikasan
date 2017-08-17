@@ -40,7 +40,6 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.module.Module;
 
 /**
@@ -51,23 +50,10 @@ import org.ikasan.spec.module.Module;
 public interface IkasanApplication
 {
     /**
-     * Get instance of a module builder
-     * @param moduleName
+     * Get an instance of an IkasanBuilderFactory
      * @return
      */
-    ModuleBuilder getModuleBuilder(String moduleName);
-
-    /**
-     * Get instance of a flow builder
-     * @return
-     */
-    FlowBuilder getFlowBuilder(String moduleName, String flowName);
-
-    /**
-     * Get instance of a component builder
-     * @return
-     */
-    ComponentBuilder getComponentBuilder();
+    public BuilderFactory getBuilderFactory();
 
     /**
      * Execute the module

@@ -40,7 +40,6 @@
  */
 package org.ikasan.builder.component;
 
-import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
@@ -50,10 +49,9 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.quartz.Scheduler;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 
@@ -79,7 +77,7 @@ public class ComponentBuilderTest {
     /**
      * Mock scheduler
      */
-    final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
+    final ApplicationContext applicationContext = mockery.mock(ApplicationContext.class, "mockApplicationContext");
 
     /**
      * Test successful flow creation.
@@ -87,7 +85,7 @@ public class ComponentBuilderTest {
     @Test
     @Ignore
     public void test_successful_scheduledConsumer() {
-        ComponentBuilder componentBuilder = new ComponentBuilder();
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Consumer scheduledConsumer = componentBuilder.scheduledConsumer().setCronExpression("121212").setEager(true).setIgnoreMisfire(true).setTimezone("UTC").build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
@@ -106,7 +104,7 @@ public class ComponentBuilderTest {
     @Test
     public void test_successful_jmsConsumer() {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
-        ComponentBuilder componentBuilder = new ComponentBuilder();
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         HashMap<String, String> properties = new HashMap<>();
         properties.put("jndi", "test");

@@ -40,10 +40,7 @@
  */
 package org.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.IkasanApplication;
-import org.ikasan.builder.IkasanApplicationFactory;
-import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.builder.*;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -70,14 +67,17 @@ public class MyApplication
         // get an ikasanApplication instance
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
+        // get a builderFactory
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
         // get a module builder from the ikasanApplication
-        ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName").withDescription("Example module with pattern builder");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName").withDescription("Example module with pattern builder");
 
         // get an instance of flowBuilder from the moduleBuilder and create a flow
-        Flow scheduledFlow = getScheduledFlow(moduleBuilder, ikasanApplication.getComponentBuilder());
+        Flow scheduledFlow = getScheduledFlow(moduleBuilder, builderFactory.getComponentBuilder());
 
         // get an instance of flowBuilder from the moduleBuilder and create a flow
-        Flow jmsFlow = getJmsFlow(moduleBuilder,ikasanApplication.getComponentBuilder());
+        Flow jmsFlow = getJmsFlow(moduleBuilder, builderFactory.getComponentBuilder());
 
         // add flows to the module
         Module module = moduleBuilder.addFlow(scheduledFlow).addFlow(jmsFlow).build();
