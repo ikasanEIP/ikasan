@@ -40,12 +40,9 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.FlowElement;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple Flow builder.
@@ -67,12 +64,12 @@ public class BuilderFactory
         return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
     }
 
-    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
-    {
-        List<FlowElement> flowElements = new ArrayList<FlowElement>();
-        flowElements.add(flowElement);
-        return new RouteImpl(flowElements);
-    }
+//    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
+//    {
+//        List<FlowElement> flowElements = new ArrayList<FlowElement>();
+//        flowElements.add(flowElement);
+//        return new RouteImpl(flowElements);
+//    }
 }
 
 

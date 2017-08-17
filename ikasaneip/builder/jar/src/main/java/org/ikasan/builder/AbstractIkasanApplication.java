@@ -40,58 +40,51 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.component.ComponentBuilder;
-import org.ikasan.spec.module.Module;
+import java.util.Map;
 
-/**
- * IkasanApplication contract
- *
- * @author Ikasan Development Team
- */
-public interface IkasanApplication
+public abstract class AbstractIkasanApplication
 {
+    /** Keep a handle on any named module builders associated with this application */
+    protected Map<String, ModuleBuilder> moduleBuilders;
+
+    public AbstractIkasanApplication(Map<String,ModuleBuilder> moduleBuilders)
+    {
+        this.moduleBuilders = moduleBuilders;
+        if(moduleBuilders == null)
+        {
+            throw new IllegalArgumentException("moduleBuilders cannot be 'null'");
+        }
+    }
+
     /**
-     * Get instance of a module builder
+     * Get the instance of the module builder for the given module name.
+     * Create one if it doesnt exist, otherwise return the exiting one.
+     *
+     * @param name
+     * @return
+     */
+    public ModuleBuilder getModuleBuilder(String name)
+    {
+        if(this.moduleBuilders.containsKey(name))
+        {
+            return this.moduleBuilders.get(name);
+        }
+
+        ModuleBuilder moduleBuilder = createModuleBuilder(name);
+        this.moduleBuilders.put(name, moduleBuilder);
+        return moduleBuilder;
+    }
+
+    /**
+     * Get an instance of the flow builder for the given module name and flow name.
      * @param moduleName
+     * @param flowName
      * @return
      */
-    ModuleBuilder getModuleBuilder(String moduleName);
+    public FlowBuilder getFlowBuilder(String moduleName, String flowName)
+    {
+        return getModuleBuilder(moduleName).getFlowBuilder(flowName);
+    }
 
-    /**
-     * Get instance of a flow builder
-     * @return
-     */
-    FlowBuilder getFlowBuilder(String moduleName, String flowName);
-
-    /**
-     * Get instance of a component builder
-     * @return
-     */
-    ComponentBuilder getComponentBuilder();
-
-    /**
-     * Execute the module
-     * @param module
-     */
-    void run(Module module);
-
-    /**
-     * This method forces Ikassan application shutdown.
-     */
-    void close();
-    /**
-     * Get bean by given name.
-     *
-     * @param beanName
-     * @return
-     */
-    Object getBean(String beanName);
-
-    /**
-     * Get bean by given class.
-     *
-     * @param className
-     * @return
-     */
-    Object getBean(Class className);
+    protected abstract ModuleBuilder createModuleBuilder(String name);
 }

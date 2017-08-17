@@ -129,7 +129,7 @@ public class FlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
-                oneOf(exclusionServiceFactory).getExclusionService("undefinedModuleName", "flowName");
+                oneOf(exclusionServiceFactory).getExclusionService("moduleName", "flowName");
                 will(returnValue(exclusionService));
             }
         });
@@ -147,7 +147,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_transitions() 
     {
-		Flow flow = ikasanApplication.getFlowBuilder("flowName")
+        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
     	    .withDescription("flowDescription")
             .withFlowInvocationContextListener(flowInvocationContextListener)
             .withFlowInvocationContextListener(flowInvocationContextListener)
@@ -160,7 +160,7 @@ public class FlowBuilderTest
     	    .producer("producer", producer).build();
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-    	Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+    	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
        	List<FlowElement<?>> flowElements = flow.getFlowElements();
 		Assert.assertTrue("Should be 5 flow elements", flowElements.size() == 5);
 		Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
@@ -206,7 +206,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_simple_router_transitions()
     {
-        Flow flow = ikasanApplication.getFlowBuilder("flowName")
+        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -217,7 +217,7 @@ public class FlowBuilderTest
                 .otherwise(BuilderFactory.routeBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-        Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
         List<FlowElement<?>> flowElements = flow.getFlowElements();
 		Assert.assertTrue("Should be 5 flow elements", flowElements.size() == 5);
         Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
@@ -275,7 +275,7 @@ public class FlowBuilderTest
                 .when("nestedRoute2", nestedRoute2)
                 .otherwise(nestedRoute3).build();
 
-        Flow flow = ikasanApplication.getFlowBuilder("flowName")
+        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -287,7 +287,7 @@ public class FlowBuilderTest
                 .otherwise(BuilderFactory.routeBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-        Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
 		Assert.assertTrue("Should be 9 flow elements", flowElements.size() == 9);
@@ -356,7 +356,7 @@ public class FlowBuilderTest
 				.when("nestedRoute2", nestedRoute2)
 				.otherwise(nestedRoute3).build();
 
-        Flow flow = ikasanApplication.getFlowBuilder("flowName")
+        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
@@ -368,7 +368,7 @@ public class FlowBuilderTest
                 .otherwise(BuilderFactory.routeBuilder().translator("name4", translator).producer("publisher4", producer)).build();
 
 		Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-    	Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+    	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
        	List<FlowElement<?>> flowElements = flow.getFlowElements();
 		Assert.assertTrue("Should be 12 flow elements", flowElements.size() == 12);
        	Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
@@ -442,7 +442,7 @@ public class FlowBuilderTest
     @Test
     public void test_successful_sequencer_transitions()
     {
-        Flow flow = ikasanApplication.getFlowBuilder("flowName")
+        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
     	.withDescription("flowDescription")
         .withExclusionServiceFactory(exclusionServiceFactory)
         .withSerialiserFactory(serialiserFactory)
@@ -452,7 +452,7 @@ public class FlowBuilderTest
     		.route("sequence name 2", BuilderFactory.routeBuilder().producer("name2", producer)).build();
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-    	Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+    	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
        	List<FlowElement<?>> flowElements = flow.getFlowElements();
        	Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
         Assert.assertTrue("Should be 4 flow elements", flowElements.size() == 4);
@@ -498,7 +498,7 @@ public class FlowBuilderTest
 		Route nestedRoute1 = BuilderFactory.routeBuilder().producer("name1", producer);
 		Route nestedRoute2 = BuilderFactory.routeBuilder().producer("name2", producer);
 
-        Flow flow = ikasanApplication.getFlowBuilder("flowName")
+        Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
 				.withDescription("flowDescription")
 				.withExclusionServiceFactory(exclusionServiceFactory)
 				.withSerialiserFactory(serialiserFactory)
@@ -512,7 +512,7 @@ public class FlowBuilderTest
 				.build();
 
 		Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-		Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+		Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
 		List<FlowElement<?>> flowElements = flow.getFlowElements();
 		Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
         Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);

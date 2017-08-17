@@ -474,8 +474,7 @@ public class FlowBuilder implements ApplicationContextAware
     {
         consumerBuilder = callbackConfiguration(name, consumerBuilder);
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
-        BuilderFactory builderFactory = BuilderFactory.getInstance();
-        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, applyPointcut(name, consumerBuilder.build()), invoker) ));
+        return new PrimaryRouteBuilder( newPrimaryRoute( new FlowElementImpl(name, applyPointcut(name, consumerBuilder.build()), invoker) ));
     }
 
 	/**
@@ -488,8 +487,14 @@ public class FlowBuilder implements ApplicationContextAware
     public PrimaryRouteBuilder consumer(String name, Consumer consumer)
     {
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
-        BuilderFactory builderFactory = BuilderFactory.getInstance();
-        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, applyPointcut(name, consumer), invoker) ));
+        return new PrimaryRouteBuilder( newPrimaryRoute( new FlowElementImpl(name, applyPointcut(name, consumer), invoker) ));
+    }
+
+    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
+    {
+        List<FlowElement> flowElements = new ArrayList<FlowElement>();
+        flowElements.add(flowElement);
+        return new RouteImpl(flowElements);
     }
 
     protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
@@ -557,7 +562,7 @@ public class FlowBuilder implements ApplicationContextAware
         return nextFlowElement;
     }
 
-    protected FlowElement connectElements(Route<Flow> route)
+    protected FlowElement connectElements(Route route)
     {
         List<FlowElement> flowElements = route.getFlowElements();
 
@@ -594,7 +599,7 @@ public class FlowBuilder implements ApplicationContextAware
         return connectElements(flowElements, null); // TODO - better way of managing this?
     }
 
-    protected Flow _build(Route<Flow> _route)
+    protected Flow _build(Route _route)
     {
         FlowElement headFlowElement = connectElements(_route);
 
@@ -713,12 +718,15 @@ public class FlowBuilder implements ApplicationContextAware
         this.context = context;
     }
 
-    public class PrimaryRouteBuilder {
-        Route<Flow> route;
+    public class PrimaryRouteBuilder
+    {
+        Route route;
 
-        public PrimaryRouteBuilder(Route route) {
+        public PrimaryRouteBuilder(Route route)
+        {
             this.route = route;
-            if (route == null) {
+            if (route == null)
+            {
                 throw new IllegalArgumentException("route cannot be 'null'");
             }
         }

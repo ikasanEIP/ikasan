@@ -49,7 +49,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public interface Route<T>
+public interface Route
 {
 	/**
 	 * Add flow elements to the end of the route.

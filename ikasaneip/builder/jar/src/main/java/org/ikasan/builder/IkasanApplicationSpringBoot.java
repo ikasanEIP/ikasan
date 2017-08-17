@@ -51,8 +51,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import java.util.HashMap;
+
 @SpringBootApplication
-public class IkasanApplicationSpringBoot implements IkasanApplication
+public class IkasanApplicationSpringBoot extends AbstractIkasanApplication implements IkasanApplication
 {
     /** logger */
     private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
@@ -61,25 +63,18 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
 
     public IkasanApplicationSpringBoot(String[] args)
     {
+        super(new HashMap<String,ModuleBuilder>() );
         this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
     }
 
     IkasanApplicationSpringBoot()
     {
+        super(new HashMap<String,ModuleBuilder>() );
     }
 
-    public ModuleBuilder getModuleBuilder(String name)
+    protected ModuleBuilder createModuleBuilder(String name)
     {
         return new ModuleBuilder(this.context, name);
-    }
-
-    public FlowBuilder getFlowBuilder(String flowName)
-    {
-        AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-        FlowBuilder flowBuilder = new FlowBuilder(flowName, "undefinedModuleName");
-        beanFactory.autowireBean(flowBuilder);
-        flowBuilder.setApplicationContext(this.context);
-        return flowBuilder;
     }
 
     public ComponentBuilder getComponentBuilder()
@@ -97,7 +92,8 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
         logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
     }
 
-    public void close(){
+    public void close()
+    {
         SpringApplication.exit(this.context, new ExitCodeGenerator(){
             @Override public int getExitCode()
             {

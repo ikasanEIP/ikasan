@@ -134,7 +134,7 @@ public class SampleFlowBuilderTest
             {
                 // set event factory
                 oneOf(consumer).setEventFactory(with(any(EventFactory.class)));
-                oneOf(exclusionServiceFactory).getExclusionService("undefinedModuleName", "flowName");
+                oneOf(exclusionServiceFactory).getExclusionService("moduleName", "flowName");
                 will(returnValue(exclusionService));
             }
         });
@@ -155,7 +155,7 @@ public class SampleFlowBuilderTest
 	public void test_successful_simple_transitions()
 	{
 
-		Flow flow = ikasanApplication.getFlowBuilder("flowName")
+		Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
 				.withDescription("flowDescription")
 				.withFlowInvocationContextListener(flowInvocationContextListener)
 				.withFlowInvocationContextListener(flowInvocationContextListener)
@@ -168,7 +168,7 @@ public class SampleFlowBuilderTest
 				.producer("producer", producer).build();
 
 		Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
-		Assert.assertTrue("module name is incorrect", "undefinedModuleName".equals(flow.getModuleName()));
+		Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
 		List<FlowElement<?>> flowElements = flow.getFlowElements();
 		Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
 
@@ -213,7 +213,7 @@ public class SampleFlowBuilderTest
     @Ignore@Test
     public void test_successful_router_transitions()
     {
-		Flow flow = ikasanApplication.getFlowBuilder("flowName")
+		Flow flow = ikasanApplication.getFlowBuilder("moduleName", "flowName")
             .consumer("consumer", consumer)
     	    .converter("converter", converter)
     	    .translator("translator", translator)
