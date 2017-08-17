@@ -40,6 +40,7 @@
  */
 package org.ikasan.sample.spring.boot.builderpattern;
 
+import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
@@ -47,8 +48,10 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import static org.junit.Assert.assertEquals;
 
@@ -70,6 +73,16 @@ public class MyApplicationTest
         myApplication = new MyApplication();
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
     }
+
+    @Rule
+    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+
+    @Before
+    public void setupTest()
+    {
+        broker.start();
+    }
+
 
     @AfterClass
     public static void shutdown(){
@@ -93,7 +106,7 @@ public class MyApplicationTest
         System.out.println("Check is module healthy.");
 
         scheduldeFlow.start();
-        pause(2000);
+        pause(5000);
         assertEquals("running",scheduldeFlow.getState());
         scheduldeFlow.stop();
         pause(2000);
@@ -108,13 +121,21 @@ public class MyApplicationTest
     {
 
         ModuleBuilder moduleBuilder = ikasanApplication.getModuleBuilder("moduleName");
-        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder);
+
+        Flow jmsFlow = myApplication.getJmsFlow(moduleBuilder,ikasanApplication.getComponentBuilder() );
 
         Module module = moduleBuilder.addFlow(jmsFlow).build();
 
         ikasanApplication.run(module);
 
         System.out.println("Check is module healthy.");
+
+        // Prepare test data
+        JmsTemplate jmsTemplate = (JmsTemplate) ikasanApplication.getBean(JmsTemplate.class);
+
+        String message  = "Hello world!";
+        System.out.println("Sending a JMS message.["+message+"]");
+        jmsTemplate.convertAndSend("source",message );
 
         jmsFlow.start();
         pause(4000);

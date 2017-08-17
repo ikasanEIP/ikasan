@@ -234,7 +234,6 @@
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
-            <version>${version.org.apache.tomcat}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -292,6 +291,19 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-utility-endpoint</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
