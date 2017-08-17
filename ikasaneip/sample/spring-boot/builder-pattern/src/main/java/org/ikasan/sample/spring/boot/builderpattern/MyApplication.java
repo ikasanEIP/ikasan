@@ -52,9 +52,6 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
-
 /**
  * Sample standalone bootstrap application using the builder pattern.
  *
@@ -66,6 +63,7 @@ public class MyApplication
     {
         new MyApplication().executeIM(args);
     }
+
 
     public void executeIM(String[] args)
     {
@@ -79,7 +77,7 @@ public class MyApplication
         Flow scheduledFlow = getScheduledFlow(moduleBuilder, ikasanApplication.getComponentBuilder());
 
         // get an instance of flowBuilder from the moduleBuilder and create a flow
-        Flow jmsFlow = getJmsFlow(moduleBuilder);
+        Flow jmsFlow = getJmsFlow(moduleBuilder,ikasanApplication.getComponentBuilder());
 
         // add flows to the module
         Module module = moduleBuilder.addFlow(scheduledFlow).addFlow(jmsFlow).build();
@@ -97,7 +95,23 @@ public class MyApplication
                 .producer("producer", new MyProducer()).build();
     }
 
-    public Flow getJmsFlow(ModuleBuilder moduleBuilder)
+    public Flow getJmsFlow(ModuleBuilder moduleBuilder,ComponentBuilder componentBuilder)
+    {
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Jms Flow Name");
+
+        return flowBuilder.withDescription("Jms flow description")
+                .consumer("consumer", componentBuilder.jmsConsumer()
+                        .setDestinationJndiName("dynamicQueues/source")
+                        .setConnectionFactoryName("ConnectionFactory")
+                        .setConnectionFactoryJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
+                        .setConnectionFactoryJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
+                        .setDestinationJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
+                        .setDestinationJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
+                        )
+                .producer("producer", new MyProducer()).build();
+    }
+
+    public Flow getSampleFlow(ModuleBuilder moduleBuilder)
     {
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Jms Flow Name");
         return flowBuilder.withDescription("Jms flow description")

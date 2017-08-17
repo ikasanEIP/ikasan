@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.Scheduler;
@@ -65,6 +66,13 @@ public class ComponentBuilder
         ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer, scheduledJobFactory);
         return scheduledConsumerBuilder;
+    }
+
+    public JmsConsumerBuilder jmsConsumer()
+    {
+        JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer);
+        return jmsConsumerBuilder;
     }
 
 }

@@ -41,6 +41,9 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
+import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
+import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -52,24 +55,30 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.Scheduler;
 
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
-public class ComponentBuilderTest
-{
+public class ComponentBuilderTest {
     /**
      * Mockery for mocking concrete classes
      */
-    private Mockery mockery = new Mockery()
-    {
+    private Mockery mockery = new Mockery() {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
 
-    /** Mock scheduler */
+    /**
+     * Mock scheduler
+     */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
     /**
@@ -77,17 +86,91 @@ public class ComponentBuilderTest
      */
     @Test
     @Ignore
-    public void test_successful_scheduledConsumer()
-    {
+    public void test_successful_scheduledConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder();
         Consumer scheduledConsumer = componentBuilder.scheduledConsumer().setCronExpression("121212").setEager(true).setIgnoreMisfire(true).setTimezone("UTC").build();
 
-        Assert.assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
 
-        ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>)scheduledConsumer).getConfiguration();
-        Assert.assertTrue("cronExpression should be '121212'", configuration.isEager() == true);
-        Assert.assertTrue("eager should be 'true'", configuration.isEager() == true);
-        Assert.assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
-        Assert.assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
+        ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
+        assertTrue("cronExpression should be '121212'", configuration.isEager() == true);
+        assertTrue("eager should be 'true'", configuration.isEager() == true);
+        assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
+        assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
     }
+
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_jmsConsumer() {
+        ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
+        ComponentBuilder componentBuilder = new ComponentBuilder();
+
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("jndi", "test");
+        Consumer jmsConsumer = componentBuilder.jmsConsumer().setMessageProvider(listenerContainer)
+                .setDestinationJndiName("jms.queue.test")
+                .setDestinationJndiProperties(properties)
+                .setDurableSubscriptionName("testDurableSubscription")
+                .setDurable(true)
+                .setConnectionFactoryJndiProperties(properties)
+                .setConnectionFactoryName("TestConnectionFactory")
+                .setConnectionFactoryUsername("TestUsername")
+                .setConnectionFactoryPassword("TestPassword")
+                .setAutoContentConversion(true)
+                .setAutoSplitBatch(false)
+                .setBatchMode(true)
+                .setBatchSize(2)
+                .setCacheLevel(2)
+                .setConcurrentConsumers(2)
+                .setMaxConcurrentConsumers(2)
+                .setSessionAcknowledgeMode(2)
+                .setSessionTransacted(true)
+                .setPubSubDomain(true)
+                .build();
+
+        assertTrue("instance should be a JmsConsumer", jmsConsumer instanceof JmsContainerConsumer);
+        SpringMessageConsumerConfiguration configuration = (
+                (ConfiguredResource<SpringMessageConsumerConfiguration>) jmsConsumer).getConfiguration();
+        assertEquals("DestinationJndiName should be 'jms.queue.test'", "jms.queue.test",
+                configuration.getDestinationJndiName());
+        assertEquals("DurableSubscriptionName should be 'testDurableSubscription'", "testDurableSubscription",
+                configuration.getDurableSubscriptionName());
+        assertTrue("Durable should be 'true'", configuration.getDurable());
+        assertEquals("DestinationJndiProperties should be 'pro'", properties,
+                configuration.getDestinationJndiProperties());
+        assertEquals("ConnectionFactoryJndiProperties should be 'pro'", properties,
+                configuration.getConnectionFactoryJndiProperties());
+        assertEquals("ConnectionFactoryName should be 'TestConnectionFactory'", "TestConnectionFactory",
+                configuration.getConnectionFactoryName());
+        assertEquals("ConnectionFactoryUsername should be 'TestUsername'", "TestUsername",
+                configuration.getConnectionFactoryUsername());
+        assertEquals("ConnectionFactoryPassword should be 'TestPassword'", "TestPassword",
+                configuration.getConnectionFactoryPassword());
+        assertTrue("AutoContentConversion should be 'true'",
+                configuration.isAutoContentConversion());
+        assertFalse("AutoSplitBatch should be 'false'",
+                configuration.isAutoSplitBatch());
+        assertTrue("BatchMode should be 'true'",
+                configuration.isBatchMode());
+        assertEquals("BatchSize should be '2'", 2,
+                configuration.getBatchSize());
+        assertEquals("CacheLevel should be '2'", 2,
+                configuration.getCacheLevel());
+        assertEquals("ConcurrentConsumers should be '2'", 2,
+                configuration.getConcurrentConsumers());
+        assertEquals("MaxConcurrentConsumers should be '2'", 2,
+                configuration.getMaxConcurrentConsumers());
+        assertEquals("SessionAcknowledgeMode should be '2'", 2,
+                configuration.getSessionAcknowledgeMode().intValue());
+        assertTrue("SessionTransacted should be 'true'",
+                configuration.getSessionTransacted());
+        assertTrue("PubSubDomain should be 'true'",
+                configuration.getPubSubDomain());
+
+    }
+
+
 }

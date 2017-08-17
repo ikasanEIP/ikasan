@@ -17,7 +17,6 @@
     <properties>
         <!--<java.version>1.8</java.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
 
     <dependencies>
@@ -149,6 +148,26 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+            <version>${version.org.springboot}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq.tooling</groupId>
+            <artifactId>activemq-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 
