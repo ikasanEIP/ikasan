@@ -50,13 +50,16 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.naming.Context;
+import javax.transaction.TransactionManager;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -79,9 +82,11 @@ public class ComponentBuilderTest {
     };
 
     /**
-     * Mock scheduler
+     * Mock applicationContext
      */
     final ApplicationContext applicationContext = mockery.mock(ApplicationContext.class, "mockApplicationContext");
+    final TransactionManager transactionManager = mockery.mock(TransactionManager.class, "mockTransactionManager");
+    final JtaTransactionManager jtaTransactionManager = mockery.mock(JtaTransactionManager.class, "mockJtaTransactionManager");
 
     /**
      * Test successful flow creation.
@@ -109,6 +114,20 @@ public class ComponentBuilderTest {
     public void test_successful_jmsConsumer_when_messageProvider_set() {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory per consumer
+                exactly(1).of(applicationContext).getBean(TransactionManager.class);
+                will(returnValue(transactionManager));
+
+                exactly(1).of(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+            }
+        });
 
         Consumer jmsConsumer = componentBuilder.jmsConsumer().setMessageProvider(listenerContainer)
                 .setDestinationJndiName("jms.queue.test")
@@ -174,6 +193,20 @@ public class ComponentBuilderTest {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory per consumer
+                exactly(1).of(applicationContext).getBean(TransactionManager.class);
+                will(returnValue(transactionManager));
+
+                exactly(1).of(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+            }
+        });
+
         Consumer jmsConsumer = componentBuilder.jmsConsumer().setMessageProvider(listenerContainer)
                 .setDestinationJndiPropertyFactoryInitial("testinitialFactory")
                 .setDestinationJndiPropertyUrlPkgPrefixes("testurlpkg")
@@ -229,6 +262,20 @@ public class ComponentBuilderTest {
     @Test
     public void test_successful_jmsConsumer_when_messageProvider_not_set() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory per consumer
+                exactly(1).of(applicationContext).getBean(TransactionManager.class);
+                will(returnValue(transactionManager));
+
+                exactly(1).of(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+            }
+        });
 
         HashMap<String, String> properties = new HashMap<>();
         properties.put("jndi", "test");
