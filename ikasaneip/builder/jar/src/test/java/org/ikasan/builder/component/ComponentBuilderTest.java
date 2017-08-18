@@ -43,9 +43,12 @@ package org.ikasan.builder.component;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
+import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
+import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -53,6 +56,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import javax.naming.Context;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -99,21 +103,17 @@ public class ComponentBuilderTest {
 
 
     /**
-     * Test successful flow creation.
+     * Test successful jms consumer creation.
      */
     @Test
-    public void test_successful_jmsConsumer() {
+    public void test_successful_jmsConsumer_when_messageProvider_set() {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
-        HashMap<String, String> properties = new HashMap<>();
-        properties.put("jndi", "test");
         Consumer jmsConsumer = componentBuilder.jmsConsumer().setMessageProvider(listenerContainer)
                 .setDestinationJndiName("jms.queue.test")
-                .setDestinationJndiProperties(properties)
                 .setDurableSubscriptionName("testDurableSubscription")
                 .setDurable(true)
-                .setConnectionFactoryJndiProperties(properties)
                 .setConnectionFactoryName("TestConnectionFactory")
                 .setConnectionFactoryUsername("TestUsername")
                 .setConnectionFactoryPassword("TestPassword")
@@ -137,10 +137,6 @@ public class ComponentBuilderTest {
         assertEquals("DurableSubscriptionName should be 'testDurableSubscription'", "testDurableSubscription",
                 configuration.getDurableSubscriptionName());
         assertTrue("Durable should be 'true'", configuration.getDurable());
-        assertEquals("DestinationJndiProperties should be 'pro'", properties,
-                configuration.getDestinationJndiProperties());
-        assertEquals("ConnectionFactoryJndiProperties should be 'pro'", properties,
-                configuration.getConnectionFactoryJndiProperties());
         assertEquals("ConnectionFactoryName should be 'TestConnectionFactory'", "TestConnectionFactory",
                 configuration.getConnectionFactoryName());
         assertEquals("ConnectionFactoryUsername should be 'TestUsername'", "TestUsername",
@@ -170,5 +166,208 @@ public class ComponentBuilderTest {
 
     }
 
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_jmsConsumer_when_messageProvider_not_set_verify_properties() {
+        ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        Consumer jmsConsumer = componentBuilder.jmsConsumer().setMessageProvider(listenerContainer)
+                .setDestinationJndiPropertyFactoryInitial("testinitialFactory")
+                .setDestinationJndiPropertyUrlPkgPrefixes("testurlpkg")
+                .setDestinationJndiPropertyProviderUrl("testiurl")
+                .setDestinationJndiPropertySecurityCredentials("testicredentails")
+                .setDestinationJndiPropertySecurityPrincipal("testprinciple")
+                .setConnectionFactoryJndiPropertyFactoryInitial("testinitialFactory")
+                .setConnectionFactoryJndiPropertyProviderUrl("testiurl")
+                .setConnectionFactoryJndiPropertySecurityCredentials("testicredentails")
+                .setConnectionFactoryJndiPropertySecurityPrincipal("testprinciple")
+                .setConnectionFactoryJndiPropertyUrlPkgPrefixes("testurlpkg")
+                .build();
+
+        assertTrue("instance should be a JmsConsumer", jmsConsumer instanceof JmsContainerConsumer);
+        SpringMessageConsumerConfiguration configuration = (
+                (ConfiguredResource<SpringMessageConsumerConfiguration>) jmsConsumer).getConfiguration();
+        assertEquals("ConnectionFactoryJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'",
+                "testinitialFactory",
+                configuration.getConnectionFactoryJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY));
+        assertEquals("ConnectionFactoryJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'",
+                "testurlpkg",
+                configuration.getConnectionFactoryJndiProperties().get(Context.URL_PKG_PREFIXES));
+        assertEquals("ConnectionFactoryJndiProperties(PROVIDER_URL) should be 'testiurl'",
+                "testiurl",
+                configuration.getConnectionFactoryJndiProperties().get(Context.PROVIDER_URL));
+        assertEquals("ConnectionFactoryJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'",
+                "testicredentails",
+                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_CREDENTIALS));
+        assertEquals("ConnectionFactoryJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'",
+                "testprinciple",
+                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_PRINCIPAL));
+        assertEquals("DestinationJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'",
+                "testinitialFactory",
+                configuration.getDestinationJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY));
+        assertEquals("DestinationJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'",
+                "testurlpkg",
+                configuration.getDestinationJndiProperties().get(Context.URL_PKG_PREFIXES));
+        assertEquals("DestinationJndiProperties(java.naming.provider.url) should be 'testurl'",
+                "testiurl",
+                configuration.getDestinationJndiProperties().get(Context.PROVIDER_URL));
+        assertEquals("DestinationJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'",
+                "testicredentails",
+                configuration.getDestinationJndiProperties().get(Context.SECURITY_CREDENTIALS));
+        assertEquals("DestinationJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'",
+                "testprinciple",
+                configuration.getDestinationJndiProperties().get(Context.SECURITY_PRINCIPAL));
+
+    }
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_jmsConsumer_when_messageProvider_not_set() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("jndi", "test");
+        Consumer jmsConsumer = componentBuilder.jmsConsumer()
+                .setDestinationJndiName("jms.queue.test")
+                .build();
+
+        assertTrue("instance should be a JmsConsumer", jmsConsumer instanceof JmsContainerConsumer);
+        SpringMessageConsumerConfiguration configuration = (
+                (ConfiguredResource<SpringMessageConsumerConfiguration>) jmsConsumer).getConfiguration();
+        assertEquals("DestinationJndiName should be 'jms.queue.test'", "jms.queue.test",
+                configuration.getDestinationJndiName());
+    }
+
+
+    /**
+     * Test successful jms producer creation.
+     */
+    @Test
+    public void test_successful_jmsproducer() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        Producer jmsProducer = componentBuilder.jmsProducer()
+                .setDestinationJndiName("jms.queue.test")
+                .setConnectionFactoryName("TestConnectionFactory")
+                .setConnectionFactoryUsername("TestUsername")
+                .setConnectionFactoryPassword("TestPassword")
+                .setSessionAcknowledgeMode(2)
+                .setSessionAcknowledgeModeName("TRANSACTED")
+                .setSessionTransacted(true)
+                .setPubSubDomain(true)
+                .setDeliveryPersistent(true)
+                .setDeliveryMode(2)
+                .setPriority(2)
+                .setExplicitQosEnabled(true)
+                .setMessageIdEnabled(true)
+                .setMessageTimestampEnabled(true)
+                .setPubSubNoLocal(true)
+                .setReceiveTimeout(2000l)
+                .setTimeToLive(2000l)
+                .build();
+
+        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        SpringMessageProducerConfiguration configuration = (
+                (ConfiguredResource< SpringMessageProducerConfiguration>) jmsProducer).getConfiguration();
+        assertEquals("DestinationJndiName should be 'jms.queue.test'", "jms.queue.test",
+                configuration.getDestinationJndiName());
+        assertEquals("ConnectionFactoryName should be 'TestConnectionFactory'", "TestConnectionFactory",
+                configuration.getConnectionFactoryName());
+        assertEquals("ConnectionFactoryUsername should be 'TestUsername'", "TestUsername",
+                configuration.getConnectionFactoryUsername());
+        assertEquals("ConnectionFactoryPassword should be 'TestPassword'", "TestPassword",
+                configuration.getConnectionFactoryPassword());
+        assertEquals("SessionAcknowledgeMode should be '2'", 2,
+                configuration.getSessionAcknowledgeMode().intValue());
+        assertEquals("SessionAcknowledgeModeName should be 'TRANSACTED'", "TRANSACTED",
+                configuration.getSessionAcknowledgeModeName());
+        assertTrue("SessionTransacted should be 'true'",
+                configuration.getSessionTransacted());
+        assertTrue("PubSubDomain should be 'true'",
+                configuration.getPubSubDomain());
+        assertTrue("DeliveryPersistent should be 'true'",
+                configuration.getDeliveryPersistent());
+        assertEquals("DeliveryMode should be 'true'",2,
+                configuration.getDeliveryMode().intValue());
+        assertEquals("DeliveryMode should be 'true'",2,
+                configuration.getDeliveryMode().intValue());
+        assertEquals("Priority should be 'true'",2,
+                configuration.getPriority().intValue());
+        assertTrue("ExplicitQosEnabled should be 'true'",
+                configuration.getExplicitQosEnabled());
+        assertTrue("MessageIdEnabled should be 'true'",
+                configuration.getMessageIdEnabled());
+        assertTrue("MessageTimestampEnabled should be 'true'",
+                configuration.getMessageTimestampEnabled());
+        assertTrue("PubSubNoLocal should be 'true'",
+                configuration.getPubSubNoLocal());
+        assertEquals("ReceiveTimeout should be 'true'",2000l,
+                configuration.getReceiveTimeout().longValue());
+        assertEquals("TimeToLive should be 'true'",2000l,
+                configuration.getTimeToLive().longValue());
+
+    }
+
+
+    /**
+     * Test successful flow creation.
+     */
+    @Test
+    public void test_successful_jmsProducer_verify_properties() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        Producer jmsProducer = componentBuilder.jmsProducer()
+                .setDestinationJndiPropertyFactoryInitial("testinitialFactory")
+                .setDestinationJndiPropertyUrlPkgPrefixes("testurlpkg")
+                .setDestinationJndiPropertyProviderUrl("testiurl")
+                .setDestinationJndiPropertySecurityCredentials("testicredentails")
+                .setDestinationJndiPropertySecurityPrincipal("testprinciple")
+                .setConnectionFactoryJndiPropertyFactoryInitial("testinitialFactory")
+                .setConnectionFactoryJndiPropertyProviderUrl("testiurl")
+                .setConnectionFactoryJndiPropertySecurityCredentials("testicredentails")
+                .setConnectionFactoryJndiPropertySecurityPrincipal("testprinciple")
+                .setConnectionFactoryJndiPropertyUrlPkgPrefixes("testurlpkg")
+                .build();
+
+        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        SpringMessageProducerConfiguration configuration = (
+                (ConfiguredResource< SpringMessageProducerConfiguration>) jmsProducer).getConfiguration();
+        assertEquals("ConnectionFactoryJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'",
+                "testinitialFactory",
+                configuration.getConnectionFactoryJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY));
+        assertEquals("ConnectionFactoryJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'",
+                "testurlpkg",
+                configuration.getConnectionFactoryJndiProperties().get(Context.URL_PKG_PREFIXES));
+        assertEquals("ConnectionFactoryJndiProperties(PROVIDER_URL) should be 'testiurl'",
+                "testiurl",
+                configuration.getConnectionFactoryJndiProperties().get(Context.PROVIDER_URL));
+        assertEquals("ConnectionFactoryJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'",
+                "testicredentails",
+                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_CREDENTIALS));
+        assertEquals("ConnectionFactoryJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'",
+                "testprinciple",
+                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_PRINCIPAL));
+        assertEquals("DestinationJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'",
+                "testinitialFactory",
+                configuration.getDestinationJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY));
+        assertEquals("DestinationJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'",
+                "testurlpkg",
+                configuration.getDestinationJndiProperties().get(Context.URL_PKG_PREFIXES));
+        assertEquals("DestinationJndiProperties(java.naming.provider.url) should be 'testurl'",
+                "testiurl",
+                configuration.getDestinationJndiProperties().get(Context.PROVIDER_URL));
+        assertEquals("DestinationJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'",
+                "testicredentails",
+                configuration.getDestinationJndiProperties().get(Context.SECURITY_CREDENTIALS));
+        assertEquals("DestinationJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'",
+                "testprinciple",
+                configuration.getDestinationJndiProperties().get(Context.SECURITY_PRINCIPAL));
+
+    }
 
 }

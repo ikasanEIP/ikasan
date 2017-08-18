@@ -107,8 +107,17 @@ public class MyApplication
                         .setConnectionFactoryJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
                         .setDestinationJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
                         .setDestinationJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
+                        .setAutoContentConversion(true)
                         )
-                .producer("producer", new MyProducer()).build();
+                .producer("producer", componentBuilder.jmsProducer()
+                        .setDestinationJndiName("dynamicQueues/target")
+                        .setConnectionFactoryName("ConnectionFactory")
+                        .setConnectionFactoryJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
+                        .setConnectionFactoryJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
+                        .setDestinationJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
+                        .setDestinationJndiPropertyProviderUrl("failover:(vm://embedded-broker?create=false)")
+                )
+                .build();
     }
 
     public Flow getSampleFlow(ModuleBuilder moduleBuilder)

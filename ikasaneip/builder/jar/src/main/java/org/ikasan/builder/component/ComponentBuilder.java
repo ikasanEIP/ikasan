@@ -41,56 +41,66 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
+import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.Scheduler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jms.core.IkasanJmsTemplate;
+import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.transaction.TransactionManager;
 
 /**
  * A simple Component builder.
- * 
+ *
  * @author Ikasan Development Team
  */
-public class ComponentBuilder
-{
-    /** handle to spring context */
+public class ComponentBuilder {
+    /**
+     * handle to spring context
+     */
     ApplicationContext applicationContext;
 
     /**
      * Constructor
+     *
      * @param applicationContext
      */
-    public ComponentBuilder(ApplicationContext applicationContext)
-    {
+    public ComponentBuilder(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        if(applicationContext == null)
-        {
+        if (applicationContext == null) {
             throw new IllegalArgumentException("applicationContext cannot be 'null'");
         }
     }
 
     /**
      * Get an instance of an Ikasan default scheduledConsumer
+     *
      * @return
      */
-    public ScheduledConsumerBuilder scheduledConsumer()
-    {
-        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer, this.applicationContext.getBean(ScheduledJobFactory.class) );
+    public ScheduledConsumerBuilder scheduledConsumer() {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer(this.applicationContext.getBean(Scheduler.class));
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer, this.applicationContext.getBean(ScheduledJobFactory.class));
         return scheduledConsumerBuilder;
     }
 
     /**
      * Get an instance of an Ikasan default jmsConsumer
+     *
      * @return
      */
-    public JmsConsumerBuilder jmsConsumer()
-    {
+    public JmsConsumerBuilder jmsConsumer() {
         JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer);
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer,
+                this.applicationContext.getBean(JtaTransactionManager.class), this.applicationContext.getBean(TransactionManager.class));
         return jmsConsumerBuilder;
+    }
+
+    public JmsProducerBuilder jmsProducer() {
+        JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
+        return jmsProducerBuilder;
     }
 
 }

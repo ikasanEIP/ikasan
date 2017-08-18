@@ -50,7 +50,7 @@ import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import java.util.Map;
 
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Contract for a default Spring based jmsConsumerBuilder.
  *
  * @author Ikasan Development Team.
  */
@@ -80,9 +80,21 @@ public interface JmsConsumerBuilder extends Builder<Consumer> {
 
     JmsConsumerBuilder setConnectionFactoryJndiPropertyFactoryInitial(String initialFactory);
 
+    JmsConsumerBuilder setConnectionFactoryJndiPropertyUrlPkgPrefixes(String urlPkgPrefixes);
+
+    JmsConsumerBuilder setConnectionFactoryJndiPropertySecurityCredentials(String securityCredentials);
+
+    JmsConsumerBuilder setConnectionFactoryJndiPropertySecurityPrincipal(String securityPrincipal);
+
     JmsConsumerBuilder setDestinationJndiPropertyProviderUrl(String providerUrl);
 
     JmsConsumerBuilder setDestinationJndiPropertyFactoryInitial(String initialFactory);
+
+    JmsConsumerBuilder setDestinationJndiPropertyUrlPkgPrefixes(String urlPkgPrefixes);
+
+    JmsConsumerBuilder setDestinationJndiPropertySecurityCredentials(String securityCredentials);
+
+    JmsConsumerBuilder setDestinationJndiPropertySecurityPrincipal(String securityPrincipal);
 
     JmsConsumerBuilder setConnectionFactoryUsername(String username);
 

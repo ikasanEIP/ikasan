@@ -74,10 +74,14 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
      */
     MessageProvider messageProvider;
 
-    @Autowired
+    /**
+     * JTA transaciton manager
+     */
     JtaTransactionManager transactionManager;
 
-    @Autowired
+    /**
+     * Local Transaction manager
+     */
     TransactionManager arjunaTransactionManager;
 
     /**
@@ -108,12 +112,15 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
     /**
      * Constructor
      */
-    public JmsConsumerBuilderImpl(JmsContainerConsumer jmsConsumer) {
+    public JmsConsumerBuilderImpl(JmsContainerConsumer jmsConsumer, JtaTransactionManager transactionManager,
+                                  TransactionManager arjunaTransactionManager) {
         this.jmsConsumer = jmsConsumer;
         if (jmsConsumer == null) {
             throw new IllegalArgumentException("jmsConsumer cannot be 'null'");
         }
 
+        this.transactionManager = transactionManager;
+        this.arjunaTransactionManager =  arjunaTransactionManager;
         this.aopProxiedMessageListener = jmsConsumer;
     }
 
@@ -224,6 +231,36 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
     }
 
     @Override
+    public JmsConsumerBuilder setConnectionFactoryJndiPropertyUrlPkgPrefixes(String urlPkgPrefixes) {
+        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
+            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        }
+        getConfiguration().getConnectionFactoryJndiProperties().put(Context.URL_PKG_PREFIXES, urlPkgPrefixes);
+
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setConnectionFactoryJndiPropertySecurityCredentials(String securityCredentials) {
+        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
+            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        }
+        getConfiguration().getConnectionFactoryJndiProperties().put(Context.SECURITY_CREDENTIALS, securityCredentials);
+
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setConnectionFactoryJndiPropertySecurityPrincipal(String securityPrincipal) {
+        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
+            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        }
+        getConfiguration().getConnectionFactoryJndiProperties().put(Context.SECURITY_PRINCIPAL, securityPrincipal);
+
+        return this;
+    }
+
+    @Override
     public JmsConsumerBuilder setDestinationJndiPropertyProviderUrl(String providerUrl) {
         if (getConfiguration().getDestinationJndiProperties() == null) {
             getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
@@ -242,6 +279,37 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
 
         return this;
     }
+
+    @Override
+    public JmsConsumerBuilder setDestinationJndiPropertyUrlPkgPrefixes(String urlPkgPrefixes) {
+        if (getConfiguration().getDestinationJndiProperties() == null) {
+            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        }
+        getConfiguration().getDestinationJndiProperties().put(Context.URL_PKG_PREFIXES, urlPkgPrefixes);
+
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setDestinationJndiPropertySecurityCredentials(String securityCredentials) {
+        if (getConfiguration().getDestinationJndiProperties() == null) {
+            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        }
+        getConfiguration().getDestinationJndiProperties().put(Context.SECURITY_CREDENTIALS, securityCredentials);
+
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setDestinationJndiPropertySecurityPrincipal(String securityPrincipal) {
+        if (getConfiguration().getDestinationJndiProperties() == null) {
+            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        }
+        getConfiguration().getDestinationJndiProperties().put(Context.SECURITY_PRINCIPAL, securityPrincipal);
+
+        return this;
+    }
+
 
     @Override
     public JmsConsumerBuilder setConnectionFactoryUsername(String username) {
@@ -355,9 +423,7 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
      */
 
     public JmsContainerConsumer build() {
-        if (this.jmsConsumer.getConfiguration() == null) {
-            this.jmsConsumer.setConfiguration(new SpringMessageConsumerConfiguration());
-        }
+
 
         if (this.jmsConsumer.getConfiguredResourceId() == null) {
             this.jmsConsumer.setConfiguredResourceId(this.componentName + flowName + moduleName);
@@ -383,7 +449,7 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
             this.jmsConsumer.setMessageProvider(messageListenerContainer);
         }
 
-        if (this.jmsConsumer.getConfiguration() == null) {
+        if (configuration!=null && this.jmsConsumer.getConfiguration() == null) {
             this.jmsConsumer.setConfiguration(configuration);
         }
 
