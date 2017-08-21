@@ -96,7 +96,6 @@ public class MyApplicationTest
      * Test simple invocation.
      */
     @Test
-    @Ignore
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_scheduled_start_and_stop_flow() throws Exception
     {
