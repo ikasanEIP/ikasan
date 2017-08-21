@@ -428,7 +428,7 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
 
     protected void validateBuilderConfiguration()
     {
-        if(this.jmsConsumer.getConfiguredResourceId() == null)
+        if(this.jmsConsumer.getConfiguration() != null && this.jmsConsumer.getConfiguredResourceId() == null)
         {
             throw new IllegalArgumentException("configuredResourceId is a required property for the jmsConsumer and cannot be 'null'");
         }

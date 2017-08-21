@@ -262,7 +262,7 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
 
     protected void validateBuilderConfiguration()
     {
-        if(this.scheduledConsumer.getConfiguredResourceId() == null)
+        if(this.scheduledConsumer.getConfiguration() != null && this.scheduledConsumer.getConfiguredResourceId() == null)
         {
             throw new IllegalArgumentException("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'");
         }

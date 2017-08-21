@@ -41,10 +41,15 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
+import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jms.core.IkasanJmsTemplate;
+import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.transaction.TransactionManager;
 
 /**
  * A simple Component builder.
@@ -82,13 +87,17 @@ public class ComponentBuilder
      * Get an instance of an Ikasan default jmsConsumer
      * @return
      */
-    public JmsConsumerBuilder jmsConsumer()
-    {
-        AutowireCapableBeanFactory beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
+    public JmsConsumerBuilder jmsConsumer() {
         JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer);
-        beanFactory.autowireBean(jmsConsumerBuilder);
+        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer,
+                this.applicationContext.getBean(JtaTransactionManager.class), this.applicationContext.getBean(TransactionManager.class));
         return jmsConsumerBuilder;
+    }
+
+    public JmsProducerBuilder jmsProducer() {
+        JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
+        return jmsProducerBuilder;
     }
 
 }
