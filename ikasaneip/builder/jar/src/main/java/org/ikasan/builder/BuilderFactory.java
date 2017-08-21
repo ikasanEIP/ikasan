@@ -40,75 +40,41 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.flow.FlowElement;
-import org.springframework.context.ApplicationContext;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.ikasan.builder.component.ComponentBuilder;
 
 /**
- * A simple Flow builder.
+ * Contract for an Ikasan Builder Factory.
+ * This builder factory provides all the builders needed to create an Ikasan module, flow, or component.
  * 
  * @author Ikasan Development Team
  */
-public class BuilderFactory
+public interface BuilderFactory
 {
-    // singleton
-    static BuilderFactory builderFactory = new BuilderFactory(null);    // FIXME
+    /**
+     * Get instance of a module builder
+     * @param moduleName
+     * @return
+     */
+    ModuleBuilder getModuleBuilder(String moduleName);
 
-    ApplicationContext context;
+    /**
+     * Get instance of a flow builder
+     * @return
+     */
+    FlowBuilder getFlowBuilder(String moduleName, String flowName);
 
-    protected static BuilderFactory getInstance()
-    {
-        return builderFactory;
-    }
-//
-    public static ModuleBuilder moduleBuilder(String name)
-    {
-        return new ModuleBuilder(name);
-    }
+    /**
+     * Get instance of a component builder
+     * @return
+     */
+    ComponentBuilder getComponentBuilder();
 
-//    public static ModuleBuilder moduleBuilder(String name, String version)
-//    {
-//        return new ModuleBuilder(name);
-//    }
+    /**
+     * Get an instance of a nested route builder.
+     * @return
+     */
+    RouteBuilder getRouteBuilder();
 
-    public static RouteBuilder routeBuilder()
-    {
-        return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
-    }
-
-    public BuilderFactory(ApplicationContext context)
-    {
-        this.context = context;
-    }
-//
-//    public static FlowBuilder flowBuilder()
-//    {
-//        // create flowBuilder with default configuration
-//        FlowBuilder flowBuilder = new FlowBuilder();
-//        return flowBuilder;
-//    }
-
-    public FlowBuilder getFlowBuilder(String name)
-    {
-        FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
-        flowBuilder.withName(name);
-        return flowBuilder;
-    }
-
-    public static FlowBuilder flowBuilder(String name, String module)
-    {
-        return new FlowBuilder(name, module);
-    }
-
-    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
-    {
-        List<FlowElement> flowElements = new ArrayList<FlowElement>();
-        flowElements.add(flowElement);
-        return new RouteImpl(flowElements);
-    }
 }
 
 

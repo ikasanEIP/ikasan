@@ -9,6 +9,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.jta.narayana.NarayanaProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,9 @@ public class ModuleConfig {
     private JmsTemplateProducer jmsProducer;
 
     @Resource
-    private AutowireCapableBeanFactory beanFactory;
+    private ApplicationContext context;
+
+
 
     /**
      *
@@ -70,14 +73,17 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        FlowBuilder fb = BuilderFactory.flowBuilder("flowName", "sample-boot-jms");
-        beanFactory.autowireBean(fb);
+        ModuleBuilder mb = new ModuleBuilder(context,"sample-module");
+
+        FlowBuilder fb = mb.getFlowBuilder("flowName");
+
+        //beanFactory.autowireBean(fb);
         Flow flow = fb
                 .withDescription("flowDescription")
                 .consumer("consumer", jmsConsumer)
                 .producer("producer", jmsProducer).build();
 
-        Module module = BuilderFactory.moduleBuilder("sample-boot-jms").withDescription("Sample Module").addFlow(flow).build();
+        Module module = mb.withDescription("Sample Module").addFlow(flow).build();
         return module;
     }
 

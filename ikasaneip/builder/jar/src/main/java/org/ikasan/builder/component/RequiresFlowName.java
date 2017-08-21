@@ -38,71 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.builder.component;
 
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleInitialisationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.ExitCodeGenerator;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-
-import java.util.HashMap;
-import java.util.Map;
-
-@SpringBootApplication
-public class IkasanApplicationSpringBoot implements IkasanApplication
+/**
+ * Contract to allow the flow name to be passed to the component.
+ *
+ * @author Ikasan Development Team.
+ */
+public interface RequiresFlowName
 {
-    /** logger */
-    private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
-
-    ApplicationContext context;
-
-    Map<String, Module> modules = new HashMap<String,Module>();
-
-    public IkasanApplicationSpringBoot(String[] args)
-    {
-        this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
-    }
-
-    IkasanApplicationSpringBoot()
-    {
-    }
-
-    public BuilderFactory getBuilderFactory()
-    {
-        return new BuilderFactoryImpl(context, new HashMap<String,ModuleBuilder>());
-    }
-
-    public void run(Module module)
-    {
-        this.modules.put(module.getName(), module);
-        ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
-        service.register(module);
-        logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
-    }
-
-    // TODO - add close or shutdown per module ?
-
-    public void close()
-    {
-        SpringApplication.exit(this.context, new ExitCodeGenerator(){
-            @Override public int getExitCode()
-            {
-                return 0;
-            }
-        });
-    }
-
-    @Override public Object getBean(String beanName)
-    {
-        return context.getBean(beanName);
-    }
-
-    @Override public Object getBean(Class className)
-    {
-        return context.getBean(className);
-    }
+    public void setFlowName(String flowName);
 }

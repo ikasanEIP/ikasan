@@ -66,7 +66,6 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:topology-conf.xml",
         "classpath:topology-tx-conf.xml",
 
-        //"classpath:user-conf.xml",
         "classpath:datasource-conf.xml",
 
         "classpath:security-service-boot-conf.xml",

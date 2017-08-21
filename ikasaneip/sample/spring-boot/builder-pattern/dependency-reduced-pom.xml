@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ikasan</groupId>
-  <artifactId>sample-spring-boot-jms</artifactId>
+  <artifactId>sample-builder-pattern</artifactId>
   <version>2.0.0-SNAPSHOT</version>
   <build>
     <plugins>
@@ -101,7 +101,39 @@
           <artifactId>geronimo-spec-j2ee</artifactId>
           <groupId>geronimo-spec</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>ikasan-rest</artifactId>
+          <groupId>org.ikasan</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>validation-api</artifactId>
+          <groupId>javax.validation</groupId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-builder</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-rest-boot</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-monitor</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <version>1.1.1</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ikasan</groupId>
@@ -122,51 +154,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-topology</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-rest-boot</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-builder</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-builder-spring</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-monitor</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-replay</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>4.3.2.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>4.3.9.Final</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -182,40 +172,10 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms-client</artifactId>
-      <version>2.3.12.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-remote-naming</artifactId>
-      <version>1.0.8.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.xnio</groupId>
-      <artifactId>xnio-nio</artifactId>
-      <version>3.0.10.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.xnio</groupId>
-      <artifactId>xnio-api</artifactId>
-      <version>3.0.10.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <version>1.4.178</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.8.3</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -223,10 +183,6 @@
       <version>1.4.1.RELEASE</version>
       <scope>test</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>spring-boot-test</artifactId>
           <groupId>org.springframework.boot</groupId>
@@ -302,25 +258,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${version.org.springboot}</version>
-        <type>pom</type>
-        <scope>import</scope>
-        <exclusions>
-          <exclusion>
-            <artifactId>logback-classic</artifactId>
-            <groupId>ch.qos.logback</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <properties>
-    <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>

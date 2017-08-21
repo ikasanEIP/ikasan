@@ -72,13 +72,15 @@ public class SimpleExample
     public Module createModule(String moduleName)
     {
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(new String[0]);
-        return ikasanApplication.getModuleBuilder(moduleName)
-                .addFlow(BuilderFactory.flowBuilder("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        return builderFactory.getModuleBuilder(moduleName)
+                .addFlow(builderFactory.getFlowBuilder("moduleName", "flowName").withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
                         .singleRecipientRouter("routerName", new SimpleRouter())
-                        .when("odd", BuilderFactory.routeBuilder().producer("oddValuePublisher", new SimpleProducer()))
-                        .otherwise(BuilderFactory.routeBuilder().producer("evenValuePublisher", new SimpleProducer()))
+                        .when("odd", builderFactory.getRouteBuilder().producer("oddValuePublisher", new SimpleProducer()))
+                        .otherwise(builderFactory.getRouteBuilder().producer("evenValuePublisher", new SimpleProducer()))
                         .build())
             .build();
     }

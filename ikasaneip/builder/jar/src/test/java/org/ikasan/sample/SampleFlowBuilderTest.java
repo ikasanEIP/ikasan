@@ -41,6 +41,8 @@
 package org.ikasan.sample;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -60,13 +62,8 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.*;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -79,7 +76,7 @@ import java.util.List;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
 		"/exclusion-service-conf.xml",
-		"/h2db-datasource-conf.xml"
+		"/datasource-conf.xml"
 })
 public class SampleFlowBuilderTest
 {
@@ -126,7 +123,9 @@ public class SampleFlowBuilderTest
 
     final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "serialiserFactory");
 
-    @Before
+	IkasanApplication ikasanApplication;
+
+	@Before
     public void setup()
     {
         // expectations
@@ -139,7 +138,15 @@ public class SampleFlowBuilderTest
                 will(returnValue(exclusionService));
             }
         });
-    }
+
+		ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
+	}
+
+	@After
+	public void teardown()
+	{
+		ikasanApplication.close();
+	}
 
 	/**
 	 * Test successful flow creation.
@@ -147,7 +154,9 @@ public class SampleFlowBuilderTest
 	@Test
 	public void test_successful_simple_transitions()
 	{
-		Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+		BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+		Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
 				.withDescription("flowDescription")
 				.withFlowInvocationContextListener(flowInvocationContextListener)
 				.withFlowInvocationContextListener(flowInvocationContextListener)
@@ -205,14 +214,16 @@ public class SampleFlowBuilderTest
     @Ignore@Test
     public void test_successful_router_transitions()
     {
-    	Flow flow = BuilderFactory.flowBuilder("flowName", "moduleName")
+		BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+		Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .consumer("consumer", consumer)
     	    .converter("converter", converter)
     	    .translator("translator", translator)
 			.singleRecipientRouter("routerName", singleRecipientRouter)
-				.when("a", BuilderFactory.routeBuilder().producer("end",producer) )
-				.when("b", BuilderFactory.routeBuilder().producer("end",producer) )
-				.otherwise(BuilderFactory.routeBuilder().producer("end",producer) )
+				.when("a", builderFactory.getRouteBuilder().producer("end",producer) )
+				.when("b", builderFactory.getRouteBuilder().producer("end",producer) )
+				.otherwise(builderFactory.getRouteBuilder().producer("end",producer) )
     	    .build();
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));

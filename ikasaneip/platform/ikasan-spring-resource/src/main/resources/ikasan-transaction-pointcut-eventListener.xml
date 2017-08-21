@@ -8,7 +8,7 @@
     <!-- Generic eventListener pointcut to be used if transactional resources are in the flow, but the originating tech is none transactional -->
     <aop:config>
         <aop:pointcut id="eventListenerPointcut" expression="execution(* org.ikasan.spec.event.EventListener.invoke(..))" />
-        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="eventListenerPointcut" />
+        <aop:advisor id="eventListenerMessagePointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="eventListenerPointcut" />
     </aop:config>
 
 </beans>

@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.builder.component.*;
 import org.ikasan.builder.conditional.Otherwise;
 import org.ikasan.builder.conditional.When;
 import org.ikasan.builder.sequential.SequenceName;
@@ -84,7 +85,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.*;
 
@@ -156,15 +156,14 @@ public class FlowBuilder implements ApplicationContextAware
     /** the serialiser factory */
     @Autowired
     SerialiserFactory serialiserFactory;
-    
+
     /** the replayRecordService **/
     ReplayRecordService replayRecordService;
 
 	/** List of FlowInvocationListener */
     List<FlowInvocationContextListener> flowInvocationContextListeners;
 
-    /** Ensure the spring context is available for registering additional beans */
-    ApplicationContext applicationContext;
+    ApplicationContext context;
 
     /**
 	 * Constructor
@@ -359,6 +358,37 @@ public class FlowBuilder implements ApplicationContextAware
         return this;
     }
 
+    protected <T> T applyPointcut(String name, T component)
+    {
+        if(context != null)
+        {
+            List<? extends Class<?>> componentInterfaces = Arrays.asList(component.getClass().getInterfaces());
+
+            Map<String,DefaultBeanFactoryPointcutAdvisor> allAopFactories =  context.getBeansOfType(DefaultBeanFactoryPointcutAdvisor.class);
+            if(allAopFactories!=null && !allAopFactories.isEmpty())
+            {
+                ProxyFactory factory = new ProxyFactory(component);
+
+                for (String key : allAopFactories.keySet())
+                {
+                    DefaultBeanFactoryPointcutAdvisor aopFactory = allAopFactories.get(key);
+                    for(Class componentInterface :componentInterfaces)
+                    {
+                        if (aopFactory.getPointcut().getClassFilter().matches(componentInterface))
+                        {
+                            logger.info("Applying pointcut [" + key + "] on component [" + name + "] class [" + component.getClass().getCanonicalName() + "] interface [" + componentInterface.getCanonicalName() + "]");
+                            factory.addInterface(componentInterface);
+                            factory.addAdvice(aopFactory.getAdvice());
+                        }
+                    }
+                }
+
+                return (T)factory.getProxy();
+            }
+        }
+
+        return component;
+    }
 
     /**
      * Setter for monitor
@@ -414,6 +444,39 @@ public class FlowBuilder implements ApplicationContextAware
         return this.eventFactory;
     }
 
+    protected Builder callbackConfiguration(String name, Builder componentBuilder)
+    {
+        if(componentBuilder instanceof RequiresComponentName)
+        {
+            ((RequiresComponentName)componentBuilder).setComponentName(name);
+        }
+
+        if(componentBuilder instanceof RequiresFlowName)
+        {
+            ((RequiresFlowName)componentBuilder).setFlowName(this.name);
+        }
+
+        if(componentBuilder instanceof RequiresModuleName)
+        {
+            ((RequiresModuleName)componentBuilder).setModuleName(this.moduleName);
+        }
+
+        if(componentBuilder instanceof RequiresAopProxy)
+        {
+            RequiresAopProxy requiresAopProxy = (RequiresAopProxy)componentBuilder;
+            requiresAopProxy.setAopProxyTarget( applyPointcut(name, requiresAopProxy.getAopProxyTarget()) );
+        }
+
+        return componentBuilder;
+    }
+
+    public PrimaryRouteBuilder consumer(String name, Builder<Consumer> consumerBuilder)
+    {
+        consumerBuilder = callbackConfiguration(name, consumerBuilder);
+        ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
+        return new PrimaryRouteBuilder( newPrimaryRoute( new FlowElementImpl(name, applyPointcut(name, consumerBuilder.build()), invoker) ));
+    }
+
 	/**
 	 * Add a consumer
 	 * 
@@ -423,47 +486,15 @@ public class FlowBuilder implements ApplicationContextAware
 	 */
     public PrimaryRouteBuilder consumer(String name, Consumer consumer)
     {
-        Consumer c = registerComponent(name, consumer);
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
-        BuilderFactory builderFactory = BuilderFactory.getInstance();
-        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, c, invoker) ));
+        return new PrimaryRouteBuilder( newPrimaryRoute( new FlowElementImpl(name, applyPointcut(name, consumer), invoker) ));
     }
 
-    protected Consumer registerComponent(String name, Consumer consumer)
+    protected Route newPrimaryRoute(FlowElement<Consumer> flowElement)
     {
-        if(applicationContext != null)
-        {
-            List<? extends Class<?>> consumerInterfaces = Arrays.asList(consumer.getClass().getInterfaces());
-            //consumerInterfaces.add(consumer.getClass());
-
-            Map<String,DefaultBeanFactoryPointcutAdvisor> allAopFactories =  applicationContext.getBeansOfType(DefaultBeanFactoryPointcutAdvisor.class);
-            if(allAopFactories!=null && !allAopFactories.isEmpty()){
-                for (String key :allAopFactories.keySet())
-                {
-                    DefaultBeanFactoryPointcutAdvisor aopFactory = allAopFactories.get(key);
-
-                    for(Class consumerInterface :consumerInterfaces)
-                    {
-                        if (aopFactory.getPointcut().getClassFilter().matches(consumerInterface))
-                        {
-                            logger.info("Matched consumer [" + consumer.getClass().getCanonicalName() + "] with poincut");
-
-                            ProxyFactory factory = new ProxyFactory(consumer);
-                            factory.addInterface(consumerInterface);
-                            factory.addAdvice(aopFactory.getAdvice());
-
-                            Consumer proxy = (Consumer) factory.getProxy();
-                            ((ConfigurableApplicationContext)applicationContext).getBeanFactory().registerSingleton(name, proxy);
-                            return proxy;
-                        }
-                    }
-
-                }
-            }
-
-
-        }
-        return consumer;
+        List<FlowElement> flowElements = new ArrayList<FlowElement>();
+        flowElements.add(flowElement);
+        return new RouteImpl(flowElements);
     }
 
     protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
@@ -476,10 +507,11 @@ public class FlowBuilder implements ApplicationContextAware
             FlowElement flowElement = flowElements.get(--count);
             if (flowElement.getFlowComponent() instanceof Consumer)
             {
-                ((Consumer)flowElement.getFlowComponent()).setEventFactory(eventFactory);
+                Consumer consumer = (Consumer) flowElement.getFlowComponent();
+                consumer.setEventFactory(eventFactory);
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
+                        consumer,
                         flowElement.getFlowElementInvoker(), nextFlowElement);
             }
             else if (flowElement.getFlowComponent() instanceof Router)
@@ -530,7 +562,7 @@ public class FlowBuilder implements ApplicationContextAware
         return nextFlowElement;
     }
 
-    protected FlowElement connectElements(Route<Flow> route)
+    protected FlowElement connectElements(Route route)
     {
         List<FlowElement> flowElements = route.getFlowElements();
 
@@ -567,7 +599,7 @@ public class FlowBuilder implements ApplicationContextAware
         return connectElements(flowElements, null); // TODO - better way of managing this?
     }
 
-    protected Flow _build(Route<Flow> _route)
+    protected Flow _build(Route _route)
     {
         FlowElement headFlowElement = connectElements(_route);
 
@@ -682,22 +714,41 @@ public class FlowBuilder implements ApplicationContextAware
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        this.context = context;
     }
 
-    public class PrimaryRouteBuilder {
-        Route<Flow> route;
+    public class PrimaryRouteBuilder
+    {
+        Route route;
 
-        public PrimaryRouteBuilder(Route route) {
+        public PrimaryRouteBuilder(Route route)
+        {
             this.route = route;
-            if (route == null) {
+            if (route == null)
+            {
                 throw new IllegalArgumentException("route cannot be 'null'");
             }
         }
 
-        public PrimaryRouteBuilder converter(String name, Converter converter) {
+        public PrimaryRouteBuilder converter(String name, Builder<Converter> converterBuilder)
+        {
+            converterBuilder = callbackConfiguration(name, converterBuilder);
+            callbackConfiguration(name, converterBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, converterBuilder.build(), new ConverterFlowElementInvoker()));
+            return this;
+        }
+
+        public PrimaryRouteBuilder converter(String name, Converter converter)
+        {
             this.route.addFlowElement(new FlowElementImpl(name, converter, new ConverterFlowElementInvoker()));
+            return this;
+        }
+
+        public PrimaryRouteBuilder translator(String name, Builder<Translator> translatorBuilder)
+        {
+            translatorBuilder = callbackConfiguration(name, translatorBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, translatorBuilder.build(), new TranslatorFlowElementInvoker()));
             return this;
         }
 
@@ -706,9 +757,23 @@ public class FlowBuilder implements ApplicationContextAware
             return this;
         }
 
+        public PrimaryRouteBuilder filter(String name, Builder<Filter> filterBuilder)
+        {
+            filterBuilder = callbackConfiguration(name, filterBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, filterBuilder.build(), new FilterFlowElementInvoker()));
+            return this;
+        }
+
         public PrimaryRouteBuilder filter(String name, Filter filter) {
             this.route.addFlowElement(new FlowElementImpl(name, filter, new FilterFlowElementInvoker()));
             return this;
+        }
+
+        public Sequence<Flow> sequencer(String name, Builder<Sequencer> sequencerBuilder)
+        {
+            sequencerBuilder = callbackConfiguration(name, sequencerBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, sequencerBuilder.build(), new SequencerFlowElementInvoker()));
+            return new PrimarySequenceImpl(route);
         }
 
         public Sequence<Flow> sequencer(String name, Sequencer sequencer) {
@@ -716,9 +781,23 @@ public class FlowBuilder implements ApplicationContextAware
             return new PrimarySequenceImpl(route);
         }
 
+        public PrimaryRouteBuilder broker(String name, Builder<Broker> brokerBuilder)
+        {
+            brokerBuilder = callbackConfiguration(name, brokerBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, brokerBuilder.build(), new BrokerFlowElementInvoker()));
+            return this;
+        }
+
         public PrimaryRouteBuilder broker(String name, Broker broker) {
             this.route.addFlowElement(new FlowElementImpl(name, broker, new BrokerFlowElementInvoker()));
             return this;
+        }
+
+        public Evaluation<Flow> singleRecipientRouter(String name, Builder<SingleRecipientRouter> singleRecipientRouterBuilder)
+        {
+            singleRecipientRouterBuilder = callbackConfiguration(name, singleRecipientRouterBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, singleRecipientRouterBuilder.build(), new SingleRecipientRouterFlowElementInvoker()));
+            return new PrimaryEvaluationImpl(route);
         }
 
         public Evaluation<Flow> singleRecipientRouter(String name, SingleRecipientRouter singleRecipientRouter) {
@@ -726,9 +805,23 @@ public class FlowBuilder implements ApplicationContextAware
             return new PrimaryEvaluationImpl(route);
         }
 
+        public Evaluation<Flow> multiRecipientRouter(String name, Builder<MultiRecipientRouter> multiRecipientRouterBuilder)
+        {
+            multiRecipientRouterBuilder = callbackConfiguration(name, multiRecipientRouterBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouterBuilder.build(), new MultiRecipientRouterFlowElementInvoker()));
+            return new PrimaryEvaluationImpl(route);
+        }
+
         public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
             this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker()));
             return new PrimaryEvaluationImpl(route);
+        }
+
+        public Endpoint<Flow> producer(String name, Builder<Producer> producerBuilder)
+        {
+            producerBuilder = callbackConfiguration(name, producerBuilder);
+            this.route.addFlowElement(new FlowElementImpl(name, producerBuilder.build(), new ProducerFlowElementInvoker()));
+            return new EndpointImpl();
         }
 
         public Endpoint<Flow> producer(String name, Producer producer) {
