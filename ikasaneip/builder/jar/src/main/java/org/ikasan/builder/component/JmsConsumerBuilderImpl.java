@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
@@ -108,7 +109,6 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
 
         this.transactionManager = transactionManager;
         this.arjunaTransactionManager =  arjunaTransactionManager;
-        this.aopProxiedMessageListener = jmsConsumer;
     }
 
     /**
@@ -382,24 +382,6 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
         }
 
         return configuration;
-    }
-
-    /**
-     * Set the raw component proxied object
-     *
-     * @param messageListener
-     */
-    public void setAopProxyTarget(MessageListener messageListener) {
-        this.aopProxiedMessageListener = messageListener;
-    }
-
-    /**
-     * Get the raw component for proxying
-     *
-     * @return
-     */
-    public MessageListener getAopProxyTarget() {
-        return (MessageListener) this.jmsConsumer;
     }
 
     /**
