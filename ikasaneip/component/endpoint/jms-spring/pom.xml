@@ -59,15 +59,20 @@
             <artifactId>ikasan-jms-client</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+        </dependency>
+
         <!-- Standard J2ee spec -->
         <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-j2ee</artifactId>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <dependency>
@@ -108,11 +113,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-exclusion-service</artifactId>
         </dependency>
 
     </dependencies>

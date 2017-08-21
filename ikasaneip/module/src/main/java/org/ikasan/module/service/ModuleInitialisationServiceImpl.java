@@ -41,6 +41,7 @@
 package org.ikasan.module.service;
 
 import org.apache.log4j.Logger;
+import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -325,6 +326,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
                 }
             }
         }
+
+        // We calling close on scheduler factory in order to force creation of new scheduler
+        // when spring context is being reloaded
+        SchedulerFactory.close();
     }
 
     private void shutdownMonitors(ApplicationContext context)

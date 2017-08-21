@@ -28,26 +28,8 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>geronimo-spec</groupId>
-                    <artifactId>geronimo-spec-j2ee</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring-arjuna</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                        <groupId>geronimo-spec</groupId>
-                        <artifactId>geronimo-spec-j2ee</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- web console -->
