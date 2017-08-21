@@ -42,7 +42,6 @@ package org.ikasan.builder;
 
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.flow.FlowElement;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
@@ -58,8 +57,7 @@ public class BuilderFactoryImpl implements BuilderFactory
     /** handle to the spring application context */
     ApplicationContext applicationContext;
 
-    /** Keep a handle on any named module builders associated with this application */
-    protected Map<String, ModuleBuilder> moduleBuilders;
+    Map<String, ModuleBuilder> moduleBuilders;
 
     /**
      * Constructor
@@ -84,18 +82,17 @@ public class BuilderFactoryImpl implements BuilderFactory
      * Get the instance of the module builder for the given module name.
      * Create one if it doesnt exist, otherwise return the exiting one.
      *
-     * @param name
      * @return
      */
-    public ModuleBuilder getModuleBuilder(String name)
+    public ModuleBuilder getModuleBuilder(String moduleName)
     {
-        if(this.moduleBuilders.containsKey(name))
+        if(this.moduleBuilders.containsKey(moduleName))
         {
-            return this.moduleBuilders.get(name);
+            return this.moduleBuilders.get(moduleName);
         }
 
-        ModuleBuilder moduleBuilder = new ModuleBuilder(this.applicationContext, name);
-        this.moduleBuilders.put(name, moduleBuilder);
+        ModuleBuilder moduleBuilder = new ModuleBuilder(this.applicationContext, moduleName);
+        this.moduleBuilders.put(moduleName, moduleBuilder);
         return moduleBuilder;
     }
 

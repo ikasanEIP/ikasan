@@ -124,9 +124,9 @@ public class ModuleBuilderTest
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
     	ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName").withDescription("module description");
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName1").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService);
-        Flow flow1 = flowBuilder.consumer("consumer", builderFactory.getComponentBuilder().scheduledConsumer()).producer("producer", producer).build();
+        Flow flow1 = flowBuilder.consumer("consumer", builderFactory.getComponentBuilder().scheduledConsumer().setConfiguredResourceId("configuredResourceId").build()).producer("producer", producer).build();
 
-    	Flow flow2 = moduleBuilder.getFlowBuilder("flowName2").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
+        Flow flow2 = moduleBuilder.getFlowBuilder("flowName2").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
                 .consumer("consumer", consumer)
                 .producer("producer", producer).build();
 

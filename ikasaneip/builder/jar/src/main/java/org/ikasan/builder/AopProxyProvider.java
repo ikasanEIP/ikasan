@@ -38,59 +38,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
-
-import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.quartz.Scheduler;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
+package org.ikasan.builder;
 
 /**
- * A simple Component builder.
- * 
+ * Contract for an AOP Proxy Provider
+ *
  * @author Ikasan Development Team
  */
-public class ComponentBuilder
+public interface AopProxyProvider
 {
-    /** handle to spring context */
-    ApplicationContext applicationContext;
-
-    public ComponentBuilder(ApplicationContext applicationContext)
-    {
-        this.applicationContext = applicationContext;
-        if(applicationContext == null)
-        {
-            throw new IllegalArgumentException("applicationContext cannot be 'null'");
-        }
-    }
-
     /**
-     * Get an instance of an Ikasan default scheduledConsumer
+     * Apply known pointcuts to the specified component, if matched.
+     *
+     * @param name
+     * @param component
+     * @param <T>
      * @return
      */
-    public ScheduledConsumerBuilder scheduledConsumer()
-    {
-        AutowireCapableBeanFactory beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
-        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer);
-        beanFactory.autowireBean(scheduledConsumerBuilder);
-        return scheduledConsumerBuilder;
-    }
-
-    /**
-     * Get an instance of an Ikasan default jmsConsumer
-     * @return
-     */
-    public JmsConsumerBuilder jmsConsumer()
-    {
-        AutowireCapableBeanFactory beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
-        JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();
-        JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer);
-        beanFactory.autowireBean(jmsConsumerBuilder);
-        return jmsConsumerBuilder;
-    }
-
+    public <T> T applyPointcut(String name, T component);
 }
 
 

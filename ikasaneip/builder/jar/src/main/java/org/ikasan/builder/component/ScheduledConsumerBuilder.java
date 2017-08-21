@@ -75,5 +75,10 @@ public interface ScheduledConsumerBuilder extends Builder<Consumer>
     public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
 
     public ScheduledConsumerBuilder setTimezone(String timezone);
+
+    public ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
+
+    public ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+
 }
 

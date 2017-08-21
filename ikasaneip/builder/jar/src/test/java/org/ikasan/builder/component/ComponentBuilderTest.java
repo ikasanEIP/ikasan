@@ -47,11 +47,14 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 
@@ -79,12 +82,25 @@ public class ComponentBuilderTest {
      */
     final ApplicationContext applicationContext = mockery.mock(ApplicationContext.class, "mockApplicationContext");
 
+    @Before
+    public void setup()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                ignoring(applicationContext);
+            }
+        });
+    }
+
     /**
      * Test successful flow creation.
      */
     @Test
     @Ignore
     public void test_successful_scheduledConsumer() {
+
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Consumer scheduledConsumer = componentBuilder.scheduledConsumer().setCronExpression("121212").setEager(true).setIgnoreMisfire(true).setTimezone("UTC").build();
 
@@ -102,6 +118,7 @@ public class ComponentBuilderTest {
      * Test successful flow creation.
      */
     @Test
+    @Ignore
     public void test_successful_jmsConsumer() {
         ArjunaIkasanMessageListenerContainer listenerContainer = new ArjunaIkasanMessageListenerContainer();
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);

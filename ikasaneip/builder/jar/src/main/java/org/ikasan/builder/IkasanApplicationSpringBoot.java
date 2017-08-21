@@ -79,7 +79,7 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     public void run(Module module)
     {
         this.modules.put(module.getName(), module);
-        ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
+        ModuleInitialisationService service = this.context.getBean(ModuleInitialisationService.class);
         service.register(module);
         logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
     }
@@ -105,4 +105,5 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     {
         return context.getBean(className);
     }
+
 }
