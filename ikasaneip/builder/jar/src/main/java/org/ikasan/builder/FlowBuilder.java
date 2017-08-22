@@ -58,7 +58,6 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
@@ -450,46 +449,39 @@ public class FlowBuilder implements ApplicationContextAware
                         consumer,
                         flowElement.getFlowElementInvoker(), nextFlowElement);
             }
-            else if (flowElement.getFlowComponent() instanceof Router)
-            {
-                nextFlowElement = new FlowElementImpl(
-                        flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
-                        flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
-            }
             else if (flowElement.getFlowComponent() instanceof MultiRecipientRouter)
             {
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
+                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
                         flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
             }
             else if (flowElement.getFlowComponent() instanceof SingleRecipientRouter)
             {
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
+                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
                         flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
             }
             else if (flowElement.getFlowComponent() instanceof Sequencer)
             {
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
+                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
                         flowElement.getFlowElementInvoker(), new LinkedHashMap<>(transitions) );
             }
             else if (flowElement.getFlowComponent() instanceof Producer)
             {
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
+                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
                         flowElement.getFlowElementInvoker());
             }
             else
             {
                 nextFlowElement = new FlowElementImpl(
                         flowElement.getComponentName(),
-                        flowElement.getFlowComponent(),
+                        this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
                         flowElement.getFlowElementInvoker(),
                         nextFlowElement);
             }

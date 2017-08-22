@@ -48,7 +48,6 @@ import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
@@ -106,10 +105,6 @@ public class SampleFlowBuilderTest
     /** Mock Converter */
     final Converter converter = mockery.mock(Converter.class, "mockConverter");
 
-    // Routers
-    /** Mock Router */
-    final Router router = mockery.mock(Router.class, "mockRouter");
-    
     // Sequencers
     /** Mock Sequencer */
     final Sequencer sequencer = mockery.mock(Sequencer.class, "mockSequencingRouter");

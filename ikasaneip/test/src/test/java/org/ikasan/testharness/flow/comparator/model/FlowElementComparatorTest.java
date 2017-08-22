@@ -43,7 +43,7 @@ package org.ikasan.testharness.flow.comparator.model;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.testharness.flow.expectation.model.RouterComponent;
+import org.ikasan.testharness.flow.expectation.model.SingleRecipientRouterComponent;
 import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -134,7 +134,7 @@ public class FlowElementComparatorTest
     @Test(expected = AssertionError.class)
     public void test_failedFlowElementComparatorDueToDifferentComponentTypes() 
     {
-        final RouterComponent routerComponent = new RouterComponent("name");
+        final SingleRecipientRouterComponent routerComponent = new SingleRecipientRouterComponent("name");
         
         // expectations
         mockery.checking(new Expectations()

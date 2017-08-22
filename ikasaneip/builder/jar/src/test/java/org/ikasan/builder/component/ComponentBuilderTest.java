@@ -52,6 +52,7 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -167,5 +168,16 @@ public class ComponentBuilderTest {
         mockery.assertIsSatisfied();
     }
 
+
+    /**
+     * Test listSplitter.
+     */
+    @Test
+    public void test_successful_listSplitter()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Splitter splitter = componentBuilder.listSplitter().build();
+        assertTrue("instance should be a Splitter", splitter instanceof Splitter);
+    }
 
 }
