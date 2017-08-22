@@ -55,14 +55,12 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
  import org.ikasan.configurationService.model.*;
+ import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
  import org.ikasan.security.service.authentication.IkasanAuthentication;
- import org.ikasan.spec.configuration.Configuration;
- import org.ikasan.spec.configuration.ConfigurationManagement;
- import org.ikasan.spec.configuration.ConfigurationParameter;
- import org.ikasan.spec.configuration.ConfiguredResource;
+ import org.ikasan.spec.configuration.*;
  import org.vaadin.teemu.VaadinIcons;
 
  import java.text.NumberFormat;
@@ -81,12 +79,7 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      private Logger logger = Logger.getLogger(ControlConfigurationPanel.class);
 
-     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
-     private PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource;
-     private Configuration platformConfiguration;
-
-     private ConfigurationParameter userParam;
-     private ConfigurationParameter passwordParam;
+     private PlatformConfigurationService platformConfigurationService;
 
 
      private TextField usernameField;
@@ -95,15 +88,15 @@ package org.ikasan.dashboard.ui.administration.panel;
      /**
       * Constructor
       *
-      * @param configurationManagement
+      * @param platformConfigurationService
       */
-     public ControlConfigurationPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+     public ControlConfigurationPanel(PlatformConfigurationService platformConfigurationService)
      {
          super();
-         this.configurationManagement = configurationManagement;
-         if (this.configurationManagement == null)
+         this.platformConfigurationService = platformConfigurationService;
+         if (this.platformConfigurationService == null)
          {
-             throw new IllegalArgumentException("configurationService cannot be null!");
+             throw new IllegalArgumentException("platformConfigurationService cannot be null!");
          }
 
 
@@ -122,7 +115,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
          paramPanel.setWidth("100%");
 
-         GridLayout paramLayout = new GridLayout(2, 3);
+         GridLayout paramLayout = new GridLayout(2, 4);
          paramLayout.setSpacing(true);
          paramLayout.setSizeFull();
          paramLayout.setMargin(true);
@@ -137,7 +130,8 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 
          TextField dashboardBaseUrl = new TextField();
-         dashboardBaseUrl.setWidth(300, Unit.PIXELS);
+         dashboardBaseUrl.setValue(this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.DASHBOARD_BASE_URL));
+         dashboardBaseUrl.setWidth(400, Unit.PIXELS);
 
          paramLayout.addComponent(dashboardBaseUrl, 1, 0);
          paramLayout.setComponentAlignment(dashboardBaseUrl, Alignment.MIDDLE_LEFT);
@@ -149,12 +143,12 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.addComponent(label, 0, 1);
          paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 
-         TextField webServiceUsername = new TextField();
-         webServiceUsername.setWidth(300, Unit.PIXELS);
-         webServiceUsername.setWidth(300, Unit.PIXELS);
+         this.usernameField = new TextField();
+         this.usernameField.setWidth(250, Unit.PIXELS);
+         this.usernameField.setValue(this.platformConfigurationService.getWebServiceUsername());
 
-         paramLayout.addComponent(webServiceUsername, 1, 1);
-         paramLayout.setComponentAlignment(webServiceUsername, Alignment.MIDDLE_LEFT);
+         paramLayout.addComponent(this.usernameField, 1, 1);
+         paramLayout.setComponentAlignment(this.usernameField, Alignment.MIDDLE_LEFT);
 
          label = new Label("Web Service User Password");
          label.addStyleName(ValoTheme.LABEL_LARGE);
@@ -163,11 +157,37 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.addComponent(label, 0, 2);
          paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 
-         TextField webServiceUserPassword = new TextField();
-         webServiceUserPassword.setWidth(300, Unit.PIXELS);
+         this.passwordField = new PasswordField();
+         this.passwordField.setWidth(250, Unit.PIXELS);
+         this.passwordField.setValue(this.platformConfigurationService.getWebServicePassword());
 
-     paramLayout.addComponent(webServiceUserPassword, 1, 2);
-         paramLayout.setComponentAlignment(webServiceUserPassword, Alignment.MIDDLE_LEFT);
+         paramLayout.addComponent(this.passwordField, 1, 2);
+         paramLayout.setComponentAlignment(this.passwordField, Alignment.MIDDLE_LEFT);
+
+         Button saveButton = new Button("Save");
+         saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
+
+         saveButton.addClickListener(new Button.ClickListener()
+         {
+             @Override
+             public void buttonClick(ClickEvent clickEvent)
+             {
+                 platformConfigurationService.saveConfigurationValue
+                         (ConfigurationConstants.DASHBOARD_BASE_URL, dashboardBaseUrl.getValue());
+                 platformConfigurationService.saveWebServiceUsername(usernameField.getValue());
+                 platformConfigurationService.saveWebServicePassword(passwordField.getValue());
+
+                 Notification notification = new Notification(
+                         "Saved",
+                         "The configuration has been saved successfully!",
+                         Type.HUMANIZED_MESSAGE);
+                 notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+                 notification.show(Page.getCurrent());
+             }
+         });
+
+         paramLayout.addComponent(saveButton, 0, 3, 1, 3);
+         paramLayout.setComponentAlignment(saveButton, Alignment.MIDDLE_CENTER);
 
          paramPanel.setContent(paramLayout);
 
@@ -188,28 +208,15 @@ package org.ikasan.dashboard.ui.administration.panel;
          refresh();
      }
 
-     private void refresh()
+     public void refresh()
      {
-         this.platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-         this.platformConfiguration = this.configurationManagement.getConfiguration(this.platformConfigurationConfiguredResource);
-
-         // create the configuration if it does not already exist!
-         if(platformConfiguration == null)
-         {
-             this.platformConfigurationConfiguredResource.setConfiguration(new PlatformConfiguration());
-             platformConfiguration = this.configurationManagement.createConfiguration(platformConfigurationConfiguredResource);
-         }
-
-         final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)platformConfiguration.getParameters();
-
          GridLayout layout = new GridLayout();
          layout.setWidth("100%");
          layout.setSpacing(true);
          layout.setMargin(true);
 
 
-         Label configLabel = new Label("Solr Configuration");
+         Label configLabel = new Label("Control Configuration");
          configLabel.addStyleName(ValoTheme.LABEL_HUGE);
          configLabel.setSizeUndefined();
 

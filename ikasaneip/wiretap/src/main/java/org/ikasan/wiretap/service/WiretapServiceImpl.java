@@ -40,14 +40,10 @@
  */
 package org.ikasan.wiretap.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
-import org.ikasan.harvest.HarvestService;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.solr.SolrService;
@@ -56,6 +52,10 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Default implementation of the <code>WiretapService</code>

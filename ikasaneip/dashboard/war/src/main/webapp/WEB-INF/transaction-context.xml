@@ -46,13 +46,13 @@
         <aop:pointcut id="startupControlServiceMethods"
                 expression="execution(* org.ikasan.module.service.StartupControlService*.*(..))"/>
         <aop:pointcut id="hospitalServiceMethods"
-                expression="execution(* org.ikasan.hospital.service.HospitalService.*(..))"/>
+                expression="execution(* org.ikasan.spec.hospital.service.HospitalService.*(..))"/>
         <aop:pointcut id="hospitalManagementServiceMethods"
-                expression="execution(* org.ikasan.hospital.service.HospitalManagementService.*(..))"/>
+                expression="execution(* org.ikasan.spec.hospital.service.HospitalManagementService.*(..))"/>
         <aop:pointcut id="replayServiceMethods"
                 expression="execution(* org.ikasan.replay.service.*.*(..))"/>
         <aop:pointcut id="housekeepingServiceMethods"
-                      expression="execution(* org.ikasan.housekeeping.HousekeepService.*(..))"/>
+                      expression="execution(* org.ikasan.spec.housekeeping.HousekeepService.*(..))"/>
         <aop:pointcut id="platformConfigurationServiceMethods"
                       expression="execution(* org.ikasan.spec.configuration.PlatformConfigurationService.*(..))"/>
         <aop:pointcut id="messageHistoryServiceMethods"

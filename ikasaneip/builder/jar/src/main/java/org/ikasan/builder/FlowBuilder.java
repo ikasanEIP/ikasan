@@ -40,7 +40,6 @@
  */
 package org.ikasan.builder;
 
-import org.apache.log4j.Logger;
 import org.ikasan.builder.conditional.Otherwise;
 import org.ikasan.builder.conditional.When;
 import org.ikasan.builder.sequential.SequenceName;
@@ -77,27 +76,29 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A simple Flow builder.
  * 
  * @author Ikasan Development Team
  */
-@Component
-public class FlowBuilder
+public class FlowBuilder implements ApplicationContextAware
 {
     /** logger */
-    private static Logger logger = Logger.getLogger(FlowBuilder.class);
+    private Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
 
-	/** name of the flow module owner */
+    /** name of the flow module owner */
 	String moduleName;
 
 	/** name of the flow being instantiated */
@@ -149,7 +150,7 @@ public class FlowBuilder
     FlowElement<?> exclusionFlowHeadElement;
     
     /** handle to the re-submission service */
-    @Autowired
+    //@Autowired
     ResubmissionService resubmissionService;
     
     /** the serialiser factory */
@@ -162,9 +163,12 @@ public class FlowBuilder
 	/** List of FlowInvocationListener */
     List<FlowInvocationContextListener> flowInvocationContextListeners;
 
+    /** Ensure the spring context is available for registering additional beans */
+    ApplicationContext applicationContext;
+
     /**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public FlowBuilder(String name, String moduleName)
@@ -204,7 +208,7 @@ public class FlowBuilder
 
 	/**
 	 * Add a module name
-	 * 
+	 *
 	 * @param moduleName
 	 * @return
 	 */
@@ -419,9 +423,47 @@ public class FlowBuilder
 	 */
     public PrimaryRouteBuilder consumer(String name, Consumer consumer)
     {
+        Consumer c = registerComponent(name, consumer);
         ConsumerFlowElementInvoker invoker = new ConsumerFlowElementInvoker();
         BuilderFactory builderFactory = BuilderFactory.getInstance();
-        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, consumer, invoker) ));
+        return new PrimaryRouteBuilder( builderFactory.newPrimaryRoute( new FlowElementImpl(name, c, invoker) ));
+    }
+
+    protected Consumer registerComponent(String name, Consumer consumer)
+    {
+        if(applicationContext != null)
+        {
+            List<? extends Class<?>> consumerInterfaces = Arrays.asList(consumer.getClass().getInterfaces());
+            //consumerInterfaces.add(consumer.getClass());
+
+            Map<String,DefaultBeanFactoryPointcutAdvisor> allAopFactories =  applicationContext.getBeansOfType(DefaultBeanFactoryPointcutAdvisor.class);
+            if(allAopFactories!=null && !allAopFactories.isEmpty()){
+                for (String key :allAopFactories.keySet())
+                {
+                    DefaultBeanFactoryPointcutAdvisor aopFactory = allAopFactories.get(key);
+
+                    for(Class consumerInterface :consumerInterfaces)
+                    {
+                        if (aopFactory.getPointcut().getClassFilter().matches(consumerInterface))
+                        {
+                            logger.info("Matched consumer [" + consumer.getClass().getCanonicalName() + "] with poincut");
+
+                            ProxyFactory factory = new ProxyFactory(consumer);
+                            factory.addInterface(consumerInterface);
+                            factory.addAdvice(aopFactory.getAdvice());
+
+                            Consumer proxy = (Consumer) factory.getProxy();
+                            ((ConfigurableApplicationContext)applicationContext).getBeanFactory().registerSingleton(name, proxy);
+                            return proxy;
+                        }
+                    }
+
+                }
+            }
+
+
+        }
+        return consumer;
     }
 
     protected FlowElement connectElements(List<FlowElement> flowElements, Map<String, FlowElement> transitions)
@@ -637,6 +679,11 @@ public class FlowBuilder
 
         return flow;
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     public class PrimaryRouteBuilder {

@@ -588,7 +588,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          refresh();
      }
 
-     private void refresh()
+     public void refresh()
      {
          this.platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
 

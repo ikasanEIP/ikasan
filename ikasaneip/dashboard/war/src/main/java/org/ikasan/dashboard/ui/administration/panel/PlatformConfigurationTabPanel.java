@@ -51,6 +51,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import org.ikasan.spec.configuration.Configuration;
  import org.ikasan.spec.configuration.ConfigurationManagement;
  import org.ikasan.spec.configuration.ConfiguredResource;
+ import org.ikasan.spec.configuration.PlatformConfigurationService;
 
  /**
   * @author CMI2 Development Team
@@ -61,6 +62,8 @@ package org.ikasan.dashboard.ui.administration.panel;
      private static final long serialVersionUID = 6005593259860222561L;
 
      private Logger logger = Logger.getLogger(PlatformConfigurationTabPanel.class);
+
+     private PlatformConfigurationService platformConfigurationService;
 
      private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
@@ -76,8 +79,10 @@ package org.ikasan.dashboard.ui.administration.panel;
       * Constructor
       *
       * @param configurationManagement
+      * @param platformConfigurationService
       */
-     public PlatformConfigurationTabPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+     public PlatformConfigurationTabPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
+                                          PlatformConfigurationService platformConfigurationService)
      {
          super();
          this.configurationManagement = configurationManagement;
@@ -85,7 +90,11 @@ package org.ikasan.dashboard.ui.administration.panel;
          {
              throw new IllegalArgumentException("configurationService cannot be null!");
          }
-
+         this.platformConfigurationService = platformConfigurationService;
+         if (this.platformConfigurationService == null)
+         {
+             throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+         }
 
          init();
      }
@@ -108,17 +117,17 @@ package org.ikasan.dashboard.ui.administration.panel;
                  .getAttribute(DashboardSessionValueConstants.USER);
 
          this.platformConfigurationGeneralTab = new GeneralConfigurationPanel
-                     (this.configurationManagement);
+                     (this.platformConfigurationService);
 
          tabsheet.addTab(this.platformConfigurationGeneralTab, "General");
 
          this.controlConfigurationPanel = new ControlConfigurationPanel
-                 (this.configurationManagement);
+                 (this.platformConfigurationService);
 
          tabsheet.addTab(this.controlConfigurationPanel, "Control");
 
          this.solrConfigurationPanel = new SolrConfigurationPanel
-                 (this.configurationManagement);
+             (this.platformConfigurationService);
 
          tabsheet.addTab(this.solrConfigurationPanel, "Solr");
 
@@ -126,6 +135,18 @@ package org.ikasan.dashboard.ui.administration.panel;
                  (this.configurationManagement);
 
          tabsheet.addTab(this.rawConfigurationPanel, "Raw");
+
+         tabsheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener()
+         {
+             @Override
+             public void selectedTabChange(TabSheet.SelectedTabChangeEvent selectedTabChangeEvent)
+             {
+                 platformConfigurationGeneralTab.refresh();
+                 controlConfigurationPanel.refresh();
+                 solrConfigurationPanel.refresh();
+                 rawConfigurationPanel.refresh();
+             }
+         });
 
          this.tabsheetPanel.setContent(tabsheet);
 
@@ -165,10 +186,10 @@ package org.ikasan.dashboard.ui.administration.panel;
      public void enter(ViewChangeEvent event)
      {
          refresh();
+         this.rawConfigurationPanel.enter(event);
          this.platformConfigurationGeneralTab.enter(event);
          this.controlConfigurationPanel.enter(event);
          this.solrConfigurationPanel.enter(event);
-         this.rawConfigurationPanel.enter(event);
      }
 
      private void refresh()

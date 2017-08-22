@@ -69,12 +69,27 @@ public interface PlatformConfigurationService
 	 * @return
 	 */
 	public String getWebServiceUsername();
+
+	/**
+	 * Save the web service username.
+	 *
+	 * @param username
+     */
+	public void saveWebServiceUsername(String username);
 	
 	/**
 	  * The the password for the account that is used to validate web service calls.
+	 *
 	 * @return
 	 */
 	public String getWebServicePassword();
+
+	/**
+	 * Save the web service password.
+	 *
+	 * @param password
+     */
+	public void saveWebServicePassword(String password);
 
 	/**
 	 * Returns the size of result sets returned for the dashboard.

@@ -51,6 +51,7 @@ import java.util.concurrent.Executors;
 import com.vaadin.ui.*;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
+import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -442,7 +443,8 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 	
 	private List<String> getValidTargetServers()
 	{
-		String replayTargetServers = this.platformConfigurationService.getConfigurationValue("replayTargetServers");
+		String replayTargetServers = this.platformConfigurationService
+				.getConfigurationValue(ConfigurationConstants.REPLAY_TARGET_SERVERS);
 		
 		if(replayTargetServers != null && replayTargetServers.length() > 0)
 		{
