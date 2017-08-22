@@ -40,9 +40,12 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.component.splitter.DefaultListSplitter;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -98,6 +101,11 @@ public class ComponentBuilder
         JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
         JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
         return jmsProducerBuilder;
+    }
+
+    public Builder<Splitter> listSplitter()
+    {
+        return new ListSplitterBuilderImpl( new DefaultListSplitter() );
     }
 
 }

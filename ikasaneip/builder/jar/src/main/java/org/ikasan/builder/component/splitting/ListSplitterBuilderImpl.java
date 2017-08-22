@@ -38,25 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.sample;
+package org.ikasan.builder.component.splitting;
 
-import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.RouterException;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.ikasan.builder.component.Builder;
+import org.ikasan.spec.component.splitting.Splitter;
 
 /**
- * Sample component for test only.
- * @author Ikasan Development Team.
+ * Ikasan provided list splitter default implementation.
+ *
+ * @author Ikasan Development Team
  */
-public class SampleRouter implements MultiRecipientRouter<String>
+public class ListSplitterBuilderImpl implements Builder<Splitter>
 {
-    @Override
-    public List<String> route(String messageToRoute) throws RouterException {
-        List<String> results = new ArrayList<String>();
-        results.add("one");
-        results.add("two");
-        return results;
+    // splitter instance
+    Splitter splitter;
+
+    /**
+     * Constructor
+     * @param splitter
+     */
+    public ListSplitterBuilderImpl(Splitter splitter)
+    {
+        this.splitter = splitter;
+        if(splitter == null)
+        {
+            throw new IllegalArgumentException("splitter cannot be 'null'");
+        }
     }
+
+    /**
+     * Build component.
+     * @return
+     */
+    public Splitter build()
+    {
+        return this.splitter;
+    }
+
 }
+
