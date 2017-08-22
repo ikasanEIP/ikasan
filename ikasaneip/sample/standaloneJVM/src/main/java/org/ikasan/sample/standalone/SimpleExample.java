@@ -41,6 +41,8 @@
 package org.ikasan.sample.standalone;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.IkasanApplication;
+import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.sample.component.consumer.SimpleConsumer;
 import org.ikasan.sample.component.converter.SimpleConverter;
 import org.ikasan.sample.component.producer.SimpleProducer;
@@ -69,7 +71,8 @@ public class SimpleExample
      */
     public Module createModule(String moduleName)
     {
-        return BuilderFactory.moduleBuilder(moduleName)
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(new String[0]);
+        return ikasanApplication.getModuleBuilder(moduleName)
                 .addFlow(BuilderFactory.flowBuilder("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String

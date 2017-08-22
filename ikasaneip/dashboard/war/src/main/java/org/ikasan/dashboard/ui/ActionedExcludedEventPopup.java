@@ -44,7 +44,7 @@ import org.ikasan.dashboard.ui.topology.panel.ActionedExclusionEventViewPanel;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.topology.service.TopologyService;
 
 import com.vaadin.annotations.Theme;

@@ -137,7 +137,7 @@
         <constructor-arg ref="wiretapService" />
     </bean>
     
-    <bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactory">
+    <bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactoryDefaultImpl">
         <!-- serializer -->
         <constructor-arg>
           <bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">

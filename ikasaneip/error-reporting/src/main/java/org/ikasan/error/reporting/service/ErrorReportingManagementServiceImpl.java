@@ -51,8 +51,8 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
-import org.ikasan.harvest.HarvestService;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.solr.SolrService;
 

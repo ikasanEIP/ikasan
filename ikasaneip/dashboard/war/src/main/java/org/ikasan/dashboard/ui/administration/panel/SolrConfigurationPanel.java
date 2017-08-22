@@ -55,14 +55,12 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
  import org.ikasan.configurationService.model.*;
+ import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
  import org.ikasan.security.service.authentication.IkasanAuthentication;
- import org.ikasan.spec.configuration.Configuration;
- import org.ikasan.spec.configuration.ConfigurationManagement;
- import org.ikasan.spec.configuration.ConfigurationParameter;
- import org.ikasan.spec.configuration.ConfiguredResource;
+ import org.ikasan.spec.configuration.*;
  import org.vaadin.teemu.VaadinIcons;
 
  import java.text.NumberFormat;
@@ -81,28 +79,20 @@ package org.ikasan.dashboard.ui.administration.panel;
 
      private Logger logger = Logger.getLogger(SolrConfigurationPanel.class);
 
-     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
-     private PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource;
-     private Configuration platformConfiguration;
-
-     private ConfigurationParameter userParam;
-     private ConfigurationParameter passwordParam;
-
-     private TextField usernameField;
-     private PasswordField passwordField;
+     private PlatformConfigurationService platformConfigurationService;
 
      /**
       * Constructor
       *
-      * @param configurationManagement
+      * @param platformConfigurationService
       */
-     public SolrConfigurationPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement)
+     public SolrConfigurationPanel(PlatformConfigurationService platformConfigurationService)
      {
          super();
-         this.configurationManagement = configurationManagement;
-         if (this.configurationManagement == null)
+         this.platformConfigurationService = platformConfigurationService;
+         if (this.platformConfigurationService == null)
          {
-             throw new IllegalArgumentException("configurationService cannot be null!");
+             throw new IllegalArgumentException("platformConfigurationService cannot be null!");
          }
 
 
@@ -121,7 +111,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
          paramPanel.setWidth("100%");
 
-         GridLayout paramLayout = new GridLayout(2, 3);
+         GridLayout paramLayout = new GridLayout(2, 4);
          paramLayout.setSpacing(true);
          paramLayout.setSizeFull();
          paramLayout.setMargin(true);
@@ -137,6 +127,17 @@ package org.ikasan.dashboard.ui.administration.panel;
 
          CheckBox solrEnabledCheckbox = new CheckBox();
 
+         String soleEnabled = this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
+
+         if(soleEnabled != null && soleEnabled.equals("true"))
+         {
+             solrEnabledCheckbox.setValue(true);
+         }
+         else
+         {
+             solrEnabledCheckbox.setValue(false);
+         }
+
 
          paramLayout.addComponent(solrEnabledCheckbox, 1, 0);
          paramLayout.setComponentAlignment(solrEnabledCheckbox, Alignment.MIDDLE_LEFT);
@@ -148,8 +149,10 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.addComponent(label, 0, 1);
          paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 
-         TextField solrUrlsTextField = new TextField();
-         solrUrlsTextField.setWidth(300, Unit.PIXELS);
+         TextArea solrUrlsTextField = new TextArea();
+         solrUrlsTextField.setWidth(500, Unit.PIXELS);
+         solrUrlsTextField.setRows(4);
+         solrUrlsTextField.setValue(this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_URLS));
 
          paramLayout.addComponent(solrUrlsTextField, 1, 1);
          paramLayout.setComponentAlignment(solrUrlsTextField, Alignment.MIDDLE_LEFT);
@@ -162,9 +165,37 @@ package org.ikasan.dashboard.ui.administration.panel;
          paramLayout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 
          TextField daysToKeepTextField = new TextField();
+         daysToKeepTextField.setValue(this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_DAYS_TO_KEEP));
 
          paramLayout.addComponent(daysToKeepTextField, 1, 2);
          paramLayout.setComponentAlignment(daysToKeepTextField, Alignment.MIDDLE_LEFT);
+
+         Button saveButton = new Button("Save");
+         saveButton.addStyleName(ValoTheme.BUTTON_SMALL);
+
+         saveButton.addClickListener(new Button.ClickListener()
+         {
+             @Override
+             public void buttonClick(ClickEvent clickEvent)
+             {
+                 platformConfigurationService.saveConfigurationValue
+                         (ConfigurationConstants.SOLR_ENABLED, solrEnabledCheckbox.getValue().toString());
+                 platformConfigurationService.saveConfigurationValue
+                         (ConfigurationConstants.SOLR_URLS, solrUrlsTextField.getValue());
+                 platformConfigurationService.saveConfigurationValue
+                         (ConfigurationConstants.SOLR_DAYS_TO_KEEP, daysToKeepTextField.getValue());
+
+                 Notification notification = new Notification(
+                         "Saved",
+                         "The configuration has been saved successfully!",
+                         Type.HUMANIZED_MESSAGE);
+                 notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+                 notification.show(Page.getCurrent());
+             }
+         });
+
+         paramLayout.addComponent(saveButton, 0, 3, 1, 3);
+         paramLayout.setComponentAlignment(saveButton, Alignment.MIDDLE_CENTER);
 
          paramPanel.setContent(paramLayout);
 
@@ -185,21 +216,8 @@ package org.ikasan.dashboard.ui.administration.panel;
          refresh();
      }
 
-     private void refresh()
+     public void refresh()
      {
-         this.platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
-
-         this.platformConfiguration = this.configurationManagement.getConfiguration(this.platformConfigurationConfiguredResource);
-
-         // create the configuration if it does not already exist!
-         if(platformConfiguration == null)
-         {
-             this.platformConfigurationConfiguredResource.setConfiguration(new PlatformConfiguration());
-             platformConfiguration = this.configurationManagement.createConfiguration(platformConfigurationConfiguredResource);
-         }
-
-         final List<ConfigurationParameter> parameters = (List<ConfigurationParameter>)platformConfiguration.getParameters();
-
          GridLayout layout = new GridLayout();
          layout.setWidth("100%");
          layout.setSpacing(true);

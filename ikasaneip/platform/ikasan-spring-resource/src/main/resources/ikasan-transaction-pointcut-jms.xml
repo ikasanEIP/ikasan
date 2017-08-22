@@ -8,7 +8,7 @@
     <!-- JMS contract message listnener pointcut -->
     <aop:config>
         <aop:pointcut id="jmsMessagePointcut" expression="execution(* javax.jms.MessageListener.onMessage(..))" />
-        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="jmsMessagePointcut" />
+        <aop:advisor id="jmsMessagePointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="jmsMessagePointcut" />
     </aop:config>
 
 </beans>

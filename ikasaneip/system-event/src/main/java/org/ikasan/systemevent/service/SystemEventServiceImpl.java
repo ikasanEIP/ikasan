@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.housekeeping.HousekeepService;
+import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.dao.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEvent;

@@ -20,55 +20,7 @@
         <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
     </properties>
     
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${version.org.springboot}</version>
-                <type>pom</type>
-                <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                </exclusions>
-
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-
     <dependencies>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jta-narayana</artifactId>
-            <version>${version.org.springboot}</version>
-            <exclusions>
-
-                <!--<exclusion>-->
-            <!---->
-                    <!--<groupId>ch.qos.logback</groupId>-->
-                    <!--<artifactId>logback-classic</artifactId>-->
-                <!--</exclusion>-->
-
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${version.org.springboot}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${version.org.springboot}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -88,18 +40,17 @@
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>geronimo-spec</groupId>
                     <artifactId>geronimo-spec-j2ee</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-rest</artifactId>
                 </exclusion>
-
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
             </exclusions>
 
         </dependency>
@@ -118,7 +69,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-topology</artifactId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -148,23 +99,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-replay</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${version.org.hibernate-validator}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${version.org.hibernate}</version>
-        </dependency>
-
 
         <!-- web console -->
         <dependency>
@@ -213,6 +151,44 @@
             <version>${version.com.h2database}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-databind</artifactId>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>${version.org.springboot}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+            <version>${version.org.springboot}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq.tooling</groupId>
+            <artifactId>activemq-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
 
     </dependencies>

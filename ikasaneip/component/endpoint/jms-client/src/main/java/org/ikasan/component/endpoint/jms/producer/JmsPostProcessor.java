@@ -44,6 +44,7 @@ import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 
 import javax.jms.JMSException;
@@ -55,10 +56,10 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class JmsPostProcessor<T> implements PostProcessor<T,Message>, Configured<GenericJmsProducerConfiguration>
+public class JmsPostProcessor<T> implements PostProcessor<T, Message>, Configured<GenericJmsProducerConfiguration>
 {
     /** default event identifier service - can be overridden via the setter */
-    private ManagedEventIdentifierService<String,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
+    private ManagedRelatedEventIdentifierService<String,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** configuration for this post processor */
     private GenericJmsProducerConfiguration configuration;
@@ -67,7 +68,7 @@ public class JmsPostProcessor<T> implements PostProcessor<T,Message>, Configured
      * Allow override of the default managed identifier service
      * @param managedEventIdentifierService
      */
-    public void setManagedEventIdentifierService(ManagedEventIdentifierService<String,Message> managedEventIdentifierService)
+    public void setManagedEventIdentifierService(ManagedRelatedEventIdentifierService<String, Message> managedEventIdentifierService)
     {
         this.managedEventIdentifierService = managedEventIdentifierService;
     }
@@ -77,8 +78,12 @@ public class JmsPostProcessor<T> implements PostProcessor<T,Message>, Configured
     {
         if(originalMessage instanceof FlowEvent)
         {
-            // carry the event identifier if available
-            this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)originalMessage).getIdentifier(), jmsMessage);
+            FlowEvent<String,?> flowEvent = (FlowEvent<String,?>)originalMessage;
+            // carry the event identifier
+            this.managedEventIdentifierService.setEventIdentifier(flowEvent.getIdentifier(), jmsMessage);
+            // carry the related event identifier if available
+            this.managedEventIdentifierService.setRelatedEventIdentifier(flowEvent.getRelatedIdentifier(), jmsMessage);
+
         }
 
         if(this.configuration != null)

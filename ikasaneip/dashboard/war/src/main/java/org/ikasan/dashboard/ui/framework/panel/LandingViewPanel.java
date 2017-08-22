@@ -61,7 +61,7 @@ import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
-import org.ikasan.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.topology.model.FilterComponent;
 import org.ikasan.topology.model.Module;
