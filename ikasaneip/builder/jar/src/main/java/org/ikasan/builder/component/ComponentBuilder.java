@@ -40,9 +40,11 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -72,28 +74,31 @@ public class ComponentBuilder
 
     /**
      * Get an instance of an Ikasan default scheduledConsumer
-     * @return
+     * @return scheduledConsumerBuilder
      */
     public ScheduledConsumerBuilder scheduledConsumer()
     {
-        AutowireCapableBeanFactory beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
         ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
-        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer);
-        beanFactory.autowireBean(scheduledConsumerBuilder);
+        ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer,
+                this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class));
         return scheduledConsumerBuilder;
     }
 
     /**
      * Get an instance of an Ikasan default jmsConsumer
-     * @return
+     * @return jmsConsumerBuilder
      */
     public JmsConsumerBuilder jmsConsumer() {
         JmsContainerConsumer jmsConsumer = new JmsContainerConsumer();
         JmsConsumerBuilder jmsConsumerBuilder = new JmsConsumerBuilderImpl(jmsConsumer,
-                this.applicationContext.getBean(JtaTransactionManager.class), this.applicationContext.getBean(TransactionManager.class));
+                this.applicationContext.getBean(JtaTransactionManager.class), this.applicationContext.getBean(TransactionManager.class),this.applicationContext.getBean(AopProxyProvider.class));
         return jmsConsumerBuilder;
     }
 
+    /**
+     * Get an instance of an Ikasan default jmsProducer
+     * @return jmsProducerBuilder
+     */
     public JmsProducerBuilder jmsProducer() {
         JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
         JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);

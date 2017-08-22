@@ -87,7 +87,6 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
     TransactionManager arjunaTransactionManager;
 
     /** AopProxyProvider provider */
-    @Autowired
     AopProxyProvider aopProxyProvider;
 
     /**
@@ -101,7 +100,7 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
      * Constructor
      */
     public JmsConsumerBuilderImpl(JmsContainerConsumer jmsConsumer, JtaTransactionManager transactionManager,
-                                  TransactionManager arjunaTransactionManager) {
+                                  TransactionManager arjunaTransactionManager, AopProxyProvider aopProxyProvider) {
         this.jmsConsumer = jmsConsumer;
         if (jmsConsumer == null) {
             throw new IllegalArgumentException("jmsConsumer cannot be 'null'");
@@ -109,6 +108,7 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
 
         this.transactionManager = transactionManager;
         this.arjunaTransactionManager =  arjunaTransactionManager;
+        this.aopProxyProvider = aopProxyProvider;
     }
 
     /**
@@ -396,7 +396,12 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
 
         validateBuilderConfiguration();
 
-        MessageListener aopProxiedMessageListener = aopProxyProvider.applyPointcut(this.componentName, jmsConsumer);
+        MessageListener aopProxiedMessageListener = null;
+        if (aopProxyProvider != null) {
+             aopProxiedMessageListener = aopProxyProvider.applyPointcut(this.componentName, jmsConsumer);
+        } else {
+            aopProxiedMessageListener = jmsConsumer;
+        }
 
         if (messageProvider != null) {
 

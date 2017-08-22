@@ -63,11 +63,9 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
     ScheduledConsumer scheduledConsumer;
 
     /** the scheduledJobFactory */
-    @Autowired
     ScheduledJobFactory scheduledJobFactory;
 
     /** AopProxyProvider provider */
-    @Autowired
     AopProxyProvider aopProxyProvider;
 
     /** scheduled job name */
@@ -80,13 +78,17 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
      * Constructor
      * @param scheduledConsumer
      */
-    public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer)
+    public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory,
+                                        AopProxyProvider aopProxyProvider)
     {
         this.scheduledConsumer = scheduledConsumer;
         if(scheduledConsumer == null)
         {
             throw new IllegalArgumentException("scheduledConsumer cannot be 'null'");
         }
+
+        this.scheduledJobFactory = scheduledJobFactory;
+        this.aopProxyProvider = aopProxyProvider;
     }
 
     /**
