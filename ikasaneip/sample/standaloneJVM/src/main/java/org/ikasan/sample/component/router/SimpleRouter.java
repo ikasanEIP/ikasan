@@ -40,12 +40,8 @@
  */
 package org.ikasan.sample.component.router;
 
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.RouterException;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Simple Router based on whether the string represents an even or odd number.
@@ -62,6 +58,6 @@ public class SimpleRouter implements SingleRecipientRouter<String>
                 return "odd";
             }
 
-            return Router.DEFAULT_RESULT;
+            return SingleRecipientRouter.DEFAULT_RESULT;
         }
 }

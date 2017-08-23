@@ -49,7 +49,6 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
@@ -280,22 +279,6 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         else if(component instanceof Broker)
         {
             flowElementInvoker = new BrokerFlowElementInvoker();
-        }
-        else if(component instanceof Router)
-        {
-            if(flowElementInvokerConfiguration == null)
-            {
-                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
-            }
-            else
-            {
-                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
-                {
-                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
-                }
-            }
-
-            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof MultiRecipientRouter)
         {

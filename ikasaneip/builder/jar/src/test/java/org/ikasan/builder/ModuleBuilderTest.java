@@ -44,15 +44,16 @@ import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -87,6 +88,8 @@ public class ModuleBuilderTest
     /** Mock serialiserFactory */
     final ReplayRecordService replayRecordService = mockery.mock(ReplayRecordService.class, "mockReplayRecordService");
 
+    IkasanApplication ikasanApplication;
+
     @Before
     public void setup()
     {
@@ -102,25 +105,34 @@ public class ModuleBuilderTest
                 exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName2");
             }
         });
+
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication();
     }
-    
+
+    @After
+    public void teardown()
+    {
+        ikasanApplication.close();
+    }
+
     /**
      * Test successful flow creation.
      */
     @Test
-    @Ignore // FIXME - remove this ignore to reinstate the test
-    public void test_successful_flowCreation() 
+    public void test_successful_flowCreation()
     {
-    	Module module = IkasanApplicationFactory.getIkasanApplication().getModuleBuilder("module name").withDescription("module description")
-    	.addFlow( BuilderFactory.flowBuilder("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
-                .consumer("consumer", consumer)
-                .producer("producer", producer).build())
-    	.addFlow( BuilderFactory.flowBuilder("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
-                .consumer("consumer", consumer)
-                .producer("producer", producer).build())
-    	.build();
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+    	ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName").withDescription("module description");
+        FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("flowName1").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService);
+        Flow flow1 = flowBuilder.consumer("consumer", builderFactory.getComponentBuilder().scheduledConsumer().setConfiguredResourceId("configuredResourceId").build()).producer("producer", producer).build();
 
-    	Assert.assertTrue("module name should be 'module name'", "module name".equals(module.getName()));
+        Flow flow2 = moduleBuilder.getFlowBuilder("flowName2").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory).withReplayRecordService(replayRecordService)
+                .consumer("consumer", consumer)
+                .producer("producer", producer).build();
+
+    	Module module = moduleBuilder.addFlow(flow1).addFlow(flow2).build();
+
+    	Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
     	Assert.assertTrue("module description should be 'module description'", "module description".equals(module.getDescription()));
     	Assert.assertNotNull("module should contain a flow named 'flowName1''", module.getFlow("flowName1"));
     	Assert.assertNotNull("module should contain a flow named 'flowName2''", module.getFlow("flowName2"));

@@ -68,13 +68,14 @@ public class ModuleBuilder
 	/** flow builders for creating flows within this module */
 	List<Flow> flows = new ArrayList<Flow>();
 
+	/** application context */
 	ApplicationContext context;
 
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	ModuleBuilder(ApplicationContext context, String name)
+	public ModuleBuilder(ApplicationContext context, String name)
 	{
 		this.context = context;
 		if(context == null)
@@ -93,7 +94,7 @@ public class ModuleBuilder
 	 * Constructor
 	 * @param name
 	 */
-	ModuleBuilder( String name)
+	ModuleBuilder(String name)
 	{
 
 		this.name = name;
@@ -144,14 +145,11 @@ public class ModuleBuilder
 
 	public FlowBuilder getFlowBuilder(String flowName)
 	{
-	//	FlowBuilder flowBuilder = this.context.getBean(FlowBuilder.class);
-
 		AutowireCapableBeanFactory beanFactory = this.context.getAutowireCapableBeanFactory();
-		FlowBuilder flowBuilder = new FlowBuilder(flowName,this.name);
+		FlowBuilder flowBuilder = new FlowBuilder(flowName, this.name);
 		beanFactory.autowireBean(flowBuilder);
 		flowBuilder.setApplicationContext(this.context);
 		return flowBuilder;
 	}
-
 }
 

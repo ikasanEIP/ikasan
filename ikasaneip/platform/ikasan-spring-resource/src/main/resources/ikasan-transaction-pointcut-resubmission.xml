@@ -7,7 +7,7 @@
 
     <aop:config>
         <aop:pointcut id="resubmissionPointcut" expression="execution(* org.ikasan.spec.resubmission.ResubmissionService.submit(..))" />
-        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="resubmissionPointcut" />
+        <aop:advisor id="resubmissionPointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="resubmissionPointcut" />
     </aop:config>
 
 </beans>

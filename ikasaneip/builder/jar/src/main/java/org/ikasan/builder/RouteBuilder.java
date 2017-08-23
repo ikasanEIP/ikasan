@@ -58,7 +58,7 @@ import org.ikasan.spec.component.transformation.Translator;
  */
 public class RouteBuilder
 {
-	Route<Route> route;
+	Route route;
 
 	public RouteBuilder(Route route)
 	{
