@@ -40,12 +40,19 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.component.filter.MessageFilterBuilder;
+import org.ikasan.builder.component.filter.MessageFilterBuilderImpl;
 import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.splitter.DefaultListSplitter;
+import org.ikasan.filter.DefaultMessageFilter;
+import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
+import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterRule;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.Scheduler;
@@ -111,6 +118,11 @@ public class ComponentBuilder
     public Builder<Splitter> listSplitter()
     {
         return new ListSplitterBuilderImpl( new DefaultListSplitter() );
+    }
+
+    public MessageFilterBuilder messageFilter()
+    {
+       return new MessageFilterBuilderImpl(this.applicationContext.getBean(DuplicateFilterService.class));
     }
 
 }

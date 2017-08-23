@@ -49,7 +49,6 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.Job;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Ikasan provided scheduled consumer default implementation.
