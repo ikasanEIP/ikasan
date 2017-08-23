@@ -40,37 +40,24 @@
  */
 package org.ikasan.builder.component;
 
-import org.hamcrest.CoreMatchers;
 import org.ikasan.builder.AopProxyProvider;
-import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
-import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
-import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
-import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.filter.configuration.FilterConfiguration;
+import org.ikasan.filter.duplicate.model.FilterEntryConverter;
+import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
-
-import javax.naming.Context;
 import javax.transaction.TransactionManager;
-import java.util.HashMap;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -98,6 +85,8 @@ public class ComponentBuilderTest {
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
     final AopProxyProvider aopProxyProvider = mockery.mock(AopProxyProvider.class, "mockAopProxyProvider");
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
+    final DuplicateFilterService duplicateFilterService = mockery.mock(DuplicateFilterService.class, "mockDuplicateFilterService");
+    final FilterEntryConverter filterEntryConverter = mockery.mock(FilterEntryConverter.class, "mockFilterEntryConverter");
 
     @Test
     public void test_successful_scheduledConsumer() {
@@ -115,8 +104,6 @@ public class ComponentBuilderTest {
 
                 oneOf(applicationContext).getBean(AopProxyProvider.class);
                 will(returnValue(aopProxyProvider));
-
-
             }
         });
 
@@ -141,7 +128,6 @@ public class ComponentBuilderTest {
 
                 oneOf(applicationContext).getBean(AopProxyProvider.class);
                 will(returnValue(aopProxyProvider));
-
             }
         });
 
@@ -178,6 +164,33 @@ public class ComponentBuilderTest {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Splitter splitter = componentBuilder.listSplitter().build();
         assertTrue("instance should be a Splitter", splitter instanceof Splitter);
+    }
+
+    /**
+     * Test messageFilterBuilder.
+     */
+    @Test
+    public void test_successful_messageFilterBuilder_withConfiguration()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(DuplicateFilterService.class);
+                will(returnValue(duplicateFilterService));
+            }
+        });
+
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+        Filter filter = componentBuilder.messageFilter().setFilterEntryConverter(filterEntryConverter)
+                .setApplyFilter(true).setLogFilter(true).setConfiguredResourceId("configuredResourceId").build();
+        assertTrue("instance should be a Filter", filter instanceof Filter);
+
+        FilterConfiguration configuration = ((ConfiguredResource<FilterConfiguration>)filter).getConfiguration();
+        assertTrue("configuredResourceId should be 'configuredResourceId'",  "configuredResourceId".equals(((ConfiguredResource<FilterConfiguration>) filter).getConfiguredResourceId()));
+        assertTrue("applyFilter should be true",  configuration.isApplyFilter());
+        assertTrue("logFiltered should be true",  configuration.isLogFiltered());
     }
 
 }
