@@ -47,16 +47,28 @@ package org.ikasan.builder;
  */
 public class IkasanApplicationFactory
 {
+    /**
+     * Constructor
+     */
     private IkasanApplicationFactory()
     {
         // hide the default constructor
     }
 
+    /**
+     * Get a new instance of the IkasanApplication
+     * @param args
+     * @return
+     */
     public static IkasanApplication getIkasanApplication(String[] args)
     {
         return new IkasanApplicationSpringBoot(args);
     }
 
+    /**
+     * Get a new instsance of the IkasanApplication
+     * @return
+     */
     public static IkasanApplication getIkasanApplication()
     {
         return new IkasanApplicationSpringBoot(new String[0]);

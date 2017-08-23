@@ -41,24 +41,8 @@
 package org.ikasan.sample.component.producer;
 
 import org.apache.log4j.Logger;
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
-import org.ikasan.spec.component.routing.RouterException;
-import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.module.Module;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Simple Producer logging the message count on every 200,000 publishes.

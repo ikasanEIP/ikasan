@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,24 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.testharness.flow.expectation.model;
-
-import org.ikasan.spec.component.routing.Router;
+package org.ikasan.builder;
 
 /**
- * Router Component type.
- * 
+ * Contract for an AOP Proxy Provider
+ *
  * @author Ikasan Development Team
- * 
  */
-public class RouterComponent extends AbstractComponent
+public interface AopProxyProvider
 {
     /**
-     * Constructor
-     * @param componentName
+     * Apply known pointcuts to the specified component, if matched.
+     *
+     * @param name
+     * @param component
+     * @param <T>
+     * @return
      */
-    public RouterComponent(String componentName)
-    {
-        super(componentName, Router.class);
-    }
+    public <T> T applyPointcut(String name, T component);
 }
+
+
+
+

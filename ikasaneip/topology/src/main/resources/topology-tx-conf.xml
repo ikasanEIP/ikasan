@@ -61,13 +61,27 @@
         </property>
     </bean>
 
-    <aop:config>
-        <aop:pointcut id="topologyServiceMethods"
-                      expression="execution(* org.ikasan.topology.service.*.*(..))"/>
 
-        <aop:advisor advice-ref="topology-required-TransactionAdvice"
-                     pointcut-ref="topologyServiceMethods"/>
+
+
+    <aop:config>
+
+        <aop:pointcut id="topologyDaoSaveMethods"
+                      expression="execution(* org.ikasan.topology.dao.TopologyDao.save*(..))"/>
+        <aop:pointcut id="topologyDaoDeleteMethods"
+                      expression="execution(* org.ikasan.topology.dao.TopologyDao.delete*(..))"/>
+        <!--<aop:pointcut id="topologyServiceMethods"-->
+        <!--expression="execution(* org.ikasan.topology.service.TopologyService.*(..))"/>-->
+        <!--<aop:pointcut id="topologyServiceMethods"-->
+                      <!--expression="execution(* org.ikasan.topology.service.TopologyService.*(..))"/>-->
+        <aop:advisor  id="topologyDaoSaveMethodsPointcutAdvice"  advice-ref="topology-required-TransactionAdvice"
+                     pointcut-ref="topologyDaoSaveMethods"/>
+
+
+        <aop:advisor id="topologyDaoDeleteMethodsPointcutAdvice" advice-ref="topology-required-TransactionAdvice"
+                     pointcut-ref="topologyDaoDeleteMethods"/>
     </aop:config>
+
 
     <tx:advice id="topology-required-TransactionAdvice"
                transaction-manager="topologyTransactionManager">

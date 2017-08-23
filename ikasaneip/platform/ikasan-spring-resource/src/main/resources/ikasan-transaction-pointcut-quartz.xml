@@ -7,7 +7,7 @@
 
     <aop:config>
         <aop:pointcut id="scheduledPointcut" expression="execution(* org.quartz.Job.execute(..))" />
-        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="scheduledPointcut" />
+        <aop:advisor id="scheduledPointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="scheduledPointcut" />
     </aop:config>
 
 </beans>
