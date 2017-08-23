@@ -477,6 +477,17 @@ public class FlowBuilder implements ApplicationContextAware
                         this.aopProxyProvider.applyPointcut(flowElement.getComponentName(), flowElement.getFlowComponent()),
                         flowElement.getFlowElementInvoker());
             }
+            else if (flowElement.getFlowComponent() instanceof When
+                    || flowElement.getFlowComponent() instanceof Otherwise
+                    || flowElement.getFlowComponent() instanceof SequenceName
+                    )
+            {
+                nextFlowElement = new FlowElementImpl(
+                        flowElement.getComponentName(),
+                        flowElement.getFlowComponent(),
+                        flowElement.getFlowElementInvoker(),
+                        nextFlowElement);
+            }
             else
             {
                 nextFlowElement = new FlowElementImpl(
