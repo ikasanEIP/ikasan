@@ -260,6 +260,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             FlowElement nextMainFlowElementInRoute = nextMainFlowElement;
             while (nextMainFlowElementInRoute != null)
             {
+                notifyFlowInvocationContextListenersSnapEvent(nextMainFlowElementInRoute, flowEvent);
                 nextMainFlowElementInRoute = nextMainFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextMainFlowElementInRoute);
             }
         }
