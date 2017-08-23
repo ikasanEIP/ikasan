@@ -40,22 +40,18 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.AopProxyProvider;
+
 /**
  * Contract to allow flow element access to be proxied via AOP.
  *
  * @author Ikasan Development Team.
  */
-public interface RequiresAopProxy<COMPONENT>
+public interface RequiresAopProxy
 {
     /**
      * Set the AOP proxy object
-     * @param component
+     * @param aopProxyProvider
      */
-    public void setAopProxyTarget(COMPONENT component);
-
-    /**
-     * Get the AOP proxy object or the object on which the AOP proxy will be applied
-     * @return
-     */
-    public COMPONENT getAopProxyTarget();
+    public void setAopProxyProvider(AopProxyProvider aopProxyProvider);
 }

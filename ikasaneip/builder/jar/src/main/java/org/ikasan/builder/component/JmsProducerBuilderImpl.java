@@ -51,7 +51,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-class JmsProducerBuilderImpl implements JmsProducerBuilder, RequiresComponentName, RequiresFlowName, RequiresModuleName {
+class JmsProducerBuilderImpl implements JmsProducerBuilder{
 
     /**
      * default jms consumer instance
@@ -67,17 +67,6 @@ class JmsProducerBuilderImpl implements JmsProducerBuilder, RequiresComponentNam
      * default value for component name - will be overridden at runtime
      */
     String componentName = "unspecifiedScheduledComponentName";
-
-    /**
-     * default value for module name - will be overridden at runtime
-     */
-    String moduleName = "unspecifiedModuleName";
-
-    /**
-     * default value for flow name - will be overridden at runtime
-     */
-    String flowName = "unspecifiedFlowName";
-
 
     /**
      * Constructor
@@ -346,7 +335,7 @@ class JmsProducerBuilderImpl implements JmsProducerBuilder, RequiresComponentNam
     public JmsTemplateProducer build() {
 
         if (this.jmsProducer.getConfiguredResourceId() == null) {
-            this.jmsProducer.setConfiguredResourceId(this.componentName + flowName + moduleName);
+            this.jmsProducer.setConfiguredResourceId(this.jmsProducer.getConfiguredResourceId());
         }
 
         if (configuration!=null && this.jmsProducer.getConfiguration() == null) {
@@ -358,19 +347,6 @@ class JmsProducerBuilderImpl implements JmsProducerBuilder, RequiresComponentNam
 
         return this.jmsProducer;
     }
-
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
-    }
-
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-
 
 }
 

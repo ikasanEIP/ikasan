@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
@@ -62,7 +63,8 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<MessageListener>, RequiresComponentName, RequiresFlowName, RequiresModuleName {
+class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
+{
 
     /**
      * default jms consumer instance
@@ -84,36 +86,21 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
      */
     TransactionManager arjunaTransactionManager;
 
+    /** AopProxyProvider provider */
+    AopProxyProvider aopProxyProvider;
+
     /**
      * configuration consumer
      */
     SpringMessageConsumerConfiguration configuration;
-    /**
-     * proxy of scheduled consumer with transaction pointcuts
-     */
-    MessageListener aopProxiedMessageListener;
 
-    /**
-     * default value for component name - will be overridden at runtime
-     */
-    String componentName = "unspecifiedScheduledComponentName";
-
-    /**
-     * default value for module name - will be overridden at runtime
-     */
-    String moduleName = "unspecifiedModuleName";
-
-    /**
-     * default value for flow name - will be overridden at runtime
-     */
-    String flowName = "unspecifiedFlowName";
-
+    String componentName = "jmsConsumer";
 
     /**
      * Constructor
      */
     public JmsConsumerBuilderImpl(JmsContainerConsumer jmsConsumer, JtaTransactionManager transactionManager,
-                                  TransactionManager arjunaTransactionManager) {
+                                  TransactionManager arjunaTransactionManager, AopProxyProvider aopProxyProvider) {
         this.jmsConsumer = jmsConsumer;
         if (jmsConsumer == null) {
             throw new IllegalArgumentException("jmsConsumer cannot be 'null'");
@@ -121,7 +108,7 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
 
         this.transactionManager = transactionManager;
         this.arjunaTransactionManager =  arjunaTransactionManager;
-        this.aopProxiedMessageListener = jmsConsumer;
+        this.aopProxyProvider = aopProxyProvider;
     }
 
     /**
@@ -398,24 +385,6 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
     }
 
     /**
-     * Set the raw component proxied object
-     *
-     * @param messageListener
-     */
-    public void setAopProxyTarget(MessageListener messageListener) {
-        this.aopProxiedMessageListener = messageListener;
-    }
-
-    /**
-     * Get the raw component for proxying
-     *
-     * @return
-     */
-    public MessageListener getAopProxyTarget() {
-        return (MessageListener) this.jmsConsumer;
-    }
-
-    /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.
      *
@@ -425,8 +394,13 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
     public JmsContainerConsumer build() {
 
 
-        if (this.jmsConsumer.getConfiguredResourceId() == null) {
-            this.jmsConsumer.setConfiguredResourceId(this.componentName + flowName + moduleName);
+        validateBuilderConfiguration();
+
+        MessageListener aopProxiedMessageListener = null;
+        if (aopProxyProvider != null) {
+             aopProxiedMessageListener = aopProxyProvider.applyPointcut(this.componentName, jmsConsumer);
+        } else {
+            aopProxiedMessageListener = jmsConsumer;
         }
 
         if (messageProvider != null) {
@@ -457,16 +431,18 @@ class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy<Mes
         return this.jmsConsumer;
     }
 
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
+    protected void validateBuilderConfiguration()
+    {
+        if(this.jmsConsumer.getConfiguration() != null && this.jmsConsumer.getConfiguredResourceId() == null)
+        {
+            throw new IllegalArgumentException("configuredResourceId is a required property for the jmsConsumer and cannot be 'null'");
+        }
     }
 
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
+    @Override
+    public void setAopProxyProvider(AopProxyProvider aopProxyProvider)
+    {
+        this.aopProxyProvider = aopProxyProvider;
     }
 
 

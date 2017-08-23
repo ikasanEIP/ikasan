@@ -66,8 +66,6 @@ public class ComparatorServiceImplTest
                 comparatorService.getComparator(TranslatorComponent.class) );
         Assert.assertNotNull("ConverterComponent comparator retrieval failed", 
             comparatorService.getComparator(ConverterComponent.class) );
-        Assert.assertNotNull("RouterComponent comparator retrieval failed", 
-                comparatorService.getComparator(RouterComponent.class) );
         Assert.assertNotNull("SingleRecipientRouterComponent comparator retrieval failed",
                 comparatorService.getComparator(SingleRecipientRouterComponent.class) );
         Assert.assertNotNull("MultiRecipientRouterComponent comparator retrieval failed",

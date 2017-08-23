@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component;
 
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
@@ -48,7 +49,6 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.Job;
-import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -57,32 +57,29 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Ikasan Development Team
  */
-class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy<Job>, RequiresComponentName, RequiresFlowName, RequiresModuleName
+class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy
 {
-    /** the scheduledJobFactory */
-    ScheduledJobFactory scheduledJobFactory;
-
     /** default scheduled consumer instance */
     ScheduledConsumer scheduledConsumer;
 
-    /** proxy of scheduled consumer with transaction pointcuts */
-    Job aopProxiedJob;
+    /** the scheduledJobFactory */
+    ScheduledJobFactory scheduledJobFactory;
 
-    /** default value for component name - will be overridden at runtime */
-    String componentName;
+    /** AopProxyProvider provider */
+    AopProxyProvider aopProxyProvider;
 
-    /** default value for module name - will be overridden at runtime */
-    String moduleName;
+    /** scheduled job name */
+    String scheduledJobName = "defaultScheduledJobName";
 
-    /** default value for flow name - will be overridden at runtime */
-    String flowName;
+    /** scheduled job group name */
+    String scheduledJobGroupName = "defaultScheduledJobGroupName";
 
     /**
      * Constructor
      * @param scheduledConsumer
-     * @param scheduledJobFactory
      */
-    public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory)
+    public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory,
+                                        AopProxyProvider aopProxyProvider)
     {
         this.scheduledConsumer = scheduledConsumer;
         if(scheduledConsumer == null)
@@ -91,12 +88,7 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
         }
 
         this.scheduledJobFactory = scheduledJobFactory;
-        if(scheduledJobFactory == null)
-        {
-            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
-        }
-
-        this.aopProxiedJob = scheduledConsumer;
+        this.aopProxyProvider = aopProxyProvider;
     }
 
     /**
@@ -218,6 +210,19 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
         return this;
     }
 
+    @Override
+    public ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName) {
+        this.scheduledJobGroupName = scheduledJobGroupName;
+        return this;
+    }
+
+    @Override
+    public ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName) {
+        this.scheduledJobName = scheduledJobName;
+        return this;
+    }
+
+
     private ScheduledConsumerConfiguration getConfiguration()
     {
         ScheduledConsumerConfiguration scheduledConsumerConfiguration = this.scheduledConsumer.getConfiguration();
@@ -228,24 +233,6 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
         }
 
         return scheduledConsumerConfiguration;
-    }
-
-    /**
-     * Set the raw component proxied object
-     * @param job
-     */
-    public void setAopProxyTarget(Job job)
-    {
-        this.aopProxiedJob = job;
-    }
-
-    /**
-     * Get the raw component for proxying
-     * @return
-     */
-    public Job getAopProxyTarget()
-    {
-        return (Job)this.scheduledConsumer;
     }
 
     /**
@@ -260,29 +247,42 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
             this.scheduledConsumer.setConfiguration( new ScheduledConsumerConfiguration() );
         }
 
-        if(this.scheduledConsumer.getConfiguredResourceId() == null)
-        {
-            this.scheduledConsumer.setConfiguredResourceId(this.componentName + flowName + moduleName);
-        }
+        validateBuilderConfiguration();
 
-        scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(this.aopProxiedJob, ScheduledConsumer.class, this.componentName, this.flowName + this.moduleName) );
+        if(this.aopProxyProvider == null)
+        {
+            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+        }
+        else
+        {
+            Job pointcutJob = this.aopProxyProvider.applyPointcut(this.scheduledJobName, scheduledConsumer);
+            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(pointcutJob, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
+        }
 
         return this.scheduledConsumer;
     }
 
-    public void setComponentName(String componentName)
+    protected void validateBuilderConfiguration()
     {
-        this.componentName = componentName;
+        if(this.scheduledConsumer.getConfiguration() != null && this.scheduledConsumer.getConfiguredResourceId() == null)
+        {
+            throw new IllegalArgumentException("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'");
+        }
+
+        if(this.scheduledJobName == null)
+        {
+            throw new IllegalArgumentException("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'");
+        }
+
+        if(this.scheduledJobGroupName == null)
+        {
+            throw new IllegalArgumentException("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'");
+        }
     }
 
-    public void setFlowName(String flowName)
-    {
-        this.flowName = flowName;
-    }
-
-    public void setModuleName(String moduleName)
-    {
-        this.moduleName = moduleName;
+    @Override
+    public void setAopProxyProvider(AopProxyProvider aopProxyProvider) {
+        this.aopProxyProvider = aopProxyProvider;
     }
 }
 

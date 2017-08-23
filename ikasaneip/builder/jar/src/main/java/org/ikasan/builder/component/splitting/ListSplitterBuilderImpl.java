@@ -38,47 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.splitting;
 
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.ikasan.builder.component.Builder;
+import org.ikasan.spec.component.splitting.Splitter;
 
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Ikasan provided list splitter default implementation.
  *
- * @author Ikasan Development Team.
+ * @author Ikasan Development Team
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public class ListSplitterBuilderImpl implements Builder<Splitter>
 {
-    public ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    // splitter instance
+    Splitter splitter;
 
-    public ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    /**
+     * Constructor
+     * @param splitter
+     */
+    public ListSplitterBuilderImpl(Splitter splitter)
+    {
+        this.splitter = splitter;
+        if(splitter == null)
+        {
+            throw new IllegalArgumentException("splitter cannot be 'null'");
+        }
+    }
 
-    public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
-
-    public ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
-
-    public ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
-
-    public ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
-
-    public ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
-
-    public ScheduledConsumerBuilder setCronExpression(String cronExpression);
-
-    public ScheduledConsumerBuilder setEager(boolean eager);
-
-    public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    public ScheduledConsumerBuilder setTimezone(String timezone);
-
-    public ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
-
-    public ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+    /**
+     * Build component.
+     * @return
+     */
+    public Splitter build()
+    {
+        return this.splitter;
+    }
 
 }
 

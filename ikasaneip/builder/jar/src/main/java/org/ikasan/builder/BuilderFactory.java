@@ -74,7 +74,6 @@ public interface BuilderFactory
      * @return
      */
     RouteBuilder getRouteBuilder();
-
 }
 
 
