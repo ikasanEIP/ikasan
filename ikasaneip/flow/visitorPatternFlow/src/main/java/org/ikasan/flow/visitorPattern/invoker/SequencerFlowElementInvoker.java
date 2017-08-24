@@ -62,6 +62,9 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
 
         Sequencer sequencer = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, sequencer);
+
+        notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
         // we must unset the context whatever happens, so try/finally
         List payloads;
         try

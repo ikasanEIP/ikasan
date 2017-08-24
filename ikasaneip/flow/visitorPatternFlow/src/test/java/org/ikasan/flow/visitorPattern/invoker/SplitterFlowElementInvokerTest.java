@@ -110,7 +110,7 @@ public class SplitterFlowElementInvokerTest
                 will(returnValue(payloads));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(flowElement));
@@ -169,7 +169,7 @@ public class SplitterFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
@@ -224,7 +224,7 @@ public class SplitterFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(2).of(flowElement).getConfiguration();
@@ -282,7 +282,7 @@ public class SplitterFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
@@ -337,7 +337,7 @@ public class SplitterFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
@@ -389,7 +389,7 @@ public class SplitterFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
@@ -421,7 +421,7 @@ public class SplitterFlowElementInvokerTest
                 exactly(2).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
@@ -457,6 +457,10 @@ public class SplitterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(splitter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(splitter).split(flowEvent);
@@ -496,6 +500,10 @@ public class SplitterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(splitter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(splitter).split(flowEvent);
@@ -535,6 +543,10 @@ public class SplitterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(splitter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(splitter).split(flowEvent);

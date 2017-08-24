@@ -70,6 +70,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         List payloads;
         try
         {
+            notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
 
             if (requiresFullEventForInvocation == null)
             {

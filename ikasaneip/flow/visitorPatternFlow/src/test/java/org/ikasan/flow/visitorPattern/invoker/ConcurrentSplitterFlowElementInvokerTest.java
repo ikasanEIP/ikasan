@@ -115,6 +115,10 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
                 exactly(1).of(subFlowElement).getFlowComponent();
                 will(returnValue(splitter));
+
+                exactly(2).of(subFlowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(splitter).split(flowEvent);
                 will(throwException(new ClassCastException()));
                 exactly(2).of(flowEvent).getPayload();
@@ -181,6 +185,9 @@ public class ConcurrentSplitterFlowElementInvokerTest
                 will(returnValue(splitterInvocationAware));
 
                 exactly(1).of(splitterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(2).of(subFlowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(splitterInvocationAware).split(flowEvent);
                 will(throwException(new ClassCastException()));
