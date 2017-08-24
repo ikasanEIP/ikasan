@@ -109,6 +109,23 @@ public interface FlowInvocationContext
      */
     void setFinalAction(FinalAction action);
 
+    /**
+     * Get the final action
+     *
+     * @return
+     */
     FinalAction getFinalAction();
 
+
+    /**
+     * Set the error uri
+     *
+     * @param errorUri
+     */
+    public void setErrorUri(String errorUri);
+
+    /**
+     * Get the error uri
+     */
+    public String getErrorUri();
 }

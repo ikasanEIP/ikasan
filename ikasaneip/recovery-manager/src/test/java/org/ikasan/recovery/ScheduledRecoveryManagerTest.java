@@ -288,6 +288,8 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, excludeEventAction.toString());
                 will(returnValue("errorUri"));
 
+                exactly(1).of(flowInvocationContext).setErrorUri("errorUri");
+
                 // add to exclusion list
                 exactly(1).of(exclusionService).addBlacklisted("identifier", "errorUri", flowInvocationContext);
             }
