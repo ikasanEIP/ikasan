@@ -122,6 +122,9 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         Splitter splitter = flowElement.getFlowComponent();
         List payloads;
         setInvocationOnComponent(flowElementInvocation, splitter);
+
+        notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
         // we must unset the context whatever happens, so try/finally
         try
         {

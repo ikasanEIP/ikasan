@@ -107,7 +107,7 @@ public class SequencerFlowElementInvokerTest
                 will(returnValue(payloads));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(flowElement));
@@ -116,7 +116,8 @@ public class SequencerFlowElementInvokerTest
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-                will(returnValue(null));            }
+                will(returnValue(null));
+            }
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
@@ -154,7 +155,7 @@ public class SequencerFlowElementInvokerTest
                 exactly(1).of(sequencerInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(flowElement));
@@ -205,7 +206,7 @@ public class SequencerFlowElementInvokerTest
 
                 exactly(3).of(flowEvent).setPayload(payload);
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(2).of(flowElement).getConfiguration();
+                exactly(4).of(flowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(2).of(flowElement).getConfiguration();
@@ -246,6 +247,10 @@ public class SequencerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(sequencer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(sequencer).sequence(payload);
@@ -280,6 +285,10 @@ public class SequencerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(sequencer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(sequencer).sequence(payload);
@@ -314,6 +323,10 @@ public class SequencerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(sequencer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(sequencer).sequence(payload);

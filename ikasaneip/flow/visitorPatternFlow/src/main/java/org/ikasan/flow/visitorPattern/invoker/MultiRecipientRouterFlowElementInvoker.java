@@ -101,6 +101,9 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
 
         MultiRecipientRouter router = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, router);
+
+        notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
         // we must unset the context whatever happens, so try/finally
         List<String> targetNames;
         try
