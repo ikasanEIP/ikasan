@@ -19,6 +19,7 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     private Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls;
     private Boolean harvested = false;
     private long expiry;
+    private String errorUri;
 
     /**
      * Constructor
@@ -32,7 +33,7 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
      * @param expiry
      */
     public FlowInvocationMetricImpl(String moduleName, String flowName, long invocationStartTime, long invocationEndTime
-            , String finalAction, Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls, long expiry)
+            , String finalAction, Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls, long expiry, String errorUri)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
@@ -41,6 +42,7 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
         this.finalAction = finalAction;
         this.componentInvocationMetricImpls = componentInvocationMetricImpls;
         this.expiry = expiry;
+        this.errorUri = errorUri;
     }
 
     private FlowInvocationMetricImpl()
@@ -138,5 +140,27 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     public void setExpiry(long expiry)
     {
         this.expiry = expiry;
+    }
+
+    public Set<ComponentInvocationMetricImpl> getComponentInvocationMetricImpls()
+    {
+        return componentInvocationMetricImpls;
+    }
+
+    public void setComponentInvocationMetricImpls(Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls)
+    {
+        this.componentInvocationMetricImpls = componentInvocationMetricImpls;
+    }
+
+    @Override
+    public String getErrorUri()
+    {
+        return errorUri;
+    }
+
+    @Override
+    public void setErrorUri(String errorUri)
+    {
+        this.errorUri = errorUri;
     }
 }
