@@ -44,6 +44,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.flow.event.FlowElementInvocationFactory;
 import org.ikasan.spec.flow.*;
 
+import java.util.List;
+
 /**
  * An abstract implementation of the FlowElementInvoker
  *
@@ -55,6 +57,10 @@ public abstract class AbstractFlowElementInvoker
     private static final Logger logger = Logger.getLogger(AbstractFlowElementInvoker.class);
 
     protected Boolean ignoreContextInvocation = false;
+    protected List<FlowInvocationContextListener> flowInvocationContextListeners;
+
+    /** flag to control invocation of the context listeners at runtime, defaults to true */
+    protected volatile boolean invokeContextListeners = true;
 
     /**
      * Helper method to notify listeners before a flow element is invoked
@@ -153,6 +159,31 @@ public abstract class AbstractFlowElementInvoker
         }
     }
 
+    /**
+     * Notify any FlowInvocationContextListeners that to snap an event
+     */
+    protected void notifyFlowInvocationContextListenersSnapEvent(FlowElement flowElement, FlowEvent flowEvent)
+    {
+        if(flowElement.getConfiguration() != null && ((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent() &&
+                ((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics())
+        {
+            if (flowInvocationContextListeners != null && this.invokeContextListeners)
+            {
+                for (FlowInvocationContextListener listener : flowInvocationContextListeners)
+                {
+                    try
+                    {
+                        listener.snapEvent(flowElement, flowEvent);
+                    }
+                    catch (RuntimeException e)
+                    {
+                        logger.warn("Unable to invoke FlowInvocationContextListener snap event, continuing", e);
+                    }
+                }
+            }
+        }
+    }
+
     public void setIgnoreContextInvocation(boolean ignoreContextInvocation)
     {
         this.ignoreContextInvocation = ignoreContextInvocation;
@@ -174,5 +205,14 @@ public abstract class AbstractFlowElementInvoker
         }
     }
 
+    public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
+
+    public void setInvokeContextListeners(boolean invokeContextListeners)
+    {
+        this.invokeContextListeners = invokeContextListeners;
+    }
 }
 

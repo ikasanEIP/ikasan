@@ -212,6 +212,7 @@ public class VisitingInvokerFlowTest
     /** is unrecoverable status */
     private boolean isUnrecoverable = false;
 
+
     @Before
     public void setup()
     {
@@ -2008,8 +2009,14 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
@@ -2092,15 +2099,25 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
+                FlowElementPersistentConfiguration configuration = new FlowElementPersistentConfiguration();
+                configuration.setCaptureMetrics(true);
+                configuration.setSnapEvent(true);
+
                 oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+                will(returnValue(configuration));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-                oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
+                will(returnValue(configuration));
+                oneOf(flowElementInvoker).setIgnoreContextInvocation(false);
                 oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
                 
@@ -2182,12 +2199,19 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(false);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
@@ -2270,12 +2294,20 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
+                exactly(1).of(consumerFlowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
@@ -2427,8 +2459,14 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
@@ -2507,8 +2545,14 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
@@ -2588,8 +2632,14 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                oneOf(consumerFlowElement).getConfiguration();
-                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                oneOf(flowElementInvoker).setFlowInvocationContextListeners(null);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                oneOf(flowElementInvoker).setInvokeContextListeners(true);
+                oneOf(consumerFlowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(consumerFlowElement).getFlowElementInvoker();

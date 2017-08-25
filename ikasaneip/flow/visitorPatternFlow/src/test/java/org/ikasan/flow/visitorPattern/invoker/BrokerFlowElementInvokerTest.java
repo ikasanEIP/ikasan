@@ -41,6 +41,7 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.flow.*;
@@ -98,6 +99,10 @@ public class BrokerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(broker).invoke(flowEvent);
                 will(throwException(new ClassCastException()));
                 exactly(1).of(flowEvent).getPayload();
@@ -123,6 +128,10 @@ public class BrokerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(broker).invoke(payload);
@@ -164,6 +173,10 @@ public class BrokerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(brokerInvocationAware));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(brokerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(brokerInvocationAware).invoke(flowEvent);
                 will(throwException(new ClassCastException()));
@@ -199,6 +212,9 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(brokerInvocationAware).invoke(payload);
                 will(returnValue(payload));
                 exactly(1).of(brokerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(flowEvent).setPayload(payload);
 
@@ -238,6 +254,10 @@ public class BrokerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(broker).invoke(flowEvent);
                 will(returnValue(flowEvent));
                 exactly(1).of(flowEvent).replace(flowEvent);
@@ -258,6 +278,10 @@ public class BrokerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(broker).invoke(flowEvent);
                 will(returnValue(flowEvent));
                 exactly(1).of(flowEvent).replace(flowEvent);
@@ -294,6 +318,10 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(broker).invoke(flowEvent);
                 will(returnValue(flowEvent));
                 exactly(1).of(flowEvent).replace(flowEvent);
@@ -330,6 +358,10 @@ public class BrokerFlowElementInvokerTest
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(broker));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(broker).invoke(flowEvent);
                 will(throwException(new ClassCastException()));
                 exactly(1).of(flowEvent).getPayload();

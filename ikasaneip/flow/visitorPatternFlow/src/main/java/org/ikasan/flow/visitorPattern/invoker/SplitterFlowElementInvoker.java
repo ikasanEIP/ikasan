@@ -70,6 +70,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         List payloads;
         try
         {
+            notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
 
             if (requiresFullEventForInvocation == null)
             {
@@ -131,6 +132,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
             FlowElement nextFlowElementInRoute = nextFlowElement;
             while (nextFlowElementInRoute != null)
             {
+                notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
                 nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
             }
         }

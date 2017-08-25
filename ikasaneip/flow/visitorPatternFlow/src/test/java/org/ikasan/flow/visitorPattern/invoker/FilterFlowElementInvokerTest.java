@@ -41,6 +41,7 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.flow.*;
@@ -96,6 +97,10 @@ public class FilterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(filter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(filter).filter(payload);
@@ -135,6 +140,10 @@ public class FilterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(filter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(filter).filter(payload);
@@ -169,6 +178,10 @@ public class FilterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(filter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(filter).filter(payload);
@@ -200,6 +213,10 @@ public class FilterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(filterInvocationAware));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(filterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
@@ -237,6 +254,10 @@ public class FilterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(filterInvocationAware));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(filterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
@@ -274,6 +295,10 @@ public class FilterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(filter));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(filter).filter(payload);

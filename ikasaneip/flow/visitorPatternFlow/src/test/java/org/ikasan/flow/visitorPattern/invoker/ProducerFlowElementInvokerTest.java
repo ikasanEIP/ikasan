@@ -41,6 +41,7 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
@@ -96,6 +97,10 @@ public class ProducerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(producer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(producer).invoke(flowEvent);
                 will(throwException(new ClassCastException()));
                 exactly(1).of(flowEvent).getPayload();
@@ -116,6 +121,10 @@ public class ProducerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(producer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(producer).invoke(payload);
@@ -151,6 +160,10 @@ public class ProducerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(producerInvocationAware));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(producerInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
                 exactly(1).of(producerInvocationAware).invoke(flowEvent);
                 will(throwException(new ClassCastException()));
@@ -173,6 +186,10 @@ public class ProducerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(producer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(producer).invoke(payload);
@@ -208,6 +225,10 @@ public class ProducerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(producer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(producer).invoke(flowEvent);
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
@@ -225,6 +246,10 @@ public class ProducerFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(producer));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(producer).invoke(flowEvent);
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
