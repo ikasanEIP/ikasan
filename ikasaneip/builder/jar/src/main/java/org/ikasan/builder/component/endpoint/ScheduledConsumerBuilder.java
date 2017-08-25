@@ -38,8 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
+import org.ikasan.builder.component.Builder;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
