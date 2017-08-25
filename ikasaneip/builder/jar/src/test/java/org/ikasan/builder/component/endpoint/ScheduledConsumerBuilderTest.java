@@ -38,10 +38,12 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
 import org.hamcrest.CoreMatchers;
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.ScheduledConsumerBuilder;
+import org.ikasan.builder.component.endpoint.ScheduledConsumerBuilderImpl;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.scheduler.ScheduledJobFactory;

@@ -38,9 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.RequiresAopProxy;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
@@ -56,7 +57,7 @@ import org.quartz.Job;
  *
  * @author Ikasan Development Team
  */
-class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy
+public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy
 {
     /** default scheduled consumer instance */
     ScheduledConsumer scheduledConsumer;
@@ -239,11 +240,9 @@ class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, Requires
      * ready for use and return the instance.
      * @return
      */
-    public ScheduledConsumer build()
-    {
-        if(this.scheduledConsumer.getConfiguration() == null)
-        {
-            this.scheduledConsumer.setConfiguration( new ScheduledConsumerConfiguration() );
+    public ScheduledConsumer build() {
+        if (this.scheduledConsumer.getConfiguration() == null) {
+            this.scheduledConsumer.setConfiguration(new ScheduledConsumerConfiguration());
         }
 
         validateBuilderConfiguration();

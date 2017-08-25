@@ -38,25 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.JmsProducerBuilder;
+import org.ikasan.builder.component.endpoint.JmsProducerBuilderImpl;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
-import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.Scheduler;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.IkasanJmsTemplate;
-import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.naming.Context;
-import javax.transaction.TransactionManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
