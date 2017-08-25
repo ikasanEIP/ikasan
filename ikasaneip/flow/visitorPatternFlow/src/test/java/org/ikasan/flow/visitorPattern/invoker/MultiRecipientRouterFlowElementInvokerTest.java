@@ -41,6 +41,7 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.event.ReplicationFactory;
@@ -119,6 +120,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
@@ -170,14 +175,20 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(true));
                 exactly(1).of(replicationFactory).replicate(flowEvent);
                 will(returnValue(flowEvent));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(flowElement).getTransition("two");
                 will(returnValue(flowElement));
@@ -187,10 +198,14 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(true));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
             }
         });
 
@@ -237,14 +252,20 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(true));
                 exactly(1).of(replicationFactory).replicate(flowEvent);
                 will(returnValue(flowEvent));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(flowElement).getTransition("two");
                 will(returnValue(flowElement));
@@ -254,10 +275,14 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(true));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
             }
         });
 
@@ -299,14 +324,20 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(flowElement));
                 exactly(1).of(invokerConfiguration).isCloneEventPerRoute();
                 will(returnValue(false));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
 
                 exactly(1).of(flowElement).getTransition("two");
                 will(returnValue(flowElement));
@@ -314,12 +345,16 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(invokerConfiguration).isCloneEventPerRoute();
                 will(returnValue(false));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
             }
         });
 
@@ -347,6 +382,8 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
@@ -382,6 +419,8 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
@@ -418,6 +457,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
@@ -471,6 +514,13 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(true));
                 exactly(1).of(replicationFactory).replicate(flowEvent);
                 will(returnValue(flowEvent));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
