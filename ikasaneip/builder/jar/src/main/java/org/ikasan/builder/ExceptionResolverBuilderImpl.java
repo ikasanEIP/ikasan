@@ -40,48 +40,46 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.component.ComponentBuilder;
+import org.hamcrest.core.IsInstanceOf;
+import org.ikasan.exceptionResolver.ExceptionResolver;
+import org.ikasan.exceptionResolver.MatchingExceptionResolver;
+import org.ikasan.exceptionResolver.action.ExceptionAction;
+import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Contract for an Ikasan Builder Factory.
- * This builder factory provides all the builders needed to create an Ikasan module, flow, or component.
+ * A simple Exception Resolver builder.
  * 
  * @author Ikasan Development Team
  */
-public interface BuilderFactory
+public class ExceptionResolverBuilderImpl implements ExceptionResolverBuilder
 {
-    /**
-     * Get instance of a module builder
-     * @param moduleName
-     * @return
-     */
-    ModuleBuilder getModuleBuilder(String moduleName);
+	/**
+	 * List of matcher based exception groups to be used by the exception resolver.
+	 */
+	List matcherBasedExceptionGroups = new ArrayList();
 
-    /**
-     * Get instance of a flow builder
-     * @return
+	/**
+	 * Build and return an instance of the exception resolver
+	 * @return
      */
-    FlowBuilder getFlowBuilder(String moduleName, String flowName);
+	public ExceptionResolver build()
+	{
+		return new MatchingExceptionResolver(this.matcherBasedExceptionGroups);
+	}
 
-    /**
-     * Get instance of a component builder
-     * @return
-     */
-    ComponentBuilder getComponentBuilder();
-
-    /**
-     * Get an instance of a nested route builder.
-     * @return
-     */
-    RouteBuilder getRouteBuilder();
-
-    /**
-     * Get an instance of an exception resolver builder.
-     * @return
-     */
-    ExceptionResolverBuilderImpl getExceptionResolverBuilder();
+	/**
+	 * Add a matcher based exception based on the specified class and action to take for that exception class.
+	 * @param exceptionClass
+	 * @param exceptionAction
+	 */
+	@Override
+	public ExceptionResolverBuilder addExceptionToAction(Class exceptionClass, ExceptionAction exceptionAction)
+	{
+		this.matcherBasedExceptionGroups.add( new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionAction) );
+		return this;
+	}
 }
-
-
-
 
