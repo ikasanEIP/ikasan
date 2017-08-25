@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -40,48 +40,42 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.exceptionResolver.action.*;
 
 /**
- * Contract for an Ikasan Builder Factory.
- * This builder factory provides all the builders needed to create an Ikasan module, flow, or component.
+ * Helper for Exception Actions.
  * 
  * @author Ikasan Development Team
  */
-public interface BuilderFactory
+public class OnException
 {
-    /**
-     * Get instance of a module builder
-     * @param moduleName
-     * @return
-     */
-    ModuleBuilder getModuleBuilder(String moduleName);
+    public static ExceptionAction stop()
+    {
+        return StopAction.instance();
+    }
 
-    /**
-     * Get instance of a flow builder
-     * @return
-     */
-    FlowBuilder getFlowBuilder(String moduleName, String flowName);
+    public static ExceptionAction ignoreException()
+    {
+        return IgnoreAction.instance();
+    }
 
-    /**
-     * Get instance of a component builder
-     * @return
-     */
-    ComponentBuilder getComponentBuilder();
+    public static ExceptionAction excludeEvent()
+    {
+        return ExcludeEventAction.instance();
+    }
 
-    /**
-     * Get an instance of a nested route builder.
-     * @return
-     */
-    RouteBuilder getRouteBuilder();
+    public static ExceptionAction retryIndefinitely()
+    {
+        return new RetryAction();
+    }
 
-    /**
-     * Get an instance of an exception resolver builder.
-     * @return
-     */
-    ExceptionResolverBuilderImpl getExceptionResolverBuilder();
+    public static ExceptionAction retry(long delay, int maxRetries)
+    {
+        return new RetryAction(delay, maxRetries);
+    }
+
+    public static ExceptionAction scheduledCronRetry(String cronExpression, int maxRetries)
+    {
+        return new ScheduledRetryAction(cronExpression, maxRetries);
+    }
 }
-
-
-
-

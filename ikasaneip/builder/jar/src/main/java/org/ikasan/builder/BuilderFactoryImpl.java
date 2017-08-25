@@ -125,4 +125,12 @@ public class BuilderFactoryImpl implements BuilderFactory
         return new RouteBuilder( new RouteImpl(new ArrayList<FlowElement>()) );
     }
 
+    /**
+     * Get an instance of an exception resolver builder.
+     * @return
+     */
+    public ExceptionResolverBuilderImpl getExceptionResolverBuilder()
+    {
+        return new ExceptionResolverBuilderImpl();
+    }
 }
