@@ -17,6 +17,11 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
     /** Logger for this class */
     private static Logger logger = Logger.getLogger(SolrExclusionEventDao.class);
 
+    /**
+     * We need to give this dao it's context.
+     */
+    public static final String EXCLUSION = "exclusion";
+
     @Override
     public void save(ExclusionEvent exclusionEvent)
     {
@@ -25,7 +30,7 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
 
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, "" + exclusionEvent.getErrorUri());
-        document.addField(TYPE, "exclusion");
+        document.addField(TYPE, EXCLUSION);
         document.addField(MODULE_NAME, exclusionEvent.getModuleName());
         document.addField(FLOW_NAME, exclusionEvent.getFlowName());
         document.addField(EVENT, exclusionEvent.getIdentifier());
@@ -96,7 +101,7 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
     @Override
     public void deleteAllExpired()
     {
-        super.removeExpired("exclusion");
+        super.removeExpired(EXCLUSION);
     }
 
 }

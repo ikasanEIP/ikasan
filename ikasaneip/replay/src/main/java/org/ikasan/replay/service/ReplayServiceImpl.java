@@ -19,6 +19,7 @@ import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.spec.solr.SolrService;
 
 
 /**
@@ -27,7 +28,7 @@ import org.ikasan.spec.replay.ReplayService;
  * @author Ikasan Development Team
  *
  */
-public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent> 
+public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent>, SolrService<ReplayEvent>
 {
 	private Logger logger = Logger.getLogger(ReplayService.class);
 	
@@ -153,4 +154,9 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		return cancel;
 	}
 
+	@Override
+	public void save(ReplayEvent save)
+	{
+		this.replayDao.saveOrUpdate(save);
+	}
 }

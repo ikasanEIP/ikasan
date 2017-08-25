@@ -146,4 +146,11 @@ public interface ReplayDao
      */
 	public void housekeep(Integer numToHousekeep);
 
+	/**
+	 * Get the harvestable records
+	 *
+	 * @param housekeepingBatchSize
+	 * @return
+     */
+	public List<ReplayEvent> getHarvestableRecords(final int housekeepingBatchSize);
 }
