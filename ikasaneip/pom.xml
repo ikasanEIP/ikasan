@@ -858,7 +858,6 @@
                 <module>platform</module>
                 <module>builder</module>
                 <module>compatibility</module>
-                <module>filetransfer</module>
                 <module>mapping</module>
                 <module>management</module>
                 <module>hospital</module>
@@ -900,7 +899,6 @@
                 <module>platform</module>
                 <module>builder</module>
                 <module>compatibility</module>
-                <module>filetransfer</module>
                 <module>replay</module>
             </modules>
         </profile>
@@ -1345,31 +1343,13 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-connector-ftp-classes</artifactId>
+                <artifactId>ikasan-ftp-endpoint</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-client-ftp-endpoint</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-connector-sftp-classes</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-client-sftp-endpoint</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-client-filetransfer</artifactId>
+                <artifactId>ikasan-sftp-endpoint</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1378,7 +1358,6 @@
                 <artifactId>ikasan-replay</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>com.esotericsoftware</groupId>
@@ -1859,6 +1838,11 @@
                 <version>${version.org.slf4j}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${version.org.slf4j}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.directory.server</groupId>

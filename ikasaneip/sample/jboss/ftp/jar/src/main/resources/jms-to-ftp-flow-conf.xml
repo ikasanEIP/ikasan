@@ -58,10 +58,15 @@
     </bean>
 
     <bean id="ftpProducer" class="org.ikasan.endpoint.ftp.producer.FtpProducer">
-        <constructor-arg ref="producerConnectionFactory"/>
+        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
+        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
+        <constructor-arg name="transactionManager" ref="transactionManager"/>
+
         <property name="configuration" ref="ftpProducerConfiguration"/>
         <property name="configuredResourceId" value="ftpProducerConfiguration"/>
     </bean>
+
 
     <bean id="ftpProducerConfiguration" class="org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration">
         <property name="clientID" value="jmsToFtpFlow"/>
@@ -73,9 +78,6 @@
         <property name="cleanupJournalOnComplete" value="false"/>
      </bean>
 
-    <bean id="producerConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ftp/SimpleFtpConnectionFactory"/>
-    </bean>
 
     <bean id="jmsToFtpConverter" class="org.ikasan.sample.sftp.component.converter.JmsToFtpConverter"/>
 
