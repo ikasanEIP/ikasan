@@ -59,11 +59,7 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
 
     String configuredResourceId;
 
-    FilterConfiguration filterConfiguration;
-
-    boolean applyFilter;
-
-    boolean logFilter;
+    FilterConfiguration filterConfiguration = new FilterConfiguration();
 
     FilterEntryConverter filterEntryConverter;
 
@@ -90,12 +86,8 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
 
         FilterRule duplicateFilterRule = new IsDuplicateFilterRule(this.duplicateFilterService, this.filterEntryConverter);
         DefaultMessageFilter filter = new DefaultMessageFilter(duplicateFilterRule);
+        filter.setConfiguration(this.filterConfiguration);
         filter.setConfiguredResourceId(this.configuredResourceId);
-
-        FilterConfiguration configuration = filter.getConfiguration();
-        configuration.setApplyFilter(this.applyFilter);
-        configuration.setLogFiltered(this.logFilter);
-
         return filter;
     }
 
@@ -129,14 +121,14 @@ public class MessageFilterBuilderImpl implements MessageFilterBuilder
     @Override
     public MessageFilterBuilder setApplyFilter(boolean applyFilter)
     {
-        this.applyFilter = applyFilter;
+        this.filterConfiguration.setApplyFilter(applyFilter);
         return this;
     }
 
     @Override
     public MessageFilterBuilder setLogFilter(boolean logFilter)
     {
-        this.logFilter = logFilter;
+        this.filterConfiguration.setLogFiltered(logFilter);
         return this;
     }
 
