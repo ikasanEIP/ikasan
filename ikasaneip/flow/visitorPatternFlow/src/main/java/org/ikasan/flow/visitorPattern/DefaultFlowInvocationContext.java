@@ -78,7 +78,7 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
     /** the last action for this context */
     private FinalAction finalAction;
         
-    
+    private String errorUri;
 
     /**
      * Accessor for the name of the last component invoked
@@ -154,5 +154,15 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
         return finalAction;
     }
 
+    @Override
+    public String getErrorUri()
+    {
+        return errorUri;
+    }
 
+    @Override
+    public void setErrorUri(String errorUri)
+    {
+        this.errorUri = errorUri;
+    }
 }
