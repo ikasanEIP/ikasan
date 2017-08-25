@@ -265,9 +265,9 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 criteria.setMaxResults(housekeepingBatchSize);
                 criteria.addOrder(Order.asc("timestamp"));
 
-                List<WiretapEvent> flowInvocationMetrics = criteria.list();
+                List<ExclusionEvent> exclusionEvents = criteria.list();
 
-                return flowInvocationMetrics;
+                return exclusionEvents;
             }
         });
     }

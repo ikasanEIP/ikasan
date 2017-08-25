@@ -266,6 +266,14 @@
 	<bean id="replayDao" class="org.ikasan.replay.dao.HibernateReplayDao">
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
+
+	<bean id="solrReplayService" class="org.ikasan.replay.service.ReplayServiceImpl">
+		<constructor-arg ref="solrReplayDao" />
+	</bean>
+
+	<bean id="solrReplayDao" class="org.ikasan.replay.dao.SolrReplayDao">
+		<constructor-arg ref="ikasanSerialiserFactory" />
+	</bean>
 	
     <bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
 		<constructor-arg ref="hospitalDao" />

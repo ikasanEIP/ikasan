@@ -10,6 +10,7 @@
 	<include file="db/alter/db-changeLog-alterIkasanWiretapAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterErrorOccurrenceAddHarvested.xml" relativeToChangelogFile="true" />
 	<include file="db/alter/db-changeLog-alterExclusionEventAddHarvested.xml" relativeToChangelogFile="true" />
+	<include file="db/alter/db-changeLog-alterReplayEventAddHarvested.xml" relativeToChangelogFile="true" />
 
 	<!-- 2.0.x cardinality creation -->
 

@@ -412,5 +412,21 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		});
 	}
 
+	public List<ReplayEvent> getHarvestableRecords(final int housekeepingBatchSize)
+	{
+		return (List<ReplayEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+		{
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				Criteria criteria = session.createCriteria(ReplayEvent.class);
+				criteria.add(Restrictions.eq("harvested", false));
+				criteria.setMaxResults(housekeepingBatchSize);
+				criteria.addOrder(Order.asc("timestamp"));
 
+				List<ReplayEvent> flowInvocationMetrics = criteria.list();
+
+				return flowInvocationMetrics;
+			}
+		});
+	}
 }

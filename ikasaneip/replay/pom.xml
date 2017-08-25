@@ -108,6 +108,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-solr</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <scope>provided</scope>
@@ -310,6 +316,10 @@
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
 			<scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-solr</artifactId>
         </dependency>
 
     </dependencies>

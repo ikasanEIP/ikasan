@@ -54,6 +54,7 @@
         <ref bean="wiretapHarvestingJob" />
         <ref bean="errorOccurrenceHarvestingJob" />
         <ref bean="exclusionHarvestingJob" />
+        <ref bean="replayHarvestingJob" />
     </util:list>
 
     <bean id="wiretapHarvestingJob" class="org.ikasan.dashboard.harvesting.SolrHarvestingJob">
@@ -75,6 +76,13 @@
         <constructor-arg ref="exclusionManagementService" />
         <constructor-arg ref="platformConfigurationService" />
         <constructor-arg ref="solrExclusionManagementService" />
+    </bean>
+
+    <bean id="replayHarvestingJob" class="org.ikasan.dashboard.harvesting.SolrHarvestingJob">
+        <constructor-arg value="replayEventHarvestingJob" />
+        <constructor-arg ref="replayManagementService" />
+        <constructor-arg ref="platformConfigurationService" />
+        <constructor-arg ref="solrReplayService" />
     </bean>
 
 </beans>

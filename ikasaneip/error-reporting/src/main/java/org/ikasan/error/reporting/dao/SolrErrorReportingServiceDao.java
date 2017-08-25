@@ -19,6 +19,11 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
 {
     private static Logger logger = Logger.getLogger(SolrErrorReportingServiceDao.class);
 
+    /**
+     * We need to give this dao it's context.
+     */
+    public static final String ERROR = "error";
+
     @Override
     public ErrorOccurrence<byte[]> find(String uri)
     {
@@ -85,7 +90,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ID, errorOccurrence.getUri());
         document.addField(ERROR_URI, errorOccurrence.getUri());
-        document.addField(TYPE, "error");
+        document.addField(TYPE, ERROR);
         document.addField(MODULE_NAME, errorOccurrence.getModuleName());
         document.addField(FLOW_NAME, errorOccurrence.getFlowName());
         document.addField(COMPONENT_NAME, errorOccurrence.getFlowElementName());
@@ -113,6 +118,6 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
     @Override
     public void deleteExpired()
     {
-
+        super.removeExpired(ERROR);
     }
 }

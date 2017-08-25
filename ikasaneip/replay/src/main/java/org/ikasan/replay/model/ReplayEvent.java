@@ -40,6 +40,8 @@
  */
 package org.ikasan.replay.model;
 
+import org.ikasan.harvest.HarvestEvent;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -48,7 +50,7 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class ReplayEvent
+public class ReplayEvent implements HarvestEvent
 {
 	private Long id;
     private String moduleName;
@@ -57,7 +59,10 @@ public class ReplayEvent
     private byte[] event;
     private long timestamp;
     private long expiry;
-	
+
+	/** flag to indicate if the record has been harvested */
+	boolean harvested;
+
 	/**
 	 * Default constructor for Hibernate
 	 */
@@ -68,14 +73,14 @@ public class ReplayEvent
 	}
 
 	/**
-	 * Constructor 
-	 * 
-	 * @param id
-	 * @param errorUri
-	 * @param actionedBy
-	 * @param state
-	 * @param timestamp
-	 */
+	 * Constructor
+	 *
+	 * @param eventId
+	 * @param event
+	 * @param moduleName
+	 * @param flowName
+	 * @param timeToLiveDays
+     */
 	public ReplayEvent(String eventId, byte[] event, String moduleName, String flowName, int timeToLiveDays)
 	{
 		super();
@@ -200,11 +205,30 @@ public class ReplayEvent
 	{
 		this.expiry = expiry;
 	}
-	
+
+	/**
+	 * Get harvested flag
+	 *
+	 * @return
+     */
+	public boolean isHarvested()
+	{
+		return harvested;
+	}
+
+	/**
+	 * Set the harvested flag.
+	 *
+	 * @param harvested
+     */
+	public void setHarvested(boolean harvested)
+	{
+		this.harvested = harvested;
+	}
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
 	public int hashCode() 
 	{

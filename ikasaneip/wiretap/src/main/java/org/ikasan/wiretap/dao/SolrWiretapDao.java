@@ -196,33 +196,31 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     @Override
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
     {
-        // Not implemented.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Integer getHousekeepingBatchSize()
     {
-        // Not implemented.
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
     {
-        // Not implemented.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Integer getTransactionBatchSize()
     {
-        // Not implemented.
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
-        // Not implemented.
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -234,13 +232,12 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     @Override
     public void setHousekeepQuery(String housekeepQuery)
     {
-        // Not implemented.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<WiretapEvent> getHarvestableRecords(int housekeepingBatchSize)
     {
-        // Not implemented.
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

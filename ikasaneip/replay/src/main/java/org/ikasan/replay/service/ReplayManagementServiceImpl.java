@@ -49,7 +49,9 @@ import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.replay.ReplayManagementService;
+import org.ikasan.spec.solr.SolrService;
 
 
 /**
@@ -58,7 +60,8 @@ import org.ikasan.spec.replay.ReplayManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>, HousekeepService
+public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit
+		, ReplayAuditEvent>, HousekeepService, HarvestService<ReplayEvent>, SolrService<ReplayEvent>
 {
 	/** the underlying dao **/
 	private ReplayDao replayDao;
@@ -159,5 +162,29 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	public void setTransactionBatchSize(Integer transactionBatchSize)
 	{
 		this.transactionBatchSize = transactionBatchSize;
+	}
+
+	@Override
+	public List<ReplayEvent> harvest(int transactionBatchSize)
+	{
+		return this.replayDao.getHarvestableRecords(transactionBatchSize);
+	}
+
+	@Override
+	public boolean harvestableRecordsExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void saveHarvestedRecord(ReplayEvent harvestedRecord)
+	{
+		this.replayDao.saveOrUpdate(harvestedRecord);
+	}
+
+	@Override
+	public void save(ReplayEvent save)
+	{
+		this.replayDao.saveOrUpdate(save);
 	}
 }
