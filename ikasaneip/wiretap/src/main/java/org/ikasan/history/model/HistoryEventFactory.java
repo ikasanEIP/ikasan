@@ -92,7 +92,7 @@ public class HistoryEventFactory
 
 		FlowInvocationMetricImpl flowInvocation = new FlowInvocationMetricImpl(moduleName, flowName, flowInvocationContext.getFlowStartTimeMillis(),
 				flowInvocationContext.getFlowEndTimeMillis(), flowInvocationContext.getFinalAction().toString(), messageHistoryEvents,
-				System.currentTimeMillis() + (MILLISECONDS_IN_DAY * daysToLive));
+				System.currentTimeMillis() + (MILLISECONDS_IN_DAY * daysToLive), flowInvocationContext.getErrorUri());
 
         return flowInvocation;
     }

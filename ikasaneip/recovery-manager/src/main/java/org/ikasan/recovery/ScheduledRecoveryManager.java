@@ -382,6 +382,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         String errorUri = this.errorReportingService.notify(lastComponentName, event, throwable, action.toString());
+        flowInvocationContext.setErrorUri(errorUri);
         if(action instanceof ExcludeEventAction)
         {
             this.exclusionService.addBlacklisted(identifier, errorUri, flowInvocationContext);
