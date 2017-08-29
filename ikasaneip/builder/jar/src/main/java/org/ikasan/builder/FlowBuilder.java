@@ -362,18 +362,20 @@ public class FlowBuilder implements ApplicationContextAware
      * Setter for monitor
      * @param monitor
      */
-    public void setMonitor(Monitor monitor)
+    public FlowBuilder withMonitor(Monitor monitor)
     {
         this.monitor = monitor;
+        return this;
     }
     
     /**
      * Setter for re-submission service
      * @param resubmissionService
      */
-    public void setResubmissionService(ResubmissionService resubmissionService)
+    public FlowBuilder withResubmissionService(ResubmissionService resubmissionService)
     {
         this.resubmissionService = resubmissionService;
+        return this;
     }
 
     /**
@@ -382,7 +384,6 @@ public class FlowBuilder implements ApplicationContextAware
 	public FlowBuilder withReplayRecordService(ReplayRecordService replayRecordService)
 	{
 		this.replayRecordService = replayRecordService;
-		
 		return this;
 	}
 
@@ -390,9 +391,10 @@ public class FlowBuilder implements ApplicationContextAware
      * Setter for exception resolver to be registered with the recovery manager.
      * @param exceptionResolver
      */
-    public void setExceptionResolver(ExceptionResolver exceptionResolver)
+    public FlowBuilder withExceptionResolver(ExceptionResolver exceptionResolver)
     {
         this.exceptionResolver = exceptionResolver;
+        return this;
     }
 
     /**
