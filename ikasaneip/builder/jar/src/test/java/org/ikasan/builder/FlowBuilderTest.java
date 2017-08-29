@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -352,6 +353,9 @@ public class FlowBuilderTest
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
 
+        ExceptionResolver exceptionResolver = builderFactory.getExceptionResolverBuilder()
+                .addExceptionToAction(Exception.class, OnException.ignoreException()).build();
+
         Route route1 = builderFactory.getRouteBuilder().producer("producer", producer);
 		Route nestedRoute1 = builderFactory.getRouteBuilder().translator("nestedRoute1-name1",translator).producer("nestedRoute1-publisher1", producer);
 		Route nestedRoute2 = builderFactory.getRouteBuilder().translator("nestedRoute2-name2",translator).producer("nestedRoute2-publisher2", producer);
@@ -365,7 +369,7 @@ public class FlowBuilderTest
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
                 .withExclusionServiceFactory(exclusionServiceFactory)
-                .withSerialiserFactory(serialiserFactory)
+                .withSerialiserFactory(serialiserFactory).withExceptionResolver(exceptionResolver)
                 .consumer("consumer", consumer)
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", route1)

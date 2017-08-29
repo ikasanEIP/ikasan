@@ -38,16 +38,16 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.RequiresAopProxy;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -63,7 +63,7 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
+public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopProxy
 {
 
     /**

@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
@@ -51,7 +51,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-class JmsProducerBuilderImpl implements JmsProducerBuilder{
+public class JmsProducerBuilderImpl implements JmsProducerBuilder{
 
     /**
      * default jms consumer instance

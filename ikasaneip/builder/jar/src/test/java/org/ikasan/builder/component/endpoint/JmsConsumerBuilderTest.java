@@ -38,16 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder.component;
+package org.ikasan.builder.component.endpoint;
 
-import org.hamcrest.CoreMatchers;
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.JmsConsumerBuilder;
+import org.ikasan.builder.component.endpoint.JmsConsumerBuilderImpl;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.listener.ArjunaIkasanMessageListenerContainer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
@@ -56,9 +54,6 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.naming.Context;
@@ -66,7 +61,6 @@ import javax.transaction.TransactionManager;
 import java.util.HashMap;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
