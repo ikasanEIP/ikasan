@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">    
+
+	<!-- 1.5.0 table creation -->
+
+	<!-- 1.5.0 table alterations -->
+	<include file="db/alter/db-changeLog-alterFlowInvocationMetricAddErrorUri.xml" relativeToChangelogFile="true" />
+
+	<!-- 1.5.0 cardinality creation -->
+
+	<!-- 1.5.0 data -->
+	
+	<!-- 1.5.0 index creation -->
+
+	<!-- 1.5.0 table drop -->
+
+	<!-- 1.5.0 table modify -->
+	
+</databaseChangeLog>

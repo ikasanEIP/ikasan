@@ -60,9 +60,12 @@ public class FilterFlowElementInvoker extends AbstractFlowElementInvoker impleme
 
         Filter filter = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, filter);
+
         // we must unset the context whatever happens, so try/finally
         try
         {
+            notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
             if (filter.filter(flowEvent.getPayload()) == null)
             {
                 endFlowElementInvocation(flowElementInvocation, flowElement, flowEvent);

@@ -241,6 +241,8 @@ public class ScheduledRecoveryManagerIntegrationTest
                 will(returnValue("componentName"));
 
                 exactly(1).of(flowInvocationContext).setFinalAction(FinalAction.EXCLUDE);
+
+                exactly(1).of(flowInvocationContext).setErrorUri(null);
             }});
         //
         // create an exception resolver

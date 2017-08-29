@@ -41,6 +41,8 @@
 package org.ikasan.spec.flow;
 
 
+import java.util.List;
+
 /**
  * Interface for classes capable of invoking a specified <code>FlowElement</code> with the specified <code>FlowEvent</code>
  * 
@@ -66,4 +68,18 @@ public interface FlowElementInvoker<COMPONENT>
      * Override the calls to the context invocation
      */
     void setIgnoreContextInvocation(boolean ignoreContextInvocation);
+
+    /**
+     * Set the flow invocation context listeners
+     *
+     * @param flowInvocationContextListeners
+     */
+    void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners);
+
+    /**
+     * Set invoke context listeners flag.
+     *
+     * @param invokeContextListeners
+     */
+    void setInvokeContextListeners(boolean invokeContextListeners);
 }

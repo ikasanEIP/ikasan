@@ -60,6 +60,9 @@ public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElement
 
         SingleRecipientRouter router = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, router);
+
+        notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
         // we must unset the context whatever happens, so try/finally
         String targetName;
         try

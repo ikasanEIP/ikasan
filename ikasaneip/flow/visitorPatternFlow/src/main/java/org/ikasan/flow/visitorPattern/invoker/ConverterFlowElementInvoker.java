@@ -63,9 +63,12 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
 
         Converter converter = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, converter);
+
         // we must unset the context whatever happens, so try/finally
         try
         {
+            notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
             if (requiresFullEventForInvocation == null)
             {
                 try

@@ -41,6 +41,7 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.flow.*;
@@ -97,6 +98,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
@@ -135,6 +140,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(singleRecipientRouterInvocationAware));
                 exactly(1).of(singleRecipientRouterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(singleRecipientRouterInvocationAware).route(payload);
@@ -171,6 +180,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
@@ -205,6 +218,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getFlowComponent();
                 will(returnValue(router));
+
+                exactly(2).of(flowElement).getConfiguration();
+                will(returnValue(new FlowElementPersistentConfiguration()));
+
                 exactly(1).of(flowEvent).getPayload();
                 will(returnValue(payload));
                 exactly(1).of(router).route(payload);
