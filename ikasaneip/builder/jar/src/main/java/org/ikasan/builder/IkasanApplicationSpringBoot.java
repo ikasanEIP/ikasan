@@ -73,7 +73,7 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
 
     public BuilderFactory getBuilderFactory()
     {
-        return new BuilderFactoryImpl(context, new HashMap<String,ModuleBuilder>());
+        return IkasanApplicationFactory.getBuilderFactory(context);
     }
 
     public void run(Module module)

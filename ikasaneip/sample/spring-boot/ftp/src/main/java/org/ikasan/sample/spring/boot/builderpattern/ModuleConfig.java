@@ -2,6 +2,7 @@ package org.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
+import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.util.producer.DevNull;
@@ -52,7 +53,7 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = new ModuleBuilder(context,"sample-boot-ftp-module");
+        ModuleBuilder mb = IkasanApplicationFactory.getBuilderFactory(context).getModuleBuilder("sample-boot-ftp-module");
         FlowBuilder ftpToLogFlowBuilder = mb.getFlowBuilder("ftpToLogFlow");
         Flow ftpToLogFlow = ftpToLogFlowBuilder
                 .withDescription("Ftp to Log")
