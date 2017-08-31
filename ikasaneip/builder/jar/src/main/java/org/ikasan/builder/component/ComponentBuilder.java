@@ -112,6 +112,24 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan default scheduledConsumer with FTP message Provider
+     * @return scheduledConsumerBuilder
+     */
+    public FtpConsumerBuilder ftpConsumer()
+    {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        FtpConsumerBuilder ftpConsumerBuilder = new FtpConsumerBuilderImpl(scheduledConsumer,
+                this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class)
+                ,this.applicationContext.getBean(JtaTransactionManager.class)
+                ,this.applicationContext.getBean(BaseFileTransferDao.class)
+                ,this.applicationContext.getBean(FileChunkDao.class)
+                ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
+
+        );
+        return ftpConsumerBuilder;
+    }
+
+    /**
      * Get an instance of an Ikasan default jmsConsumer
      * @return jmsConsumerBuilder
      */

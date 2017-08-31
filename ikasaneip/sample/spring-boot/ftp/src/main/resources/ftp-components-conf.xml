@@ -7,60 +7,6 @@
     <!--  component implementations                                          -->
     <!--  ================================================================== -->
 
-    <bean id="ftpConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
-        <constructor-arg ref="scheduler"/>
-        <property name="messageProvider" ref="ftpMessageProvider"/>
-        <property name="jobDetail">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="scheduledJobFactory"/>
-                <property name="targetMethod" value="createJobDetail"/>
-                <property name="arguments">
-                    <list>
-                        <ref bean="ftpConsumer"/>
-                        <value type="java.lang.Class">
-                            org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
-                        </value>
-                        <value>ftpConsumer</value>
-                        <value>ftpToLogFlow</value>
-                    </list>
-                </property>
-            </bean>
-        </property>
-        <property name="configuration" ref="ftpConsumerConfiguration"/>
-        <property name="configuredResourceId" value="ftpConsumer"/>
-    </bean>
-
-    <bean id="ftpConsumerConfiguration" class="org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration">
-        <property name="cronExpression" value="${ftp.consumer.cronExpression}"/>
-        <property name="clientID" value="${ftp.consumer.clientID}"/>
-        <property name="username" value="${ftp.consumer.username}"/>
-        <property name="password" value="${ftp.consumer.password}"/>
-        <property name="remoteHost" value="${ftp.consumer.remoteHost}"/>
-        <property name="remotePort" value="${ftp.consumer.remotePort}"/>
-        <property name="sourceDirectory" value="${ftp.consumer.sourceDirectory}"/>
-        <property name="filenamePattern" value="${ftp.consumer.filenamePattern}"/>
-        <property name="chronological" value="true"/>
-        <property name="cleanupJournalOnComplete" value="false"/>
-        <property name="ageOfFiles" value="30"/>
-        <property name="minAge" value="1"/>
-        <property name="filterOnLastModifiedDate" value="true"/>
-        <property name="renameOnSuccess" value="false"/>
-        <property name="renameOnSuccessExtension" value=".tmp"/>
-        <property name="destructive" value="false"/>
-        <property name="chunking" value="false"/>
-    </bean>
-
-    <bean id="fileBasedPasswordHelper" class="org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper"></bean>
-
-    <bean id="ftpMessageProvider" class="org.ikasan.endpoint.ftp.consumer.FtpMessageProvider">
-        <property name="configuration" ref="ftpConsumerConfiguration"/>
-        <constructor-arg name="fileBasedPasswordHelper" ref="fileBasedPasswordHelper"/>
-        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
-        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
-        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
-        <constructor-arg name="transactionManager" ref="transactionManager"/>
-    </bean>
-
     <bean id="payloadToStringConverter" class="org.ikasan.sample.converter.PayloadToStringConverter"/>
 
     <bean id="filePayloadGeneratorConverter" class="org.ikasan.sample.converter.FilePayloadGeneratorConverter"/>

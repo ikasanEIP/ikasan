@@ -50,7 +50,6 @@ public class ModuleConfig {
     @Resource
     private ApplicationContext context;
 
-
     @Value("${sftp.consumer.cronExpression}")
     private String sftpConsumerCronExpression;
 

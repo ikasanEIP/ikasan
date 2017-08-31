@@ -119,7 +119,6 @@ public class ComponentBuilderTest {
         mockery.assertIsSatisfied();
     }
 
-
     @Test
     public void test_successful_sftpConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
@@ -155,6 +154,43 @@ public class ComponentBuilderTest {
 
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void test_successful_ftpConsumer() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(Scheduler.class);
+                will(returnValue(scheduler));
+                oneOf(applicationContext).getBean(ScheduledJobFactory.class);
+                will(returnValue(scheduledJobFactory));
+
+                oneOf(applicationContext).getBean(AopProxyProvider.class);
+                will(returnValue(aopProxyProvider));
+
+                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+                oneOf(applicationContext).getBean(BaseFileTransferDao.class);
+                will(returnValue(baseFileTransferDao));
+
+                oneOf(applicationContext).getBean(FileChunkDao.class);
+                will(returnValue(fileChunkDao));
+
+                oneOf(applicationContext).getBean(TransactionalResourceCommandDAO.class);
+                will(returnValue(transactionalResourceCommandDAO));
+            }
+        });
+
+        componentBuilder.sftpConsumer();
+
+        mockery.assertIsSatisfied();
+    }
+
     @Test
     public void test_successful_jmsConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
