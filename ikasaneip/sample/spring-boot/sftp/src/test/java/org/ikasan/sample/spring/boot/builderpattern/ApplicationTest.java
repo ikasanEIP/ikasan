@@ -53,10 +53,8 @@ import org.apache.sshd.server.command.ScpCommandFactory;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.sftp.SftpSubsystem;
-import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
-import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.After;
@@ -169,8 +167,6 @@ public class ApplicationTest {
         String[] args = {""};
 
 
-        Application myApplication = new Application();
-
         IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
         System.out.println("Check is module healthy.");
@@ -178,17 +174,12 @@ public class ApplicationTest {
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
 
-        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sample-boot-sftp-module");
-        Flow flow = myApplication.getSftpConsumerFlow(moduleBuilder, builderFactory.getComponentBuilder());
-
-        Module module = moduleBuilder.addFlow(flow).build();
-
-        ikasanApplication.run(module);
+        Module module = (Module) ikasanApplication.getBean(Module.class);
+        Flow flow = (Flow) module.getFlow("Sftp To Log Flow");
 
         // start flow
         flow.start();
-        pause(20000);
+        pause(15000);
         assertEquals("running", flow.getState());
 
         flow.stop();
