@@ -42,7 +42,8 @@ public class ModuleConfig {
     @Resource
     private ApplicationContext context;
 
-
+    @Resource
+    private BuilderFactory builderFactory;
 
     /**
      *
@@ -74,11 +75,10 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = IkasanApplicationFactory.getBuilderFactory(context).getModuleBuilder("sample-module");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-module");
 
         FlowBuilder fb = mb.getFlowBuilder("flowName");
 
-        //beanFactory.autowireBean(fb);
         Flow flow = fb
                 .withDescription("flowDescription")
                 .consumer("consumer", jmsConsumer)

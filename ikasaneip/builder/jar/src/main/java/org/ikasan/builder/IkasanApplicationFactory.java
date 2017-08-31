@@ -51,9 +51,6 @@ import java.util.HashMap;
  */
 public class IkasanApplicationFactory
 {
-    private static BuilderFactoryImpl instance;
-
-    private static ApplicationContext existingApplicationContext;
 
     /**
      * Constructor
@@ -71,29 +68,6 @@ public class IkasanApplicationFactory
     public static IkasanApplication getIkasanApplication(String[] args)
     {
         return new IkasanApplicationSpringBoot(args);
-    }
-
-    /**
-     * Get a new instance of the IkasanApplication
-     * @param applicationContext
-     * @return
-     */
-    public static BuilderFactory getBuilderFactory(ApplicationContext applicationContext)
-    {
-        if (existingApplicationContext == null){
-            existingApplicationContext = applicationContext;
-        }
-        if(instance==null)
-        {
-            instance = new BuilderFactoryImpl(applicationContext, new HashMap<String, ModuleBuilder>());
-        }
-
-        if (!existingApplicationContext.equals(applicationContext)){
-            existingApplicationContext = applicationContext;
-            instance = new BuilderFactoryImpl(applicationContext, new HashMap<String, ModuleBuilder>());
-        }
-
-        return instance;
     }
 
     /**

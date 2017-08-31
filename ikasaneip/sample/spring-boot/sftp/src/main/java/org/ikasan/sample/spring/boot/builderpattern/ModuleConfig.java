@@ -50,6 +50,9 @@ public class ModuleConfig {
     @Resource
     private ApplicationContext context;
 
+    @Resource
+    private BuilderFactory builderFactory;
+
     @Value("${sftp.consumer.cronExpression}")
     private String sftpConsumerCronExpression;
 
@@ -80,7 +83,6 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        BuilderFactory builderFactory = IkasanApplicationFactory.getBuilderFactory(context);
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-sftp-module");
 
         FlowBuilder timeGeneratorToSftpFlowBuilder = mb.getFlowBuilder("timeGeneratorToSftpFlow");

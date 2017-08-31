@@ -48,6 +48,9 @@ public class ModuleConfig {
     @Resource
     private ApplicationContext context;
 
+    @Resource
+    private BuilderFactory builderFactory;
+
     @Value("${ftp.consumer.cronExpression}")
     private String ftpConsumerCronExpression;
 
@@ -75,7 +78,6 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        BuilderFactory builderFactory = IkasanApplicationFactory.getBuilderFactory(context);
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-ftp-module");
 
         Flow ftpToLogFlow = getFtpToLogFlow(mb, builderFactory.getComponentBuilder());
