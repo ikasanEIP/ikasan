@@ -97,6 +97,7 @@ import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.StartupControlService;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.systemevent.model.SystemEvent;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.topology.model.BusinessStream;
@@ -185,7 +186,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private ComboBox businessStreamCombo;
 	private ComboBox treeViewBusinessStreamCombo;
 
-	private WiretapDao wiretapDao;
+	private WiretapService wiretapService;
+	private WiretapService solrWiretapService;
 
 	private PopupDateField systemEventFromDate;
 	private PopupDateField systemEventToDate;
@@ -232,13 +234,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 WiretapDao wiretapDao, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
-			 HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
-			 ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
-			 StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
-			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,
-			 FlowElementConfigurationWindow flowElementConfigurationWindow, FlowComponentsConfigurationUploadDownloadWindow flowComponentsConfigurationUploadDownloadWindow,
-			 ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow, DiscoveryWindow discoveryWindow)
+							 WiretapService wiretapService, WiretapService solrWiretapService, ExclusionManagementService<ExclusionEvent, String> exclusionManagementService,
+                             HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, SystemEventService systemEventService,
+                             ErrorCategorisationService errorCategorisationService, TriggerManagementService triggerManagementService, TopologyStateCache topologyCache,
+                             StartupControlService startupControlService, ErrorReportingService errorReportingService, ErrorReportingManagementService errorReportingManagementService,
+                             PlatformConfigurationService platformConfigurationService, SecurityService securityService, HospitalService<byte[]> hospitalService, FlowConfigurationWindow flowConfigurationWindow,
+                             FlowElementConfigurationWindow flowElementConfigurationWindow, FlowComponentsConfigurationUploadDownloadWindow flowComponentsConfigurationUploadDownloadWindow,
+                             ModuleComponentsConfigurationUploadDownloadWindow moduleComponentsConfigurationUploadDownloadWindow, DiscoveryWindow discoveryWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -250,10 +252,15 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("componentConfigurationWindow cannot be null!");
 		}
-		this.wiretapDao = wiretapDao;
-		if(this.wiretapDao == null)
+		this.wiretapService = wiretapService;
+		if(this.wiretapService == null)
 		{
-			throw new IllegalArgumentException("wiretapDao cannot be null!");
+			throw new IllegalArgumentException("wiretapService cannot be null!");
+		}
+		this.solrWiretapService = solrWiretapService;
+		if(this.solrWiretapService == null)
+		{
+			throw new IllegalArgumentException("solrWiretapService cannot be null!");
 		}
 		this.exclusionManagementService = exclusionManagementService;
 		if(this.exclusionManagementService == null)
@@ -391,8 +398,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 						|| authentication.hasGrantedAuthority(SecurityConstants.WIRETAP_READ)
 						|| authentication.hasGrantedAuthority(SecurityConstants.WIRETAP_WRITE)))
     	{
-       		WiretapTab wiretapTab = new WiretapTab
-					(this.wiretapDao, this.treeViewBusinessStreamCombo, this.platformConfigurationService);
+       		WiretapTab wiretapTab = new WiretapTab(this.wiretapService, this.solrWiretapService,
+					this.treeViewBusinessStreamCombo, this.platformConfigurationService);
        		wiretapTab.createLayout();
        		wiretapTab.applyFilter();
 

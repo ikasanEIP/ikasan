@@ -39,7 +39,8 @@
 	<bean id="topologyViewPanel" class="org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel" scope="session">
         <constructor-arg ref="topologyService" />
         <constructor-arg ref="componentConfigurationWindow" />
-        <constructor-arg ref="solrWiretapDao" />
+        <constructor-arg ref="wiretapService" />
+        <constructor-arg ref="solrWiretapService" />
         <constructor-arg ref="exclusionManagementService" />
         <constructor-arg ref="hospitalManagementService" />
         <constructor-arg ref="systemEventService"/>

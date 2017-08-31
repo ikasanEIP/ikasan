@@ -102,22 +102,6 @@ public class ReplayAudit
 		this.targetServer = targetServer;
 	}
 
-//	/**
-//	 * @return the replayAuditEvents
-//	 */
-//	public Set<ReplayAuditEvent> getReplayAuditEvents() 
-//	{
-//		return replayAuditEvents;
-//	}
-
-//	/**
-//	 * @param replayAuditEvents the replayAuditEvents to set
-//	 */
-//	public void setReplayAuditEvents(Set<ReplayAuditEvent> replayAuditEvents) 
-//	{
-//		this.replayAuditEvents = replayAuditEvents;
-//	}
-
 	/**
 	 * @return the timestamp
 	 */

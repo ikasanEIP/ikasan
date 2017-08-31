@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,69 +38,95 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.replay.service;
-
-import org.ikasan.replay.dao.ReplayDao;
-import org.ikasan.replay.model.HibernateReplayEvent;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.replay.ReplayRecordService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+package org.ikasan.spec.replay;
 
 /**
- * Replay record service implementation.
  * 
  * @author Ikasan Development Team
- * 
+ *
  */
-public class ReplayRecordServiceImpl implements ReplayRecordService<FlowEvent<String,?>>
+public interface ReplayEvent
 {
-	/** need a serialiser to serialise the incoming event payload of T */
-    private SerialiserFactory serialiserFactory;
-    
-    /** the underlying dao **/
-    private ReplayDao replayDao;
-     
-    /**
-     * Constructor
-     * 
-     * @param serialiserFactory
-     * @param replayDao
-     */
-	public ReplayRecordServiceImpl(SerialiserFactory serialiserFactory,
-			ReplayDao replayDao) 
-	{
-		super();
-		this.serialiserFactory = serialiserFactory;
-		if(serialiserFactory == null)
-		{
-			throw new IllegalArgumentException("SerialiserFactory cannot be null!");
-		}
-		this.replayDao = replayDao;
-		if(this.replayDao == null)
-		{
-			throw new IllegalArgumentException("ReplayDao cannot be null!");
-		}
-	}
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.spec.replay.ReplayRecordService#record(java.lang.Object)
+	/**
+	 * @return the id
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void record(FlowEvent<String,?> event, String moduleName, String flowName, int timeToLiveDays) 
-	{
-        byte[] bytes = (byte[])this.serialiserFactory.getDefaultSerialiser().serialise(event.getPayload());
+	public Long getId();
 
-		String eventAsString = null;
 
-		if(event.getPayload() != null)
-		{
-			eventAsString = event.getPayload().toString();
-		}
+	/**
+	 * @return the event
+	 */
+	public byte[] getEvent();
+	
+	/**
+	 * @param event the event to set
+	 */
+	public void setEvent(byte[] event);
 
-        HibernateReplayEvent replayEvent = new HibernateReplayEvent(event.getIdentifier(), bytes
-				, eventAsString, moduleName, flowName, timeToLiveDays);
-        
-        this.replayDao.saveOrUpdate(replayEvent);
-	}
+	/**
+	 * @return the moduleName
+	 */
+	public String getModuleName();
+
+	/**
+	 * @param moduleName the moduleName to set
+	 */
+	public void setModuleName(String moduleName);
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName();
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(String flowName);
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(long timestamp);
+	
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp();
+
+	/**
+	 * @return the eventId
+	 */
+	public String getEventId();
+
+	/**
+	 * @param eventId the eventId to set
+	 */
+	public void setEventId(String eventId);
+
+	/**
+	 * @return the expiry
+	 */
+	public long getExpiry();
+
+	/**
+	 * @param expiry the expiry to set
+	 */
+	public void setExpiry(long expiry);
+
+
+	/**
+	 * Get the event as a string
+	 *
+	 * @return
+     */
+	public String getEventAsString();
+
+	/**
+	 * Set the event as a string
+	 *
+	 * @param eventAsString
+     */
+	public void setEventAsString(String eventAsString);
+
 }

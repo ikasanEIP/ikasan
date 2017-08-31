@@ -47,6 +47,11 @@ public class IkasanSolrDocument
     @Field("exceptionClass")
     private String exceptionClass;
 
+    public String getId()
+    {
+        return id;
+    }
+
     public long getIdentifier()
     {
         return new Long(id);

@@ -117,9 +117,7 @@ public class ExclusionEventViewPanel extends Panel
 	private HospitalService<byte[]> hospitalService;
 	private TextArea comments;
 
-	/**
-	 * @param policy
-	 */
+
 	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
 			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
@@ -174,7 +172,14 @@ public class ExclusionEventViewPanel extends Panel
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf1 = new TextField();
-		tf1.setValue(this.exclusionEvent.getModuleName());
+		if(this.exclusionEvent != null)
+		{
+			tf1.setValue(this.exclusionEvent.getModuleName());
+		}
+		else
+		{
+			tf1.setValue(this.action.getModuleName());
+		}
 		tf1.setReadOnly(true);
 		tf1.setWidth("80%");
 		layout.addComponent(tf1, 1, 1);
@@ -185,7 +190,14 @@ public class ExclusionEventViewPanel extends Panel
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf2 = new TextField();
-		tf2.setValue(this.exclusionEvent.getFlowName());
+		if(this.exclusionEvent != null)
+		{
+			tf2.setValue(this.exclusionEvent.getFlowName());
+		}
+		else
+		{
+			tf2.setValue(this.action.getFlowName());
+		}
 		tf2.setReadOnly(true);
 		tf2.setWidth("80%");
 		layout.addComponent(tf2, 1, 2);
@@ -206,7 +218,15 @@ public class ExclusionEventViewPanel extends Panel
 		layout.addComponent(label, 0, 4);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
-		Date date = new Date(this.exclusionEvent.getTimestamp());
+		Date date = null;
+		if(this.exclusionEvent != null)
+		{
+			date = new Date(this.exclusionEvent.getTimestamp());
+		}
+		else
+		{
+			date = new Date(this.action.getTimestamp());
+		}
 		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
 	    String timestamp = format.format(date);
 	    
@@ -222,7 +242,14 @@ public class ExclusionEventViewPanel extends Panel
 		layout.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
 		
 		TextField tf5 = new TextField();
-		tf5.setValue(exclusionEvent.getErrorUri());
+		if(exclusionEvent != null)
+		{
+			tf5.setValue(exclusionEvent.getErrorUri());
+		}
+		else
+		{
+			tf5.setValue(action.getErrorUri());
+		}
 		tf5.setReadOnly(true);
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 5);
@@ -285,8 +312,11 @@ public class ExclusionEventViewPanel extends Panel
 		comments.setValidationVisible(false);         
 		comments.setRequiredError("A comment is required!");
 		comments.setNullSettingAllowed(false);
-		
-		layout.addComponent(comments, 3, 4, 3, 5);
+
+		if(this.exclusionEvent != null)
+		{
+			layout.addComponent(comments, 3, 4, 3, 5);
+		}
 		
 		final Button resubmitButton = new Button("Re-submit");
 		final Button ignoreButton = new Button("Ignore");
@@ -469,11 +499,15 @@ public class ExclusionEventViewPanel extends Panel
 		
 		final AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
-		logger.debug("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
+
 		
-		if(this.exclusionEvent.getEvent() != null)
+		if(this.exclusionEvent != null && this.exclusionEvent.getEvent() != null)
 		{
 			eventEditor.setValue(new String((byte[])this.exclusionEvent.getEvent()));
+		}
+		else if(this.action != null && this.action.getEvent() != null)
+		{
+			eventEditor.setValue(new String((byte[])this.action.getEvent()));
 		}
 		
 		eventEditor.setReadOnly(true);

@@ -1,15 +1,12 @@
-package org.ikasan.solr.dao;
-
-import org.ikasan.solr.model.IkasanSolrDocument;
+package org.ikasan.spec.solr;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Ikasan Development Team on 04/08/2017.
+ * Created by stewmi on 27/08/2017.
  */
-public interface SolrGeneralSearchDao<RESULTS>
+public interface SolrSearchService<RESULTS>
 {
     /**
      * Perform general search against ikasan solr index.

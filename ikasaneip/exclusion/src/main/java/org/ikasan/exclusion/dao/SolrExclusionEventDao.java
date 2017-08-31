@@ -1,6 +1,7 @@
 package org.ikasan.exclusion.dao;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.solr.SolrDaoBase;
@@ -59,7 +60,20 @@ public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEvent
     @Override
     public void delete(String errorUri)
     {
-        throw new UnsupportedOperationException();
+        StringBuffer query = new StringBuffer();
+        query.append(ID).append(COLON).append(errorUri);
+
+        try
+        {
+            UpdateResponse response = this.solrClient.deleteByQuery(query.toString());
+            this.solrClient.commit();
+
+            logger.info("Deleted " + errorUri + " exclusion solr records. Response [" + response + "]." );
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("An error has occurred ");
+        }
     }
 
     @Override

@@ -25,3 +25,6 @@ ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.REM
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/WEB-INF/deploy/org.ikasan.dashboard.ui.AppWidgetSet/rpcPolicyManifest/manifest.txt
 ikasaneip/component/endpoint/utility-endpoint/src/test/resources/data/unit/Trade.txt.cr32
 ikasaneip/out
+ikasaneip/webconsole/skinny-war/overlays/
+ikasaneip/sample/scheduleDrivenSrc/war/overlays/
+ikasaneip/sample/genericTechPriceSrc/war/overlays/

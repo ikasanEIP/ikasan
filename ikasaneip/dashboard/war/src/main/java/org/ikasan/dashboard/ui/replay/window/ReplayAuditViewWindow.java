@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.replay.panel.ReplayAuditViewPanel;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 
 import com.vaadin.ui.Window;

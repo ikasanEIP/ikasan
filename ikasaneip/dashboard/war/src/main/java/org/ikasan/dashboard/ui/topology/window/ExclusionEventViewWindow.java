@@ -75,9 +75,7 @@ public class ExclusionEventViewWindow extends Window
 	private ErrorReportingManagementService errorReportingManagementService;
 	private HospitalService<byte[]> hospitalService;
 
-	/**
-	 * @param policy
-	 */
+
 	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
 			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
 			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)

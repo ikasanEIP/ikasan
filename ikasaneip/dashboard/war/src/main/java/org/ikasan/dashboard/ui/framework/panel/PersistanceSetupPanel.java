@@ -99,10 +99,13 @@ public class PersistanceSetupPanel extends Panel implements View
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 	private IkasanAuthentication ikasanAuthentication;
 
-    /**
-     * Constructor
-     * 
-     * @param ikasanModuleService
+	/**
+	 * Constructor
+	 *
+	 * @param persistenceService
+	 * @param userService
+	 * @param authenticationService
+	 * @param configurationManagement
      */
     public PersistanceSetupPanel(PersistenceService persistenceService,
     		UserService userService, AuthenticationService authenticationService,

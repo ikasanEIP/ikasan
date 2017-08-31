@@ -65,7 +65,7 @@
         </tx:attributes>
     </tx:advice>
 
-    <bean id="wiretapDao"
+    <bean id="wiretapEvent"
           class="org.ikasan.wiretap.dao.HibernateWiretapDao">
         <constructor-arg value="true"/>
         <constructor-arg value="1000"/>

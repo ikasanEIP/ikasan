@@ -60,8 +60,8 @@ import org.ikasan.dashboard.ui.replay.window.ReplayAuditViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -130,7 +130,7 @@ public class ReplayAuditTab extends TopologyTab
 	private PlatformConfigurationService platformConfigurationService;
 	
 	public ReplayAuditTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-			PlatformConfigurationService platformConfigurationService)
+                          PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;

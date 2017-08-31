@@ -13,10 +13,17 @@
 
 
     <bean id="searchPanel" class="org.ikasan.dashboard.ui.search.panel.SearchPanel" scope="session">
-        <constructor-arg ref="solrGeneralSearchDao"/>
+        <constructor-arg ref="solrGeneralService"/>
         <constructor-arg ref="platformConfigurationService"/>
-        <constructor-arg ref="solrWiretapDao"/>
-        <constructor-arg ref="solrErrorReportingServiceDao"/>
+        <constructor-arg ref="solrWiretapService"/>
+        <constructor-arg ref="errorReportingService"/>
+        <constructor-arg ref="solrReplayManagementService"/>
+        <constructor-arg ref="replayService"/>
+        <constructor-arg ref="topologyService"/>
+        <constructor-arg ref="exclusionManagementService"/>
+        <constructor-arg ref="hospitalManagementService"/>
+        <constructor-arg ref="errorReportingManagementService"/>
+        <constructor-arg ref="hospitalService"/>
     </bean>
 
 </beans>

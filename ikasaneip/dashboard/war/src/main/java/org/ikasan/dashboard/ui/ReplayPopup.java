@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.ikasan.dashboard.ui.replay.panel.ReplayStatusPanel;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayService;
 
 import com.vaadin.annotations.PreserveOnRefresh;

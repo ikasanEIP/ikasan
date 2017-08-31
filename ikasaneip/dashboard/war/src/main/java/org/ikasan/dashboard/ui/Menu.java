@@ -173,7 +173,7 @@ public class Menu extends CssLayout
         topologyMenuItem.setPrimaryStyleName("valo-menu-item");
         topologyMenuItem.setIcon(VaadinIcons.CONNECT_O);
         menuItemsLayout.addComponent(topologyMenuItem);
-        this.menuComponents.put(topologyMenuItem, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
+        this.menuComponents.put(topologyMenuItem, SecurityConstants.TOPOLOGY_VIEW_PERMISSIONS);
 
         final Button searchMenuItem = new Button("Search", new ClickListener()
         {

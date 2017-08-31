@@ -90,6 +90,10 @@ public class SecurityConstants
 	public static String TOPOLOGY_WRITE = "topology-write";
 	public static String TOPOLOGY_ADMIN = "topology-admin";
 
+	public static String SEARCH_READ = "search-read";
+	public static String SEARCH_WRITE = "search-write";
+	public static String SEARCH_ADMIN = "search-admin";
+
 	public static String MAPPING_READ = "mapping-read";
 	public static String MAPPING_WRITE = "mapping-write";
 	public static String MAPPING_ADMIN = "mapping-admin";
@@ -101,6 +105,10 @@ public class SecurityConstants
 	public static String REPLAY_READ = "replay-read";
 	public static String REPLAY_WRITE = "replay-write";
 	public static String REPLAY_ADMIN = "replay-admin";
+
+	public static String SEARCH_REPLAY_READ = "search-replay-read";
+	public static String SEARCH_REPLAY_WRITE = "search-replay-write";
+	public static String SEARCH_REPLAY_ADMIN = "search-replay-admin";
 
 	public static String HOUSEKEEPING_READ = "housekeeping-read";
 	public static String HOUSEKEEPING_WRITE = "housekeeping-write";
@@ -214,6 +222,9 @@ public class SecurityConstants
 		SERVICE_VIEW_PERMISSIONS.add(HARVESTING_ADMIN);
 		SERVICE_VIEW_PERMISSIONS.add(HARVESTING_READ);
 		SERVICE_VIEW_PERMISSIONS.add(HARVESTING_WRITE);
+		SERVICE_VIEW_PERMISSIONS.add(SEARCH_ADMIN);
+		SERVICE_VIEW_PERMISSIONS.add(SEARCH_READ);
+		SERVICE_VIEW_PERMISSIONS.add(SEARCH_WRITE);
 
 		TOPOLOGY_VIEW_PERMISSIONS = new ArrayList<String>();
 		TOPOLOGY_VIEW_PERMISSIONS.add(WIRETAP_READ);

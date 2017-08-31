@@ -53,9 +53,9 @@ import org.ikasan.dashboard.ui.ReplayPopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
@@ -105,7 +105,7 @@ public class ReplayEventViewPanel extends Panel
 	 * @param platformConfigurationService
 	 */
 	public ReplayEventViewPanel(ReplayEvent replayEvent, ReplayService replayService,
-			PlatformConfigurationService platformConfigurationService)
+								PlatformConfigurationService platformConfigurationService)
 	{
 		super();
 		this.replayEvent = replayEvent;
@@ -211,7 +211,7 @@ public class ReplayEventViewPanel extends Panel
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	 ArrayList<ReplayEvent> replayEvents = new ArrayList<ReplayEvent>();  
+            	 ArrayList<ReplayEvent> replayEvents = new ArrayList<ReplayEvent>();
             	 replayEvents.add(replayEvent);
             	
             	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("replayEvents", replayEvents);
@@ -225,7 +225,9 @@ public class ReplayEventViewPanel extends Panel
 
 		if(authentication != null && (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
 				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
-				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)))
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE)))
 		{
 			replayButton.setVisible(true);
 		}
@@ -242,7 +244,7 @@ public class ReplayEventViewPanel extends Panel
 		
 		final AceEditor editor = new AceEditor();
 		editor.setCaption("Event");
-		editor.setValue(new String(this.replayEvent.getEvent()));
+		editor.setValue(new String(this.replayEvent.getEventAsString()));
 		editor.setReadOnly(true);
 		editor.setMode(AceMode.xml);
 		editor.setWordWrap(true);

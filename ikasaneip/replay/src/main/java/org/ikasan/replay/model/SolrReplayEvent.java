@@ -40,9 +40,9 @@
  */
 package org.ikasan.replay.model;
 
-import org.ikasan.harvest.HarvestEvent;
+import org.apache.solr.client.solrj.beans.Field;
+import org.ikasan.spec.replay.ReplayEvent;
 
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -50,26 +50,39 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class ReplayEvent implements HarvestEvent
+public class SolrReplayEvent implements ReplayEvent
 {
-	private Long id;
+	@Field("id")
+	private String id;
+
+	@Field("moduleName")
     private String moduleName;
+
+	@Field("flowName")
     private String flowName;
+
+	@Field("event")
 	private String eventId;
-    private byte[] event;
+
+	@Field("payloadRaw")
+    private byte[] payloadRaw;
+
+	@Field("payload")
+	private String eventAsString;
+
+	@Field("timestamp")
     private long timestamp;
+
+	@Field("expiry")
     private long expiry;
 
-	/** flag to indicate if the record has been harvested */
-	boolean harvested;
 
 	/**
-	 * Default constructor for Hibernate
+	 * Default constructor
 	 */
-	@SuppressWarnings("unused")
-	private ReplayEvent()
+	public SolrReplayEvent()
 	{
-		
+
 	}
 
 	/**
@@ -81,12 +94,13 @@ public class ReplayEvent implements HarvestEvent
 	 * @param flowName
 	 * @param timeToLiveDays
      */
-	public ReplayEvent(String eventId, byte[] event, String moduleName, String flowName, int timeToLiveDays)
+	public SolrReplayEvent(String eventId, byte[] event, String eventAsString, String moduleName, String flowName, int timeToLiveDays)
 	{
 		super();
 
 		this.eventId = eventId;
-		this.event = event;
+		this.payloadRaw = event;
+		this.eventAsString = eventAsString;
 		this.moduleName = moduleName;
 		this.flowName = flowName;
 		this.timestamp = new Date().getTime();
@@ -98,7 +112,7 @@ public class ReplayEvent implements HarvestEvent
 	 */
 	public Long getId()
 	{
-		return id;
+		return new Long(id);
 	}
 
 	/**
@@ -106,7 +120,7 @@ public class ReplayEvent implements HarvestEvent
 	 */
 	private void setId(Long id)
 	{
-		this.id = id;
+		this.id = id.toString();
 	}
 
 
@@ -115,7 +129,7 @@ public class ReplayEvent implements HarvestEvent
 	 */
 	public byte[] getEvent()
 	{
-		return event;
+		return this.payloadRaw;
 	}
 	
 	/**
@@ -123,7 +137,7 @@ public class ReplayEvent implements HarvestEvent
 	 */
 	public void setEvent(byte[] event)
 	{
-		this.event = event;
+		this.payloadRaw = event;
 	}
 
 	/**
@@ -206,29 +220,21 @@ public class ReplayEvent implements HarvestEvent
 		this.expiry = expiry;
 	}
 
-	/**
-	 * Get harvested flag
-	 *
-	 * @return
-     */
-	public boolean isHarvested()
+
+	public String getEventAsString()
 	{
-		return harvested;
+		return eventAsString;
 	}
 
-	/**
-	 * Set the harvested flag.
-	 *
-	 * @param harvested
-     */
-	public void setHarvested(boolean harvested)
+	public void setEventAsString(String eventAsString)
 	{
-		this.harvested = harvested;
+		this.eventAsString = eventAsString;
 	}
+
 
 	/* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
+                 * @see java.lang.Object#hashCode()
+                 */
 	@Override
 	public int hashCode() 
 	{
@@ -256,23 +262,26 @@ public class ReplayEvent implements HarvestEvent
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ReplayEvent other = (ReplayEvent) obj;
+		SolrReplayEvent other = (SolrReplayEvent) obj;
 		if (!id.equals(other.id))
 			return false;
 		
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
-	public String toString() 
+	public String toString()
 	{
-		return "ReplayEvent [id=" + id + ", moduleName=" + moduleName
-				+ ", flowName=" + flowName + ", eventId=" + eventId
-				+ ", event=" + Arrays.toString(event) + ", timestamp="
-				+ timestamp + "]";
+		final StringBuffer sb = new StringBuffer("SolrReplayEvent{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", moduleName='").append(moduleName).append('\'');
+		sb.append(", flowName='").append(flowName).append('\'');
+		sb.append(", eventId='").append(eventId).append('\'');
+		sb.append(", event='").append(payloadRaw).append('\'');
+		sb.append(", eventAsString='").append(eventAsString).append('\'');
+		sb.append(", timestamp=").append(timestamp);
+		sb.append(", expiry=").append(expiry);
+		sb.append('}');
+		return sb.toString();
 	}
-	
 }
