@@ -55,31 +55,31 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
  */
 public interface ScheduledConsumerBuilder extends Builder<Consumer>
 {
-    public ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
-    public ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
+    ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
 
-    public ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
+    ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
 
-    public ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
+    ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
 
-    public ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
+    ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
-    public ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
+    ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
 
-    public ScheduledConsumerBuilder setCronExpression(String cronExpression);
+    ScheduledConsumerBuilder setCronExpression(String cronExpression);
 
-    public ScheduledConsumerBuilder setEager(boolean eager);
+    ScheduledConsumerBuilder setEager(boolean eager);
 
-    public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
+    ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
 
-    public ScheduledConsumerBuilder setTimezone(String timezone);
+    ScheduledConsumerBuilder setTimezone(String timezone);
 
-    public ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
+    ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
 
-    public ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+    ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
 
 }
 

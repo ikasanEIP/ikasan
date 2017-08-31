@@ -49,6 +49,9 @@ import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.splitter.DefaultListSplitter;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -88,6 +91,24 @@ public class ComponentBuilder
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ScheduledConsumerBuilderImpl(scheduledConsumer,
                 this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class));
         return scheduledConsumerBuilder;
+    }
+
+    /**
+     * Get an instance of an Ikasan default scheduledConsumer with SFTP message Provider
+     * @return scheduledConsumerBuilder
+     */
+    public SftpConsumerBuilder sftpConsumer()
+    {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        SftpConsumerBuilder sftpConsumerBuilder = new SftpConsumerBuilderImpl(scheduledConsumer,
+                this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class)
+                ,this.applicationContext.getBean(JtaTransactionManager.class)
+                ,this.applicationContext.getBean(BaseFileTransferDao.class)
+                ,this.applicationContext.getBean(FileChunkDao.class)
+                ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
+
+        );
+        return sftpConsumerBuilder;
     }
 
     /**
