@@ -196,31 +196,31 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
     @Override
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
     {
-        throw new UnsupportedOperationException();
+
     }
 
     @Override
     public Integer getHousekeepingBatchSize()
     {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     @Override
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
     {
-        throw new UnsupportedOperationException();
+
     }
 
     @Override
     public Integer getTransactionBatchSize()
     {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     @Override
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
-        throw new UnsupportedOperationException();
+
     }
 
     @Override

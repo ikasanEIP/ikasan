@@ -58,9 +58,9 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
 import org.tepi.filtertable.FilterTable;
@@ -339,7 +339,9 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 
 		if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
 				authentication.hasGrantedAuthority(SecurityConstants.REPLAY_ADMIN)
-				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE))
+				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_WRITE)
+				|| authentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_ADMIN)
+				|| authentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE))
 		{
 			cancelButton.setVisible(true);
 			replayButton.setVisible(true);
@@ -382,7 +384,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-		    		ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
+					ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
 			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
 			    			, replayService, platformConfigurationService);
 			    

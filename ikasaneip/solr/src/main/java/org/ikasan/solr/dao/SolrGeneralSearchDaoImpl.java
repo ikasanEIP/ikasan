@@ -18,7 +18,7 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
     private static Logger logger = Logger.getLogger(SolrGeneralSearchDaoImpl.class);
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, long startTime, long endTime, int resultSize)
+    public IkasanSolrDocumentSearchResults search(String searchString, String queryFilter, long startTime, long endTime, int resultSize)
     {
         IkasanSolrDocumentSearchResults results = null;
 
@@ -39,6 +39,11 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
         query.set("defType", "dismax");
         query.setFilterQueries(queryBuffer.toString());
+
+        if(queryFilter != null && !queryFilter.isEmpty())
+        {
+            query.setFilterQueries(queryFilter);
+        }
 
         try
         {

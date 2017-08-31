@@ -50,7 +50,8 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
@@ -80,7 +81,7 @@ public class ReplayAuditViewPanel extends Panel
 	
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
 	
-	public ReplayAuditViewPanel(ReplayAudit replayAudit, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService) 
+	public ReplayAuditViewPanel(ReplayAudit replayAudit, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService)
 	{
 		super();
 		

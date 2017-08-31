@@ -57,7 +57,8 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.serialiser.Serialiser;
@@ -105,7 +106,7 @@ public class ReplayServiceTest extends JerseyTest
 	{
 		for(int i=0; i<100; i++)
 		{
-			ReplayEvent replayEvent = new ReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "moduleName", "flowName", 0);
+			HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "this is a test event", "moduleName", "flowName", 0);
 			
 	        
 			this.replayDao.saveOrUpdate(replayEvent);
@@ -161,7 +162,7 @@ public class ReplayServiceTest extends JerseyTest
     	flowNames.add("flowName");
     	
     	List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
-    			(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    			(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
     	
@@ -285,7 +286,7 @@ public class ReplayServiceTest extends JerseyTest
 		flowNames.add("flowName");
 
 		List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
-				(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
 
 		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
 		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
@@ -313,7 +314,7 @@ public class ReplayServiceTest extends JerseyTest
 
 		replayAudits = this.replayDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 		replayEvents = this.replayDao.getReplayEvents
-				(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
 		auditEvents = this.replayDao.getReplayAuditEventsByAuditId(auditId1);
 		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId2));
 		auditEvents.addAll(this.replayDao.getReplayAuditEventsByAuditId(auditId3));

@@ -62,6 +62,7 @@ import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
@@ -112,7 +113,8 @@ public class WiretapTab extends TopologyTab
 	
 	private FilterTable wiretapTable;
 	
-	private WiretapDao wiretapDao;
+	private WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> wiretapService;
+	private WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> solrWiretapService;
 
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -136,10 +138,11 @@ public class WiretapTab extends TopologyTab
 	
 	private PlatformConfigurationService platformConfigurationService;
 	
-	public WiretapTab(WiretapDao wiretapDao, ComboBox businessStreamCombo,
-			PlatformConfigurationService platformConfigurationService)
+	public WiretapTab(WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> wiretapService, WiretapService<WiretapEvent, PagedSearchResult<WiretapEvent>> solrWiretapService
+					  ,ComboBox businessStreamCombo, PlatformConfigurationService platformConfigurationService)
 	{
-		this.wiretapDao = wiretapDao;
+		this.wiretapService = wiretapService;
+		this.solrWiretapService = solrWiretapService;
 		this.businessStreamCombo = businessStreamCombo;
 		this.platformConfigurationService = platformConfigurationService;
 		
@@ -260,7 +263,7 @@ public class WiretapTab extends TopologyTab
             		}
             	}            	
             	
-            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
+            	PagedSearchResult<WiretapEvent> events = wiretapService.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
             			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
 
             	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)

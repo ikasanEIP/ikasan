@@ -77,11 +77,11 @@ import org.ikasan.dashboard.ui.topology.window.WiretapConfigurationWindow;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.module.StartupControlService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.systemevent.service.SystemEventService;
@@ -219,9 +219,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	
 	public ReplayViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService, 
-			 TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
-			 PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
+                           SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
+                           TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
+                           PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
 			 ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService, FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;

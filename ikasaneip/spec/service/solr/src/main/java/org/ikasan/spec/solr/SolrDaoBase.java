@@ -25,6 +25,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     public static final String COMPONENT_NAME = "componentName";
     public static final String CREATED_DATE_TIME = "timestamp";
     public static final String PAYLOAD_CONTENT = "payload";
+    public static final String PAYLOAD_CONTENT_RAW = "payloadRaw";
     public static final String EVENT = "event";
     public static final String RELATED_EVENT = "relatedEventId";
     public static final String EXPIRY = "expiry";
@@ -82,7 +83,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param type
      * @return
      */
-    protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
+    public String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, String type)
     {
         StringBuffer moduleNamesBuffer = new StringBuffer();

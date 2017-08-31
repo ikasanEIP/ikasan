@@ -11,4 +11,5 @@ public interface SolrService<ENTITY>
      * @param save
      */
     public void save(ENTITY save);
+
 }

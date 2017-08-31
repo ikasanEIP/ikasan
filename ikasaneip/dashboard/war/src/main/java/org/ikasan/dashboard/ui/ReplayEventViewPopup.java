@@ -41,8 +41,8 @@
 package org.ikasan.dashboard.ui;
 
 import org.ikasan.dashboard.ui.replay.panel.ReplayEventViewPanel;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayService;
 
 import com.vaadin.annotations.Theme;
@@ -64,7 +64,7 @@ public class ReplayEventViewPopup extends UI
 	@Override
 	protected void init(VaadinRequest request)
 	{		
-		ReplayEvent replayEvent 
+		ReplayEvent replayEvent
 		 	= (ReplayEvent)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("replayEvent");
 		
 		ReplayService replayService = (ReplayService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("replayService");

@@ -120,23 +120,26 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private SystemEventService systemEventService;
     private ErrorReportingManagementService errorReportingManagementService;
     private ErrorReportingService errorReportingService;
-    
+
     /**
-     * Constructor 
-     * 
+     * Constructor
+     *
      * @param views
      * @param viewComponentContainer
-     * @param userService
-     * @param authenticationService
-     * @param visibilityGroup
-     * @param editableGroup
-     * @param newMappingConfigurationFunctionalGroup
-     * @param existingMappingConfigurationFunctionalGroup
      * @param eventBus
-     * @param persistenceServiceFactory
-     * @param persistenceProvider
      * @param imagePanelLayout
      * @param navigationPanel
+     * @param menuLayout
+     * @param bannerImage
+     * @param menu
+     * @param topologyStateCache
+     * @param bannerLabel
+     * @param mainLayout
+     * @param menuContent
+     * @param showMenuButton
+     * @param systemEventService
+     * @param errorReportingManagementService
+     * @param errorReportingService
      */
 	public IkasanUI(HashMap<String, IkasanUINavigator> views,
 	        ViewComponentContainer viewComponentContainer, EventBus eventBus, VerticalLayout imagePanelLayout, 

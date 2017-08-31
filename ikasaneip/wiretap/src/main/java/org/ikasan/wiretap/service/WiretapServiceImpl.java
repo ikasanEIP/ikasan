@@ -145,6 +145,21 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
             payloadContent);
     }
 
+    @Override
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames, Set<String> moduleFlow, Set<String> componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
+    {
+        if (pageNo < 0)
+        {
+            throw new IllegalArgumentException("pageNo must be >= 0");
+        }
+        if (pageSize < 1)
+        {
+            throw new IllegalArgumentException("pageSize must be > 0");
+        }
+        return wiretapDao.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate,
+                payloadContent);
+    }
+
     /**
      * Get a wireTap event given its Id
      * 
@@ -268,4 +283,5 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     {
         this.save(harvestedRecord);
     }
+
 }

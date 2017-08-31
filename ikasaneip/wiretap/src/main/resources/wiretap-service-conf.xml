@@ -62,7 +62,7 @@
 
 	<bean id="wiretapService"
 		class="org.ikasan.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="wiretapEvent" />
 		<constructor-arg ref="moduleService" />
 		<constructor-arg ref ="wiretapEventFactory"/>
 	</bean>
@@ -79,7 +79,7 @@
         <property name="platformConfigurationService" ref="platformConfigurationService"/>
     </bean>
 	
-	<bean id="wiretapDao"
+	<bean id="wiretapEvent"
 		class="org.ikasan.wiretap.dao.HibernateWiretapDao">
         <constructor-arg value="true"/>
         <constructor-arg value="1000"/>

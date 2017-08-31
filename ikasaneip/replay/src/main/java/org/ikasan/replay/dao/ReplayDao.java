@@ -45,7 +45,8 @@ import java.util.List;
 
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 
 
 /**
@@ -94,12 +95,12 @@ public interface ReplayDao
      * @param moduleNames
      * @param flowNames
      * @param eventId
-     * @param fromDate
-     * @param toDate
-     * @return
+     * @param payloadContent
+	 *@param fromDate
+	 * @param toDate   @return
      */
     public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames,
-			String eventId, Date fromDate, Date toDate);
+											 String eventId, String payloadContent, Date fromDate, Date toDate);
     
     /**
      *  Get a list of ReplayAudit depending upon search criteria.

@@ -16,7 +16,7 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.solr.SolrService;
@@ -38,13 +38,12 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     
     private List<ReplayListener<ReplayAuditEvent>> replayListeners 
     	= new ArrayList<ReplayListener<ReplayAuditEvent>>();
-    
-	/**
+
+    /**
 	 * Constructor
-	 * 
+	 *
 	 * @param replayDao
-	 * @param serialiserFactory
-	 */
+     */
 	public ReplayServiceImpl(ReplayDao replayDao) 
 	{
 		super();
@@ -94,7 +93,8 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		    		+ "/"
 		    		+ event.getFlowName();
 			
-			logger.debug("Replay Url: " + url);
+			logger.info("Replay Url: " + url);
+			logger.info("Event: " + event.getEvent());
 			
 		    WebTarget webTarget = client.target(url);
 		    Response response = webTarget.request().put(Entity.entity(event.getEvent()
@@ -112,7 +112,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		    
 		    logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
 		    
-		    this.replayDao.saveOrUpdate(replayAuditEvent);
+//		    this.replayDao.saveOrUpdate(replayAuditEvent);
 		    
 		    replayAuditEvent.setReplayEvent(event);
 		    

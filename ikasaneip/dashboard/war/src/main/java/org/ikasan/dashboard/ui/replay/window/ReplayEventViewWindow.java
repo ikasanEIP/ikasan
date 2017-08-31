@@ -42,8 +42,8 @@ package org.ikasan.dashboard.ui.replay.window;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.replay.panel.ReplayEventViewPanel;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayService;
 
 import com.vaadin.ui.Window;
@@ -71,7 +71,7 @@ public class ReplayEventViewWindow extends Window
 	 * @param platformConfigurationService
 	 */
 	public ReplayEventViewWindow(ReplayEvent replayEvent, ReplayService replayService,
-			PlatformConfigurationService platformConfigurationService)
+								 PlatformConfigurationService platformConfigurationService)
 	{
 		super();
 		this.replayEvent = replayEvent;

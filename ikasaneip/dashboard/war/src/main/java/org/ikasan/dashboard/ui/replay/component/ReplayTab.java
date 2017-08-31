@@ -59,9 +59,9 @@ import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.component.TopologyTab;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.topology.model.Flow;
@@ -113,7 +113,8 @@ public class ReplayTab extends TopologyTab
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
 	
-	private TextField eventId;	
+	private TextField eventId;
+	private TextField payloadContent;
 	
 	private float splitPosition;
 	private Unit splitUnit;
@@ -127,7 +128,7 @@ public class ReplayTab extends TopologyTab
 	private PlatformConfigurationService platformConfigurationService;
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-			PlatformConfigurationService platformConfigurationService)
+					 PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
@@ -177,7 +178,7 @@ public class ReplayTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-			    	ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
+					ReplayEvent replayEvent = (ReplayEvent)itemClickEvent.getItemId();
 			    	ReplayEventViewWindow replayEventViewWindow = new ReplayEventViewWindow(replayEvent
 			    			, replayService, platformConfigurationService);
 			    
@@ -220,8 +221,8 @@ public class ReplayTab extends TopologyTab
             	}
 
             	List<ReplayEvent> replayEvents = replayManagementService
-            			.getReplayEvents(moduleNames, flowNames, eventId.getValue(),
-            					fromDate.getValue(), toDate.getValue());
+            			.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
+                                fromDate.getValue(), toDate.getValue());
             	
             	if(replayEvents == null || replayEvents.size() == 0)
             	{
@@ -340,7 +341,14 @@ public class ReplayTab extends TopologyTab
 		
 		this.eventId.setNullSettingAllowed(true);
 		
-		dateSelectLayout.addComponent(this.eventId, 1, 0);				
+		dateSelectLayout.addComponent(this.eventId, 1, 0);
+
+		this.payloadContent = new TextField("Payload");
+		this.payloadContent.setWidth("80%");
+
+		this.payloadContent.setNullSettingAllowed(true);
+
+		dateSelectLayout.addComponent(this.payloadContent, 1, 1);
 		
 		final VerticalSplitPanel vSplitPanel = new VerticalSplitPanel();
 		vSplitPanel.setHeight("100%");
@@ -570,14 +578,14 @@ public class ReplayTab extends TopologyTab
 	 */
 	protected List<ReplayEvent> getReplayEvents()
 	{
-		Collection<ReplayEvent> items = (Collection<ReplayEvent>)tableContainer.getItemIds();       	
+		Collection<ReplayEvent> items = (Collection<ReplayEvent>)tableContainer.getItemIds();
     	
     	final List<ReplayEvent> myItems = new ArrayList<ReplayEvent>(items);
     	
     	// We need to sort so that we can resubmit the oldest events first!
-    	Comparator<ReplayEvent> comparator = new Comparator<ReplayEvent>() 
+    	Comparator<ReplayEvent> comparator = new Comparator<ReplayEvent>()
     	{
-    	    public int compare(ReplayEvent c1, ReplayEvent c2) 
+    	    public int compare(ReplayEvent c1, ReplayEvent c2)
     	    {
     	        if (c2.getTimestamp() < c1.getTimestamp())
     	        {

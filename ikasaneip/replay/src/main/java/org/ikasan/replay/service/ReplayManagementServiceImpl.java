@@ -48,8 +48,9 @@ import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.solr.SolrService;
 
@@ -90,10 +91,10 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
          */
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
-			List<String> flowNames, String eventId,
-			Date fromDate, Date toDate) 
+                                                      List<String> flowNames, String eventId,
+                                                      String payloadContent, Date fromDate, Date toDate)
 	{
-		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, fromDate, toDate);
+		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate);
 	}
 
 	/* (non-Javadoc)

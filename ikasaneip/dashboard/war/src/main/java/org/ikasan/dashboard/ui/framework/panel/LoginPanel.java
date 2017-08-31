@@ -53,12 +53,13 @@ public class LoginPanel extends Panel implements View
 
     /**
      * Helper method to initialise this object.
-     * 
-     * @param userService
-     * @param authProvider
+     *
+     * @param authenticationService
      * @param visibilityGroup
-     * @param userDetailsHelper
      * @param commitHandler
+     * @param userService
+     * @param bannerImage
+     * @param bannerLabel
      */
     protected void init(AuthenticationService authenticationService,
             VisibilityGroup visibilityGroup, final CommitHandler commitHandler, UserService userService,
