@@ -40,10 +40,9 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.builder.component.Builder;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
@@ -55,7 +54,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team.
  */
-public interface FileConsumerBuilder extends Builder<Consumer>
+public interface FileConsumerBuilder extends ScheduledConsumerBuilder
 {
     public FileConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
@@ -100,6 +99,8 @@ public interface FileConsumerBuilder extends Builder<Consumer>
     public FileConsumerBuilder setLogMatchedFilenames(boolean logMatchedFilenames);
 
     public FileConsumerBuilder setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
+
+    public FileConsumerBuilder setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor);
 
 }
 

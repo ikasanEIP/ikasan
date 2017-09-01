@@ -45,6 +45,7 @@ import org.ikasan.builder.component.filter.MessageFilterBuilder;
 import org.ikasan.builder.component.filter.MessageFilterBuilderImpl;
 import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
@@ -148,6 +149,18 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan default fileConsumer
+     * @return scheduledConsumerBuilder
+     */
+    public FileConsumerBuilder fileConsumer()
+    {
+        ScheduledConsumer scheduledConsumer = new org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer( this.applicationContext.getBean(Scheduler.class) );
+        FileConsumerBuilder fileConsumerBuilder = new FileConsumerBuilderImpl(scheduledConsumer,
+                this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class), new FileMessageProvider() );
+        return fileConsumerBuilder;
+    }
+
+    /**
      * Get an instance of an Ikasan default jmsConsumer
      * @return jmsConsumerBuilder
      */
@@ -167,8 +180,6 @@ public class ComponentBuilder
         JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
         return jmsProducerBuilder;
     }
-
-
 
     public Builder<Splitter> listSplitter()
     {

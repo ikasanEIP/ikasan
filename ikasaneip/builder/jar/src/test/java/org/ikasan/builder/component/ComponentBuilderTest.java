@@ -44,6 +44,7 @@ import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.builder.component.endpoint.FileConsumerBuilder;
 import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
@@ -60,7 +61,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import javax.transaction.TransactionManager;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -115,6 +115,31 @@ public class ComponentBuilderTest {
         });
 
         componentBuilder.scheduledConsumer();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_fileConsumer()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(Scheduler.class);
+                will(returnValue(scheduler));
+                oneOf(applicationContext).getBean(ScheduledJobFactory.class);
+                will(returnValue(scheduledJobFactory));
+
+                oneOf(applicationContext).getBean(AopProxyProvider.class);
+                will(returnValue(aopProxyProvider));
+            }
+        });
+
+        FileConsumerBuilder fileConsumerBuilder = componentBuilder.fileConsumer();
 
         mockery.assertIsSatisfied();
     }
