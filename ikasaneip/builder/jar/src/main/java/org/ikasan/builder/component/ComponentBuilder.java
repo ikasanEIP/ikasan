@@ -148,6 +148,23 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan default FTP Producer
+     * @return ftpProducerBuilder
+     */
+    public FtpProducerBuilder ftpProducer()
+    {
+
+        FtpProducerBuilder ftpProducerBuilder = new FtpProducerBuilderImpl(
+                this.applicationContext.getBean(JtaTransactionManager.class)
+                ,this.applicationContext.getBean(BaseFileTransferDao.class)
+                ,this.applicationContext.getBean(FileChunkDao.class)
+                ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
+
+        );
+        return ftpProducerBuilder;
+    }
+
+    /**
      * Get an instance of an Ikasan default jmsConsumer
      * @return jmsConsumerBuilder
      */

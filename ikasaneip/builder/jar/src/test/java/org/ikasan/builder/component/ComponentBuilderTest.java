@@ -220,6 +220,34 @@ public class ComponentBuilderTest {
     }
 
     @Test
+    public void test_successful_ftpProducer() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+                oneOf(applicationContext).getBean(BaseFileTransferDao.class);
+                will(returnValue(baseFileTransferDao));
+
+                oneOf(applicationContext).getBean(FileChunkDao.class);
+                will(returnValue(fileChunkDao));
+
+                oneOf(applicationContext).getBean(TransactionalResourceCommandDAO.class);
+                will(returnValue(transactionalResourceCommandDAO));
+            }
+        });
+
+        componentBuilder.ftpProducer();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
     public void test_successful_jmsConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 

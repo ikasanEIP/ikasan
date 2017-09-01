@@ -43,12 +43,6 @@ public class ModuleConfig {
     private Converter filePayloadGeneratorConverter;
 
     @Resource
-    private Producer ftpProducer;
-
-    @Resource
-    private ApplicationContext context;
-
-    @Resource
     private BuilderFactory builderFactory;
 
     @Value("${ftp.consumer.cronExpression}")
@@ -75,19 +69,33 @@ public class ModuleConfig {
     @Value("${ftp.consumer.filenamePattern}")
     private String ftpConsumerFilenamePattern;
 
+
+
+    @Value("${ftp.producer.clientID}")
+    private String ftpProducerClientID;
+
+    @Value("${ftp.producer.username}")
+    private String ftpProducerUsername;
+
+    @Value("${ftp.producer.password}")
+    private String ftpProducerPassword;
+
+    @Value("${ftp.producer.remoteHost}")
+    private String ftpProducerRemoteHost;
+
+    @Value("${ftp.producer.remotePort}")
+    private Integer ftpProducerRemotePort;
+
+    @Value("${ftp.producer.outputDirectory}")
+    private String ftpConsumerOutputDirectory;
+
     @Bean
     public Module getModule(){
 
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-ftp-module");
 
         Flow ftpToLogFlow = getFtpToLogFlow(mb, builderFactory.getComponentBuilder());
-
-        FlowBuilder timeGeneratorToFtpFlowBuilder = mb.getFlowBuilder("timeGeneratorToFtpFlow");
-        Flow timeGeneratorToFtpFlow = timeGeneratorToFtpFlowBuilder
-                .withDescription("Generates random string and send it to ftp as file")
-                .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)
-                .converter("Random String Generator",filePayloadGeneratorConverter)
-                .producer("Ftp Producer", ftpProducer).build();
+        Flow timeGeneratorToFtpFlow = getTimeGeneratorToFtpFlow(mb, builderFactory.getComponentBuilder());
 
         Module module = mb.withDescription("Sample Spring Boot FTP Module")
                 .addFlow(ftpToLogFlow).addFlow(timeGeneratorToFtpFlow).build();
@@ -125,6 +133,30 @@ public class ModuleConfig {
                 .producer("Log", new DevNull()).build();
 
         return ftpToLogFlow;
+    }
+
+
+    public Flow getTimeGeneratorToFtpFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
+    {
+        FlowBuilder timeGeneratorToFtpFlowBuilder = moduleBuilder.getFlowBuilder("timeGeneratorToFtpFlow");
+        Flow timeGeneratorToFtpFlow = timeGeneratorToFtpFlowBuilder
+                .withDescription("Generates random string and send it to ftp as file")
+                .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)
+                .converter("Random String Generator",filePayloadGeneratorConverter)
+                .producer("Ftp Producer", componentBuilder.ftpProducer()
+                                .setClientID(ftpProducerClientID)
+                                .setUsername(ftpProducerUsername)
+                                .setPassword(ftpProducerPassword)
+                                .setRemoteHost(ftpProducerRemoteHost)
+                                .setRemotePort(ftpProducerRemotePort)
+                                .setOutputDirectory(ftpConsumerOutputDirectory)
+                                .setOverwrite(true)
+                                .setConfiguredResourceId("ftpProducerConfiguration")
+                                .build()
+                        )
+                .build();
+
+        return timeGeneratorToFtpFlow;
     }
 
 
