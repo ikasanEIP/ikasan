@@ -52,6 +52,7 @@ import org.ikasan.component.splitter.DefaultListSplitter;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.ikasan.endpoint.sftp.producer.SftpProducer;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -95,7 +96,7 @@ public class ComponentBuilder
 
     /**
      * Get an instance of an Ikasan default scheduledConsumer with SFTP message Provider
-     * @return scheduledConsumerBuilder
+     * @return sftpConsumerBuilder
      */
     public SftpConsumerBuilder sftpConsumer()
     {
@@ -112,8 +113,25 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan default SFTP Producer
+     * @return sftpProducerBuilder
+     */
+    public SftpProducerBuilder sftpProducer()
+    {
+
+        SftpProducerBuilder sftpProducerBuilder = new SftpProducerBuilderImpl(
+                this.applicationContext.getBean(JtaTransactionManager.class)
+                ,this.applicationContext.getBean(BaseFileTransferDao.class)
+                ,this.applicationContext.getBean(FileChunkDao.class)
+                ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
+
+        );
+        return sftpProducerBuilder;
+    }
+
+    /**
      * Get an instance of an Ikasan default scheduledConsumer with FTP message Provider
-     * @return scheduledConsumerBuilder
+     * @return FtpConsumerBuilder
      */
     public FtpConsumerBuilder ftpConsumer()
     {
@@ -149,6 +167,8 @@ public class ComponentBuilder
         JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
         return jmsProducerBuilder;
     }
+
+
 
     public Builder<Splitter> listSplitter()
     {

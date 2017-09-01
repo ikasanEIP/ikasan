@@ -7,40 +7,6 @@
     <!--  component implementations                                          -->
     <!--  ================================================================== -->
 
-    <!--<bean id="sftpConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">-->
-        <!--<constructor-arg ref="scheduler"/>-->
-        <!--<property name="messageProvider" ref="sftpMessageProvider"/>-->
-        <!--<property name="jobDetail">-->
-            <!--<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
-                <!--<property name="targetObject" ref="scheduledJobFactory"/>-->
-                <!--<property name="targetMethod" value="createJobDetail"/>-->
-                <!--<property name="arguments">-->
-                    <!--<list>-->
-                        <!--<ref bean="sftpConsumer"/>-->
-                        <!--<value type="java.lang.Class">-->
-                            <!--org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer-->
-                        <!--</value>-->
-                        <!--<value>sftpConsumer</value>-->
-                        <!--<value>sftpToLogFlow</value>-->
-                    <!--</list>-->
-                <!--</property>-->
-            <!--</bean>-->
-        <!--</property>-->
-        <!--<property name="configuration" ref="sftpConsumerConfiguration"/>-->
-        <!--<property name="configuredResourceId" value="sftpConsumer"/>-->
-    <!--</bean>-->
-
-   <!---->
-
-
-    <!--<bean id="sftpMessageProvider" class="org.ikasan.endpoint.sftp.consumer.SftpMessageProvider">-->
-        <!--<property name="configuration" ref="sftpConsumerConfiguration"/>-->
-        <!--<constructor-arg name="fileChunkDao" ref="fileChunkDao"/>-->
-        <!--<constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>-->
-        <!--<constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>-->
-        <!--<constructor-arg name="transactionManager" ref="transactionManager"/>-->
-    <!--</bean>-->
-
     <bean id="payloadToStringConverter" class="org.ikasan.sample.converter.PayloadToStringConverter"/>
 
     <bean id="filePayloadGeneratorConverter" class="org.ikasan.sample.converter.FilePayloadGeneratorConverter"/>
@@ -69,26 +35,6 @@
 
     <bean id="fileGeneratorScheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
         <property name="cronExpression" value="${fileGenerator.consumer.cronExpression}"/>
-    </bean>
-
-    <bean id="sftpProducer" class="org.ikasan.endpoint.sftp.producer.SftpProducer">
-        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
-        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
-        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
-        <constructor-arg name="transactionManager" ref="transactionManager"/>
-
-        <property name="configuration" ref="sftpProducerConfiguration"/>
-        <property name="configuredResourceId" value="sftpProducerConfiguration"/>
-    </bean>
-
-    <bean id="sftpProducerConfiguration" class="org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration">
-        <property name="clientID" value="${sftp.producer.clientID}"/>
-        <property name="username" value="${sftp.producer.username}"/>
-        <property name="password" value="${sftp.producer.password}"/>
-        <property name="remoteHost" value="${sftp.producer.remoteHost}"/>
-        <property name="remotePort" value="${sftp.producer.remotePort}"/>
-        <property name="outputDirectory" value="${sftp.producer.outputDirectory}"/>
-        <property name="cleanupJournalOnComplete" value="false"/>
     </bean>
 
 </beans>

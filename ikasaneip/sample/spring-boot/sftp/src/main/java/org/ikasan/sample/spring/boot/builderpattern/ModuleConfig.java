@@ -34,21 +34,10 @@ import javax.annotation.Resource;
 public class ModuleConfig {
 
     @Resource
-    private ScheduledConsumer sftpConsumer;
-
-    @Resource
     private ScheduledConsumer fileGeneratorScheduledConsumer;
 
     @Resource
-    private Converter payloadToStringConverter;
-    @Resource
     private Converter filePayloadGeneratorConverter;
-
-    @Resource
-    private Producer sftpProducer;
-
-    @Resource
-    private ApplicationContext context;
 
     @Resource
     private BuilderFactory builderFactory;
@@ -80,23 +69,36 @@ public class ModuleConfig {
     @Value("${sftp.consumer.knownHosts}")
     private String sftpConsumerKnownHosts;
 
+    @Value("${sftp.producer.clientID}")
+    private String sftpProducerClientID;
+
+    @Value("${sftp.producer.username}")
+    private String sftpProducerUsername;
+
+    @Value("${sftp.producer.password}")
+    private String sftpProducerPassword;
+
+    @Value("${sftp.producer.remoteHost}")
+    private String sftpProducerRemoteHost;
+
+    @Value("${sftp.producer.remotePort}")
+    private Integer sftpProducerRemotePort;
+
+    @Value("${sftp.producer.outputDirectory}")
+    private String sftpConsumerOutputDirectory;
+
     @Bean
     public Module getModule(){
 
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-sftp-module");
 
-        FlowBuilder timeGeneratorToSftpFlowBuilder = mb.getFlowBuilder("timeGeneratorToSftpFlow");
-        Flow timeGeneratorToSftpFlow = timeGeneratorToSftpFlowBuilder
-                .withDescription("Generates random string and send it to sftp as file")
-                .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)
-                .converter("Random String Generator",filePayloadGeneratorConverter)
-                .producer("Sftp Producer", sftpProducer)
-                .build();
 
+
+        Flow timeGeneratorToSftpFlow = getTimeGeneratorToSftpFlow(mb,builderFactory.getComponentBuilder());
         Flow sftpToLogFlow = getSftpConsumerFlow(mb,builderFactory.getComponentBuilder());
 
         Module module = mb.withDescription("SFTP Sample Module")
-                .addFlow(timeGeneratorToSftpFlow).addFlow(sftpToLogFlow).build();
+                .addFlow(sftpToLogFlow).addFlow(timeGeneratorToSftpFlow).build();
         return module;
 
     }
@@ -158,5 +160,45 @@ public class ModuleConfig {
                 .producer("Log", new DevNull()).build();
         return sftpToLogFlow;
     }
+
+    /**
+     *
+
+     <bean id="sftpProducerConfiguration" class="org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration">
+     <property name="clientID" value="${sftp.producer.clientID}"/>
+     <property name="username" value="${sftp.producer.username}"/>
+     <property name="password" value="${sftp.producer.password}"/>
+     <property name="remoteHost" value="${sftp.producer.remoteHost}"/>
+     <property name="remotePort" value="${sftp.producer.remotePort}"/>
+     <property name="outputDirectory" value="${sftp.producer.outputDirectory}"/>
+     <property name="cleanupJournalOnComplete" value="false"/>
+     </bean>
+
+
+     * @param moduleBuilder
+     * @param componentBuilder
+     * @return
+     */
+    public Flow getTimeGeneratorToSftpFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
+    {
+        FlowBuilder timeGeneratorToSftpFlowBuilder = moduleBuilder.getFlowBuilder("timeGeneratorToSftpFlow");
+        Flow timeGeneratorToSftpFlow = timeGeneratorToSftpFlowBuilder
+                .withDescription("Generates random string and send it to sftp as file")
+                .consumer("Scheduled Consumer", fileGeneratorScheduledConsumer)
+                .converter("Random String Generator",filePayloadGeneratorConverter)
+                .producer("Sftp Producer", componentBuilder.sftpProducer()
+                        .setClientID(sftpProducerClientID)
+                        .setUsername(sftpProducerUsername)
+                        .setPassword(sftpProducerPassword)
+                        .setRemoteHost(sftpProducerRemoteHost)
+                        .setRemotePort(sftpProducerRemotePort)
+                        .setOutputDirectory(sftpConsumerOutputDirectory)
+                        .setConfiguredResourceId("sftpProducerConfiguration")
+                        .build())
+                .build();
+
+        return timeGeneratorToSftpFlow;
+    }
+
 
 }
