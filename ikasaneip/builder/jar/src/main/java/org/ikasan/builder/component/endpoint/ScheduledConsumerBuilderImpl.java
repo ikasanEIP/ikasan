@@ -69,10 +69,10 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
     AopProxyProvider aopProxyProvider;
 
     /** scheduled job name */
-    String scheduledJobName = "defaultScheduledJobName";
+    String scheduledJobName;
 
     /** scheduled job group name */
-    String scheduledJobGroupName = "defaultScheduledJobGroupName";
+    String scheduledJobGroupName;
 
     /**
      * Constructor
