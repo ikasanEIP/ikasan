@@ -75,6 +75,7 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
 
+        notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
 
         if(hasConverter == null)
         {

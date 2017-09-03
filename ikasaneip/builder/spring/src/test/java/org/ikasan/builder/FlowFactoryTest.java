@@ -45,7 +45,7 @@ import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
@@ -136,7 +136,7 @@ public class FlowFactoryTest
 
         fe = flowElements.get(4);
         Assert.assertTrue("flow element name should be 'router'", "router".equals(fe.getComponentName()));
-        Assert.assertTrue("flow element component should be an instance of Router", fe.getFlowComponent() instanceof Router);
+        Assert.assertTrue("flow element component should be an instance of MultiRecipientRouter", fe.getFlowComponent() instanceof MultiRecipientRouter);
         Assert.assertTrue("flow element invoker should be an instance of MultiRecipientRouterFlowElementInvoker", fe.getFlowElementInvoker() instanceof MultiRecipientRouterFlowElementInvoker);
         Assert.assertTrue("flow element should have 2 routable transitions", fe.getTransitions().size() == 2);
 

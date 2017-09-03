@@ -40,8 +40,6 @@
  */
 package org.ikasan.spec.component.routing;
 
-import java.util.List;
-
 /**
  * Contract for a Routing operation.
  * 

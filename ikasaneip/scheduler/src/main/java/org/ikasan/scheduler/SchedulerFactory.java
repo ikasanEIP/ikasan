@@ -70,7 +70,17 @@ public class SchedulerFactory
         
         return schedulerFactory;
     }
-    
+
+    /**
+     * This method is called during module shutdown.
+     * That will assure that new scheduler instance will be created each time
+     * Spring context is reloaded.
+     */
+    public static void close()
+    {
+        schedulerFactory = null;
+    }
+
     /**
      * Constructor
      */
@@ -105,6 +115,6 @@ public class SchedulerFactory
     protected Scheduler newScheduler() throws SchedulerException
     {
         System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
-        return StdSchedulerFactory.getDefaultScheduler();
+        return  StdSchedulerFactory.getDefaultScheduler();
     }
 }

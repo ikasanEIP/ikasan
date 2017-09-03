@@ -60,9 +60,12 @@ public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker imp
 
         Translator translator = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, translator);
+
         // we must unset the context whatever happens, so try/finally
         try
         {
+            notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
             translator.translate(flowEvent.getPayload());
         }
         finally

@@ -62,6 +62,7 @@
         <module>mongo-endpoint</module>
         <module>mongo-endpoint-test</module>
         <module>email-endpoint</module>
+        <module>filetransfer</module>
     </modules>
 
 </project>

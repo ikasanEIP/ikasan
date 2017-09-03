@@ -50,11 +50,10 @@ import org.ikasan.spec.module.Module;
 public interface IkasanApplication
 {
     /**
-     * Get instance of a module builder
-     * @param moduleName
+     * Get an instance of an IkasanBuilderFactory
      * @return
      */
-    ModuleBuilder getModuleBuilder(String moduleName);
+    public BuilderFactory getBuilderFactory();
 
     /**
      * Execute the module
@@ -62,6 +61,10 @@ public interface IkasanApplication
      */
     void run(Module module);
 
+    /**
+     * This method forces Ikassan application shutdown.
+     */
+    void close();
     /**
      * Get bean by given name.
      *
