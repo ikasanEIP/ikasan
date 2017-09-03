@@ -34,8 +34,10 @@
     <!-- 1.4.x change log -->
     <include file="db-changelog-1.4.0.xml" relativeToChangelogFile="true" />
 
-    <!-- 2.0.x change log -->
-    <include file="db-changelog-2.0.0.xml" relativeToChangelogFile="true" />
-	
+    <!-- 1.5.0 change log -->
+    <include file="db-changelog-1.5.0.xml" relativeToChangelogFile="true" />
+
+	<!-- 2.0.x change log -->
+	<include file="db-changelog-2.0.0.xml" relativeToChangelogFile="true" />	
 
 </databaseChangeLog>

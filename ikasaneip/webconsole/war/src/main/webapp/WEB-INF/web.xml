@@ -52,7 +52,7 @@
             classpath:rest-service-conf.xml
             classpath:replay-service-conf.xml
 			classpath:filter-service-conf.xml
-            /WEB-INF/security-service-conf.xml
+            classpath:security-service-boot-conf.xml
         </param-value>
 	</context-param>
 

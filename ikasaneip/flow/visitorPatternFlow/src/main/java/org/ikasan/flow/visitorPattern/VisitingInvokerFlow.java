@@ -836,9 +836,9 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         {
             try
             {
-               	
-            	notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
             	flowElementCaptureMetrics(flowElement);
+                flowElement.getFlowElementInvoker().setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+                flowElement.getFlowElementInvoker().setInvokeContextListeners(invokeContextListeners);
                 flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
                 
             }
@@ -929,32 +929,6 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         }
 
     }
-    
-    /**
-     * Notify any FlowInvocationContextListeners that to snap an event
-     */
-    protected void notifyFlowInvocationContextListenersSnapEvent(FlowElement flowElement, FlowEvent flowEvent)
-    {
-    	if(((FlowElementConfiguration)flowElement.getConfiguration()).getSnapEvent() &&
-    			((FlowElementConfiguration)flowElement.getConfiguration()).getCaptureMetrics())
-    	{
-	        if (flowInvocationContextListeners != null && this.invokeContextListeners)
-	        {
-	            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
-	            {
-	                try
-	                {
-	                    listener.snapEvent(flowElement, flowEvent);
-	                } 
-	                catch (RuntimeException e)
-	                {
-	                    logger.warn("Unable to invoke FlowInvocationContextListener snap event, continuing", e);
-	                }
-	            }
-	        }
-    	}
-    }
-
 
     /**
      * Set the flow monitor

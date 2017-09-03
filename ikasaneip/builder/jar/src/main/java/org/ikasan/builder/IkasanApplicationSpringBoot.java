@@ -42,17 +42,25 @@ package org.ikasan.builder;
 
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleInitialisationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SpringBootApplication
 public class IkasanApplicationSpringBoot implements IkasanApplication
 {
-    static final String MODULE_NAME = "moduleName";
-    static final String PROTOTYPE = "prototype";
+    /** logger */
+    private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
 
     ApplicationContext context;
+
+    Map<String, Module> modules = new HashMap<String,Module>();
 
     public IkasanApplicationSpringBoot(String[] args)
     {
@@ -63,20 +71,29 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     {
     }
 
-//    public BuilderFactory getBuilderFactory()
-//    {
-//        return new BuilderFactory(this.context);
-//    }
-
-    public ModuleBuilder getModuleBuilder(String name)
+    public BuilderFactory getBuilderFactory()
     {
-        return new ModuleBuilder(this.context, name);
+        return new BuilderFactoryImpl(context, new HashMap<String,ModuleBuilder>());
     }
 
     public void run(Module module)
     {
-        ModuleInitialisationService service =  this.context.getBean(ModuleInitialisationService.class);
+        this.modules.put(module.getName(), module);
+        ModuleInitialisationService service = this.context.getBean(ModuleInitialisationService.class);
         service.register(module);
+        logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
+    }
+
+    // TODO - add close or shutdown per module ?
+
+    public void close()
+    {
+        SpringApplication.exit(this.context, new ExitCodeGenerator(){
+            @Override public int getExitCode()
+            {
+                return 0;
+            }
+        });
     }
 
     @Override public Object getBean(String beanName)
@@ -88,4 +105,5 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     {
         return context.getBean(className);
     }
+
 }

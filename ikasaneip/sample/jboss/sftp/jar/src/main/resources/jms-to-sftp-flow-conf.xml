@@ -58,7 +58,10 @@
     </bean>
 
     <bean id="sftpProducer" class="org.ikasan.endpoint.sftp.producer.SftpProducer">
-        <constructor-arg ref="producerConnectionFactory"/>
+        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
+        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
+        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
+        <constructor-arg name="transactionManager" ref="transactionManager"/>
         <property name="configuration" ref="sftpProducerConfiguration"/>
         <property name="configuredResourceId" value="sftpProducerConfiguration"/>
     </bean>
@@ -73,9 +76,6 @@
         <property name="cleanupJournalOnComplete" value="false"/>
      </bean>
 
-    <bean id="producerConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/sftp/SimpleSftpConnectionFactory"/>
-    </bean>
 
     <bean id="jmsToSftpConverter" class="org.ikasan.sample.sftp.component.converter.JmsToSftpConverter"/>
 

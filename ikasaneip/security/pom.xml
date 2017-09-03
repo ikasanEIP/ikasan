@@ -96,7 +96,13 @@
 	    <dependency>
 	        <groupId>org.springframework.ldap</groupId>
 	        <artifactId>spring-ldap-odm</artifactId>
-	    </dependency>
+			<exclusions>
+				<exclusion>
+					<artifactId>freemarker</artifactId>
+					<groupId>org.freemarker</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 	    <dependency>
 	        <groupId>org.springframework.ldap</groupId>

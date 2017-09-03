@@ -229,7 +229,7 @@ public class MessageHistoryServiceImplTest
             }
 
             FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
-                    System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l);
+                    System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
             flowInvocationMetric.setHarvested(false);
 
@@ -291,7 +291,7 @@ public class MessageHistoryServiceImplTest
             }
 
             FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
-                    System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l);
+                    System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
             flowInvocationMetric.setHarvested(false);
 

@@ -62,6 +62,9 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
 
         Sequencer sequencer = flowElement.getFlowComponent();
         setInvocationOnComponent(flowElementInvocation, sequencer);
+
+        notifyFlowInvocationContextListenersSnapEvent(flowElement, flowEvent);
+
         // we must unset the context whatever happens, so try/finally
         List payloads;
         try
@@ -90,6 +93,7 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
                 FlowElement nextFlowElementInRoute = nextFlowElement;
                 while (nextFlowElementInRoute != null)
                 {
+                    notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEvent);
                     nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
                 }
             }
