@@ -44,6 +44,21 @@
             <groupId>org.jboss</groupId>
             <artifactId>jboss-remote-naming</artifactId>
             <version>1.0.8.Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.marshalling</groupId>
+                    <artifactId>jboss-marshalling</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.remoting3</groupId>
+                    <artifactId>jboss-remoting</artifactId>
+                </exclusion>
+
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jboss.xnio/xnio-nio -->
         <dependency>
