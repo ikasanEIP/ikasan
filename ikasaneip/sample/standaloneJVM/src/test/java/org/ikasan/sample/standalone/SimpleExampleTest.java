@@ -49,7 +49,6 @@ import org.junit.Test;
  * 
  * @author Ikasan Development Team
  */
-@Ignore
 public class SimpleExampleTest
 {
     /**

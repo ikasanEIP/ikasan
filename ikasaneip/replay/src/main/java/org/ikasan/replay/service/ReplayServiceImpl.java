@@ -112,7 +112,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		    
 		    logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
 		    
-//		    this.replayDao.saveOrUpdate(replayAuditEvent);
+		    this.replayDao.saveOrUpdate(replayAuditEvent);
 		    
 		    replayAuditEvent.setReplayEvent(event);
 		    
