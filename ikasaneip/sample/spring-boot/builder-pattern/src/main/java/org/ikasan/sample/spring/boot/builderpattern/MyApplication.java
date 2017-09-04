@@ -91,7 +91,8 @@ public class MyApplication
     {
         FlowBuilder flowBuilder = moduleBuilder.getFlowBuilder("Scheduled Flow Name");
         return flowBuilder.withDescription("scheduled flow description")
-                .consumer("consumer", componentBuilder.scheduledConsumer().setCronExpression("0/5 * * * * ?").setConfiguredResourceId("configuredResourceId").build())
+                .consumer("consumer", componentBuilder.scheduledConsumer().setCronExpression("0/5 * * * * ?").setConfiguredResourceId("configuredResourceId")
+                        .setScheduledJobGroupName("scheduledJobGroupName").setScheduledJobName("scheduledJobName").build())
                 .producer("producer", new MyProducer()).build();
     }
 

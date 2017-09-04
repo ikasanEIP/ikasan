@@ -38,72 +38,34 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleInitialisationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.ExitCodeGenerator;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.ikasan.builder.component.Builder;
+import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
+import org.ikasan.spec.component.endpoint.Producer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@SpringBootApplication
-public class IkasanApplicationSpringBoot implements IkasanApplication
+/**
+ * Contract for a default fileProducerBuilder.
+ *
+ * @author Ikasan Development Team.
+ */
+public interface FileProducerBuilder extends Builder<Producer>
 {
-    /** logger */
-    private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
+    public FileProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    ApplicationContext context;
+    public FileProducerBuilder setConfiguration(FileProducerConfiguration fileProducerConfiguration);
 
-    Map<String, Module> modules = new HashMap<String,Module>();
+    public FileProducerBuilder setFilename(String filename);
 
-    public IkasanApplicationSpringBoot(String[] args)
-    {
-        this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
-    }
+    public FileProducerBuilder setTempFilename(String tempFilename);
 
-    IkasanApplicationSpringBoot()
-    {
-    }
+    public FileProducerBuilder setUseTempFile(boolean useTempFile);
 
-    public BuilderFactory getBuilderFactory()
-    {
-        return this.context.getBean(BuilderFactory.class);
-    }
+    public FileProducerBuilder setWriteChecksum(boolean writeChecksum);
 
-    public void run(Module module)
-    {
-        this.modules.put(module.getName(), module);
-        ModuleInitialisationService service = this.context.getBean(ModuleInitialisationService.class);
-        service.register(module);
-        logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
-    }
+    public FileProducerBuilder setEncoding(String encoding);
 
-    // TODO - add close or shutdown per module ?
-
-    public void close()
-    {
-        SpringApplication.exit(this.context, new ExitCodeGenerator(){
-            @Override public int getExitCode()
-            {
-                return 0;
-            }
-        });
-    }
-
-    @Override public Object getBean(String beanName)
-    {
-        return context.getBean(beanName);
-    }
-
-    @Override public Object getBean(Class className)
-    {
-        return context.getBean(className);
-    }
+    public FileProducerBuilder setLineEnding(String lineEnding);
 
 }
+
