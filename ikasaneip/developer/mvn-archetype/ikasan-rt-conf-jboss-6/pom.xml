@@ -35,20 +35,11 @@
 	<packaging>maven-plugin</packaging>
 	<name>IkasanEIP Maven Archetype for the Ikasan Runtime configuration within JBoss6</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-plugin-plugin</artifactId>
-			<version>3.2</version>
-		</dependency>
-	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>3.2</version>
 				<configuration>
 					<goalPrefix>ikasan-rt-conf-jboss</goalPrefix>
 					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>

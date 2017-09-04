@@ -131,6 +131,12 @@
 		   <groupId>com.github.vaadin4qbanos</groupId>
 		   <artifactId>jsclipboard</artifactId>
 		   <version>1.0.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 			
 		
@@ -371,30 +377,60 @@
 			<groupId>org.xwiki.rendering</groupId>
 			<artifactId>xwiki-rendering-syntax-xwiki21</artifactId>
 			<version>4.1.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
 	    </dependency>
 	    
 	    <dependency>
 			<groupId>org.xwiki.commons</groupId>
 			<artifactId>xwiki-commons-component-default</artifactId>
 			<version>4.1.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
 	    </dependency>
 	    
 	    <dependency>
 		      <groupId>org.xwiki.rendering</groupId>
 		      <artifactId>xwiki-rendering-macro-toc</artifactId>
 		      <version>4.1.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
 	    </dependency>
 	    
 	    <dependency>
-		      <groupId>org.xwiki.rendering</groupId>
-		      <artifactId>xwiki-rendering-macro-html</artifactId>
-		      <version>4.1.3</version>
+			<groupId>org.xwiki.rendering</groupId>
+			<artifactId>xwiki-rendering-macro-html</artifactId>
+			<version>4.1.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
 	    </dependency>
 	    
 	    <dependency>
 		   <groupId>com.vaadin.addon</groupId>
 		   <artifactId>vaadin-charts</artifactId>
 		   <version>2.1.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!-- Test dependencies-->
@@ -403,6 +439,32 @@
 		   <groupId>com.vaadin</groupId>
 		   <artifactId>vaadin-testbench</artifactId>
 		   <scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.sourceforge.cssparser</groupId>
+					<artifactId>cssparser</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

@@ -427,6 +427,7 @@
         <version.org.apache.sshd>0.14.0</version.org.apache.sshd>
 		<version.org.glassfish.jersey>2.21</version.org.glassfish.jersey>
 		<version.org.glassfish.json>1.0</version.org.glassfish.json>
+		<version.com.fasterxml.jackson.core>2.5.4</version.com.fasterxml.jackson.core>
 		<version.javax.ws.rs>2.0</version.javax.ws.rs>
 		<version.com.zybnet.vaadin-autocomplete>1.1.1</version.com.zybnet.vaadin-autocomplete>
 		<version.vaadin>7.7.0</version.vaadin>
@@ -542,7 +543,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -677,9 +678,11 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+
             </plugins>
         </pluginManagement>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -692,6 +695,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <configuration>
+                    <rules><dependencyConvergence/></rules>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -726,6 +737,8 @@
                     </execution>
                 </executions>
             </plugin>
+
+
         </plugins>
     </build>
     <reporting>
@@ -869,6 +882,8 @@
                 <module>dashboard</module>
                 <module>sample</module>
             </modules>
+
+
         </profile>
 
         <profile>
@@ -884,6 +899,7 @@
                 <module>serialiser</module>
                 <module>exclusion</module>
                 <module>error-reporting</module>
+                <module>recovery-manager</module>
                 <module>recovery-manager</module>
                 <module>flow</module>
                 <module>configuration-service</module>
@@ -1535,6 +1551,12 @@
                 <groupId>com.io7m.xom</groupId>
                 <artifactId>xom</artifactId>
                 <version>${version.com.io7m.xom}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1645,14 +1667,31 @@
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-server</artifactId>
                 <version>${version.org.glassfish.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>validation-api</artifactId>
+                        <groupId>javax.validation</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.glassfish.jersey.media</groupId>
                 <artifactId>jersey-media-json-jackson</artifactId>
                 <version>${version.org.glassfish.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+				<version>${version.com.fasterxml.jackson.core}</version>
+            </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-servlet</artifactId>
@@ -1866,6 +1905,23 @@
                 <groupId>org.apache.directory.server</groupId>
                 <artifactId>apacheds-server-unit</artifactId>
                 <version>${version.org.apache.directory.server.apached-server-unit}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-interceptor-kerberos</artifactId>
+
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.directory.server</groupId>
+                        <artifactId>apacheds-server-jndi</artifactId>
+                    </exclusion>
+
+                </exclusions>
+
             </dependency>
 
             <dependency>
@@ -2077,6 +2133,12 @@
                 <groupId>dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${version.dom4j.dom4j}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
