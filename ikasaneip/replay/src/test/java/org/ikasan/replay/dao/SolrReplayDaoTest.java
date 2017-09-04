@@ -1,5 +1,6 @@
 package org.ikasan.replay.dao;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -8,9 +9,12 @@ import java.util.Date;
 /**
  * Created by stewmi on 29/08/2017.
  */
+@Ignore
+// todo make me a real test
 public class SolrReplayDaoTest
 {
     @Test
+
     public void test()
     {
         ArrayList<String> servers = new ArrayList<>();
