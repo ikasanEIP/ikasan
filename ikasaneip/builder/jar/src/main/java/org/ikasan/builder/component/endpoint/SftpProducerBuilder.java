@@ -41,45 +41,62 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.component.Builder;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Contract for a default sftpProducerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public interface SftpProducerBuilder extends Builder<Producer>
 {
-    ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    SftpProducerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
-    ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    SftpProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
+    SftpProducerBuilder setConfiguration(SftpProducerConfiguration sftpProducerConfiguration);
 
-    ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
+    SftpProducerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
-    ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
+    SftpProducerBuilder setOutputDirectory(String outputDirectory);
 
-    ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
+    SftpProducerBuilder setRenameExtension(String renameExtension);
 
-    ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
+    SftpProducerBuilder setTempFileName(String tempFileName);
 
-    ScheduledConsumerBuilder setCronExpression(String cronExpression);
+    SftpProducerBuilder setChecksumDelivered(Boolean checksumDelivered);
 
-    ScheduledConsumerBuilder setEager(boolean eager);
+    SftpProducerBuilder setCleanUpChunks(Boolean cleanUpChunks);
 
-    ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
+    SftpProducerBuilder setClientID(String clientID);
 
-    ScheduledConsumerBuilder setTimezone(String timezone);
+    SftpProducerBuilder setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete);
 
-    ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
+    SftpProducerBuilder setCreateParentDirectory(Boolean createParentDirectory);
 
-    ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+    SftpProducerBuilder setOverwrite(Boolean overwrite);
 
+    SftpProducerBuilder setUnzip(Boolean unzip);
+
+    SftpProducerBuilder setRemoteHost(String remoteHost);
+
+    SftpProducerBuilder setPrivateKeyFilename(String privateKeyFilename);
+
+    SftpProducerBuilder setMaxRetryAttempts(Integer maxRetryAttempts);
+
+    SftpProducerBuilder setRemotePort(Integer remotePort);
+
+    SftpProducerBuilder setKnownHostsFilename(String knownHostsFilename);
+
+    SftpProducerBuilder setUsername(String username);
+
+    SftpProducerBuilder setPassword(String password);
+
+    SftpProducerBuilder setConnectionTimeout(Integer connectionTimeout);
+
+    SftpProducerBuilder setPreferredKeyExchangeAlgorithm(String preferredKeyExchangeAlgorithm);
+    
 }
 

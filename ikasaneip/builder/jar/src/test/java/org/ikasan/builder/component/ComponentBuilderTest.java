@@ -41,6 +41,9 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
@@ -88,6 +91,10 @@ public class ComponentBuilderTest {
     final DuplicateFilterService duplicateFilterService = mockery.mock(DuplicateFilterService.class, "mockDuplicateFilterService");
     final FilterEntryConverter filterEntryConverter = mockery.mock(FilterEntryConverter.class, "mockFilterEntryConverter");
 
+    final BaseFileTransferDao baseFileTransferDao = mockery.mock(BaseFileTransferDao.class, "mockBaseFileTransferDao");
+    final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class, "mockFileChunkDao");
+    final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class, "mockTransactionalResourceCommandDAO");
+
     @Test
     public void test_successful_scheduledConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
@@ -108,6 +115,106 @@ public class ComponentBuilderTest {
         });
 
         componentBuilder.scheduledConsumer();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_sftpConsumer() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(Scheduler.class);
+                will(returnValue(scheduler));
+                oneOf(applicationContext).getBean(ScheduledJobFactory.class);
+                will(returnValue(scheduledJobFactory));
+
+                oneOf(applicationContext).getBean(AopProxyProvider.class);
+                will(returnValue(aopProxyProvider));
+
+                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+                oneOf(applicationContext).getBean(BaseFileTransferDao.class);
+                will(returnValue(baseFileTransferDao));
+
+                oneOf(applicationContext).getBean(FileChunkDao.class);
+                will(returnValue(fileChunkDao));
+
+                oneOf(applicationContext).getBean(TransactionalResourceCommandDAO.class);
+                will(returnValue(transactionalResourceCommandDAO));
+            }
+        });
+
+        componentBuilder.sftpConsumer();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_sftpProducer() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+                oneOf(applicationContext).getBean(BaseFileTransferDao.class);
+                will(returnValue(baseFileTransferDao));
+
+                oneOf(applicationContext).getBean(FileChunkDao.class);
+                will(returnValue(fileChunkDao));
+
+                oneOf(applicationContext).getBean(TransactionalResourceCommandDAO.class);
+                will(returnValue(transactionalResourceCommandDAO));
+            }
+        });
+
+        componentBuilder.sftpProducer();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_ftpConsumer() {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                oneOf(applicationContext).getBean(Scheduler.class);
+                will(returnValue(scheduler));
+                oneOf(applicationContext).getBean(ScheduledJobFactory.class);
+                will(returnValue(scheduledJobFactory));
+
+                oneOf(applicationContext).getBean(AopProxyProvider.class);
+                will(returnValue(aopProxyProvider));
+
+                oneOf(applicationContext).getBean(JtaTransactionManager.class);
+                will(returnValue(jtaTransactionManager));
+
+                oneOf(applicationContext).getBean(BaseFileTransferDao.class);
+                will(returnValue(baseFileTransferDao));
+
+                oneOf(applicationContext).getBean(FileChunkDao.class);
+                will(returnValue(fileChunkDao));
+
+                oneOf(applicationContext).getBean(TransactionalResourceCommandDAO.class);
+                will(returnValue(transactionalResourceCommandDAO));
+            }
+        });
+
+        componentBuilder.ftpConsumer();
 
         mockery.assertIsSatisfied();
     }
