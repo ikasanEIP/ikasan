@@ -37,25 +37,4 @@
         <property name="cronExpression" value="${fileGenerator.consumer.cronExpression}"/>
     </bean>
 
-    <bean id="ftpProducer" class="org.ikasan.endpoint.ftp.producer.FtpProducer">
-        <constructor-arg name="fileChunkDao" ref="fileChunkDao"/>
-        <constructor-arg name="transactionalResourceCommandDAO" ref="transactionalResourceCommandDAO"/>
-        <constructor-arg name="baseFileTransferDao" ref="baseFileTransferDao"/>
-        <constructor-arg name="transactionManager" ref="transactionManager"/>
-
-        <property name="configuration" ref="ftpProducerConfiguration"/>
-        <property name="configuredResourceId" value="ftpProducerConfiguration"/>
-    </bean>
-
-    <bean id="ftpProducerConfiguration" class="org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration">
-        <property name="clientID" value="${ftp.producer.clientID}"/>
-        <property name="username" value="${ftp.producer.username}"/>
-        <property name="password" value="${ftp.producer.password}"/>
-        <property name="remoteHost" value="${ftp.producer.remoteHost}"/>
-        <property name="remotePort" value="${ftp.producer.remotePort}"/>
-        <property name="outputDirectory" value="${ftp.producer.outputDirectory}"/>
-        <property name="cleanupJournalOnComplete" value="false"/>
-        <property name="overwrite" value="true"/>
-    </bean>
-
 </beans>

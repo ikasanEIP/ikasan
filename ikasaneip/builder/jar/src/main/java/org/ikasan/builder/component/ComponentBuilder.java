@@ -149,6 +149,23 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan default FTP Producer
+     * @return ftpProducerBuilder
+     */
+    public FtpProducerBuilder ftpProducer()
+    {
+
+        FtpProducerBuilder ftpProducerBuilder = new FtpProducerBuilderImpl(
+                this.applicationContext.getBean(JtaTransactionManager.class)
+                ,this.applicationContext.getBean(BaseFileTransferDao.class)
+                ,this.applicationContext.getBean(FileChunkDao.class)
+                ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
+
+        );
+        return ftpProducerBuilder;
+    }
+
+    /**
      * Get an instance of an Ikasan default fileConsumer
      * @return scheduledConsumerBuilder
      */
@@ -180,6 +197,8 @@ public class ComponentBuilder
         JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
         return jmsProducerBuilder;
     }
+
+
 
     public Builder<Splitter> listSplitter()
     {
