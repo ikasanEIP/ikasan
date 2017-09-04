@@ -155,6 +155,11 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         this.messageProviderPostProcessor = messageProviderPostProcessor;
     }
 
+    public MessageProviderPostProcessor getMessageProviderPostProcessor()
+    {
+        return this.messageProviderPostProcessor;
+    }
+
     @Override
     public FileConsumerConfiguration getConfiguration()
     {

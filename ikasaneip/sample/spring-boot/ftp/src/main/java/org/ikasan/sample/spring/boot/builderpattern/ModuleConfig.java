@@ -120,6 +120,8 @@ public class ModuleConfig {
                         .setDestructive(false)
                         .setChunking(false)
                         .setConfiguredResourceId("configuredResourceId")
+                        .setScheduledJobGroupName("FtpToLogFlow")
+                        .setScheduledJobName("FtpConsumer")
                         .build())
                 .converter("FTP payload to String Converter",payloadToStringConverter)
                 .producer("Log", new DevNull()).build();
