@@ -80,6 +80,8 @@ public class ApplicationTest {
     private int port;
     private FakeFtpServer fakeFtpServer;
 
+    IkasanApplication ikasanApplication;
+
     @Before
     public void setup() throws ClientConnectionException
     {
@@ -105,6 +107,10 @@ public class ApplicationTest {
         fakeFtpServer.start();
         port = fakeFtpServer.getServerControlPort();
 
+        String[] args = {""};
+
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+
     }
 
     @After
@@ -115,6 +121,8 @@ public class ApplicationTest {
         }
         fakeFtpServer.getFileSystem().delete(FTP_DIR);
         fakeFtpServer.stop();
+
+        ikasanApplication.close();
     }
 
     /**
@@ -122,15 +130,8 @@ public class ApplicationTest {
      *
      * @throws Exception
      */
-    @Ignore
     @Test
     public void test_ftpConsumer_flow() throws Exception {
-        String[] args = {""};
-
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-        System.out.println("Check is module healthy.");
-
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = (Module) ikasanApplication.getBean(Module.class);
@@ -138,10 +139,9 @@ public class ApplicationTest {
 
         // start flow
         flow.start();
-        pause(20000);
+        pause(15000);
         assertEquals("running", flow.getState());
 
-        pause(5000);
         flow.stop();
         pause(2000);
         assertEquals("stopped", flow.getState());
@@ -155,12 +155,6 @@ public class ApplicationTest {
      */
     @Test
     public void test_ftpProducer_flow() throws Exception {
-        String[] args = {""};
-
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-        System.out.println("Check is module healthy.");
-
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
         Module module = (Module) ikasanApplication.getBean(Module.class);
@@ -171,10 +165,9 @@ public class ApplicationTest {
 
         // start flow
         flow.start();
-        pause(20000);
+        pause(15000);
         assertEquals("running", flow.getState());
 
-        pause(7000);
         flow.stop();
         pause(2000);
         assertEquals("stopped", flow.getState());
