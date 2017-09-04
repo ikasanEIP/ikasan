@@ -155,6 +155,8 @@ public class ModuleConfig {
                         .setDestructive(false)
                         .setChunking(false)
                         .setConfiguredResourceId("configuredResourceId")
+                        .setScheduledJobGroupName("SftpToLogFlow")
+                        .setScheduledJobName("SftpConsumer")
                         .build())
                 .converter("SFTP payload to String Converter",new PayloadToStringConverter())
                 .producer("Log", new DevNull()).build();

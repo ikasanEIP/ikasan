@@ -115,13 +115,13 @@ public class FtpConsumerBuilderTest
         {
             {
                 // set event factory
-                oneOf(aopProxyProvider).applyPointcut(with("defaultScheduledJobName"),with(emptyScheduleConsumer));
+                oneOf(aopProxyProvider).applyPointcut(with("testjob"),with(emptyScheduleConsumer));
                 will(returnValue(emptyScheduleConsumer));
 
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("defaultScheduledJobName"),
-                        with("defaultScheduledJobGroupName"));
+                        with("testjob"),
+                        with("testGroup"));
                 will(returnValue(jobDetail));
             }
         });
@@ -132,6 +132,8 @@ public class FtpConsumerBuilderTest
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
                 .setConfiguredResourceId("testConfigId")
+                .setScheduledJobGroupName("testGroup")
+                .setScheduledJobName("testjob")
                 .setMessageProvider(messageProvider)
                 .build();
 
@@ -163,8 +165,8 @@ public class FtpConsumerBuilderTest
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("defaultScheduledJobName"),
-                        with("defaultScheduledJobGroupName"));
+                        with("testjob"),
+                        with("testGroup"));
                 will(returnValue(jobDetail));
             }
         });
@@ -211,6 +213,8 @@ public class FtpConsumerBuilderTest
                 .setActive(true)
                 .setMessageProvider(messageProvider)
                 .setConfiguredResourceId("testConfigId")
+                .setScheduledJobGroupName("testGroup")
+                .setScheduledJobName("testjob")
                 .build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
@@ -275,8 +279,8 @@ public class FtpConsumerBuilderTest
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("defaultScheduledJobName"),
-                        with("defaultScheduledJobGroupName"));
+                        with("testjob"),
+                        with("testGroup"));
                 will(returnValue(jobDetail));
             }
         });
@@ -289,6 +293,8 @@ public class FtpConsumerBuilderTest
                 .setUsername("testUser")
                 .setPassword("testPassword")
                 .setConfiguredResourceId("testConfigId")
+                .setScheduledJobGroupName("testGroup")
+                .setScheduledJobName("testjob")
                 .build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
@@ -322,8 +328,8 @@ public class FtpConsumerBuilderTest
                 // set event factory
                 oneOf(scheduledJobFactory).createJobDetail(with(emptyScheduleConsumer),
                         with(is(CoreMatchers.equalTo(ScheduledConsumer.class))),
-                        with("defaultScheduledJobName"),
-                        with("defaultScheduledJobGroupName"));
+                        with("testjob"),
+                        with("testGroup"));
                 will(returnValue(jobDetail));
             }
         });
@@ -332,6 +338,8 @@ public class FtpConsumerBuilderTest
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
                 .setMessageProvider(messageProvider)
+                .setScheduledJobGroupName("testGroup")
+                .setScheduledJobName("testjob")
                 .build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
