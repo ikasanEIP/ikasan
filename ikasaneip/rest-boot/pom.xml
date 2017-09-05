@@ -63,6 +63,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${version.javax.servlet}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-resubmission</artifactId>
             <scope>provided</scope>
@@ -79,8 +85,13 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip</artifactId>
+            <artifactId>ikasan-eip-standalone</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${version.org.springboot}</version>
         </dependency>
 		<dependency>
             <groupId>org.ikasan</groupId>
