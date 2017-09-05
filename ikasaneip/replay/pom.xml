@@ -147,7 +147,8 @@
 			</exclusions>
 		</dependency>
 		
-		<dependency>
+
+        <dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 		</dependency>
@@ -304,9 +305,20 @@
 			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
 			<version>${version.org.glassfish.jersey}</version>
 			<scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
-		
-		<dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
 			<scope>test</scope>
