@@ -409,7 +409,7 @@
         <version.org.aspectj>1.7.4</version.org.aspectj>
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
         <version.commons-lang>2.5</version.commons-lang>
-        <version.javax.servlet>2.4</version.javax.servlet>
+        <version.javax.servlet>3.1.0</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
         <version.activemq>5.13.4</version.activemq>
@@ -2011,7 +2011,7 @@
 
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
+                <artifactId>javax.servlet-api</artifactId>
                 <version>${version.javax.servlet}</version>
             </dependency>
 
