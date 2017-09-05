@@ -124,7 +124,6 @@
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>jta</artifactId>
-            <version>5.3.4.Final</version>
             <scope>provided</scope>
         </dependency>
 
