@@ -40,7 +40,7 @@
  */
 package org.ikasan.history.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
@@ -56,7 +56,7 @@ import org.ikasan.spec.history.MessageHistoryService;
  */
 public class MessageHistoryContextListener<T> implements FlowInvocationContextListener
 {
-    private static final Logger logger = Logger.getLogger(MessageHistoryContextListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageHistoryContextListener.class);
 
     /** the delegate service used to save the flowInvocationContext */
     protected MessageHistoryService<FlowInvocationContext, FlowEvent, T, ComponentInvocationMetricImpl> messageHistoryService;

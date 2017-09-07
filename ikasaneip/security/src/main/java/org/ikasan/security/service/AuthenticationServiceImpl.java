@@ -42,7 +42,7 @@ package org.ikasan.security.service;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
@@ -58,7 +58,7 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class AuthenticationServiceImpl implements AuthenticationService
 {
-	private static Logger logger = Logger.getLogger(AuthenticationServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 	
 	private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
 	private SecurityService securityService;

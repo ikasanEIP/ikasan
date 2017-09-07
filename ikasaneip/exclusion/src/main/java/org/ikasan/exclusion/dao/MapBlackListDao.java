@@ -40,7 +40,8 @@
  */
 package org.ikasan.exclusion.dao;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.exclusion.model.BlackListEvent;
 
 import java.util.*;
@@ -49,11 +50,10 @@ import java.util.*;
  * Map implementation of the BlackListDao.
  * @author Ikasan Development Team
  */
-public class MapBlackListDao
-        implements BlackListDao<String,BlackListEvent>
+public class MapBlackListDao implements BlackListDao<String,BlackListEvent>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(MapBlackListDao.class);
+    private static Logger logger = LoggerFactory.getLogger(MapBlackListDao.class);
 
     /** blacklist instances */
     LinkedHashMap<String,BlackListEvent> blackList;
@@ -98,7 +98,7 @@ public class MapBlackListDao
     @Override
     public void deleteExpired()
     {
-        List<String> expiredIdentifiers = new ArrayList<String>();
+        List<String> expiredIdentifiers = new ArrayList<>();
 
         long expiryTime = System.currentTimeMillis();
         for(Map.Entry<String,BlackListEvent> entry:blackList.entrySet())

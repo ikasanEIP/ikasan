@@ -40,7 +40,7 @@
  */
 package org.ikasan.testharness.flow.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
@@ -66,7 +66,7 @@ public class FlowEventListenerSubject
     implements FlowEventListener, FlowSubject
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(FlowEventListenerSubject.class);
+    private static Logger logger = LoggerFactory.getLogger(FlowEventListenerSubject.class);
 
     /** replication factory */
     private ReplicationFactory<FlowEvent> replicationFactory;

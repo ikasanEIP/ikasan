@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.rest.submit.ResubmissionApplication;
 import org.ikasan.spec.configuration.Configuration;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ConfigurationApplication extends IkasanRestApplication
 {
 
-private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
+private static Logger logger = LoggerFactory.getLogger(ResubmissionApplication.class);
 	
 	@Autowired
 	private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;

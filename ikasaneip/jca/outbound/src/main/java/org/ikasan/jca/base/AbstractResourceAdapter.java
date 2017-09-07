@@ -40,7 +40,7 @@
  */
 package org.ikasan.jca.base;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.*;
@@ -83,7 +83,7 @@ import java.util.TimerTask;
 public abstract class AbstractResourceAdapter implements ResourceAdapter
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(AbstractResourceAdapter.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractResourceAdapter.class);
 
     /**
      * The boot strap context reference obtained from ApplicationServer to get

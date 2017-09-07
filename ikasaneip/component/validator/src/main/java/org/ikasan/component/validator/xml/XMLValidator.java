@@ -43,7 +43,7 @@
 package org.ikasan.component.validator.xml;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.validator.ValidationException;
 import org.ikasan.component.validator.ValidationResult;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -78,7 +78,7 @@ public class XMLValidator<SOURCE, TARGET> implements Converter<SOURCE, Object>, 
     /**
      * Logger instance
      */
-    private static Logger logger = Logger.getLogger(XMLValidator.class);
+    private static Logger logger = LoggerFactory.getLogger(XMLValidator.class);
 
     /**
      * Unique id for configured resource in this component

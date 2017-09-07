@@ -43,7 +43,7 @@ package org.ikasan.systemevent.service;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.dao.SystemEventDao;
@@ -58,7 +58,7 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class SystemEventServiceImpl implements SystemEventService, InitializingBean, HousekeepService
 {
-    private Logger logger = Logger.getLogger(SystemEventServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(SystemEventServiceImpl.class);
 
     /**
      * Underlying data access object

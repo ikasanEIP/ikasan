@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -75,7 +75,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware, ConfiguredResource<FlowPersistentConfiguration>
 {
 	/** logger instance */
-    private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
+    private static Logger logger = LoggerFactory.getLogger(VisitingInvokerFlow.class);
 
     /** thread states */
     private static Boolean ACTIVE = true;

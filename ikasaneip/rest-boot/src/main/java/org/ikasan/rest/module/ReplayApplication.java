@@ -40,18 +40,18 @@
  */
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Ikasan Development Team
@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/rest/replay")
 @RestController
 public class ReplayApplication {
-    private static Logger logger = Logger.getLogger(ReplayApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ReplayApplication.class);
 
     /**
      * stopped state string constant

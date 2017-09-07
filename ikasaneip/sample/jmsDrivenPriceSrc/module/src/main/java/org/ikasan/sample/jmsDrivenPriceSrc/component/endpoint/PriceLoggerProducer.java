@@ -40,7 +40,7 @@
  */
 package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 
@@ -53,7 +53,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 public class PriceLoggerProducer implements Producer<StringBuilder>
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(PriceLoggerProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(PriceLoggerProducer.class);
 
     /**
      * Message invocation

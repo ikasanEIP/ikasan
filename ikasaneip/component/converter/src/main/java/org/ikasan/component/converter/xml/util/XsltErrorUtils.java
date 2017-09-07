@@ -43,7 +43,7 @@ package org.ikasan.component.converter.xml.util;
 // Imported java classes
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a range of static XSLT utility methods for error
@@ -56,7 +56,7 @@ public class XsltErrorUtils
     /**
      * The logger instance.
      */
-    private static final Logger logger = Logger.getLogger(XsltErrorUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(XsltErrorUtils.class);
 
     /**
      * Throws an Exception with the specified detail message.

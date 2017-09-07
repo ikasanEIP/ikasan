@@ -40,7 +40,7 @@
  */
 package org.ikasan.testharness.flow.expectation.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
@@ -57,7 +57,7 @@ import org.junit.ComparisonFailure;
 public class OrderedExpectation extends AbstractListExpectation
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(OrderedExpectation.class);
+    private static Logger logger = LoggerFactory.getLogger(OrderedExpectation.class);
 
     /**
      * Constructor

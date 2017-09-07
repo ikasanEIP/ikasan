@@ -40,8 +40,13 @@
  */
 package org.ikasan.rest.security;
 
-import java.io.IOException;
-import java.security.Principal;
+import org.apache.commons.codec.binary.Base64;
+import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.AuthenticationServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -53,13 +58,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
-import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.AuthenticationServiceException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import java.io.IOException;
+import java.security.Principal;
 
 
 /**
@@ -75,7 +75,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Priority(Priorities.AUTHORIZATION)
 public class SecurityFilter implements ContainerRequestFilter {
  
-	private static Logger logger = Logger.getLogger(SecurityFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
 	
     @Context
     UriInfo uriInfo;

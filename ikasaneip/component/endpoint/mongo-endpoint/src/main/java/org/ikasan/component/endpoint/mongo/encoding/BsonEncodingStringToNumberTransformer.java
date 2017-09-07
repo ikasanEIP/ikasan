@@ -2,7 +2,7 @@ package org.ikasan.component.endpoint.mongo.encoding;
 
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.bson.Transformer;
 
 /**
@@ -15,7 +15,7 @@ public class BsonEncodingStringToNumberTransformer implements Transformer
 {
 
     /** logger instance */
-    private static Logger logger = Logger.getLogger(BsonEncodingStringToNumberTransformer.class);
+    private static Logger logger = LoggerFactory.getLogger(BsonEncodingStringToNumberTransformer.class);
 
     private Pattern numberRegExp;
 
