@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -66,7 +66,7 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class LocalAuthenticationProvider implements AuthenticationProvider
 {
-	private static Logger logger = Logger.getLogger(LocalAuthenticationProvider.class);
+	private static Logger logger = LoggerFactory.getLogger(LocalAuthenticationProvider.class);
 	
 	private SecurityService securityService;
 	private UserService userService;

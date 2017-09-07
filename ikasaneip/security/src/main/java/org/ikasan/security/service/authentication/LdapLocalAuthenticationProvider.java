@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -69,7 +69,7 @@ import org.springframework.security.ldap.authentication.LdapAuthenticator;
  */
 public class LdapLocalAuthenticationProvider implements AuthenticationProvider
 {
-	private static Logger logger = Logger.getLogger(LdapLocalAuthenticationProvider.class);
+	private static Logger logger = LoggerFactory.getLogger(LdapLocalAuthenticationProvider.class);
 	
     private LdapAuthenticator authenticator;
     private SecurityService securityService;

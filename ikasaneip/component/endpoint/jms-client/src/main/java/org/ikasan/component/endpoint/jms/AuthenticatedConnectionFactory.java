@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 
 import javax.jms.Connection;
@@ -59,7 +59,7 @@ import java.util.Properties;
 public class AuthenticatedConnectionFactory implements ConnectionFactory
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(AuthenticatedConnectionFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(AuthenticatedConnectionFactory.class);
 
     /** JMS Connection Factory instance */
     protected ConnectionFactory connectionFactory;

@@ -42,7 +42,7 @@ package org.ikasan.web.security;
 
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.module.Module;
 import org.springframework.security.access.AfterInvocationProvider;
 import org.springframework.security.access.ConfigAttribute;
@@ -60,7 +60,7 @@ public abstract class AbstractModuleAfterInvocationProvider implements AfterInvo
     private String responsiveConfigAttribute;
 
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(AbstractModuleAfterInvocationProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractModuleAfterInvocationProvider.class);
 
     /**
      * Constructor

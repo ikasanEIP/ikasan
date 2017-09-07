@@ -41,7 +41,7 @@ package org.ikasan.component.endpoint.email.producer;
  */
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.management.ManagedResource;
@@ -78,7 +78,7 @@ public class EmailProducerTest {
     /**
      * Logger for this class
      */
-    private Logger logger = Logger.getLogger(EmailProducerTest.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailProducerTest.class);
 
     /**
      * in memory SMTP server

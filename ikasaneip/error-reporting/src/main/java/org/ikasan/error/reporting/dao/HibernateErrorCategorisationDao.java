@@ -40,12 +40,6 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -57,6 +51,10 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
+
 /**
  * 
  * @author Ikasan Development Team
@@ -64,7 +62,6 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateErrorCategorisationDao extends HibernateDaoSupport implements ErrorCategorisationDao
 {
-	private Logger logger = Logger.getLogger(HibernateErrorCategorisationDao.class);
 
 	public static final String MODULE_NAMES = "moduleNames";
 	public static final String FLOW_NAMES = "flowNames";
@@ -199,7 +196,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
         {
             public Object doInHibernate(Session session) throws HibernateException
             {     
-            	StringBuffer queryBuffer = new StringBuffer(ERROR_CATERORISED_COUNT_SQL);
+            	StringBuilder queryBuffer = new StringBuilder(ERROR_CATERORISED_COUNT_SQL);
             	
             	if(moduleNames != null && !moduleNames.isEmpty())
             	{
@@ -254,7 +251,7 @@ public class HibernateErrorCategorisationDao extends HibernateDaoSupport impleme
             	}
 
             	List rowCountList = query.list();
-            	Long rowCount = new Long(0);
+            	Long rowCount = 0L;
             	
             	if (!rowCountList.isEmpty())
 			    {

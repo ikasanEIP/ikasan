@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +89,7 @@ public class UsersController {
     /**
      * Logger for this class
      */
-    private Logger logger = Logger.getLogger(UsersController.class);
+    private static Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     /**
      * Constructor

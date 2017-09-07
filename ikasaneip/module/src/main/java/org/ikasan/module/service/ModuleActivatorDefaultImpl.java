@@ -40,7 +40,7 @@
  */
 package org.ikasan.module.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
@@ -60,7 +60,7 @@ import java.util.List;
 public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
 {
     /** logger instance */
-    private final static Logger logger = Logger.getLogger(ModuleActivatorDefaultImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleActivatorDefaultImpl.class);
 
     /** startup flow control DAO */
     private StartupControlDao startupControlDao;

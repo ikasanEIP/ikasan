@@ -3,7 +3,7 @@ package org.ikasan.filter.duplicate.service;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultEntityAgeFilterService implements EntityAgeFilterService
 {
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(DefaultEntityAgeFilterService.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultEntityAgeFilterService.class);
 
     private FilteredMessageDao filteredMessageDao;
 

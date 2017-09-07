@@ -57,7 +57,7 @@ import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.service.AuthenticationServiceImpl;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
@@ -69,7 +69,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 public class ErrorOccurrenceCustomDataTypeMigrationTask implements
 		CustomTaskChange, CustomTaskRollback
 {
-	private static Logger logger = Logger.getLogger(ErrorOccurrenceCustomDataTypeMigrationTask.class);
+	private static Logger logger = LoggerFactory.getLogger(ErrorOccurrenceCustomDataTypeMigrationTask.class);
 
 	/* (non-Javadoc)
 	 * @see liquibase.change.custom.CustomChange#getConfirmationMessage()

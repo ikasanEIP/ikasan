@@ -40,7 +40,7 @@
  */
 package org.ikasan.jca.base.outbound;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.*;
@@ -67,7 +67,7 @@ import java.util.Set;
 public abstract class EISManagedConnectionFactory implements ManagedConnectionFactory, Serializable
 {
     /** Logger */
-    private static Logger logger = Logger.getLogger(EISManagedConnectionFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(EISManagedConnectionFactory.class);
 
     /** default serial version uid */
     private static final long serialVersionUID = 1L;

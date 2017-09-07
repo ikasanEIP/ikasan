@@ -40,7 +40,7 @@
  */
 package org.ikasan.testharness.flow.expectation.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
@@ -58,7 +58,7 @@ import java.util.Iterator;
  */
 public class UnorderedExpectation extends AbstractListExpectation
 {
-    private static final Logger logger = Logger.getLogger(UnorderedExpectation.class);
+    private static final Logger logger = LoggerFactory.getLogger(UnorderedExpectation.class);
 
     /**
      * Default constructor that will initialise a default comparator

@@ -48,7 +48,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 /**
  * Command class capturing the Wiretap search criteria fields

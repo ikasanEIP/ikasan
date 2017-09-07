@@ -40,7 +40,7 @@
  */
 package org.ikasan.sample.flow.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
@@ -64,7 +64,7 @@ import java.util.List;
  */
 public class SimpleFlowListener implements FlowEventListener
 {
-    Logger logger = Logger.getLogger(SimpleFlowListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleFlowListener.class);
 
     List<String> events = new ArrayList<String>();
 
