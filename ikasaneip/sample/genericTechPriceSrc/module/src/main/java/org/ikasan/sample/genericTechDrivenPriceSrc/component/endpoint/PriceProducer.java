@@ -66,6 +66,6 @@ public class PriceProducer implements Producer<StringBuilder>
         output.append("] producer invocation with payload [");
         output.append(payload);
         output.append("]");
-        logger.info(output);
+        logger.info(output.toString());
     }
 }

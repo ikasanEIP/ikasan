@@ -129,7 +129,7 @@ public abstract class AbstractResourceAdapter implements ResourceAdapter
         catch (UnavailableException e)
         {
             String err = "Exception while creating the timer."; //$NON-NLS-1$
-            logger.fatal(err, e);
+            logger.error(err, e);
             throw new ResourceAdapterInternalException(err, e);
         }
     }

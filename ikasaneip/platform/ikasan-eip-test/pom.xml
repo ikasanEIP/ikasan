@@ -72,10 +72,10 @@
             <artifactId>spring-context-support</artifactId>
         </dependency>
 
+        <!-- so we don't need it in flow tests -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

@@ -44,7 +44,7 @@ import java.util.*;
  */
 public class XsltConfigurationParameterConverter implements Converter<XsltConverterConfiguration, Map<String, String>> {
 
-    private static final Logger log = Logger.getLogger(XsltConfigurationParameterConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(XsltConfigurationParameterConverter.class);
 
     private static final String XSLT_PARAM_PREFIX = "xsltParam";
 
@@ -62,7 +62,7 @@ public class XsltConfigurationParameterConverter implements Converter<XsltConver
             try {
                 convertField(params, field, configuration);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw new RuntimeException(String.format("error occurred introspecting XsltConverterConfiguration instance for field name: %s", field.getName()), e);
             }
         }
@@ -97,8 +97,8 @@ public class XsltConfigurationParameterConverter implements Converter<XsltConver
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("Created get method: %s, for field: %s", getMethod.getName(), field.getName()));
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Created get method: %s, for field: %s", getMethod.getName(), field.getName()));
         }
 
         Object result = getMethod.invoke(configuration);
@@ -127,7 +127,7 @@ public class XsltConfigurationParameterConverter implements Converter<XsltConver
 
         builder.append("<list>");
         for (String s : list) {
-            builder.append("<value>" + s + "</value>");
+            builder.append("<value>").append(s).append( "</value>");
         }
         builder.append("</list>");
 

@@ -40,39 +40,22 @@
  */
 package org.ikasan.topology.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ikasan.topology.exception.DiscoveryException;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.topology.dao.TopologyDao;
+import org.ikasan.topology.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.JsonArray;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
-import org.ikasan.topology.dao.TopologyDao;
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.BusinessStreamFlow;
-import org.ikasan.topology.model.Component;
-import org.ikasan.topology.model.Filter;
-import org.ikasan.topology.model.FilterComponent;
-import org.ikasan.topology.model.FilterComponentKey;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Notification;
-import org.ikasan.topology.model.RoleFilter;
-import org.ikasan.topology.model.Server;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ikasan.topology.exception.DiscoveryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
  * 
@@ -81,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TopologyServiceImpl implements TopologyService
 {
-	private Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
 
 	private TopologyDao topologyDao;
 
