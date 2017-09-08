@@ -52,13 +52,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Ikasan Development Team
  */
 @RequestMapping("/rest/replay")
 @RestController
-public class ReplayApplication {
+public class ReplayApplication
+{
     private static Logger logger = LoggerFactory.getLogger(ReplayApplication.class);
 
     /**
@@ -86,52 +88,44 @@ public class ReplayApplication {
             value = "/eventReplay/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
     public ResponseEntity replay(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName,
-                                 @RequestBody byte[] event) {
-
-        try {
+            @RequestBody byte[] event)
+    {
+        try
+        {
             Module<Flow> module = moduleContainer.getModule(moduleName);
-
-            if (module == null) {
+            if (module == null)
+            {
                 throw new RuntimeException("Could not get module from module container using name:  " + moduleName);
             }
-
             Flow flow = module.getFlow(flowName);
-
-            if (flow == null) {
+            if (flow == null)
+            {
                 throw new RuntimeException("Could not get flow from module container using name:  " + flowName);
             }
-
-            if (flow.getState().equals(STOPPED) || flow.getState().equals(STOPPED_IN_ERROR)) {
+            if (flow.getState().equals(STOPPED) || flow.getState().equals(STOPPED_IN_ERROR))
+            {
                 throw new RuntimeException("Events cannot be replayed when the flow that is being replayed to is in a " +
                         flow.getState() + " state.  Module[" + moduleName + "] Flow[" + flowName + "]");
             }
-
             FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
-
             ResubmissionService resubmissionService = flowConfiguration.getResubmissionService();
-
-            if (resubmissionService == null) {
+            if (resubmissionService == null)
+            {
                 throw new RuntimeException("The resubmission service on the flow you are resubmitting to is null. This is most liekly due to " +
                         "the resubmission service not being set on the flow factory for the flow you are resubmitting to.");
             }
-
             Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
-
             Object deserialisedEvent = serialiser.deserialise(event);
-
             logger.debug("deserialisedEvent " + deserialisedEvent);
-
             resubmissionService.submit(deserialisedEvent);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
-
             logger.error("An error has occurred trying to replay an event: ", e);
-
             return new ResponseEntity("An error has occurred on the server when trying to replay the event. " + e.getMessage(),
                     HttpStatus.NOT_FOUND);
         }
-
         return new ResponseEntity("Event replayed!", HttpStatus.OK);
     }
-
 }
