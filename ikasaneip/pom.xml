@@ -398,7 +398,7 @@
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
-        <version.commons-io>1.4</version.commons-io>
+        <version.commons-io>2.5</version.commons-io>
         <version.org.quartz-scheduler>2.0.2</version.org.quartz-scheduler>
         <version.com.h2database>1.4.178</version.com.h2database>
         <version.org.subethamail>1.2</version.org.subethamail>
@@ -435,6 +435,7 @@
 		<version.org.vaadin.addons.aceeditor>0.8.13</version.org.vaadin.addons.aceeditor>
 		<version.ru.xpoft.vaadin.spring-vaadin-integration>3.1</version.ru.xpoft.vaadin.spring-vaadin-integration>
         <version.org.apache.tomcat>8.5.5</version.org.apache.tomcat>
+        <version.org.apache.solr>6.6.0</version.org.apache.solr>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -1321,20 +1322,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Console is now redundant and replaced by the dashboard. To be fully removed in a later version. -->
-            <!-- dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>console-jar</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>console</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency -->
-
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-builder</artifactId>
@@ -2159,6 +2146,48 @@
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
                 <version>${version.org.apache.sshd}</version>
+            </dependency>
+
+            <!-- Solr -->
+
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-solrj</artifactId>
+                <version>${version.org.apache.solr}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-core</artifactId>
+                <version>${version.org.apache.solr}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-continuation</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-test-framework</artifactId>
+                <version>${version.org.apache.solr}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
         </dependencies>

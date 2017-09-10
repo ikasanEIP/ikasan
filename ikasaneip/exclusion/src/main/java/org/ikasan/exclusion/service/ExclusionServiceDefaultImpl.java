@@ -51,7 +51,6 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.solr.SolrService;
-import org.ikasan.spec.wiretap.WiretapEvent;
 
 import java.util.List;
 

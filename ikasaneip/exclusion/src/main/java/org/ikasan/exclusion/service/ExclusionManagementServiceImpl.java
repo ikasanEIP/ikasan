@@ -51,7 +51,6 @@ import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.HousekeeperService;
 import org.ikasan.spec.solr.SolrService;
-import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * 

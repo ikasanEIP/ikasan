@@ -40,9 +40,6 @@
  */
 package org.ikasan.exclusion.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -52,10 +49,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.ikasan.spec.wiretap.WiretapEvent;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Hibernate implementation of the ExclusionEventDao.

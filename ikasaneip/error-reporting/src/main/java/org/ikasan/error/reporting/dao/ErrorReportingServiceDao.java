@@ -40,8 +40,6 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import org.ikasan.spec.wiretap.WiretapEvent;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,8 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public interface ErrorReportingServiceDao<EVENT, IDENTIFIER> {
+public interface ErrorReportingServiceDao<EVENT, IDENTIFIER>
+{
 
     /**
      * Find an error reporting event instance from the incoming uri.
