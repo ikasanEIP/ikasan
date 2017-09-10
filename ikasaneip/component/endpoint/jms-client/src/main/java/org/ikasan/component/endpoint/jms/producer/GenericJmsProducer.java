@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.producer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -72,7 +72,7 @@ public class GenericJmsProducer<T>
         ManagedResource, ConfiguredResource<GenericJmsProducerConfiguration>
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(GenericJmsProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(GenericJmsProducer.class);
     
     /** JMS Connection Factory */
     protected ConnectionFactory connectionFactory;

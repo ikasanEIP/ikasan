@@ -1,6 +1,6 @@
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/rest/moduleControl")
 @RestController
 public class ModuleControlApplication {
-    private static Logger logger = Logger.getLogger(ModuleControlApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ModuleControlApplication.class);
 
     @Autowired
     private ModuleService moduleService;

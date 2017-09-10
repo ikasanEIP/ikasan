@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
@@ -66,7 +66,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class SchedulerController
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SchedulerController.class);
+    private static Logger logger = LoggerFactory.getLogger(SchedulerController.class);
 
     /** The scheduler to use */
     private Scheduler platformScheduler;

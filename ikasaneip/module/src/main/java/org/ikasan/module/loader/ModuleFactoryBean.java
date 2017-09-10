@@ -44,7 +44,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.module.Module;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -71,7 +71,7 @@ public class ModuleFactoryBean implements FactoryBean, ApplicationContextAware
     private ApplicationContext parentContext;
 
     /** Logger for this class */
-    private static final Logger logger = Logger.getLogger(ModuleFactoryBean.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleFactoryBean.class);
 
     /** List of environment bean definitions */
     private List<String> environmentalisationBeanDefinitionFileNameList;

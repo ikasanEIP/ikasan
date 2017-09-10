@@ -40,14 +40,15 @@
  */
 package org.ikasan.component.converter.xml.util;
 
+import org.ikasan.component.converter.xml.ThreadLocalBeansWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.ikasan.component.converter.xml.ThreadLocalBeansWrapper;
 
 /**
  * Exposed to the XSLT stylesheet, provides static access to underlying data
@@ -65,7 +66,7 @@ public class TransformationDataLookup
     /**
      * Logger instance for this class
      */
-    private static final Logger logger = Logger.getLogger(TransformationDataLookup.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransformationDataLookup.class);
 
     /**
      * Looks up a value from a named bean using a named bean method, with the

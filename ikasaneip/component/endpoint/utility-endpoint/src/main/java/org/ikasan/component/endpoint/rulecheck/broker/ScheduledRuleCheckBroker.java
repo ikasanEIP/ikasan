@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.rulecheck.broker;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.rulecheck.Rule;
 import org.ikasan.component.endpoint.rulecheck.RuleCheckConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -67,7 +67,7 @@ public class ScheduledRuleCheckBroker<EVENT> implements Broker<EVENT,EVENT>, Man
     /**
      * logger
      */
-    private static Logger logger = Logger.getLogger(ScheduledRuleCheckBroker.class);
+    private static Logger logger = LoggerFactory.getLogger(ScheduledRuleCheckBroker.class);
 
     /**
      * Scheduler

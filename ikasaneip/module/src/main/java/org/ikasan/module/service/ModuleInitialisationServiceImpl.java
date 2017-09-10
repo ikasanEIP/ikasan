@@ -40,7 +40,7 @@
  */
 package org.ikasan.module.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -81,7 +81,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         DisposableBean
 {
     /** logger instance */
-    private final static Logger logger = Logger.getLogger(ModuleInitialisationServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleInitialisationServiceImpl.class);
 
     /** Runtime container for holding modules */
     private ModuleContainer moduleContainer;

@@ -40,7 +40,7 @@
  */
 package org.ikasan.web.converter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.springframework.binding.convert.converters.Converter;
 
 import java.util.HashMap;
@@ -53,7 +53,7 @@ import java.util.Map;
 public class SpringConverter implements Converter
 {
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(SpringConverter.class);
+    private static Logger logger = LoggerFactory.getLogger(SpringConverter.class);
 
     /**
      * Default map entry separator when received as a single String

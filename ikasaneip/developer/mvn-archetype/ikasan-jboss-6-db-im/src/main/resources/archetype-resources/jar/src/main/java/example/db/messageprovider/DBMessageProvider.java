@@ -42,7 +42,7 @@ package example.db.messageprovider;
 
 import example.io.model.Model;
 import example.io.service.SourceService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.quartz.JobExecutionContext;
 
@@ -57,7 +57,7 @@ import java.util.List;
 public class DBMessageProvider implements MessageProvider<Collection<Model>>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(DBMessageProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(DBMessageProvider.class);
 
     /** service handle */
     private SourceService ioService;
