@@ -42,53 +42,44 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.RequiresAopProxy;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
+import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-import org.quartz.Job;
+
+import java.util.List;
 
 /**
- * Ikasan provided scheduled consumer default implementation.
+ * Ikasan provided local file consumer default implementation.
+ *
  * This implemnetation allows for proxying of the object to facilitate transaction pointing.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, RequiresAopProxy
+public class FileConsumerBuilderImpl extends ScheduledConsumerBuilderImpl
+        implements FileConsumerBuilder, RequiresAopProxy
 {
-    /** default scheduled consumer instance */
-    ScheduledConsumer scheduledConsumer;
-
-    /** the scheduledJobFactory */
-    ScheduledJobFactory scheduledJobFactory;
-
-    /** AopProxyProvider provider */
-    AopProxyProvider aopProxyProvider;
-
-    /** scheduled job name */
-    String scheduledJobName;
-
-    /** scheduled job group name */
-    String scheduledJobGroupName;
+    FileMessageProvider fileMessageProvider;
 
     /**
      * Constructor
      * @param scheduledConsumer
      */
-    public ScheduledConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory,
-                                        AopProxyProvider aopProxyProvider)
+    public FileConsumerBuilderImpl(ScheduledConsumer scheduledConsumer, ScheduledJobFactory scheduledJobFactory,
+                                   AopProxyProvider aopProxyProvider, FileMessageProvider fileMessageProvider)
     {
-        this.scheduledConsumer = scheduledConsumer;
-        if(scheduledConsumer == null)
+        super(scheduledConsumer, scheduledJobFactory, aopProxyProvider);
+        this.fileMessageProvider = fileMessageProvider;
+        if(fileMessageProvider == null)
         {
-            throw new IllegalArgumentException("scheduledConsumer cannot be 'null'");
+            throw new IllegalArgumentException("fileMessageProvider cannot be 'null'");
         }
 
-        this.scheduledJobFactory = scheduledJobFactory;
-        this.aopProxyProvider = aopProxyProvider;
     }
 
     /**
@@ -97,7 +88,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param criticalOnStartup
      * @return
      */
-    public ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup)
+    public FileConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup)
     {
         this.scheduledConsumer.setCriticalOnStartup(criticalOnStartup);
         return this;
@@ -108,20 +99,16 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param configuredResourceId
      * @return
      */
-    public ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId)
+    public FileConsumerBuilder setConfiguredResourceId(String configuredResourceId)
     {
         this.scheduledConsumer.setConfiguredResourceId(configuredResourceId);
         return this;
     }
 
-    /**
-     * Actual runtime configuration
-     * @param scheduledConsumerConfiguration
-     * @return
-     */
-    public ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration)
+    @Override
+    public FileConsumerBuilder setConfiguration(FileConsumerConfiguration fileConsumerConfiguration)
     {
-        this.scheduledConsumer.setConfiguration(scheduledConsumerConfiguration);
+        this.scheduledConsumer.setConfiguration(fileConsumerConfiguration);
         return this;
     }
 
@@ -130,7 +117,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param messageProvider
      * @return
      */
-    public ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider)
+    public FileConsumerBuilder setMessageProvider(MessageProvider messageProvider)
     {
         this.scheduledConsumer.setMessageProvider(messageProvider);
         return this;
@@ -141,7 +128,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param managedEventIdentifierService
      * @return
      */
-    public ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
+    public FileConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
     {
         this.scheduledConsumer.setManagedEventIdentifierService(managedEventIdentifierService);
         return this;
@@ -152,7 +139,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param managedResourceRecoveryManager
      * @return
      */
-    public ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    public FileConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
     {
         this.scheduledConsumer.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         return this;
@@ -163,7 +150,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param eventFactory
      * @return
      */
-    public ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory) {
+    public FileConsumerBuilder setEventFactory(EventFactory eventFactory) {
         this.scheduledConsumer.setEventFactory(eventFactory);
         return this;
     }
@@ -173,7 +160,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param cronExpression
      * @return
      */
-    public ScheduledConsumerBuilder setCronExpression(String cronExpression)
+    public FileConsumerBuilder setCronExpression(String cronExpression)
     {
         getConfiguration().setCronExpression(cronExpression);
         return this;
@@ -185,7 +172,8 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param eager
      * @return
      */
-    public ScheduledConsumerBuilder setEager(boolean eager) {
+    public FileConsumerBuilder setEager(boolean eager)
+    {
         getConfiguration().setEager(eager);
         return this;
     }
@@ -195,7 +183,7 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param ignoreMisfire
      * @return
      */
-    public ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire) {
+    public FileConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire) {
         getConfiguration().setIgnoreMisfire(ignoreMisfire);
         return this;
     }
@@ -205,34 +193,103 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * @param timezone
      * @return
      */
-    public ScheduledConsumerBuilder setTimezone(String timezone) {
+    public FileConsumerBuilder setTimezone(String timezone) {
         getConfiguration().setTimezone(timezone);
         return this;
     }
 
     @Override
-    public ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName) {
+    public FileConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName) {
         this.scheduledJobGroupName = scheduledJobGroupName;
         return this;
     }
 
     @Override
-    public ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName) {
+    public FileConsumerBuilder setScheduledJobName(String scheduledJobName) {
         this.scheduledJobName = scheduledJobName;
         return this;
     }
 
-
-    private ScheduledConsumerConfiguration getConfiguration()
+    @Override
+    public FileConsumerBuilder setFilenames(List<String> filenames)
     {
-        ScheduledConsumerConfiguration scheduledConsumerConfiguration = this.scheduledConsumer.getConfiguration();
-        if(scheduledConsumerConfiguration == null)
+        getConfiguration().setFilenames(filenames);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setEncoding(String encoding)
+    {
+        getConfiguration().setEncoding(encoding);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setIncludeHeader(boolean includeHeader)
+    {
+        getConfiguration().setIncludeHeader(includeHeader);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setIncludeTrailer(boolean includeTrailer)
+    {
+        getConfiguration().setIncludeTrailer(includeTrailer);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setSortByModifiedDateTime(boolean sortByModifiedDateTime)
+    {
+        getConfiguration().setSortByModifiedDateTime(sortByModifiedDateTime);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setSortAscending(boolean sortAscending)
+    {
+        getConfiguration().setSortAscending(sortAscending);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setDirectoryDepth(int directoryDepth)
+    {
+        getConfiguration().setDirectoryDepth(directoryDepth);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setLogMatchedFilenames(boolean logMatchedFilenames)
+    {
+        getConfiguration().setLogMatchedFilenames(logMatchedFilenames);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning)
+    {
+        getConfiguration().setIgnoreFileRenameWhilstScanning(ignoreFileRenameWhilstScanning);
+        return this;
+    }
+
+    @Override
+    public FileConsumerBuilder setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor)
+    {
+        this.fileMessageProvider.setMessageProviderPostProcessor(messageProviderPostProcessor);
+        return this;
+    }
+
+    private FileConsumerConfiguration getConfiguration()
+    {
+        FileConsumerConfiguration scheduledFileConsumerConfiguration = (FileConsumerConfiguration)this.scheduledConsumer.getConfiguration();
+        if(scheduledFileConsumerConfiguration == null)
         {
-            scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
-            this.scheduledConsumer.setConfiguration(scheduledConsumerConfiguration);
+            scheduledFileConsumerConfiguration = new FileConsumerConfiguration();
+            this.scheduledConsumer.setConfiguration(scheduledFileConsumerConfiguration);
         }
 
-        return scheduledConsumerConfiguration;
+        return scheduledFileConsumerConfiguration;
     }
 
     /**
@@ -240,47 +297,11 @@ public class ScheduledConsumerBuilderImpl implements ScheduledConsumerBuilder, R
      * ready for use and return the instance.
      * @return
      */
-    public ScheduledConsumer build() {
-        if (this.scheduledConsumer.getConfiguration() == null) {
-            this.scheduledConsumer.setConfiguration(new ScheduledConsumerConfiguration());
-        }
-
-        validateBuilderConfiguration();
-
-        if(this.aopProxyProvider == null)
-        {
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(scheduledConsumer, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
-        }
-        else
-        {
-            Job pointcutJob = this.aopProxyProvider.applyPointcut(this.scheduledJobName, scheduledConsumer);
-            scheduledConsumer.setJobDetail( scheduledJobFactory.createJobDetail(pointcutJob, ScheduledConsumer.class, this.scheduledJobName, this.scheduledJobGroupName) );
-        }
-
-        return this.scheduledConsumer;
-    }
-
-    protected void validateBuilderConfiguration()
+    public ScheduledConsumer build()
     {
-        if(this.scheduledConsumer.getConfiguration() != null && this.scheduledConsumer.getConfiguredResourceId() == null)
-        {
-            throw new IllegalArgumentException("configuredResourceId is a required property for the scheduledConsumer and cannot be 'null'");
-        }
-
-        if(this.scheduledJobName == null)
-        {
-            throw new IllegalArgumentException("scheduledJobName is a required property for the scheduledConsumer and cannot be 'null'");
-        }
-
-        if(this.scheduledJobGroupName == null)
-        {
-            throw new IllegalArgumentException("scheduledJobGroupName is a required property for the scheduledConsumer and cannot be 'null'");
-        }
+        this.scheduledConsumer.setMessageProvider(this.fileMessageProvider);
+        return super.build();
     }
 
-    @Override
-    public void setAopProxyProvider(AopProxyProvider aopProxyProvider) {
-        this.aopProxyProvider = aopProxyProvider;
-    }
 }
 

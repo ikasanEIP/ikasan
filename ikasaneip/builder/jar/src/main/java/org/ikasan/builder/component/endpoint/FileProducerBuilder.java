@@ -41,45 +41,31 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.component.Builder;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
+import org.ikasan.spec.component.endpoint.Producer;
 
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Contract for a default fileProducerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public interface FileProducerBuilder extends Builder<Producer>
 {
-    ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    public FileProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    public FileProducerBuilder setConfiguration(FileProducerConfiguration fileProducerConfiguration);
 
-    ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
+    public FileProducerBuilder setFilename(String filename);
 
-    ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
+    public FileProducerBuilder setTempFilename(String tempFilename);
 
-    ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
+    public FileProducerBuilder setUseTempFile(boolean useTempFile);
 
-    ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
+    public FileProducerBuilder setWriteChecksum(boolean writeChecksum);
 
-    ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
+    public FileProducerBuilder setEncoding(String encoding);
 
-    ScheduledConsumerBuilder setCronExpression(String cronExpression);
-
-    ScheduledConsumerBuilder setEager(boolean eager);
-
-    ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
-
-    ScheduledConsumerBuilder setTimezone(String timezone);
-
-    ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
-
-    ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+    public FileProducerBuilder setLineEnding(String lineEnding);
 
 }
 

@@ -40,6 +40,10 @@
  */
 package org.ikasan.builder;
 
+import org.springframework.context.ApplicationContext;
+
+import java.util.HashMap;
+
 /**
  * Factory implementation for an IkasanApplication instance.
  *
@@ -47,6 +51,7 @@ package org.ikasan.builder;
  */
 public class IkasanApplicationFactory
 {
+
     /**
      * Constructor
      */

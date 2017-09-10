@@ -40,46 +40,67 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.builder.component.Builder;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
+import java.util.List;
+
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Contract for a default fileConsumerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public interface FileConsumerBuilder extends ScheduledConsumerBuilder
 {
-    ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    public FileConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
-    ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    public FileConsumerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
+    public FileConsumerBuilder setConfiguration(FileConsumerConfiguration scheduledConsumerConfiguration);
 
-    ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
+    public FileConsumerBuilder setMessageProvider(MessageProvider messageProvider);
 
-    ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
+    public FileConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
 
-    ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
+    public FileConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
-    ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
+    public FileConsumerBuilder setEventFactory(EventFactory eventFactory);
 
-    ScheduledConsumerBuilder setCronExpression(String cronExpression);
+    public FileConsumerBuilder setCronExpression(String cronExpression);
 
-    ScheduledConsumerBuilder setEager(boolean eager);
+    public FileConsumerBuilder setEager(boolean eager);
 
-    ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
+    public FileConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
 
-    ScheduledConsumerBuilder setTimezone(String timezone);
+    public FileConsumerBuilder setTimezone(String timezone);
 
-    ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
+    public FileConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
 
-    ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+    public FileConsumerBuilder setScheduledJobName(String scheduledJobName);
+
+    public FileConsumerBuilder setFilenames(List<String> filenames);
+
+    public FileConsumerBuilder setEncoding(String encoding);
+
+    public FileConsumerBuilder setIncludeHeader(boolean includeHeader);
+
+    public FileConsumerBuilder setIncludeTrailer(boolean includeTrailer);
+
+    public FileConsumerBuilder setSortByModifiedDateTime(boolean sortByModifiedDateTime);
+
+    public FileConsumerBuilder setSortAscending(boolean sortAscending);
+
+    public FileConsumerBuilder setDirectoryDepth(int directoryDepth);
+
+    public FileConsumerBuilder setLogMatchedFilenames(boolean logMatchedFilenames);
+
+    public FileConsumerBuilder setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
+
+    public FileConsumerBuilder setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor);
 
 }
 

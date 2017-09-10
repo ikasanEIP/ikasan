@@ -56,20 +56,11 @@
         <activemq.url>tcp://localhost:61616</activemq.url>
     </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-plugin-plugin</artifactId>
-			<version>3.2</version>
-		</dependency>
-	</dependencies>
-	
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.2</version>
                 <configuration>
                     <goalPrefix>ikasan-im-jboss</goalPrefix>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
