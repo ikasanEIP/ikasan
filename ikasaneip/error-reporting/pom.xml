@@ -158,6 +158,12 @@
       <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-serialiser</artifactId>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.ow2.asm</groupId>
+                  <artifactId>asm</artifactId>
+              </exclusion>
+          </exclusions>
           <scope>provided</scope>
       </dependency>
 
@@ -176,12 +182,13 @@
       <dependency>
           <groupId>com.google.guava</groupId>
           <artifactId>guava</artifactId>
+          <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>org.apache.solr</groupId>
           <artifactId>solr-solrj</artifactId>
-          <version>6.6.0</version>
+          <scope>provided</scope>
       </dependency>
 
 
@@ -189,14 +196,12 @@
       <dependency>
           <groupId>org.apache.solr</groupId>
           <artifactId>solr-core</artifactId>
-          <version>6.6.0</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>org.apache.solr</groupId>
           <artifactId>solr-test-framework</artifactId>
-          <version>6.6.0</version>
           <scope>test</scope>
       </dependency>
 
@@ -267,7 +272,6 @@
         <version>${version.org.hamcrest.hamcrest-all}</version>
       </dependency>
 
-      <!-- Hibernate dependency -->
       <dependency>
           <groupId>org.javassist</groupId>
           <artifactId>javassist</artifactId>

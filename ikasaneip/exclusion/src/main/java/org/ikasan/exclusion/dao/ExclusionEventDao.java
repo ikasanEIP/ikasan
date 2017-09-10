@@ -40,8 +40,6 @@
  */
 package org.ikasan.exclusion.dao;
 
-import org.ikasan.spec.wiretap.WiretapEvent;
-
 import java.util.Date;
 import java.util.List;
 
