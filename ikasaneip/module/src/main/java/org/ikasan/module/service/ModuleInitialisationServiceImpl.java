@@ -354,49 +354,61 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleSecurity(Module module)
     {
-        List<Policy> existingAuthorities = this.securityService.getAllPolicies();
+        List<Policy> readBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
 
-        Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
-        if (!existingAuthorities.contains(readBlueConsole))
+        if (readBlueConsolePolicies==null || readBlueConsolePolicies.isEmpty())
         {
+            Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
+
             logger.info("Creating ReadBlueConsole policy...");
             this.securityService.savePolicy(readBlueConsole);
         }
-        Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
 
-        if (!existingAuthorities.contains(writeBlueConsole))
+        List<Policy> writeBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
+
+        if (writeBlueConsolePolicies==null && writeBlueConsolePolicies.isEmpty() )
         {
+            Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
+
             logger.info("Creating WriteBlueConsole policy...");
             this.securityService.savePolicy(writeBlueConsole);
         }
 
-        List<Role> existingRoles = this.securityService.getAllRoles();
+        List<Role> existingUserRoles = this.securityService.getRoleByNameLike("User");
 
-        Role userRole = new Role("User", "Users who have a read only view on the system.");
-        if (!existingRoles.contains(userRole))
+        if (existingUserRoles==null || existingUserRoles.isEmpty())
         {
+            Role userRole = new Role("User", "Users who have a read only view on the system.");
+
             logger.info("Creating standard User role...");
             this.securityService.saveRole(userRole);
         }
 
-        Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
-        if (!existingRoles.contains(adminRole))
+        List<Role> existingAdminRoles = this.securityService.getRoleByNameLike("ADMIN");
+
+        if (existingAdminRoles==null || existingAdminRoles.isEmpty())
         {
+            Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
+
             logger.info("Creating standard Admin role...");
             this.securityService.saveRole(adminRole);
         }
 
-        List<IkasanPrincipal> existingPrinciples = this.securityService.getAllPrincipals();
+        List<IkasanPrincipal> existingAdminPrinciples = this.securityService.getPrincipalByNameLike("admin");
 
-        IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","user", "The administrator user principle.");
-        if (!existingPrinciples.contains(adminPrinciple))
+        if (existingAdminPrinciples==null && existingAdminPrinciples.isEmpty())
         {
+            IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","user", "The administrator user principle.");
+
             logger.info("Creating standard admin principle...");
             this.securityService.savePrincipal(adminPrinciple);
         }
-        IkasanPrincipal userPrinciple = new IkasanPrincipal("user","user", "The user principle.");
-        if (!existingPrinciples.contains(userPrinciple))
+        List<IkasanPrincipal> existingUserPrinciples = this.securityService.getPrincipalByNameLike("user");
+
+        if (existingUserPrinciples==null || existingUserPrinciples.isEmpty())
         {
+            IkasanPrincipal userPrinciple = new IkasanPrincipal("user","user", "The user principle.");
+
             logger.info("Creating standard user principle...");
             this.securityService.savePrincipal(userPrinciple);
         }
