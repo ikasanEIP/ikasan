@@ -61,7 +61,7 @@ public class FileProducer<T> implements Producer<T>, ConfiguredResource<FileProd
     String configurationId;
 
     // configuration bean
-    FileProducerConfiguration configuration;
+    FileProducerConfiguration configuration = new FileProducerConfiguration();
 
     @Override
     public String getConfiguredResourceId() {

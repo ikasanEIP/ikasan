@@ -120,6 +120,8 @@ public class ScheduledConsumerBuilderTest {
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
                 .setConfiguredResourceId("testConfigId")
+                .setScheduledJobName("defaultScheduledJobName")
+                .setScheduledJobGroupName("defaultScheduledJobGroupName")
                 .build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
@@ -159,6 +161,8 @@ public class ScheduledConsumerBuilderTest {
         Consumer scheduledConsumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
                 .setConfiguredResourceId("testConfigId")
+                .setScheduledJobName("defaultScheduledJobName")
+                .setScheduledJobGroupName("defaultScheduledJobGroupName")
                 .build();
 
         assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);

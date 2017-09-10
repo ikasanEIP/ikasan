@@ -41,45 +41,61 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.component.Builder;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
 /**
- * Contract for a default scheduledConsumerBuilder.
+ * Contract for a default ftpProducerBuilder.
  *
  * @author Ikasan Development Team.
  */
-public interface ScheduledConsumerBuilder extends Builder<Consumer>
+public interface FtpProducerBuilder extends Builder<Producer>
 {
-    ScheduledConsumerBuilder setCriticalOnStartup(boolean criticalOnStartup);
+    FtpProducerBuilder setCriticalOnStartup(boolean criticalOnStartup);
 
-    ScheduledConsumerBuilder setConfiguredResourceId(String configuredResourceId);
+    FtpProducerBuilder setConfiguredResourceId(String configuredResourceId);
 
-    ScheduledConsumerBuilder setConfiguration(ScheduledConsumerConfiguration scheduledConsumerConfiguration);
+    FtpProducerBuilder setConfiguration(FtpProducerConfiguration fftpProducerConfiguration);
 
-    ScheduledConsumerBuilder setMessageProvider(MessageProvider messageProvider);
+    FtpProducerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
 
-    ScheduledConsumerBuilder setManagedEventIdentifierService(ManagedEventIdentifierService managedEventIdentifierService);
+    FtpProducerBuilder setOutputDirectory(String outputDirectory);
 
-    ScheduledConsumerBuilder setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
+    FtpProducerBuilder setRenameExtension(String renameExtension);
 
-    ScheduledConsumerBuilder setEventFactory(EventFactory eventFactory);
+    FtpProducerBuilder setTempFileName(String tempFileName);
 
-    ScheduledConsumerBuilder setCronExpression(String cronExpression);
+    FtpProducerBuilder setChecksumDelivered(Boolean checksumDelivered);
 
-    ScheduledConsumerBuilder setEager(boolean eager);
+    FtpProducerBuilder setClientID(String clientID);
 
-    ScheduledConsumerBuilder setIgnoreMisfire(boolean ignoreMisfire);
+    FtpProducerBuilder setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete);
 
-    ScheduledConsumerBuilder setTimezone(String timezone);
+    FtpProducerBuilder setCreateParentDirectory(Boolean createParentDirectory);
 
-    ScheduledConsumerBuilder setScheduledJobGroupName(String scheduledJobGroupName);
+    FtpProducerBuilder setOverwrite(Boolean overwrite);
 
-    ScheduledConsumerBuilder setScheduledJobName(String scheduledJobName);
+    FtpProducerBuilder setActive(Boolean active);
 
+    FtpProducerBuilder setUnzip(Boolean unzip);
+
+    FtpProducerBuilder setRemoteHost(String remoteHost);
+
+    FtpProducerBuilder setMaxRetryAttempts(Integer maxRetryAttempts);
+
+    FtpProducerBuilder setRemotePort(Integer remotePort);
+
+    FtpProducerBuilder setUsername(String username);
+
+    FtpProducerBuilder setPassword(String password);
+
+    FtpProducerBuilder setConnectionTimeout(Integer connectionTimeout);
+
+    FtpProducerBuilder setSystemKey(String systemKey);
+
+    FtpProducerBuilder setSocketTimeout(Integer socketTimeout);
+
+    FtpProducerBuilder setDataTimeout(Integer dataTimeout);
 }
 

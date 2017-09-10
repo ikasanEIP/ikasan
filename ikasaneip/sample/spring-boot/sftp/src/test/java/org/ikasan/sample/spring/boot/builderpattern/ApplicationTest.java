@@ -83,6 +83,9 @@ public class ApplicationTest {
 
     private SshServer sshd;
 
+    private IkasanApplication ikasanApplication;
+    private Application Application;
+
     @Before
     public void beforeTestSetup() throws Exception {
         sshd = SshServer.setUpDefaultServer();
@@ -110,6 +113,11 @@ public class ApplicationTest {
         sshd.start();
 
         putFile();
+
+        String[] args = {""};
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+
+
     }
 
     public void putFile() throws Exception {
@@ -157,6 +165,7 @@ public class ApplicationTest {
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt"));
         Files.deleteIfExists(FileSystems.getDefault().getPath("test.txt.tmp"));
 
+        ikasanApplication.close();
     }
 
     /**
@@ -164,20 +173,15 @@ public class ApplicationTest {
      */
     @Test
     public void test_sftpConsumer_flow() throws Exception {
-        String[] args = {""};
-
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-        System.out.println("Check is module healthy.");
-
 
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
+
         Module module = (Module) ikasanApplication.getBean(Module.class);
-        Flow flow = (Flow) module.getFlow("sftpToLogFlow");
+        Flow flow = (Flow) module.getFlow("Sftp To Log Flow");
 
         // start flow
         flow.start();
-        pause(20000);
+        pause(15000);
         assertEquals("running", flow.getState());
 
         flow.stop();
@@ -190,13 +194,12 @@ public class ApplicationTest {
     /**
      * The SFTP test does not work on windows
      */
-    @Ignore
     @Test
+    @Ignore
     public void test_sftpProducer_flow() throws Exception {
         String[] args = {""};
 
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+
         System.out.println("Check is module healthy.");
 
 
@@ -206,10 +209,9 @@ public class ApplicationTest {
 
         // start flow
         flow.start();
-        pause(20000);
+        pause(15000);
         assertEquals("running", flow.getState());
 
-        pause(5000);
         flow.stop();
         pause(2000);
         assertEquals("stopped", flow.getState());

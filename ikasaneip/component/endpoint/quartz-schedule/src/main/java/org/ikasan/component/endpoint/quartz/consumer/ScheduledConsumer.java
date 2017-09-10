@@ -443,6 +443,11 @@ public class ScheduledConsumer<T>
         this.messageProvider = messageProvider;
     }
 
+    public MessageProvider<?> getMessageProvider()
+    {
+        return this.messageProvider;
+    }
+
     /**
      * Method factory for creating a cron trigger
      *
