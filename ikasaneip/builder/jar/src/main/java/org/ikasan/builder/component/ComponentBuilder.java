@@ -46,6 +46,7 @@ import org.ikasan.builder.component.filter.MessageFilterBuilderImpl;
 import org.ikasan.builder.component.splitting.ListSplitterBuilderImpl;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
+import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
@@ -53,8 +54,8 @@ import org.ikasan.component.splitter.DefaultListSplitter;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
-import org.ikasan.endpoint.sftp.producer.SftpProducer;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.quartz.Scheduler;
@@ -175,6 +176,15 @@ public class ComponentBuilder
         FileConsumerBuilder fileConsumerBuilder = new FileConsumerBuilderImpl(scheduledConsumer,
                 this.applicationContext.getBean(ScheduledJobFactory.class), this.applicationContext.getBean(AopProxyProvider.class), new FileMessageProvider() );
         return fileConsumerBuilder;
+    }
+
+    /**
+     * Get an instance of an Ikasan default fileProducer
+     * @return FileProducerBuilder
+     */
+    public FileProducerBuilder fileProducer()
+    {
+        return new FileProducerBuilderImpl();
     }
 
     /**
