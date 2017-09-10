@@ -10,7 +10,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.replay.dao.ReplayDao;
@@ -29,7 +29,7 @@ import org.ikasan.spec.replay.ReplayService;
  */
 public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent> 
 {
-	private Logger logger = Logger.getLogger(ReplayService.class);
+	private static Logger logger = LoggerFactory.getLogger(ReplayService.class);
 	
 	private ReplayDao replayDao;
 	

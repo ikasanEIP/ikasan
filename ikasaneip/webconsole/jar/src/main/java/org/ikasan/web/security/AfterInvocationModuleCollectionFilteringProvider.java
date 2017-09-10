@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.module.Module;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -68,7 +68,7 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
     }
 
     /** Logger for this class */
-    Logger logger = Logger.getLogger(AfterInvocationModuleCollectionFilteringProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(AfterInvocationModuleCollectionFilteringProvider.class);
 
     public Object decide(Authentication authentication, Object object, Collection<ConfigAttribute> config,
             Object returnedObject) throws AccessDeniedException

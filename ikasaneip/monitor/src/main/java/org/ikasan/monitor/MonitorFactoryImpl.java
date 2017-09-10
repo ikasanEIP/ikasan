@@ -40,7 +40,7 @@
  */
 package org.ikasan.monitor;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Monitor;
 
@@ -57,7 +57,7 @@ public class MonitorFactoryImpl implements MonitorFactory
     /** default executor service is a single thread executor */
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private static final Logger logger = Logger.getLogger(MonitorFactoryImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MonitorFactoryImpl.class);
 
     /**
      * Get an instance of a monitor

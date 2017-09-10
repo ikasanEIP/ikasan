@@ -3,7 +3,7 @@ package org.ikasan.component.converter.xml;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 /**
  * Validating parser callbacks
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 public class XmlValidationEventHandler implements ValidationEventHandler
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(XmlValidationEventHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(XmlValidationEventHandler.class);
     /* (non-Javadoc)
      * @see javax.xml.bind.ValidationEventHandler#handleEvent(javax.xml.bind.ValidationEvent)
      */

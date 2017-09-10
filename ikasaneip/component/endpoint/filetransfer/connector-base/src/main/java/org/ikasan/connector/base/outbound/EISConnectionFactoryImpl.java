@@ -40,7 +40,9 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import java.io.Serializable;
+import org.ikasan.connector.ConnectorRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.Reference;
 import javax.resource.ResourceException;
@@ -51,10 +53,7 @@ import javax.resource.cci.ResourceAdapterMetaData;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.connector.ConnectorRuntimeException;
+import java.io.Serializable;
 
 /**
  * This class implements the ConnectionFactory for the EIS resource adapter.
@@ -70,7 +69,7 @@ public abstract class EISConnectionFactoryImpl implements EISConnectionFactory, 
     private static final long serialVersionUID = 1L;
 
     /** Logger */
-    private Logger logger = LoggerFactory.getLogger(EISConnectionFactoryImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionFactoryImpl.class);
 
     /** Reference */
     private Reference reference;

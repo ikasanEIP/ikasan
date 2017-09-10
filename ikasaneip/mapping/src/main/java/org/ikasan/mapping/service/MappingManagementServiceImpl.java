@@ -41,7 +41,7 @@
 package org.ikasan.mapping.service;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.model.*;
 import org.ikasan.mapping.service.configuration.MappingConfigurationServiceConfiguration;
@@ -53,7 +53,7 @@ import org.springframework.dao.DataAccessException;
  */
 public class MappingManagementServiceImpl implements MappingManagementService
 {
-    private Logger logger = Logger.getLogger(MappingManagementServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingManagementServiceImpl.class);
 
     
     protected final MappingConfigurationDao dao;

@@ -40,7 +40,7 @@
  */
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ import java.security.Principal;
 @RequestMapping("/rest/resubmission")
 @RestController
 public class ResubmissionApplication {
-    private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ResubmissionApplication.class);
 
     @Autowired
     private HospitalService hospitalService;

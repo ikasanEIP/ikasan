@@ -40,7 +40,7 @@
  */
 package org.ikasan.configurationService.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.configurationService.model.*;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -68,7 +68,7 @@ import java.util.Map;
  */
 public class ComponentConfigurationImportHelper
 {
-    private Logger logger = Logger.getLogger(ComponentConfigurationImportHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(ComponentConfigurationImportHelper.class);
 
     public static final String ID_XPATH = "/componentConfiguration/id";
     public static final String DESCRIPTION_XPATH = "/componentConfiguration/description";

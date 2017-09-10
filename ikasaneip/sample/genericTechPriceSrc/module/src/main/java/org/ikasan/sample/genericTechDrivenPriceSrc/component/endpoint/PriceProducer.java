@@ -40,7 +40,7 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 
@@ -53,7 +53,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 public class PriceProducer implements Producer<StringBuilder>
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(PriceProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(PriceProducer.class);
 
     /** invocation count */
     private int invocationCount = 0;
@@ -66,6 +66,6 @@ public class PriceProducer implements Producer<StringBuilder>
         output.append("] producer invocation with payload [");
         output.append(payload);
         output.append("]");
-        logger.info(output);
+        logger.info(output.toString());
     }
 }

@@ -40,7 +40,7 @@
  */
 package org.ikasan.jca.base.outbound;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
@@ -61,7 +61,7 @@ public abstract class EISConnectionImpl
     implements Connection
 { 
     /** Logger */
-    private static Logger logger = Logger.getLogger(EISConnectionImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionImpl.class);
 
     /**
      * The ManagedConnection instance that controls this virtual

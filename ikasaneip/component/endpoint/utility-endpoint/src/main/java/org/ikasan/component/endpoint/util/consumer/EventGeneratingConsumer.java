@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.util.consumer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 
 import java.util.concurrent.ExecutorService;
@@ -56,7 +56,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
     implements ConfiguredResource<EventGeneratingConsumerConfiguration>
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(EventGeneratingConsumer.class);
+    private static Logger logger = LoggerFactory.getLogger(EventGeneratingConsumer.class);
 
     /** allow techEndpoint to execute in a separate thread */
     private ExecutorService executorService = Executors.newSingleThreadExecutor();

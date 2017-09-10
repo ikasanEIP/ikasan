@@ -1,6 +1,6 @@
 package org.ikasan.configurationService.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 public abstract class ConfigurationHelper
 {
-    private Logger logger = Logger.getLogger(ConfigurationHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigurationHelper.class);
 
     protected ConfigurationManagement<ConfiguredResource, Configuration> configurationService;
 

@@ -40,7 +40,7 @@ package org.ikasan.web.security;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ReflectiveMethodInvocation;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
@@ -62,7 +62,7 @@ public class ModuleAdminVoter implements AccessDecisionVoter {
     public static final String MODULE_ADMIN_ATTRIBUTE = "MODULE_ADMIN";
 
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(ModuleAdminVoter.class);
+    private static Logger logger = LoggerFactory.getLogger(ModuleAdminVoter.class);
 
 
     public boolean supports(ConfigAttribute attribute) {

@@ -60,7 +60,7 @@ import java.util.Map;
 public class AopProxyProviderSpringImpl implements AopProxyProvider, ApplicationContextAware
 {
     /** logger */
-    private Logger logger = LoggerFactory.getLogger(AopProxyProviderSpringImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(AopProxyProviderSpringImpl.class);
 
     /** map of defined pointcuts */
     Map<String,DefaultBeanFactoryPointcutAdvisor> aopFactories;
