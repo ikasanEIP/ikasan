@@ -43,7 +43,7 @@ public class ConfigurationApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
             produces = {"application/json"})
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createConfiguration(@PathVariable("moduleName") String moduleName,
                                               @PathVariable("flowName") String flowName,
                                               @PathVariable("componentName") String componentName) {
@@ -84,7 +84,7 @@ public class ConfigurationApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
             produces = {"application/json"})
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createFlowElementConfiguration(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName,
                                                          @PathVariable("componentName") String componentName) {
 
@@ -131,7 +131,7 @@ public class ConfigurationApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/createConfiguration/{moduleName}/{flowName}",
             produces = {"application/json"})
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createFlowConfiguration(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName) {
         Module<Flow> module = moduleContainer.getModule(moduleName);
 

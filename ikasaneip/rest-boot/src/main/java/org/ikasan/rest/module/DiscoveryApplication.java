@@ -80,7 +80,7 @@ public class DiscoveryApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/flows/{moduleName}",
             produces = {"application/json"})
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public List<org.ikasan.topology.model.Flow> getFlows(@PathVariable("moduleName") String moduleName) {
 
         List<org.ikasan.topology.model.Flow> flows = new ArrayList<org.ikasan.topology.model.Flow>();
@@ -147,7 +147,7 @@ public class DiscoveryApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/components/{moduleName}/{flowName}",
             produces = {"application/json"})
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public List<org.ikasan.topology.model.Component> getComponents(@PathVariable("moduleName") String moduleName,
                                                                    @PathVariable("flowName") String flowName) {
 
