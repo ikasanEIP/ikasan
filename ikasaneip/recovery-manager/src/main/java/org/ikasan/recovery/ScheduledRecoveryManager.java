@@ -40,7 +40,7 @@
  */
 package org.ikasan.recovery;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
@@ -75,7 +75,7 @@ import static org.quartz.TriggerKey.triggerKey;
 public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionResolver, FlowInvocationContext, ID>, Job
 {
     /** logger */
-    private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
+    private static Logger logger = LoggerFactory.getLogger(ScheduledRecoveryManager.class);
 
     /** recovery job name */
     private static final String RECOVERY_JOB_NAME = "recoveryJob_";

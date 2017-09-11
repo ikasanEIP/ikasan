@@ -43,7 +43,7 @@ package org.ikasan.security.service.authentication;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.SecurityService;
@@ -61,7 +61,7 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 public class AuthenticationProviderFactoryImpl implements AuthenticationProviderFactory<AuthenticationMethod>
 {
 	/** Logger instance */
-    private static Logger logger = Logger.getLogger(AuthenticationProviderFactoryImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(AuthenticationProviderFactoryImpl.class);
 
 	private UserService userService;
 	private SecurityService securityService;

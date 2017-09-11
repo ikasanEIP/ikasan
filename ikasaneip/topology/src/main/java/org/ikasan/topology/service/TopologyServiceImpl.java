@@ -84,7 +84,7 @@ import org.springframework.web.client.RestTemplate;
  */
 public class TopologyServiceImpl implements TopologyService
 {
-	private Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
 
 	private TopologyDao topologyDao;
 

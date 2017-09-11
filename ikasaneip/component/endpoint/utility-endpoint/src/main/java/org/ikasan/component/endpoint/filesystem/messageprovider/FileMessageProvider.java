@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
@@ -65,7 +65,7 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         ManagedResource, Configured<FileConsumerConfiguration>, EndpointListener<String,IOException>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(FileMessageProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(FileMessageProvider.class);
 
     /** path separator */
     private static final String FQN_PATH_SEPARATOR = "/";

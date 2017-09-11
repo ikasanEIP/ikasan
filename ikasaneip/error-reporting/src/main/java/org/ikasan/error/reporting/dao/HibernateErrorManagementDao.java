@@ -43,7 +43,8 @@ package org.ikasan.error.reporting.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -62,346 +63,302 @@ import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
- * 
  * @author Ikasan Development Team
- *
  */
-public class HibernateErrorManagementDao  extends HibernateDaoSupport implements ErrorManagementDao
+public class HibernateErrorManagementDao extends HibernateDaoSupport implements ErrorManagementDao
 {
-	private static Logger logger = Logger.getLogger(HibernateErrorManagementDao.class);
+    private static Logger logger = LoggerFactory.getLogger(HibernateErrorManagementDao.class);
 
-	public static final String EVENT_IDS = "eventIds";
-	public static final String NOW = "now";
+    public static final String EVENT_IDS = "eventIds";
 
-	public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrence eo " +
-			" where eo.expiry < :" + NOW;
+    public static final String NOW = "now";
 
-	public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
-			" where eo.uri in(:" + EVENT_IDS + ")";
+    public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrence eo " +
+            " where eo.expiry < :" + NOW;
 
-	public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
+    public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrence eo " +
+            " where eo.uri in(:" + EVENT_IDS + ")";
 
-	public static final String NOTES_DELETE_QUERY = "delete Note n " +
-			" where n.id in(:" + EVENT_IDS + ")";
+    public static final String ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY = "select id.noteId from ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
 
-	public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
+    public static final String NOTES_DELETE_QUERY = "delete Note n " +
+            " where n.id in(:" + EVENT_IDS + ")";
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
-	 */
-	@Override
-	public void saveErrorOccurrenceAction(
-			ErrorOccurrenceAction errorOccurrenceAction)
-	{
-		this.getHibernateTemplate().saveOrUpdate(errorOccurrenceAction);
-	}
+    public static final String ERROR_OCCURRENCE_NOTE_DELETE_QUERY = "delete ErrorOccurrenceNote where id.errorUri in (:" + EVENT_IDS + ")";
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
-	 */
-	@Override
-	public void saveNote(Note note)
-	{
-		this.getHibernateTemplate().saveOrUpdate(note);
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceAction(org.ikasan.error.reporting.window.ErrorOccurrenceAction)
+     */
+    @Override
+    public void saveErrorOccurrenceAction(
+            ErrorOccurrenceAction errorOccurrenceAction)
+    {
+        this.getHibernateTemplate().saveOrUpdate(errorOccurrenceAction);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteNote(org.ikasan.error.reporting.window.Note)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void deleteNote(final Note note)
-	{
-		this.getHibernateTemplate().execute(new HibernateCallback()
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
+     */
+    @Override
+    public void saveNote(Note note)
+    {
+        this.getHibernateTemplate().saveOrUpdate(note);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteNote(org.ikasan.error.reporting.window.Note)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteNote(final Note note)
+    {
+        this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
             {
-   
                 Query query = session.createQuery(ErrorManagementDaoConstants.DELETE_NOTE);
-                
                 query.setParameter(ErrorManagementDaoConstants.NOTE_ID, note.getId());
-
                 query.executeUpdate();
-                
                 return null;
             }
         });
-		
-		this.getHibernateTemplate().delete(note);
-	}
+        this.getHibernateTemplate().delete(note);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceLink(org.ikasan.error.reporting.window.ErrorOccurrenceLink)
-	 */
-	@Override
-	public void saveErrorOccurrenceLink(ErrorOccurrenceLink errorOccurrenceLink)
-	{
-		this.getHibernateTemplate().saveOrUpdate(errorOccurrenceLink);
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceLink(org.ikasan.error.reporting.window.ErrorOccurrenceLink)
+     */
+    @Override
+    public void saveErrorOccurrenceLink(ErrorOccurrenceLink errorOccurrenceLink)
+    {
+        this.getHibernateTemplate().saveOrUpdate(errorOccurrenceLink);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceNote(org.ikasan.error.reporting.window.ErrorOccurrenceNote)
-	 */
-	@Override
-	public void saveErrorOccurrenceNote(ErrorOccurrenceNote errorOccurrenceNote)
-	{
-		this.getHibernateTemplate().saveOrUpdate(errorOccurrenceNote);	
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveErrorOccurrenceNote(org.ikasan.error.reporting.window.ErrorOccurrenceNote)
+     */
+    @Override
+    public void saveErrorOccurrenceNote(ErrorOccurrenceNote errorOccurrenceNote)
+    {
+        this.getHibernateTemplate().saveOrUpdate(errorOccurrenceNote);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteErrorOccurence(org.ikasan.error.reporting.window.ErrorOccurrence)
-	 */
-	@Override
-	public void deleteErrorOccurence(ErrorOccurrence errorOccurrence)
-	{
-		this.getHibernateTemplate().delete(errorOccurrence);
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteErrorOccurence(org.ikasan.error.reporting.window.ErrorOccurrence)
+     */
+    @Override
+    public void deleteErrorOccurence(ErrorOccurrence errorOccurrence)
+    {
+        this.getHibernateTemplate().delete(errorOccurrence);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrences(java.util.List)
-	 */
-	@Override
-	public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris)
-	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
-		
-		if(errorUris != null && errorUris.size() > 0)
-		{
-			criteria.add(Restrictions.in("uri", errorUris));
-		}
-		
-		criteria.addOrder(Order.desc("timestamp"));
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrences(java.util.List)
+     */
+    @Override
+    public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris)
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        if (errorUris != null && errorUris.size() > 0)
+        {
+            criteria.add(Restrictions.in("uri", errorUris));
+        }
+        criteria.addOrder(Order.desc("timestamp"));
+        return (List<ErrorOccurrence>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+    }
 
-        return (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNotesByErrorUri(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Note> getNotesByErrorUri(final String errorUri)
-	{
-		return (List<Note>)this.getHibernateTemplate().execute(new HibernateCallback()
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNotesByErrorUri(java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Note> getNotesByErrorUri(final String errorUri)
+    {
+        return (List<Note>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
             {
-   
                 Query query = session.createQuery(ErrorManagementDaoConstants.GET_NOTE_BY_ERROR_URI);
-                
                 query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
-
-                return (List<Note>)query.list();
+                return (List<Note>) query.list();
             }
         });
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrenceActions(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
-	 */
-	@Override
-	public List<ErrorOccurrence> findActionErrorOccurrences(
-			List<String> moduleName, List<String> flowName,
-			List<String> flowElementname, Date startDate, Date endDate)
-	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
-		
-		if(moduleName != null && moduleName.size() > 0)
-		{
-			criteria.add(Restrictions.in("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.size() > 0)
-		{
-			criteria.add(Restrictions.in("flowName", flowName));
-		}
-		
-		if(flowElementname != null && flowElementname.size() > 0)
-		{
-			criteria.add(Restrictions.in("flowElementName", flowElementname));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("userActionTimestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("userActionTimestamp", endDate.getTime()));
-		}
-		
-		criteria.add(Restrictions.isNotNull("userAction"));
-		criteria.addOrder(Order.desc("userActionTimestamp"));
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#findErrorOccurrenceActions(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+     */
+    @Override
+    public List<ErrorOccurrence> findActionErrorOccurrences(
+            List<String> moduleName, List<String> flowName,
+            List<String> flowElementname, Date startDate, Date endDate)
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        if (moduleName != null && moduleName.size() > 0)
+        {
+            criteria.add(Restrictions.in("moduleName", moduleName));
+        }
+        if (flowName != null && flowName.size() > 0)
+        {
+            criteria.add(Restrictions.in("flowName", flowName));
+        }
+        if (flowElementname != null && flowElementname.size() > 0)
+        {
+            criteria.add(Restrictions.in("flowElementName", flowElementname));
+        }
+        if (startDate != null)
+        {
+            criteria.add(Restrictions.gt("userActionTimestamp", startDate.getTime()));
+        }
+        if (endDate != null)
+        {
+            criteria.add(Restrictions.lt("userActionTimestamp", endDate.getTime()));
+        }
+        criteria.add(Restrictions.isNotNull("userAction"));
+        criteria.addOrder(Order.desc("userActionTimestamp"));
+        return (List<ErrorOccurrence>) this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
+    }
 
-        return (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#houseKeepErrorOccurrenceActions()
+     */
+    @Override
+    public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#houseKeepErrorOccurrenceActions()
-	 */
-	@Override
-	public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getAllErrorUrisWithNote()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<String> getAllErrorUrisWithNote()
-	{
-		return (List<String>)this.getHibernateTemplate().execute(new HibernateCallback()
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getAllErrorUrisWithNote()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getAllErrorUrisWithNote()
+    {
+        return (List<String>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
             {
-   
                 Query query = session.createQuery("select ecn.id.errorUri from ErrorOccurrenceNote ecn");
-
-                return (List<String>)query.list();
+                return (List<String>) query.list();
             }
         });
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getErrorOccurrenceNotesByErrorUri(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(
-			final String errorUri)
-	{
-		return (List<ErrorOccurrenceNote>)this.getHibernateTemplate().execute(new HibernateCallback()
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getErrorOccurrenceNotesByErrorUri(java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ErrorOccurrenceNote> getErrorOccurrenceNotesByErrorUri(
+            final String errorUri)
+    {
+        return (List<ErrorOccurrenceNote>) this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
             {
-   
                 Query query = session.createQuery(ErrorManagementDaoConstants.GET_ERROR_OCCURRENCE_NOTE_BY_ERROR_URI);
-                
                 query.setParameter(ErrorManagementDaoConstants.ERROR_URI, errorUri);
-
-                return (List<ErrorOccurrenceNote>)query.list();
+                return (List<ErrorOccurrenceNote>) query.list();
             }
         });
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#close(java.util.List)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void close(final List<String> uris, final String user)
-	{
-		this.getHibernateTemplate().execute(new HibernateCallback()
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#close(java.util.List)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void close(final List<String> uris, final String user)
+    {
+        this.getHibernateTemplate().execute(new HibernateCallback()
         {
             @SuppressWarnings("unchecked")
             public Object doInHibernate(Session session) throws HibernateException
             {
-   
                 Query query = session.createQuery(ErrorManagementDaoConstants.CLOSE_ERROR_OCCURRENCE);
-                
                 query.setParameterList(ErrorManagementDaoConstants.ERROR_URIS, uris);
                 query.setParameter(ErrorManagementDaoConstants.USER, user);
                 query.setParameter(ErrorManagementDaoConstants.TIMESTAMP, System.currentTimeMillis());
-                
                 logger.debug("Query: " + query);
-                
                 query.executeUpdate();
-                
                 return null;
             }
         });
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNumberOfModuleErrors(java.lang.String)
-	 */
-	@Override
-	public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate)
-	{
-		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
-		
-		if(moduleName != null)
-		{
-			criteria.add(Restrictions.eq("moduleName", moduleName));
-		}
-		
-		if(startDate != null)
-		{
-			criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
-		}
-		
-		if(endDate != null)
-		{
-			criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
-		}
-		
-		if(excluded)
-		{
-			criteria.add(Restrictions.eq("action", "ExcludeEvent"));
-		}
-		
-		if(actioned)
-		{
-			criteria.add(Restrictions.isNotNull("userAction"));
-		}
-		else
-		{
-			criteria.add(Restrictions.isNull("userAction"));
-		}
-		
-		criteria.setProjection(Projections.projectionList()
-		                    .add(Projections.count("moduleName")));
-		
-		return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
-	}
+    /* (non-Javadoc)
+     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#getNumberOfModuleErrors(java.lang.String)
+     */
+    @Override
+    public Long getNumberOfModuleErrors(String moduleName, boolean excluded, boolean actioned, Date startDate, Date endDate)
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        if (moduleName != null)
+        {
+            criteria.add(Restrictions.eq("moduleName", moduleName));
+        }
+        if (startDate != null)
+        {
+            criteria.add(Restrictions.gt("timestamp", startDate.getTime()));
+        }
+        if (endDate != null)
+        {
+            criteria.add(Restrictions.lt("timestamp", endDate.getTime()));
+        }
+        if (excluded)
+        {
+            criteria.add(Restrictions.eq("action", "ExcludeEvent"));
+        }
+        if (actioned)
+        {
+            criteria.add(Restrictions.isNotNull("userAction"));
+        }
+        else
+        {
+            criteria.add(Restrictions.isNull("userAction"));
+        }
+        criteria.setProjection(Projections.projectionList()
+                .add(Projections.count("moduleName")));
+        return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+    }
 
-	@Override
-	public void housekeep(final Integer numToHousekeep)
-	{
-		getHibernateTemplate().execute(new HibernateCallback<Object>()
-		{
-			public Object doInHibernate(Session session) throws HibernateException
-			{
-				Query query = session.createQuery(ERROR_OCCURRENCES_TO_DELETE_QUERY);
-				query.setLong(NOW, System.currentTimeMillis());
-				query.setMaxResults(numToHousekeep);
-
-				List<Long> errorUris = (List<Long>)query.list();
-
-				if(errorUris.size() > 0)
-				{
-					query = session.createQuery(ERROR_OCCURRENCE_NOTE_DELETE_QUERY);
-					query.setParameterList(EVENT_IDS, errorUris);
-					query.executeUpdate();
-
-					query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
-					query.setParameterList(EVENT_IDS, errorUris);
-
-					List<Long> errorOccurenceNotesIds = (List<Long>)query.list();
-
-					if(errorOccurenceNotesIds.size() > 0)
-					{
-						query = session.createQuery(NOTES_DELETE_QUERY);
-						query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
-						query.executeUpdate();
-					}
-
-					query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
-					query.setParameterList(EVENT_IDS, errorUris);
-					query.executeUpdate();
-				}
-
-				return null;
-			}
-		});
-	}
-
+    @Override
+    public void housekeep(final Integer numToHousekeep)
+    {
+        getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(ERROR_OCCURRENCES_TO_DELETE_QUERY);
+                query.setLong(NOW, System.currentTimeMillis());
+                query.setMaxResults(numToHousekeep);
+                List<Long> errorUris = (List<Long>) query.list();
+                if (errorUris.size() > 0)
+                {
+                    query = session.createQuery(ERROR_OCCURRENCE_NOTE_DELETE_QUERY);
+                    query.setParameterList(EVENT_IDS, errorUris);
+                    query.executeUpdate();
+                    query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
+                    query.setParameterList(EVENT_IDS, errorUris);
+                    List<Long> errorOccurenceNotesIds = (List<Long>) query.list();
+                    if (errorOccurenceNotesIds.size() > 0)
+                    {
+                        query = session.createQuery(NOTES_DELETE_QUERY);
+                        query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
+                        query.executeUpdate();
+                    }
+                    query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
+                    query.setParameterList(EVENT_IDS, errorUris);
+                    query.executeUpdate();
+                }
+                return null;
+            }
+        });
+    }
 }

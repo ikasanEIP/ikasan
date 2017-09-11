@@ -1,6 +1,6 @@
 package org.ikasan.component.endpoint.rulecheck;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
@@ -13,7 +13,7 @@ public class DailyEventRuleRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends Rule
         implements Rule<PAYLOAD_TYPE, Object>, DynamicConfiguredResource<DailyEventRuleConfiguration>,
         IsErrorReportingServiceAware
 {
-    private Logger logger = Logger.getLogger(DailyEventRuleRule.class);
+    private static Logger logger = LoggerFactory.getLogger(DailyEventRuleRule.class);
 
     private DailyEventRuleConfiguration configuration;
 

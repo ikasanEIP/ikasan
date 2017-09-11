@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
@@ -75,7 +75,7 @@ public class ScheduledConsumer<T>
     /**
      * logger
      */
-    private static Logger logger = Logger.getLogger(ScheduledConsumer.class);
+    private static Logger logger = LoggerFactory.getLogger(ScheduledConsumer.class);
 
     /** distinguish between business schedule callback and eager schedule callback */
     private static String EAGER_SCHEDULE = "eagerSchedule_";

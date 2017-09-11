@@ -40,23 +40,11 @@
  */
 package org.ikasan.sample.flow.listener;
 
-import org.apache.log4j.Logger;
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.sample.component.consumer.SimpleConsumer;
-import org.ikasan.sample.component.converter.SimpleConverter;
-import org.ikasan.sample.component.producer.SimpleProducer;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.module.Module;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple flow listener such as for wiretaps.
@@ -64,19 +52,17 @@ import java.util.List;
  */
 public class SimpleFlowListener implements FlowEventListener
 {
-    Logger logger = Logger.getLogger(SimpleFlowListener.class);
-
-    List<String> events = new ArrayList<String>();
+    private static final Logger logger = LoggerFactory.getLogger(SimpleFlowListener.class);
 
     @Override
     public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
-        logger.info(event);
+        logger.info(event.toString());
     }
 
     @Override
     public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
-        logger.info(event);
+        logger.info(event.toString());
     }
 }

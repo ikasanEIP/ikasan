@@ -66,6 +66,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
             <scope>test</scope>
@@ -96,8 +101,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-exclusion-service</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

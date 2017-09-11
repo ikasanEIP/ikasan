@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -71,7 +71,7 @@ public class GenericJmsConsumer
         ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>, Converter<Message,Object>, MultiThreadedCapable
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
+    private static Logger logger = LoggerFactory.getLogger(GenericJmsConsumer.class);
 
     /** JMS Connection Factory */
     protected ConnectionFactory connectionFactory;

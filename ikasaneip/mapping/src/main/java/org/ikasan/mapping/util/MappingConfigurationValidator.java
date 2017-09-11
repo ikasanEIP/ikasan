@@ -1,6 +1,6 @@
 package org.ikasan.mapping.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 
@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class MappingConfigurationValidator
 {
-    private Logger logger = Logger.getLogger(MappingConfigurationValidator.class);
+    private static Logger logger = LoggerFactory.getLogger(MappingConfigurationValidator.class);
 
     private HashMap<String, Integer> validationMap
             = null;

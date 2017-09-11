@@ -77,7 +77,7 @@ public enum CommonExceptionType
     ;
 
     /** Logger */
-    private Logger logger = LoggerFactory.getLogger(CommonExceptionType.class);
+    private static Logger logger = LoggerFactory.getLogger(CommonExceptionType.class);
 
     /** exception type description */
     private String description = null;
@@ -90,11 +90,10 @@ public enum CommonExceptionType
      * @param description 
      * @param id 
      */
-    private CommonExceptionType(final String description, final int id)
+    CommonExceptionType(final String description, final int id)
     {
         this.description = description;
         this.id = id;
-        logger.debug("CommonExceptionType constructor created id [" + this.id + "]."); //$NON-NLS-1$
     }
 
     /**

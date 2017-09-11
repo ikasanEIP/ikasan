@@ -40,7 +40,8 @@
  */
 package org.ikasan.component.endpoint.util.producer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 
@@ -52,36 +53,40 @@ import java.util.regex.Pattern;
  *
  * @author Ikasan Development Team
  */
-public class LogProducer<T>
-        implements Producer<T>
+public class LogProducer<T> implements Producer<T>
 {
-    /** logger instance */
-    Logger logger = Logger.getLogger(LogProducer.class);
+    /**
+     * logger instance
+     */
+    private static final Logger logger = LoggerFactory.getLogger(LogProducer.class);
 
-    /** text to accompany the payload logging */
+    /**
+     * text to accompany the payload logging
+     */
     String text;
 
-    /** regexp pattern to apply */
+    /**
+     * regexp pattern to apply
+     */
     Pattern pattern;
 
     /**
      * Constructor
+     *
      * @param text
      * @param eventPlaceholder
      */
     public LogProducer(String text, String eventPlaceholder)
     {
         this.text = text;
-        if(text == null)
+        if (text == null)
         {
             throw new IllegalArgumentException("text cannot be 'null'");
         }
-
-        if(eventPlaceholder == null)
+        if (eventPlaceholder == null)
         {
             throw new IllegalArgumentException("eventPlaceholder cannot be 'null'");
         }
-
         this.pattern = Pattern.compile(eventPlaceholder);
     }
 
@@ -96,9 +101,9 @@ public class LogProducer<T>
     @Override
     public void invoke(T payload) throws EndpointException
     {
-        if(logger.isInfoEnabled())
+        if (logger.isInfoEnabled())
         {
-            if(pattern == null)
+            if (pattern == null)
             {
                 logger.info(payload.toString());
             }

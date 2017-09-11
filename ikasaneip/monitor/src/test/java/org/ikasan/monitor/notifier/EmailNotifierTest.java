@@ -41,7 +41,7 @@
 package org.ikasan.monitor.notifier;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Notifier;
 import org.junit.Assert;
@@ -72,7 +72,7 @@ public class EmailNotifierTest
     String bccReceiver = "bccRecipient1@ikasan.org";
     
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(EmailNotifierTest.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailNotifierTest.class);
     
     /** in memory SMTP server */
     Wiser wiser;

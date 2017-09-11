@@ -40,7 +40,7 @@
  */
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
@@ -64,7 +64,7 @@ import java.util.Set;
 @RequestMapping("/rest/discovery")
 @RestController
 public class DiscoveryApplication {
-    private static Logger logger = Logger.getLogger(DiscoveryApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(DiscoveryApplication.class);
 
     @Autowired
     private ModuleContainer moduleContainer;

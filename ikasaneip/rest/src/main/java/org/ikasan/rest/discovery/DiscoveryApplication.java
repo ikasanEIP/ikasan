@@ -55,7 +55,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -72,7 +72,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Path("/discovery")
 public class DiscoveryApplication extends IkasanRestApplication
 {
-	private static Logger logger = Logger.getLogger(DiscoveryApplication.class);
+	private static Logger logger = LoggerFactory.getLogger(DiscoveryApplication.class);
 	
 	@Autowired
 	private ModuleContainer moduleContainer;

@@ -43,7 +43,7 @@ package org.ikasan.web.security;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.module.Module;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -60,7 +60,7 @@ public class ModuleAfterInvocationProvider extends AbstractModuleAfterInvocation
     private static final String AFTER_MODULE_READ = "AFTER_MODULE_READ";
 
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(ModuleAfterInvocationProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(ModuleAfterInvocationProvider.class);
 
     /** Constructor */
     public ModuleAfterInvocationProvider()

@@ -47,7 +47,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.monitor.Notifier;
@@ -61,7 +61,7 @@ import org.ikasan.spec.monitor.Notifier;
 public class DashboardNotifier implements Notifier<String>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(DashboardNotifier.class);
+    private static Logger logger = LoggerFactory.getLogger(DashboardNotifier.class);
     
     /** only interested in state changes */
     boolean notifyStateChangesOnly = true;

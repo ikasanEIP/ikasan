@@ -41,7 +41,7 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import com.google.common.util.concurrent.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>, ManagedService
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(ConcurrentSplitterFlowElementInvoker.class);
+    private static Logger logger = LoggerFactory.getLogger(ConcurrentSplitterFlowElementInvoker.class);
 
     /** executor service for thread dispatching */
     private ListeningExecutorService executorService;

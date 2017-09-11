@@ -40,7 +40,7 @@
  */
 package org.ikasan.wiretap.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
@@ -88,7 +88,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     private TriggerDao triggerDao;
 
     /** Logger instance */
-    private static final Logger logger = Logger.getLogger(JobAwareFlowEventListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobAwareFlowEventListener.class);
 
     // TODO - find a better way of identifying failure and reloading triggers
     /** flag to identify initial trigger load failures */

@@ -44,7 +44,7 @@
 # //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.ikasan</groupId>
@@ -56,12 +56,12 @@
     <packaging>jar</packaging>
 
     <dependencies>
-    
-       <!-- Ikasan libraries -->
-       <dependency>
+
+        <!-- Ikasan libraries -->
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spring-resource</artifactId>
-       </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -71,19 +71,19 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
-          </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-           </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-         </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-recovery-manager</artifactId>
         </dependency>
@@ -97,8 +97,8 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-serialiser</artifactId>
         </dependency>
-		
-		<dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
         </dependency>
@@ -131,22 +131,22 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
-         </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
-         </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security</artifactId>
-         </dependency>
-		 
-		 <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-replay</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -162,29 +162,29 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-         </dependency>
-        
+        </dependency>
+
         <!-- Hibernate dependency -->
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-          </dependency>
-        
+        </dependency>
+
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-             <exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
@@ -193,9 +193,9 @@
         </dependency>
 
         <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-orm</artifactId>
-           </dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -210,18 +210,8 @@
         <!-- logging -->
 
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
 
         <!-- For point cut transaction management -->
@@ -233,6 +223,18 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

@@ -40,7 +40,7 @@
  */
 package org.ikasan.sample.scheduleDrivenSrc.component.endpoint;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 
@@ -52,7 +52,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 public class ScheduleEventProducer implements Producer<StringBuilder>
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(ScheduleEventProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(ScheduleEventProducer.class);
 
     /** invocation count */
     private int invocationCount = 0;

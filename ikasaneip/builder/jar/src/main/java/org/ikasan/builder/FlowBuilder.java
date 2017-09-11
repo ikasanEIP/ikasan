@@ -92,7 +92,7 @@ import java.util.*;
 public class FlowBuilder implements ApplicationContextAware
 {
     /** logger */
-    private Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
+    private static Logger logger = LoggerFactory.getLogger(FlowBuilder.class);
 
     /** name of the flow module owner */
 	String moduleName;
