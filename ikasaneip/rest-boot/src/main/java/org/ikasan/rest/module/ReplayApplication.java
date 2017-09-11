@@ -84,7 +84,7 @@ public class ReplayApplication {
      */
     @RequestMapping(method = RequestMethod.PUT,
             value = "/eventReplay/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity replay(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName,
                                  @RequestBody byte[] event) {
 
