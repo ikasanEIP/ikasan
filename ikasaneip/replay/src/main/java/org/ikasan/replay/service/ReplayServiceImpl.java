@@ -8,15 +8,14 @@ import java.util.List;
 
 
 import org.apache.log4j.Logger;
+import org.apache.commons.codec.binary.Base64;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -68,14 +67,6 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 					,new StringHttpMessageConverter()));
 		//TODO: applay authorization on rest template
 
-
-//		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authUser, authPassword);
-//
-//    	ClientConfig clientConfig = new ClientConfig();
-//    	clientConfig.register(feature) ;
-//
-//    	Client client = ClientBuilder.newClient(clientConfig);
-//
     	ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
     	logger.debug("Saving replayAudit: " + replayAudit);
     	
@@ -105,13 +96,10 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 
 			ResponseEntity<String> response = null;
 			try {
-				HttpEntity request =  new HttpEntity(event.getEvent());
+				HttpEntity request = initRequest(event.getEvent(),event.getModuleName(),authUser,authPassword
+						);
 				response = restTemplate.exchange(new URI(url), HttpMethod.PUT,request,String.class);
 
-	//		    WebTarget webTarget = client.target(url);
-	//		    Response response = webTarget.request().put(Entity.entity(event.getEvent()
-	//		    		, MediaType.APPLICATION_OCTET_STREAM));
-	//
 				boolean success = true;
 
 				if(!response.getStatusCode().is2xxSuccessful())
@@ -137,7 +125,19 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 			}
     	}
 	}
-	
+
+
+	private HttpEntity initRequest(byte[] event,String module ,String user, String password){
+		HttpHeaders headers = new HttpHeaders();
+		if(user!=null && password !=null){
+			String credentials = user + ":" +password;
+			String encodedCridentials =  new String(Base64.encodeBase64(credentials.getBytes()));
+			headers.set(HttpHeaders.AUTHORIZATION, "Basic "+encodedCridentials);
+		}
+		headers.set(HttpHeaders.USER_AGENT,module);
+		return new HttpEntity(event,headers);
+
+	}
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayService#addReplayListener(org.ikasan.spec.replay.ReplayListener)
 	 */
