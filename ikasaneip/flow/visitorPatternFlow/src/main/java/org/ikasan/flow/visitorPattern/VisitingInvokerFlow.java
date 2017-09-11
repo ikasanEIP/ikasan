@@ -152,7 +152,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     private String configuredResourceId;
 
     /** map to keep track of active threads */
-    private ConcurrentHashMap<Long, Boolean> activeThreads = new ConcurrentHashMap<Long, Boolean>();
+    private ConcurrentHashMap<Long, Boolean> activeThreads = new ConcurrentHashMap<>();
 
     /** we don't want to wait for ever for the flow to stop. Default 30 seconds */
     private long stopWaitTimeout = 30000;
@@ -667,13 +667,13 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             if(allInactive)
             {
                 logger.info("All threads are inactive.");
-                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                this.activeThreads = new ConcurrentHashMap<>();
                 return true;
             }
             else if(System.currentTimeMillis() - currentTimeMillis > this.stopWaitTimeout)
             {
                 logger.info("Timed out waiting for threads to complete.");
-                this.activeThreads = new ConcurrentHashMap<Long, Boolean>();
+                this.activeThreads = new ConcurrentHashMap<>();
                 return true;
             }
             else
@@ -730,6 +730,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         this.setThreadState(ACTIVE);
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
         flowInvocationContext.startFlowInvocation();
+        // set the lastComponentName before we try any logic with exclusion/replay, otherwise the resulting errorOccurrence will have null componentName and fail
+        flowInvocationContext.setLastComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
         ID originalEventLifeIdentifier = (ID)event.getIdentifier();
@@ -789,6 +791,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 	{
 		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
         flowInvocationContext.startFlowInvocation();
+        // set the lastComponentName before we try any logic with exclusion/replay, otherwise the resulting errorOccurrence will have null componentName and fail
+        flowInvocationContext.setLastComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
 
         try
         {
