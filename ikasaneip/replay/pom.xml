@@ -164,12 +164,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Test Dependencies -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <scope>test</scope>
         </dependency>
+
+        <!-- Test Dependencies -->
 
         <dependency>
             <groupId>commons-collections</groupId>
@@ -186,6 +186,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -249,6 +255,18 @@
 	          <artifactId>hamcrest-all</artifactId>
 	          <scope>test</scope>
 	      </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
