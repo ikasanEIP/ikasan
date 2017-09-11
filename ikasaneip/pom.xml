@@ -409,6 +409,7 @@
         <version.org.aspectj>1.7.4</version.org.aspectj>
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
         <version.commons-lang>2.5</version.commons-lang>
+        <version.commons-lang3>3.6</version.commons-lang3>
         <version.javax.servlet>2.4</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
@@ -1399,6 +1400,11 @@
                 <artifactId>commons-beanutils</artifactId>
                 <version>${version.commons-beanutils}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${version.commons-lang3}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -1697,6 +1703,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
+                <version>${version.com.fasterxml.jackson.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
                 <version>${version.com.fasterxml.jackson.core}</version>
             </dependency>
 
@@ -2161,7 +2173,16 @@
                 <version>${version.wiremock}</version>
                 <exclusions>
                     <exclusion>
-
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-databind</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
                     </exclusion>
 
                 </exclusions>
