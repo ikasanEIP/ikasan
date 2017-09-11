@@ -31,7 +31,6 @@ public class ModuleControlApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlFlowState/{moduleName}/{flowName}")
-    //  @Consumes("application/octet-stream")
     @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
     public ResponseEntity controlFlowState(
             @PathVariable("moduleName") String moduleName,
@@ -94,7 +93,7 @@ public class ModuleControlApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/flowState/{moduleName}/{flowName}")
     //@Produces(MediaType.APPLICATION_JSON)
-    @PreAuthorize("hasRole('ALL') OR hasRole('WebServiceAdmin')")
+    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
     public String getFlowState(@PathVariable("moduleName") String moduleName,
                                @PathVariable("flowName") String flowName) {
 
