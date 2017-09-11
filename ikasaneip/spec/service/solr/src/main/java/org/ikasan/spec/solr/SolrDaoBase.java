@@ -268,8 +268,6 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
         try
         {
-            System.out.println("Query " + query.toString());
-
             UpdateResponse response = this.solrClient.deleteByQuery(query.toString());
             this.solrClient.commit();
 

@@ -51,6 +51,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ReplayEventViewPopup;
 import org.ikasan.dashboard.ui.ReplayPopup;
+import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -106,8 +107,9 @@ public class ReplayTab extends TopologyTab
 	private FilterTable replayEventsTable;
 	
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
-	
 	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  solrReplayManagementService;
+	private ReplayService<ReplayEvent, ReplayAuditEvent>  solrReplayService;
 	
 
 	private PopupDateField fromDate;
@@ -128,10 +130,13 @@ public class ReplayTab extends TopologyTab
 	private PlatformConfigurationService platformConfigurationService;
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
+					 ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> solrReplayService,
 					 PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
+		this.solrReplayManagementService = solrReplayManagementService;
+		this.solrReplayService = solrReplayService;
 		this.platformConfigurationService = platformConfigurationService;
 		
 		tableContainer = this.buildContainer();
@@ -220,9 +225,24 @@ public class ReplayTab extends TopologyTab
                 	}
             	}
 
-            	List<ReplayEvent> replayEvents = replayManagementService
-            			.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
-                                fromDate.getValue(), toDate.getValue());
+				String solrEnabled = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
+
+				List<ReplayEvent> replayEvents = null;
+
+				if(solrEnabled != null && solrEnabled.equals("true"))
+				{
+					logger.info("Performing replay search via Solr Index.");
+					replayEvents = solrReplayManagementService
+							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
+									fromDate.getValue(), toDate.getValue());
+				}
+				else
+				{
+					logger.info("Performing replay search via RMDBS.");
+					replayEvents = replayManagementService
+							.getReplayEvents(moduleNames, flowNames, eventId.getValue(), payloadContent.getValue(),
+									fromDate.getValue(), toDate.getValue());
+				}
             	
             	if(replayEvents == null || replayEvents.size() == 0)
             	{

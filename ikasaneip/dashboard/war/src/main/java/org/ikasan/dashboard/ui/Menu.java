@@ -45,12 +45,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.MenuLayout;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.vaadin.teemu.VaadinIcons;
 
 import com.vaadin.navigator.Navigator;
@@ -78,18 +81,23 @@ public class Menu extends CssLayout
 	private Button userItem = new Button();
 	private Label lastLoginTimeLabel = new Label();
 
+    private PlatformConfigurationService platformConfigurationService;
+
     /**
      * Constructor
      *
      * @param views
      * @param menuLayout
+     * @param platformConfigurationService
      */
-	public Menu(HashMap<String, IkasanUINavigator> views, MenuLayout menuLayout)
+	public Menu(HashMap<String, IkasanUINavigator> views, MenuLayout menuLayout,
+                PlatformConfigurationService platformConfigurationService)
 	{
 		super();
 
 		this.views = views;
 		this.menuLayout = menuLayout;
+        this.platformConfigurationService = platformConfigurationService;
 		
 		buildMenu();
 	}
@@ -145,8 +153,6 @@ public class Menu extends CssLayout
         dashboardMenuItem.setPrimaryStyleName("valo-menu-item");
         dashboardMenuItem.setIcon(VaadinIcons.DASHBOARD);
         menuItemsLayout.addComponent(dashboardMenuItem);
-
-        label = null;
         
         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
  	        	.getAttribute(DashboardSessionValueConstants.USER);
@@ -175,22 +181,27 @@ public class Menu extends CssLayout
         menuItemsLayout.addComponent(topologyMenuItem);
         this.menuComponents.put(topologyMenuItem, SecurityConstants.TOPOLOGY_VIEW_PERMISSIONS);
 
-        final Button searchMenuItem = new Button("Search", new ClickListener()
-        {
-            @Override
-            public void buttonClick(final ClickEvent event)
-            {
-                loadTopLevelNavigator();
-                UI.getCurrent().getNavigator().navigateTo("searchView");
-            }
-        });
+        String solrEnabled = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
 
-        searchMenuItem.setHtmlContentAllowed(true);
-        searchMenuItem.setPrimaryStyleName("valo-menu-item");
-        searchMenuItem.setIcon(VaadinIcons.SEARCH);
-        menuItemsLayout.addComponent(searchMenuItem);
-        this.menuComponents.put(searchMenuItem, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
-        
+        if(solrEnabled != null && solrEnabled.equals("true"))
+        {
+            final Button searchMenuItem = new Button("Search", new ClickListener()
+            {
+                @Override
+                public void buttonClick(final ClickEvent event)
+                {
+                    loadTopLevelNavigator();
+                    UI.getCurrent().getNavigator().navigateTo("searchView");
+                }
+            });
+
+            searchMenuItem.setHtmlContentAllowed(true);
+            searchMenuItem.setPrimaryStyleName("valo-menu-item");
+            searchMenuItem.setIcon(VaadinIcons.SEARCH);
+            menuItemsLayout.addComponent(searchMenuItem);
+            this.menuComponents.put(searchMenuItem, SecurityConstants.SERVICE_VIEW_PERMISSIONS);
+        }
+
         final Button mappingMenuItem = new Button("Mapping", new ClickListener()
         {
             @Override

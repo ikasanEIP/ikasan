@@ -310,7 +310,6 @@ public class NavigationPanel extends Panel implements ViewContext, CommitHandler
 		{
 			UI.getCurrent().getNavigator().navigateTo("emptyPanel");
 	        UI.getCurrent().getNavigator().navigateTo("landingView");
-			UI.getCurrent().getNavigator().navigateTo("searchView");
 		}
 
 	}
