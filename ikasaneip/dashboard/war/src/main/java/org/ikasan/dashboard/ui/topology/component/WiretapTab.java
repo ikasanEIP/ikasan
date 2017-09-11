@@ -55,10 +55,14 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.WiretapPopup;
+import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
+import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.component.container.WiretapEventBeanQuery;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -122,7 +126,8 @@ public class WiretapTab extends TopologyTab
 	private ComboBox businessStreamCombo;
 	private TextField eventId;
 	private TextField payloadContent;
-	
+
+	private CheckBox useDbCheckbox;
 	
 	private float splitPosition;
 	private Unit splitUnit;
@@ -169,7 +174,13 @@ public class WiretapTab extends TopologyTab
     }
 	
 	public void createLayout()
-	{	
+	{
+		final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+				.getAttribute(DashboardSessionValueConstants.USER);
+
+		this.useDbCheckbox = new CheckBox("Use RMDBS for search");
+		this.useDbCheckbox.setValue(false);
+
 		this.wiretapTable = new FilterTable();
 		this.wiretapTable.setFilterBarVisible(true);
 		this.wiretapTable.setSizeFull();
@@ -261,10 +272,25 @@ public class WiretapTab extends TopologyTab
             		{
             			modulesNames.add(flow.getFlow().getModule().getName());
             		}
-            	}            	
-            	
-            	PagedSearchResult<WiretapEvent> events = wiretapService.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
-            			, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
+            	}
+
+				String solrEnabled = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
+
+				PagedSearchResult<WiretapEvent> events = null;
+
+				if(solrEnabled != null && solrEnabled.equals("true") &&
+						WiretapTab.this.useDbCheckbox.getValue() == false)
+				{
+					logger.info("Performing wiretap search via Solr Index.");
+					events = WiretapTab.this.solrWiretapService.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
+							, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
+				}
+            	else
+				{
+					logger.info("Performing wiretap search via RMDBS.");
+					events = wiretapService.findWiretapEvents(0, platformConfigurationService.getSearchResultSetSize(), "timestamp", false, modulesNames
+							, flowNames, componentNames, eventId.getValue(), null, fromDate.getValue(), toDate.getValue(), payloadContent.getValue());
+				}
 
             	if(events.getPagedResults() == null || events.getPagedResults().size() == 0)
             	{
@@ -327,13 +353,13 @@ public class WiretapTab extends TopologyTab
         			popupOpener.setFeatures("height=600,width=900,resizable");
         	        popupOpener.extend(popupButton);
         	        
-//        	        popupButton.addClickListener(new Button.ClickListener()
-//        	    	{
-//        	            public void buttonClick(ClickEvent event)
-//        	            {
-//        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapFlowEvent)wiretapEvent);
-//        	            }
-//        	        });
+        	        popupButton.addClickListener(new Button.ClickListener()
+        	    	{
+        	            public void buttonClick(ClickEvent event)
+        	            {
+        	            	 VaadinService.getCurrentRequest().getWrappedSession().setAttribute("wiretapEvent", (WiretapEvent)wiretapEvent);
+        	            }
+        	        });
         	        
         	        item.getItemProperty(" ").setValue(popupButton);
             	}
@@ -352,7 +378,7 @@ public class WiretapTab extends TopologyTab
             }
         });
 
-		GridLayout layout = new GridLayout(1, 6);
+		GridLayout layout = new GridLayout(1, 7);
 		layout.setMargin(false);
 		layout.setHeight(270 , Unit.PIXELS);
 		
@@ -457,14 +483,23 @@ public class WiretapTab extends TopologyTab
 		filterButtonLayout.setHeight(25, Unit.PIXELS);
 		filterButtonLayout.addComponent(hideFilterButton, 0, 0);
 		filterButtonLayout.addComponent(showFilterButton, 1, 0);
-		
+
+		String solrEnabled = this.platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
+
+		if(solrEnabled != null && solrEnabled.equals("true")
+			&& (authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY)
+				|| authentication.hasGrantedAuthority(SecurityConstants.WIRETAP_ADMIN)))
+		{
+			layout.addComponent(useDbCheckbox);
+		}
+
 		Label filterHintLabel = new Label();
 		filterHintLabel.setCaptionAsHtml(true);
 		filterHintLabel.setCaption(VaadinIcons.QUESTION_CIRCLE_O.getHtml() + 
 				" Drag items from the topology tree to the tables below in order to narrow your search.");
 		filterHintLabel.addStyleName(ValoTheme.LABEL_TINY);
 		filterHintLabel.addStyleName(ValoTheme.LABEL_LIGHT);
-		
+
 		layout.addComponent(filterHintLabel);
 		layout.addComponent(hListSelectLayout);
 		layout.addComponent(hDateSelectLayout);

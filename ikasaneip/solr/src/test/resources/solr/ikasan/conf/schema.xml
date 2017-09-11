@@ -596,6 +596,8 @@
 
   <field name="dateRange" type="dateRange" multiValued="true"/>
 
+  <field name="expiry" type="long" multiValued="false"/>
+
   <field name="cat" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="price" type="${solr.tests.floatClass:pfloat}" indexed="true" stored="true" multiValued="false"/>
   <field name="inStock" type="boolean" indexed="true" stored="true"/>

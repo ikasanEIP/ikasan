@@ -33,16 +33,17 @@
     <commitWithin>
       <softCommit>${solr.commitwithin.softcommit:true}</softCommit>
     </commitWithin>
-    <updateLog></updateLog>
-  </updateHandler>
 
+  </updateHandler>
   <requestHandler name="/select" class="solr.SearchHandler">
     <lst name="defaults">
       <str name="echoParams">explicit</str>
       <str name="indent">true</str>
+      <str name="defType">dismax</str>
+      <str name="qf">id payload type moduleName flowName componentName event errorUri errorDetail errorMessage exceptionClass</str>
       <str name="df">text</str>
     </lst>
-
   </requestHandler>
+
 </config>
 

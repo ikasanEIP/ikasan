@@ -112,8 +112,27 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
     {
         List<SolrReplayEvent> results = null;
 
-        Set<String> moduleNamesSet = new HashSet<String>(moduleNames);
-        Set<String> flowNamesSet = new HashSet<String>(flowNames);
+        Set<String> moduleNamesSet = null;
+
+        if(moduleNames == null)
+        {
+            moduleNamesSet = new HashSet<String>();
+        }
+        else
+        {
+            moduleNamesSet = new HashSet<String>(moduleNames);
+        }
+
+        Set<String> flowNamesSet = null;
+
+        if(flowNames == null)
+        {
+            flowNamesSet = new HashSet<String>();
+        }
+        else
+        {
+            flowNamesSet = new HashSet<String>(flowNames);
+        }
 
         String queryString = this.buildQuery(moduleNamesSet, flowNamesSet, null, fromDate, toDate, payloadContent, eventId, REPLAY);
 

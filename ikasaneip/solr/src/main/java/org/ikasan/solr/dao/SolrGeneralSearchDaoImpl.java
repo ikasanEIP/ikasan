@@ -47,6 +47,8 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
 
         try
         {
+            logger.info("query: " + query);
+
             QueryResponse rsp = this.solrClient.query( query );
 
             beans = rsp.getBeans(IkasanSolrDocument.class);

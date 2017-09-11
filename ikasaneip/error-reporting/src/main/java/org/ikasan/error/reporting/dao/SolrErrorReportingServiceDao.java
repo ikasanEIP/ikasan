@@ -88,7 +88,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
         long expiry = millisecondsInDay + System.currentTimeMillis();
 
         SolrInputDocument document = new SolrInputDocument();
-        document.addField(ID, errorOccurrence.getUri());
+        document.addField(ID, "error" + errorOccurrence.getUri());
         document.addField(ERROR_URI, errorOccurrence.getUri());
         document.addField(TYPE, ERROR);
         document.addField(MODULE_NAME, errorOccurrence.getModuleName());

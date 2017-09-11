@@ -17,5 +17,11 @@
 -->
 <schema name="minimal" version="1.1">
   <fieldType name="string" class="solr.StrField"/>
-  <dynamicField name="*" type="string" indexed="true" stored="true"/>
+  <fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+
+  <dynamicField name="type*" type="string" indexed="true" stored="true"/>
+
+  <dynamicField name="expiry*" type="long" indexed="true" stored="true" multiValued="false"/>
+
+  <dynamicField name="timestamp*" type="long" indexed="true" stored="true" multiValued="false"/>
 </schema>

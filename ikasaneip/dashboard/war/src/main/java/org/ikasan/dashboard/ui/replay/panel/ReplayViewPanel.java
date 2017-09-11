@@ -210,6 +210,8 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService;
 	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
+	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  solrReplayManagementService;
+	private ReplayService<ReplayEvent, ReplayAuditEvent>  solrReplayService;
 	
 	private boolean initialised = false;
 	
@@ -222,7 +224,9 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
                            SystemEventService systemEventService, ErrorCategorisationService errorCategorisationService,
                            TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
                            PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
-			 ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService, FlowConfigurationWindow flowConfigurationWindow)
+			               ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
+						   ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> solrReplayService,
+						   FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -275,9 +279,19 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 			throw new IllegalArgumentException("replayManagementService cannot be null!");
 		}
 		this.replayService = replayService;
-		if(this.securityService == null)
+		if(this.replayService == null)
 		{
 			throw new IllegalArgumentException("replayService cannot be null!");
+		}
+		this.solrReplayManagementService = solrReplayManagementService;
+		if(this.solrReplayManagementService == null)
+		{
+			throw new IllegalArgumentException("solrReplayManagementService cannot be null!");
+		}
+		this.solrReplayService = solrReplayService;
+		if(this.solrReplayService == null)
+		{
+			throw new IllegalArgumentException("solrReplayService cannot be null!");
 		}
 		this.flowConfigurationWindow = flowConfigurationWindow;
 		if(this.flowConfigurationWindow == null)
@@ -334,7 +348,8 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 				|| authentication.hasGrantedAuthority(SecurityConstants.REPLAY_READ)))
     	{
     		
-    		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService, 
+    		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService,
+					this.solrReplayManagementService, this.solrReplayService,
     				this.platformConfigurationService);
 
     		replayTab.createLayout();
