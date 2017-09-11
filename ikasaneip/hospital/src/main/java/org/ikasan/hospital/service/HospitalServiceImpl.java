@@ -42,7 +42,7 @@ package org.ikasan.hospital.service;
 
 import java.security.Principal;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
@@ -78,7 +78,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
     /** paused state string constant */
     private static String PAUSED = "paused";
     
-	private static Logger logger = Logger.getLogger(HospitalServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(HospitalServiceImpl.class);
 	
 	private ModuleContainer moduleContainer;
 	private HospitalDao hospitalDao;

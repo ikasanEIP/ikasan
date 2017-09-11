@@ -51,7 +51,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -77,7 +77,7 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
  */
 public class LdapServiceImpl implements LdapService
 {
-	private static Logger logger = Logger.getLogger(LdapServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(LdapServiceImpl.class);
 
 	private SecurityDao securityDao;
 	private UserDao userDao;

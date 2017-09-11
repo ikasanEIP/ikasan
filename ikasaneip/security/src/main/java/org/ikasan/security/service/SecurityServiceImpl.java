@@ -42,7 +42,7 @@ package org.ikasan.security.service;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.*;
 
@@ -54,7 +54,7 @@ import org.ikasan.security.model.*;
 public class SecurityServiceImpl implements SecurityService
 {
 	/** Logger instance */
-    private static Logger logger = Logger.getLogger(SecurityServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
     
     private SecurityDao securityDao;
 

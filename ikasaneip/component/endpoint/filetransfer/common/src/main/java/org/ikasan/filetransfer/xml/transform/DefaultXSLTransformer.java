@@ -41,36 +41,22 @@
 package org.ikasan.filetransfer.xml.transform;
 
 // Imported java classes
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
+import org.apache.commons.io.FileUtils;
+import org.ikasan.filetransfer.CommonXSLTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
-import javax.xml.transform.ErrorListener;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ikasan.filetransfer.CommonXSLTransformer;
-import org.w3c.dom.Document;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This class wraps TrAX API for ease of transformation.
@@ -118,8 +104,7 @@ public class DefaultXSLTransformer
     /**
      * The logger instance.
      */
-    private static Logger logger =
-        LoggerFactory.getLogger(DefaultXSLTransformer.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultXSLTransformer.class);
 
     /**
      * The quite handy debugging flag to get more information

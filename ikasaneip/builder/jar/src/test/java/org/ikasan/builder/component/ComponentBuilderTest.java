@@ -41,6 +41,7 @@
 package org.ikasan.builder.component;
 
 import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.FileProducerBuilder;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
@@ -140,6 +141,16 @@ public class ComponentBuilderTest {
         });
 
         FileConsumerBuilder fileConsumerBuilder = componentBuilder.fileConsumer();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_fileProducer()
+    {
+        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+
+        FileProducerBuilder fileProducerBuilder = componentBuilder.fileProducer();
 
         mockery.assertIsSatisfied();
     }

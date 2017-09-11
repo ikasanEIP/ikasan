@@ -43,7 +43,7 @@ package org.ikasan.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
@@ -85,7 +85,7 @@ import org.springframework.context.ApplicationContextAware;
 public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 {
  	/** logger */
-    private static Logger logger = Logger.getLogger(FlowFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(FlowFactory.class);
 
     /** name of the flow's module owner */
     String moduleName;

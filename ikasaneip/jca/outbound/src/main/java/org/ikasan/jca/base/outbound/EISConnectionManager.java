@@ -40,7 +40,7 @@
  */
 package org.ikasan.jca.base.outbound;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -67,7 +67,7 @@ public abstract class EISConnectionManager
     private static final long serialVersionUID = 3076364861205203561L;
     
     /** Logger */
-    private static Logger logger = Logger.getLogger(EISConnectionManager.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionManager.class);
 
     /**
      * This is the compulsory method that generates a new (virtual) connection 

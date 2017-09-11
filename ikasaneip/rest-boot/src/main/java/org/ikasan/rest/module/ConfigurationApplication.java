@@ -1,6 +1,6 @@
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConfigurationApplication {
 
-    private static Logger logger = Logger.getLogger(ConfigurationApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigurationApplication.class);
 
     @Autowired
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;

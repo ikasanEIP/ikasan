@@ -56,11 +56,11 @@ import java.util.Map;
 public class IkasanApplicationSpringBoot implements IkasanApplication
 {
     /** logger */
-    private Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
+    private static Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
 
     ApplicationContext context;
 
-    Map<String, Module> modules = new HashMap<String,Module>();
+    Map<String, Module> modules = new HashMap<>();
 
     public IkasanApplicationSpringBoot(String[] args)
     {
