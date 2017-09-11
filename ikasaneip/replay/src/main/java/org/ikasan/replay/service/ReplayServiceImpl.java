@@ -37,7 +37,8 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     
     private List<ReplayListener<ReplayAuditEvent>> replayListeners 
     	= new ArrayList<ReplayListener<ReplayAuditEvent>>();
-    
+
+    private RestTemplate restTemplate;
 	/**
 	 * Constructor
 	 * 
@@ -47,6 +48,11 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	{
 		super();
 		this.replayDao = replayDao;
+		restTemplate = new RestTemplate();
+		restTemplate.setMessageConverters(
+				Arrays.asList(
+						new ByteArrayHttpMessageConverter()
+						,new StringHttpMessageConverter()));
 	}
 
 
@@ -59,13 +65,6 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 			String authUser, String authPassword, String user, String replayReason) 
 	{
 		cancel = false;
-
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setMessageConverters(
-				Arrays.asList(
-					new ByteArrayHttpMessageConverter()
-					,new StringHttpMessageConverter()));
-		//TODO: applay authorization on rest template
 
     	ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
     	logger.debug("Saving replayAudit: " + replayAudit);
