@@ -31,8 +31,7 @@ public class ModuleControlApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlFlowState/{moduleName}/{flowName}")
-    //  @Consumes("application/octet-stream")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlFlowState(
             @PathVariable("moduleName") String moduleName,
             @PathVariable("flowName") String flowName, @RequestBody String action) {
@@ -64,7 +63,7 @@ public class ModuleControlApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public void controlFlowStartupMode(@PathVariable("moduleName") String moduleName,
                                        @PathVariable("flowName") String flowName, @PathVariable("startupType") String startupType,
                                        @RequestBody String startupComment) {
@@ -94,7 +93,7 @@ public class ModuleControlApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/flowState/{moduleName}/{flowName}")
     //@Produces(MediaType.APPLICATION_JSON)
-    @PreAuthorize("hasRole('ALL') OR hasRole('WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public String getFlowState(@PathVariable("moduleName") String moduleName,
                                @PathVariable("flowName") String flowName) {
 
@@ -145,7 +144,7 @@ public class ModuleControlApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlContextListenersState/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlContextListenersState(@PathVariable("moduleName") String moduleName,
                                                        @PathVariable("flowName") String flowName, @RequestBody String action) {
 

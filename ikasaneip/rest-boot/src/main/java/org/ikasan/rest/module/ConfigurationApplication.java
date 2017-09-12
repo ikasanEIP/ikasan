@@ -11,6 +11,7 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +43,7 @@ public class ConfigurationApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
             produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createConfiguration(@PathVariable("moduleName") String moduleName,
                                               @PathVariable("flowName") String flowName,
                                               @PathVariable("componentName") String componentName) {
@@ -82,6 +84,7 @@ public class ConfigurationApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
             produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createFlowElementConfiguration(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName,
                                                          @PathVariable("componentName") String componentName) {
 
@@ -121,7 +124,6 @@ public class ConfigurationApplication {
     /**
      * TODO: work out how to get annotation security working.
      *
-     * @param context
      * @param moduleName
      * @param flowName
      * @return
@@ -129,6 +131,7 @@ public class ConfigurationApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/createConfiguration/{moduleName}/{flowName}",
             produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createFlowConfiguration(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName) {
         Module<Flow> module = moduleContainer.getModule(moduleName);
 
