@@ -72,7 +72,7 @@ public class ResubmissionApplication {
      */
     @RequestMapping(method = RequestMethod.PUT,
             value = "/resubmit/{moduleName}/{flowName}/{errorUri}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity resubmit(@PathVariable("moduleName") String moduleName,
                                    @PathVariable("flowName") String flowName,
                                    @PathVariable("errorUri") String errorUri, @RequestBody byte[] event) {
@@ -100,7 +100,7 @@ public class ResubmissionApplication {
      */
     @RequestMapping(method = RequestMethod.PUT,
             value = "/ignore/{moduleName}/{flowName}/{errorUri}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity ignore(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName,
                                  @PathVariable("errorUri") String errorUri, @RequestBody byte[] event) {
         try {
