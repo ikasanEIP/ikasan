@@ -121,7 +121,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 					listener.onReplay(replayAuditEvent);
 				}
 			} catch (URISyntaxException e) {
-				logger.error(e);
+				logger.error(e.getMessage(),e);
 			}
     	}
 	}
