@@ -441,6 +441,12 @@ public class ScheduledConsumer<T>
     public void setMessageProvider(MessageProvider<T> messageProvider)
     {
         this.messageProvider = messageProvider;
+
+        // pass configuration to messageProvider if this is configured
+        if(messageProvider instanceof Configured && consumerConfiguration != null)
+        {
+            ((Configured)messageProvider).setConfiguration(consumerConfiguration);
+        }
     }
 
     public MessageProvider<?> getMessageProvider()

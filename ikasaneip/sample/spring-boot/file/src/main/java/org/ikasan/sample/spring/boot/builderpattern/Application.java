@@ -38,63 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.sample.spring.boot.builderpattern;
 
+import org.ikasan.builder.*;
+import org.ikasan.builder.component.ComponentBuilder;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
-import java.util.List;
-
 /**
- * IkasanApplication contract
- *
+ * Sample local file consumer and local file producer Integration Module
  * @author Ikasan Development Team
  */
-public interface IkasanApplication
+public class Application
 {
-    /**
-     * Get an instance of an IkasanBuilderFactory
-     * @return
-     */
-    public BuilderFactory getBuilderFactory();
+    public static void main(String[] args) throws Exception
+    {
+        new Application().boot(args);
+    }
 
-    /**
-     * Execute the module
-     * @param module
-     */
-    void run(Module module);
+    public IkasanApplication boot(String[] args)
+    {
+        // get an ikasanApplication instance
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
 
-    /**
-     * This method forces Ikassan application shutdown.
-     */
-    void close();
+        // get local integration module componentFactory instance
+        ComponentFactory componentFactory = ikasanApplication.getBean(ComponentFactory.class);
 
-    /**
-     * Get module by name
-     * @param moduleName
-     * @return
-     */
-    Module getModule(String moduleName);
+        // get the builders
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule");
 
-    /**
-     * Get all modules within this application
-     * @return
-     */
-    List<Module> getModules();
+        Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
+                .withDescription("Sample file source flow")
+                .consumer("File Consumer", componentFactory.getFileConsumer())
+                .producer("File Producer", componentFactory.getFileProducer()).build();
 
-    /**
-     * Get bean by given class
-     * @param className
-     * @param <COMPONENT>
-     * @return
-     */
-    <COMPONENT> COMPONENT getBean(Class className);
-
-    /**
-     * Get bean by given name and class
-     * @param name
-     * @param className
-     * @param <COMPONENT>
-     * @return
-     */
-    <COMPONENT> COMPONENT getBean(String name, Class className);
+        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.").addFlow(sourceFlow).build();
+        ikasanApplication.run(module);
+        return ikasanApplication;
+    }
 }
