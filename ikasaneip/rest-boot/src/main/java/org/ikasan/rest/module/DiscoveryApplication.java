@@ -47,6 +47,7 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,6 +80,7 @@ public class DiscoveryApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/flows/{moduleName}",
             produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public List<org.ikasan.topology.model.Flow> getFlows(@PathVariable("moduleName") String moduleName) {
 
         List<org.ikasan.topology.model.Flow> flows = new ArrayList<org.ikasan.topology.model.Flow>();
@@ -145,7 +147,7 @@ public class DiscoveryApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/components/{moduleName}/{flowName}",
             produces = {"application/json"})
-
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public List<org.ikasan.topology.model.Component> getComponents(@PathVariable("moduleName") String moduleName,
                                                                    @PathVariable("flowName") String flowName) {
 
