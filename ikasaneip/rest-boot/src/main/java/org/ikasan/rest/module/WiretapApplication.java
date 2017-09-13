@@ -61,7 +61,7 @@ public class WiretapApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
 
     public ResponseEntity createTrigger(@PathVariable("moduleName") String moduleName,
                                         @PathVariable("flowName") String flowName,
@@ -89,7 +89,7 @@ public class WiretapApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/deleteTrigger")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity deleteTrigger(@RequestBody Long triggerId) {
         try {
             this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);

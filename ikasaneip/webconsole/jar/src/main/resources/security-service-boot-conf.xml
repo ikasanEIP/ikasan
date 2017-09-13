@@ -98,7 +98,8 @@
 		<access-denied-handler error-page="/accessDenied.jsp" />
 		<intercept-url pattern="/login.jsp" access="permitAll"/>
 		<intercept-url pattern="/css/style.css" access="permitAll"/>
-		<intercept-url pattern="/images/midbg.jpg" access="permitAll"/>
+		<intercept-url pattern="/images/**" access="permitAll"/>
+		<!-- Keep Authorization on rest on the code level -->
 		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
 		<intercept-url pattern="/rest/**" access="permitAll"/>
 		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />
