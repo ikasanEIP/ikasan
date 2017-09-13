@@ -213,11 +213,17 @@ public class SchematronValidatorTest
         ValidationResult<Document, Document> validationResult = validator.invoke(getDocument("xml/passes-codelist.xml"));
         Assert.assertTrue("Document should be valid", validationResult.getResult().equals(ValidationResult.Result.VALID));
         // stop the webserver
-        stopJetty();
+        //stopJetty();
+
+
+        configuration.setSchematronUri("http://localhost:1/src/test/resources/" + "xslt/dir1/relative-codelist.sch.xsl");
+        validator.setConfiguration(configuration);
+
+
         ValidationResult<Document, Document> validationResult2 = validator.invoke(getDocument("xml/passes-codelist.xml"));
         Assert.assertTrue("Document should still be valid", validationResult2.getResult().equals(ValidationResult.Result.VALID));
         // start it back up
-        startJetty();
+//        startJetty();
     }
 
     private Document getDocument(String resource)
