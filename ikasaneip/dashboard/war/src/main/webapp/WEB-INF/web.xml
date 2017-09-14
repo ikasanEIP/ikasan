@@ -26,18 +26,17 @@
         			 /WEB-INF/administration-context.xml,
         			 /WEB-INF/policy-context.xml,
         			 /WEB-INF/service-context.xml,
-        			 /WEB-INF/topology-context.xml,
-                     /WEB-INF/search-context.xml,
+        			 /WEB-INF/topology-context.xml, 
         			 /WEB-INF/monitor-context.xml,
         			 /WEB-INF/notification-context.xml,
                      /WEB-INF/housekeeping-context.xml,
                      /WEB-INF/discovery-context.xml,
-                     /WEB-INF/solr-harvesting-context.xml,
         			 classpath:platform-service-conf.xml, 
         			 classpath:serialiser-service-conf.xml, 
         			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
         			 classpath:module-service-conf.xml,
+                     classpath:scheduler-service-conf.xml
         </param-value>
     </context-param>
 
