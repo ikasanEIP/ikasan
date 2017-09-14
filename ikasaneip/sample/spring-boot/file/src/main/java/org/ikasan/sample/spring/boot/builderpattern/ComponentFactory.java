@@ -38,63 +38,71 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.spec.module.Module;
 
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * IkasanApplication contract
+ * Sample component factory.
  *
  * @author Ikasan Development Team
  */
-public interface IkasanApplication
+@Configuration
+public class ComponentFactory
 {
+    @Resource
+    private BuilderFactory builderFactory;
+
+    @Value("#{'${file.consumer.filenames}'.split(',')}")
+    List<String> sourceFilenames;
+
+    @Value("${file.consumer.cronExpression}")
+    String cronExpression;
+
+    @Value("${file.consumer.scheduledGroupName}")
+    String scheduledGroupName;
+
+    @Value("${file.consumer.scheduledName}")
+    String scheduledName;
+
+    @Value("${file.consumer.configuredResourceId}")
+    String fileConsumerConfiguredResourceId;
+
+    @Value("${file.producer.configuredResourceId}")
+    String fileProducerConfiguredResourceId;
+
+    @Value("${file.producer.filename}")
+    String targetFilename;
+
     /**
-     * Get an instance of an IkasanBuilderFactory
+     * Return an instance of a configured file consumer
      * @return
      */
-    public BuilderFactory getBuilderFactory();
+    Consumer getFileConsumer()
+    {
+        return builderFactory.getComponentBuilder().fileConsumer()
+                .setCronExpression(cronExpression)
+                .setScheduledJobGroupName(scheduledGroupName)
+                .setScheduledJobName(scheduledName)
+                .setFilenames(sourceFilenames)
+                .setConfiguredResourceId(fileConsumerConfiguredResourceId)
+                .build();
+    }
 
-    /**
-     * Execute the module
-     * @param module
-     */
-    void run(Module module);
+    Producer getFileProducer()
+    {
+         return builderFactory.getComponentBuilder().fileProducer()
+                .setConfiguredResourceId(fileProducerConfiguredResourceId)
+                .setFilename(targetFilename)
+                .build();
+    }
 
-    /**
-     * This method forces Ikassan application shutdown.
-     */
-    void close();
-
-    /**
-     * Get module by name
-     * @param moduleName
-     * @return
-     */
-    Module getModule(String moduleName);
-
-    /**
-     * Get all modules within this application
-     * @return
-     */
-    List<Module> getModules();
-
-    /**
-     * Get bean by given class
-     * @param className
-     * @param <COMPONENT>
-     * @return
-     */
-    <COMPONENT> COMPONENT getBean(Class className);
-
-    /**
-     * Get bean by given name and class
-     * @param name
-     * @param className
-     * @param <COMPONENT>
-     * @return
-     */
-    <COMPONENT> COMPONENT getBean(String name, Class className);
 }

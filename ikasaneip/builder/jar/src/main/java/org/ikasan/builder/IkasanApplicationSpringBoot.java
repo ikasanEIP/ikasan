@@ -41,6 +41,7 @@
 package org.ikasan.builder;
 
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +50,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @SpringBootApplication
 public class IkasanApplicationSpringBoot implements IkasanApplication
@@ -59,8 +59,6 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
     private static Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
 
     ApplicationContext context;
-
-    Map<String, Module> modules = new HashMap<>();
 
     public IkasanApplicationSpringBoot(String[] args)
     {
@@ -78,14 +76,12 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
 
     public void run(Module module)
     {
-        this.modules.put(module.getName(), module);
         ModuleInitialisationService service = this.context.getBean(ModuleInitialisationService.class);
         service.register(module);
         logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
     }
 
     // TODO - add close or shutdown per module ?
-
     public void close()
     {
         SpringApplication.exit(this.context, new ExitCodeGenerator(){
@@ -96,14 +92,30 @@ public class IkasanApplicationSpringBoot implements IkasanApplication
         });
     }
 
-    @Override public Object getBean(String beanName)
+    @Override
+    public Module getModule(String moduleName)
     {
-        return context.getBean(beanName);
+        ModuleContainer moduleContainer = this.context.getBean(ModuleContainer.class);
+        return moduleContainer.getModule(moduleName);
     }
 
-    @Override public Object getBean(Class className)
+    @Override
+    public List<Module> getModules()
     {
-        return context.getBean(className);
+        ModuleContainer moduleContainer = this.context.getBean(ModuleContainer.class);
+        return moduleContainer.getModules();
+    }
+
+    @Override
+    public <COMPONENT> COMPONENT getBean(Class className)
+    {
+        return (COMPONENT) context.getBean(className);
+    }
+
+    @Override
+    public <COMPONENT> COMPONENT getBean(String name, Class className)
+    {
+        return (COMPONENT) context.getBean(name, className);
     }
 
 }
