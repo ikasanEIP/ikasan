@@ -29,3 +29,5 @@ ikasaneip/webconsole/skinny-war/overlays/
 ikasaneip/sample/scheduleDrivenSrc/war/overlays/
 ikasaneip/sample/genericTechPriceSrc/war/overlays/
 ikasaneip/component/endpoint/filetransfer/sftp/hostkey.ser
+ikasaneip/dashboard/boot/src/main/resources/VAADIN/widgetsets/
+ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/AppWidgetset/deferredjs/

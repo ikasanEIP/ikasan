@@ -1,0 +1,124 @@
+$v-app-loading-text: "Ikasan Dashboard";
+$v-font-size: 11px;
+
+/* Import the Valo theme. */
+/* This only allows us to use the mixins defined in it and does not add any styles by itself. */
+@import "../valo/valo.scss";
+@import "./dashboardview.scss";
+
+/* This contains all of your theme. */
+/* If somebody wants to extend the theme she will include this mixin. */
+@mixin mytheme 
+{
+  	/* Include all the styles from the Valo theme */
+ 	@include valo; 
+	
+	@include dashboard-dashboard-view; 
+ 	
+ 	.v-panel-navigation {
+		background: #434343;
+	}
+
+	.v-panel-content-navigation {
+        background: #434343;
+        border: none;
+        font-family: "Calibri";
+        color: white;
+        width: 30%;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+    
+    .v-caption-ikasan {
+		font-family: "Calibri";
+		color: #666;
+		font-size: $v-font-size;
+	}
+
+	.v-header {
+		background-color: #F9AF56;
+		background-image: url(./images/Banner.png);
+		background-repeat: no-repeat;
+		height: 70px;
+		position: relative;
+		padding-left: 0px;
+	}
+
+	.v-label-ikasan-maroon {
+		font-family: "Calibri";
+		color: #99141B;
+		font-size: 18px;
+		font-weight: bold;
+		line-height: 18px;
+		margin-top: 18px;
+		padding-left: 0px;
+	}
+
+	.v-label-ikasan-white {
+	    font-family: "Calibri";
+	    color: white !important;
+	    padding-left: 10px;
+	}
+	
+	.v-window-ikasan .v-window-outerheader {
+		background: #99141B;
+	}
+	
+	.v-window-ikasan .v-window-header {
+		color: white;
+	}
+    
+	.v-table-cell-content-ikasan {
+		font-size: $v-font-size;
+	}
+	
+	.v-table-header td {
+		font-size: $v-font-size;
+	}
+	
+	.v-tree-node-caption {
+		margin-left: 16px;
+		padding-bottom: 3px;
+	}
+	
+	.v-tree-node-caption-redicon {
+		margin-left: 16px;
+		padding-bottom: 3px;
+		color: red;
+	}
+
+	.v-tree-node-caption-yellowicon {
+		margin-left: 16px;
+		padding-bottom: 3px;
+		color: yellow;
+	}
+
+	.v-tree-node-caption-orangeicon {
+		margin-left: 16px;
+		padding-bottom: 3px;
+		color: orange;
+	}
+
+	.v-tree-node-caption-greenicon {
+		margin-left: 16px;
+		padding-bottom: 3px;
+		color: green;
+	}
+	
+	.v-monitor-caption-greenicon {
+		margin-left: 16px;
+		padding-bottom: 3px;
+		color: green;
+		font-size: 72px;
+		line-height: normal;
+	}
+	
+
+	.white .v-button-caption {
+		padding-top: 5px;
+		font-family: "Calibri";
+		color: white;
+	}
+}

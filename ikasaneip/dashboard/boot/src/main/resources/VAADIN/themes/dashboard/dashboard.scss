@@ -1,0 +1,267 @@
+$v-app-loading-text: "Ikasan Dashboard";
+$v-font-size: 11px;
+
+@import "../valo/valo";
+@import "views/dashboardview";
+
+
+
+// Main layout padding
+$view-padding: round($v-unit-size / 1.5) !default;
+
+// Slight adjustment to menu background-color
+$valo-menu-background-color	: #414B56;
+
+$v-font-weight: 400;
+
+@mixin dashboard {
+  @include valo;
+  @include dashboard-dashboard-view;
+  
+	.v-Notification.error {
+		@include valo-notification-error-style;
+		@include valo-notification-closable-style;
+	}
+
+	.wordwrap-table .v-table-cell-wrapper {
+	   white-space: normal;
+	   overflow: hidden;
+	   padding: 5px;
+	   line-height: 15px;
+	}
+  
+	.v-header {
+		background-color: #F9AF56;
+		background-image: url(./images/Banner.png);
+		background-repeat: no-repeat;
+		height: 70px;
+		position: relative;
+		padding-left: 0px;
+	}
+  
+    .v-panel-navigation {
+		background: $valo-menu-background-color;
+		border: none !important;
+	}
+
+	.v-panel-content-navigation {
+        background: $valo-menu-background-color;
+        border: none;
+        font-family: "Calibri";
+        color: white;
+        width: 100%;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+    
+    .v-caption-ikasan {
+		font-family: "Calibri";
+		color: #666;
+		font-size: $v-font-size;
+	}
+
+	.v-header {
+		background-color: #F9AF56;
+		background-image: url(./images/Banner.png);
+		background-repeat: no-repeat;
+		height: 70px;
+		position: relative;
+		padding-left: 0px;
+	}
+
+	.v-label-ikasan-maroon {
+		font-family: "Calibri";
+		color: #99141B;
+		font-size: 18px;
+		font-weight: bold;
+		line-height: 18px;
+		margin-top: 18px;
+		padding-left: 0px;
+	}
+
+	.v-label-ikasan-white {
+	    font-family: "Calibri";
+	    color: white !important;
+	    padding-left: 10px;
+	}
+	
+	.v-window-ikasan .v-window-outerheader {
+		background: #99141B;
+	}
+	
+	.v-window-ikasan .v-window-header {
+		color: white;
+	}
+    
+	.v-table-cell-content-ikasan {
+		font-size: $v-font-size;
+	}
+	
+	.v-table-cell-content-ikasan-green {
+		font-size: $v-font-size;
+		background-color: rgba(0, 153, 51, 0.2);
+		vertical-align: top;
+	}
+	
+	.v-table-cell-content-ikasan-red {
+		font-size: $v-font-size;
+		background-color: rgba(255, 0, 0, 0.2);
+		vertical-align: top;
+	}
+	
+	.v-table-cell-content-ikasan-orange {
+		font-size: $v-font-size;
+		background-color: rgba(255, 153, 0, 0.2);
+		vertical-align: top;
+	}
+	
+	.v-table-cell-content-ikasan-green-small {
+		font-size: 11px;
+		background-color: rgba(0, 153, 51, 0.2);
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+	.v-table-row-ikasan-green-small:hover, .v-table-row-odd-ikasan-green-small:hover {
+	    background: rgba(0, 153, 51, 0.3);
+	}
+
+
+	.v-table-cell-content-ikasan-red-small {
+		font-size: 11px;
+		background-color: rgba(255, 0, 0, 0.2);
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+	.v-table-cell-content-ikasan-blue-small {
+		font-size: 11px;
+		background-color: rgba(0, 0, 255, 0.2);
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+
+	.v-table-row-ikasan-red-small:hover, .v-table-row-odd-ikasan-red-small:hover {
+	    background: rgba(255, 0, 0, 0.3);
+	}
+
+	.v-table-row-ikasan-blue-small:hover, .v-table-row-odd-ikasan-blue-small:hover {
+		background: rgba(0, 0, 255, 0.3);
+	}
+
+	.v-table-cell-content-ikasan-orange-small {
+		font-size: 11px;
+		background-color: rgba(255, 153, 0, 0.2);
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+	.v-table-row-ikasan-orange-small:hover, .v-table-row-odd-ikasan-orange-small:hover {
+	    background: rgba(255, 153, 0, 0.3);
+	}
+
+	.v-table-cell-content-ikasan-indigo-small {
+		font-size: 11px;
+		background-color: rgba(75, 0, 130, 0.2);
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+	.v-table-row-ikasan-indigo-small:hover, .v-table-row-odd-ikasan-indigo-small:hover {
+	    background: rgba(75, 0, 130, 0.3);
+	}
+
+	.v-table-cell-content-ikasan-small {
+		font-size: 9px;
+		vertical-align: top;
+	}
+
+	.v-table-row-ikasan-ikasan-small:hover, .v-table-row-odd-ikasan-small:hover {
+	    background: #99CCFF;
+	}
+	
+	.v-table-cell-content-ikasan-small {
+		font-size: 9px;
+		vertical-align: top;
+	}
+	
+	.v-table-header td {
+		font-size: $v-font-size;
+	}
+	
+	.v-table-row:hover, .v-table-row-odd:hover {
+	    background: #99CCFF;
+	}
+	
+	.v-tree-node-caption {
+		padding-bottom: 5px;
+	}
+	
+	.v-tree-node-caption-redicon {
+		color: red;
+	}
+
+	.v-tree-node-caption-yellowicon {
+		color: yellow;
+	}
+
+	.v-tree-node-caption-orangeicon {
+		color: orange;
+	}
+
+	.v-tree-node-caption-greenicon {
+		color: green;
+	}
+	
+	.v-tree-node-caption-indigoicon {
+		color: indigo;
+	}
+
+	.v-tree-node-caption-blueicon {
+		color: blue;
+	}
+	
+	.v-monitor-caption-greenicon {
+		color: green;
+		font-size: 72px;
+		line-height: normal;
+	}
+	
+
+	.white .v-button-caption {
+		padding-top: 5px;
+		font-family: "Calibri";
+		color: white;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels .monitor-panel-slot {
+		padding: 6px;
+		min-height: 220px;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[width-range~="0-700px"] .monitor-panel-slot {
+		width: 50% !important;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[width-range~="701px-"] .monitor-panel-slot {
+		width: 33% !important;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[height-range~="0-440px"] .monitor-panel-slot {
+		height: 50%;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels[height-range~="441px-"] .monitor-panel-slot {
+		height: 33%;
+	}
+	
+	.dashboard-view.dashboard-view .dashboard-panels .monitor-panel-slot.max {
+		width: 100% !important;
+		height: 100%;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
