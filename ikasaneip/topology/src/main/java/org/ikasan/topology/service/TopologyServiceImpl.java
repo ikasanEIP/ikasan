@@ -40,22 +40,42 @@
  */
 package org.ikasan.topology.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ikasan.topology.exception.DiscoveryException;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.codec.binary.Base64;
+
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.topology.dao.TopologyDao;
-import org.ikasan.topology.model.*;
+import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.BusinessStreamFlow;
+import org.ikasan.topology.model.Component;
+import org.ikasan.topology.model.Filter;
+import org.ikasan.topology.model.FilterComponent;
+import org.ikasan.topology.model.FilterComponentKey;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Notification;
+import org.ikasan.topology.model.RoleFilter;
+import org.ikasan.topology.model.Server;
+
+import com.ikasan.topology.exception.DiscoveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.json.JsonArray;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import java.util.*;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 
@@ -68,6 +88,7 @@ public class TopologyServiceImpl implements TopologyService
 
 	private TopologyDao topologyDao;
 
+	private RestTemplate restTemplate;
 	/**
 	 * Constructor
 	 * 
@@ -80,6 +101,13 @@ public class TopologyServiceImpl implements TopologyService
 		{
 			throw new IllegalArgumentException("topologyDao cannot be null!");
 		}
+
+        restTemplate = new RestTemplate();
+		restTemplate.setMessageConverters(
+				Arrays.asList(
+						new MappingJackson2HttpMessageConverter()
+						,new StringHttpMessageConverter()));
+
 	}
 
 	/* (non-Javadoc)
@@ -206,16 +234,7 @@ public class TopologyServiceImpl implements TopologyService
 	public void discover(IkasanAuthentication authentication) throws DiscoveryException
 	{
 		List<Server> servers =  this.topologyDao.getAllServers();
-		
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    	
-    	ObjectMapper mapper = new ObjectMapper();
-    	
+
     	// Firstly sort out the server module relationships
 		for(Server server: servers)
 		{
@@ -232,13 +251,13 @@ public class TopologyServiceImpl implements TopologyService
 						+ "/rest/discovery/flows/"
 						+ module.getName();
 				
-			    WebTarget webTarget = client.target(url);
-			    
-			    JsonArray flowResponse = null;
-			    
-			    try
-			    {
-			    	flowResponse = webTarget.request().get(JsonArray.class);
+			   try
+				{
+					logger.info("REST ["+url+"]");
+					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials()
+					);
+					ResponseEntity<String> response = restTemplate.exchange(new URI(url), HttpMethod.GET,request,String.class);
+
 			    }
 			    catch(Exception e)
 			    {
@@ -276,14 +295,16 @@ public class TopologyServiceImpl implements TopologyService
 						+ module.getContextRoot() 
 						+ "/rest/discovery/flows/"
 						+ module.getName();
-				
-			    WebTarget webTarget = client.target(url);
-			    
-			    JsonArray flowResponse = null;
-			    
+
+                ResponseEntity<List<Flow>> flowResponse;
 			    try
 			    {
-			    	flowResponse = webTarget.request().get(JsonArray.class);
+					logger.info("REST ["+url+"]");
+					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials()
+					);
+					flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET,request,new ParameterizedTypeReference<List<Flow>>() {});
+
+
 			    }
 			    catch(Exception e)
 			    {
@@ -298,17 +319,13 @@ public class TopologyServiceImpl implements TopologyService
 			    
 			    Set<Flow> flowSet = new HashSet<Flow>();
 			    
-			    for(JsonValue flowValue: flowResponse)
+			    for(Flow flow: flowResponse.getBody())
 			    { 
 			    	List<String> discoveredComponentNames = new ArrayList<String>();
 			    	
-		    		Flow flow;
-		    		
-					try
+		    		try
 					{
-						flow = mapper.readValue(
-								 flowValue.toString(), Flow.class);
-						
+
 						discoveredFlowNames.add(flow.getName());
 						
 						for(Component component: flow.getComponents())
@@ -508,6 +525,17 @@ public class TopologyServiceImpl implements TopologyService
 		return component;
 	}
 
+
+	private HttpEntity initRequest(String user, String password){
+		HttpHeaders headers = new HttpHeaders();
+		if(user!=null && password !=null){
+			String credentials = user + ":" +password;
+			String encodedCridentials =  new String(Base64.encodeBase64(credentials.getBytes()));
+			headers.set(HttpHeaders.AUTHORIZATION, "Basic "+encodedCridentials);
+		}
+		return new HttpEntity(headers);
+
+	}
 	/* (non-Javadoc)
 	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStream(org.ikasan.topology.window.BusinessStream)
 	 */

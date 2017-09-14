@@ -2,10 +2,10 @@ package org.ikasan.component.validator.schematron;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.util.log.Log;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.validator.ValidationResult;
@@ -35,9 +35,10 @@ public class SchematronValidatorTest
         // prevent logging
         Log.setLog(null);
         server = new Server(0);
-        SelectChannelConnector connector = new SelectChannelConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setPort(0);
         server.addConnector(connector);
+
 
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(true);
@@ -48,7 +49,7 @@ public class SchematronValidatorTest
         server.setHandler(handlers);
 
         server.start();
-        int localPort = server.getConnectors()[0].getLocalPort();
+        int localPort = connector.getLocalPort();
         baseUrl = "http://localhost:" + localPort + "/src/test/resources/";
     }
 
@@ -212,11 +213,17 @@ public class SchematronValidatorTest
         ValidationResult<Document, Document> validationResult = validator.invoke(getDocument("xml/passes-codelist.xml"));
         Assert.assertTrue("Document should be valid", validationResult.getResult().equals(ValidationResult.Result.VALID));
         // stop the webserver
-        stopJetty();
+        //stopJetty();
+
+
+        configuration.setSchematronUri("http://localhost:1/src/test/resources/" + "xslt/dir1/relative-codelist.sch.xsl");
+        validator.setConfiguration(configuration);
+
+
         ValidationResult<Document, Document> validationResult2 = validator.invoke(getDocument("xml/passes-codelist.xml"));
         Assert.assertTrue("Document should still be valid", validationResult2.getResult().equals(ValidationResult.Result.VALID));
         // start it back up
-        startJetty();
+//        startJetty();
     }
 
     private Document getDocument(String resource)
