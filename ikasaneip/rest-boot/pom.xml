@@ -89,14 +89,25 @@
 
     <dependencies>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${version.javax.servlet}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${version.org.springboot}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-rest</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${version.javax.servlet}</version>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-hospital</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -115,14 +126,15 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>${version.org.springboot}</version>
-        </dependency>
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-topology</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
             <scope>provided</scope>
         </dependency>
 
