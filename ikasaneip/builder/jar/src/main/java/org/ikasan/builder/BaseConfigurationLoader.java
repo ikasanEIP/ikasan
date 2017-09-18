@@ -73,7 +73,7 @@ import org.springframework.context.annotation.ImportResource;
 
 } )
 
-@ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*","com.*","org.ikasan.*"})
+@ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*","org.ikasan.*"})
 public class BaseConfigurationLoader {
 
 }
