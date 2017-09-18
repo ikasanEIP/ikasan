@@ -37,6 +37,10 @@
                                 javax.servlet.jstl.api,
                                 javax.servlet.api,
                                 org.jboss.jts,
+                                org.jboss.msc,
+                                org.jboss.as.naming,
+                                org.hornetq,
+                                org.jboss.remote-naming,
                                 org.ikasan.ikasan-sample-jboss-sftp.conf</Dependencies>
 						</manifestEntries>
 					</archive>
