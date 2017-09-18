@@ -48,6 +48,7 @@ import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 
@@ -78,6 +79,12 @@ public class RouteBuilder
 	public RouteBuilder translator(String name, Translator translator)
 	{
 		this.route.addFlowElement(new FlowElementImpl(name, translator, new TranslatorFlowElementInvoker()));
+		return this;
+	}
+
+	public RouteBuilder splitter(String name, Splitter splitter)
+	{
+		this.route.addFlowElement(new FlowElementImpl(name, splitter, new SplitterFlowElementInvoker()));
 		return this;
 	}
 
