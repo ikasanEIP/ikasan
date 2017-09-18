@@ -46,6 +46,7 @@ import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
@@ -101,9 +102,11 @@ public class FlowBuilderTest
     final Converter converter = mockery.mock(Converter.class, "mockConverter");
 
     // Routers
-    /** Mock Router */
+    /** Mock SRR Router */
     final SingleRecipientRouter singleRecipientRouter = mockery.mock(SingleRecipientRouter.class, "mockSingleRecipientRouter");
-    
+    /** Mock MRR Router */
+    final MultiRecipientRouter multiRecipientRouter = mockery.mock(MultiRecipientRouter.class, "mockMultiRecipientRouter");
+
     // Sequencers
     /** Mock Sequencer */
     final Sequencer sequencer = mockery.mock(Sequencer.class, "mockSequencingRouter");
@@ -441,6 +444,107 @@ public class FlowBuilderTest
 		Assert.assertTrue("flow element name should be 'publisher4'", "publisher4".equals(feRouteOtherwise.getComponentName()));
 		Assert.assertTrue("flow element component should be an instance of Producer", feRouteOtherwise.getFlowComponent() instanceof Producer);
 		Assert.assertTrue("flow element transition should be to producer", feRouteOtherwise.getTransitions().size() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow creation.
+     * deprecated with the test above
+     */
+    @Test
+    public void test_successful_multiReceipientRouter_transitions()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+
+        ExceptionResolver exceptionResolver = builderFactory.getExceptionResolverBuilder()
+                .addExceptionToAction(Exception.class, OnException.ignoreException()).build();
+
+        Route route1 = builderFactory.getRouteBuilder().producer("producer", producer);
+        Route nestedRoute1 = builderFactory.getRouteBuilder().translator("nestedRoute1-name1",translator).producer("nestedRoute1-publisher1", producer);
+        Route nestedRoute2 = builderFactory.getRouteBuilder().translator("nestedRoute2-name2",translator).producer("nestedRoute2-publisher2", producer);
+        Route nestedRoute3 = builderFactory.getRouteBuilder().translator("nestedRoute3-name3",translator).producer("nestedRoute3-publisher3", producer);
+        Route route2 = builderFactory.getRouteBuilder().multiRecipientRouter("nestedMRR", multiRecipientRouter)
+                .when("nestedRoute1", nestedRoute1)
+                .when("nestedRoute2", nestedRoute2)
+                .otherwise(nestedRoute3).build();
+
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+                .withDescription("flowDescription")
+                .withFlowInvocationContextListeners(Collections.singletonList(flowInvocationContextListener))
+                .withExclusionServiceFactory(exclusionServiceFactory)
+                .withSerialiserFactory(serialiserFactory).withExceptionResolver(exceptionResolver)
+                .consumer("consumer", consumer)
+                .singleRecipientRouter("router", singleRecipientRouter)
+                .when("route1", route1)
+                .when("route2", route2)
+                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer)).build();
+
+        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        Assert.assertTrue("Should be 12 flow elements", flowElements.size() == 12);
+        Assert.assertNotNull("Flow elements cannot be 'null'", flowElements);
+
+        Assert.assertTrue("Should have one FlowInvocationContextListener", flow.getFlowInvocationContextListeners().size() == 1);
+
+        // Consumer
+        FlowElement fe = flowElements.get(0);
+        Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
+        Assert.assertTrue("flow element should have a single transition", fe.getTransitions().size() == 1);
+
+        // MRR
+        fe = (FlowElement)fe.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'router'", "router".equals(fe.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of SRR", fe.getFlowComponent() instanceof SingleRecipientRouter);
+        Assert.assertTrue("flow element MRR shuold have 3 transitions not [" + fe.getTransitions().size() + "]", fe.getTransitions().size() == 3);
+
+        // when route1
+        FlowElement feRoute1 = (FlowElement)fe.getTransitions().get("route1");
+        Assert.assertTrue("flow element name should be 'producer'", "producer".equals(feRoute1.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", feRoute1.getFlowComponent() instanceof Producer);
+
+        // when route2
+        FlowElement feRoute2 = (FlowElement)fe.getTransitions().get("route2");
+        Assert.assertTrue("flow element name should be 'nestedMRR'", "nestedMRR".equals(feRoute2.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of MRR", feRoute2.getFlowComponent() instanceof MultiRecipientRouter);
+        Assert.assertTrue("flow element MRR should have 3 transitions not [" + feRoute2.getTransitions().size() + "]", feRoute2.getTransitions().size() == 3);
+
+        // route2 nested components
+        // route2 nestedRoute1
+        FlowElement feNestedRoute1 = (FlowElement)feRoute2.getTransitions().get("nestedRoute1");
+        Assert.assertTrue("flow element name should be 'nestedRoute1-name1'", "nestedRoute1-name1".equals(feNestedRoute1.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", feNestedRoute1.getFlowComponent() instanceof Translator);
+        feNestedRoute1 = (FlowElement)feNestedRoute1.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'nestedRoute1-publisher1'", "nestedRoute1-publisher1".equals(feNestedRoute1.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", feNestedRoute1.getFlowComponent() instanceof Producer);
+
+        // route2 nestedRoute2
+        FlowElement feNestedRoute2 = (FlowElement)feRoute2.getTransitions().get("nestedRoute2");
+        Assert.assertTrue("flow element name should be 'nestedRoute2-name2'", "nestedRoute2-name2".equals(feNestedRoute2.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", feNestedRoute2.getFlowComponent() instanceof Translator);
+        feNestedRoute2 = (FlowElement)feNestedRoute2.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'nestedRoute2-publisher2'", "nestedRoute2-publisher2".equals(feNestedRoute2.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", feNestedRoute2.getFlowComponent() instanceof Producer);
+
+        // route2 nestedOtherwise
+        FlowElement feNestedOtherwise = (FlowElement)feRoute2.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'nestedRoute3-name3'", "nestedRoute3-name3".equals(feNestedOtherwise.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", feNestedOtherwise.getFlowComponent() instanceof Translator);
+        feNestedOtherwise = (FlowElement)feNestedOtherwise.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'nestedRoute3-publisher3'", "nestedRoute3-publisher3".equals(feNestedOtherwise.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", feNestedOtherwise.getFlowComponent() instanceof Producer);
+
+        // otherwise
+        FlowElement feRouteOtherwise = (FlowElement)fe.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'name4'", "name4".equals(feRouteOtherwise.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Translator", feRouteOtherwise.getFlowComponent() instanceof Translator);
+        Assert.assertTrue("flow element transition should be to prodcuer", feRouteOtherwise.getTransitions().size() == 1);
+        feRouteOtherwise = (FlowElement)feRouteOtherwise.getTransitions().get("default");
+        Assert.assertTrue("flow element name should be 'publisher4'", "publisher4".equals(feRouteOtherwise.getComponentName()));
+        Assert.assertTrue("flow element component should be an instance of Producer", feRouteOtherwise.getFlowComponent() instanceof Producer);
+        Assert.assertTrue("flow element transition should be to producer", feRouteOtherwise.getTransitions().size() == 0);
 
         mockery.assertIsSatisfied();
     }

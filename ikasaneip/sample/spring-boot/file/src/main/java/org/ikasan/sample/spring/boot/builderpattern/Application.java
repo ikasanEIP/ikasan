@@ -41,7 +41,6 @@
 package org.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.*;
-import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
@@ -66,13 +65,13 @@ public class Application
 
         // get the builders
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
                 .withDescription("Sample file source flow")
                 .consumer("File Consumer", componentFactory.getFileConsumer())
-                .producer("File Producer", componentFactory.getFileProducer()).build();
+                //.producer("File Producer", componentFactory.getFileProducer()).build();
+                .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
         Module module = moduleBuilder.withDescription("Sample file consumer / producer module.").addFlow(sourceFlow).build();
         ikasanApplication.run(module);
