@@ -37,40 +37,36 @@
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms-client</artifactId>
-            <version>2.3.12.Final</version>
+            <version>2.3.25.Final</version>
         </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/org.jboss/jboss-remote-naming -->
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-remote-naming</artifactId>
-            <version>1.0.8.Final</version>
+            <version>2.0.5.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.xnio</groupId>
                     <artifactId>xnio-api</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.marshalling</groupId>
-                    <artifactId>jboss-marshalling</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.remoting3</groupId>
-                    <artifactId>jboss-remoting</artifactId>
-                </exclusion>
 
             </exclusions>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.jboss.xnio/xnio-nio -->
         <dependency>
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-nio</artifactId>
-            <version>3.0.10.GA</version>
+            <version>3.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-api</artifactId>
-            <version>3.0.10.GA</version>
+            <version>3.1.0.Final</version>
         </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -115,68 +111,6 @@
     <build>
         <plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.ikasan:ikasan-webconsole-boot-war</include>
-                                </includes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>org.ikasan:ikasan-webconsole-boot-war</artifact>
-                                    <includes>
-
-                                        <include>css/**</include>
-                                        <include>images/**</include>
-                                        <include>js/**</include>
-                                        <include>login/**</include>
-                                        <include>WEB-INF/**</include>
-
-                                    </includes>
-                                </filter>
-                            </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>css</pattern>
-                                    <shadedPattern>META-INF/resources/css</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>images</pattern>
-                                    <shadedPattern>META-INF/resources/images</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>js</pattern>
-                                    <shadedPattern>META-INF/resources/js</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>WEB-INF</pattern>
-                                    <shadedPattern>META-INF/resources/WEB-INF</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>login</pattern>
-                                    <shadedPattern>META-INF/resources</shadedPattern>
-                                </relocation>
-
-                            </relocations>
-
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
