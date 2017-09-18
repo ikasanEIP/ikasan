@@ -48,6 +48,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import javax.jms.DeliveryMode;
+import javax.jms.Session;
 import java.util.List;
 
 /**
@@ -82,6 +84,9 @@ public class ComponentFactory
     @Value("${file.producer.filename}")
     String targetFilename;
 
+    @Value("${jms.producer.configuredResourceId}")
+    String jmsProducerConfiguredResourceId;
+
     /**
      * Return an instance of a configured file consumer
      * @return
@@ -105,4 +110,44 @@ public class ComponentFactory
                 .build();
     }
 
+    Consumer getJmsConsumer()
+    {
+        return builderFactory.getComponentBuilder().jmsConsumer()
+                .setDestinationJndiName("jms.topic.test")
+                .setDurableSubscriptionName("testDurableSubscription")
+                .setDurable(true)
+                .setConnectionFactoryName("TestConnectionFactory")
+                .setConnectionFactoryUsername("TestUsername")
+                .setConnectionFactoryPassword("TestPassword")
+                .setAutoContentConversion(true)
+                .setAutoSplitBatch(false)
+                .setBatchMode(true)
+                .setBatchSize(2)
+                .setCacheLevel(2)
+                .setConcurrentConsumers(2)
+                .setMaxConcurrentConsumers(2)
+                .setSessionAcknowledgeMode(2)
+                .setSessionTransacted(true)
+                .setPubSubDomain(true)
+                .build();
+    }
+
+    Producer getJmsProducer()
+    {
+        return builderFactory.getComponentBuilder().jmsProducer()
+                .setConfiguredResourceId(jmsProducerConfiguredResourceId)
+                .setDestinationJndiName("jms.topic.test")
+                .setConnectionFactoryName("TestConnectionFactory")
+                .setConnectionFactoryUsername("TestUsername")
+                .setConnectionFactoryPassword("TestPassword")
+                .setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE)
+                .setSessionTransacted(true)
+                .setPubSubDomain(true)
+                .setDeliveryPersistent(true)
+                .setDeliveryMode(DeliveryMode.PERSISTENT)
+                .setExplicitQosEnabled(true)
+                .setMessageIdEnabled(true)
+                .setMessageTimestampEnabled(true)
+                .build();
+    }
 }
