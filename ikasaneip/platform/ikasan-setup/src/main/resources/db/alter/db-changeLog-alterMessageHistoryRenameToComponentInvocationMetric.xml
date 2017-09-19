@@ -61,7 +61,7 @@
 
 		<renameColumn columnDataType="${identity}" newColumnName="FlowInvocationMetricId" oldColumnName="FlowInvocationId" tableName="ComponentInvocationMetric"/>
 
-		<addForeignKeyConstraint baseColumnNames="FlowInvocationId"
+		<addForeignKeyConstraint baseColumnNames="FlowInvocationMetricId"
 								 baseTableName="ComponentInvocationMetric" constraintName="MHFlowInvocation_FK"
 								 deferrable="false" initiallyDeferred="false" referencedColumnNames="Id"
 								 referencedTableName="FlowInvocation" />
