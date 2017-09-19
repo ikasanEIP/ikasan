@@ -49,12 +49,14 @@
 
     <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationId" context="postBaseline">
 
+		<validCheckSum>any</validCheckSum>
+
 		<preConditions onFail="MARK_RAN">
 			<not><columnExists tableName="MessageHistory" columnName="FlowInvocationId"/></not>
 		</preConditions>
 
 	    <addColumn tableName="MessageHistory">
-			<column name="FlowInvocationId" type="numeric(18)">
+			<column name="FlowInvocationId" type="${identity}">
 				<constraints nullable="true"/>
 			</column>
 	    </addColumn>
