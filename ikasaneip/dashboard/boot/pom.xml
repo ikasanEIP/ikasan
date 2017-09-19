@@ -80,7 +80,7 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>src/main/resources/VAADIN/widgetsets</directory>
+							<directory>target/classes/VAADIN/widgetsets</directory>
 						</fileset>
 					</filesets>
 				</configuration>
@@ -92,9 +92,9 @@
                 <configuration>
                     <extraJvmArgs>-Xmx512M -Xss1024k -Dvaadin.charts.developer.license=4c2ab27c-2412-455a-bf24-8af3c447e7ff</extraJvmArgs>
                     
-                    <webappDirectory>${basedir}/src/main/resources/VAADIN/widgetsets
+                    <webappDirectory>${basedir}/target/classes/VAADIN/widgetsets
                     </webappDirectory>
-                    <hostedWebapp>${basedir}/src/main/resources/VAADIN/widgetsets
+                    <hostedWebapp>${basedir}/target/classes/VAADIN/widgetsets
                     </hostedWebapp>
                     <noServer>true</noServer>
                     
@@ -135,7 +135,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
