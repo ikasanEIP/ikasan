@@ -89,7 +89,7 @@ public class DefaultSpringBootIkasanApplication implements IkasanApplication{
         return (COMPONENT) context().getBean(name, className);
     }
 
-    public ApplicationContext context() {
+    private ApplicationContext context() {
         if (context == null){
             throw new RuntimeException("Context is null - this is because you have used the default constructor, " +
                     "this is required by spring. Please ensure you only use the spring boot constructor specifying " +
