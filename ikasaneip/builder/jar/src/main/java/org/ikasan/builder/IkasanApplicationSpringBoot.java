@@ -40,25 +40,82 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.module.ModuleInitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ExitCodeGenerator;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+import java.util.List;
 
 @SpringBootApplication
-public class IkasanApplicationSpringBoot extends DefaultSpringBootIkasanApplication implements IkasanApplication
+public class IkasanApplicationSpringBoot implements IkasanApplication
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
 
+    ApplicationContext context;
+
     public IkasanApplicationSpringBoot(String[] args)
     {
-        super(IkasanApplicationSpringBoot.class, args);
+        this.context = SpringApplication.run(IkasanApplicationSpringBoot.class, args);
     }
 
-    public IkasanApplicationSpringBoot(){
-        super();
-        logger.info("Ikasan application created.");
+    IkasanApplicationSpringBoot()
+    {
     }
 
+    public BuilderFactory getBuilderFactory()
+    {
+        return this.context.getBean(BuilderFactory.class);
+    }
+
+    public void run(Module module)
+    {
+        ModuleInitialisationService service = this.context.getBean(ModuleInitialisationService.class);
+        service.register(module);
+        logger.info("Module [" + module.getName() + "] successfully bootstrapped.");
+    }
+
+    // TODO - add close or shutdown per module ?
+    public void close()
+    {
+        SpringApplication.exit(this.context, new ExitCodeGenerator(){
+            @Override public int getExitCode()
+            {
+                return 0;
+            }
+        });
+    }
+
+    @Override
+    public Module getModule(String moduleName)
+    {
+        ModuleContainer moduleContainer = this.context.getBean(ModuleContainer.class);
+        return moduleContainer.getModule(moduleName);
+    }
+
+    @Override
+    public List<Module> getModules()
+    {
+        ModuleContainer moduleContainer = this.context.getBean(ModuleContainer.class);
+        return moduleContainer.getModules();
+    }
+
+    @Override
+    public <COMPONENT> COMPONENT getBean(Class className)
+    {
+        return (COMPONENT) context.getBean(className);
+    }
+
+    @Override
+    public <COMPONENT> COMPONENT getBean(String name, Class className)
+    {
+        return (COMPONENT) context.getBean(name, className);
+    }
 
 }
