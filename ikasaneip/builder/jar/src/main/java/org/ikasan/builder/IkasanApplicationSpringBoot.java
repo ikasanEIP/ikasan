@@ -45,20 +45,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class IkasanApplicationSpringBoot extends DefaultSpringBootIkasanApplication implements IkasanApplication
+public class IkasanApplicationSpringBoot
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
 
-    public IkasanApplicationSpringBoot(String[] args)
-    {
-        super(IkasanApplicationSpringBoot.class, args);
+    public static IkasanApplication getIkasanApplication(String[] args){
+        return IkasanApplicationFactory.getIkasanApplication(args);
     }
 
-    public IkasanApplicationSpringBoot(){
-        super();
-        logger.info("Ikasan application created.");
-    }
 
 
 }
