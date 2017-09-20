@@ -1,10 +1,11 @@
 package org.ikasan.exclusion.dao;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.solr.SolrDaoBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class SolrExclusionEventDao extends SolrDaoBase implements ExclusionEventDao<String, ExclusionEvent>
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrExclusionEventDao.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrExclusionEventDao.class);
 
     /**
      * We need to give this dao it's context.

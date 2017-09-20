@@ -1,11 +1,12 @@
 package org.ikasan.error.reporting.dao;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.solr.SolrDaoBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorReportingServiceDao<ErrorOccurrence<byte[]>, String>
 {
-    private static Logger logger = Logger.getLogger(SolrErrorReportingServiceDao.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrErrorReportingServiceDao.class);
 
     /**
      * We need to give this dao it's context.

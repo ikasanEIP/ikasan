@@ -1,6 +1,5 @@
 package org.ikasan.wiretap.dao;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -11,6 +10,8 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.ikasan.wiretap.model.SolrWiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Date;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrWiretapDao.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrWiretapDao.class);
 
     /**
      * We need to give this dao it's context.

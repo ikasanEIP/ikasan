@@ -1,6 +1,7 @@
 package org.ikasan.wiretap.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -10,7 +11,7 @@ import java.util.*;
 public abstract class SolrQueryBuilder
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrQueryBuilder.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrQueryBuilder.class);
 
     public static final String AND = "AND";
     public static final String OR = "OR ";

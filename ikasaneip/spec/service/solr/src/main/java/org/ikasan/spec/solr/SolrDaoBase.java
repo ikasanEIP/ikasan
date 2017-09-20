@@ -1,9 +1,10 @@
 package org.ikasan.spec.solr;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Set;
 public abstract class SolrDaoBase implements SolrInitialisationService
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrDaoBase.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrDaoBase.class);
 
     public static final String ID = "id";
     public static final String ERROR_URI = "errorUri";
