@@ -40,20 +40,15 @@
  */
 package org.ikasan.builder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Embedded SpringBoot bootstrapping.
+ *
+ * @author Ikasan Development Team
+ */
 @SpringBootApplication
 public class IkasanApplicationSpringBoot
 {
-    /** logger */
-    private static Logger logger = LoggerFactory.getLogger(IkasanApplicationSpringBoot.class);
-
-    public static IkasanApplication getIkasanApplication(String[] args){
-        return IkasanApplicationFactory.getIkasanApplication(args);
-    }
-
-
 
 }
