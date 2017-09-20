@@ -40,10 +40,6 @@
  */
 package org.ikasan.builder;
 
-import org.springframework.context.ApplicationContext;
-
-import java.util.HashMap;
-
 /**
  * Factory implementation for an IkasanApplication instance.
  *
@@ -67,7 +63,7 @@ public class IkasanApplicationFactory
      */
     public static IkasanApplication getIkasanApplication(String[] args)
     {
-        return new IkasanApplicationSpringBoot(args);
+        return DefaultSpringBootIkasanApplication.createDefaultSpringBootIkasanApplication(IkasanApplicationSpringBoot.class, args);
     }
 
     /**
@@ -76,6 +72,27 @@ public class IkasanApplicationFactory
      */
     public static IkasanApplication getIkasanApplication()
     {
-        return new IkasanApplicationSpringBoot(new String[0]);
+        return DefaultSpringBootIkasanApplication.createDefaultSpringBootIkasanApplication(IkasanApplicationSpringBoot.class, new String[0]);
+    }
+
+    /**
+     * Gets an ikasan application where user specifies class to use and args to pass
+     *
+     * @param clazz
+     * @param args
+     * @return
+     */
+    public static IkasanApplication getIkasanApplication(Class<?> clazz, String[] args){
+        return DefaultSpringBootIkasanApplication.createDefaultSpringBootIkasanApplication(clazz,args);
+    }
+
+    /**
+     * Gets an ikasan application where user specifies class to use and args to pass
+     *
+     * @param clazz
+     * @return
+     */
+    public static IkasanApplication getIkasanApplication(Class<?> clazz){
+        return DefaultSpringBootIkasanApplication.createDefaultSpringBootIkasanApplication(clazz,new String[0]);
     }
 }
