@@ -283,10 +283,6 @@
             <artifactId>guava</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-solr</artifactId>
-        </dependency>
 
     </dependencies>
 
