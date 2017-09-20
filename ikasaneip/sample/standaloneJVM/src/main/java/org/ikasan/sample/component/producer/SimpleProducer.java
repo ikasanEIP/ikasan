@@ -40,7 +40,7 @@
  */
 package org.ikasan.sample.component.producer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.TransformationException;
 
@@ -50,7 +50,7 @@ import org.ikasan.spec.component.transformation.TransformationException;
  */
 public class SimpleProducer<T> implements Producer<T>
 {
-    Logger logger = Logger.getLogger(SimpleProducer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleProducer.class);
 
     static int msgCount = 0;
 

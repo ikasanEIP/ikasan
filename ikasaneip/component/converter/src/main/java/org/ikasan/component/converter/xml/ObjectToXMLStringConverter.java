@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.converter.xml;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -79,7 +79,7 @@ import java.util.Map;
 public class ObjectToXMLStringConverter implements Converter<Object, Object>, ConfiguredResource<XmlConfiguration>
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(ObjectToXMLStringConverter.class);
+    private static Logger logger = LoggerFactory.getLogger(ObjectToXMLStringConverter.class);
 
     /** JAXB Context is thread-safe so keep handle to the context */
     private JAXBContext context;

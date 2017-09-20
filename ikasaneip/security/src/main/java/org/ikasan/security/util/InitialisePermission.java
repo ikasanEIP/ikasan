@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.model.User;
@@ -55,7 +55,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class InitialisePermission implements InitializingBean
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(InitialisePermission.class);
+    private static Logger logger = LoggerFactory.getLogger(InitialisePermission.class);
 
     /** standard user role text */
     private static String ROLE_USER = "ROLE_USER";

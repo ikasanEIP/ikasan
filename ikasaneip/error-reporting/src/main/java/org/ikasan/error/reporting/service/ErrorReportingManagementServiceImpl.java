@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -64,7 +64,7 @@ import org.ikasan.spec.solr.SolrService;
 public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
 		HousekeepService, HarvestService<ErrorOccurrence<byte[]>>, SolrService<ErrorOccurrence<byte[]>>
 {
-	private static Logger logger = Logger.getLogger(ErrorReportingManagementServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(ErrorReportingManagementServiceImpl.class);
 	
 	public static final String CLOSE = "close";
 

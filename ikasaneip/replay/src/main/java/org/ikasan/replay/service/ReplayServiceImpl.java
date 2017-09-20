@@ -1,18 +1,15 @@
 package org.ikasan.replay.service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.commons.codec.binary.Base64;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
@@ -20,6 +17,10 @@ import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayListener;
 import org.ikasan.spec.replay.ReplayService;
 import org.ikasan.spec.solr.SolrService;
+import org.springframework.http.*;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 
 /**
@@ -30,7 +31,7 @@ import org.ikasan.spec.solr.SolrService;
  */
 public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent>, SolrService<ReplayEvent>
 {
-	private Logger logger = Logger.getLogger(ReplayService.class);
+	private static Logger logger = LoggerFactory.getLogger(ReplayService.class);
 	
 	private ReplayDao replayDao;
 	
@@ -39,15 +40,21 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     private List<ReplayListener<ReplayAuditEvent>> replayListeners 
     	= new ArrayList<ReplayListener<ReplayAuditEvent>>();
 
-    /**
+    private RestTemplate restTemplate;
+	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param replayDao
-     */
+	 */
 	public ReplayServiceImpl(ReplayDao replayDao) 
 	{
 		super();
 		this.replayDao = replayDao;
+		restTemplate = new RestTemplate();
+		restTemplate.setMessageConverters(
+				Arrays.asList(
+						new ByteArrayHttpMessageConverter()
+						,new StringHttpMessageConverter()));
 	}
 
 
@@ -60,14 +67,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 			String authUser, String authPassword, String user, String replayReason) 
 	{
 		cancel = false;
-		
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authUser, authPassword);
-    	
-    	ClientConfig clientConfig = new ClientConfig();
-    	clientConfig.register(feature) ;
-    	
-    	Client client = ClientBuilder.newClient(clientConfig);
-    
+
     	ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
     	logger.debug("Saving replayAudit: " + replayAudit);
     	
@@ -93,36 +93,53 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		    		+ "/"
 		    		+ event.getFlowName();
 			
-			logger.info("Replay Url: " + url);
-			logger.info("Event: " + event.getEvent());
-			
-		    WebTarget webTarget = client.target(url);
-		    Response response = webTarget.request().put(Entity.entity(event.getEvent()
-		    		, MediaType.APPLICATION_OCTET_STREAM));
-		    
-		    boolean success = true;
-		    
-		    if(response.getStatus()  != 200)
-    	    {
-    	    	success = false;
-    	    }
-		    
-		    ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
-		    		response.readEntity(String.class), System.currentTimeMillis());
-		    
-		    logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
-		    
-		    this.replayDao.saveOrUpdate(replayAuditEvent);
-		    
-		    replayAuditEvent.setReplayEvent(event);
-		    
-		    for(ReplayListener<ReplayAuditEvent> listener: this.replayListeners)
-		    {
-		    	listener.onReplay(replayAuditEvent);
-		    }
+			logger.debug("Replay Url: " + url);
+            logger.info("Event: " + event.getEvent());
+
+            ResponseEntity<String> response = null;
+			try {
+				HttpEntity request = initRequest(event.getEvent(),event.getModuleName(),authUser,authPassword
+						);
+				response = restTemplate.exchange(new URI(url), HttpMethod.PUT,request,String.class);
+
+				boolean success = true;
+
+				if(!response.getStatusCode().is2xxSuccessful())
+				{
+					success = false;
+				}
+
+				ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
+						response.getBody(), System.currentTimeMillis());
+
+				logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
+
+				this.replayDao.saveOrUpdate(replayAuditEvent);
+
+				replayAuditEvent.setReplayEvent(event);
+
+				for(ReplayListener<ReplayAuditEvent> listener: this.replayListeners)
+				{
+					listener.onReplay(replayAuditEvent);
+				}
+			} catch (URISyntaxException e) {
+				logger.error(e.getMessage(),e);
+			}
     	}
 	}
-	
+
+
+	private HttpEntity initRequest(byte[] event,String module ,String user, String password){
+		HttpHeaders headers = new HttpHeaders();
+		if(user!=null && password !=null){
+			String credentials = user + ":" +password;
+			String encodedCridentials =  new String(Base64.encodeBase64(credentials.getBytes()));
+			headers.set(HttpHeaders.AUTHORIZATION, "Basic "+encodedCridentials);
+		}
+		headers.set(HttpHeaders.USER_AGENT,module);
+		return new HttpEntity(event,headers);
+
+	}
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayService#addReplayListener(org.ikasan.spec.replay.ReplayListener)
 	 */

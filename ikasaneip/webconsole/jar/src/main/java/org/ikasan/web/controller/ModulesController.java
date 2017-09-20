@@ -207,8 +207,7 @@ public class ModulesController
      * @return
      */
     @RequestMapping(value = "flow.htm", method = RequestMethod.POST)
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin','BlueConsoleAdmin','ADMIN_'+#moduleName)")
-
+    @PreAuthorize("hasAnyAuthority('ALL','WriteBlueConsole')")
     public String controlFlow(@RequestParam("moduleName")String moduleName,
                             @RequestParam("flowName") String flowName,
                             @RequestParam("action") String action)

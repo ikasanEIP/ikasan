@@ -52,7 +52,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.rest.IkasanRestApplication;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
@@ -64,7 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Path("/wiretap")
 public class WiretapApplication extends IkasanRestApplication
 {
-	private static Logger logger = Logger.getLogger(WiretapApplication.class);
+	private static Logger logger = LoggerFactory.getLogger(WiretapApplication.class);
 	
 	@Autowired
     private JobAwareFlowEventListener jobAwareFlowEventListener;

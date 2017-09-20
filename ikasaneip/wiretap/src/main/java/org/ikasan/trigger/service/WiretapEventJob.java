@@ -45,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 
@@ -78,7 +78,7 @@ public class WiretapEventJob implements FlowEventJob
     /**
      * logger instance
      */
-    private static final Logger logger = Logger.getLogger(WiretapEventJob.class);
+    private static final Logger logger = LoggerFactory.getLogger(WiretapEventJob.class);
 
     /**
      * List of names of parameters supported by this job

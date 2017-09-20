@@ -45,105 +45,103 @@
 # //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    
-  <artifactId>ikasan-exclusion-service</artifactId>
-  <packaging>jar</packaging>
-  <name>Ikasan Exclusion Service</name>
-  <description>Default Ikasan Exclusion Service for the Ikasan Enterprise Integration Platform</description>
+
+    <artifactId>ikasan-exclusion-service</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Exclusion Service</name>
+    <description>Default Ikasan Exclusion Service for the Ikasan Enterprise Integration Platform</description>
 
     <build>
         <plugins>
-              <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-javadoc-plugin</artifactId>
-                     <version>2.8.1</version>
-                     <executions>
-                           <execution>
-                                  <id>attach-javadocs</id>
-                                  <goals>
-                                         <goal>jar</goal>
-                                  </goals>
-                           </execution>
-                     </executions>
-              </plugin>
-              <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-source-plugin</artifactId>
-                     <version>2.1.2</version>
-                     <executions>
-                           <execution>
-                                  <id>attach-sources</id>
-                                  <goals>
-                                         <goal>jar</goal>
-                                  </goals>
-                           </execution>
-                     </executions>
-              </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
-  <dependencies>
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-exclusion</artifactId>
-          <scope>provided</scope>
-      </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-exclusion</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-configuration</artifactId>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-configuration</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-management</artifactId>
-        <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-flow</artifactId>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-serialiser</artifactId>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-serialiser</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-solr</artifactId>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+          <dependency>
+              <groupId>org.ikasan</groupId>
+              <artifactId>ikasan-spec-solr</artifactId>
+              <scope>provided</scope>
+          </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-housekeeping</artifactId>
-          <scope>provided</scope>
-      </dependency>
+          <dependency>
+              <groupId>org.ikasan</groupId>
+              <artifactId>ikasan-spec-housekeeping</artifactId>
+              <scope>provided</scope>
+          </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-solr</artifactId>
-          <scope>provided</scope>
-      </dependency>
+          <dependency>
+              <groupId>org.ikasan</groupId>
+              <artifactId>ikasan-solr</artifactId>
+              <scope>provided</scope>
+          </dependency>
 
-      <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-          <scope>provided</scope>
-      </dependency>
-
-      <dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
@@ -155,11 +153,11 @@
             <scope>provided</scope>
         </dependency>
 
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
       <dependency>
           <groupId>org.ikasan</groupId>
@@ -173,11 +171,17 @@
           <scope>provided</scope>
       </dependency>
 
-      <dependency>
-          <groupId>org.apache.solr</groupId>
-          <artifactId>solr-solrj</artifactId>
-      </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
 
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
 
       <!-- Test dependencies -->
       <dependency>
@@ -192,75 +196,56 @@
           <scope>test</scope>
       </dependency>
 
-      <!-- logging -->
-      <dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-           <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-	  <dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-aspects</artifactId>
-		<scope>test</scope>
-	</dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.jmock</groupId>
-          <artifactId>jmock</artifactId>
-           <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.jmock</groupId>
-          <artifactId>jmock-legacy</artifactId>
-           <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-test</artifactId>
-           <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>com.h2database</groupId>
-          <artifactId>h2</artifactId>
-          <scope>test</scope>
-      </dependency>
+        <!-- Hibernate dependency -->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-all</artifactId>
-          <scope>test</scope>
-      </dependency>
-
-      <!-- Hibernate dependency -->
-      <dependency>
-          <groupId>org.javassist</groupId>
-          <artifactId>javassist</artifactId>
-          <scope>test</scope>
-      </dependency>
-
-  </dependencies>
+    </dependencies>
 
 </project>
 

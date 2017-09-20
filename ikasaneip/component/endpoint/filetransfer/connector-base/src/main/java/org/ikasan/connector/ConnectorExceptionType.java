@@ -69,7 +69,7 @@ public enum ConnectorExceptionType implements ExceptionType
     CONNECTION_TIMED_OUT("The connection timed out", 3004), //$NON-NLS-1$
     ;
     /** Logger */
-    private Logger logger = LoggerFactory.getLogger(ConnectorExceptionType.class);
+    private static Logger logger = LoggerFactory.getLogger(ConnectorExceptionType.class);
 
     /** exception type description */
     private String description = null;
@@ -84,11 +84,10 @@ public enum ConnectorExceptionType implements ExceptionType
      * @param description - The description for this ConnectorExceptionType
      * @param id - The id of this ConnectorExceptionType
      */
-    private ConnectorExceptionType(final String description, final int id)
+    ConnectorExceptionType(final String description, final int id)
     {
         this.description = description;
         this.id = id;
-        logger.debug("ConnectorExceptionType constructor created id [" + this.id + "]."); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

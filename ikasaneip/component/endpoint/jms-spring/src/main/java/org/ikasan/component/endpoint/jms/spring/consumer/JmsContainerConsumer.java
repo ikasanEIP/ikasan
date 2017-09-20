@@ -78,7 +78,7 @@ public class JmsContainerConsumer
 		ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
 {
     /** Logger instance */
-    private Logger logger = LoggerFactory.getLogger(JmsContainerConsumer.class);
+    private static Logger logger = LoggerFactory.getLogger(JmsContainerConsumer.class);
 
     /** configured Resource identifier */
     String configuredResourceId;
