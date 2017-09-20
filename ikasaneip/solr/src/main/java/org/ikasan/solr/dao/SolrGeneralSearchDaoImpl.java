@@ -1,11 +1,12 @@
 package org.ikasan.solr.dao;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.solr.SolrDaoBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneralSearchDao<IkasanSolrDocumentSearchResults>
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrGeneralSearchDaoImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrGeneralSearchDaoImpl.class);
 
     @Override
     public IkasanSolrDocumentSearchResults search(String searchString, String queryFilter, long startTime, long endTime, int resultSize)

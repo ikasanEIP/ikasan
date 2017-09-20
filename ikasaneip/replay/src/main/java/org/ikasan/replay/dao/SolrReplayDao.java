@@ -1,18 +1,18 @@
 package org.ikasan.replay.dao;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.replay.model.SolrReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.solr.SolrDaoBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SolrReplayDao extends SolrDaoBase implements ReplayDao
 {
-    private static Logger logger = Logger.getLogger(SolrReplayDao.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrReplayDao.class);
 
     /** handle to the serialiser factory */
     private SerialiserFactory serialiserFactory;

@@ -1,6 +1,8 @@
 package org.ikasan.wiretap.util;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +14,7 @@ import java.util.Date;
 public class SolrWiretapQueryBuilder extends SolrQueryBuilder
 {
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(SolrWiretapQueryBuilder.class);
+    private static Logger logger = LoggerFactory.getLogger(SolrWiretapQueryBuilder.class);
 
     public static final String MODULE_NAME = "ModuleName:";
     public static final String FLOW_NAME = "FlowName:";
