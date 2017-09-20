@@ -32,7 +32,7 @@
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 
@@ -98,7 +98,8 @@
 		<access-denied-handler error-page="/accessDenied.jsp" />
 		<intercept-url pattern="/login.jsp" access="permitAll"/>
 		<intercept-url pattern="/css/style.css" access="permitAll"/>
-		<intercept-url pattern="/images/midbg.jpg" access="permitAll"/>
+		<intercept-url pattern="/images/**" access="permitAll"/>
+		<!-- Keep Authorization on rest on the code level -->
 		<!--<intercept-url pattern="/rest/**" access="hasAnyAuthority('ALL','WebServiceAdmin')"/>-->
 		<intercept-url pattern="/rest/**" access="permitAll"/>
 		<intercept-url pattern="/admin/**" access="hasAnyAuthority('ALL','WebServiceAdmin','WriteBlueConsole')" />

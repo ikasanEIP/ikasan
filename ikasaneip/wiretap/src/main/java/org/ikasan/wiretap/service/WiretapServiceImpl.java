@@ -40,7 +40,9 @@
  */
 package org.ikasan.wiretap.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.housekeeping.HousekeepService;
@@ -69,7 +71,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     private WiretapDao wiretapDao;
 
     /** Logger for this class */
-    private static Logger logger = Logger.getLogger(WiretapServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(WiretapServiceImpl.class);
 
     /** Optional service configuration for the wiretap service */
     private WiretapServiceConfiguration wiretapServiceConfiguration;

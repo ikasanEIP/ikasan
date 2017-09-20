@@ -40,28 +40,18 @@
  */
 package org.ikasan.configurationService.service;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.ikasan.configurationService.model.*;
+import org.ikasan.spec.configuration.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
-import org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.configurationService.model.DefaultConfiguration;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationException;
-import org.ikasan.spec.configuration.ConfigurationFactory;
-import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.ikasan.spec.configuration.Masked;
 
 /**
  * Default implementation of the ConfigurationFactory for creating configuration
@@ -71,8 +61,7 @@ import org.ikasan.spec.configuration.Masked;
  */
 public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
 
-    private static Logger logger = Logger
-            .getLogger(ConfigurationFactoryDefaultImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigurationFactoryDefaultImpl.class);
 
     private static ConfigurationFactory configurationFactory = new ConfigurationFactoryDefaultImpl();
 

@@ -40,7 +40,7 @@
  */
 package org.ikasan.configurationService.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -67,7 +67,7 @@ import java.util.ArrayList;
  */
 public class ModuleConfigurationImportHelper extends ConfigurationHelper
 {
-    private Logger logger = Logger.getLogger(ModuleConfigurationImportHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(ModuleConfigurationImportHelper.class);
 
     public static final String NAME_XPATH = "/moduleConfiguration/name";
 

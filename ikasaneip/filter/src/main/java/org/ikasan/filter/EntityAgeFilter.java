@@ -40,7 +40,7 @@
  */
 package org.ikasan.filter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.filter.configuration.EntityAgeFilterConfiguration;
 import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.filter.duplicate.model.EntityAgeFilterEntryConverter;
@@ -59,7 +59,7 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 public class EntityAgeFilter<T> implements Filter<T>, ConfiguredResource<EntityAgeFilterConfiguration>, ManagedResource
 {
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(EntityAgeFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(EntityAgeFilter.class);
 
     /** unique identifier for this configured resource */
     private String configuredResourceId;

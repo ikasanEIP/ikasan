@@ -40,6 +40,9 @@
  */
 package org.ikasan.web.command;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,8 +50,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
 
 /**
  * Command class capturing the Wiretap search criteria fields
@@ -61,7 +62,7 @@ public class WiretapSearchCriteria implements Serializable
     private static final long serialVersionUID = 3595514737829632181L;
     
     /** Logger for the class */
-    private Logger logger  = Logger.getLogger(WiretapSearchCriteria.class);
+    private static final Logger logger  = LoggerFactory.getLogger(WiretapSearchCriteria.class);
 
     /** Constructor */
     public WiretapSearchCriteria()

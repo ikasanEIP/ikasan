@@ -41,7 +41,7 @@
 package org.ikasan.component.validator.schematron;
 
 import net.sf.saxon.lib.StandardURIResolver;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.validator.ValidationException;
 import org.ikasan.component.validator.ValidationResult;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -79,7 +79,7 @@ import javax.xml.transform.dom.DOMSource;
  */
 public class SchematronValidator implements Broker<Document, ValidationResult<Document, Document>>, ManagedResource, ConfiguredResource<SchematronValidatorConfiguration>
 {
-    private static final Logger logger = Logger.getLogger(SchematronValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(SchematronValidator.class);
 
     private String configurationId;
 

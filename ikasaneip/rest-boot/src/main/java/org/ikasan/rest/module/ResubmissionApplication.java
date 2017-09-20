@@ -40,7 +40,7 @@
  */
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ import java.security.Principal;
 @RequestMapping("/rest/resubmission")
 @RestController
 public class ResubmissionApplication {
-    private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ResubmissionApplication.class);
 
     @Autowired
     private HospitalService hospitalService;
@@ -72,7 +72,7 @@ public class ResubmissionApplication {
      */
     @RequestMapping(method = RequestMethod.PUT,
             value = "/resubmit/{moduleName}/{flowName}/{errorUri}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity resubmit(@PathVariable("moduleName") String moduleName,
                                    @PathVariable("flowName") String flowName,
                                    @PathVariable("errorUri") String errorUri, @RequestBody byte[] event) {
@@ -100,7 +100,7 @@ public class ResubmissionApplication {
      */
     @RequestMapping(method = RequestMethod.PUT,
             value = "/ignore/{moduleName}/{flowName}/{errorUri}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity ignore(@PathVariable("moduleName") String moduleName, @PathVariable("flowName") String flowName,
                                  @PathVariable("errorUri") String errorUri, @RequestBody byte[] event) {
         try {

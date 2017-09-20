@@ -40,7 +40,7 @@
  */
 package org.ikasan.jca.base.outbound;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.jca.base.ConnectorRuntimeException;
 
 import javax.naming.Reference;
@@ -64,7 +64,7 @@ public abstract class EISConnectionFactoryImpl implements Serializable, javax.re
     private static final long serialVersionUID = 1L;
 
     /** Logger */
-    private Logger logger = Logger.getLogger(EISConnectionFactoryImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(EISConnectionFactoryImpl.class);
 
     /** Reference */
     private Reference reference;

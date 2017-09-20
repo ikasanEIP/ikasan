@@ -42,6 +42,8 @@ package org.ikasan.builder;
 
 import org.ikasan.spec.module.Module;
 
+import java.util.List;
+
 /**
  * IkasanApplication contract
  *
@@ -65,19 +67,34 @@ public interface IkasanApplication
      * This method forces Ikassan application shutdown.
      */
     void close();
-    /**
-     * Get bean by given name.
-     *
-     * @param beanName
-     * @return
-     */
-    Object getBean(String beanName);
 
     /**
-     * Get bean by given class.
-     *
-     * @param className
+     * Get module by name
+     * @param moduleName
      * @return
      */
-    Object getBean(Class className);
+    Module getModule(String moduleName);
+
+    /**
+     * Get all modules within this application
+     * @return
+     */
+    List<Module> getModules();
+
+    /**
+     * Get bean by given class
+     * @param className
+     * @param <COMPONENT>
+     * @return
+     */
+    <COMPONENT> COMPONENT getBean(Class className);
+
+    /**
+     * Get bean by given name and class
+     * @param name
+     * @param className
+     * @param <COMPONENT>
+     * @return
+     */
+    <COMPONENT> COMPONENT getBean(String name, Class className);
 }

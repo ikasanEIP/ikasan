@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.CustomMetric;
@@ -68,7 +68,7 @@ import org.ikasan.spec.wiretap.WiretapSerialiser;
 public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvocationContext, FlowEvent<String,Object>, PagedSearchResult<ComponentInvocationMetric>, ComponentInvocationMetric>
         , HousekeepService, HarvestService<FlowInvocationMetric>
 {
-    private static final Logger logger = Logger.getLogger(MessageHistoryServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageHistoryServiceImpl.class);
 
     public static final String MESSAGE_HISTORY_DAYS_TO_LIVE = "messageHistoryDaysToLive";
 

@@ -44,7 +44,7 @@ import java.util.Map;
 
 import org.ikasan.spec.wiretap.WiretapSerialiser;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the WiretapSerialiser factory.
@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
  */
 public class WiretapSerialiserService implements WiretapSerialiser<Object, String>
 {
-    private static Logger logger = Logger.getLogger(WiretapSerialiserService.class);
+    private static Logger logger = LoggerFactory.getLogger(WiretapSerialiserService.class);
 
     private Map<Class<?>, WiretapSerialiser<Object,String>> serialisers;
 

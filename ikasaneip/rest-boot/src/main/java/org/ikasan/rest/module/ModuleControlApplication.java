@@ -1,6 +1,6 @@
 package org.ikasan.rest.module;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
@@ -24,15 +24,14 @@ import java.util.Map;
 @RequestMapping("/rest/moduleControl")
 @RestController
 public class ModuleControlApplication {
-    private static Logger logger = Logger.getLogger(ModuleControlApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ModuleControlApplication.class);
 
     @Autowired
     private ModuleService moduleService;
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlFlowState/{moduleName}/{flowName}")
-    //  @Consumes("application/octet-stream")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlFlowState(
             @PathVariable("moduleName") String moduleName,
             @PathVariable("flowName") String flowName, @RequestBody String action) {
@@ -64,7 +63,7 @@ public class ModuleControlApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public void controlFlowStartupMode(@PathVariable("moduleName") String moduleName,
                                        @PathVariable("flowName") String flowName, @PathVariable("startupType") String startupType,
                                        @RequestBody String startupComment) {
@@ -94,7 +93,7 @@ public class ModuleControlApplication {
     @RequestMapping(method = RequestMethod.GET,
             value = "/flowState/{moduleName}/{flowName}")
     //@Produces(MediaType.APPLICATION_JSON)
-    @PreAuthorize("hasRole('ALL') OR hasRole('WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public String getFlowState(@PathVariable("moduleName") String moduleName,
                                @PathVariable("flowName") String flowName) {
 
@@ -145,7 +144,7 @@ public class ModuleControlApplication {
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/controlContextListenersState/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyRole('ALL','WebServiceAdmin')")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlContextListenersState(@PathVariable("moduleName") String moduleName,
                                                        @PathVariable("flowName") String flowName, @RequestBody String action) {
 

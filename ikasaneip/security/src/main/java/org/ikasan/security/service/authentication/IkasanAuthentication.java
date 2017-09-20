@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.springframework.security.core.Authentication;
@@ -59,9 +59,9 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class IkasanAuthentication implements Authentication
 {
-	private Logger logger = Logger.getLogger(IkasanAuthentication.class);
+    private static Logger logger = LoggerFactory.getLogger(IkasanAuthentication.class);
 
-	public static final String MODULE = "Module";
+    public static final String MODULE = "Module";
 	public static final String MAPPING_CONFIGURATION = "Mapping Configuration";
 	public static final String FLOW = "Flow";
 	public static final String BUSINESS_STREAM = "Business Stream";

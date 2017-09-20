@@ -40,7 +40,8 @@
  */
 package org.ikasan.builder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -72,7 +73,7 @@ import java.util.concurrent.Executors;
 public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<FlowElement<?>>
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(FlowElementFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(FlowElementFactory.class);
 
     /** name of the flow element being instantiated */
     String name;

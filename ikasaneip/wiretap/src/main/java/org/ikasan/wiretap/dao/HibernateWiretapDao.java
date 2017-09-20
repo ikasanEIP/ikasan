@@ -40,9 +40,12 @@
  */
 package org.ikasan.wiretap.dao;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -67,6 +70,8 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapDao
 {
+    /** Logger for this class */
+    private static Logger logger = LoggerFactory.getLogger(HibernateWiretapDao.class);
 
     private static final String EXPIRY = "expiry";
     private static final String EVENT_ID = "eventId";

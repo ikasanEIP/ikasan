@@ -40,7 +40,7 @@ package org.ikasan.component.endpoint.email.producer;
  * ====================================================================
  */
 import com.google.common.collect.Maps;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -61,7 +61,7 @@ import java.util.Properties;
  */
 public class EmailProducer implements Producer<EmailPayload>, ManagedResource, ConfiguredResource<EmailProducerConfiguration> {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(EmailProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailProducer.class);
 
     // configured resource identifier
     private String configurationId;

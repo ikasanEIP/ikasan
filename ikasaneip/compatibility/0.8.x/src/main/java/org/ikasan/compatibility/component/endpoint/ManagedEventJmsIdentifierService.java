@@ -40,7 +40,7 @@
  */
 package org.ikasan.compatibility.component.endpoint;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 
@@ -60,7 +60,7 @@ public class ManagedEventJmsIdentifierService implements ManagedEventIdentifierS
     static String I7_ENVELOPE_ID = String.valueOf("envelope_id");
 
     /** logger instance */
-    private static Logger logger = Logger.getLogger(ManagedEventJmsIdentifierService.class);
+    private static Logger logger = LoggerFactory.getLogger(ManagedEventJmsIdentifierService.class);
 
     @Override
     public void setEventIdentifier(String identifier, MapMessage mapMessage) throws ManagedEventIdentifierException
