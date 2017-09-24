@@ -44,7 +44,8 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ikasan</groupId>
@@ -92,7 +93,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-error-reporting</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -101,23 +101,11 @@
             <scope>provided</scope>
         </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-solr</artifactId>
-          <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-solr</artifactId>
-          <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-component</artifactId>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -155,17 +143,17 @@
             <scope>provided</scope>
         </dependency>
 
-      <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-serialiser</artifactId>
-          <exclusions>
-              <exclusion>
-                  <groupId>org.ow2.asm</groupId>
-                  <artifactId>asm</artifactId>
-              </exclusion>
-          </exclusions>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-serialiser</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -195,18 +183,6 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
-
-      <dependency>
-          <groupId>org.apache.solr</groupId>
-          <artifactId>solr-core</artifactId>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.solr</groupId>
-          <artifactId>solr-test-framework</artifactId>
-          <scope>test</scope>
-      </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>

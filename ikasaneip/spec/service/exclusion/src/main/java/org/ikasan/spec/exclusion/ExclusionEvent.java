@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.model;
+package org.ikasan.spec.exclusion;
 
 import org.ikasan.harvest.HarvestEvent;
 

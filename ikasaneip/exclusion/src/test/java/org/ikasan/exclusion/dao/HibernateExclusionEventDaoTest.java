@@ -44,7 +44,8 @@ import java.util.ArrayList;
 
 import javax.annotation.Resource;
 
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

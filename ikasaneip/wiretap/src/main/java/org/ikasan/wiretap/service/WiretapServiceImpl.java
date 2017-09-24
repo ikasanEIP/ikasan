@@ -48,10 +48,9 @@ import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.solr.SolrService;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
-import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -65,7 +64,7 @@ import java.util.Set;
  * @author Ikasan Development Team
  */
 public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
-        , InitializingBean, HousekeepService, HarvestService<WiretapEvent>, SolrService<WiretapEvent>
+        , InitializingBean, HousekeepService, HarvestService<WiretapEvent>
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;

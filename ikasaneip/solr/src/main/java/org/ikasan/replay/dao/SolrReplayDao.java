@@ -4,10 +4,9 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.replay.model.SolrReplayEvent;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.solr.SolrDaoBase;
@@ -90,18 +89,6 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
     }
 
     @Override
-    public void saveOrUpdate(ReplayAudit replayAudit)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void saveOrUpdate(ReplayAuditEvent replayAuditEvent)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate)
     {
         return null;
@@ -164,30 +151,6 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
 
 
         return new ArrayList<ReplayEvent>(results);
-    }
-
-    @Override
-    public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames, String eventId, String user, Date startDate, Date endDate)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ReplayAudit getReplayAuditById(Long id)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Long getNumberReplayAuditEventsByAuditId(Long id)
-    {
-        throw new UnsupportedOperationException();
     }
 
     @Override

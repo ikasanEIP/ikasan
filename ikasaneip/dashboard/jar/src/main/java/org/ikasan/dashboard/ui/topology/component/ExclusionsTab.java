@@ -70,7 +70,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellSty
 import org.ikasan.dashboard.ui.topology.panel.ResubmitIgnoreStatusPanel;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
@@ -109,7 +109,6 @@ import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
-import sun.management.Agent;
 
 /**
  *

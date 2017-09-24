@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.dao;
+package org.ikasan.spec.exclusion;
 
 import java.util.Date;
 import java.util.List;

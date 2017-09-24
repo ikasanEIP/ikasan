@@ -43,6 +43,7 @@ package org.ikasan.replay.dao;
 import javax.annotation.Resource;
 
 import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -71,7 +72,8 @@ public class HibernateReplayDaoTest
      */
 	@Resource Mockery mockery;
 	
-	@Resource ReplayDao replayDao;
+	@Resource
+    ReplayDao replayDao;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	

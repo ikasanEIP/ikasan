@@ -48,7 +48,7 @@ import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.dashboard.ui.topology.component.CategorisedErrorTab;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.error.reporting.service.ErrorCategorisationService;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
 import org.ikasan.spec.hospital.service.HospitalManagementService;

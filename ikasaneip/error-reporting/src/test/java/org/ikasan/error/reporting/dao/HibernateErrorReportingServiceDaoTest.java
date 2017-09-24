@@ -42,6 +42,7 @@ package org.ikasan.error.reporting.dao;
 
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

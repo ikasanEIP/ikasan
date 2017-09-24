@@ -42,17 +42,13 @@ package org.ikasan.exclusion.service;
 
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.exclusion.dao.BlackListDao;
-import org.ikasan.exclusion.dao.ExclusionEventDao;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.exclusion.model.BlackListEvent;
-import org.ikasan.exclusion.model.ExclusionEvent;
-import org.ikasan.spec. harvest.HarvestService;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.serialiser.Serialiser;
-import org.ikasan.spec.solr.SolrService;
-
-import java.util.List;
 
 /**
  * Default implementation of the ExclusionService.

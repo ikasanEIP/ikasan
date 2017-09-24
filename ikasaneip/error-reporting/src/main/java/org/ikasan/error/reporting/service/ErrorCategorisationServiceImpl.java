@@ -41,7 +41,7 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorCategorisationDao;
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
 import org.ikasan.error.reporting.model.ErrorCategorisationLink;

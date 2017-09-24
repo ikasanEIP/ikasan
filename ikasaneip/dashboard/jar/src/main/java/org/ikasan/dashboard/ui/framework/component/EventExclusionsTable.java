@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 
 import com.vaadin.ui.Component;

@@ -38,20 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.replay.dao;
+package org.ikasan.spec.replay;
 
 import java.util.Date;
 import java.util.List;
 
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.HibernateReplayEvent;
-import org.ikasan.spec.replay.ReplayEvent;
-
-
 /**
  * Data Access interface for <code>ReplayEvent</code> instances
- * 
+ *
  * @author Ikasan Development Team
  *
  */
@@ -59,28 +53,14 @@ public interface ReplayDao
 {
 	/**
 	 * Method to save or update a ReplayEvent.
-	 * 
+	 *
 	 * @param replayEvent
 	 */
 	public void saveOrUpdate(ReplayEvent replayEvent);
-	
-	/**
-	 * Method to save or update a ReplayAudit.
-	 * 
-	 * @param replayAudit
-	 */
-	public void saveOrUpdate(ReplayAudit replayAudit);
-	
-	/**
-	 * Method to save or update a ReplayAuditEvent.
-	 * 
-	 * @param replayAuditEvent
-	 */
-	public void saveOrUpdate(ReplayAuditEvent replayAuditEvent);
 
-    /**
+	/**
      * Get a list of ReplayEvent depending upon search criteria.
-     * 
+     *
      * @param moduleName
      * @param flowName
      * @param startDate
@@ -88,10 +68,10 @@ public interface ReplayDao
      * @return
      */
     public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate);
-    
+
     /**
      * Get a list of ReplayEvent depending upon search criteria.
-     * 
+     *
      * @param moduleNames
      * @param flowNames
      * @param eventId
@@ -101,51 +81,6 @@ public interface ReplayDao
      */
     public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames,
 											 String eventId, String payloadContent, Date fromDate, Date toDate);
-    
-    /**
-     *  Get a list of ReplayAudit depending upon search criteria.
-     *  
-     * @param moduleNames
-     * @param flowNames
-     * @param eventId
-     * @param user
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
-			String eventId, String user, Date startDate, Date endDate);
- 
-    /**
-     * Get a ReplayAudit by its id.
-     * 
-     * @param id
-     * @return
-     */
-    public ReplayAudit getReplayAuditById(Long id);
-    
-    /**
-     * Get a ReplayAuditEvents by their audit id.
-     * 
-     * @param id
-     * @return
-     */
-    public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id);
-    
-    /**
-     * Get the number of ReplayAuditEvents by their audit id.
-     * 
-     * @param id
-     * @return
-     */
-    public Long getNumberReplayAuditEventsByAuditId(Long id);
-
-	/**
-	 * House keep a number of records.
-	 *
-	 * @param numToHousekeep
-     */
-	public void housekeep(Integer numToHousekeep);
 
 	/**
 	 * Get the harvestable records
@@ -154,4 +89,12 @@ public interface ReplayDao
 	 * @return
      */
 	public List<ReplayEvent> getHarvestableRecords(final int housekeepingBatchSize);
+
+	/**
+	 * House keep a number of records.
+	 *
+	 * @param numToHousekeep
+	 */
+	public void housekeep(Integer numToHousekeep);
+
 }

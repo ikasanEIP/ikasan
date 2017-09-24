@@ -48,7 +48,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -110,7 +111,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#findAll()
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#findAll()
 	 */
 	@Override
 	public List<ExclusionEvent> findAll()
@@ -122,7 +123,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#delete(java.lang.String)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#delete(java.lang.String)
 	 */
 	@Override
 	public void delete(final String errorUri)
@@ -141,7 +142,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
 	 */
 	@Override
 	public List<ExclusionEvent> find(List<String> moduleName,
@@ -242,7 +243,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.lang.String)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(java.lang.String)
 	 */
 	@Override
 	public ExclusionEvent find(String errorUri)

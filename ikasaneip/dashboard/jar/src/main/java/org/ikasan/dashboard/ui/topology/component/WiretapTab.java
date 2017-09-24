@@ -72,8 +72,6 @@ import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Component;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
-import org.ikasan.wiretap.dao.WiretapDao;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.teemu.VaadinIcons;

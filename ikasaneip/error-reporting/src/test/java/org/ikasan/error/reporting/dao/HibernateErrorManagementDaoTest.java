@@ -49,6 +49,7 @@ import javax.annotation.Resource;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,8 +76,8 @@ public class HibernateErrorManagementDaoTest
     @Resource
     ErrorManagementDao errorManagementDao;
     
-    @Resource 
-    ErrorReportingServiceDao errorReportingServiceDao;
+    @Resource
+	ErrorReportingServiceDao errorReportingServiceDao;
 
     Exception exception = new Exception("error message");
 

@@ -42,6 +42,7 @@ package org.ikasan.wiretap.dao;
 
 import javax.annotation.Resource;
 
+import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.junit.After;

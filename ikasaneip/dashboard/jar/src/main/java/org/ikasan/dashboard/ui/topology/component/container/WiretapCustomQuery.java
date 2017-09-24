@@ -48,7 +48,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.vaadin.addons.lazyquerycontainer.Query;
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;

@@ -41,8 +41,8 @@
 package org.ikasan.exclusion.service;
 
 import org.ikasan.exclusion.dao.BlackListDaoFactory;
-import org.ikasan.exclusion.dao.ExclusionEventDao;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
