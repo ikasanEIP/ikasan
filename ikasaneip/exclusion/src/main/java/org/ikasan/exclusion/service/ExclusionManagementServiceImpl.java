@@ -42,22 +42,19 @@ package org.ikasan.exclusion.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import org.ikasan.exclusion.dao.ExclusionEventDao;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.HousekeeperService;
-import org.ikasan.spec.solr.SolrService;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>, HarvestService<ExclusionEvent>, HousekeeperService, SolrService<ExclusionEvent>
+public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>, HarvestService<ExclusionEvent>, HousekeeperService
 {
 	private ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
@@ -168,11 +165,5 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 	{
 		return false;
 	}
-
-    @Override
-    public void save(ExclusionEvent save)
-    {
-        this.exclusionEventDao.save(save);
-    }
 }
  

@@ -6,10 +6,10 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.ikasan.wiretap.model.SolrWiretapEvent;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class SolrWiretapDao extends SolrDaoBase implements WiretapDao
         document.addField(MODULE_NAME, wiretapEvent.getModuleName());
         document.addField(FLOW_NAME, wiretapEvent.getFlowName());
         document.addField(COMPONENT_NAME, wiretapEvent.getComponentName());
-        document.addField(EVENT, ((WiretapFlowEvent)wiretapEvent).getEventId());
+        document.addField(EVENT, wiretapEvent.getEventId());
         document.addField(PAYLOAD_CONTENT, wiretapEvent.getEvent());
         document.addField(CREATED_DATE_TIME, wiretapEvent.getTimestamp());
         document.setField(EXPIRY, expiry);

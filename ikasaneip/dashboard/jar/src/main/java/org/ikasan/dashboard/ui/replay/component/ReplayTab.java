@@ -109,8 +109,7 @@ public class ReplayTab extends TopologyTab
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  replayManagementService;
 	private ReplayService<ReplayEvent, ReplayAuditEvent>  replayService;
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  solrReplayManagementService;
-	private ReplayService<ReplayEvent, ReplayAuditEvent>  solrReplayService;
-	
+
 
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
@@ -130,13 +129,12 @@ public class ReplayTab extends TopologyTab
 	private PlatformConfigurationService platformConfigurationService;
 	
 	public ReplayTab(ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-					 ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> solrReplayService,
+					 ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService,
 					 PlatformConfigurationService platformConfigurationService)
 	{
 		this.replayManagementService = replayManagementService;
 		this.replayService = replayService;
 		this.solrReplayManagementService = solrReplayManagementService;
-		this.solrReplayService = solrReplayService;
 		this.platformConfigurationService = platformConfigurationService;
 		
 		tableContainer = this.buildContainer();

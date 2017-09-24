@@ -7,16 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import org.ikasan.spec.replay.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.codec.binary.Base64;
-import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.spec.replay.ReplayEvent;
-import org.ikasan.spec.replay.ReplayListener;
-import org.ikasan.spec.replay.ReplayService;
-import org.ikasan.spec.solr.SolrService;
 import org.springframework.http.*;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -29,11 +25,11 @@ import org.springframework.web.client.RestTemplate;
  * @author Ikasan Development Team
  *
  */
-public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent>, SolrService<ReplayEvent>
+public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEvent>
 {
 	private static Logger logger = LoggerFactory.getLogger(ReplayService.class);
 	
-	private ReplayDao replayDao;
+	private ReplayAuditDao<ReplayAudit,ReplayAuditEvent> replayAuditDao;
 	
 	private boolean cancel = false;
     
@@ -44,12 +40,12 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 	/**
 	 * Constructor
 	 * 
-	 * @param replayDao
+	 * @param replayAuditDao
 	 */
-	public ReplayServiceImpl(ReplayDao replayDao) 
+	public ReplayServiceImpl(ReplayAuditDao replayAuditDao)
 	{
 		super();
-		this.replayDao = replayDao;
+		this.replayAuditDao = replayAuditDao;
 		restTemplate = new RestTemplate();
 		restTemplate.setMessageConverters(
 				Arrays.asList(
@@ -71,7 +67,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     	ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
     	logger.debug("Saving replayAudit: " + replayAudit);
     	
-    	this.replayDao.saveOrUpdate(replayAudit);
+    	this.replayAuditDao.saveOrUpdateAudit(replayAudit);
     	
     	for(ReplayEvent event: events)
     	{
@@ -114,7 +110,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 
 				logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
 
-				this.replayDao.saveOrUpdate(replayAuditEvent);
+				this.replayAuditDao.saveOrUpdate(replayAuditEvent);
 
 				replayAuditEvent.setReplayEvent(event);
 
@@ -171,9 +167,4 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		return cancel;
 	}
 
-	@Override
-	public void save(ReplayEvent save)
-	{
-		this.replayDao.saveOrUpdate(save);
-	}
 }

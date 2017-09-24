@@ -238,11 +238,6 @@
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-mapping</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-solr</artifactId>
 		</dependency>
 
@@ -250,75 +245,20 @@
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-solr</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-topology</artifactId>
-		</dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-security</artifactId>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-setup</artifactId>
 		</dependency>
 		
 		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-system-event</artifactId>
-		</dependency>
-
-		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
         </dependency>
  
  		<dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-wiretap</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-configuration-service</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-hospital</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-module</artifactId>
-        </dependency>
-		
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-error-reporting-service</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-exclusion-service</artifactId>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-monitor</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-replay</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-scheduler</artifactId>
 		</dependency>
 
 		<dependency>

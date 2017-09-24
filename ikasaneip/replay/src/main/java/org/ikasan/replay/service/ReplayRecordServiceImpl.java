@@ -40,7 +40,7 @@
  */
 package org.ikasan.replay.service;
 
-import org.ikasan.replay.dao.ReplayDao;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.replay.ReplayRecordService;

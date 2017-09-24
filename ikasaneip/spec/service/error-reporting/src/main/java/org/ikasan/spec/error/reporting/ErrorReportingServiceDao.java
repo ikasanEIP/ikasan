@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.dao;
+package org.ikasan.spec.error.reporting;
 
 import java.util.Date;
 import java.util.List;

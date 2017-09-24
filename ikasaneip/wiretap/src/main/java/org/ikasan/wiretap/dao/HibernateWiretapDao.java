@@ -45,16 +45,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.spec.wiretap.WiretapDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.history.model.CustomMetric;
-import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.ComponentInvocationMetric;
-import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
@@ -127,7 +125,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * Save the wiretapFlowEvent
      *
      * @see
-     * org.ikasan.wiretap.dao.WiretapDao#save(
+     * WiretapDao#save(
      * org.ikasan.wiretap.model.WiretapFlowEvent)
      */
     public void save(WiretapEvent wiretapEvent)
@@ -276,7 +274,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     }
 
     /* (non-Javadoc)
-	 * @see org.ikasan.wiretap.dao.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
+	 * @see org.ikasan.spec.wiretap.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override

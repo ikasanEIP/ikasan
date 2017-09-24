@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 public class SolrWiretapDaoTest extends SolrTestCaseJ4
 {
 
+    @Ignore
     @Test
     public void test_delete_expired_records() throws Exception {
         Path path = createTempDir();
@@ -40,6 +42,7 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
             WiretapFlowEvent event = new WiretapFlowEvent("moduleName", "flowName", "componentName",
                 "eventId", "relatedEventId", 12345l, "event", 0l);
+
 
             solrCloudBase.save(event);
 

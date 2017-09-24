@@ -132,17 +132,16 @@
 	</bean>
 
 	<bean id="solrWiretapService"
-		  class="org.ikasan.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="solrWiretapDao" />
-		<constructor-arg ref="moduleService" />
-		<constructor-arg ref ="wiretapEventFactory"/>
+		  class="org.ikasan.wiretap.service.SolrWiretapServiceImpl">
+		<constructor-arg name="wiretapDao" ref="solrWiretapDao" />
+		<constructor-arg name="moduleService" ref="moduleService" />
 	</bean>
 
 	<bean id="wiretapService"
 		  class="org.ikasan.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="wiretapEvent" />
-		<constructor-arg ref="moduleService" />
-		<constructor-arg ref ="wiretapEventFactory"/>
+		<constructor-arg name="wiretapDao" ref="wiretapEvent" />
+		<constructor-arg name="moduleService" ref="moduleService" />
+		<constructor-arg name="wiretapEventFactory" ref="wiretapEventFactory"/>
 	</bean>
 
 	<bean id="wiretapEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactoryDefaultImpl">
@@ -192,15 +191,14 @@
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
 
-	<bean id="solrErrorReportingService" class="org.ikasan.error.reporting.service.ErrorReportingManagementServiceImpl">
-		<constructor-arg ref="errorManagementDao"/>
+	<bean id="solrErrorReportingService" class="org.ikasan.error.reporting.service.SolrErrorReportingManagmentServiceImpl">
 		<constructor-arg ref="solrErrorReportingServiceDao"/>
 	</bean>
 
 	<bean id="solrErrorReportingServiceDao" class="org.ikasan.error.reporting.dao.SolrErrorReportingServiceDao">
 	</bean>
 
-	<bean id="solrExclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
+	<bean id="solrExclusionManagementService" class="org.ikasan.exclusion.service.SolrExclusionServiceImpl">
 		<constructor-arg ref="solrExclusionServiceExclusionEventDao"/>
 	</bean>
 
@@ -267,11 +265,11 @@
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
 
-	<bean id="solrReplayManagementService" class="org.ikasan.replay.service.ReplayManagementServiceImpl">
+	<bean id="solrReplayManagementService" class="org.ikasan.replay.service.SolrReplayServiceImpl">
 		<constructor-arg ref="solrReplayDao" />
 	</bean>
 
-	<bean id="solrReplayService" class="org.ikasan.replay.service.ReplayServiceImpl">
+	<bean id="solrReplayService" class="org.ikasan.replay.service.SolrReplayServiceImpl">
 		<constructor-arg ref="solrReplayDao" />
 	</bean>
 
@@ -386,14 +384,6 @@
 
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
     
-    <bean id="ikasan.xads"
-                class="org.springframework.jndi.JndiObjectFactoryBean">
-     	<property name="jndiName" value="java:/datasource/ikasan/xads" />
-     </bean>
 
-    <bean id="ikasan.ds"
-            class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="java:/datasource/ikasan/ds" />
-    </bean>
 
 </beans>

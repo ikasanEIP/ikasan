@@ -40,7 +40,6 @@
  */
 package org.ikasan.replay.model;
 
-import org.apache.solr.client.solrj.beans.Field;
 import org.ikasan.harvest.HarvestEvent;
 
 import java.util.Arrays;

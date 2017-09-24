@@ -38,14 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.dao;
+package org.ikasan.spec.wiretap;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * Interface for all wiretap event data access.

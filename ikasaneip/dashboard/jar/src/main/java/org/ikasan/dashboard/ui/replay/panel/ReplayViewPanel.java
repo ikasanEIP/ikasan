@@ -211,8 +211,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> replayManagementService;
 	private ReplayService<ReplayEvent, ReplayAuditEvent> replayService;
 	private ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>  solrReplayManagementService;
-	private ReplayService<ReplayEvent, ReplayAuditEvent>  solrReplayService;
-	
+
 	private boolean initialised = false;
 	
 	private FlowConfigurationWindow flowConfigurationWindow;
@@ -225,7 +224,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
                            TriggerManagementService triggerManagementService, TopologyStateCache topologyCache, StartupControlService startupControlService,
                            PlatformConfigurationService platformConfigurationService, SecurityService securityService, ReplayManagementService<ReplayEvent,
 			               ReplayAudit, ReplayAuditEvent> replayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> replayService,
-						   ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService, ReplayService<ReplayEvent, ReplayAuditEvent> solrReplayService,
+						   ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> solrReplayManagementService,
 						   FlowConfigurationWindow flowConfigurationWindow)
 	{
 		this.topologyService = topologyService;
@@ -288,11 +287,6 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
 		{
 			throw new IllegalArgumentException("solrReplayManagementService cannot be null!");
 		}
-		this.solrReplayService = solrReplayService;
-		if(this.solrReplayService == null)
-		{
-			throw new IllegalArgumentException("solrReplayService cannot be null!");
-		}
 		this.flowConfigurationWindow = flowConfigurationWindow;
 		if(this.flowConfigurationWindow == null)
 		{
@@ -349,8 +343,7 @@ public class ReplayViewPanel extends Panel implements View, Action.Handler
     	{
     		
     		final ReplayTab replayTab = new ReplayTab(this.replayManagementService, this.replayService,
-					this.solrReplayManagementService, this.solrReplayService,
-    				this.platformConfigurationService);
+					this.solrReplayManagementService, this.platformConfigurationService);
 
     		replayTab.createLayout();
 			
