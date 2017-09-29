@@ -203,8 +203,7 @@ public class ComponentBuilder
      * @return jmsProducerBuilder
      */
     public JmsProducerBuilder jmsProducer() {
-        JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
         return jmsProducerBuilder;
     }
 

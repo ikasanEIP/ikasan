@@ -38,71 +38,48 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.spring.boot.builderpattern;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-
-import org.ikasan.builder.BuilderFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
-import java.util.List;
+import org.ikasan.builder.*;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
- * Sample component factory.
- *
+ * Sample local file consumer and local file producer Integration Module
  * @author Ikasan Development Team
  */
-@Configuration
-public class ComponentFactory
+@SpringBootApplication
+@ComponentScan({"org.ikasan.*", "com.ikasan.*"})
+public class Application
 {
-    @Resource
-    private BuilderFactory builderFactory;
-
-    @Value("#{'${file.consumer.filenames}'.split(',')}")
-    List<String> sourceFilenames;
-
-    @Value("${file.consumer.cronExpression}")
-    String cronExpression;
-
-    @Value("${file.consumer.scheduledGroupName}")
-    String scheduledGroupName;
-
-    @Value("${file.consumer.scheduledName}")
-    String scheduledName;
-
-    @Value("${file.consumer.configuredResourceId}")
-    String fileConsumerConfiguredResourceId;
-
-    @Value("${file.producer.configuredResourceId}")
-    String fileProducerConfiguredResourceId;
-
-    @Value("${file.producer.filename}")
-    String targetFilename;
-
-    /**
-     * Return an instance of a configured file consumer
-     * @return
-     */
-    Consumer getFileConsumer()
+    public static void main(String[] args) throws Exception
     {
-        return builderFactory.getComponentBuilder().fileConsumer()
-                .setCronExpression(cronExpression)
-                .setScheduledJobGroupName(scheduledGroupName)
-                .setScheduledJobName(scheduledName)
-                .setFilenames(sourceFilenames)
-                .setConfiguredResourceId(fileConsumerConfiguredResourceId)
-                .build();
+        new Application().boot(args);
     }
 
-    Producer getFileProducer()
+    public IkasanApplication boot(String[] args)
     {
-         return builderFactory.getComponentBuilder().fileProducer()
-                .setConfiguredResourceId(fileProducerConfiguredResourceId)
-                .setFilename(targetFilename)
-                .build();
-    }
+        // get an ikasanApplication instance
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class, args);
 
+        // get local integration module componentFactory instance
+        ComponentFactory componentFactory = ikasanApplication.getBean(ComponentFactory.class);
+
+        // get the builders
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
+
+        Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
+                .withDescription("Sample file source flow")
+                //.consumer("File Consumer", componentFactory.getFileConsumer())
+                .consumer("JMS Consumer", componentFactory.getJmsConsumer())
+                .producer("File Producer", componentFactory.getFileProducer()).build();
+                //.producer("JMS Producer", componentFactory.getJmsProducer()).build();
+
+        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.").addFlow(sourceFlow).build();
+        ikasanApplication.run(module);
+        return ikasanApplication;
+    }
 }

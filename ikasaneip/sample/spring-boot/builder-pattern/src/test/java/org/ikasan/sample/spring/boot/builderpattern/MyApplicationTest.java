@@ -80,14 +80,6 @@ public class MyApplicationTest
         broker.start();
     }
 
-
-//    @Before
-//    public void setupTest()
-//    {
-//
-//    }
-
-
     @After
     public void shutdown(){
         ikasanApplication.close();
