@@ -38,16 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.spring.boot.builderpattern;
+package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.*;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Sample local file consumer and local file producer Integration Module
  * @author Ikasan Development Team
  */
+@SpringBootApplication
+@ComponentScan({"org.ikasan.*", "com.ikasan.*"})
 public class Application
 {
     public static void main(String[] args) throws Exception
@@ -58,7 +62,7 @@ public class Application
     public IkasanApplication boot(String[] args)
     {
         // get an ikasanApplication instance
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class, args);
 
         // get local integration module componentFactory instance
         ComponentFactory componentFactory = ikasanApplication.getBean(ComponentFactory.class);
@@ -69,9 +73,10 @@ public class Application
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
                 .withDescription("Sample file source flow")
-                .consumer("File Consumer", componentFactory.getFileConsumer())
-                //.producer("File Producer", componentFactory.getFileProducer()).build();
-                .producer("JMS Producer", componentFactory.getJmsProducer()).build();
+                //.consumer("File Consumer", componentFactory.getFileConsumer())
+                .consumer("JMS Consumer", componentFactory.getJmsConsumer())
+                .producer("File Producer", componentFactory.getFileProducer()).build();
+                //.producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
         Module module = moduleBuilder.withDescription("Sample file consumer / producer module.").addFlow(sourceFlow).build();
         ikasanApplication.run(module);

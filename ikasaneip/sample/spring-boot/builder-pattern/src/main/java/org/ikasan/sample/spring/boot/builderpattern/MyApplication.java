@@ -111,6 +111,7 @@ public class MyApplication
                         .build()
                 )
                 .producer("producer", componentBuilder.jmsProducer()
+                        .setConfiguredResourceId("crid")
                         .setDestinationJndiName("dynamicQueues/target")
                         .setConnectionFactoryName("ConnectionFactory")
                         .setConnectionFactoryJndiPropertyFactoryInitial("org.apache.activemq.jndi.ActiveMQInitialContextFactory")
@@ -164,11 +165,6 @@ public class MyApplication
         public void stop() {
             this.isRunning = false;
         }
-
-//        @Override public void onMessage(Message message)
-//        {
-//            System.out.print("Message");
-//        }
 
         @Override
         public void submit(Object o) {

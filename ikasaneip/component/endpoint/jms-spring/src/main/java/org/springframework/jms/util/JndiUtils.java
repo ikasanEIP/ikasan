@@ -41,11 +41,13 @@
 package org.springframework.jms.util;
 
 import org.ikasan.component.endpoint.jms.AuthenticatedConnectionFactory;
+import org.ikasan.component.endpoint.jms.AuthenticatedXAConnectionFactory;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.jndi.JndiTemplate;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.XAConnectionFactory;
 import javax.naming.NamingException;
 import java.util.Map;
 import java.util.Properties;
@@ -85,9 +87,18 @@ public class JndiUtils
      * @param password
      * @return
      */
-    public static ConnectionFactory getAuthenicatedConnectionFactory(Map<String,String> jndiProperties, String connectionFactoryName, String username, String password)
+    public static ConnectionFactory getAuthenticatedConnectionFactory(Map<String,String> jndiProperties, String connectionFactoryName, String username, String password)
     {
         ConnectionFactory connectionFactory = getConnectionFactory(jndiProperties, connectionFactoryName);
+        if(connectionFactory instanceof XAConnectionFactory)
+        {
+            AuthenticatedXAConnectionFactory authenticatedXAConnectionFactory = new AuthenticatedXAConnectionFactory();
+            authenticatedXAConnectionFactory.setXAConnectionFactory((XAConnectionFactory)connectionFactory);
+            authenticatedXAConnectionFactory.setUsername(username);
+            authenticatedXAConnectionFactory.setPassword(password);
+            return authenticatedXAConnectionFactory;
+        }
+
         AuthenticatedConnectionFactory authenticatedConnectionFactory = new AuthenticatedConnectionFactory();
         authenticatedConnectionFactory.setConnectionFactory(connectionFactory);
         authenticatedConnectionFactory.setUsername(username);

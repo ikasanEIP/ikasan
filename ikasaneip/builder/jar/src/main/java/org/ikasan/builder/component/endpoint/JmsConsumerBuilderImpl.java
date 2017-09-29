@@ -51,6 +51,7 @@ import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.MessageListener;
 import javax.naming.Context;
 import javax.transaction.TransactionManager;
@@ -70,6 +71,11 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
      * default jms consumer instance
      */
     JmsContainerConsumer jmsConsumer;
+
+    /**
+     * Connection Factory override
+     */
+    ConnectionFactory connectionFactory;
 
     /**
      * Message provider
@@ -92,7 +98,7 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
     /**
      * configuration consumer
      */
-    SpringMessageConsumerConfiguration configuration;
+    SpringMessageConsumerConfiguration configuration = new SpringMessageConsumerConfiguration();
 
     String componentName = "jmsConsumer";
 
@@ -376,6 +382,13 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
         return this;
     }
 
+    @Override
+    public JmsConsumerBuilder setConnectionFactory(ConnectionFactory connectionFactory)
+    {
+        this.connectionFactory = connectionFactory;
+        return this;
+    }
+
     private SpringMessageConsumerConfiguration getConfiguration() {
         if (configuration == null) {
             configuration = new SpringMessageConsumerConfiguration();
@@ -405,7 +418,12 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
         if (messageProvider != null) {
 
-            if (messageProvider instanceof IkasanMessageListenerContainer) {
+            if (messageProvider instanceof IkasanMessageListenerContainer)
+            {
+                if(connectionFactory != null)
+                {
+                    ((IkasanMessageListenerContainer)messageProvider).setConnectionFactory(connectionFactory);
+                }
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setMessageListener(aopProxiedMessageListener);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setErrorHandler(jmsConsumer);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setExceptionListener(jmsConsumer);
@@ -415,6 +433,10 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
         } else {
             ArjunaIkasanMessageListenerContainer messageListenerContainer = new ArjunaIkasanMessageListenerContainer();
+            if(connectionFactory != null)
+            {
+                messageListenerContainer.setConnectionFactory(connectionFactory);
+            }
             messageListenerContainer.setMessageListener(aopProxiedMessageListener);
             messageListenerContainer.setErrorHandler(jmsConsumer);
             messageListenerContainer.setExceptionListener(jmsConsumer);
