@@ -38,9 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.spring.boot.builderpattern;
+package com.ikasan.sample.spring.boot.builderpattern;
 
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -48,6 +49,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 import javax.jms.Session;
 import java.util.List;
@@ -112,7 +114,10 @@ public class ComponentFactory
 
     Consumer getJmsConsumer()
     {
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
+
         return builderFactory.getComponentBuilder().jmsConsumer()
+                .setConnectionFactory(connectionFactory)
                 .setDestinationJndiName("jms.topic.test")
                 .setDurableSubscriptionName("testDurableSubscription")
                 .setDurable(true)

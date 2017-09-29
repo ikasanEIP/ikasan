@@ -133,7 +133,7 @@ public class JmsTemplateProducer<T>
             }
             else
             {
-                ConnectionFactory connectionFactory = JndiUtils.getAuthenicatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
+                ConnectionFactory connectionFactory = JndiUtils.getAuthenticatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
                 this.jmsTemplate.setConnectionFactory(connectionFactory);
             }
         }

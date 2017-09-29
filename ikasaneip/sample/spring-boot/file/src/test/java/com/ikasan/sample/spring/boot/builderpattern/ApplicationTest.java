@@ -38,11 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.spring.boot.builderpattern;
+package com.ikasan.sample.spring.boot.builderpattern;
 
+import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -60,7 +62,15 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
+    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
+    @Before
+    public void setup()
+    {
+        broker.start();
+    }
+
+    
     /**
      * Test simple invocation.
      */

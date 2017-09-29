@@ -42,6 +42,9 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
+import org.springframework.jms.core.IkasanJmsTemplate;
+
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,30 +54,37 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public class JmsProducerBuilderImpl implements JmsProducerBuilder{
+public class JmsProducerBuilderImpl implements JmsProducerBuilder
+{
+    /**
+     * jms template
+     */
+    IkasanJmsTemplate ikasanJmsTemplate;
 
     /**
-     * default jms consumer instance
+     * Connection Factory override
      */
-    JmsTemplateProducer jmsProducer;
+    ConnectionFactory connectionFactory;
 
     /**
      * configuration consumer
      */
-    SpringMessageProducerConfiguration configuration;
+    SpringMessageProducerConfiguration configuration = new SpringMessageProducerConfiguration();
 
     /**
-     * default value for component name - will be overridden at runtime
+     * Configuration resource id
      */
-    String componentName = "unspecifiedScheduledComponentName";
+    String configuredResourceId;
 
     /**
      * Constructor
      */
-    public JmsProducerBuilderImpl(JmsTemplateProducer jmsProducer) {
-        this.jmsProducer = jmsProducer;
-        if (jmsProducer == null) {
-            throw new IllegalArgumentException("jmsProducer cannot be 'null'");
+    public JmsProducerBuilderImpl(IkasanJmsTemplate ikasanJmsTemplate)
+    {
+        this.ikasanJmsTemplate = ikasanJmsTemplate;
+        if (ikasanJmsTemplate == null)
+        {
+            throw new IllegalArgumentException("ikasanJmsTemplate cannot be 'null'");
         }
 
     }
@@ -85,8 +95,9 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder{
      * @param configuredResourceId
      * @return
      */
-    public JmsProducerBuilder setConfiguredResourceId(String configuredResourceId) {
-        this.jmsProducer.setConfiguredResourceId(configuredResourceId);
+    public JmsProducerBuilder setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
         return this;
     }
 
@@ -96,57 +107,59 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder{
      * @param jmsProducerConfiguration
      * @return
      */
-    public JmsProducerBuilder setConfiguration(SpringMessageProducerConfiguration jmsProducerConfiguration) {
-        this.jmsProducer.setConfiguration(jmsProducerConfiguration);
+    public JmsProducerBuilder setConfiguration(SpringMessageProducerConfiguration jmsProducerConfiguration)
+    {
+        this.configuration = jmsProducerConfiguration;
         return this;
     }
 
     @Override
-    public JmsProducerBuilder setConnectionFactoryJndiPropertyProviderUrl(String providerUrl) {
-        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
-            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+    public JmsProducerBuilder setConnectionFactoryJndiPropertyProviderUrl(String providerUrl)
+    {
+        if (this.configuration.getConnectionFactoryJndiProperties() == null) {
+            this.configuration.setConnectionFactoryJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getConnectionFactoryJndiProperties().put(Context.PROVIDER_URL, providerUrl);
+        this.configuration.getConnectionFactoryJndiProperties().put(Context.PROVIDER_URL, providerUrl);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryJndiPropertyFactoryInitial(String initialFactory) {
-        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
-            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getConnectionFactoryJndiProperties() == null) {
+            this.configuration.setConnectionFactoryJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getConnectionFactoryJndiProperties().put(Context.INITIAL_CONTEXT_FACTORY, initialFactory);
+        this.configuration.getConnectionFactoryJndiProperties().put(Context.INITIAL_CONTEXT_FACTORY, initialFactory);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryJndiPropertyUrlPkgPrefixes(String urlPackage) {
-        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
-            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getConnectionFactoryJndiProperties() == null) {
+            this.configuration.setConnectionFactoryJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getConnectionFactoryJndiProperties().put(Context.URL_PKG_PREFIXES, urlPackage);
+        this.configuration.getConnectionFactoryJndiProperties().put(Context.URL_PKG_PREFIXES, urlPackage);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryJndiPropertySecurityCredentials(String securityCredentials) {
-        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
-            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getConnectionFactoryJndiProperties() == null) {
+            this.configuration.setConnectionFactoryJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getConnectionFactoryJndiProperties().put(Context.SECURITY_CREDENTIALS, securityCredentials);
+        this.configuration.getConnectionFactoryJndiProperties().put(Context.SECURITY_CREDENTIALS, securityCredentials);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryJndiPropertySecurityPrincipal(String securityPrincipal) {
-        if (getConfiguration().getConnectionFactoryJndiProperties() == null) {
-            getConfiguration().setConnectionFactoryJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getConnectionFactoryJndiProperties() == null) {
+            this.configuration.setConnectionFactoryJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getConnectionFactoryJndiProperties().put(Context.SECURITY_PRINCIPAL, securityPrincipal);
+        this.configuration.getConnectionFactoryJndiProperties().put(Context.SECURITY_PRINCIPAL, securityPrincipal);
 
         return this;
     }
@@ -154,199 +167,208 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder{
 
     @Override
     public JmsProducerBuilder setDestinationJndiPropertyProviderUrl(String providerUrl) {
-        if (getConfiguration().getDestinationJndiProperties() == null) {
-            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getDestinationJndiProperties() == null) {
+            this.configuration.setDestinationJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getDestinationJndiProperties().put(Context.PROVIDER_URL, providerUrl);
+        this.configuration.getDestinationJndiProperties().put(Context.PROVIDER_URL, providerUrl);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDestinationJndiPropertyFactoryInitial(String initialFactory) {
-        if (getConfiguration().getDestinationJndiProperties() == null) {
-            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getDestinationJndiProperties() == null) {
+            this.configuration.setDestinationJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getDestinationJndiProperties().put(Context.INITIAL_CONTEXT_FACTORY, initialFactory);
+        this.configuration.getDestinationJndiProperties().put(Context.INITIAL_CONTEXT_FACTORY, initialFactory);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDestinationJndiPropertyUrlPkgPrefixes(String initialFactory) {
-        if (getConfiguration().getDestinationJndiProperties() == null) {
-            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getDestinationJndiProperties() == null) {
+            this.configuration.setDestinationJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getDestinationJndiProperties().put(Context.URL_PKG_PREFIXES, initialFactory);
+        this.configuration.getDestinationJndiProperties().put(Context.URL_PKG_PREFIXES, initialFactory);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDestinationJndiPropertySecurityCredentials(String securityCredentials) {
-        if (getConfiguration().getDestinationJndiProperties() == null) {
-            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getDestinationJndiProperties() == null) {
+            this.configuration.setDestinationJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getDestinationJndiProperties().put(Context.SECURITY_CREDENTIALS, securityCredentials);
+        this.configuration.getDestinationJndiProperties().put(Context.SECURITY_CREDENTIALS, securityCredentials);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDestinationJndiPropertySecurityPrincipal(String securityPrincipal) {
-        if (getConfiguration().getDestinationJndiProperties() == null) {
-            getConfiguration().setDestinationJndiProperties(new HashMap<String, String>());
+        if (this.configuration.getDestinationJndiProperties() == null) {
+            this.configuration.setDestinationJndiProperties(new HashMap<String, String>());
         }
-        getConfiguration().getDestinationJndiProperties().put(Context.SECURITY_PRINCIPAL, securityPrincipal);
+        this.configuration.getDestinationJndiProperties().put(Context.SECURITY_PRINCIPAL, securityPrincipal);
 
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDestinationJndiProperties(Map<String, String> destinationJndiProperties) {
-        getConfiguration().setDestinationJndiProperties(destinationJndiProperties);
+        this.configuration.setDestinationJndiProperties(destinationJndiProperties);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDestinationJndiName(String destinationJndiName) {
-        getConfiguration().setDestinationJndiName(destinationJndiName);
+        this.configuration.setDestinationJndiName(destinationJndiName);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryJndiProperties(Map<String, String> connectionFactoryJndiProperties) {
-        getConfiguration().setConnectionFactoryJndiProperties(connectionFactoryJndiProperties);
+        this.configuration.setConnectionFactoryJndiProperties(connectionFactoryJndiProperties);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryName(String connectionFactoryName) {
-        getConfiguration().setConnectionFactoryName(connectionFactoryName);
+        this.configuration.setConnectionFactoryName(connectionFactoryName);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryUsername(String connectionFactoryUsername) {
-        getConfiguration().setConnectionFactoryUsername(connectionFactoryUsername);
+        this.configuration.setConnectionFactoryUsername(connectionFactoryUsername);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setConnectionFactoryPassword(String connectionFactoryPassword) {
-        getConfiguration().setConnectionFactoryPassword(connectionFactoryPassword);
+        this.configuration.setConnectionFactoryPassword(connectionFactoryPassword);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setPubSubDomain(Boolean pubSubDomain) {
-        getConfiguration().setPubSubDomain(pubSubDomain);
+        this.configuration.setPubSubDomain(pubSubDomain);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDeliveryPersistent(Boolean deliveryPersistent) {
-        getConfiguration().setDeliveryPersistent(deliveryPersistent);
+        this.configuration.setDeliveryPersistent(deliveryPersistent);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setDeliveryMode(Integer deliveryMode) {
-        getConfiguration().setDeliveryMode(deliveryMode);
+        this.configuration.setDeliveryMode(deliveryMode);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setSessionTransacted(Boolean sessionTransacted) {
-        getConfiguration().setSessionTransacted(sessionTransacted);
+        this.configuration.setSessionTransacted(sessionTransacted);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setExplicitQosEnabled(Boolean explicitQosEnabled) {
-        getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
+        this.configuration.setExplicitQosEnabled(explicitQosEnabled);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setMessageIdEnabled(Boolean messageIdEnabled) {
-        getConfiguration().setMessageIdEnabled(messageIdEnabled);
+        this.configuration.setMessageIdEnabled(messageIdEnabled);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setMessageTimestampEnabled(Boolean messageTimestampEnabled) {
-        getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
+        this.configuration.setMessageTimestampEnabled(messageTimestampEnabled);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setPriority(Integer priority) {
-        getConfiguration().setPriority(priority);
+        this.configuration.setPriority(priority);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setPubSubNoLocal(Boolean pubSubNoLocal) {
-        getConfiguration().setPubSubNoLocal(pubSubNoLocal);
+        this.configuration.setPubSubNoLocal(pubSubNoLocal);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setReceiveTimeout(Long receiveTimeout) {
-        getConfiguration().setReceiveTimeout(receiveTimeout);
+        this.configuration.setReceiveTimeout(receiveTimeout);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setSessionAcknowledgeMode(Integer sessionAcknowledgeMode) {
-        getConfiguration().setSessionAcknowledgeMode(sessionAcknowledgeMode);
+        this.configuration.setSessionAcknowledgeMode(sessionAcknowledgeMode);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setSessionAcknowledgeModeName(String sessionAcknowledgeModeName) {
-        getConfiguration().setSessionAcknowledgeModeName(sessionAcknowledgeModeName);
+        this.configuration.setSessionAcknowledgeModeName(sessionAcknowledgeModeName);
         return this;
     }
 
     @Override
     public JmsProducerBuilder setTimeToLive(Long timeToLive) {
-        getConfiguration().setTimeToLive(timeToLive);
+        this.configuration.setTimeToLive(timeToLive);
         return this;
     }
 
-    private SpringMessageProducerConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new SpringMessageProducerConfiguration();
-        }
-
-        return configuration;
+    @Override
+    public JmsProducerBuilder setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+        return this;
     }
 
-
-    /**
+   /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.
      *
      * @return
      */
 
-    public JmsTemplateProducer build() {
+    public JmsTemplateProducer build()
+    {
+        JmsTemplateProducer jmsProducer = getJmsTempalteProducer(this.ikasanJmsTemplate);
+        jmsProducer.setConfiguration(configuration);
+        jmsProducer.setConfiguredResourceId(configuredResourceId);
 
-        if (this.jmsProducer.getConfiguredResourceId() == null) {
-            this.jmsProducer.setConfiguredResourceId(this.jmsProducer.getConfiguredResourceId());
-        }
+        validateBuilderConfiguration(jmsProducer);
 
-        if (configuration!=null && this.jmsProducer.getConfiguration() == null) {
-            this.jmsProducer.setConfiguration(configuration);
-        } else if(this.jmsProducer.getConfiguration() == null){
-            this.jmsProducer.setConfiguration(new SpringMessageProducerConfiguration());
-        }
-
-
-        return this.jmsProducer;
+        return jmsProducer;
     }
 
+    protected void validateBuilderConfiguration(JmsTemplateProducer jmsTemplateProducer)
+    {
+        if(jmsTemplateProducer.getConfiguration() != null && jmsTemplateProducer.getConfiguredResourceId() == null)
+        {
+            throw new IllegalArgumentException("configuredResourceId is a required property for the jmsProducer and cannot be 'null'");
+        }
+    }
+
+    /**
+     * Factory method to get an instance of JmsTemplateProducer (and to aid testing).
+     * @param ikasanJmsTemplate
+     * @return
+     */
+    protected JmsTemplateProducer getJmsTempalteProducer(IkasanJmsTemplate ikasanJmsTemplate)
+    {
+        return new JmsTemplateProducer(ikasanJmsTemplate);
+    }
 }
 
