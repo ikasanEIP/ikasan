@@ -209,7 +209,11 @@
 		<aop:pointcut id="triggerDaoMethods"
 			expression="execution(* org.ikasan.trigger.dao.TriggerDao.save(..)) ||
 						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..))" />
-			
+
+		<aop:pointcut id="wiretapDaoMethods"
+					  expression="execution(* org.ikasan.wiretap.dao.WiretapDao.save(..))" />
+
+
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
 		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="systemevent-required-TransactionAdvice"
@@ -222,6 +226,8 @@
 			pointcut-ref="hospitalServiceMethods" />
 		<aop:advisor id="triggerDaoPointcutAdvice" advice-ref="wiretap-required-TransactionAdvice"
 			pointcut-ref="triggerDaoMethods" />
+		<aop:advisor id="wiretapDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
+			pointcut-ref="wiretapDaoMethods" />
 	</aop:config>
 
 	<tx:advice id="wiretap-required-TransactionAdvice"
