@@ -62,11 +62,6 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
     IkasanJmsTemplate ikasanJmsTemplate;
 
     /**
-     * Connection Factory override
-     */
-    ConnectionFactory connectionFactory;
-
-    /**
      * configuration consumer
      */
     SpringMessageProducerConfiguration configuration = new SpringMessageProducerConfiguration();
@@ -331,7 +326,7 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
 
     @Override
     public JmsProducerBuilder setConnectionFactory(ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
+        this.ikasanJmsTemplate.setConnectionFactory(connectionFactory);
         return this;
     }
 
