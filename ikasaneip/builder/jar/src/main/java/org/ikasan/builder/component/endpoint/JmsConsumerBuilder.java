@@ -48,6 +48,7 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 
+import javax.jms.ConnectionFactory;
 import java.util.Map;
 
 /**
@@ -76,6 +77,8 @@ public interface JmsConsumerBuilder extends Builder<Consumer> {
     JmsConsumerBuilder setDurableSubscriptionName(String durableSubscriptionName);
 
     JmsConsumerBuilder setConnectionFactoryJndiProperties(Map<String, String> connectionFactoryJndiProperties);
+
+    JmsConsumerBuilder setConnectionFactory(ConnectionFactory connectionFactory);
 
     JmsConsumerBuilder setConnectionFactoryJndiPropertyProviderUrl(String providerUrl);
 
