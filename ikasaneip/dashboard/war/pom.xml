@@ -57,7 +57,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-security</artifactId>
