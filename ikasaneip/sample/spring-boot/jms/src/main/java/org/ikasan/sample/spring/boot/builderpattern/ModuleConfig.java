@@ -1,23 +1,18 @@
 package org.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.boot.jta.narayana.NarayanaProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
@@ -82,7 +77,7 @@ public class ModuleConfig {
 
         FlowBuilder fb = mb.getFlowBuilder("flowName");
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("failover:(vm://embedded-broker?create=false)");
+        ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory("failover:(vm://embedded-broker?create=false)");
         Consumer localJmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
                 .setDestinationJndiName("source")
