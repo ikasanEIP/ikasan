@@ -49,6 +49,7 @@ import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
+import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
@@ -710,7 +711,7 @@ public class FlowBuilder implements ApplicationContextAware
         }
 
         public Evaluation<Flow> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter) {
-            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker()));
+            this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterConfiguration())));
             return new PrimaryEvaluationImpl(route);
         }
 
