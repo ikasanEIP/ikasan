@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -114,7 +115,7 @@ public class RouteBuilder
 
 	public Evaluation<Route> multiRecipientRouter(String name, MultiRecipientRouter multiRecipientRouter)
 	{
-		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker()));
+		this.route.addFlowElement(new FlowElementImpl(name, multiRecipientRouter, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), new MultiRecipientRouterConfiguration())));
 		return new EvaluationImpl(route);
 	}
 
