@@ -78,7 +78,9 @@ public class ArjunaIkasanMessageListenerContainer extends IkasanMessageListenerC
     protected void establishConnectionFactory()
     {
         super.establishConnectionFactory();
-        if(getConnectionFactory() instanceof XAConnectionFactory)
+
+        // proxy an XA CF, but only if its not already been proxied
+        if(getConnectionFactory() instanceof XAConnectionFactory && !(getConnectionFactory() instanceof ConnectionFactoryProxy) )
         {
             ConnectionFactory connectionFactoryProxy = new ConnectionFactoryProxy(
                     (XAConnectionFactory) getConnectionFactory(),
