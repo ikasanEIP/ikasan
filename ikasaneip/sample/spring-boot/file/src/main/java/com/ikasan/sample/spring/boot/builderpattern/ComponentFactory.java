@@ -40,19 +40,22 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 import javax.jms.Session;
+import java.io.File;
 import java.util.List;
+
+import static org.springframework.jms.listener.DefaultMessageListenerContainer.CACHE_CONNECTION;
 
 /**
  * Sample component factory.
@@ -89,6 +92,9 @@ public class ComponentFactory
     @Value("${jms.producer.configuredResourceId}")
     String jmsProducerConfiguredResourceId;
 
+    @Value("${jms.provider.url}")
+    private String jmsProviderUrl;
+
     /**
      * Return an instance of a configured file consumer
      * @return
@@ -100,6 +106,7 @@ public class ComponentFactory
                 .setScheduledJobGroupName(scheduledGroupName)
                 .setScheduledJobName(scheduledName)
                 .setFilenames(sourceFilenames)
+                .setLogMatchedFilenames(true)
                 .setConfiguredResourceId(fileConsumerConfiguredResourceId)
                 .build();
     }
@@ -109,50 +116,63 @@ public class ComponentFactory
          return builderFactory.getComponentBuilder().fileProducer()
                 .setConfiguredResourceId(fileProducerConfiguredResourceId)
                 .setFilename(targetFilename)
+                .setOverwrite(true)
                 .build();
     }
 
     Consumer getJmsConsumer()
     {
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
+        ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
 
-        return builderFactory.getComponentBuilder().jmsConsumer()
+       return builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
                 .setDestinationJndiName("jms.topic.test")
                 .setDurableSubscriptionName("testDurableSubscription")
                 .setDurable(true)
-                .setConnectionFactoryName("TestConnectionFactory")
-                .setConnectionFactoryUsername("TestUsername")
-                .setConnectionFactoryPassword("TestPassword")
                 .setAutoContentConversion(true)
-                .setAutoSplitBatch(false)
-                .setBatchMode(true)
-                .setBatchSize(2)
-                .setCacheLevel(2)
-                .setConcurrentConsumers(2)
-                .setMaxConcurrentConsumers(2)
-                .setSessionAcknowledgeMode(2)
+                .setAutoSplitBatch(true)
+                .setBatchMode(false)
+                .setBatchSize(1)
+                .setCacheLevel(CACHE_CONNECTION)
+                .setConcurrentConsumers(1)
+                .setMaxConcurrentConsumers(1)
+                .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
                 .setSessionTransacted(true)
-                .setPubSubDomain(true)
+                .setPubSubDomain(false)
                 .build();
     }
 
     Producer getJmsProducer()
     {
+        ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
+
         return builderFactory.getComponentBuilder().jmsProducer()
                 .setConfiguredResourceId(jmsProducerConfiguredResourceId)
                 .setDestinationJndiName("jms.topic.test")
-                .setConnectionFactoryName("TestConnectionFactory")
-                .setConnectionFactoryUsername("TestUsername")
-                .setConnectionFactoryPassword("TestPassword")
-                .setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE)
+                .setConnectionFactory(connectionFactory)
+                .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
                 .setSessionTransacted(true)
-                .setPubSubDomain(true)
+                .setPubSubDomain(false)
                 .setDeliveryPersistent(true)
                 .setDeliveryMode(DeliveryMode.PERSISTENT)
                 .setExplicitQosEnabled(true)
                 .setMessageIdEnabled(true)
                 .setMessageTimestampEnabled(true)
-                .build();
+                .setPostProcessor(null).build();
+    }
+
+    Converter getSourceFileConverter()
+    {
+        return new SourceFileConverter();
+    }
+
+    class SourceFileConverter implements Converter<List<File>,String>
+    {
+        @Override
+        public String convert(List<File> files) throws TransformationException
+        {
+            File file = files.get(0);
+            return file.getName();
+        }
     }
 }
