@@ -40,10 +40,12 @@
  */
 package org.ikasan.builder.component.endpoint;
 
+import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -72,11 +74,18 @@ public class JmsProducerBuilderTest {
     };
 
     final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
+    final IkasanJmsTemplate mockIkasanJmsTemplate = mockery.mock(IkasanJmsTemplate.class, "mockIkasanJmsTemplate");
+    final PostProcessor postProcessor = mockery.mock(PostProcessor.class, "mockPostProcessor");
 
     @Test
     public void test_jmsproducerbuilder_build() {
 
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
+        mockery.checking(new Expectations()
+        {{
+            oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
+        }});
+
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate);
 
         Producer jmsProducer = jmsProducerBuilder
                 .setConfiguredResourceId("crid")
@@ -97,7 +106,7 @@ public class JmsProducerBuilderTest {
                 .setPubSubNoLocal(true)
                 .setReceiveTimeout(2000l)
                 .setTimeToLive(2000l)
-                .build();
+                .setPostProcessor(postProcessor).build();
 
         assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
         SpringMessageProducerConfiguration configuration = (
@@ -139,6 +148,7 @@ public class JmsProducerBuilderTest {
         assertEquals("TimeToLive should be 'true'",2000l,
                 configuration.getTimeToLive().longValue());
 
+        this.mockery.assertIsSatisfied();
     }
 
 
