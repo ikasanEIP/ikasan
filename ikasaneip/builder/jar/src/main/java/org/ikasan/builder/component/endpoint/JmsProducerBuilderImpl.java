@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component.endpoint;
 
+import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.springframework.jms.core.IkasanJmsTemplate;
@@ -321,6 +322,13 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
     @Override
     public JmsProducerBuilder setTimeToLive(Long timeToLive) {
         this.configuration.setTimeToLive(timeToLive);
+        return this;
+    }
+
+    @Override
+    public JmsProducerBuilder setPostProcessor(PostProcessor<?, ?> postProcessor)
+    {
+        this.ikasanJmsTemplate.setPostProcessor(postProcessor);
         return this;
     }
 

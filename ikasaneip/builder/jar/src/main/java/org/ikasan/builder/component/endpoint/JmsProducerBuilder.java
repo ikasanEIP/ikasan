@@ -41,6 +41,7 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.component.Builder;
+import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 
@@ -117,5 +118,7 @@ public interface JmsProducerBuilder extends Builder<Producer> {
     JmsProducerBuilder setSessionAcknowledgeModeName(String sessionAcknowledgeModeName);
 
     JmsProducerBuilder setTimeToLive(Long timeToLive);
+
+    JmsProducerBuilder setPostProcessor(PostProcessor<?,?> postProcessor);
 }
 
