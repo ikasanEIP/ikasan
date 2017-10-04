@@ -46,6 +46,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.*;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
+ import org.ikasan.dashboard.solr.SolrInitialiser;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
  import org.ikasan.security.service.authentication.IkasanAuthentication;
  import org.ikasan.spec.configuration.Configuration;
@@ -71,6 +72,7 @@ package org.ikasan.dashboard.ui.administration.panel;
      private ControlConfigurationPanel controlConfigurationPanel;
      private SolrConfigurationPanel solrConfigurationPanel;
      private RawConfigurationPanel rawConfigurationPanel;
+     private SolrInitialiser solrInitialiser;
 
      private Panel tabsheetPanel;
      private TabSheet tabsheet;
@@ -80,9 +82,10 @@ package org.ikasan.dashboard.ui.administration.panel;
       *
       * @param configurationManagement
       * @param platformConfigurationService
+      * @param solrInitialiser
       */
      public PlatformConfigurationTabPanel(ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement,
-                                          PlatformConfigurationService platformConfigurationService)
+                                          PlatformConfigurationService platformConfigurationService, SolrInitialiser solrInitialiser)
      {
          super();
          this.configurationManagement = configurationManagement;
@@ -94,6 +97,11 @@ package org.ikasan.dashboard.ui.administration.panel;
          if (this.platformConfigurationService == null)
          {
              throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+         }
+         this.solrInitialiser = solrInitialiser;
+         if (this.solrInitialiser == null)
+         {
+             throw new IllegalArgumentException("solrInitialiser cannot be null!");
          }
 
          init();
@@ -127,7 +135,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          tabsheet.addTab(this.controlConfigurationPanel, "Control");
 
          this.solrConfigurationPanel = new SolrConfigurationPanel
-             (this.platformConfigurationService);
+             (this.platformConfigurationService, this.solrInitialiser);
 
          tabsheet.addTab(this.solrConfigurationPanel, "Solr");
 

@@ -55,6 +55,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
  import org.ikasan.configurationService.model.*;
+ import org.ikasan.dashboard.solr.SolrInitialiser;
  import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -80,19 +81,27 @@ package org.ikasan.dashboard.ui.administration.panel;
      private Logger logger = Logger.getLogger(SolrConfigurationPanel.class);
 
      private PlatformConfigurationService platformConfigurationService;
+     private SolrInitialiser solrInitialiser;
 
      /**
       * Constructor
       *
       * @param platformConfigurationService
+      * @param solrInitialiser
       */
-     public SolrConfigurationPanel(PlatformConfigurationService platformConfigurationService)
+     public SolrConfigurationPanel(PlatformConfigurationService platformConfigurationService,
+                                   SolrInitialiser solrInitialiser)
      {
          super();
          this.platformConfigurationService = platformConfigurationService;
          if (this.platformConfigurationService == null)
          {
              throw new IllegalArgumentException("platformConfigurationService cannot be null!");
+         }
+         this.solrInitialiser = solrInitialiser;
+         if (this.solrInitialiser == null)
+         {
+             throw new IllegalArgumentException("solrInitialiser cannot be null!");
          }
 
 
@@ -178,6 +187,15 @@ package org.ikasan.dashboard.ui.administration.panel;
              @Override
              public void buttonClick(ClickEvent clickEvent)
              {
+                 Boolean solrStarted = true;
+
+                 if(solrEnabledCheckbox.getValue() == true)
+                 {
+                     solrStarted = solrInitialiser.initialiseSolr();
+
+                     solrEnabledCheckbox.setValue(solrStarted);
+                 }
+
                  platformConfigurationService.saveConfigurationValue
                          (ConfigurationConstants.SOLR_ENABLED, solrEnabledCheckbox.getValue().toString());
                  platformConfigurationService.saveConfigurationValue
@@ -185,12 +203,24 @@ package org.ikasan.dashboard.ui.administration.panel;
                  platformConfigurationService.saveConfigurationValue
                          (ConfigurationConstants.SOLR_DAYS_TO_KEEP, daysToKeepTextField.getValue());
 
-                 Notification notification = new Notification(
-                         "Saved",
-                         "The configuration has been saved successfully!",
-                         Type.HUMANIZED_MESSAGE);
-                 notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
-                 notification.show(Page.getCurrent());
+                 if(!solrStarted)
+                 {
+                     Notification notification = new Notification(
+                             "Saved",
+                             "The configuration has been saved successfully! However, Solr does not appear to be running and will not be enabled.",
+                             Type.WARNING_MESSAGE);
+                     notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+                     notification.show(Page.getCurrent());
+                 }
+                 else
+                 {
+                     Notification notification = new Notification(
+                             "Saved",
+                             "The configuration has been saved successfully!",
+                             Type.HUMANIZED_MESSAGE);
+                     notification.setStyleName(ValoTheme.NOTIFICATION_CLOSABLE);
+                     notification.show(Page.getCurrent());
+                 }
              }
          });
 

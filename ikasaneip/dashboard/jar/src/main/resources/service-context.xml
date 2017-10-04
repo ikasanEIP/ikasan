@@ -5,6 +5,22 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+
+	<bean id="solrInitialiser" class="org.ikasan.dashboard.solr.SolrInitialiser">
+		<constructor-arg>
+			<list>
+				<ref bean="solrWiretapDao" />
+				<ref bean="solrGeneralSearchDao" />
+				<ref bean="solrErrorReportingServiceDao" />
+				<ref bean="solrExclusionServiceExclusionEventDao" />
+				<ref bean="solrReplayDao" />
+
+			</list>
+		</constructor-arg>
+		<constructor-arg ref="platformConfigurationService"/>
+		<constructor-arg ref="solrHarvestSchedulerService"/>
+	</bean>
+
 	<bean id="componentConfigurationExportHelper"
 		  class="org.ikasan.configurationService.util.ComponentConfigurationExportHelper">
 	</bean>
