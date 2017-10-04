@@ -320,6 +320,7 @@
     <bean id="platformConfigurationPanel" class="org.ikasan.dashboard.ui.administration.panel.PlatformConfigurationTabPanel" scope="session">
         <constructor-arg ref="configurationService"/>
         <constructor-arg ref="platformConfigurationService"/>
+        <constructor-arg ref="solrInitialiser"/>
     </bean>
     
     <bean id="bannerImage" class="com.vaadin.ui.Image" scope="session">

@@ -50,6 +50,7 @@ import org.ikasan.dashboard.discovery.DiscoverySchedulerService;
 import org.ikasan.dashboard.harvesting.HarvestingSchedulerService;
 import org.ikasan.dashboard.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.dashboard.notification.NotifierServiceImpl;
+import org.ikasan.dashboard.solr.SolrInitialiser;
 import org.ikasan.dashboard.ui.framework.cache.TopologyStateCache;
 import org.ikasan.dashboard.ui.framework.constants.ConfigurationConstants;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -90,10 +91,9 @@ public class WebAppStartStopListener implements ServletContextListener
 
             final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
             HousekeepingSchedulerService schedulerService = (HousekeepingSchedulerService) springContext.getBean("housekeepingSchedulerService");
-            HarvestingSchedulerService harvestingSchedulerService = (HarvestingSchedulerService) springContext.getBean("harvestSchedulerService");
             DiscoverySchedulerService discoverySchedulerService = (DiscoverySchedulerService) springContext.getBean("discoverySchedulerService");
 
-            boolean solrInitialised = this.initialiseSolr(springContext);
+            this.initialiseSolr(springContext);
 
             if (schedulerService != null)
             {
@@ -103,19 +103,14 @@ public class WebAppStartStopListener implements ServletContextListener
                     schedulerService.registerJobs();
                     schedulerService.startScheduler();
 
-                    if (solrInitialised)
-                    {
-                        harvestingSchedulerService.registerJobs();
-                        harvestingSchedulerService.startScheduler();
-                    }
-
                     discoverySchedulerService.startScheduler();
                     logger.info("Successfully registered jobs and started scheduler.");
                 } catch (Exception e)
                 {
                     logger.error("Could not start scheduler!", e);
                 }
-            } else
+            }
+            else
             {
                 logger.warn("schedulerService was null when trying to access from web application context!");
             }
@@ -158,72 +153,7 @@ public class WebAppStartStopListener implements ServletContextListener
 
     private boolean initialiseSolr(WebApplicationContext springContext)
     {
-        PlatformConfigurationService platformConfigurationService = (PlatformConfigurationService)springContext.getBean("platformConfigurationService");
-
-        String solrEnabled = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_ENABLED);
-
-        if(solrEnabled != null && solrEnabled.equals("true"))
-        {
-            String daysToLiveString = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_DAYS_TO_KEEP);
-            String solrUrls = platformConfigurationService.getConfigurationValue(ConfigurationConstants.SOLR_URLS);
-
-            if(solrUrls == null)
-            {
-                logger.info("Solr URLs are not configured! Setting solr enabled to false");
-                platformConfigurationService.saveConfigurationValue(ConfigurationConstants.SOLR_ENABLED, "false");
-
-                return false;
-            }
-            else
-            {
-                List<String> solrUrlsList = this.tokens(solrUrls, ',');
-
-                Integer daysToLive = 7;
-
-                try
-                {
-                    daysToLive = Integer.parseInt(daysToLiveString);
-                }
-                catch (Exception e)
-                {
-                    logger.info("Could not initialise solr days to live, Using default of " + daysToLive);
-                }
-
-                SolrInitialisationService solrDao = (SolrInitialisationService)springContext.getBean("solrWiretapDao");
-                solrDao.init(solrUrlsList, daysToLive);
-
-                solrDao = (SolrInitialisationService)springContext.getBean("solrGeneralSearchDao");
-                solrDao.init(solrUrlsList, daysToLive);
-
-                solrDao = (SolrInitialisationService)springContext.getBean("solrErrorReportingServiceDao");
-                solrDao.init(solrUrlsList, daysToLive);
-
-                solrDao = (SolrInitialisationService)springContext.getBean("solrExclusionServiceExclusionEventDao");
-                solrDao.init(solrUrlsList, daysToLive);
-
-                solrDao = (SolrInitialisationService)springContext.getBean("solrReplayDao");
-                solrDao.init(solrUrlsList, daysToLive);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private List<String> tokens(String tokenString, char tokenChar)
-    {
-        Splitter splitter = Splitter.on(tokenChar).omitEmptyStrings().trimResults();
-
-        ArrayList<String> results = new ArrayList<String>();
-
-        Iterable<String> tokens = splitter.split(tokenString);
-
-        for(String token: tokens)
-        {
-            results.add(token);
-        }
-
-        return results;
+        SolrInitialiser solrInitialiser = (SolrInitialiser)springContext.getBean("solrInitialiser");
+        return solrInitialiser.initialiseSolr();
     }
 }
