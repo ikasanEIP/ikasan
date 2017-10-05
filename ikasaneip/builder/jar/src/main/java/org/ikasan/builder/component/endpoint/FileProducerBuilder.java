@@ -63,6 +63,8 @@ public interface FileProducerBuilder extends Builder<Producer>
 
     public FileProducerBuilder setWriteChecksum(boolean writeChecksum);
 
+    public FileProducerBuilder setOverwrite(boolean overwrite);
+
     public FileProducerBuilder setEncoding(String encoding);
 
     public FileProducerBuilder setLineEnding(String lineEnding);

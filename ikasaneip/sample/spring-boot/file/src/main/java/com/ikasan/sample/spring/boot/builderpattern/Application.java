@@ -72,13 +72,21 @@ public class Application
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
-                .withDescription("Sample file source flow")
-                //.consumer("File Consumer", componentFactory.getFileConsumer())
+                .withDescription("Sample file to JMS flow")
+                .consumer("File Consumer", componentFactory.getFileConsumer())
+                .converter("File Converter", componentFactory.getSourceFileConverter())
+                .producer("JMS Producer", componentFactory.getJmsProducer()).build();
+
+        Flow targetFlow = moduleBuilder.getFlowBuilder("targetFileFlow")
+                .withDescription("Sample JMS to file flow")
                 .consumer("JMS Consumer", componentFactory.getJmsConsumer())
                 .producer("File Producer", componentFactory.getFileProducer()).build();
-                //.producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
-        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.").addFlow(sourceFlow).build();
+        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.")
+                .addFlow(sourceFlow)
+                .addFlow(targetFlow)
+                .build();
+
         ikasanApplication.run(module);
         return ikasanApplication;
     }
