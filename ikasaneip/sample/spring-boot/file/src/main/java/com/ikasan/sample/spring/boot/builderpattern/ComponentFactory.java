@@ -42,6 +42,8 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.OnException;
+import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
@@ -158,7 +160,12 @@ public class ComponentFactory
                 .setExplicitQosEnabled(true)
                 .setMessageIdEnabled(true)
                 .setMessageTimestampEnabled(true)
-                .setPostProcessor(null).build();
+                .build();
+    }
+
+    ExceptionResolver getSourceFlowExceptionResolver()
+    {
+        return builderFactory.getExceptionResolverBuilder().addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build();
     }
 
     Converter getSourceFileConverter()
@@ -172,7 +179,12 @@ public class ComponentFactory
         public String convert(List<File> files) throws TransformationException
         {
             File file = files.get(0);
+            if(file.getName().startsWith("err"))
+            {
+                throw new TransformationException("Filename started with 'err'");
+            }
             return file.getName();
         }
     }
+
 }
