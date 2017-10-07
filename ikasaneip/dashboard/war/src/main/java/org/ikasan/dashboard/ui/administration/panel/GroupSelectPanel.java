@@ -46,10 +46,10 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.*;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
- import org.ikasan.dashboard.ui.administration.window.PolicySelectWindow;
+ import org.ikasan.dashboard.ui.administration.window.GroupSelectWindow;
  import org.ikasan.dashboard.ui.administration.window.UserSelectWindow;
  import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
- import org.ikasan.security.model.Policy;
+ import org.ikasan.security.model.IkasanPrincipalLite;
  import org.ikasan.security.model.UserLite;
  import org.ikasan.security.service.SecurityService;
  import org.ikasan.security.service.UserService;
@@ -62,11 +62,11 @@ package org.ikasan.dashboard.ui.administration.panel;
   * @author CMI2 Development Team
   *
   */
- public class UserSelectPanel extends Panel
+ public class GroupSelectPanel extends Panel
  {
      private static final long serialVersionUID = 6005593259860222561L;
 
-     private Logger logger = Logger.getLogger(UserSelectPanel.class);
+     private Logger logger = Logger.getLogger(GroupSelectPanel.class);
 
      private UserService userService;
      private SecurityService securityService;
@@ -77,8 +77,8 @@ package org.ikasan.dashboard.ui.administration.panel;
      private IndexedContainer tableContainer;
 
 
-     public UserSelectPanel(UserService userService, SecurityService securityService,
-                            SystemEventService systemEventService)
+     public GroupSelectPanel(UserService userService, SecurityService securityService,
+                             SystemEventService systemEventService)
      {
          super();
          this.userService = userService;
@@ -106,8 +106,8 @@ package org.ikasan.dashboard.ui.administration.panel;
      {
          IndexedContainer cont = new IndexedContainer();
 
-         cont.addContainerProperty("Username", String.class,  null);
          cont.addContainerProperty("Name", String.class,  null);
+         cont.addContainerProperty("Description", String.class,  null);
 
          return cont;
      }
@@ -130,7 +130,7 @@ package org.ikasan.dashboard.ui.administration.panel;
          gridLayout.setSpacing(true);
          gridLayout.setWidth("100%");
 
-         Label policyLabel = new Label("Select User");
+         Label policyLabel = new Label("Select Group");
          policyLabel.setStyleName(ValoTheme.LABEL_HUGE);
          gridLayout.addComponent(policyLabel);
          gridLayout.setComponentAlignment(policyLabel, Alignment.MIDDLE_LEFT);
@@ -138,7 +138,7 @@ package org.ikasan.dashboard.ui.administration.panel;
 
          this.usersTable = new FilterTable();
          this.usersTable.setWidth("100%");
-         this.usersTable.setHeight("250px");
+         this.usersTable.setHeight("500px");
          
          this.usersTable.setFilterBarVisible(true);
          this.usersTable.addStyleName(ValoTheme.TABLE_SMALL);
@@ -159,32 +159,35 @@ package org.ikasan.dashboard.ui.administration.panel;
              {
                  if(itemClickEvent.isDoubleClick())
                  {
-                     UserLite userLite = (UserLite)itemClickEvent.getItemId();
+                     IkasanPrincipalLite ikasanPrincipalLite = (IkasanPrincipalLite)itemClickEvent.getItemId();
 
-                     logger.info("User lite:" + userLite);
+                     logger.info("ikasanPrincipalLite:" + ikasanPrincipalLite);
 
-                     ((UserSelectWindow)getParent()).setUser(userLite);
-                     ((UserSelectWindow)getParent()).close();
+                     ((GroupSelectWindow)getParent()).setUser(ikasanPrincipalLite);
+                     ((GroupSelectWindow)getParent()).close();
                  }
              }
          });
 
          logger.info("Loading users");
 
-         List<UserLite> users = this.userService.getUserLites();
+         List<IkasanPrincipalLite> principals = this.securityService.getAllPrincipalLites();
 
-         logger.info("Finished loading users. Number loaded: " + users.size());
+         logger.info("Finished loading users. Number loaded: " + principals.size());
 
          this.tableContainer.removeAllItems();
 
-         for(UserLite user: users)
+         for(IkasanPrincipalLite principal: principals)
          {
-             Item item = tableContainer.addItem(user);
-             this.usersTable.setColumnExpandRatio("Username", .1f);
-             this.usersTable.setColumnExpandRatio("Name", .2f);
+             if(principal.getType() != null && principal.getType().equals("application"))
+             {
+                 Item item = tableContainer.addItem(principal);
+                 this.usersTable.setColumnExpandRatio("Name", .1f);
+                 this.usersTable.setColumnExpandRatio("Description", .2f);
 
-             item.getItemProperty("Username").setValue(user.getUsername());
-             item.getItemProperty("Name").setValue(user.getFirstName() + " " + user.getSurname());
+                 item.getItemProperty("Name").setValue(principal.getName());
+                 item.getItemProperty("Description").setValue(principal.getDescription());
+             }
          }
 
          gridLayout.addComponent(this.usersTable);
