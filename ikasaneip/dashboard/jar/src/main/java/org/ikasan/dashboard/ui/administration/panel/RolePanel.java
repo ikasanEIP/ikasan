@@ -48,10 +48,7 @@ package org.ikasan.dashboard.ui.administration.panel;
  import com.vaadin.ui.Button.ClickEvent;
  import com.vaadin.ui.themes.ValoTheme;
  import org.apache.log4j.Logger;
- import org.ikasan.dashboard.ui.administration.window.PolicySelectWindow;
- import org.ikasan.dashboard.ui.administration.window.RoleSelectWindow;
- import org.ikasan.dashboard.ui.administration.window.UserSelectWindow;
- import org.ikasan.dashboard.ui.administration.window.UserWindow;
+ import org.ikasan.dashboard.ui.administration.window.*;
  import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
  import org.ikasan.dashboard.ui.framework.constants.SystemEventConstants;
  import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
@@ -61,7 +58,6 @@ package org.ikasan.dashboard.ui.administration.panel;
  import org.ikasan.security.service.UserService;
  import org.ikasan.security.service.authentication.IkasanAuthentication;
  import org.ikasan.systemevent.service.SystemEventService;
- import org.springframework.security.access.method.P;
  import org.tepi.filtertable.FilterTable;
  import org.vaadin.teemu.VaadinIcons;
 
@@ -401,7 +397,7 @@ package org.ikasan.dashboard.ui.administration.panel;
              @SuppressWarnings("unchecked")
              public void buttonClick(ClickEvent event) {
 
-                 final UserSelectWindow window = new UserSelectWindow(userService, securityService, systemEventService);
+                 final GroupSelectWindow window = new GroupSelectWindow(userService, securityService, systemEventService);
                  UI.getCurrent().addWindow(window);
 
                  window.addCloseListener(new Window.CloseListener()
@@ -409,13 +405,13 @@ package org.ikasan.dashboard.ui.administration.panel;
                      @Override
                      public void windowClose(Window.CloseEvent closeEvent)
                      {
-                         UserLite userLite = window.getUser();
+                         IkasanPrincipalLite ikasanPrincipalLite = window.getIkasanPrincipal();
 
-                         if(userLite != null)
+                         if(ikasanPrincipalLite != null)
                          {
                              role = securityService.getRoleById(role.getId());
 
-                             IkasanPrincipal principal = securityService.findPrincipalByName(userLite.getUsername());
+                             IkasanPrincipal principal = securityService.findPrincipalByName(ikasanPrincipalLite.getName());
                              principal.getRoles().add(role);
 
                              securityService.savePrincipal(principal);
@@ -423,11 +419,11 @@ package org.ikasan.dashboard.ui.administration.panel;
                              IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                                      .getAttribute(DashboardSessionValueConstants.USER);
 
-                             String action = "Role " + role.getName() + " added to user " + userLite.getUsername() + " by " + ikasanAuthentication.getName();
+                             String action = "Role " + role.getName() + " added to user " + ikasanPrincipalLite.getName() + " by " + ikasanAuthentication.getName();
 
                              systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, ikasanAuthentication.getName());
 
-                             addUser(userLite);
+                             addGroup(ikasanPrincipalLite);
                          }
                      }
                  });
@@ -551,6 +547,14 @@ package org.ikasan.dashboard.ui.administration.panel;
              userMap.put(user.getUsername(), user);
          }
 
+         List<IkasanPrincipalLite> principalLites = this.securityService.getAllPrincipalLites();
+         HashMap<String, IkasanPrincipalLite> principalMap = new HashMap<String, IkasanPrincipalLite>();
+
+         for(IkasanPrincipalLite principalLite: principalLites)
+         {
+             principalMap.put(principalLite.getName(), principalLite);
+         }
+
          for(IkasanPrincipal principal: principals)
          {
              if(principal.getType().equals("user"))
@@ -560,6 +564,19 @@ package org.ikasan.dashboard.ui.administration.panel;
                  if(user != null)
                  {
                     addUser(user);
+                 }
+             }
+         }
+
+         for(IkasanPrincipal principal: principals)
+         {
+             if(principal.getType().equals("application"))
+             {
+                 IkasanPrincipalLite ikasanPrincipalLite = principalMap.get(principal.getName());
+
+                 if(ikasanPrincipalLite != null)
+                 {
+                     addGroup(ikasanPrincipalLite);
                  }
              }
          }
@@ -666,6 +683,58 @@ package org.ikasan.dashboard.ui.administration.panel;
          item.getItemProperty("Lastname").setValue(user.getSurname());
          item.getItemProperty("Email").setValue(user.getEmail());
          item.getItemProperty("Department").setValue(user.getDepartment());
+         item.getItemProperty("").setValue(deleteButton);
+     }
+
+     private void addGroup(final IkasanPrincipalLite ikasanPrincipalLite)
+     {
+         Button deleteButton = new Button();
+         deleteButton.setIcon(VaadinIcons.TRASH);
+         deleteButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+         deleteButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
+
+         deleteButton.addClickListener(new Button.ClickListener()
+         {
+             public void buttonClick(ClickEvent event)
+             {
+                 groupsTable.removeItem(ikasanPrincipalLite);
+
+                 role = securityService.getRoleById(role.getId());
+
+                 IkasanPrincipal principal = securityService.findPrincipalByName(ikasanPrincipalLite.getName());
+                 principal.getRoles().remove(role);
+
+                 securityService.savePrincipal(principal);
+
+                 IkasanAuthentication ikasanAuthentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                         .getAttribute(DashboardSessionValueConstants.USER);
+
+                 String action = "Role " + role.getName() + " removed from group " + ikasanPrincipalLite.getName() + " by " + ikasanAuthentication.getName();
+
+                 systemEventService.logSystemEvent(SystemEventConstants.DASHBOARD_USER_ROLE_CHANGED_CONSTANTS, action, ikasanAuthentication.getName());
+             }
+         });
+
+         final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                 .getAttribute(DashboardSessionValueConstants.USER);
+
+         if(authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY) ||
+                 authentication.hasGrantedAuthority(SecurityConstants.ROLE_ADMINISTRATION_ADMIN)
+                 || authentication.hasGrantedAuthority(SecurityConstants.ROLE_ADMINISTRATION_WRITE))
+         {
+             deleteButton.setVisible(true);
+         }
+         else
+         {
+             deleteButton.setVisible(false);
+         }
+
+         Item item = this.groupsContainer.addItem(ikasanPrincipalLite);
+
+         item.getItemProperty("Name").setValue(ikasanPrincipalLite.getName());
+         item.getItemProperty("Type").setValue(ikasanPrincipalLite.getType());
+         item.getItemProperty("Description").setValue(ikasanPrincipalLite.getDescription());
          item.getItemProperty("").setValue(deleteButton);
      }
  }

@@ -74,6 +74,7 @@ public class FileProducerBuilderTest {
                 .setTempFilename("tempy.tmp")
                 .setUseTempFile(true)
                 .setWriteChecksum(true)
+                .setOverwrite(true)
                 .build();
 
         assertTrue("instance should be a fileProducer", fileProducer instanceof FileProducer);
@@ -89,6 +90,7 @@ public class FileProducerBuilderTest {
         assertEquals("lineEnding should be '\\n'", "\n", configuration.getLineEnding());
         assertEquals("tempFilename should be 'tempy.tmp'", "tempy.tmp", configuration.getTempFilename());
         assertTrue("useTempFile should be 'true'", configuration.isUseTempFile());
+        assertTrue("overwrite should be 'true'", configuration.isOverwrite());
         assertTrue("writeChecksum should be 'true'", configuration.isWriteChecksum());
     }
 

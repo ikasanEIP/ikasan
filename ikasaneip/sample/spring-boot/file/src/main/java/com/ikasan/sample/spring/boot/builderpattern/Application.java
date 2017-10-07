@@ -38,17 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.spring.boot.builderpattern;
+package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.*;
-import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Sample local file consumer and local file producer Integration Module
  * @author Ikasan Development Team
  */
+@SpringBootApplication
+@ComponentScan({"org.ikasan.*", "com.ikasan.*"})
 public class Application
 {
     public static void main(String[] args) throws Exception
@@ -59,22 +62,31 @@ public class Application
     public IkasanApplication boot(String[] args)
     {
         // get an ikasanApplication instance
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(Application.class, args);
 
         // get local integration module componentFactory instance
         ComponentFactory componentFactory = ikasanApplication.getBean(ComponentFactory.class);
 
         // get the builders
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        ComponentBuilder componentBuilder = builderFactory.getComponentBuilder();
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
-                .withDescription("Sample file source flow")
+                .withDescription("Sample file to JMS flow")
                 .consumer("File Consumer", componentFactory.getFileConsumer())
+                .converter("File Converter", componentFactory.getSourceFileConverter())
+                .producer("JMS Producer", componentFactory.getJmsProducer()).build();
+
+        Flow targetFlow = moduleBuilder.getFlowBuilder("targetFileFlow")
+                .withDescription("Sample JMS to file flow")
+                .consumer("JMS Consumer", componentFactory.getJmsConsumer())
                 .producer("File Producer", componentFactory.getFileProducer()).build();
 
-        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.").addFlow(sourceFlow).build();
+        Module module = moduleBuilder.withDescription("Sample file consumer / producer module.")
+                .addFlow(sourceFlow)
+                .addFlow(targetFlow)
+                .build();
+
         ikasanApplication.run(module);
         return ikasanApplication;
     }

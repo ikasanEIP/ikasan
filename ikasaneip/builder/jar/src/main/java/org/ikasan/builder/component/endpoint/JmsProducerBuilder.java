@@ -41,9 +41,11 @@
 package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.component.Builder;
+import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 
+import javax.jms.ConnectionFactory;
 import java.util.Map;
 
 /**
@@ -66,6 +68,8 @@ public interface JmsProducerBuilder extends Builder<Producer> {
     JmsProducerBuilder setDestinationJndiPropertySecurityPrincipal(String securityPrincipal);
 
     JmsProducerBuilder setDestinationJndiProperties(Map<String, String> destinationJndiProperties);
+
+    JmsProducerBuilder setConnectionFactory(ConnectionFactory connectionFactory);
 
     JmsProducerBuilder setConnectionFactoryJndiProperties(Map<String, String> connectionFactoryJndiProperties);
 
@@ -114,5 +118,7 @@ public interface JmsProducerBuilder extends Builder<Producer> {
     JmsProducerBuilder setSessionAcknowledgeModeName(String sessionAcknowledgeModeName);
 
     JmsProducerBuilder setTimeToLive(Long timeToLive);
+
+    JmsProducerBuilder setPostProcessor(PostProcessor<?,?> postProcessor);
 }
 

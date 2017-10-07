@@ -104,6 +104,13 @@ public class FileProducerBuilderImpl implements FileProducerBuilder
     }
 
     @Override
+    public FileProducerBuilder setOverwrite(boolean overwrite)
+    {
+        this.fileProducer.getConfiguration().setOverwrite(overwrite);
+        return this;
+    }
+
+    @Override
     public FileProducerBuilder setLineEnding(String lineEnding)
     {
         this.fileProducer.getConfiguration().setLineEnding(lineEnding);

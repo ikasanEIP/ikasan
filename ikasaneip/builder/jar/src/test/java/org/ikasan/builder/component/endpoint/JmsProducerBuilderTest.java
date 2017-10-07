@@ -40,15 +40,18 @@
  */
 package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.builder.component.endpoint.JmsProducerBuilder;
-import org.ikasan.builder.component.endpoint.JmsProducerBuilderImpl;
+import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.springframework.jms.core.IkasanJmsTemplate;
 
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
 import static org.junit.Assert.assertEquals;
@@ -61,13 +64,31 @@ import static org.junit.Assert.assertTrue;
  */
 public class JmsProducerBuilderTest {
 
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery() {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
+    final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
+    final IkasanJmsTemplate mockIkasanJmsTemplate = mockery.mock(IkasanJmsTemplate.class, "mockIkasanJmsTemplate");
+    final PostProcessor postProcessor = mockery.mock(PostProcessor.class, "mockPostProcessor");
+
     @Test
     public void test_jmsproducerbuilder_build() {
 
-        JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
+        mockery.checking(new Expectations()
+        {{
+            oneOf(mockIkasanJmsTemplate).setPostProcessor(postProcessor);
+        }});
+
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(mockIkasanJmsTemplate);
 
         Producer jmsProducer = jmsProducerBuilder
+                .setConfiguredResourceId("crid")
                 .setDestinationJndiName("jms.queue.test")
                 .setConnectionFactoryName("TestConnectionFactory")
                 .setConnectionFactoryUsername("TestUsername")
@@ -85,7 +106,7 @@ public class JmsProducerBuilderTest {
                 .setPubSubNoLocal(true)
                 .setReceiveTimeout(2000l)
                 .setTimeToLive(2000l)
-                .build();
+                .setPostProcessor(postProcessor).build();
 
         assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
         SpringMessageProducerConfiguration configuration = (
@@ -127,15 +148,17 @@ public class JmsProducerBuilderTest {
         assertEquals("TimeToLive should be 'true'",2000l,
                 configuration.getTimeToLive().longValue());
 
+        this.mockery.assertIsSatisfied();
     }
 
 
     @Test
-    public void test_jmsproducerbuilder_build_verify_properties() {
-        JmsTemplateProducer jmsTemplateProducer = new JmsTemplateProducer(new IkasanJmsTemplate());
-        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(jmsTemplateProducer);
+    public void test_jmsproducerbuilder_build_verify_properties()
+    {
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
 
         Producer jmsProducer = jmsProducerBuilder
+                .setConfiguredResourceId("crid")
                 .setDestinationJndiPropertyFactoryInitial("testinitialFactory")
                 .setDestinationJndiPropertyUrlPkgPrefixes("testurlpkg")
                 .setDestinationJndiPropertyProviderUrl("testiurl")
@@ -182,6 +205,19 @@ public class JmsProducerBuilderTest {
                 "testprinciple",
                 configuration.getDestinationJndiProperties().get(Context.SECURITY_PRINCIPAL));
 
+    }
+
+    @Test
+    public void test_jmsproducerbuilder_build_with_cf()
+    {
+        JmsProducerBuilder jmsProducerBuilder = new JmsProducerBuilderImpl(new IkasanJmsTemplate());
+
+        Producer jmsProducer = jmsProducerBuilder
+                .setConfiguredResourceId("crid")
+                .setConnectionFactory(connectionFactory)
+                .build();
+
+        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
     }
 
 }

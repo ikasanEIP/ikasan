@@ -82,7 +82,8 @@ public class IkasanApplicationFactory
      * @param args
      * @return
      */
-    public static IkasanApplication getIkasanApplication(Class<?> clazz, String[] args){
+    public static IkasanApplication getIkasanApplication(Class<?> clazz, String[] args)
+    {
         return DefaultSpringBootIkasanApplication.createDefaultSpringBootIkasanApplication(clazz,args);
     }
 
@@ -92,7 +93,8 @@ public class IkasanApplicationFactory
      * @param clazz
      * @return
      */
-    public static IkasanApplication getIkasanApplication(Class<?> clazz){
+    public static IkasanApplication getIkasanApplication(Class<?> clazz)
+    {
         return DefaultSpringBootIkasanApplication.createDefaultSpringBootIkasanApplication(clazz,new String[0]);
     }
 }
