@@ -93,8 +93,13 @@ public class AopProxyProviderSpringImpl implements AopProxyProvider, Application
                     }
                 }
             }
-
-            return (T)factory.getProxy();
+            if(factory.getAdvisors().length>0)
+            {
+                return (T) factory.getProxy();
+            }else
+            {
+                return component;
+            }
         }
         return component;
     }
