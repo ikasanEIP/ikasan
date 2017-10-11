@@ -179,6 +179,13 @@
 		</beans:property>
 	</beans:bean>
 
+	<beans:bean id="errorReportingServiceDaoTransactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory">
+			<beans:ref bean="errorReportingSessionFactory" />
+		</beans:property>
+	</beans:bean>
+
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
 			expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..)) ||
@@ -213,6 +220,9 @@
 		<aop:pointcut id="wiretapDaoMethods"
 					  expression="execution(* org.ikasan.wiretap.dao.WiretapDao.save(..))" />
 
+		<aop:pointcut id="errorReportingServiceDaoMethods"
+					  expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.save(..))" />
+
 
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
@@ -228,7 +238,17 @@
 			pointcut-ref="triggerDaoMethods" />
 		<aop:advisor id="wiretapDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="wiretapDaoMethods" />
+
+		<aop:advisor id="errorReportingServiceDaoPointcutAdvice" advice-ref="errorReportingServiceDao-TransactionAdvice"
+			pointcut-ref="errorReportingServiceDaoMethods" />
 	</aop:config>
+
+	<tx:advice id="errorReportingServiceDao-TransactionAdvice"
+			   transaction-manager="errorReportingServiceDaoTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
 
 	<tx:advice id="wiretap-required-TransactionAdvice"
 		transaction-manager="wiretapServiceTransactionManager">
