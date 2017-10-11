@@ -280,9 +280,19 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 		return (List<ReplayEvent>)this.getHibernateTemplate().findByCriteria(criteria, 0, 2000);
 	}
 
+	@Override
+	public ReplayEvent getReplayEventById(Long id)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(HibernateReplayEvent.class);
+
+		criteria.add(Restrictions.eq("id", id));
+
+		return (ReplayEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+
 	/* (non-Javadoc)
-	 * @see org.ikasan.spec.replay.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayAudit)
-	 */
+         * @see org.ikasan.spec.replay.ReplayDao#saveOrUpdate(org.ikasan.replay.window.ReplayAudit)
+         */
 	@Override
 	public void saveOrUpdateAudit(ReplayAudit replayAudit)
 	{

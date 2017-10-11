@@ -12,6 +12,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.solr.SolrDaoBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.support.DataAccessUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -91,7 +92,7 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
     @Override
     public List<ReplayEvent> getReplayEvents(String moduleName, String flowName, Date startDate, Date endDate)
     {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -139,16 +140,10 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
 
             results = rsp.getBeans(SolrReplayEvent.class);
         }
-        catch (SolrServerException e)
+        catch (Exception e)
         {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Exception performing solr query: " + query, e);
         }
-
 
         return new ArrayList<ReplayEvent>(results);
     }
@@ -163,5 +158,37 @@ public class SolrReplayDao extends SolrDaoBase implements ReplayDao
     public List<ReplayEvent> getHarvestableRecords(int housekeepingBatchSize)
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ReplayEvent getReplayEventById(Long id)
+    {
+        String queryString = super.buildIdQuery(id, REPLAY);
+
+        logger.info("queryString: " + queryString);
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery(queryString);
+        query.setRows(100);
+        query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
+        query.setFields(ID, MODULE_NAME, FLOW_NAME, COMPONENT_NAME, CREATED_DATE_TIME, EVENT, PAYLOAD_CONTENT, PAYLOAD_CONTENT_RAW);
+
+        logger.info("query: " + query.toString());
+
+        List<SolrReplayEvent> results = null;
+
+        try
+        {
+            QueryResponse rsp = this.solrClient.query(query);
+
+            results = rsp.getBeans(SolrReplayEvent.class);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Exception performing solr query: " + query, e);
+        }
+
+
+        return (ReplayEvent)DataAccessUtils.uniqueResult(results);
     }
 }

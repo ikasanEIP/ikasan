@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -19,7 +20,7 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
     private static Logger logger = LoggerFactory.getLogger(SolrGeneralSearchDaoImpl.class);
 
     @Override
-    public IkasanSolrDocumentSearchResults search(String searchString, String queryFilter, long startTime, long endTime, int resultSize)
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize)
     {
         IkasanSolrDocumentSearchResults results = null;
 
@@ -40,6 +41,8 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
         query.setSort(CREATED_DATE_TIME, SolrQuery.ORDER.desc);
         query.set("defType", "dismax");
         query.setFilterQueries(queryBuffer.toString());
+
+        String queryFilter = super.buildQuery(moduleName, flowNames, null, null, null, null, null, null);
 
         if(queryFilter != null && !queryFilter.isEmpty())
         {

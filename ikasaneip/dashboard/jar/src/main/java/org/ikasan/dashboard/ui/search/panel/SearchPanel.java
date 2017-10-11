@@ -335,9 +335,8 @@ public class SearchPanel extends Panel implements View
             moduleNames.add("no module name");
         }
 
-        String queryFilter = this.solrSearchService.buildQuery(moduleNames, flowNames, null, null, null, null, null, null);
-
-        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(searchString, queryFilter,
+        
+        IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchString,
                 this.fromDate.getValue().getTime(), this.toDate.getValue().getTime(),
                 platformConfigurationService.getSearchResultSetSize());
 

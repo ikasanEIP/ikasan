@@ -84,7 +84,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param type
      * @return
      */
-    public String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
+    protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, String type)
     {
         StringBuffer moduleNamesBuffer = new StringBuffer();
@@ -148,20 +148,16 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
         if(eventId != null && !eventId.trim().isEmpty())
         {
-            delim = "";
-
             eventIdBuffer.append(EVENT + COLON);
 
-            eventIdBuffer.append(delim).append("\"").append(eventId).append("\" ");
+            eventIdBuffer.append("\"").append(eventId).append("\" ");
         }
 
         if(type != null && !type.trim().isEmpty())
         {
-            delim = "";
-
             typeBuffer.append(TYPE + COLON);
 
-            typeBuffer.append(delim).append("\"").append(type).append("\" ");
+            typeBuffer.append("\"").append(type).append("\" ");
         }
 
         if(fromDate != null && untilDate != null)
@@ -249,6 +245,52 @@ public abstract class SolrDaoBase implements SolrInitialisationService
 
             bufferFinalQuery.append(dateBuffer);
         }
+
+        return bufferFinalQuery.toString();
+    }
+
+    /**
+     * Query solr index by id for a given type
+     * @param id
+     * @param type
+     * @return
+     */
+    protected String buildIdQuery(Long id, String type)
+    {
+        StringBuffer idBuffer = new StringBuffer();
+        StringBuffer flowNamesBuffer = new StringBuffer();
+        StringBuffer componentNamesBuffer = new StringBuffer();
+        StringBuffer dateBuffer = new StringBuffer();
+        StringBuffer payloadBuffer = new StringBuffer();
+        StringBuffer eventIdBuffer = new StringBuffer();
+        StringBuffer typeBuffer = new StringBuffer();
+
+
+       idBuffer.append(ID + COLON + id);
+
+        if(type != null && !type.trim().isEmpty())
+        {
+            typeBuffer.append(TYPE + COLON);
+
+            typeBuffer.append("\"").append(type).append("\" ");
+        }
+
+
+        StringBuffer bufferFinalQuery = new StringBuffer();
+
+        boolean hasPrevious = false;
+
+        if(typeBuffer.length() > 0)
+        {
+            if(hasPrevious)
+            {
+                bufferFinalQuery.append(AND);
+            }
+
+            bufferFinalQuery.append(typeBuffer);
+            hasPrevious = true;
+        }
+
 
         return bufferFinalQuery.toString();
     }

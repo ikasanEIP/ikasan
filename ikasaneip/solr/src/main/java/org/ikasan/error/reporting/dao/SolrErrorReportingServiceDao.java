@@ -31,7 +31,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
     {
         String queryString = ERROR_URI + COLON + "\"" + uri + "\"";
 
-        logger.info("queryString: " + queryString);
+        logger.debug("queryString: " + queryString);
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString);
@@ -107,7 +107,7 @@ public class SolrErrorReportingServiceDao extends SolrDaoBase implements ErrorRe
 
         try
         {
-            logger.info("Adding document: " + document);
+            logger.debug("Adding document: " + document);
             solrClient.add(document);
             solrClient.commit();
         }

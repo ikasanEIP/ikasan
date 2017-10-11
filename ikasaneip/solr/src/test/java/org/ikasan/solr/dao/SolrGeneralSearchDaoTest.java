@@ -108,7 +108,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             dao = new SolrGeneralSearchDaoImpl();
             dao.setSolrClient(server);
 
-            assertEquals(3, dao.search("test", "", 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
+            assertEquals(3, dao.search(null, null, "test"//, 0, System.currentTimeMillis() + 100000000l, 100).getResultList().size());
 
         }
     }

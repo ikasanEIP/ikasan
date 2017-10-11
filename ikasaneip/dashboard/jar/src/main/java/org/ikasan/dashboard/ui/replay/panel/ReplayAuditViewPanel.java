@@ -236,15 +236,15 @@ public class ReplayAuditViewPanel extends Panel
 		
 		List<ReplayAuditEvent> auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId());
 		
-		for(final ReplayAuditEvent replayEvent: auditEvents)
+		for(final ReplayAuditEvent replayAuditEvent: auditEvents)
     	{
-    		Date date = new Date(replayEvent.getTimestamp());
+    		Date date = new Date(replayAuditEvent.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
-    	    Item item = tableContainer.addItem(replayEvent);	
+    	    Item item = tableContainer.addItem(replayAuditEvent);
     	    
-    	    if(replayEvent.isSuccess())
+    	    if(replayAuditEvent.isSuccess())
     	    {
     	    	item.getItemProperty("Success").setValue(new Label(VaadinIcons.CHECK.getHtml(), ContentMode.HTML));
     	    }
@@ -252,11 +252,13 @@ public class ReplayAuditViewPanel extends Panel
     	    {
     	    	item.getItemProperty("Success").setValue(new Label(VaadinIcons.BAN.getHtml(), ContentMode.HTML));
     	    }
-    	    
-    	    item.getItemProperty("Module Name").setValue(replayEvent.getReplayEvent().getModuleName());
-			item.getItemProperty("Flow Name").setValue(replayEvent.getReplayEvent().getFlowName());
-			item.getItemProperty("Event Id / Payload Id").setValue(replayEvent.getReplayEvent().getEventId());
-			item.getItemProperty("Message").setValue(replayEvent.getResultMessage());
+
+    	    // todo sort out handle to replay event
+			ReplayEvent replayEvent = this.replayManagementService.getReplayEventById(replayAuditEvent.getId().getReplayEventId());
+    	    item.getItemProperty("Module Name").setValue(replayEvent.getModuleName());
+			item.getItemProperty("Flow Name").setValue(replayEvent.getFlowName());
+			item.getItemProperty("Event Id / Payload Id").setValue(replayEvent.getEventId());
+			item.getItemProperty("Message").setValue(replayAuditEvent.getResultMessage());
 			item.getItemProperty("Timestamp").setValue(timestamp);
 			
 			Button popupButton = new Button();

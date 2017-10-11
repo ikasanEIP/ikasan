@@ -1175,8 +1175,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	    		+ "/"
 	    		+ flow.getName();
 
+		logger.info("User " + authentication.getName() + " attempting to " + action + " flow " + flow + " url: " + url);
 	    WebTarget webTarget = client.target(url);
 	    Response response = webTarget.request().put(Entity.entity(action, MediaType.APPLICATION_OCTET_STREAM));
+
+		logger.info("Response: " + response);
 
 	    if(response.getStatus()  == 200)
 	    {
