@@ -46,14 +46,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.Request;
+import com.github.tomakehurst.wiremock.http.RequestListener;
+import com.github.tomakehurst.wiremock.http.Response;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.ikasan.replay.dao.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
@@ -66,11 +65,15 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 /**
  * 
@@ -85,7 +88,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/substitute-components.xml",
         "/mock-components.xml"
 })
-public class ReplayServiceTest extends JerseyTest
+public class ReplayServiceTest
 {
 	/**
      * Mockery for mocking concrete classes
@@ -99,40 +102,45 @@ public class ReplayServiceTest extends JerseyTest
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	
 	@Resource Serialiser<byte[], byte[]> serialiser;
-	
+
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
+
+    private String baseUri;
+
 	@Before
 	public void addReplayEvents()
 	{
-		for(int i=0; i<100; i++)
+
+        baseUri = "http://localhost:"+wireMockRule.port()+"/";
+
+        for(int i=0; i<100; i++)
 		{
 			ReplayEvent replayEvent = new ReplayEvent("errorUri-" + i, "this is a test event".getBytes(), "moduleName", "flowName", 0);
 			
 	        
 			this.replayDao.saveOrUpdate(replayEvent);
 		}
+
+        stubFor(put(urlEqualTo("/moduleName/rest/replay/eventReplay/moduleName/flowName"))
+                .withHeader(HttpHeaders.USER_AGENT, equalTo("moduleName"))
+
+				.willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("Event resubmitted!")));
+		wireMockRule.addMockServiceRequestListener(new RequestListener() {
+			@Override
+			public void requestReceived(Request request, Response response) {
+				System.out.print(request);
+				System.out.print(response);
+			}
+		});
 	}
-	
-	@Path("{moduleName}/rest/replay/eventReplay/{moduleName}/{flowName}/")
-    public static class ReplayWSResource 
-    {
-        @PUT
-        public Response replay(@PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName, byte[] data) 
-        {        	
-        	return Response.ok("Event resubmitted!").build();
-        }
-    }
 
-    @Override
-    protected Application configure() 
-    {
-        return new ResourceConfig(ReplayWSResource.class).property("contextConfigLocation", "classpath:replay-conf.xml")
-        		.property("contextConfigLocation", "classpath:substitute-components.xml")
-        		.property("contextConfigLocation", "classpath:mock-components.xml")
-        		.property("contextConfigLocation", "classpath:hsqldb-config.xml");
-    }
 
-    @Test
-    @DirtiesContext
+	@Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void test_replay_success() throws MalformedURLException 
     {    
     	// expectations
@@ -163,7 +171,7 @@ public class ReplayServiceTest extends JerseyTest
     	List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
     			(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
-    	this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
+    	this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
     	
     	
     	List<ReplayAudit> replayAudits = this.replayDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
@@ -256,7 +264,7 @@ public class ReplayServiceTest extends JerseyTest
     }
 
 	@Test
-	@DirtiesContext
+	@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 	public void test_delete_success() throws MalformedURLException
 	{
 		// expectations
@@ -287,10 +295,10 @@ public class ReplayServiceTest extends JerseyTest
 		List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
 				(moduleNames, flowNames, "", new Date(0), new Date(System.currentTimeMillis() + 1000000));
 
-		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
-		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
-		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
-		this.replayService.replay(super.getBaseUri().toURL().toString(), replayEvents, "user", "password", "user", "this is a test!");
+		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
+		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
+		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
+		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!");
 
 		List<ReplayAudit> replayAudits = this.replayDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 

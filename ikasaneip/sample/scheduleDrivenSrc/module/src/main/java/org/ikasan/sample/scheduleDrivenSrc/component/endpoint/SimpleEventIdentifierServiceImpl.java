@@ -40,7 +40,6 @@
  */
 package org.ikasan.sample.scheduleDrivenSrc.component.endpoint;
 
-import org.apache.log4j.Logger;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 
 
@@ -52,11 +51,6 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
  */
 public class SimpleEventIdentifierServiceImpl<T> implements ManagedEventIdentifierService<String, T>
 {
-    /**
-     * class logger
-     */
-    private static Logger logger = Logger.getLogger(SimpleEventIdentifierServiceImpl.class);
-
     /*
      * (non-Javadoc)
      * @see org.ikasan.spec.event.EventLifeIdentifierService#getLifeIdentifier(java.lang.Object)

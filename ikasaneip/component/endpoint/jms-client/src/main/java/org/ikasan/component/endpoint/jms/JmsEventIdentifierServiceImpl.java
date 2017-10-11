@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
@@ -58,7 +58,7 @@ import javax.jms.MessageNotWriteableException;
 public class JmsEventIdentifierServiceImpl implements ManagedRelatedEventIdentifierService<String, Message>
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(JmsEventIdentifierServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(JmsEventIdentifierServiceImpl.class);
 
     /*
      * (non-Javadoc)

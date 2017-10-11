@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
@@ -58,7 +58,7 @@ import java.util.List;
 public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<MultiRecipientRouter>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(MultiRecipientRouterFlowElementInvoker.class);
+    private static Logger logger = LoggerFactory.getLogger(MultiRecipientRouterFlowElementInvoker.class);
 
     /** replication factory - requirement for flows where event can undergo a number of sequential routes */
     private ReplicationFactory<FlowEvent<?,?>> replicationFactory;

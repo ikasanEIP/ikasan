@@ -57,6 +57,8 @@ public class SampleConsumer implements
     /** Ikasan event factory for instantiating the Ikasan flow event based on the tech endpoint payload */
     FlowEventFactory flowEventFactory;
 
+    volatile boolean isRunning = false;
+
     /**
      * Set the Ikasan event listener. This is the consumer's handle to pass the event back up to the ikasan flow.
      * @param eventListener
@@ -89,6 +91,7 @@ public class SampleConsumer implements
     @Override
     public void start()
     {
+        isRunning = true;
     }
 
     /**
@@ -98,7 +101,7 @@ public class SampleConsumer implements
     @Override
     public boolean isRunning()
     {
-        return false;
+        return isRunning;
     }
 
     /**
@@ -107,6 +110,7 @@ public class SampleConsumer implements
     @Override
     public void stop()
     {
+        isRunning = false;
     }
 
     /**

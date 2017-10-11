@@ -40,7 +40,7 @@
  */
 package org.ikasan.monitor.notifier;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Notifier;
 import org.joda.time.DateTime;
@@ -59,7 +59,7 @@ import java.util.*;
 public class EmailNotifier implements Notifier<String>, ConfiguredResource<EmailNotifierConfiguration>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(EmailNotifier.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailNotifier.class);
 
     /** regular expression for splitting grouped email addresses in a single String separated by comma, semi-colon, or space */
     private static String EMAIL_ADDRESS_SPLIT_REGEXP = ",| |;";

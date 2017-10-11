@@ -40,19 +40,11 @@
  */
 package org.ikasan.component.endpoint.util.producer;
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Test class for LogProducer.
- * 
+ *
  * @author Ikasan Development Team
  */
 public class LogProducerTest
@@ -73,80 +65,5 @@ public class LogProducerTest
     public void test_failed_constructor_null_placeholder()
     {
         new LogProducer<String>("String me up", null);
-    }
-
-    /**
-     * Test logProducer not regexp
-     */
-    @Test
-    public void test_no_regExp()
-    {
-        final TestAppender appender = new TestAppender();
-        final Logger logger = Logger.getRootLogger();
-        logger.addAppender(appender);
-
-        try
-        {
-            Producer producer = new LogProducer<String>();
-            producer.invoke("actual payload content");
-        }
-        finally
-        {
-            logger.removeAppender(appender);
-        }
-
-        final List<LoggingEvent> log = appender.getLog();
-        final LoggingEvent firstLogEntry = log.get(0);
-        Assert.assertEquals((String) firstLogEntry.getMessage(), "actual payload content");
-    }
-
-    /**
-     * Test logProducer not regexp
-     */
-    @Test
-    public void test_regExp()
-    {
-        final TestAppender appender = new TestAppender();
-        final Logger logger = Logger.getRootLogger();
-        logger.addAppender(appender);
-
-        try
-        {
-            Producer producer = new LogProducer<String>("Sample text to log with [MY_PAYLOAD] before this.", "MY_PAYLOAD");
-            producer.invoke("actual payload content");
-        }
-        finally
-        {
-            logger.removeAppender(appender);
-        }
-
-        final List<LoggingEvent> log = appender.getLog();
-        final LoggingEvent firstLogEntry = log.get(0);
-        Assert.assertEquals((String) firstLogEntry.getMessage(), "Sample text to log with [actual payload content] before this.");
-    }
-
-    /**
-     * Class for recording the logging statements
-     */
-    class TestAppender extends AppenderSkeleton {
-        private final List<LoggingEvent> log = new ArrayList<LoggingEvent>();
-
-        @Override
-        public boolean requiresLayout() {
-            return false;
-        }
-
-        @Override
-        protected void append(final LoggingEvent loggingEvent) {
-            log.add(loggingEvent);
-        }
-
-        @Override
-        public void close() {
-        }
-
-        public List<LoggingEvent> getLog() {
-            return new ArrayList<LoggingEvent>(log);
-        }
     }
 }

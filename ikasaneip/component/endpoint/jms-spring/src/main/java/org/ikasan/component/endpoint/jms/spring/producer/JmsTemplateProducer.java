@@ -119,10 +119,18 @@ public class JmsTemplateProducer<T>
         this.configuration = configuration;
     }
 
-    @Override
-    public void startManagedResource()
+    /**
+     * If CF not already provided then look it up from JNDI
+     */
+    protected void establishConnectionFactory()
     {
-        System.out.println("Applying configuration: " + configuration);
+        // if we already have a CF instance just return
+        if(this.jmsTemplate.getConnectionFactory() != null)
+        {
+            return;
+        }
+
+        // get and set CF
         try
         {
             // get connection factory
@@ -133,7 +141,7 @@ public class JmsTemplateProducer<T>
             }
             else
             {
-                ConnectionFactory connectionFactory = JndiUtils.getAuthenicatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
+                ConnectionFactory connectionFactory = JndiUtils.getAuthenticatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
                 this.jmsTemplate.setConnectionFactory(connectionFactory);
             }
         }
@@ -141,6 +149,12 @@ public class JmsTemplateProducer<T>
         {
             throw new RuntimeException("Check the configuration ConnectionFactoryName [" + configuration.getConnectionFactoryName() + "]", e);
         }
+
+    }
+    @Override
+    public void startManagedResource()
+    {
+        establishConnectionFactory();
 
         if (configuration.getDestinationJndiProperties() == null || configuration.getDestinationJndiProperties().isEmpty())
         {

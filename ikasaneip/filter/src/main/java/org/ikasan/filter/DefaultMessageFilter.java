@@ -40,7 +40,7 @@
  */
 package org.ikasan.filter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
@@ -56,7 +56,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<FilterConfiguration>
 {
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(DefaultMessageFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultMessageFilter.class);
 
     /** The {@link FilterRule} evaluating the incoming message */
     private final FilterRule<T> filterRule;

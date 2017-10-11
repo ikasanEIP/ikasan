@@ -42,7 +42,7 @@ package org.ikasan.component.endpoint.mongo;
 
 import com.mongodb.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.bson.BSON;
 import org.bson.Transformer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -59,7 +59,7 @@ import java.util.*;
 public abstract class MongoComponent implements ManagedResource, ConfiguredResource<MongoClientConfiguration>
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(MongoComponent.class);
+    private static Logger logger = LoggerFactory.getLogger(MongoComponent.class);
 
     /** configured resource id */
     private String configuredResourceId;

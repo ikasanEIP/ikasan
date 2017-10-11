@@ -40,27 +40,32 @@
  */
 package org.ikasan.module.service;
 
-import org.apache.log4j.Logger;
-import org.ikasan.security.model.Authority;
-import org.ikasan.security.service.UserService;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.scheduler.SchedulerFactory;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,10 +77,11 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public class ModuleInitialisationServiceImpl implements ModuleInitialisationService, ApplicationContextAware,
-        InitializingBean, DisposableBean
+        InitializingBean,
+        DisposableBean
 {
     /** logger instance */
-    private final static Logger logger = Logger.getLogger(ModuleInitialisationServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ModuleInitialisationServiceImpl.class);
 
     /** Runtime container for holding modules */
     private ModuleContainer moduleContainer;
@@ -91,8 +97,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private ApplicationContext platformContext;
 
-    /** UserService provides access to users and authorities */
-    private UserService userService;
+    /** SecurityService provides access to users and authorities */
+    private SecurityService securityService;
 
     /** TopologyService provides access to module metadata tables */
     private TopologyService topologyService;
@@ -104,10 +110,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * Constructor
      * @param moduleContainer
      * @param moduleActivator
-     * @param userService
+     * @param securityService
      */
     public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator,
-                                           UserService userService, TopologyService topologyService)
+                                           SecurityService securityService, TopologyService topologyService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -122,16 +128,16 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
         }
 
-        this.userService = userService;
-        if(userService == null)
+        this.securityService = securityService;
+        if(securityService == null)
         {
-            throw new IllegalArgumentException("userService cannot be 'null'");
+            throw new IllegalArgumentException("securityService cannot be 'null'");
         }
 
         this.topologyService = topologyService;
         if(topologyService == null)
         {
-            throw new IllegalArgumentException("userService cannot be 'null'");
+            throw new IllegalArgumentException("topologyService cannot be 'null'");
         }
         innerContexts = new LinkedList<>();
     }
@@ -152,6 +158,31 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         this.loaderConfiguration = loaderConfiguration;
     }
 
+
+    public void register(Module module)
+    {
+//        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader((BeanDefinitionRegistry)platformContext);
+//        reader.loadBeanDefinitions(new FileSystemResource(xmlConfigFileLocation));
+//
+//        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) this.platformContext;
+//        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(Module.class);
+//        builder.addPropertyValue("flows", module.getFlows());
+//        builder.addPropertyValue("description", module.getDescription());
+//        builder.addPropertyValue("name", module.getName());
+//        registry.registerBeanDefinition(module.getName(), builder.getBeanDefinition());
+
+        initialise(module);
+    }
+
+    public void register(List<Module> modules)
+    {
+        for (Module<Flow> module : modules)
+        {
+            initialise(module);
+        }
+
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -160,70 +191,92 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     @SuppressWarnings("unchecked")
     public void afterPropertiesSet() throws Exception
     {
-        // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
-        ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
-        Map<String,List> loaderResources = loaderContext.getBeansOfType(List.class);
+        try {
+            // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
+            ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
+            Map<String, List> loaderResources = loaderContext.getBeansOfType(List.class);
 
-        for(List<String> loaderResource : loaderResources.values())
-        {
-            String[] resourcesArray = new String[loaderResource.size()];
-            loaderResource.toArray(resourcesArray);
+            for (List<String> loaderResource : loaderResources.values()) {
+                String[] resourcesArray = new String[loaderResource.size()];
+                loaderResource.toArray(resourcesArray);
 
-            AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
-            innerContexts.add(applicationContext);
+                AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
+                innerContexts.add(applicationContext);
 
-            for(String beanName:applicationContext.getBeanDefinitionNames())
-            {
-                try
-                {
+                for (String beanName : applicationContext.getBeanDefinitionNames()) {
+                    try {
 
-                    if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract())
-                    {
-                        logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                        if (!applicationContext.getBeanFactory().getBeanDefinition(beanName).isAbstract()) {
+                            logger.info("Loader Spring context contains bean name [" + beanName + "] of type [" + applicationContext.getBean(beanName).getClass().getName() + "]");
+                        }
+                    } catch (RuntimeException e) {
+                        logger.warn("Failed to access " + beanName, e);
                     }
                 }
-                catch(RuntimeException e)
-                {
-                    logger.warn("Failed to access " + beanName, e);
-                }
+
+                loadModuleFromContext(applicationContext);
+
             }
 
-            // check for moduleActivator overrides and use the first one found
-            try
+        } catch (BeanDefinitionStoreException e){
+            if(e.getMessage().contains("IOException parsing XML document from class path resource [loader-conf.xml]"))
             {
-                Map<String,ModuleActivator> activators = applicationContext.getBeansOfType(ModuleActivator.class);
-                if(activators != null && activators.size() > 0)
-                {
-                    for(ModuleActivator activator : activators.values())
-                    {
-                        this.moduleActivator = activator;
-                        logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
-                        break;  // just use the first one we find
-                    }
-                }
-            }
-            catch(NoSuchBeanDefinitionException e)
-            {
-                // nothing of issue here, move on
-            }
-
-            // load all modules in this context
-            // TODO - should multiple modules share the same application context ?
-            Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-            for (Module<Flow> module : moduleBeans.values())
-            {
-                try {
-                    this.initialiseModuleSecurity(module);
-                    // intialise config into db
-                    this.initialiseModuleMetaData(module);
-                    this.moduleContainer.add(module);
-                    this.moduleActivator.activate(module);
-                } catch (RuntimeException re){
-                    logger.error("There was a problem initialising module", re);
-                }
+                logger.info("Default [" + loaderConfiguration + "] not found, loading from main context.");
+                loadModuleFromContext(platformContext);
             }
         }
+
     }
+
+
+    private void loadModuleFromContext(ApplicationContext context){
+
+        // check for moduleActivator overrides and use the first one found
+        try {
+            Map<String, ModuleActivator> activators = context.getBeansOfType(ModuleActivator.class);
+            if (activators != null && activators.size() > 0) {
+                for (ModuleActivator activator : activators.values()) {
+                    this.moduleActivator = activator;
+                    logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
+                    break;  // just use the first one we find
+                }
+            }
+        } catch (NoSuchBeanDefinitionException e) {
+            // nothing of issue here, move on
+        }
+
+        // load all modules in this context
+        // TODO - should multiple modules share the same application context ?
+        Map<String, Module> moduleBeans = context.getBeansOfType(Module.class);
+        if (!moduleBeans.isEmpty())
+        {
+            initialise(moduleBeans);
+        }
+
+    }
+
+    private void initialise(Map<String, Module> moduleBeans)
+    {
+        for (Module<Flow> module : moduleBeans.values())
+        {
+            initialise(module);
+        }
+
+    }
+
+    private void initialise(Module module)
+    {
+        try {
+            this.initialiseModuleSecurity(module);
+            // intialise config into db
+            this.initialiseModuleMetaData(module);
+            this.moduleContainer.add(module);
+            this.moduleActivator.activate(module);
+        } catch (RuntimeException re){
+            logger.error("There was a problem initialising module", re);
+        }
+    }
+
 
     /**
      * Callback from the container to gracefully stop flows and modules, and stop the inner loaded contexts
@@ -275,6 +328,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
                 }
             }
         }
+
+        // We calling close on scheduler factory in order to force creation of new scheduler
+        // when spring context is being reloaded
+        SchedulerFactory.close();
     }
 
     private void shutdownMonitors(ApplicationContext context)
@@ -297,22 +354,65 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleSecurity(Module module)
     {
-        List<Authority> existingAuthorities = this.userService.getAuthorities();
-        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
-                + module.getName() + " module. This is typically assigned to business users");
-        if (!existingAuthorities.contains(moduleUserAuthority))
+        List<Policy> readBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
+
+        if (readBlueConsolePolicies==null || readBlueConsolePolicies.isEmpty())
         {
-            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleUserAuthority);
+            Policy readBlueConsole = new Policy("ReadBlueConsole", "Policy to read Module via BlueConsole.");
+
+            logger.info("Creating ReadBlueConsole policy...");
+            this.securityService.savePolicy(readBlueConsole);
         }
-        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
-                "Allows administrator access to the " + module.getName()
-                        + " module. This is typically assigned to business administrators");
-        if (!existingAuthorities.contains(moduleAdminAuthority))
+
+        List<Policy> writeBlueConsolePolicies = this.securityService.getPolicyByNameLike("ReadBlueConsole");
+
+        if (writeBlueConsolePolicies==null && writeBlueConsolePolicies.isEmpty() )
         {
-            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleAdminAuthority);
+            Policy writeBlueConsole = new Policy("WriteBlueConsole", "Policy to modify Module via BlueConsole.");
+
+            logger.info("Creating WriteBlueConsole policy...");
+            this.securityService.savePolicy(writeBlueConsole);
         }
+
+        List<Role> existingUserRoles = this.securityService.getRoleByNameLike("User");
+
+        if (existingUserRoles==null || existingUserRoles.isEmpty())
+        {
+            Role userRole = new Role("User", "Users who have a read only view on the system.");
+
+            logger.info("Creating standard User role...");
+            this.securityService.saveRole(userRole);
+        }
+
+        List<Role> existingAdminRoles = this.securityService.getRoleByNameLike("ADMIN");
+
+        if (existingAdminRoles==null || existingAdminRoles.isEmpty())
+        {
+            Role adminRole = new Role("ADMIN", "Users who may perform administration functions on the system.");
+
+            logger.info("Creating standard Admin role...");
+            this.securityService.saveRole(adminRole);
+        }
+
+        List<IkasanPrincipal> existingAdminPrinciples = this.securityService.getPrincipalByNameLike("admin");
+
+        if (existingAdminPrinciples==null && existingAdminPrinciples.isEmpty())
+        {
+            IkasanPrincipal adminPrinciple = new IkasanPrincipal("admin","user", "The administrator user principle.");
+
+            logger.info("Creating standard admin principle...");
+            this.securityService.savePrincipal(adminPrinciple);
+        }
+        List<IkasanPrincipal> existingUserPrinciples = this.securityService.getPrincipalByNameLike("user");
+
+        if (existingUserPrinciples==null || existingUserPrinciples.isEmpty())
+        {
+            IkasanPrincipal userPrinciple = new IkasanPrincipal("user","user", "The user principle.");
+
+            logger.info("Creating standard user principle...");
+            this.securityService.savePrincipal(userPrinciple);
+        }
+
     }
 
     /**
@@ -322,14 +422,145 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      */
     private void initialiseModuleMetaData(Module module)
     {
+        String host = getHost();
+        Server existingServer = null;
+        if(host != null)
+        {
+            Integer port = getPort();
+            String pid = getPid();
+            String context = getContext(module);
+            String serverName = "http://" + host + ":" + port+"/"+context;
+            String serverUrl = "http://" + host;
+            logger.info("Module host [" + host + ":" + port + "] running with PID [" + pid + "]");
+            Server server = new Server(host, serverName, serverUrl, port);
+            List<Server> servers = this.topologyService.getAllServers();
+            boolean foundMatchingServer = false;
+            for (Server s : servers)
+            {
+                if (s.getUrl().equals(server.getUrl()) && s.getPort().equals(server.getPort()))
+                {
+                    foundMatchingServer = true;
+                    existingServer = s;
+                }
+            }
+            if (!foundMatchingServer)
+            {
+                logger.info("Server instance  [" + server + "], creating...");
+                this.topologyService.save(server);
+                existingServer = server;
+            }
+        }
         org.ikasan.topology.model.Module moduleDB = this.topologyService.getModuleByName(module.getName());
 
-        if (moduleDB==null)
+        if (moduleDB == null)
         {
             logger.info("module does not exist [" + module.getName() + "], creating...");
-            moduleDB = new  org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(), module.getDescription(),module.getVersion(), null, null);
+            moduleDB = new org.ikasan.topology.model.Module(module.getName(), platformContext.getApplicationName(),
+                    module.getDescription(), module.getVersion(), null, null);
+            if(existingServer!=null)
+            {
+                moduleDB.setServer(existingServer);
+            }
+            this.topologyService.save(moduleDB);
+        }
+        else if(existingServer != null)
+        {
+            logger.info("Updating [" + module.getName() + "] server instance to  [" + existingServer.getUrl() + "].");
+            moduleDB.setServer(existingServer);
             this.topologyService.save(moduleDB);
         }
 
+
+    }
+
+    private Integer getPort() {
+        try
+        {
+            String port = platformContext.getEnvironment().getProperty("server.port");
+            if(port!=null)
+            {
+                return Integer.valueOf(port);
+            }
+            Object portObject;
+            try
+            {
+                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=full-ha-sockets,socket-binding=http"), "port");
+            }catch (InstanceNotFoundException e){
+                portObject = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=full-sockets,socket-binding=http"), "port");
+            }
+
+            if(portObject!=null)
+            {
+                return (Integer) portObject;
+            }
+            return 8080;
+        }
+        catch (Throwable ex) {
+            return 8080;
+        }
+    }
+
+    private String getHost()
+    {
+        try
+        {
+            String host = platformContext.getEnvironment().getProperty("server.address");
+            if (host != null)
+            {
+                return host;
+            }
+            host = platformContext.getEnvironment().getProperty("service.name");
+            if (host != null)
+            {
+                return host;
+            }
+            Object portHost;
+            try
+            {
+                portHost = ManagementFactory.getPlatformMBeanServer()
+                        .getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+            }
+            catch (InstanceNotFoundException e)
+            {
+                portHost = System.getProperty("jboss.bind.address");
+            }
+            if (portHost != null)
+            {
+                return (String) portHost;
+            }
+            return null;
+        }
+        catch (Throwable ex)
+        {
+            return null;
+        }
+    }
+
+    private String getContext(Module module)
+    {
+        try
+        {
+            String context = platformContext.getEnvironment().getProperty("server.contextPath");
+
+            if (context != null)
+            {
+                return context;
+            }
+            return module.getName();
+        }
+        catch (Throwable ex)
+        {
+            return null;
+        }
+    }
+
+    private static  String getPid() {
+        try {
+            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            return jvmName.split("@")[0];
+        }
+        catch (Throwable ex) {
+            return null;
+        }
     }
 }

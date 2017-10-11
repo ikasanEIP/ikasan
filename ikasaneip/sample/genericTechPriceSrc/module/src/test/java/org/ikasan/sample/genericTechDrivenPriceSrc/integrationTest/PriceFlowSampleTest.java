@@ -41,18 +41,7 @@
 package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest;
 
 import org.ikasan.platform.IkasanEIPTest;
-import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ConsumerEventComparator;
-import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ConverterEventComparator;
-import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ProducerEventComparator;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.ikasan.testharness.flow.FlowObserver;
-import org.ikasan.testharness.flow.FlowSubject;
-import org.ikasan.testharness.flow.FlowTestHarness;
-import org.ikasan.testharness.flow.FlowTestHarnessImpl;
-import org.ikasan.testharness.flow.expectation.model.*;
-import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,73 +60,31 @@ import javax.annotation.Resource;
         "/component-conf.xml",
         "/flow-conf.xml",
         "/substitute-components.xml",
-        "/ikasan-transaction-conf.xml",
         "/module-conf.xml",
-        "/replay-service-conf.xml",
-        "/configuration-service-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-conf.xml"
         })
-
 public class PriceFlowSampleTest extends IkasanEIPTest
 {
-    /** Consumer specific event comparator */
-    ConsumerEventComparator consumerEventComparator;
-
-    /** Converter specific event comparator */
-    ConverterEventComparator converterEventComparator;
-
-    /** Producer specific event comparator */
-    ProducerEventComparator producerEventComparator;
-
     @Resource
-    Module<Flow> module;
-
-    @Resource
-    FlowSubject testHarnessFlowEventListener;
-
-    @Before
-    public void setup()
-    {
-        // create the test comparators
-        this.consumerEventComparator = new ConsumerEventComparator();
-        this.converterEventComparator = new ConverterEventComparator();
-        this.producerEventComparator = new ProducerEventComparator();
-        this.testHarnessFlowEventListener.removeAllObservers();
-
-    }
+    Flow priceConverterFlow;
 
     @Test
-    public void test_flow_consumer_translator_producer()
+    public void test_flow_consumer_converter_producer()
     {
-        FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
-        {{
-                expectation(new ConsumerComponent("Price Consumer"), "Price Consumer");
-                expectation(new ConverterComponent("Price Converter"), "Price Converter");
-                expectation(new ProducerComponent("Price Publisher"), "Price Publisher");
-        }});
-        testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
-        testHarnessFlowEventListener.setIgnoreEventCapture(true);
+        // setup the expected component invocations
+        ikasanFlowTestRule.withFlow(priceConverterFlow)
+                          .consumer("Price Consumer")
+                          .converter("Price Converter")
+                          .producer("Price Publisher");
 
-        for(Flow flow:module.getFlows())
-        {
-            flow.start();
-        }
+        // start the flow and assert it runs
+        ikasanFlowTestRule.startFlow(testHarnessFlowEventListener);
 
-        try
-        {
-            Thread.sleep(100);
-        }
-        catch(InterruptedException e)
-        {
-            // dont care
-        }
+        // wait for a brief while to let the flow complete
+        ikasanFlowTestRule.sleep(100L);
 
-        for(Flow flow:module.getFlows())
-        {
-            flow.stop();
-        }
-        flowTestHarness.assertIsSatisfied();
+        // don't need to stop flow or check harness assertions - that is done by the IkasanFlowTestRule
     }
 
 }

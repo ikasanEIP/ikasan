@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.bson.Transformer;
 
 /**
@@ -15,7 +15,7 @@ import org.bson.Transformer;
 public class BsonEncodingStringToDateTransformer implements Transformer
 {
     /** logger instance */
-    private static Logger logger = Logger.getLogger(BsonEncodingStringToDateTransformer.class);
+    private static Logger logger = LoggerFactory.getLogger(BsonEncodingStringToDateTransformer.class);
 
     private Pattern dateRegExp;
 

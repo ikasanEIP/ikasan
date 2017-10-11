@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -66,7 +66,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateSystemEventDao extends HibernateDaoSupport implements SystemEventDao
 {
     /** logger instance */
-    private static final Logger logger = Logger.getLogger(HibernateSystemEventDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(HibernateSystemEventDao.class);
 
     public static final String EXPIRY = "expiry";
     public static final String EVENT_IDS = "eventIds";

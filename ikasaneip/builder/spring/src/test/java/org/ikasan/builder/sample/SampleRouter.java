@@ -40,7 +40,7 @@
  */
 package org.ikasan.builder.sample;
 
-import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.RouterException;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ import java.util.List;
  * Sample component for test only.
  * @author Ikasan Development Team.
  */
-public class SampleRouter implements Router<String>
+public class SampleRouter implements MultiRecipientRouter<String>
 {
     @Override
     public List<String> route(String messageToRoute) throws RouterException {

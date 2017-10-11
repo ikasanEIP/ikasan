@@ -40,7 +40,8 @@
  */
 package org.ikasan.flow.context;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowEvent;
@@ -56,7 +57,8 @@ import java.util.List;
  */
 public class ComponentTimingLoggingListener implements FlowInvocationContextListener
 {
-    protected static Logger logger = Logger.getLogger(ComponentTimingLoggingListener.class);
+    // protected so we can override the logger in the test
+    protected static Logger logger = LoggerFactory.getLogger(ComponentTimingLoggingListener.class);
 
     @Override
     public void endFlow(FlowInvocationContext flowInvocationContext)

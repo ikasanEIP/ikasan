@@ -41,7 +41,6 @@
 package org.ikasan.testharness.flow.expectation.model;
 
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.junit.Assert;
 import org.junit.Test;
 

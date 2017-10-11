@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

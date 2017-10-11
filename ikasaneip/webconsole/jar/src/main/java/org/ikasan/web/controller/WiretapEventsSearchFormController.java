@@ -46,7 +46,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.flow.FlowEvent;
@@ -77,7 +77,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class WiretapEventsSearchFormController
 {
     /** The logger */
-    private Logger logger = Logger.getLogger(WiretapEventsSearchFormController.class);
+    private static Logger logger = LoggerFactory.getLogger(WiretapEventsSearchFormController.class);
 
     /** The wiretap service */
     private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;

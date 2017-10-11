@@ -41,7 +41,6 @@
 package org.ikasan.flow.visitorPattern;
 
 import org.ikasan.flow.configuration.FlowElementPersistentConfiguration;
-import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -123,7 +122,7 @@ public class VisitingInvokerFlowTest
     /** Mock list of configured resource flow elements */
     private final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements
             = mockery.mock(List.class, "mockFlowElementConfiguredResources");
-    
+
     /** Mock list of configured resource flow elements */
     private final List<FlowElement<?>> flowElements
             = mockery.mock(List.class, "mockFlowElements");
@@ -348,13 +347,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();     
+
+                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -531,13 +530,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();     
+
+                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -773,7 +772,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -815,7 +814,7 @@ public class VisitingInvokerFlowTest
 
     /**
      * Test successful flow start regardless of a managed resource successfully
-     * starting. We ignore managed resource start failures as these could 
+     * starting. We ignore managed resource start failures as these could
      * resolve themselves later in the flow invocation.
      */
     @Test
@@ -879,13 +878,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();     
+
+                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -1117,13 +1116,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();     
+
+                oneOf(flowElements).iterator();
 
 
                 // inject errorReportingService to those needing it
@@ -1296,13 +1295,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();     
+
+                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -1702,8 +1701,8 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test successful flow stop on flow which is already stopped. 
-     * This should go through the motions as there is no issue in 
+     * Test successful flow stop on flow which is already stopped.
+     * This should go through the motions as there is no issue in
      * stopping a stopped flow.
      */
     @Test
@@ -1836,8 +1835,8 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test successful flow stop on flow which is already stoppedInError. 
-     * This should go through the motions as there is no issue in 
+     * Test successful flow stop on flow which is already stoppedInError.
+     * This should go through the motions as there is no issue in
      * stopping a stoppedInError flow.
      */
     @Test
@@ -2024,7 +2023,7 @@ public class VisitingInvokerFlowTest
                 oneOf(consumerFlowElement).getConfiguration();
                 will(returnValue(new FlowElementPersistentConfiguration()));
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(true);
-                
+
                 oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
 
@@ -2044,6 +2043,12 @@ public class VisitingInvokerFlowTest
                 // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
@@ -2120,7 +2125,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowElementInvoker).setIgnoreContextInvocation(false);
                 oneOf(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(returnValue(null));
-                
+
                 oneOf(flowConfiguration).getReplayRecordService();
                 will(returnValue(replayRecordService));
 
@@ -2142,13 +2147,19 @@ public class VisitingInvokerFlowTest
                 // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
-        ((FlowPersistentConfiguration)flow.getConfiguration()).setInvokeContextListeners(true);
+        flow.getConfiguration().setInvokeContextListeners(true);
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         isRunning = true;
@@ -2195,7 +2206,7 @@ public class VisitingInvokerFlowTest
                 oneOf(flowConfiguration).getReplayRecordService();
                 will(returnValue(replayRecordService));
 
-                oneOf(flowConfiguration).getConsumerFlowElement();
+                exactly(2).of(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 oneOf(consumerFlowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
@@ -2234,6 +2245,10 @@ public class VisitingInvokerFlowTest
                 // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
+
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
@@ -2332,13 +2347,19 @@ public class VisitingInvokerFlowTest
                 // in this test we do not need to cancelAll recovery
                 oneOf(recoveryManager).isRecovering();
                 will(returnValue(false));
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName",
                 flowConfiguration, recoveryManager, exclusionService);
-        ((FlowPersistentConfiguration)flow.getConfiguration()).setInvokeContextListeners(true);
+        flow.getConfiguration().setInvokeContextListeners(true);
         flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
         flow.stopContextListeners();
         flow.startContextListeners();
@@ -2395,6 +2416,13 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
+
             }
         });
 
@@ -2447,7 +2475,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 oneOf(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).getReplayRecordService();
                 will(returnValue(replayRecordService));
 
@@ -2480,6 +2508,12 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
@@ -2533,7 +2567,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 oneOf(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).getReplayRecordService();
                 will(returnValue(replayRecordService));
 
@@ -2566,6 +2600,12 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
@@ -2591,7 +2631,7 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test failed flow invoke with a flow event with the resulting outcome 
+     * Test failed flow invoke with a flow event with the resulting outcome
      * being continue to run.
      */
     @Test
@@ -2620,7 +2660,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(configuredResource));
 
                 oneOf(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).getReplayRecordService();
                 will(returnValue(replayRecordService));
 
@@ -2653,6 +2693,12 @@ public class VisitingInvokerFlowTest
 
                 // pass the exception to the recovery manager
                 oneOf(recoveryManager).recover(flowInvocationContext, exception, flowEvent, "identifier");
+
+                oneOf(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                oneOf(consumerFlowElement).getComponentName();
+                will(returnValue("consumer"));
+                oneOf(flowInvocationContext).setLastComponentName("consumer");
             }
         });
 
@@ -2677,7 +2723,7 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test failed flow invoke with an exception resulting outcome 
+     * Test failed flow invoke with an exception resulting outcome
      * being continue to run.
      */
     @Test
@@ -2720,7 +2766,7 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test failed flow invoke with an exception resulting outcome 
+     * Test failed flow invoke with an exception resulting outcome
      * being recovery.
      */
     @Test
@@ -2764,7 +2810,7 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test failed flow invoke with an exception resulting outcome 
+     * Test failed flow invoke with an exception resulting outcome
      * being stoppedInError.
      */
     @Test
@@ -2894,13 +2940,13 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();     
+
+                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
@@ -3045,7 +3091,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
 
                 // get the two exclusion flow element configured resources
                 oneOf(exclusionFlowConfiguration).getConfiguredResourceFlowElements();
@@ -3061,14 +3107,14 @@ public class VisitingInvokerFlowTest
                 will(returnValue("configuredResourceId"));
 
                 exactly(2).of(flowConfiguration).configure(configuredResource);
-                
+
                 oneOf(flowConfiguration).configure(flow);
-                
+
                 oneOf(flowConfiguration).getFlowElements();
                 will(returnValue(flowElements));
-                
-                oneOf(flowElements).iterator();                
-                
+
+                oneOf(flowElements).iterator();
+
                 // inject errorReportingService to those needing it on the business flow
                 oneOf(flowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));

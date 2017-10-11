@@ -2,7 +2,7 @@ package org.ikasan.component.endpoint.mongo.encoding;
 
 import net.sf.json.JSONNull;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.bson.Transformer;
 
 /**
@@ -15,7 +15,7 @@ public class BsonEncodingJsonNullToNullTransformer implements Transformer
 {
 
     /** logger instance */
-    private static Logger logger = Logger.getLogger(BsonEncodingJsonNullToNullTransformer.class);
+    private static Logger logger = LoggerFactory.getLogger(BsonEncodingJsonNullToNullTransformer.class);
 
     /**
      * 

@@ -178,13 +178,5 @@ public class UserServiceTest
 
 	}
 
-	/**
-	 * Test method for {@link org.ikasan.security.service.UserServiceImpl#createAuthority(org.ikasan.security.model.Authority)}.
-	 */
-	@Test
-	public void testCreateAuthority()
-	{
-
-	}
 
 }

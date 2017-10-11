@@ -41,10 +41,9 @@
 package org.ikasan.security.model;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -82,9 +81,6 @@ public class User implements UserDetails, Principal
     /** Activation status for the user in the system */
     private boolean enabled;
 
-    /** All <code>GrantedAuthrities</code> held by the user for the system */
-    private Set<Authority> grantedAuthorities = new HashSet<Authority>();
-    
     /** All <code>IkasanPrincipals</code> held by the owner for the system */
     private Set<IkasanPrincipal> principals;
     
@@ -118,27 +114,6 @@ public class User implements UserDetails, Principal
         // Do Nothing - Default constructor required by ORM
     }
 
-    /**
-     * Accessor method for grantedAuthrities, used by ORM
-     * 
-     * @return Set of granted authorities
-     */
-    @SuppressWarnings("unused")
-    private Set<Authority> getGrantedAuthorities()
-    {
-        return grantedAuthorities;
-    }
-
-    /**
-     * Setter method for GrantedAuthorities
-     * 
-     * @param grantedAuthorities
-     */
-    public void setGrantedAuthorities(Set<Authority> grantedAuthorities)
-    {
-        this.grantedAuthorities = grantedAuthorities;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -146,7 +121,29 @@ public class User implements UserDetails, Principal
      */
     public Collection<? extends org.springframework.security.core.GrantedAuthority> getAuthorities()
     {
-        return grantedAuthorities;
+		Set<IkasanPrincipal> principals = this.getPrincipals();
+
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+		for(IkasanPrincipal principal: principals)
+		{
+			Set<Role> roles = principal.getRoles();
+
+			for(Role role: roles)
+			{
+				Set<Policy> policies = role.getPolicies();
+
+				for(Policy policy: policies)
+				{
+					if(!authorities.contains(policy))
+					{
+						authorities.add(policy);
+					}
+				}
+			}
+		}
+
+		return authorities;
     }
 
     /*
@@ -268,36 +265,49 @@ public class User implements UserDetails, Principal
         this.enabled = enabled;
     }
 
-    /**
-     * Allows an Authority to be granted to a User
-     * 
-     * @param authority
-     */
-    public void grantAuthority(Authority authority)
-    {
-        if (grantedAuthorities.contains(authority))
-        {
-            throw new IllegalArgumentException("Authority [" + authority + "] is already granted to user [" + this
-                    + "]");
-        }
-        grantedAuthorities.add(authority);
-    }
 
     /**
-     * Removes an Authority from a user's granted authorities
+     * Removes an Policy from a user's granted authorities
      * 
-     * @param authority
+     * @param policy
      */
-    public void revokeAuthority(Authority authority)
+    public void revokePolicy(Policy policy)
     {
-        if (!grantedAuthorities.contains(authority))
-        {
-            throw new IllegalArgumentException("Authority [" + authority + "] has not been granted to user [" + this
-                    + "]");
-        }
-        grantedAuthorities.remove(authority);
+		for(IkasanPrincipal principal: principals)
+		{
+			Set<Role> roles = principal.getRoles();
+
+			for(Role role: roles)
+			{
+				Set<Policy> policies = role.getPolicies();
+
+
+				if(policies.contains(policy)){
+					policies.remove(policy);
+
+				}
+
+			}
+		}
+
     }
 
+
+	public void addPrincipal(IkasanPrincipal principal){
+
+		if(principals!=null)
+		{
+			if(!principals.contains(principal))
+			{
+				principals.add(principal);
+			}
+		}
+		else
+		{
+			principals = new HashSet<>();
+			principals.add(principal);
+		}
+	}
     /**
      * Accessor for id
      * 
@@ -413,10 +423,6 @@ public class User implements UserDetails, Principal
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result
 				+ ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime
-				* result
-				+ ((grantedAuthorities == null) ? 0 : grantedAuthorities
-						.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((password == null) ? 0 : password.hashCode());
@@ -460,12 +466,6 @@ public class User implements UserDetails, Principal
 			if (other.firstName != null)
 				return false;
 		} else if (!firstName.equals(other.firstName))
-			return false;
-		if (grantedAuthorities == null)
-		{
-			if (other.grantedAuthorities != null)
-				return false;
-		} else if (!grantedAuthorities.equals(other.grantedAuthorities))
 			return false;
 		if (id == null)
 		{

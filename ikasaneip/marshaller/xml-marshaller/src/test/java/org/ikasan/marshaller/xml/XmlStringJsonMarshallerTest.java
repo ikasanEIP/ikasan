@@ -40,7 +40,7 @@
 */
 package org.ikasan.marshaller.xml;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;

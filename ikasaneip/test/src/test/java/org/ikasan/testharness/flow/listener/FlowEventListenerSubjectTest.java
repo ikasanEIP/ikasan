@@ -40,16 +40,17 @@
  */
 package org.ikasan.testharness.flow.listener;
 
-import java.util.List;
-
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  * Tests for the <code>FlowEventListenerSubject</code> class.
@@ -59,27 +60,29 @@ import org.junit.Test;
  */
 public class FlowEventListenerSubjectTest
 {
-    Mockery mockery = new Mockery()
+    private Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
     
     /** mocked List<FlowObserver> */
-    final List<FlowObserver> flowObservers = mockery.mock(List.class, "List<FlowObserver>");
+    @SuppressWarnings("unchecked")
+    private final List<FlowObserver> flowObservers = mockery.mock(List.class, "List<FlowObserver>");
     
     /** mocked FlowObserver */
-    final FlowObserver flowObserver = mockery.mock(FlowObserver.class, "FlowObserver");
+    private final FlowObserver flowObserver = mockery.mock(FlowObserver.class, "FlowObserver");
     
     /** mocked FlowElement */
-    final FlowElement flowElement = mockery.mock(FlowElement.class, "FlowElement");
+    private final FlowElement flowElement = mockery.mock(FlowElement.class, "FlowElement");
     
     /** mocked flowEvent */
-    final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "FlowEvent");
+    private final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "FlowEvent");
     
     /** mocked replicationFactory */
-    final ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "ReplicationFactory");
+    private final ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "ReplicationFactory");
     
     /**
      * Sanity test the invocation of the before flow element to notify flow 
@@ -108,7 +111,8 @@ public class FlowEventListenerSubjectTest
      * observers of an event.
      */
     @Test
-    public void test_afterFlowElement() 
+    @SuppressWarnings("unchecked")
+    public void test_afterFlowElement()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -133,7 +137,8 @@ public class FlowEventListenerSubjectTest
      * Sanity test the observer registration.
      */
     @Test
-    public void test_observerRegistrationOperations() 
+    @SuppressWarnings("unchecked")
+    public void test_observerRegistrationOperations()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -160,7 +165,7 @@ public class FlowEventListenerSubjectTest
      */
     private class TestFlowEventListenerSubject extends FlowEventListenerSubject
     {
-        public TestFlowEventListenerSubject(ReplicationFactory<FlowEvent> replicationFactory)
+        TestFlowEventListenerSubject(ReplicationFactory<FlowEvent> replicationFactory)
         {
             super(replicationFactory);
         }

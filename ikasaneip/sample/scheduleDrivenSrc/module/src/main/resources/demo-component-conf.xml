@@ -9,6 +9,9 @@
     <!--  ================================================================== -->
     <bean id="demoScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
+        <property name="messageProvider">
+            <bean class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.SimpleMessageProvider"/>
+        </property>
         <property name="jobDetail" >
             <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetObject" ref="scheduledJobFactory" />

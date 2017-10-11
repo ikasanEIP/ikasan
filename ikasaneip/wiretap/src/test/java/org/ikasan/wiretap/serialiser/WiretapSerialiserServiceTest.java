@@ -43,7 +43,7 @@ package org.ikasan.wiretap.serialiser;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.ikasan.spec.wiretap.WiretapSerialiser;
 import org.junit.Before;
