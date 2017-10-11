@@ -103,6 +103,7 @@ public class ModuleBuilderTest
                 // get exclusionService instance per flow
                 exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName1");
                 exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName2");
+                exactly(2).of(serialiserFactory).getDefaultSerialiser();
             }
         });
 
