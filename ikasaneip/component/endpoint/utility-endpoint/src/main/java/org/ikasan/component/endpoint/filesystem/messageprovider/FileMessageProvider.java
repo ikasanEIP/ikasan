@@ -144,7 +144,20 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
 
         if(this.fileConsumerConfiguration.isLogMatchedFilenames())
         {
-            logger.info("No matching file names");
+            for(String filename:this.fileConsumerConfiguration.getFilenames())
+            {
+                if(logger.isInfoEnabled())
+                {
+                    if(filename.startsWith("/"))
+                    {
+                        logger.info("No matching filename for " + filename);
+                    }
+                    else
+                    {
+                        logger.info("No matching filename for " + System.getProperty("user.dir") + "/" + filename);
+                    }
+                }
+            }
         }
 
         return null;

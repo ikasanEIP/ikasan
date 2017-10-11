@@ -155,7 +155,7 @@ public class FileMessageProviderTest
         // set test expectations
         mockery.checking(new Expectations() {
             {
-                exactly(2).of(configuration).getFilenames();
+                exactly(3).of(configuration).getFilenames();
                 will(returnValue(filenames));
                 exactly(1).of(configuration).isLogMatchedFilenames();
                 will(returnValue(true));
