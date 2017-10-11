@@ -97,4 +97,11 @@ public interface ReplayDao
 	 */
 	public void housekeep(Integer numToHousekeep);
 
+	/**
+	 * Get the replay event by id.
+	 *
+	 * @param id
+	 * @return
+	 */
+	public ReplayEvent getReplayEventById(Long id);
 }

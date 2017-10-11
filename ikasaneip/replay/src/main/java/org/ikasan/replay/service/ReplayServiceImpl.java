@@ -1,7 +1,6 @@
 package org.ikasan.replay.service;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +15,7 @@ import org.ikasan.replay.model.ReplayAuditEvent;
 import org.springframework.http.*;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -81,60 +81,75 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     		{
     			targetServer += "/";
     		}
-    		
-	    	String url = targetServer 
-					+ event.getModuleName() 
-					+ "/rest/replay/eventReplay/"
-					+ event.getModuleName() 
-		    		+ "/"
-		    		+ event.getFlowName();
-			
-			logger.debug("Replay Url: " + url);
+
             logger.info("Event: " + event.getEvent());
 
             ResponseEntity<String> response = null;
-			try {
-				HttpEntity request = initRequest(event.getEvent(),event.getModuleName(),authUser,authPassword
-						);
-				response = restTemplate.exchange(new URI(url), HttpMethod.PUT,request,String.class);
+
+				String url = targetServer
+						+ event.getModuleName().replace(" ", "%20")
+						+ "/rest/replay/eventReplay/"
+						+ event.getModuleName().replace(" ", "%20")
+						+ "/"
+						+ event.getFlowName().replace(" ", "%20");
+
+				HttpEntity request = initRequest(event.getEvent(), event.getModuleName(), authUser, authPassword);
+
+				logger.info("Attempting to call URL: " + url);
+
+				String responseBody = null;
+
+				try
+				{
+					response = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+					responseBody = response.getBody();
+				}
+				catch(final HttpClientErrorException e)
+				{
+					logger.error("An error has occurred attempting to relay event: " + e.getResponseBodyAsString(), e);
+					responseBody = e.getResponseBodyAsString();
+				}
+				catch (Exception e)
+				{
+					logger.error("An error has occurred attempting to relay event: " + e.getMessage(),e);
+				}
 
 				boolean success = true;
 
-				if(!response.getStatusCode().is2xxSuccessful())
+				if(response == null || !response.getStatusCode().is2xxSuccessful())
 				{
 					success = false;
 				}
 
 				ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
-						response.getBody(), System.currentTimeMillis());
+						responseBody, System.currentTimeMillis());
 
 				logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
 
 				this.replayAuditDao.saveOrUpdate(replayAuditEvent);
 
-				replayAuditEvent.setReplayEvent(event);
 
 				for(ReplayListener<ReplayAuditEvent> listener: this.replayListeners)
 				{
 					listener.onReplay(replayAuditEvent);
 				}
-			} catch (URISyntaxException e) {
-				logger.error(e.getMessage(),e);
-			}
     	}
 	}
 
 
-	private HttpEntity initRequest(byte[] event,String module ,String user, String password){
+	private HttpEntity initRequest(byte[] event, String module, String user, String password)
+	{
 		HttpHeaders headers = new HttpHeaders();
-		if(user!=null && password !=null){
+
+		if(user!=null && password !=null)
+		{
 			String credentials = user + ":" +password;
 			String encodedCridentials =  new String(Base64.encodeBase64(credentials.getBytes()));
 			headers.set(HttpHeaders.AUTHORIZATION, "Basic "+encodedCridentials);
 		}
-		headers.set(HttpHeaders.USER_AGENT,module);
-		return new HttpEntity(event,headers);
+		headers.set(HttpHeaders.USER_AGENT, module);
 
+		return new HttpEntity(event, headers);
 	}
 	/* (non-Javadoc)
 	 * @see org.ikasan.spec.replay.ReplayService#addReplayListener(org.ikasan.spec.replay.ReplayListener)

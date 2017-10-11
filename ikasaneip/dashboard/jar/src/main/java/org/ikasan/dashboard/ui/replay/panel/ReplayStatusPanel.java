@@ -399,7 +399,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
-    	    Item item = tableContainer.addItem(replayEvent);			            	    
+    	    Item item = tableContainer.addItem(replayEvent.getId());
     	    
     	    item.getItemProperty("Module Name").setValue(replayEvent.getModuleName());
 			item.getItemProperty("Flow Name").setValue(replayEvent.getFlowName());
@@ -489,7 +489,7 @@ public class ReplayStatusPanel extends Panel implements ReplayListener<ReplayAud
             	VaadinSession.getCurrent().getLockInstance().lock();
         		try 
         		{
-        			Item item = tableContainer.getItem(auditEvent.getReplayEvent());
+        			Item item = tableContainer.getItem(auditEvent.getId().getReplayEventId());
         			
         			if(item != null)
         			{

@@ -1,6 +1,5 @@
 package org.ikasan.spec.solr;
 
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -11,25 +10,14 @@ public interface SolrSearchService<RESULTS>
     /**
      * Perform general search against ikasan solr index.
      *
+     * @param moduleNames
+     * @param flowNames
      * @param searchString
+     * @param queryFilter
+     * @param startTime
+     * @param endTime
      * @param resultSize
      * @return
      */
-    public RESULTS search(String searchString, String queryFilter, long startTime, long endTime, int resultSize);
-
-    /**
-     * Build a solr search query suitable for the ikasan schema.
-     *
-     * @param moduleNames
-     * @param flowNames
-     * @param componentNames
-     * @param fromDate
-     * @param untilDate
-     * @param payloadContent
-     * @param eventId
-     * @param type
-     * @return
-     */
-    public String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
-            , Date untilDate, String payloadContent, String eventId, String type);
+    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize);
 }

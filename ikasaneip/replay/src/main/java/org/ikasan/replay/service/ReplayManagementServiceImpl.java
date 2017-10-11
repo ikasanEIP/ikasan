@@ -136,6 +136,12 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	}
 
 	@Override
+	public ReplayEvent getReplayEventById(Long id)
+	{
+		return this.replayDao.getReplayEventById(id);
+	}
+
+	@Override
 	public void housekeep()
 	{
 		int deleted = 0;

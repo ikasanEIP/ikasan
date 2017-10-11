@@ -57,4 +57,10 @@ public class SolrReplayServiceImpl implements SolrService<ReplayEvent>, ReplayMa
     public Long getNumberReplayAuditEventsByAuditId(Long id) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public ReplayEvent getReplayEventById(Long id)
+    {
+        return this.replayDao.getReplayEventById(id);
+    }
 }

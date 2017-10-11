@@ -56,4 +56,12 @@ public interface ReplayManagementService<EVENT, AUDIT, AUDIT_EVENT>
      * @return
      */
     public Long getNumberReplayAuditEventsByAuditId(Long id);
+
+	/**
+	 * Get the replay event by id.
+	 *
+	 * @param id
+	 * @return
+     */
+	public EVENT getReplayEventById(Long id);
 }
