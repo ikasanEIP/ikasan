@@ -74,7 +74,8 @@ public class Application
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("sampleFileIntegrationModule").withDescription("Sample File reader/writer module.");
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
-                .withDescription("Sample file to JMS flow").withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
+                .withDescription("Sample file to JMS flow")
+                .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
                 .consumer("File Consumer", componentFactory.getFileConsumer())
                 .converter("File Converter", componentFactory.getSourceFileConverter())
                 .producer("JMS Producer", componentFactory.getJmsProducer()).build();
