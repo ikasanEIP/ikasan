@@ -6,10 +6,12 @@ import org.ikasan.builder.FlowBuilder;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
+import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -38,10 +40,10 @@ public class ModuleConfig {
     private JmsTemplateProducer jmsProducer;
 
     @Resource
-    private ApplicationContext context;
+    private BuilderFactory builderFactory;
 
     @Resource
-    private BuilderFactory builderFactory;
+    private ErrorReportingServiceFactory errorReportingServiceFactory;
 
     /**
      *
@@ -86,8 +88,11 @@ public class ModuleConfig {
 
         Flow flow = fb
                 .withDescription("flowDescription")
+                .withErrorReportingServiceFactory(errorReportingServiceFactory)
                 .consumer("consumer", localJmsConsumer)     // jmsConsumer
-                .producer("producer", jmsProducer).build();
+                .broker( "exception generating broker", new ExceptionGenerationgBroker())
+                .producer("producer", jmsProducer)
+                .build();
 
         Module module = mb.withDescription("Sample Module").addFlow(flow).build();
         return module;
