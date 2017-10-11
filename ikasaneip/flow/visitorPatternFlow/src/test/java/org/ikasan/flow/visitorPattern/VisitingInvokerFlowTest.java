@@ -364,6 +364,8 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
+                oneOf(flowElements).iterator();
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -547,6 +549,8 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
+                oneOf(flowElements).iterator();
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -555,6 +559,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(errorReportingServiceAwareComponent));
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
+
 
                 // get the three flow element managed resources
                 oneOf(exclusionFlowConfiguration).getManagedResourceFlowElements();
@@ -895,6 +900,9 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
+                oneOf(flowElements).iterator();
+
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -1134,6 +1142,8 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
+                oneOf(flowElements).iterator();
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -1312,9 +1322,13 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
+                oneOf(flowElements).iterator();
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
+
+
 
                 oneOf(errorReportingServiceAwareFlowElement1).getFlowComponent();
                 will(returnValue(errorReportingServiceAwareComponent));
@@ -2957,6 +2971,8 @@ public class VisitingInvokerFlowTest
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
 
+                oneOf(flowElements).iterator();
+
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
                 will(returnValue(errorReportingServiceAwareFlowElements));
@@ -3123,6 +3139,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue(errorReportingServiceAwareComponent));
 
                 oneOf(errorReportingServiceAwareComponent).setErrorReportingService(errorReportingService);
+
+                oneOf(flowElements).iterator();
 
                 // inject errorReportingService to those needing it on the exclusion flow
                 oneOf(exclusionFlowConfiguration).getErrorReportingServiceAwareFlowElements();
