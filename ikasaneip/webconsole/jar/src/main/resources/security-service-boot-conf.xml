@@ -223,7 +223,6 @@
 		<aop:pointcut id="errorReportingServiceDaoMethods"
 					  expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.save(..))" />
 
-
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
 		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="systemevent-required-TransactionAdvice"
@@ -241,7 +240,8 @@
 
 		<aop:advisor id="errorReportingServiceDaoPointcutAdvice" advice-ref="errorReportingServiceDao-TransactionAdvice"
 			pointcut-ref="errorReportingServiceDaoMethods" />
-	</aop:config>
+
+  </aop:config>
 
 	<tx:advice id="errorReportingServiceDao-TransactionAdvice"
 			   transaction-manager="errorReportingServiceDaoTransactionManager">
