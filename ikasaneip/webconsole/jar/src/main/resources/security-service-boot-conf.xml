@@ -213,9 +213,6 @@
 		<aop:pointcut id="wiretapDaoMethods"
 					  expression="execution(* org.ikasan.wiretap.dao.WiretapDao.save(..))" />
 
-		<aop:pointcut id="exclusionDaoMethods"
-					  expression="execution(* org.ikasan.exclusion.dao.ExclusionEventDao.save(..))" />
-
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
 		<aop:advisor id="systemEventServicePointcutAdvice" advice-ref="systemevent-required-TransactionAdvice"
@@ -230,8 +227,7 @@
 			pointcut-ref="triggerDaoMethods" />
 		<aop:advisor id="wiretapDaoPointcutAdvice" advice-ref="required-TransactionAdvice"
 					 pointcut-ref="wiretapDaoMethods" />
-		<aop:advisor id="exclusionDaoPointcutAdvice" advice-ref="notSupported-TransactionAdvice"
-					 pointcut-ref="exclusionDaoMethods" />
+
 	</aop:config>
 
 	<tx:advice id="wiretap-required-TransactionAdvice"
