@@ -42,12 +42,15 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.OnException;
+import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
 import javax.jms.DeliveryMode;
@@ -63,6 +66,9 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
  * @author Ikasan Development Team
  */
 @Configuration
+@ImportResource( {
+        "classpath:ikasan-transaction-pointcut-quartz.xml"
+} )
 public class ComponentFactory
 {
     @Resource
@@ -158,7 +164,12 @@ public class ComponentFactory
                 .setExplicitQosEnabled(true)
                 .setMessageIdEnabled(true)
                 .setMessageTimestampEnabled(true)
-                .setPostProcessor(null).build();
+                .build();
+    }
+
+    ExceptionResolver getSourceFlowExceptionResolver()
+    {
+        return builderFactory.getExceptionResolverBuilder().addExceptionToAction(TransformationException.class, OnException.excludeEvent()).build();
     }
 
     Converter getSourceFileConverter()
@@ -172,7 +183,12 @@ public class ComponentFactory
         public String convert(List<File> files) throws TransformationException
         {
             File file = files.get(0);
+            if(file.getName().startsWith("err"))
+            {
+                throw new TransformationException("Filename started with 'err'");
+            }
             return file.getName();
         }
     }
+
 }

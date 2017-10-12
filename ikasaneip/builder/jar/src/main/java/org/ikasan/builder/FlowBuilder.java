@@ -46,7 +46,6 @@ import org.ikasan.builder.sequential.SequenceName;
 import org.ikasan.builder.sequential.SequentialOrder;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
-import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
@@ -132,10 +131,11 @@ public class FlowBuilder implements ApplicationContextAware
     ExclusionService exclusionService;
 
     /** error reporting service factory */
-    ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl();
+    @Autowired
+    ErrorReportingServiceFactory errorReportingServiceFactory;
 
     /** error reporting service */
-
+    @Autowired
     ErrorReportingService errorReportingService;
 
     /** flow monitor */
