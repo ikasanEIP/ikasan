@@ -50,6 +50,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:exception-conf.xml",
         "classpath:transaction-conf.xml",
         "classpath:ikasan-transaction-conf.xml",
+        "classpath:ikasan-transaction-pointcut-resubmission.xml",
         "classpath:serialiser-service-conf.xml",
         "classpath:scheduler-service-conf.xml",
         "classpath:error-reporting-service-conf.xml",
@@ -60,17 +61,13 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:replay-service-conf.xml",
         "classpath:wiretap-service-conf.xml",
         "classpath:hospital-conf.xml",
-
         "classpath:exclusion-service-conf.xml",
         "classpath:ikasan-module-bootstrap-conf.xml",
         "classpath:topology-conf.xml",
         "classpath:topology-tx-conf.xml",
-
         "classpath:datasource-conf.xml",
-
         "classpath:security-service-boot-conf.xml",
         "classpath:springapp-servlet-boot.xml",
-
 } )
 
 @ComponentScan({"org.ikasan.web.*","org.ikasan.rest.*","org.ikasan.*"})
