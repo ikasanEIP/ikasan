@@ -45,7 +45,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.spec.wiretap.WiretapDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -123,12 +125,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * Save the wiretapFlowEvent
      *
      * @see
-     * org.ikasan.wiretap.dao.WiretapDao#save(
+     * WiretapDao#save(
      * org.ikasan.wiretap.model.WiretapFlowEvent)
      */
     public void save(WiretapEvent wiretapEvent)
     {
-        getHibernateTemplate().save(wiretapEvent);
+        getHibernateTemplate().saveOrUpdate((WiretapFlowEvent)wiretapEvent);
     }
 
     /**
@@ -272,7 +274,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     }
 
     /* (non-Javadoc)
-	 * @see org.ikasan.wiretap.dao.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
+	 * @see org.ikasan.spec.wiretap.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -406,8 +408,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     private void batchHousekeepDelete() 
     {
-        logger.info("Wiretap batched housekeeper called. [transactionBatchSize: " + transactionBatchSize
-                + "][housekeepingBatchSize: " + housekeepingBatchSize + "]");
+        logger.info("Wiretap batched housekeeper called");
 
         int numberDeleted = 0;
 
@@ -464,6 +465,24 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 logger.info(rowCount+", Wiretap housekeepables exist");
                 return new Boolean(rowCount>0);
+            }
+        });
+    }
+
+    public List<WiretapEvent> getHarvestableRecords(final int housekeepingBatchSize)
+    {
+        return (List<WiretapEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(WiretapFlowEvent.class);
+                criteria.add(Restrictions.eq("harvested", false));
+                criteria.setMaxResults(housekeepingBatchSize);
+                criteria.addOrder(Order.asc("timestamp"));
+
+                List<WiretapEvent> flowInvocationMetrics = criteria.list();
+
+                return flowInvocationMetrics;
             }
         });
     }

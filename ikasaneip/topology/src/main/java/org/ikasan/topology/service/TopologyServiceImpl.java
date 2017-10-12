@@ -250,13 +250,14 @@ public class TopologyServiceImpl implements TopologyService
 						+ module.getContextRoot() 
 						+ "/rest/discovery/flows/"
 						+ module.getName();
-				
-			   try
+
+				try
 				{
 					logger.info("REST ["+url+"]");
+
 					HttpEntity request = initRequest(authentication.getName(), (String)authentication.getCredentials()
 					);
-					ResponseEntity<String> response = restTemplate.exchange(new URI(url), HttpMethod.GET,request,String.class);
+					ResponseEntity<List<Flow>> flowResponse = restTemplate.exchange(new URI(url), HttpMethod.GET,request,new ParameterizedTypeReference<List<Flow>>() {});
 
 			    }
 			    catch(Exception e)

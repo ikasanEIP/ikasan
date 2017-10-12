@@ -40,6 +40,7 @@
  */
 package org.ikasan.wiretap.model;
 
+import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.wiretap.WiretapEvent;
 
 import java.io.Serializable;
@@ -50,16 +51,16 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
-public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable
+public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable, HarvestEvent
 {
-    /** event id */
-    private String eventId;
-
     /** related event id */
     private String relatedEventId;
 
     /** event created date/time */
     private long eventTimestamp;
+
+    /** has the record been harvested */
+    private boolean harvested;
 
 
     public WiretapFlowEvent()
@@ -70,7 +71,7 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
             final String eventId, final String relatedEventId, final long eventTimestamp, final String event, final Long expiry)
     {
         super(moduleName, flowName, componentName, event, expiry);
-        this.eventId = eventId;
+        super.eventId = eventId;
         this.relatedEventId = relatedEventId;
         this.eventTimestamp = eventTimestamp;
     }
@@ -105,4 +106,13 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
         this.eventTimestamp = eventTimestamp;
     }
 
+    public boolean isHarvested()
+    {
+        return harvested;
+    }
+
+    public void setHarvested(boolean harvested)
+    {
+        this.harvested = harvested;
+    }
 }

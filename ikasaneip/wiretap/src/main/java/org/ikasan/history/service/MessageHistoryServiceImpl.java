@@ -214,4 +214,10 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     {
         this.platformConfigurationService = platformConfigurationService;
     }
+
+    @Override
+    public void saveHarvestedRecord(FlowInvocationMetric harvestedRecord)
+    {
+        this.messageHistoryDao.save(harvestedRecord);
+    }
 }

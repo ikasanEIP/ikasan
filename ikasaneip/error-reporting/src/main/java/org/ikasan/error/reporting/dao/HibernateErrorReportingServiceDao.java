@@ -50,6 +50,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -108,7 +109,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.lang.String, java.lang.String, java.lang.String)
      */
 	@Override
 	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
@@ -223,7 +224,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, int)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, int)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -277,7 +278,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
 	 */
 	@Override
 	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName,
@@ -327,4 +328,5 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 
         return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria, 0, size);
 	}
+
 }

@@ -41,6 +41,9 @@
 package org.ikasan.error.reporting.model;
 
 
+import org.apache.solr.client.solrj.beans.Field;
+import org.ikasan.harvest.HarvestEvent;
+
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
  * possible about the occurrence of that error
@@ -48,49 +51,58 @@ package org.ikasan.error.reporting.model;
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrence<EVENT>
+public class ErrorOccurrence<EVENT> implements HarvestEvent
 {
     /** unique identifier for this instance */
+	@Field("errorUri")
     private String uri;
 
     /**
      * name of the module where this error occurred
      */
+	@Field("moduleName")
     private String moduleName;
 
     /**
      * name of the flow where this error occurred, if it was event/flow related
      */
+	@Field("flowName")
     private String flowName;
 
     /**
      * name of the flow element where this error occurred, if it was event/flow related
      */
+	@Field("componentName")
     private String flowElementName;
 
     /**
      * raw dump of the error as it occurred
      */
+	@Field("errorDetail")
     private String errorDetail;
 
     /**
      * the error message extracted from the errorDetail
      */
+	@Field("errorMessage")
     private String errorMessage;
     
     /**
      * the exception class associated with the error
      */
+	@Field("exceptionClass")
     private String exceptionClass;
 
     /**
 	 * Id of the event associated with this error, if it was event/flow related
 	 */
+	@Field("event")
 	private String eventLifeIdentifier;
 
     /**
      * Related identifier
      */
+	@Field("relatedEventId")
     private String eventRelatedIdentifier;
 
     /** action to be taken on this error incident */
@@ -104,11 +116,13 @@ public class ErrorOccurrence<EVENT>
     /**
      * Representation of the Event as a String at the time that the error took place
      */
+	@Field("payload")
     private String eventAsString;
 
     /**
 	 * Time that this error was logged
 	 */
+	@Field("timestamp")
 	private long timestamp;
 
     /**
@@ -131,10 +145,15 @@ public class ErrorOccurrence<EVENT>
      */
     private long userActionTimestamp;
 
+	/**
+	 * Flag to indicate if the entity has been harvested.
+     */
+	private boolean harvested;
+
     /**
      * Constructor
      */
-    private ErrorOccurrence()
+    public ErrorOccurrence()
     {
         // required by the ORM
     }
@@ -204,7 +223,7 @@ public class ErrorOccurrence<EVENT>
         return moduleName;
     }
 
-    private void setModuleName(String moduleName) 
+	public void setModuleName(String moduleName)
     {
         this.moduleName = moduleName;
     }
@@ -214,7 +233,7 @@ public class ErrorOccurrence<EVENT>
         return flowName;
     }
 
-    private void setFlowName(String flowName)
+	public void setFlowName(String flowName)
     {
         this.flowName = flowName;
     }
@@ -224,7 +243,7 @@ public class ErrorOccurrence<EVENT>
         return flowElementName;
     }
 
-    private void setFlowElementName(String flowElementName) 
+	public void setFlowElementName(String flowElementName)
     {
         this.flowElementName = flowElementName;
     }
@@ -234,7 +253,7 @@ public class ErrorOccurrence<EVENT>
         return errorDetail;
     }
 
-    private void setErrorDetail(String errorDetail) 
+	public void setErrorDetail(String errorDetail)
     {
         this.errorDetail = errorDetail;
     }
@@ -254,7 +273,7 @@ public class ErrorOccurrence<EVENT>
         return event;
     }
 
-    private void setEvent(EVENT event) 
+	public void setEvent(EVENT event)
     {
         this.event = event;
     }
@@ -264,7 +283,7 @@ public class ErrorOccurrence<EVENT>
         return timestamp;
     }
 
-    private void setTimestamp(long timestamp)
+	public void setTimestamp(long timestamp)
     {
         this.timestamp = timestamp;
     }
@@ -273,7 +292,7 @@ public class ErrorOccurrence<EVENT>
         return expiry;
     }
 
-    private void setExpiry(long expiry)
+	public void setExpiry(long expiry)
     {
         this.expiry = expiry;
     }
@@ -293,7 +312,7 @@ public class ErrorOccurrence<EVENT>
         return this.uri;
     }
 
-    private void setUri(String uri)
+	public void setUri(String uri)
     {
         this.uri = uri;
     }
@@ -313,7 +332,7 @@ public class ErrorOccurrence<EVENT>
         return errorMessage;
     }
 
-    private void setErrorMessage(String errorMessage) 
+	public void setErrorMessage(String errorMessage)
     {
         this.errorMessage = errorMessage;
     }
@@ -398,9 +417,20 @@ public class ErrorOccurrence<EVENT>
 		this.eventAsString = eventAsString;
 	}
 
+	public boolean isHarvested()
+	{
+		return harvested;
+	}
+
+	@Override
+	public void setHarvested(boolean harvested)
+	{
+		this.harvested = harvested;
+	}
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
 	public int hashCode()
 	{

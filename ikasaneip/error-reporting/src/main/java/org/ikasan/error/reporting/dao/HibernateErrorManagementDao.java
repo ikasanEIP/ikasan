@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -96,14 +97,20 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
         this.getHibernateTemplate().saveOrUpdate(errorOccurrenceAction);
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
-     */
-    @Override
-    public void saveNote(Note note)
-    {
-        this.getHibernateTemplate().saveOrUpdate(note);
-    }
+	@Override
+	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence)
+	{
+		this.getHibernateTemplate().saveOrUpdate(errorOccurrence);
+	}
+
+	/* (non-Javadoc)
+         * @see org.ikasan.error.reporting.dao.ErrorManagementDao#saveNote(org.ikasan.error.reporting.window.Note)
+         */
+	@Override
+	public void saveNote(Note note)
+	{
+		this.getHibernateTemplate().saveOrUpdate(note);
+	}
 
     /* (non-Javadoc)
      * @see org.ikasan.error.reporting.dao.ErrorManagementDao#deleteNote(org.ikasan.error.reporting.window.Note)
@@ -328,37 +335,63 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
         return (Long) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
     }
 
-    @Override
-    public void housekeep(final Integer numToHousekeep)
-    {
-        getHibernateTemplate().execute(new HibernateCallback<Object>()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(ERROR_OCCURRENCES_TO_DELETE_QUERY);
-                query.setLong(NOW, System.currentTimeMillis());
-                query.setMaxResults(numToHousekeep);
-                List<Long> errorUris = (List<Long>) query.list();
-                if (errorUris.size() > 0)
-                {
-                    query = session.createQuery(ERROR_OCCURRENCE_NOTE_DELETE_QUERY);
-                    query.setParameterList(EVENT_IDS, errorUris);
-                    query.executeUpdate();
-                    query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
-                    query.setParameterList(EVENT_IDS, errorUris);
-                    List<Long> errorOccurenceNotesIds = (List<Long>) query.list();
-                    if (errorOccurenceNotesIds.size() > 0)
-                    {
-                        query = session.createQuery(NOTES_DELETE_QUERY);
-                        query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
-                        query.executeUpdate();
-                    }
-                    query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
-                    query.setParameterList(EVENT_IDS, errorUris);
-                    query.executeUpdate();
-                }
-                return null;
-            }
-        });
-    }
+	@Override
+	public void housekeep(final Integer numToHousekeep)
+	{
+		getHibernateTemplate().execute(new HibernateCallback<Object>()
+		{
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				Query query = session.createQuery(ERROR_OCCURRENCES_TO_DELETE_QUERY);
+				query.setLong(NOW, System.currentTimeMillis());
+				query.setMaxResults(numToHousekeep);
+
+				List<Long> errorUris = (List<Long>)query.list();
+
+				if(errorUris.size() > 0)
+				{
+					query = session.createQuery(ERROR_OCCURRENCE_NOTE_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, errorUris);
+					query.executeUpdate();
+
+					query = session.createQuery(ERROR_OCCURENCE_NOTES_TO_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, errorUris);
+
+					List<Long> errorOccurenceNotesIds = (List<Long>)query.list();
+
+					if(errorOccurenceNotesIds.size() > 0)
+					{
+						query = session.createQuery(NOTES_DELETE_QUERY);
+						query.setParameterList(EVENT_IDS, errorOccurenceNotesIds);
+						query.executeUpdate();
+					}
+
+					query = session.createQuery(ERROR_OCCURRENCE_DELETE_QUERY);
+					query.setParameterList(EVENT_IDS, errorUris);
+					query.executeUpdate();
+				}
+
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public List<ErrorOccurrence<byte[]>> getHarvestableRecords(final int harvestingBatchSize)
+	{
+		return (List<ErrorOccurrence<byte[]>>) this.getHibernateTemplate().execute(new HibernateCallback()
+		{
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				Criteria criteria = session.createCriteria(ErrorOccurrence.class);
+				criteria.add(Restrictions.eq("harvested", false));
+				criteria.setMaxResults(harvestingBatchSize);
+				criteria.addOrder(Order.asc("timestamp"));
+
+				List<ErrorOccurrence> flowInvocationMetrics = criteria.list();
+
+				return flowInvocationMetrics;
+			}
+		});
+	}
 }

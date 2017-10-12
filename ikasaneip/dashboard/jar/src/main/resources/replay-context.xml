@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="replayNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="replay"/>
+        <constructor-arg>
+            <list>
+            	<bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value=""/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="emptyPanel"/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" scope="session">
+                   <constructor-arg value="replayPanel"/>
+                   <constructor-arg ref="replayViewPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="replayViewComponentContainer"/>
+    </bean>
+    
+    <bean id="replayViewPanel" class="org.ikasan.dashboard.ui.replay.panel.ReplayViewPanel" scope="session">
+        <constructor-arg ref="topologyService" />
+        <constructor-arg ref="componentConfigurationWindow" />
+        <constructor-arg ref="systemEventService"/>
+        <constructor-arg ref="errorCategorisationService"/>
+        <constructor-arg ref="triggerManagementService"/>
+        <constructor-arg ref="topologyStateCache"/>
+        <constructor-arg ref="startupControlService"/>
+        <constructor-arg ref="platformConfigurationService"/>
+        <constructor-arg ref="securityService"/>
+        <constructor-arg ref="replayManagementService"/>
+        <constructor-arg ref="replayService"/>
+        <constructor-arg ref="solrReplayManagementService"/>
+        <constructor-arg ref="flowConfigurationWindow"/>
+    </bean>
+
+	<bean id="replayViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+		<constructor-arg value="false"/>
+    </bean>
+</beans>

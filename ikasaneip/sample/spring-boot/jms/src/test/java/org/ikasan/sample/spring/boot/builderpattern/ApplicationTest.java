@@ -44,10 +44,10 @@ import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -64,7 +64,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -89,6 +91,8 @@ public class ApplicationTest
     private WiretapService wiretapService;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
+
+    Set<String> empty = new HashSet<>();
 
     private Flow flowUUT;
 
@@ -151,7 +155,7 @@ public class ApplicationTest
         assertThat(consumer.getCaptureResults(), hasItem(SAMPLE_MESSAGE));
 
         //verify wiretap
-        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);
         assertEquals(1, wiretaps.getPagedResults().size());
         assertEquals(wiretaps.getPagedResults().get(0).getEvent(), SAMPLE_MESSAGE);
 
@@ -185,7 +189,7 @@ public class ApplicationTest
         assertEquals(error.getUri(), exclusionEvent.getErrorUri());
 
         //verify wiretap
-        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);
         assertEquals(0, wiretaps.getPagedResults().size());
 
     }
@@ -222,7 +226,7 @@ public class ApplicationTest
         assertEquals(0, exclusions.size());
         
         //verify wiretap was not stored to DB
-        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);
         assertEquals(0, wiretaps.getPagedResults().size());
 
     }
@@ -254,8 +258,9 @@ public class ApplicationTest
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
 
+
         //verify wiretap was not stored to DB
-        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true, null, "", "",null,null,null,null,null);
         assertEquals(0, wiretaps.getPagedResults().size());
 
     }

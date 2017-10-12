@@ -79,7 +79,7 @@
 			<aop:pointcut id="blackListDaoMethods"
 						  expression="execution(* org.ikasan.exclusion.dao.BlackListDao.*(..))"/>
 			<aop:pointcut id="exclusionEventDaoMethods"
-						  expression="execution(* org.ikasan.exclusion.dao.ExclusionEventDao.*(..))"/>
+						  expression="execution(* org.ikasan.spec.exclusion.ExclusionEventDao.*(..))"/>
 	        <aop:pointcut id="serviceMethods"
 	                expression="execution(* org.ikasan.spec.exclusion.ExclusionService.*(..))"/>
 

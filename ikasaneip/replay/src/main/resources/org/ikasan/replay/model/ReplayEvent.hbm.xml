@@ -49,7 +49,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.ikasan.replay.model.ReplayEvent"
+	<class name="org.ikasan.replay.model.HibernateReplayEvent"
 		table="ReplayEvent">
 		
 		<id name="id" type="java.lang.Long" column="Id">
@@ -75,6 +75,11 @@
 		          column="Event" 
 		          type="byte[]" 
 		          not-null="true"/>
+
+		<property name="eventAsString"
+				  column="EventAsString"
+				  type="java.lang.String"
+				  not-null="false"/>
 		          
 		<property name="timestamp" 
 				  column="Timestamp" 
@@ -85,6 +90,11 @@
 				  column="Expiry" 
 				  type="long" 
 				  not-null="true"/>
+
+		<property name="harvested"
+				  type="boolean"
+				  column="Harvested"
+				  not-null="true" />
 		
 	</class>
 </hibernate-mapping>

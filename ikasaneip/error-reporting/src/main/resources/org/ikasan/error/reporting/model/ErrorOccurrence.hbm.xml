@@ -135,6 +135,11 @@
                   type="long"
                   column="UserActionTimestamp"
                   not-null="false" />
+
+        <property name="harvested"
+                  type="boolean"
+                  column="Harvested"
+                  not-null="true" />
                   
     </class>
 

@@ -46,7 +46,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
@@ -55,7 +55,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;

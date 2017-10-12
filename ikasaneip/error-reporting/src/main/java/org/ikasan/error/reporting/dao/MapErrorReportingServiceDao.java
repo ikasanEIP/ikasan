@@ -40,6 +40,7 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -123,7 +124,7 @@ public class MapErrorReportingServiceDao<T>
     }
 
     /* (non-Javadoc)
-         * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+         * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
          */
     @Override
     public List<ErrorOccurrence> find(List<String> moduleName,
@@ -135,7 +136,7 @@ public class MapErrorReportingServiceDao<T>
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+     * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#rowCount(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
      */
     @Override
     public Long rowCount(List<String> moduleName, List<String> flowName,
@@ -146,7 +147,7 @@ public class MapErrorReportingServiceDao<T>
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
+     * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
      */
     @Override
     public List<ErrorOccurrence> find(List<String> moduleName,

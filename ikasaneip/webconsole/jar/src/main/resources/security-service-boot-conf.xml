@@ -218,10 +218,10 @@
 						execution(* org.ikasan.trigger.dao.TriggerDao.delete(..))" />
 
 		<aop:pointcut id="wiretapDaoMethods"
-					  expression="execution(* org.ikasan.wiretap.dao.WiretapDao.save(..))" />
+					  expression="execution(* org.ikasan.spec.wiretap.WiretapDao.save(..))" />
 
 		<aop:pointcut id="errorReportingServiceDaoMethods"
-					  expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.save(..))" />
+					  expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingServiceDao.save(..))" />
 
 		<aop:advisor id="securityServicePointcutAdvice" advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />

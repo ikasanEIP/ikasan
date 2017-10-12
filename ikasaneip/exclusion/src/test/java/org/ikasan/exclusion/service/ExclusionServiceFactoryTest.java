@@ -40,10 +40,8 @@
  */
 package org.ikasan.exclusion.service;
 
-import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.BlackListDaoFactory;
-import org.ikasan.exclusion.dao.ExclusionEventDao;
-import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

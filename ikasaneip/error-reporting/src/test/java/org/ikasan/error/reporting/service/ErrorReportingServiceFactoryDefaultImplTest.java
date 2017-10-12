@@ -40,7 +40,7 @@
  */
 package org.ikasan.error.reporting.service;
 
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.serialiser.SerialiserFactory;

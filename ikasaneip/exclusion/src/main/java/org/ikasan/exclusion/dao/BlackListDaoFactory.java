@@ -3,7 +3,7 @@ package org.ikasan.exclusion.dao;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 
 /**
- * Created by stewmi on 18/05/2017.
+ * Created by Ikasan Development Team on 18/05/2017.
  */
 public class BlackListDaoFactory
 {

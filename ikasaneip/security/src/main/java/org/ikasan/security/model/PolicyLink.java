@@ -70,9 +70,10 @@ public class PolicyLink
     }
 
 	/**
+	 * Constructor
+	 *
 	 * @param policyLinkType
 	 * @param targetId
-	 * @param createdDateTime
 	 */
 	public PolicyLink(PolicyLinkType policyLinkType, Long targetId, String name)
 	{
