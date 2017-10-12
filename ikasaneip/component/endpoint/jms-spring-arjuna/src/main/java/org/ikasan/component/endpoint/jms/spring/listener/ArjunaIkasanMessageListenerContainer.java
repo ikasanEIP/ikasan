@@ -45,7 +45,7 @@ import org.jboss.narayana.jta.jms.TransactionHelperImpl;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.configuration.Configured;
 
 import javax.jms.ConnectionFactory;

@@ -58,7 +58,6 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
@@ -135,7 +134,7 @@ public class ApplicationTest
     public void teardown()
     {
         ikasanApplication.close();
-        broker.start();
+        broker.stop();
     }
 
     @Test
