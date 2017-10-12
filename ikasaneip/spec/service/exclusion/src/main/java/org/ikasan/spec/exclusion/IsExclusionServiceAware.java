@@ -38,9 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.service;
-
-import org.ikasan.spec.exclusion.ExclusionService;
+package org.ikasan.spec.exclusion;
 
 /**
  * Created by elliga on 03/06/2015.

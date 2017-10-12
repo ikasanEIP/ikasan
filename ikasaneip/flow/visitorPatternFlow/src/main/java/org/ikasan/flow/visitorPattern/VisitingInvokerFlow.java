@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;

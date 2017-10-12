@@ -43,7 +43,7 @@ package org.ikasan.component.endpoint.jms.spring.consumer;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.component.transformation.Converter;

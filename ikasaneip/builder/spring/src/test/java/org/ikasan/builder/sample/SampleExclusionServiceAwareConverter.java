@@ -40,7 +40,7 @@
  */
 package org.ikasan.builder.sample;
 
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.exclusion.ExclusionService;

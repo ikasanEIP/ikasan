@@ -121,11 +121,6 @@
             <version>19.0-rc2</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-exclusion-service</artifactId>
-        </dependency>
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
