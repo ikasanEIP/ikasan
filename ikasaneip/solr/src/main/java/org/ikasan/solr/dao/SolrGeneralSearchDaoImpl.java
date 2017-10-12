@@ -22,6 +22,12 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
     @Override
     public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize)
     {
+        return this.search(moduleName, flowNames, searchString, startTime, endTime,resultSize, null);
+    }
+
+    @Override
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes)
+    {
         IkasanSolrDocumentSearchResults results = null;
 
         List<IkasanSolrDocument> beans = null;
@@ -42,7 +48,7 @@ public class SolrGeneralSearchDaoImpl extends SolrDaoBase implements SolrGeneral
         query.set("defType", "dismax");
         query.setFilterQueries(queryBuffer.toString());
 
-        String queryFilter = super.buildQuery(moduleName, flowNames, null, null, null, null, null, null);
+        String queryFilter = super.buildQuery(moduleName, flowNames, null, null, null, null, null, entityTypes);
 
         if(queryFilter != null && !queryFilter.isEmpty())
         {

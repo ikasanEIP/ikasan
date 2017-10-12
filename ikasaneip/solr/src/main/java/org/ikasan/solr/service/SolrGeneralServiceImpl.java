@@ -39,4 +39,10 @@ public class SolrGeneralServiceImpl implements SolrSearchService<IkasanSolrDocum
         return this.solrGeneralSearchDao.search(moduleName, flowNames, searchString, startTime, endTime, resultSize);
     }
 
+    @Override
+    public IkasanSolrDocumentSearchResults search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
+            , long endTime, int resultSize, List<String> entityTypes)
+    {
+        return this.solrGeneralSearchDao.search(moduleNames, flowNames, searchString, startTime, endTime, resultSize, entityTypes);
+    }
 }
