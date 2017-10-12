@@ -47,14 +47,16 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationId" context="postBaseline">
+    <changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationId" context="postBaseline" dbms="sybase, mysql, mssql">
+
+		<validCheckSum>any</validCheckSum>
 
 		<preConditions onFail="MARK_RAN">
 			<not><columnExists tableName="MessageHistory" columnName="FlowInvocationId"/></not>
 		</preConditions>
 
 	    <addColumn tableName="MessageHistory">
-			<column name="FlowInvocationId" type="numeric(18)">
+			<column name="FlowInvocationId" type="${identity}">
 				<constraints nullable="true"/>
 			</column>
 	    </addColumn>
@@ -65,5 +67,26 @@
 								 referencedTableName="FlowInvocation" />
 
     </changeSet>
+
+	<changeSet author="ikasan dev" id="alterMessageHistoryAddFlowInvocationId" context="postBaseline" dbms="h2">
+
+		<validCheckSum>any</validCheckSum>
+
+		<preConditions onFail="MARK_RAN">
+			<not><columnExists tableName="MessageHistory" columnName="FlowInvocationId"/></not>
+		</preConditions>
+
+		<addColumn tableName="MessageHistory">
+			<column name="FlowInvocationId" type="numeric(18)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+		<addForeignKeyConstraint baseColumnNames="FlowInvocationId"
+								 baseTableName="MessageHistory" constraintName="MHFlowInvocation_FK"
+								 deferrable="false" initiallyDeferred="false" referencedColumnNames="Id"
+								 referencedTableName="FlowInvocation" />
+
+	</changeSet>
 
 </databaseChangeLog>

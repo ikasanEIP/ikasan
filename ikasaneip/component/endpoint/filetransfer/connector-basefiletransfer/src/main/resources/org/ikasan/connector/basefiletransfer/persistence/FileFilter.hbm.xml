@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 
-
- $Id: FileFilter.hbm.xml 43183 2015-02-06 11:15:54Z stewmi $
- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/resources/org/ikasan/connector/basefiletransfer/persistence/FileFilter.hbm.xml $
- 
  ====================================================================
  Ikasan Enterprise Integration Platform
  

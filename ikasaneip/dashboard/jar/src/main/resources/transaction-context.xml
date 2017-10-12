@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<bean id="hibernateTransactionManager"
+            class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+
+    <aop:config>
+        <aop:pointcut id="securityServiceMethods"
+                expression="execution(* org.ikasan.security.service.SecurityService*.*(..))"/>
+        <aop:pointcut id="userServiceMethods"
+                expression="execution(* org.ikasan.security.service.UserService*.*(..))"/>
+        <aop:pointcut id="authenticationServiceMethods"
+                expression="execution(* org.ikasan.security.service.AuthenticationService*.*(..))"/>
+        <aop:pointcut id="ldapServiceMethods"
+                expression="execution(* org.ikasan.security.service.LdapService*.synchronize(..))"/>
+        <aop:pointcut id="mappingServiceMethods"
+                expression="execution(* org.ikasan.mapping.service.*.*(..))"/>
+        <aop:pointcut id="configurationServiceMethods"
+                expression="execution(* org.ikasan.configurationService.service.*.*(..))"/>
+        <aop:pointcut id="topologyDaoSaveMethods"
+                expression="execution(* org.ikasan.topology.dao.*.save*(..))"/>
+        <aop:pointcut id="topologyDaoDeleteMethods"
+                      expression="execution(* org.ikasan.topology.dao.*.delete*(..))"/>
+        <aop:pointcut id="wiretapDaoMethods"
+                expression="execution(* org.ikasan.wiretap.dao.*.*(..))"/>
+        <aop:pointcut id="exclusionDaoMethods"
+                      expression="execution(* org.ikasan.exclusion.dao.*.*(..))"/>
+        <aop:pointcut id="triggerDaoMethods"
+                expression="execution(* org.ikasan.trigger.dao.*.*(..))"/>
+        <aop:pointcut id="systemEventServiceMethods"
+                expression="execution(* org.ikasan.systemevent.service.*.*(..))"/>
+        <aop:pointcut id="errorCategorisationServiceMethods"
+                expression="execution(* org.ikasan.error.reporting.service.*.*(..))"/>
+        <aop:pointcut id="startupControlServiceMethods"
+                expression="execution(* org.ikasan.module.service.StartupControlService*.*(..))"/>
+        <aop:pointcut id="hospitalServiceMethods"
+                expression="execution(* org.ikasan.spec.hospital.service.HospitalService.*(..))"/>
+        <aop:pointcut id="hospitalManagementServiceMethods"
+                expression="execution(* org.ikasan.spec.hospital.service.HospitalManagementService.*(..))"/>
+        <aop:pointcut id="replayServiceMethods"
+                expression="execution(* org.ikasan.replay.service.*.*(..))"/>
+        <aop:pointcut id="housekeepingServiceMethods"
+                      expression="execution(* org.ikasan.spec.housekeeping.HousekeepService.*(..))"/>
+        <aop:pointcut id="platformConfigurationServiceMethods"
+                      expression="execution(* org.ikasan.spec.configuration.PlatformConfigurationService.*(..))"/>
+        <aop:pointcut id="messageHistoryServiceMethods"
+                      expression="execution(* org.ikasan.history.dao.MessageHistoryDao.*(..))"/>
+
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalManagementServiceMethods"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="hospitalServiceMethods"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="errorCategorisationServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="mappingServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="configurationServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyDaoSaveMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyDaoDeleteMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="wiretapDaoMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="exclusionDaoMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="systemEventServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="startupControlServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="replayServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="housekeepingServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="platformConfigurationServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="messageHistoryServiceMethods"/>
+        
+    </aop:config>
+
+    <tx:advice id="txAdvice" transaction-manager="hibernateTransactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+</beans>

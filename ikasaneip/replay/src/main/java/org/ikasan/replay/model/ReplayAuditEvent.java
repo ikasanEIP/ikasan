@@ -40,7 +40,7 @@
  */
 package org.ikasan.replay.model;
 
-import java.util.Date;
+import org.ikasan.spec.replay.ReplayEvent;
 
 /**
  * 
@@ -64,11 +64,11 @@ public class ReplayAuditEvent
 
     
     /**
-     * Cpnstructor 
+     * Constructor
      * @param replayAudit
      * @param replayEvent
      */
-	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, boolean success, String result, long timestamp) 
+	public ReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent, boolean success, String result, long timestamp)
 	{
 		super();
 		this.replayAudit = replayAudit;
@@ -110,7 +110,7 @@ public class ReplayAuditEvent
 	/**
 	 * @return the replayAudit
 	 */
-	public ReplayAudit getReplayAudit() 
+	public ReplayAudit getReplayAudit()
 	{
 		return replayAudit;
 	}
@@ -119,29 +119,10 @@ public class ReplayAuditEvent
 	/**
 	 * @param replayAudit the replayAudit to set
 	 */
-	public void setReplayAudit(ReplayAudit replayAudit) 
+	public void setReplayAudit(ReplayAudit replayAudit)
 	{
 		this.replayAudit = replayAudit;
 	}
-
-
-	/**
-	 * @return the replayEvent
-	 */
-	public ReplayEvent getReplayEvent() 
-	{
-		return replayEvent;
-	}
-
-
-	/**
-	 * @param replayEvent the replayEvent to set
-	 */
-	public void setReplayEvent(ReplayEvent replayEvent)
-	{
-		this.replayEvent = replayEvent;
-	}
-
 	
 
 	/**

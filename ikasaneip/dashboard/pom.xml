@@ -13,8 +13,10 @@
     </parent>
 
 	<modules>
+		<module>jar</module>
+		<module>boot</module>
 		<module>war</module>
-	</modules> 
+	</modules>
   
 	<build>
 		<plugins>

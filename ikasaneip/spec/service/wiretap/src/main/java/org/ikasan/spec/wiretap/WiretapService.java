@@ -76,6 +76,30 @@ public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
             String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
 
     /**
+     * Allows previously stored FlowEvents to be searched for.
+     *
+     * @param pageNo - page index into the greater result set
+     * @param pageSize - how many results to return in the result
+     * @param orderBy - The field to order by
+     * @param orderAscending - Ascending flag
+     * @param moduleNames - Set of names of modules to include in search - must
+     *            contain at least one moduleName
+     * @param moduleFlow - The name of Flow internal to the Module
+     * @param componentName - The name of the component
+     * @param eventId - The FlowEvent Id
+     * @param payloadId - The Payload Id
+     * @param fromDate - Include only events after fromDate
+     * @param untilDate - Include only events before untilDate
+     * @param payloadContent - The Payload content
+     *
+     * @throws IllegalArgumentException - if moduleNames is null or empty
+     * @return List of <code>WiretapFlowEventHeader</code> representing the result
+     *         of the search
+     */
+    public PAGEDRESULT findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
+                                         Set<String> moduleFlow, Set<String> componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
+
+    /**
      * Retrieve a specific <code>WiretapFlowEvent</code> by Id
      * 
      * @param wiretapFlowEventId - The id of the wiretap event to retrieve
@@ -108,4 +132,11 @@ public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
 	 * @return
 	 */
 	public boolean housekeepablesExist();
+
+    /**
+     * Save the wiretap event.
+     *
+     * @param event
+     */
+    public void save(WiretapEvent event);
 }

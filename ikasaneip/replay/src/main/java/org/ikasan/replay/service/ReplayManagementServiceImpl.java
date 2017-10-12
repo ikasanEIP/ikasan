@@ -45,12 +45,13 @@ import java.util.List;
 
 
 import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.replay.dao.ReplayDao;
+import org.ikasan.spec.replay.ReplayAuditDao;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.replay.model.ReplayAudit;
 import org.ikasan.replay.model.ReplayAuditEvent;
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.spec.harvest.HarvestService;
+import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
-
 
 /**
  * Replay management service implementatiom.
@@ -58,10 +59,13 @@ import org.ikasan.spec.replay.ReplayManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent>, HousekeepService
+public class ReplayManagementServiceImpl implements ReplayManagementService<ReplayEvent, ReplayAudit
+		, ReplayAuditEvent>, HousekeepService, HarvestService<ReplayEvent>
 {
 	/** the underlying dao **/
 	private ReplayDao replayDao;
+
+	private ReplayAuditDao<ReplayAudit,ReplayAuditEvent> replayAuditDao;
 	
 	private Integer housekeepingBatchSize = 200;
 
@@ -72,10 +76,11 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	 * 
 	 * @param replayDao
 	 */
-	public ReplayManagementServiceImpl(ReplayDao replayDao) 
+	public ReplayManagementServiceImpl(ReplayDao replayDao, ReplayAuditDao<ReplayAudit,ReplayAuditEvent> replayAuditDao)
 	{
 		super();
 		this.replayDao = replayDao;
+		this.replayAuditDao = replayAuditDao;
 		if(this.replayDao == null)
 		{
 			throw new IllegalArgumentException("repalyDao cannot be null!");
@@ -87,10 +92,10 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
          */
 	@Override
 	public List<ReplayEvent> getReplayEvents(List<String> moduleNames,
-			List<String> flowNames, String eventId,
-			Date fromDate, Date toDate) 
+                                                      List<String> flowNames, String eventId,
+                                                      String payloadContent, Date fromDate, Date toDate)
 	{
-		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, fromDate, toDate);
+		return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate);
 	}
 
 	/* (non-Javadoc)
@@ -100,7 +105,7 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames,
 			String eventId, String user, Date startDate, Date endDate) 
 	{
-		return this.replayDao.getReplayAudits(moduleNames, flowNames, eventId, user, startDate, endDate);
+		return this.replayAuditDao.getReplayAudits(moduleNames, flowNames, eventId, user, startDate, endDate);
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +114,7 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	@Override
 	public ReplayAudit getReplayAuditById(Long id) 
 	{
-		return this.replayDao.getReplayAuditById(id);
+		return this.replayAuditDao.getReplayAuditById(id);
 	}
 
 	/* (non-Javadoc)
@@ -118,7 +123,7 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	@Override
 	public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id) 
 	{
-		return this.replayDao.getReplayAuditEventsByAuditId(id);
+		return this.replayAuditDao.getReplayAuditEventsByAuditId(id);
 	}
 
 	/* (non-Javadoc)
@@ -127,7 +132,13 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	@Override
 	public Long getNumberReplayAuditEventsByAuditId(Long id) 
 	{
-		return this.replayDao.getNumberReplayAuditEventsByAuditId(id);
+		return this.replayAuditDao.getNumberReplayAuditEventsByAuditId(id);
+	}
+
+	@Override
+	public ReplayEvent getReplayEventById(Long id)
+	{
+		return this.replayDao.getReplayEventById(id);
 	}
 
 	@Override
@@ -160,4 +171,23 @@ public class ReplayManagementServiceImpl implements ReplayManagementService<Repl
 	{
 		this.transactionBatchSize = transactionBatchSize;
 	}
+
+	@Override
+	public List<ReplayEvent> harvest(int transactionBatchSize)
+	{
+		return this.replayDao.getHarvestableRecords(transactionBatchSize);
+	}
+
+	@Override
+	public boolean harvestableRecordsExist()
+	{
+		return true;
+	}
+
+	@Override
+	public void saveHarvestedRecord(ReplayEvent harvestedRecord)
+	{
+		this.replayDao.saveOrUpdate(harvestedRecord);
+	}
+
 }

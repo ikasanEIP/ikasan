@@ -97,5 +97,6 @@
        <module>history</module>
 	   <module>replay</module>
        <module>mapping</module>
+       <module>solr</module>
     </modules>
 </project>

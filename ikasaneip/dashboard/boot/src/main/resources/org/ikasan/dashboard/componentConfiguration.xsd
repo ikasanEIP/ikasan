@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="componentConfiguration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" maxOccurs="1" minOccurs="1"/>
+        <xs:element ref="description" maxOccurs="1" minOccurs="1"/>
+        <xs:element ref="parameters" maxOccurs="1" minOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="parameters">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="integerParameter" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="longParameter" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="booleanParameter" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="stringParameter" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="maskedStringParameter" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="listParameter" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="mapParameter" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="listParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name" maxOccurs="1" minOccurs="1"/>
+        <xs:element ref="description" maxOccurs="1" minOccurs="1"/>
+        <xs:element name="value" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="mapParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name" maxOccurs="1" minOccurs="1"/>
+        <xs:element ref="description" maxOccurs="1" minOccurs="1"/>
+        <xs:element ref="item" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="booleanParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element name="value">
+          <xs:simpleType>
+            <xs:union>
+              <xs:simpleType>
+                <xs:restriction base='xs:string'>
+                  <xs:length value="0"/>
+                </xs:restriction>
+              </xs:simpleType>
+              <xs:simpleType>
+                <xs:restriction base='xs:boolean' />
+              </xs:simpleType>
+            </xs:union>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element ref="description"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="integerParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element name="value">
+          <xs:simpleType>
+            <xs:union>
+              <xs:simpleType>
+                <xs:restriction base='xs:string'>
+                  <xs:length value="0"/>
+                </xs:restriction>
+              </xs:simpleType>
+              <xs:simpleType>
+                <xs:restriction base='xs:integer' />
+              </xs:simpleType>
+            </xs:union>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element ref="description"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="longParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element name="value">
+          <xs:simpleType>
+            <xs:union>
+              <xs:simpleType>
+                <xs:restriction base='xs:string'>
+                  <xs:length value="0"/>
+                </xs:restriction>
+              </xs:simpleType>
+              <xs:simpleType>
+                <xs:restriction base='xs:long' />
+              </xs:simpleType>
+            </xs:union>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element ref="description"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="stringParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element name="value" type="xs:string"/>
+        <xs:element ref="description"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="maskedStringParameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element name="value" type="xs:string"/>
+        <xs:element ref="description"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="item">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element name="value" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="name" type="xs:string"/>
+  <xs:element name="description" type="xs:string"/>
+  <xs:element name="id" type="xs:string"/>
+
+</xs:schema>

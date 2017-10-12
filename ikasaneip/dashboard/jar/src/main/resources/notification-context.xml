@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+     ">
+
+	<bean id="notificationPanel" class="org.ikasan.dashboard.ui.administration.panel.NotificationsConfigurationPanel" scope="session">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="topologyService" />
+        <constructor-arg ref="notificationService" />
+    </bean>
+        
+    <bean id="notificationService" class="org.ikasan.dashboard.notification.NotifierServiceImpl" scope="singleton">
+        <constructor-arg ref="topologyService" />
+        <constructor-arg ref="notificationContentProducerFactory" />
+        <constructor-arg>
+	        <list>
+	            <ref bean="emailNotifier" />
+	        </list>
+	    </constructor-arg>
+    	<constructor-arg ref="configurationService" /> 
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+    
+    <bean id="notificationContentProducerFactory" class="org.ikasan.dashboard.notification.NotificationContentProducerFactory">
+        <constructor-arg ref="errorCategorisationService" />
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="platformConfigurationService" />
+    </bean>
+    
+    <bean id="emailNotifier" class="org.ikasan.dashboard.notification.email.EmailNotifier">
+        <property name="configuration" ref="emailConfiguration" />
+    </bean>
+	
+	<bean id="emailConfiguration" class="org.ikasan.monitor.notifier.EmailNotifierConfiguration">
+        <property name="mailFrom" value="${mail.from}" />
+        <property name="mailSmtpHost" value="${mail.smtp.host}" />
+    </bean>
+    
+    <context:property-placeholder ignore-resource-not-found="true" ignore-unresolvable="true" location="classpath:ikasan-environment.properties" />
+
+</beans>

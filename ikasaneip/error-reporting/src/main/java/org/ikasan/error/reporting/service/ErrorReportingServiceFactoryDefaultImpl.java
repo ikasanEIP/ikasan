@@ -40,14 +40,13 @@
  */
 package org.ikasan.error.reporting.service;
 
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.dao.MapErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrencesLinkedHashMap;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.springframework.beans.factory.FactoryBean;
 
 /**
  * ErrorReportingService Factory default implementation.

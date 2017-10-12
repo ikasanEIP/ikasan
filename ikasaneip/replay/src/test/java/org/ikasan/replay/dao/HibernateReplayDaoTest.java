@@ -42,7 +42,8 @@ package org.ikasan.replay.dao;
 
 import javax.annotation.Resource;
 
-import org.ikasan.replay.model.ReplayEvent;
+import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -71,7 +72,8 @@ public class HibernateReplayDaoTest
      */
 	@Resource Mockery mockery;
 	
-	@Resource ReplayDao replayDao;
+	@Resource
+    ReplayDao replayDao;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	
@@ -79,7 +81,7 @@ public class HibernateReplayDaoTest
 	@DirtiesContext
 	public void testSaveReplayEvent_success()
 	{
-		ReplayEvent replayEvent = new ReplayEvent("errorUri", "event".getBytes(), "moduleName", "flowName", 30);
+		HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
 		
       
 		this.replayDao.saveOrUpdate(replayEvent);

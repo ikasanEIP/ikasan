@@ -62,6 +62,12 @@ public interface ErrorManagementDao
 	 * @param errorOccurrenceAction
 	 */
 	public void saveErrorOccurrenceAction(ErrorOccurrenceAction errorOccurrenceAction);
+
+	/**
+	 *
+	 * @param errorOccurrence
+     */
+	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence);
 	
 	/**
 	 * 
@@ -148,7 +154,7 @@ public interface ErrorManagementDao
     public List<ErrorOccurrenceAction> houseKeepErrorOccurrenceActions();
     
     /**
-     * 
+     *
      * @param moduleName
      * @return
      */
@@ -158,4 +164,12 @@ public interface ErrorManagementDao
 	 * House keep associated entities.
      */
 	public void housekeep(final Integer numToHousekeep);
+
+	/**
+	 * Get harvestable records
+	 *
+	 * @param harvestingBatchSize
+	 * @return
+     */
+	public List<ErrorOccurrence<byte[]>> getHarvestableRecords(final int harvestingBatchSize);
 }

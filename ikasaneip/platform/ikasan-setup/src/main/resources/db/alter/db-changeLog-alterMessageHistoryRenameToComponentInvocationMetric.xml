@@ -47,16 +47,46 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="ikasan dev" id="alterMessageHistoryRenameToComponentInvocationMetric" context="postBaseline">
-    
+    <changeSet author="ikasan dev" id="alterMessageHistoryRenameToComponentInvocationMetric" context="postBaseline" dbms="sybase, mysql, mssql">
+
+		<validCheckSum>any</validCheckSum>
+
     	<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="ComponentInvocationMetric" /></not>
 		</preConditions>
+
+		<dropForeignKeyConstraint baseTableName="MessageHistory" constraintName="MHFlowInvocation_FK"/>
+
+		<renameTable newTableName="ComponentInvocationMetric" oldTableName="MessageHistory"/>
+
+		<renameColumn columnDataType="${identity}" newColumnName="FlowInvocationMetricId" oldColumnName="FlowInvocationId" tableName="ComponentInvocationMetric"/>
+
+		<addForeignKeyConstraint baseColumnNames="FlowInvocationMetricId"
+								 baseTableName="ComponentInvocationMetric" constraintName="MHFlowInvocation_FK"
+								 deferrable="false" initiallyDeferred="false" referencedColumnNames="Id"
+								 referencedTableName="FlowInvocation" />
+
+    </changeSet>
+
+	<changeSet author="ikasan dev" id="alterMessageHistoryRenameToComponentInvocationMetric" context="postBaseline" dbms="h2">
+
+		<validCheckSum>any</validCheckSum>
+
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="ComponentInvocationMetric" /></not>
+		</preConditions>
+
+		<dropForeignKeyConstraint baseTableName="MessageHistory" constraintName="MHFlowInvocation_FK"/>
 
 		<renameTable newTableName="ComponentInvocationMetric" oldTableName="MessageHistory"/>
 
 		<renameColumn columnDataType="numeric(18)" newColumnName="FlowInvocationMetricId" oldColumnName="FlowInvocationId" tableName="ComponentInvocationMetric"/>
 
-    </changeSet>
+		<addForeignKeyConstraint baseColumnNames="FlowInvocationMetricId"
+								 baseTableName="ComponentInvocationMetric" constraintName="MHFlowInvocation_FK"
+								 deferrable="false" initiallyDeferred="false" referencedColumnNames="Id"
+								 referencedTableName="FlowInvocation" />
+
+	</changeSet>
 
 </databaseChangeLog>

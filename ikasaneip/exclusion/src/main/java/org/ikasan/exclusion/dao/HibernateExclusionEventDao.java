@@ -40,9 +40,6 @@
  */
 package org.ikasan.exclusion.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -51,10 +48,14 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Hibernate implementation of the ExclusionEventDao.
@@ -110,7 +111,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#findAll()
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#findAll()
 	 */
 	@Override
 	public List<ExclusionEvent> findAll()
@@ -122,7 +123,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#delete(java.lang.String)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#delete(java.lang.String)
 	 */
 	@Override
 	public void delete(final String errorUri)
@@ -141,7 +142,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.Object)
 	 */
 	@Override
 	public List<ExclusionEvent> find(List<String> moduleName,
@@ -242,7 +243,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#find(java.lang.String)
+	 * @see org.ikasan.spec.exclusion.ExclusionEventDao#find(java.lang.String)
 	 */
 	@Override
 	public ExclusionEvent find(String errorUri)
@@ -252,5 +253,29 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 
         return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
 	}
+
+    public List<ExclusionEvent> getHarvestableRecords(final int housekeepingBatchSize)
+    {
+        return (List<ExclusionEvent>) this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                criteria.add(Restrictions.eq("harvested", false));
+                criteria.setMaxResults(housekeepingBatchSize);
+                criteria.addOrder(Order.asc("timestamp"));
+
+                List<ExclusionEvent> exclusionEvents = criteria.list();
+
+                return exclusionEvents;
+            }
+        });
+    }
+
+    @Override
+    public void deleteAllExpired()
+    {
+        throw new UnsupportedOperationException();
+    }
 
 }
