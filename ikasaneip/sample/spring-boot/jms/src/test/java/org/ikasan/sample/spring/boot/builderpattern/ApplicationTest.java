@@ -79,7 +79,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    @Rule public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
     private IkasanApplication ikasanApplication;
 
@@ -95,6 +95,7 @@ public class ApplicationTest
 
     @Before public void setup()
     {
+        broker.start();
         // startup spring context
         String[] args = { "" };
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
@@ -134,6 +135,7 @@ public class ApplicationTest
     public void teardown()
     {
         ikasanApplication.close();
+        broker.start();
     }
 
     @Test
