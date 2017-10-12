@@ -50,6 +50,7 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
 import javax.jms.DeliveryMode;
@@ -65,6 +66,9 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
  * @author Ikasan Development Team
  */
 @Configuration
+@ImportResource( {
+        "classpath:ikasan-transaction-pointcut-quartz.xml"
+} )
 public class ComponentFactory
 {
     @Resource
