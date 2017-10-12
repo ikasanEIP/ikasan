@@ -136,7 +136,13 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         {
             if(this.fileConsumerConfiguration.isLogMatchedFilenames())
             {
-                logger.info("Matching file names: " + files);
+                for(File file:files)
+                {
+                    if(logger.isInfoEnabled())
+                    {
+                        logger.info("Matching filename for " + file.getAbsolutePath());
+                    }
+                }
             }
 
             return files;
