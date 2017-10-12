@@ -1,5 +1,6 @@
 package org.ikasan.solr.dao;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,4 +21,18 @@ public interface SolrGeneralSearchDao<RESULTS>
      */
     public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize);
 
+
+    /**
+     * Perform general search against ikasan solr index.
+     *
+     * @param moduleName
+     * @param flowNames
+     * @param searchString
+     * @param startTime
+     * @param endTime
+     * @param resultSize
+     * @param entityTypes
+     * @return
+     */
+    public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes);
 }

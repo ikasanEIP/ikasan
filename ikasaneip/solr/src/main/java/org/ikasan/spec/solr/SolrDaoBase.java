@@ -6,6 +6,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -87,6 +88,28 @@ public abstract class SolrDaoBase implements SolrInitialisationService
     protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, String type)
     {
+        ArrayList<String> types = new ArrayList<>();
+        types.add(type);
+
+        return this.buildQuery(moduleNames, flowNames, componentNames, fromDate, untilDate, payloadContent, eventId, types);
+    }
+
+    /**
+     * Helper method to build the query that is issued to Solr.
+     *
+     * @param moduleNames
+     * @param flowNames
+     * @param componentNames
+     * @param fromDate
+     * @param untilDate
+     * @param payloadContent
+     * @param eventId
+     * @param types
+     * @return
+     */
+    protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
+            , Date untilDate, String payloadContent, String eventId, List<String> types)
+    {
         StringBuffer moduleNamesBuffer = new StringBuffer();
         StringBuffer flowNamesBuffer = new StringBuffer();
         StringBuffer componentNamesBuffer = new StringBuffer();
@@ -153,11 +176,21 @@ public abstract class SolrDaoBase implements SolrInitialisationService
             eventIdBuffer.append("\"").append(eventId).append("\" ");
         }
 
-        if(type != null && !type.trim().isEmpty())
+        if(types != null && !types.isEmpty())
         {
-            typeBuffer.append(TYPE + COLON);
+            delim = "";
 
-            typeBuffer.append("\"").append(type).append("\" ");
+            componentNamesBuffer.append(TYPE + COLON);
+
+            componentNamesBuffer.append(OPEN_BRACKET);
+
+            for (String type : types)
+            {
+                componentNamesBuffer.append(delim).append("\"").append(type).append("\" ");
+                delim = OR;
+            }
+
+            componentNamesBuffer.append(CLOSE_BRACKET);
         }
 
         if(fromDate != null && untilDate != null)
