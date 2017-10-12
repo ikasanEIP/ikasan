@@ -40,14 +40,9 @@
  */
 package org.ikasan.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
@@ -62,6 +57,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.history.MessageHistoryService;
 import org.ikasan.spec.monitor.Monitor;
@@ -70,12 +66,17 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.

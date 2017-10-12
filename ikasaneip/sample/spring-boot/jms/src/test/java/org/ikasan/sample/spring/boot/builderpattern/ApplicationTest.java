@@ -58,7 +58,6 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
@@ -79,7 +78,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    @Rule public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
     private IkasanApplication ikasanApplication;
 
@@ -95,6 +94,7 @@ public class ApplicationTest
 
     @Before public void setup()
     {
+        broker.start();
         // startup spring context
         String[] args = { "" };
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
@@ -134,6 +134,7 @@ public class ApplicationTest
     public void teardown()
     {
         ikasanApplication.close();
+        broker.stop();
     }
 
     @Test
