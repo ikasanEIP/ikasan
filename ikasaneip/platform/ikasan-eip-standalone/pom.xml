@@ -201,6 +201,11 @@
             <artifactId>tomcat-embed-jasper</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Hibernate ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>

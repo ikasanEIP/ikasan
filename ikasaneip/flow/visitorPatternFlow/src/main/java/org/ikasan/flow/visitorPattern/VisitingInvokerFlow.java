@@ -40,7 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -60,6 +60,8 @@ import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -372,21 +374,21 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
 
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
-            
+
+            final List<FlowElement<?>> flowElements = this.flowConfiguration.getFlowElements();
             // configure the flow elements
-            configureFlowElements(this.flowConfiguration.getFlowElements());
+            configureFlowElements(flowElements);
             
             // configure the flow itself
             this.flowConfiguration.configure(this);
             
             this.invokeContextListeners = this.flowPersistentConfiguration.getInvokeContextListeners();
 
-            // register the errorReportingService with those components requiring it
-            for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
-            {
-                IsErrorReportingServiceAware component = flowElement.getFlowComponent();
-                component.setErrorReportingService(this.errorReportingService);
-            }
+            // set error reporting service on aware flow elements
+            this.flowConfiguration.getErrorReportingServiceAwareFlowElements().forEach(fe -> fe.getFlowComponent().setErrorReportingService(this.errorReportingService));
+
+            // set exclusion service on aware flow elements
+            injectExclusionService(flowElements, exclusionService);
         }
         catch(RuntimeException e)
         {
@@ -1177,5 +1179,17 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     public List<FlowInvocationContextListener> getFlowInvocationContextListeners()
     {
         return flowInvocationContextListeners;
+    }
+
+    private void injectExclusionService(List<FlowElement<?>> flowElements, ExclusionService exclusionService)
+    {
+
+        for (final FlowElement flowElement : flowElements)
+        {
+            if (flowElement.getFlowComponent() instanceof IsExclusionServiceAware)
+            {
+                ((IsExclusionServiceAware)flowElement.getFlowComponent()).setExclusionService(exclusionService);
+            }
+        }
     }
 }

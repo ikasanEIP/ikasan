@@ -41,6 +41,8 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.*;
+import org.ikasan.exceptionResolver.ExceptionResolver;
+import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -73,6 +75,7 @@ public class Application
 
         Flow sourceFlow = moduleBuilder.getFlowBuilder("sourceFileFlow")
                 .withDescription("Sample file to JMS flow")
+                .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
                 .consumer("File Consumer", componentFactory.getFileConsumer())
                 .converter("File Converter", componentFactory.getSourceFileConverter())
                 .producer("JMS Producer", componentFactory.getJmsProducer()).build();

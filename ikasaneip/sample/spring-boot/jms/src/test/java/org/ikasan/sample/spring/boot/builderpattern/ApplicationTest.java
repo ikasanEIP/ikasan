@@ -41,25 +41,30 @@
 package org.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.hornetq.api.core.TransportConfiguration;
-import org.hornetq.api.core.client.ClientSession;
-import org.hornetq.api.core.client.ClientSessionFactory;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.trigger.model.Trigger;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -73,53 +78,200 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    @Rule
     public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
-    @Before
-    public void setup()
+    private IkasanApplication ikasanApplication;
+
+    private ErrorReportingService errorReportingService;
+
+    private ExclusionManagementService exclusionManagementService;
+
+    private WiretapService wiretapService;
+
+    private static String SAMPLE_MESSAGE = "Hello world!";
+
+    private Flow flowUUT;
+
+    @Before public void setup()
     {
         broker.start();
-    }
-    /**
-     * Test simple invocation.
-     */
-    @Test
-    public void test_createModule_start_and_stop_flow() throws Exception
-    {
-        String[] args = {""};
-
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
+        // startup spring context
+        String[] args = { "" };
+        ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
         System.out.println("Check is module healthy.");
 
-        // Prepare test data
-        JmsTemplate jmsTemplate = (JmsTemplate) ikasanApplication.getBean(JmsTemplate.class);
-
-        String message  = "Hello world!";
-        System.out.println("Sending a JMS message.["+message+"]");
-        jmsTemplate.convertAndSend("source",message );
-
-
         // / you cannot lookup flow directly from context as only Module is injected through @Bean
-        Module module  = (Module) ikasanApplication.getBean(Module.class);
-        Flow flow = (Flow) module.getFlow("flowName");
+        Module module = ikasanApplication.getBean(Module.class);
+        flowUUT = (Flow) module.getFlow("flowName");
 
-        // start flow
-        flow.start();
-        pause(2000);
-        assertEquals("running",flow.getState());
+        // get hold of errorReportingService
+        ErrorReportingServiceFactory errorReportingServiceFactory = ikasanApplication
+                .getBean("errorReportingServiceFactory", ErrorReportingServiceFactory.class);
+        errorReportingService = errorReportingServiceFactory.getErrorReportingService();
 
-        pause(5000);
-        flow.stop();
-        pause(2000);
-        assertEquals("stopped",flow.getState());
+        // get hold of errorReportingService
+        exclusionManagementService = ikasanApplication
+                .getBean("exclusionManagementService", ExclusionManagementService.class);
+
+        // get hold of errorReportingService
+        wiretapService = ikasanApplication.getBean("wiretapService", WiretapService.class);
+
+        // add wiretap to flow
+        Trigger trigger = new Trigger(module.getName(), flowUUT.getName(), "after", "wiretapJob", "consumer",
+                new HashMap<String, String>()
+                {{put("timeToLive", "100");}});
+        JobAwareFlowEventListener wiretapListener = ikasanApplication.getBean(JobAwareFlowEventListener.class);
+        wiretapListener.addDynamicTrigger(trigger);
+
+        // Prepare test data
+        JmsTemplate jmsTemplate = ikasanApplication.getBean(JmsTemplate.class);
+        String message = SAMPLE_MESSAGE;
+        System.out.println("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
+    }
+
+    @After
+    public void teardown()
+    {
+        ikasanApplication.close();
+        broker.stop();
+    }
+
+    @Test
+    public void test_successful_message_processing() throws Exception
+    {
+
+        // Perform Test
+        startFlow();
 
         // Verify the expectations
-        MessageVerifierConsumer consumer = (MessageVerifierConsumer) ikasanApplication.getBean(MessageVerifierConsumer.class);
+        MessageVerifierConsumer consumer =  ikasanApplication.getBean(MessageVerifierConsumer.class);
 
         // Set expectation
-        assertThat(consumer.getCaptureResults(), hasItem(message));
+        assertThat(consumer.getCaptureResults(), hasItem(SAMPLE_MESSAGE));
+
+        //verify wiretap
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        assertEquals(1, wiretaps.getPagedResults().size());
+        assertEquals(wiretaps.getPagedResults().get(0).getEvent(), SAMPLE_MESSAGE);
+
+    }
+
+    @Test
+    public void test_exclusion() throws Exception
+    {
+
+        // Prepare test data
+
+        // setup custome broker to throw an exception
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+
+        // Perform Test
+        startFlow();
+
+        // Verify the error was stored in DB
+
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ExcludeEvent", error.getAction());
+
+        // Verify the exclusion was stored to DB was stored in DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(1, exclusions.size());
+        ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
+        assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+
+        //verify wiretap
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        assertEquals(0, wiretaps.getPagedResults().size());
+
+    }
+
+    @Test
+    public void test_flow_in_recovery() throws Exception
+    {
+
+        // Prepare test data
+
+        // setup custome broker to throw an exception
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        exceptionGenerationgBroker.setShouldThrowRecoveryException(true);
+
+        // Perform Test
+        flowUUT.start();
+        pause(5000);
+        assertEquals("recovering",flowUUT.getState());
+
+        flowUUT.stop();
+        pause(2000);
+        assertEquals("stopped",flowUUT.getState());
+
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(EndpointException.class.getName(), error.getExceptionClass());
+        assertEquals("Retry (delay=10000, maxRetries=-1)", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+        
+        //verify wiretap was not stored to DB
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        assertEquals(0, wiretaps.getPagedResults().size());
+
+    }
+
+    @Test
+    public void test_flow_stopped_in_error() throws Exception
+    {
+
+        // Prepare test data
+
+        // setup custome broker to throw an exception
+        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowUUT.getFlowElement("exception generating broker").getFlowComponent();
+        exceptionGenerationgBroker.setShouldThrowStoppedInErrorException(true);
+
+        // Perform Test
+        flowUUT.start();
+        pause(5000);
+        assertEquals("stoppedInError",flowUUT.getState());
+
+
+        // Verify the error was stored in DB
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(RuntimeException.class.getName(), error.getExceptionClass());
+        assertEquals("Stop", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+
+        //verify wiretap was not stored to DB
+        PagedSearchResult<WiretapEvent> wiretaps = (PagedSearchResult<WiretapEvent>) wiretapService.findWiretapEvents(0,1,null,true,null,null,null,null,null,null,null,null);
+        assertEquals(0, wiretaps.getPagedResults().size());
+
+    }
+
+    
+    private void startFlow(){
+        // start flow
+        flowUUT.start();
+        pause(2000);
+        assertEquals("running",flowUUT.getState());
+
+        pause(5000);
+        flowUUT.stop();
+        pause(2000);
+        assertEquals("stopped",flowUUT.getState());
+
     }
 
     /**
