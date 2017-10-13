@@ -86,7 +86,7 @@ public class ArrayListPagedSearchResult<T> implements PagedSearchResult<T>, Seri
      * 
      * @param pagedResults - search results comprising a single page of results
      *            from a larger super set
-     * @param firstResult - index of the first result shown here into the larger
+     * @param firstResultIndex - index of the first result shown here into the larger
      *            super set of results
      * @param resultSize - size of the larger super set of results
      */
