@@ -83,7 +83,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param payloadContent
      * @param eventId
      * @param type
-     * @return
+     * @return String
      */
     protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, String type)
@@ -105,7 +105,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * @param payloadContent
      * @param eventId
      * @param types
-     * @return
+     * @return String
      */
     protected String buildQuery(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, Date fromDate
             , Date untilDate, String payloadContent, String eventId, List<String> types)
@@ -286,7 +286,7 @@ public abstract class SolrDaoBase implements SolrInitialisationService
      * Query solr index by id for a given type
      * @param id
      * @param type
-     * @return
+     * @return String
      */
     protected String buildIdQuery(Long id, String type)
     {
