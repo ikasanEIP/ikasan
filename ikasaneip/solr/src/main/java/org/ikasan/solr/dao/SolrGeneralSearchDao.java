@@ -17,7 +17,7 @@ public interface SolrGeneralSearchDao<RESULTS>
      * @param startTime
      * @param endTime
      * @param resultSize
-     * @return
+     * @return RESULTS
      */
     public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize);
 
@@ -32,7 +32,7 @@ public interface SolrGeneralSearchDao<RESULTS>
      * @param endTime
      * @param resultSize
      * @param entityTypes
-     * @return
+     * @return RESULTS
      */
     public RESULTS search(Set<String> moduleName, Set<String> flowNames, String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes);
 }
