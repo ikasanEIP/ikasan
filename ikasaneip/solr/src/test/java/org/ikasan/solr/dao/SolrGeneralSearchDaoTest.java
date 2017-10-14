@@ -11,6 +11,7 @@ import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.solr.SolrDaoBase;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -25,6 +26,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 {
     SolrGeneralSearchDaoImpl dao;
 
+    @Ignore
     @Test
     @DirtiesContext
     public void test_delete_expired_records() throws Exception {
@@ -71,6 +73,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
         }
     }
 
+    @Ignore
     @Test
     @DirtiesContext
     public void test_search_success() throws Exception {
