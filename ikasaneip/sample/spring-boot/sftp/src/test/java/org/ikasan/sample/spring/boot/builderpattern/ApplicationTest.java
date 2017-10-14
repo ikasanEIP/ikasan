@@ -78,6 +78,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Ikasan Development Team
  */
+@Ignore
 @RunWith(SpringRunner.class)
 public class ApplicationTest {
 
