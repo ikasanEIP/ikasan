@@ -1150,11 +1150,11 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-solr</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency-->
 
             <dependency>
                 <groupId>org.ikasan</groupId>
