@@ -558,10 +558,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.2</version>
-                    <configuration>
-                        <releaseProfiles>all</releaseProfiles>
-                        <arguments>-Pall</arguments>
-                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
