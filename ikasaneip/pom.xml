@@ -559,7 +559,8 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.2</version>
                     <configuration>
-                        <arguments>${releaseArgs}</arguments>
+                        <releaseProfiles>all</releaseProfiles>
+                        <arguments>-Pall</arguments>
                     </configuration>
                     <dependencies>
                         <dependency>
