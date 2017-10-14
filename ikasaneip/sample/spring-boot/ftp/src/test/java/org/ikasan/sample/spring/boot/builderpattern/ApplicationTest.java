@@ -64,6 +64,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ikasan Development Team
  */
+@Ignore
 @RunWith(SpringRunner.class)
 public class ApplicationTest {
 

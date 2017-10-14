@@ -58,6 +58,7 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
@@ -77,6 +78,7 @@ import static org.junit.Assert.assertThat;
  * 
  * @author Ikasan Development Team
  */
+@Ignore
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {

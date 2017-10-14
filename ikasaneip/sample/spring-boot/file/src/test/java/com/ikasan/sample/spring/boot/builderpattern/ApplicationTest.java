@@ -45,6 +45,7 @@ import org.ikasan.builder.IkasanApplication;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -74,6 +75,7 @@ public class ApplicationTest
     /**
      * Test simple invocation.
      */
+    @Ignore
     @Test
     public void test_createModule_start_and_stop_flow() throws Exception
     {
