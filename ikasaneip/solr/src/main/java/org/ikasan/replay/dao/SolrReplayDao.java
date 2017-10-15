@@ -1,7 +1,6 @@
 package org.ikasan.replay.dao;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.ikasan.replay.model.SolrReplayEvent;
@@ -14,12 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by stewmi on 25/08/2017.
+ * Created by Ikasan Development Team on 25/08/2017.
  */
 public class SolrReplayDao extends SolrDaoBase implements ReplayDao
 {

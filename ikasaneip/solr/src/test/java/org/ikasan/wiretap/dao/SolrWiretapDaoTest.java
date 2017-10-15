@@ -8,7 +8,6 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Path;

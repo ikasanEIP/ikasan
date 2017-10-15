@@ -1,7 +1,6 @@
 package org.ikasan.solr.model;
 
 import org.apache.solr.client.solrj.beans.Field;
-import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
  * Created by Ikasan Development Team on 14/02/2017.
