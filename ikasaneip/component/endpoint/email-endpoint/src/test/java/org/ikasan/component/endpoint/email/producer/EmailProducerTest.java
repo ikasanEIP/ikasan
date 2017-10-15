@@ -106,7 +106,6 @@ public class EmailProducerTest {
     }
 
     @Test
-    @Ignore
     public void test_successful_email_withoutAttachment() throws MessagingException, IOException {
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(false, null);
 
@@ -132,7 +131,6 @@ public class EmailProducerTest {
     }
 
     @Test
-    @Ignore
     public void test_successful_email_contentFromConfig() throws MessagingException, IOException {
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(false, "This content is from config");
 
@@ -158,7 +156,6 @@ public class EmailProducerTest {
     }
 
     @Test
-    @Ignore
     public void test_successful_email_contentFromPayload() throws MessagingException, IOException {
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(false, "This content is from config");
 
@@ -185,7 +182,6 @@ public class EmailProducerTest {
 
 
     @Test
-    @Ignore
     public void test_successful_email_withAttachment() throws MessagingException, IOException {
 
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(true, null);
@@ -215,7 +211,6 @@ public class EmailProducerTest {
     }
 
     @Test
-    @Ignore
     public void testMailServerFailure()throws IOException{
 
         wiser.stop();
