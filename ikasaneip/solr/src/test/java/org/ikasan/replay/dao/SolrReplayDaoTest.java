@@ -17,7 +17,7 @@ import java.util.List;
 
 
 /**
- * Created by stewmi on 29/08/2017.
+ * Created by Ikasan Development on 29/08/2017.
  */
 public class SolrReplayDaoTest extends SolrTestCaseJ4
 {
