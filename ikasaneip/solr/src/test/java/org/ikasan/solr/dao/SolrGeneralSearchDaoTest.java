@@ -26,7 +26,6 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
 {
     SolrGeneralSearchDaoImpl dao;
 
-    @Ignore
     @Test
     @DirtiesContext
     public void test_delete_expired_records() throws Exception {
@@ -73,7 +72,6 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
         }
     }
 
-    @Ignore
     @Test
     @DirtiesContext
     public void test_search_success() throws Exception {
