@@ -1,17 +1,14 @@
 package org.ikasan.solr.service;
 
 import org.ikasan.solr.dao.SolrGeneralSearchDao;
-import org.ikasan.solr.model.IkasanSolrDocument;
 import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
 import org.ikasan.spec.solr.SolrSearchService;
-import org.ikasan.spec.solr.SolrService;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Created by stewmi on 26/08/2017.
+ * Created by Ikasan Development Team on 26/08/2017.
  */
 public class SolrGeneralServiceImpl implements SolrSearchService<IkasanSolrDocumentSearchResults>
 {

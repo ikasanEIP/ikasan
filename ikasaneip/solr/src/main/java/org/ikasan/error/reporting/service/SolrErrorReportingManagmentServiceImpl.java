@@ -5,7 +5,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.spec.solr.SolrService;
 
 /**
- * Created by amajewski on 23/09/2017.
+ * Created by Ikasan Development Team on 23/09/2017.
  */
 public class SolrErrorReportingManagmentServiceImpl implements SolrService<ErrorOccurrence<byte[]>> {
 
