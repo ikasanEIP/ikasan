@@ -4,14 +4,15 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -35,6 +36,12 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
+            HashMap<String, Object> fields = new HashMap<>();
+            fields.put("id", new Integer(1));
+
+            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fields);
+            server.request(schemaRequest);
+
 
             SolrWiretapDao solrCloudBase = new SolrWiretapDao();
             solrCloudBase.setSolrClient(server);
@@ -47,6 +54,8 @@ public class SolrWiretapDaoTest extends SolrTestCaseJ4
 
             assertEquals(1, server.query(new SolrQuery("*:*")).getResults().getNumFound());
             assertEquals(1, server.query("newcore", new SolrQuery("*:*")).getResults().getNumFound());
+
+            server.close();
 
         }
     }

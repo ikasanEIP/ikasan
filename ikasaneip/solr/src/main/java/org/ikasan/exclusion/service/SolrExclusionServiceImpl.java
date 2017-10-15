@@ -5,7 +5,7 @@ import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.solr.SolrService;
 
 /**
- * Created by amajewski on 23/09/2017.
+ * Created by Ikasan Development Team on 23/09/2017.
  */
 public class SolrExclusionServiceImpl implements SolrService<ExclusionEvent> {
 

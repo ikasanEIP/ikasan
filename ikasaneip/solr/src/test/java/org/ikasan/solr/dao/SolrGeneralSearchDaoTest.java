@@ -4,18 +4,12 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.NodeConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.ikasan.solr.model.IkasanSolrDocumentSearchResults;
-import org.ikasan.spec.solr.SolrDaoBase;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.annotation.Resource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -43,6 +37,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
 
+
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("type", "type");
             doc.addField("expiry", 0l);
@@ -68,7 +63,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             assertEquals(1, server.query("newcore", new SolrQuery("*:*")).getResults().getNumFound());
 
 
-
+            server.close();
         }
     }
 

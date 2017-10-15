@@ -1,7 +1,5 @@
 package org.ikasan.replay.service;
 
-import org.ikasan.replay.model.ReplayAudit;
-import org.ikasan.replay.model.ReplayAuditEvent;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
@@ -11,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by amajewski on 23/09/2017.
+ * Created by Ikasan Development Team on 23/09/2017.
  */
-public class SolrReplayServiceImpl implements SolrService<ReplayEvent>, ReplayManagementService<ReplayEvent, ReplayAudit, ReplayAuditEvent> {
+public class SolrReplayServiceImpl implements SolrService<ReplayEvent>, ReplayManagementService<ReplayEvent, Object, Object> {
 
     private ReplayDao replayDao;
 
@@ -39,17 +37,17 @@ public class SolrReplayServiceImpl implements SolrService<ReplayEvent>, ReplayMa
     }
 
     @Override
-    public List<ReplayAudit> getReplayAudits(List<String> moduleNames, List<String> flowNames, String eventId, String user, Date startDate, Date endDate) {
+    public List<Object> getReplayAudits(List<String> moduleNames, List<String> flowNames, String eventId, String user, Date startDate, Date endDate) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ReplayAudit getReplayAuditById(Long id) {
+    public Object getReplayAuditById(Long id) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ReplayAuditEvent> getReplayAuditEventsByAuditId(Long id) {
+    public List<Object> getReplayAuditEventsByAuditId(Long id) {
         throw new UnsupportedOperationException();
     }
 

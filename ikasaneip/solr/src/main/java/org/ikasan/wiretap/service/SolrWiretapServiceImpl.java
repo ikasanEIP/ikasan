@@ -35,7 +35,8 @@ public class SolrWiretapServiceImpl implements HousekeepService, SolrService<Wir
     /**
      * Constructor
      *
-     * @param wiretapDao - The wire tap DAO
+     * @param wiretapDao
+     * @param moduleService
      */
     public SolrWiretapServiceImpl(WiretapDao wiretapDao,ModuleService moduleService) {
         this.wiretapDao = wiretapDao;
@@ -56,14 +57,10 @@ public class SolrWiretapServiceImpl implements HousekeepService, SolrService<Wir
     }
 
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see org.ikasan.spec.management.HousekeeperService#housekeepablesExist()
-     */
     @Override
-    public boolean housekeepablesExist() {
-        return this.wiretapDao.housekeepablesExist();
+    public boolean housekeepablesExist()
+    {
+        return false;
     }
 
     /**
