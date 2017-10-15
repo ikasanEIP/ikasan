@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 public class SolrWiretapDaoTest extends SolrTestCaseJ4
 {
 
-    @Ignore
     @Test
     public void test_delete_expired_records() throws Exception {
         Path path = createTempDir();
