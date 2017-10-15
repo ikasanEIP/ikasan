@@ -34,7 +34,7 @@ public class SolrWiretapServiceImpl implements HousekeepService, SolrService<Wir
 
     /**
      * Constructor
-     * 
+     *
      * @param wiretapDao
      * @param moduleService
      */
