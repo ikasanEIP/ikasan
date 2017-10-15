@@ -13,7 +13,6 @@ import java.util.Date;
 // todo make me a real test
 public class SolrReplayDaoTest
 {
-    @Ignore
     public void test()
     {
         ArrayList<String> servers = new ArrayList<>();
