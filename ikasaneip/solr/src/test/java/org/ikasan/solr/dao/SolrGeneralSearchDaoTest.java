@@ -4,6 +4,7 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
@@ -18,6 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import javax.annotation.Resource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 /**
  * Created by Ikasan Development Team on 04/08/2017.
@@ -42,6 +44,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             createRequest.setCoreName("newcore");
             createRequest.setConfigSet("minimal");
             server.request(createRequest);
+
 
             SolrInputDocument doc = new SolrInputDocument();
             doc.addField("type", "type");
@@ -68,7 +71,7 @@ public class SolrGeneralSearchDaoTest extends SolrTestCaseJ4
             assertEquals(1, server.query("newcore", new SolrQuery("*:*")).getResults().getNumFound());
 
 
-
+            server.close();
         }
     }
 
