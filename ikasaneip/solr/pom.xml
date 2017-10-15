@@ -57,7 +57,6 @@
     <name>Ikasan Solr Implementation</name>
     <description>Ikasan EIP Solr Abstraction</description>
 
-
     <dependencies>
 
         <dependency>
