@@ -62,6 +62,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
@@ -175,6 +176,7 @@ public class ApplicationTest {
     /**
      * The SFTP test does not work on windows
      */
+    @DirtiesContext
     @Test
     public void test_sftpConsumer_flow() throws Exception {
 
@@ -198,6 +200,7 @@ public class ApplicationTest {
     /**
      * The SFTP test does not work on windows
      */
+    @DirtiesContext
     @Test
     @Ignore
     public void test_sftpProducer_flow() throws Exception {

@@ -53,6 +53,7 @@ import org.junit.runner.RunWith;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.*;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
@@ -129,6 +130,7 @@ public class ApplicationTest {
      *
      * @throws Exception
      */
+    @DirtiesContext
     @Test
     public void test_ftpConsumer_flow() throws Exception {
 
@@ -152,6 +154,7 @@ public class ApplicationTest {
      *
      * @throws Exception
      */
+    @DirtiesContext
     @Test
     public void test_ftpProducer_flow() throws Exception {
 
