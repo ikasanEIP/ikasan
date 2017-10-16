@@ -62,6 +62,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,7 +102,7 @@ public class ApplicationTest
     {
         broker.start();
         // startup spring context
-        String[] args = { "" };
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
         System.out.println("Check is module healthy.");
 

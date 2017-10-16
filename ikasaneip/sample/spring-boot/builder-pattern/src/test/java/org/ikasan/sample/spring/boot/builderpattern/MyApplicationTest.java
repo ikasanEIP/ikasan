@@ -52,6 +52,7 @@ import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -72,11 +73,12 @@ public class MyApplicationTest
 
     @Before
     public  void setup(){
-        String[] args = {""};
+        broker.start();
+
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
 
         myApplication = new MyApplication();
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-        broker.start();
     }
 
     @After
