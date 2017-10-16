@@ -44,10 +44,12 @@ import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import java.util.List;
 
@@ -64,10 +66,26 @@ public class ApplicationTest
 {
     public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
+    private IkasanApplication ikasanApplication;
+
     @Before
     public void setup()
     {
         broker.start();
+
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
+
+        Application myApplication = new Application();
+        ikasanApplication = myApplication.boot(args);
+        System.out.println("Check is module healthy.");
+
+    }
+
+    @After
+    public void shutdown()
+    {
+        ikasanApplication.close();
+        broker.stop();
     }
 
     
@@ -77,11 +95,6 @@ public class ApplicationTest
     @Test
     public void test_createModule_start_and_stop_flow() throws Exception
     {
-        String[] args = {""};
-
-        Application myApplication = new Application();
-        IkasanApplication ikasanApplication = myApplication.boot(args);
-        System.out.println("Check is module healthy.");
 
         List<Module> modules  = ikasanApplication.getModules();
         assertTrue("There should only be 1 module in this application, but found " + modules.size(), modules.size() == 1);
