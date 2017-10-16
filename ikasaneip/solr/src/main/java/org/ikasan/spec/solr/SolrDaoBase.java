@@ -180,17 +180,17 @@ public abstract class SolrDaoBase implements SolrInitialisationService
         {
             delim = "";
 
-            componentNamesBuffer.append(TYPE + COLON);
+            typeBuffer.append(TYPE + COLON);
 
-            componentNamesBuffer.append(OPEN_BRACKET);
+            typeBuffer.append(OPEN_BRACKET);
 
             for (String type : types)
             {
-                componentNamesBuffer.append(delim).append("\"").append(type).append("\" ");
+                typeBuffer.append(delim).append("\"").append(type).append("\" ");
                 delim = OR;
             }
 
-            componentNamesBuffer.append(CLOSE_BRACKET);
+            typeBuffer.append(CLOSE_BRACKET);
         }
 
         if(fromDate != null && untilDate != null)

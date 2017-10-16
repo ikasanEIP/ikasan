@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,56 +38,64 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.replay;
+package org.ikasan.dashboard.ui.search.window;
 
-import java.util.List;
-
+import com.vaadin.ui.Window;
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.search.panel.ReplayEventViewPanel;
+import org.ikasan.spec.configuration.PlatformConfigurationService;
+import org.ikasan.spec.replay.ReplayEvent;
+import org.ikasan.spec.replay.ReplayService;
+import org.ikasan.topology.service.TopologyService;
 
 /**
- * ReplayService contract.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface ReplayService<EVENT, AUDIT_EVENT>
+public class ReplayEventViewWindow extends Window
 {
+	private Logger logger = Logger.getLogger(ReplayEventViewWindow.class);
+
+	private static final long serialVersionUID = -3347325521531925322L;
+	
+	private ReplayEvent replayEvent;
+	private ReplayService replayService;
+	private PlatformConfigurationService platformConfigurationService;
+	private TopologyService topologyService;
+
 	/**
-	 * Add a replay listener.
-	 * 
-	 * @param listener
+	 * Constructor
+	 *  
+	 * @param replayEvent
+	 * @param replayService
+	 * @param platformConfigurationService
 	 */
-	public void addReplayListener(ReplayListener<AUDIT_EVENT> listener);
+	public ReplayEventViewWindow(ReplayEvent replayEvent, ReplayService replayService,
+                                 PlatformConfigurationService platformConfigurationService,
+								 TopologyService topologyService)
+	{
+		super();
+		this.replayEvent = replayEvent;
+		this.replayService = replayService;
+		this.platformConfigurationService = platformConfigurationService;
+		this.topologyService = topologyService;
+		
+		this.init();
+	}
 
-    /**
-     * Entry point for replay of a list of events.
-     * 
-     * @param targetServer
-     * @param events
-     * @param authUser
-     * @param authPassword
-     * @param user
-     */
-    public void replay(String targetServer, List<EVENT> events, String authUser, String authPassword, String user, String replayReason);
 
-    /**
-     * Entry point for replay of an individual event.
-     *
-     * @param targetServer
-     * @param event
-     * @param authUser
-     * @param authPassword
-     * @param user
-     */
-    public void replay(String targetServer, EVENT event, String authUser, String authPassword, String user, String replayReason);
-    
-    /**
-     * Method to cancel the replay.
-     */
-    public void cancel();
+	public void init()
+	{
+		this.setModal(true);
+		this.setResizable(false);
+		this.setHeight("90%");
+		this.setWidth("90%");
+		
+		ReplayEventViewPanel panel = new ReplayEventViewPanel(this.replayEvent, replayService,
+				platformConfigurationService, topologyService);
+		
+		this.setContent(panel);
+	}
 
-    /**
-     * Has the replay been cancelled?
-     * 
-     * @return
-     */
-    public boolean isCancelled();
 }

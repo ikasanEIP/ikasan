@@ -18,14 +18,16 @@ import org.ikasan.dashboard.ui.framework.icons.AtlassianIcons;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.housekeeping.panel.HousekeepingPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.dashboard.ui.replay.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.search.window.ErrorOccurrenceViewWindow;
+import org.ikasan.dashboard.ui.search.window.ReplayEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.exclusion.dao.SolrExclusionEventDao;
+import org.ikasan.replay.dao.SolrReplayDao;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -41,6 +43,7 @@ import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.hospital.service.HospitalManagementService;
 import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.replay.ReplayService;
@@ -51,6 +54,7 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.service.TopologyService;
+import org.ikasan.wiretap.dao.SolrWiretapDao;
 import org.tepi.filtertable.FilterTable;
 import org.vaadin.teemu.VaadinIcons;
 
@@ -154,7 +158,7 @@ public class SearchPanel extends Panel implements View
                     {
                         List<ReplayEvent> replayEvents = replayManagementService.getReplayEvents(new ArrayList<>(), new ArrayList<>(), ikasanSolrDocument.getEventId(), null, null, null);
                         ReplayEventViewWindow errorOccurrenceViewWindow = new ReplayEventViewWindow(replayEvents.get(0), replayService,
-                                platformConfigurationService);
+                                platformConfigurationService, topologyService);
 
                         UI.getCurrent().addWindow(errorOccurrenceViewWindow);
                     }
@@ -335,14 +339,35 @@ public class SearchPanel extends Panel implements View
             moduleNames.add("no module name");
         }
 
+        ArrayList<String> types = new ArrayList<>();
+
+        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_REPLAY_WRITE))
+        {
+            types.add(SolrReplayDao.REPLAY);
+        }
+
+        if(ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_WRITE)
+                || ikasanAuthentication.hasGrantedAuthority(SecurityConstants.SEARCH_ADMIN)
+                || ikasanAuthentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+        {
+            types.add(SolrReplayDao.REPLAY);
+            types.add(SolrExclusionEventDao.EXCLUSION);
+            types.add(SolrWiretapDao.WIRETAP);
+        }
+
+        if(types.isEmpty())
+        {
+            types.add("DUMMY");
+        }
+
         
         IkasanSolrDocumentSearchResults results = this.solrSearchService.search(moduleNames, flowNames, searchString,
                 this.fromDate.getValue().getTime(), this.toDate.getValue().getTime(),
-                platformConfigurationService.getSearchResultSetSize());
+                platformConfigurationService.getSearchResultSetSize(), types);
 
         if(results == null || results.getResultList().size() == 0)
         {
-            Notification.show("The ikasan search returned no results!", Notification.Type.ERROR_MESSAGE);
+            Notification.show("The Ikasan search returned no results!", Notification.Type.ERROR_MESSAGE);
 
             layout.removeComponent(this.resultsLabel);
             resultsLabel = new Label("Number of records returned: 0 of 0");

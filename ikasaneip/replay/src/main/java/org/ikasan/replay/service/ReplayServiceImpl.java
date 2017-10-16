@@ -136,6 +136,82 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
     	}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.replay.ReplayService#replay(java.util.List)
+	 */
+	@Override
+	public void replay(String targetServer, ReplayEvent event,
+					   String authUser, String authPassword, String user, String replayReason)
+	{
+		cancel = false;
+
+		ReplayAudit replayAudit = new ReplayAudit(user, replayReason, targetServer);
+		logger.debug("Saving replayAudit: " + replayAudit);
+
+		this.replayAuditDao.saveOrUpdateAudit(replayAudit);
+
+
+		if(!targetServer.endsWith("/"))
+		{
+			targetServer += "/";
+		}
+
+		logger.info("Event: " + event.getEvent());
+
+		ResponseEntity<String> response = null;
+
+		String url = targetServer
+				+ event.getModuleName().replace(" ", "%20")
+				+ "/rest/replay/eventReplay/"
+				+ event.getModuleName().replace(" ", "%20")
+				+ "/"
+				+ event.getFlowName().replace(" ", "%20");
+
+		HttpEntity request = initRequest(event.getEvent(), event.getModuleName(), authUser, authPassword);
+
+		logger.info("Attempting to call URL: " + url);
+
+		String responseBody = null;
+
+		RuntimeException exception = null;
+
+		try
+		{
+			response = restTemplate.exchange(new URI(url), HttpMethod.PUT, request, String.class);
+			responseBody = response.getBody();
+		}
+		catch(final HttpClientErrorException e)
+		{
+			logger.error("An error has occurred attempting to replay event: " + e.getResponseBodyAsString(), e);
+			responseBody = e.getResponseBodyAsString();
+			exception = new RuntimeException(e.getResponseBodyAsString(), e);
+		}
+		catch (Exception e)
+		{
+			logger.error("An error has occurred attempting to replay event: " + e.getMessage(),e);
+			exception = new RuntimeException(e.getMessage(), e);
+		}
+
+		boolean success = true;
+
+		if(response == null || !response.getStatusCode().is2xxSuccessful())
+		{
+			success = false;
+		}
+
+		ReplayAuditEvent replayAuditEvent = new ReplayAuditEvent(replayAudit, event, success,
+				responseBody, System.currentTimeMillis());
+
+		logger.debug("Saving replayAuditEvent: " + replayAuditEvent);
+
+		this.replayAuditDao.saveOrUpdate(replayAuditEvent);
+
+		if(exception != null)
+		{
+			throw exception;
+		}
+	}
+
 
 	private HttpEntity initRequest(byte[] event, String module, String user, String password)
 	{
