@@ -68,7 +68,6 @@ public class MyApplicationTest
     private IkasanApplication ikasanApplication;
     private MyApplication myApplication;
 
-    @Rule
     public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
 
     @Before
@@ -82,7 +81,9 @@ public class MyApplicationTest
 
     @After
     public void shutdown(){
+
         ikasanApplication.close();
+        broker.stop();
     }
     /**
      * Test simple invocation.

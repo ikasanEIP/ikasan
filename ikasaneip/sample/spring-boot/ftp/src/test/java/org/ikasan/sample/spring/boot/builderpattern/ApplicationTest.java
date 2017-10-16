@@ -48,7 +48,6 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockftpserver.fake.FakeFtpServer;
@@ -57,14 +56,12 @@ import org.mockftpserver.fake.filesystem.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
  *
  * @author Ikasan Development Team
  */
-@Ignore
 @RunWith(SpringRunner.class)
 public class ApplicationTest {
 
