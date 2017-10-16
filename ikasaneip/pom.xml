@@ -2047,6 +2047,12 @@
                 <artifactId>subethasmtp-wiser</artifactId>
                 <version>${version.org.subethamail}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
