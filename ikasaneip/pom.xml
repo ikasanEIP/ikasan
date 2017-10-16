@@ -594,6 +594,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.6</version>
                     <configuration>
+                        <parallel>methods</parallel>
+                        <threadCount>5</threadCount>
                         <argLine>-XX:-UseSplitVerifier</argLine>
                     </configuration>
                 </plugin>
