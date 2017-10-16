@@ -255,7 +255,6 @@ public class EmailProducerTest {
 
         configuration.setSubject("Subject Line");
         configuration.setMailHost("localhost");
-        configuration.setMailSmtpPort(2500);
 
         configuration.setHasAttachment(hasAttachment);
 
