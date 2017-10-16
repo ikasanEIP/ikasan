@@ -61,6 +61,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
@@ -143,6 +144,7 @@ public class ApplicationTest
         broker.stop();
     }
 
+    @DirtiesContext
     @Test
     public void test_successful_message_processing() throws Exception
     {
@@ -163,6 +165,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_exclusion() throws Exception
     {
@@ -196,6 +199,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_in_recovery() throws Exception
     {
@@ -233,6 +237,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_stopped_in_error() throws Exception
     {
@@ -271,10 +276,9 @@ public class ApplicationTest
     private void startFlow(){
         // start flow
         flowUUT.start();
-        pause(2000);
-        assertEquals("running",flowUUT.getState());
 
-        pause(5000);
+        pause(10000);
+        assertEquals("running",flowUUT.getState());
         flowUUT.stop();
         pause(2000);
         assertEquals("stopped",flowUUT.getState());

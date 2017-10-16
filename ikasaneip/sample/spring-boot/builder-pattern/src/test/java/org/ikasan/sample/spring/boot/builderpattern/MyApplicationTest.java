@@ -90,7 +90,6 @@ public class MyApplicationTest
     /**
      * Test simple invocation.
      */
-    @Ignore
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_scheduled_start_and_stop_flow() throws Exception
@@ -114,7 +113,6 @@ public class MyApplicationTest
 
     }
 
-    @Ignore
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void test_jmsFlow_start_and_stop_flow() throws Exception
