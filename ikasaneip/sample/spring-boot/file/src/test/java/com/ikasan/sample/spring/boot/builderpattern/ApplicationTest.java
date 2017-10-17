@@ -65,13 +65,14 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker;
 
     private IkasanApplication ikasanApplication;
 
     @Before
     public void setup()
     {
+        broker = new EmbeddedActiveMQBroker();
         broker.start();
 
         String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};

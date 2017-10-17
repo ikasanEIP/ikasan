@@ -69,10 +69,11 @@ public class MyApplicationTest
     private IkasanApplication ikasanApplication;
     private MyApplication myApplication;
 
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker;
 
     @Before
     public  void setup(){
+        broker = new EmbeddedActiveMQBroker();
         broker.start();
 
         String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
