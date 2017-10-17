@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
@@ -60,8 +61,8 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrenceImpl, Note, ErrorOccurrenceNote, ModuleErrorCount>,
-		HousekeepService, HarvestService<ErrorOccurrenceImpl> {
+public class ErrorReportingManagementServiceImpl implements ErrorReportingManagementService<ErrorOccurrence, Note, ErrorOccurrenceNote, ModuleErrorCount>,
+		HousekeepService, HarvestService<ErrorOccurrence> {
 	private static Logger logger = LoggerFactory.getLogger(ErrorReportingManagementServiceImpl.class);
 
 	public static final String CLOSE = "close";
@@ -81,7 +82,8 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @param errorManagementDao
 	 */
 	public ErrorReportingManagementServiceImpl(ErrorManagementDao errorManagementDao,
-											   ErrorReportingServiceDao errorReportingServiceDao) {
+											   ErrorReportingServiceDao errorReportingServiceDao)
+	{
 		super();
 		this.errorManagementDao = errorManagementDao;
 		if (this.errorManagementDao == null) {
@@ -159,10 +161,10 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	 * @see org.ikasan.spec.error.reporting.ErrorReportingManagermentService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
 	 */
 	@Override
-	public List<ErrorOccurrenceImpl> find(List<String> moduleName,
+	public List<ErrorOccurrence> find(List<String> moduleName,
                                           List<String> flowName, List<String> flowElementname,
                                           Date startDate, Date endDate) {
-		return this.errorManagementDao.findActionErrorOccurrences(moduleName, flowName, flowElementname, startDate, endDate);
+		return new ArrayList<>(this.errorManagementDao.findActionErrorOccurrences(moduleName, flowName, flowElementname, startDate, endDate));
 	}
 
 	/* (non-Javadoc)
@@ -277,8 +279,8 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	}
 
 	@Override
-	public List<ErrorOccurrenceImpl> harvest(int transactionBatchSize) {
-		return this.errorManagementDao.getHarvestableRecords(transactionBatchSize);
+	public List<ErrorOccurrence> harvest(int transactionBatchSize) {
+		return new ArrayList<>(this.errorManagementDao.getHarvestableRecords(transactionBatchSize));
 	}
 
 	@Override
@@ -287,7 +289,7 @@ public class ErrorReportingManagementServiceImpl implements ErrorReportingManage
 	}
 
 	@Override
-	public void saveHarvestedRecord(ErrorOccurrenceImpl harvestedRecord) {
+	public void saveHarvestedRecord(ErrorOccurrence harvestedRecord) {
 		this.errorManagementDao.saveErrorOccurrence(harvestedRecord);
 	}
 

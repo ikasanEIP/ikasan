@@ -40,14 +40,14 @@
  */
 package org.ikasan.error.reporting.dao;
 
-import java.util.Date;
-import java.util.List;
-
-import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceAction;
 import org.ikasan.error.reporting.model.ErrorOccurrenceLink;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.Note;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -66,7 +66,7 @@ public interface ErrorManagementDao
 	 *
 	 * @param errorOccurrence
      */
-	public void saveErrorOccurrence(ErrorOccurrenceImpl errorOccurrence);
+	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence);
 	
 	/**
 	 * 
@@ -97,14 +97,14 @@ public interface ErrorManagementDao
 	 * 
 	 * @param errorOccurrence
 	 */
-	public void deleteErrorOccurence(ErrorOccurrenceImpl errorOccurrence);
+	public void deleteErrorOccurence(ErrorOccurrence errorOccurrence);
 	
 	/**
 	 * 
 	 * @param errorUris
 	 * @return
 	 */
-	public List<ErrorOccurrenceImpl> findErrorOccurrences(List<String> errorUris);
+	public List<ErrorOccurrence> findErrorOccurrences(List<String> errorUris);
 	
 	
 	/**
@@ -144,8 +144,8 @@ public interface ErrorManagementDao
 	 * @param endDate
 	 * @return
 	 */
-    public List<ErrorOccurrenceImpl> findActionErrorOccurrences(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-                                                                Date startDate, Date endDate);
+    public List<ErrorOccurrence> findActionErrorOccurrences(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+															Date startDate, Date endDate);
     /**
      * 
      * @return
@@ -170,5 +170,5 @@ public interface ErrorManagementDao
 	 * @param harvestingBatchSize
 	 * @return
      */
-	public List<ErrorOccurrenceImpl> getHarvestableRecords(final int harvestingBatchSize);
+	public List<ErrorOccurrence> getHarvestableRecords(final int harvestingBatchSize);
 }
