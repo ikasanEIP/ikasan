@@ -45,6 +45,10 @@ public class ModuleConfig {
     @Resource
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
+
+
     /**
      *
      *
@@ -79,7 +83,7 @@ public class ModuleConfig {
 
         FlowBuilder fb = mb.getFlowBuilder("flowName");
 
-        ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory("failover:(vm://embedded-broker?create=false)");
+        ConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
         Consumer localJmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
                 .setConnectionFactory(connectionFactory)
                 .setDestinationJndiName("source")
