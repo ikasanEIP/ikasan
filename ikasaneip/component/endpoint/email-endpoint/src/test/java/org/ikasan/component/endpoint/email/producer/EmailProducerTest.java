@@ -206,6 +206,7 @@ public class EmailProducerTest {
         }
     }
 
+    @Ignore
     @Test
     public void testMailServerFailure()throws IOException{
 
