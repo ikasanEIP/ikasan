@@ -42,7 +42,7 @@ package org.ikasan.dashboard.ui;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -75,7 +75,7 @@ public class ErrorOccurrencePopup extends UI
 		 PlatformConfigurationService platformConfigurationService 
 		 	= (PlatformConfigurationService)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("platformConfigurationService");
 	        	
-		ErrorOccurrence errorOccurrence = (ErrorOccurrence)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
+		ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)VaadinService.getCurrentRequest().getWrappedSession().getAttribute("errorOccurrence");
 		
 		
 		ErrorOccurrenceViewPanel panel 

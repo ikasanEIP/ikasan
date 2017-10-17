@@ -70,6 +70,6 @@ public class ErrorManagementDaoConstants
 	
 	public static final String DELETE_NOTE = "delete from ErrorOccurrenceNote where noteId = :" + NOTE_ID; 
 
-	public static final String CLOSE_ERROR_OCCURRENCE = "update ErrorOccurrence set userAction = 'close'" +
+	public static final String CLOSE_ERROR_OCCURRENCE = "update ErrorOccurrenceImpl set userAction = 'close'" +
 			", actionedBy = :" + USER + ", userActionTimestamp = :" + TIMESTAMP + " where uri in :" + ERROR_URIS;  
 }

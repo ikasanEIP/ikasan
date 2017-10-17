@@ -47,14 +47,14 @@ package org.ikasan.error.reporting.model;
  */
 public class CategorisedErrorOccurrence
 {
-	private ErrorOccurrence errorOccurrence;
+	private ErrorOccurrenceImpl errorOccurrence;
 	private ErrorCategorisation errorCategorisation;
 
 	/**
 	 * @param errorOccurrence
 	 * @param errorCategorisation
 	 */
-	public CategorisedErrorOccurrence(ErrorOccurrence errorOccurrence,
+	public CategorisedErrorOccurrence(ErrorOccurrenceImpl errorOccurrence,
 			ErrorCategorisation errorCategorisation)
 	{
 		super();
@@ -65,7 +65,7 @@ public class CategorisedErrorOccurrence
 	/**
 	 * @return the errorOccurrence
 	 */
-	public ErrorOccurrence getErrorOccurrence()
+	public ErrorOccurrenceImpl getErrorOccurrence()
 	{
 		return errorOccurrence;
 	}
@@ -73,7 +73,7 @@ public class CategorisedErrorOccurrence
 	/**
 	 * @param errorOccurrence the errorOccurrence to set
 	 */
-	public void setErrorOccurrence(ErrorOccurrence errorOccurrence)
+	public void setErrorOccurrence(ErrorOccurrenceImpl errorOccurrence)
 	{
 		this.errorOccurrence = errorOccurrence;
 	}

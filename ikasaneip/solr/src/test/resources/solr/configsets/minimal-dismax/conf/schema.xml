@@ -25,7 +25,7 @@
 
   <dynamicField name="timestamp*" type="long" indexed="true" stored="true" multiValued="false"/>
 
-  <dynamicField name="id*" type="long" indexed="true" stored="true"/>
+  <dynamicField name="id*" type="string" indexed="true" stored="true"/>
 
   <dynamicField name="moduleName*" type="string" indexed="true" stored="true"/>
 

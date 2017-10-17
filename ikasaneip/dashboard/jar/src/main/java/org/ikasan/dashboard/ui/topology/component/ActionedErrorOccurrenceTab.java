@@ -49,11 +49,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.ActionedErrorOccurrencePopup;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ActionedErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -76,7 +75,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -86,7 +84,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
@@ -179,7 +176,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		    {
 		    	if(itemClickEvent.isDoubleClick())
 		    	{
-			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
+			    	ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)itemClickEvent.getItemId();
 			    	ActionedErrorOccurrenceViewWindow errorOccurrenceViewWindow 
 			    		= new ActionedErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService);
 			    	
@@ -353,7 +350,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
 		this.addComponent(wrapper);
 	}
 	
-	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
+	protected void refreshTable(boolean showError, Collection<ErrorOccurrenceImpl> myItems)
 	{
 		errorOccurenceTable.removeAllItems();
 
@@ -405,7 +402,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     		}
     	}
     	
-		List<ErrorOccurrence> errorOccurrences = errorReportingManagementService
+		List<ErrorOccurrenceImpl> errorOccurrences = errorReportingManagementService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
     	
     	if((errorOccurrences == null || errorOccurrences.size() == 0) && showError)
@@ -415,7 +412,7 @@ public class ActionedErrorOccurrenceTab extends TopologyTab
     	
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
 
-    	for(ErrorOccurrence errorOccurrence: errorOccurrences)
+    	for(ErrorOccurrenceImpl errorOccurrence: errorOccurrences)
     	{
     		Date date = new Date(errorOccurrence.getUserActionTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

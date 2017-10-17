@@ -8,6 +8,38 @@ import org.ikasan.spec.wiretap.WiretapEvent;
  */
 public class SolrWiretapEvent implements WiretapEvent<String>
 {
+    /**
+     * Used by solr to create results.
+     */
+    public SolrWiretapEvent()
+    {
+
+    }
+
+    /**
+     * Constructor
+     *
+     * @param moduleName
+     * @param flowName
+     * @param componentName
+     * @param eventId
+     * @param relatedEventId
+     * @param eventTimestamp
+     * @param event
+     */
+    public SolrWiretapEvent(Long id, final String moduleName, final String flowName, final String componentName,
+                            final String eventId, final String relatedEventId, final long eventTimestamp, final String event)
+    {
+        this.id = id.toString();
+        this.moduleName = moduleName;
+        this.flowName = flowName;
+        this.componentName = componentName;
+        this.eventId = eventId;
+        this.relatedEventId = relatedEventId;
+        this.timestamp = eventTimestamp;
+        this.event = event;
+    }
+
     @Field("id")
     private String id;
 
@@ -24,13 +56,17 @@ public class SolrWiretapEvent implements WiretapEvent<String>
     private String componentName;
 
     @Field("timestamp")
-    private long timeStamp;
+    private long timestamp;
 
     @Field("expiry")
     private long expiry;
 
     @Field("event")
     private String eventId;
+
+    @Field("relateEvent")
+    private String relatedEventId;
+
 
 
     @Override
@@ -60,7 +96,7 @@ public class SolrWiretapEvent implements WiretapEvent<String>
     @Override
     public long getTimestamp()
     {
-        return this.timeStamp;
+        return this.timestamp;
     }
 
     @Override
@@ -106,9 +142,9 @@ public class SolrWiretapEvent implements WiretapEvent<String>
         this.componentName = componentName;
     }
 
-    public void setTimeStamp(long timeStamp)
+    public void setTimestamp(long timestamp)
     {
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
     }
 
     public void setExpiry(long expiry)
@@ -121,6 +157,16 @@ public class SolrWiretapEvent implements WiretapEvent<String>
         this.eventId = eventId;
     }
 
+    public String getRelatedEventId()
+    {
+        return relatedEventId;
+    }
+
+    public void setRelatedEventId(String relatedEventId)
+    {
+        this.relatedEventId = relatedEventId;
+    }
+
     @Override
     public String toString()
     {
@@ -130,7 +176,7 @@ public class SolrWiretapEvent implements WiretapEvent<String>
                 ", moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", componentName='" + componentName + '\'' +
-                ", timeStamp=" + timeStamp +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

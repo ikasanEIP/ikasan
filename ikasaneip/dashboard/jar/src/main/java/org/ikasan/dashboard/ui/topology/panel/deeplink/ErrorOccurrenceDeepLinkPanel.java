@@ -46,7 +46,7 @@ import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.dashboard.ui.topology.panel.ErrorOccurrenceViewPanel;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -112,7 +112,7 @@ public class ErrorOccurrenceDeepLinkPanel extends UI
 		
 		String errorUri = request.getParameter("errorUri");
 		
-		ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(errorUri);
+		ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)errorReportingService.find(errorUri);
 		
 		if(errorOccurrence == null)
 		{

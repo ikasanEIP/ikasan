@@ -43,7 +43,7 @@ package org.ikasan.error.reporting.dao;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +57,7 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public class MapErrorReportingServiceDao<T>
-        implements ErrorReportingServiceDao<ErrorOccurrence, String>
+        implements ErrorReportingServiceDao<ErrorOccurrenceImpl, String>
 {
     /**
      * logger instance
@@ -67,14 +67,14 @@ public class MapErrorReportingServiceDao<T>
     /**
      * actual errorOccurrence instances
      */
-    LinkedHashMap<String, ErrorOccurrence> errorOccurrences;
+    LinkedHashMap<String, ErrorOccurrenceImpl> errorOccurrences;
 
     /**
      * Constructor
      *
      * @param errorOccurrences
      */
-    public MapErrorReportingServiceDao(LinkedHashMap<String, ErrorOccurrence> errorOccurrences)
+    public MapErrorReportingServiceDao(LinkedHashMap<String, ErrorOccurrenceImpl> errorOccurrences)
     {
         this.errorOccurrences = errorOccurrences;
         if (errorOccurrences == null)
@@ -84,13 +84,13 @@ public class MapErrorReportingServiceDao<T>
     }
 
     @Override
-    public ErrorOccurrence find(String uri)
+    public ErrorOccurrenceImpl find(String uri)
     {
         return this.errorOccurrences.get(uri);
     }
 
     @Override
-    public void save(ErrorOccurrence errorOccurrence)
+    public void save(ErrorOccurrenceImpl errorOccurrence)
     {
         this.errorOccurrences.put(errorOccurrence.getUri(), errorOccurrence);
     }
@@ -100,7 +100,7 @@ public class MapErrorReportingServiceDao<T>
     {
         List<String> expiredIdentifiers = new ArrayList<>();
         long expiryTime = System.currentTimeMillis();
-        for (Map.Entry<String, ErrorOccurrence> entry : errorOccurrences.entrySet())
+        for (Map.Entry<String, ErrorOccurrenceImpl> entry : errorOccurrences.entrySet())
         {
             if (entry.getValue().getExpiry() < expiryTime)
             {
@@ -127,9 +127,9 @@ public class MapErrorReportingServiceDao<T>
          * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
          */
     @Override
-    public List<ErrorOccurrence> find(List<String> moduleName,
-            List<String> flowName, List<String> flowElementname,
-            Date startDate, Date endDate, int size)
+    public List<ErrorOccurrenceImpl> find(List<String> moduleName,
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, int size)
     {
         // TODO Auto-generated method stub
         return null;
@@ -150,10 +150,10 @@ public class MapErrorReportingServiceDao<T>
      * @see org.ikasan.spec.error.reporting.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date, java.lang.String, java.lang.String, int)
      */
     @Override
-    public List<ErrorOccurrence> find(List<String> moduleName,
-            List<String> flowName, List<String> flowElementname,
-            Date startDate, Date endDate, String action, String exceptionClass,
-            int size)
+    public List<ErrorOccurrenceImpl> find(List<String> moduleName,
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, String action, String exceptionClass,
+                                          int size)
     {
         // TODO Auto-generated method stub
         return null;

@@ -50,7 +50,7 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.teemu.VaadinIcons;
@@ -86,7 +86,7 @@ public class ErrorOccurrenceCloseWindow extends Window
 	
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private Collection<ErrorOccurrence> errorOccurrences;
+	private Collection<ErrorOccurrenceImpl> errorOccurrences;
 	
 	private Table errorOccurenceTable;
 	
@@ -99,7 +99,7 @@ public class ErrorOccurrenceCloseWindow extends Window
 	 * @param policy
 	 */
 	public ErrorOccurrenceCloseWindow(ErrorReportingManagementService errorReportingManagementService,
-			Collection<ErrorOccurrence> errorOccurrences)
+			Collection<ErrorOccurrenceImpl> errorOccurrences)
 	{
 		super();
 		this.errorOccurrences = errorOccurrences;
@@ -222,10 +222,10 @@ public class ErrorOccurrenceCloseWindow extends Window
             	final IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
 			        	.getAttribute(DashboardSessionValueConstants.USER);
             	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)cont.getItemIds();
+            	Collection<ErrorOccurrenceImpl> items = (Collection<ErrorOccurrenceImpl>)cont.getItemIds();
             	ArrayList<String> uris = new ArrayList<String>();
             	
-            	for(ErrorOccurrence eo: items)
+            	for(ErrorOccurrenceImpl eo: items)
             	{
             		uris.add(eo.getUri());
             	}
@@ -259,7 +259,7 @@ public class ErrorOccurrenceCloseWindow extends Window
 		layout.addComponent(buttonsLayout, 0, 4, 1, 4);
 		layout.setComponentAlignment(buttonsLayout, Alignment.MIDDLE_CENTER);
 		
-		for(ErrorOccurrence errorOccurrence: errorOccurrences)
+		for(ErrorOccurrenceImpl errorOccurrence: errorOccurrences)
     	{
     		Date date = new Date(errorOccurrence.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);

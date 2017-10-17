@@ -61,7 +61,7 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellSty
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCommentWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
@@ -217,7 +217,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 		    {
 		    	if (itemClickEvent.isDoubleClick())
 		    	{
-			    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
+			    	ErrorOccurrenceImpl errorOccurrence = (ErrorOccurrenceImpl)itemClickEvent.getItemId();
 			    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence, errorReportingManagementService,
 			    			platformConfigurationService);
 			    	
@@ -232,7 +232,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 			public String generateDescription(com.vaadin.ui.Component source,
 					Object itemId, Object propertyId)
 			{
-				 return "Double click the table row to view details of error "+ ((ErrorOccurrence)(itemId)).getUri();
+				 return "Double click the table row to view details of error "+ ((ErrorOccurrenceImpl)(itemId)).getUri();
 			}
 		});
 				
@@ -390,7 +390,7 @@ public class ErrorOccurrenceTab extends TopologyTab
         {
             public void buttonClick(ClickEvent event) 
             {	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
+            	Collection<ErrorOccurrenceImpl> items = (Collection<ErrorOccurrenceImpl>)container.getItemIds();
             	
             	Resource r = selectAllButton.getIcon();
             	
@@ -398,7 +398,7 @@ public class ErrorOccurrenceTab extends TopologyTab
             	{
             		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE);
             		
-            		for(ErrorOccurrence eo: items)
+            		for(ErrorOccurrenceImpl eo: items)
                 	{
                 		Item item = container.getItem(eo);
                 		
@@ -411,7 +411,7 @@ public class ErrorOccurrenceTab extends TopologyTab
             	{
             		selectAllButton.setIcon(VaadinIcons.CHECK_SQUARE_O);
             		
-            		for(ErrorOccurrence eo: items)
+            		for(ErrorOccurrenceImpl eo: items)
                 	{
                 		Item item = container.getItem(eo);
                 		
@@ -434,11 +434,11 @@ public class ErrorOccurrenceTab extends TopologyTab
         {
             public void buttonClick(ClickEvent event) 
             {	            	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
+            	Collection<ErrorOccurrenceImpl> items = (Collection<ErrorOccurrenceImpl>)container.getItemIds();
             	
-            	final Collection<ErrorOccurrence> myItems = new ArrayList<ErrorOccurrence>(items);
+            	final Collection<ErrorOccurrenceImpl> myItems = new ArrayList<ErrorOccurrenceImpl>(items);
             	
-            	for(ErrorOccurrence eo: items)
+            	for(ErrorOccurrenceImpl eo: items)
             	{
             		Item item = container.getItem(eo);
             		
@@ -465,7 +465,7 @@ public class ErrorOccurrenceTab extends TopologyTab
 	                    {
 	                    	if(window.getAction().equals(ErrorOccurrenceCloseWindow.CLOSE))
 	                    	{
-	                    		updateCancel((Collection<ErrorOccurrence>) myItems);
+	                    		updateCancel((Collection<ErrorOccurrenceImpl>) myItems);
 	                    	}
 	                    }
 	                });
@@ -486,11 +486,11 @@ public class ErrorOccurrenceTab extends TopologyTab
         {
             public void buttonClick(ClickEvent event) 
             {	
-            	Collection<ErrorOccurrence> items = (Collection<ErrorOccurrence>)container.getItemIds();
+            	Collection<ErrorOccurrenceImpl> items = (Collection<ErrorOccurrenceImpl>)container.getItemIds();
             	
-            	final Collection<ErrorOccurrence> myItems = new ArrayList<ErrorOccurrence>(items);
+            	final Collection<ErrorOccurrenceImpl> myItems = new ArrayList<ErrorOccurrenceImpl>(items);
             	
-            	for(ErrorOccurrence eo: items)
+            	for(ErrorOccurrenceImpl eo: items)
             	{
             		Item item = container.getItem(eo);
             		
@@ -549,7 +549,7 @@ public class ErrorOccurrenceTab extends TopologyTab
             	
 		    	StringBuffer sb = new StringBuffer();
 		    	
-		    	for(ErrorOccurrence errorOccurrence: (List<ErrorOccurrence>)container.getItemIds())
+		    	for(ErrorOccurrenceImpl errorOccurrence: (List<ErrorOccurrenceImpl>)container.getItemIds())
 		    	{
 					sb.append(buildErrorUrl(dashboardUrl, errorOccurrence)).append("\n");	    	
 		    	}
@@ -734,21 +734,21 @@ public class ErrorOccurrenceTab extends TopologyTab
     	
     	for(Object errorOccurrence: container.getItemIds())
     	{    		
-    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getModuleName()).append("\",");
-    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getFlowName()).append("\",");
-    		sb.append("\"").append(((ErrorOccurrence)errorOccurrence).getFlowElementName()).append("\",");
+    		sb.append("\"").append(((ErrorOccurrenceImpl)errorOccurrence).getModuleName()).append("\",");
+    		sb.append("\"").append(((ErrorOccurrenceImpl)errorOccurrence).getFlowName()).append("\",");
+    		sb.append("\"").append(((ErrorOccurrenceImpl)errorOccurrence).getFlowElementName()).append("\",");
 
-			if(((ErrorOccurrence)errorOccurrence).getErrorMessage() != null) {
-				sb.append("\"").append(((ErrorOccurrence) errorOccurrence).getErrorMessage().length() > 32760 ?
-						((ErrorOccurrence) errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"").substring(0, 32759) :
-						((ErrorOccurrence) errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"")).append("\",");
+			if(((ErrorOccurrenceImpl)errorOccurrence).getErrorMessage() != null) {
+				sb.append("\"").append(((ErrorOccurrenceImpl) errorOccurrence).getErrorMessage().length() > 32760 ?
+						((ErrorOccurrenceImpl) errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"").substring(0, 32759) :
+						((ErrorOccurrenceImpl) errorOccurrence).getErrorMessage().replaceAll("\"", "\"\"")).append("\",");
 			}
 			else
 			{
 				sb.append("\"").append("NULL").append("\",");
 			}
     		
-    		Date date = new Date(((ErrorOccurrence)errorOccurrence).getTimestamp());
+    		Date date = new Date(((ErrorOccurrenceImpl)errorOccurrence).getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
     	    String timestamp = format.format(date);
     	    
@@ -756,7 +756,7 @@ public class ErrorOccurrenceTab extends TopologyTab
     	    
     		if(dashboardUrl != null)
     		{
-    			sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrence)errorOccurrence)).append("\"");
+    			sb.append("\"").append(this.buildErrorUrl(dashboardUrl, (ErrorOccurrenceImpl)errorOccurrence)).append("\"");
     		}
     		
     		sb.append("\r\n");
@@ -767,7 +767,7 @@ public class ErrorOccurrenceTab extends TopologyTab
         return out;
     }
 	
-	protected void refreshTable(boolean showError, Collection<ErrorOccurrence> myItems)
+	protected void refreshTable(boolean showError, Collection<ErrorOccurrenceImpl> myItems)
 	{
 		errorOccurenceTable.removeAllItems();
 		
@@ -822,7 +822,7 @@ public class ErrorOccurrenceTab extends TopologyTab
     		}
     	}
     	
-		List<ErrorOccurrence> errorOccurences = errorReportingService
+		List<ErrorOccurrenceImpl> errorOccurences = errorReportingService
     			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue(),
     					platformConfigurationService.getSearchResultSetSize());
     	
@@ -854,7 +854,7 @@ public class ErrorOccurrenceTab extends TopologyTab
     		notif.show(Page.getCurrent());
     	}
     	
-    	for(final ErrorOccurrence errorOccurrence: errorOccurences)
+    	for(final ErrorOccurrenceImpl errorOccurrence: errorOccurences)
     	{
     		Date date = new Date(errorOccurrence.getTimestamp());
     		SimpleDateFormat format = new SimpleDateFormat(DashboardConstants.DATE_FORMAT_TABLE_VIEWS);
@@ -939,11 +939,11 @@ public class ErrorOccurrenceTab extends TopologyTab
     
 	}
 
-	protected void updateComments(Collection<ErrorOccurrence> myItems)
+	protected void updateComments(Collection<ErrorOccurrenceImpl> myItems)
 	{
     	List<String> noteUris =  this.errorReportingManagementService.getAllErrorUrisWithNote();
     	
-		for(ErrorOccurrence eo: myItems)
+		for(ErrorOccurrenceImpl eo: myItems)
 		{
 			Item item = container.getItem(eo);
 		 
@@ -965,15 +965,15 @@ public class ErrorOccurrenceTab extends TopologyTab
 		}
 	}
 	
-	protected void updateCancel(Collection<ErrorOccurrence> myItems)
+	protected void updateCancel(Collection<ErrorOccurrenceImpl> myItems)
 	{    	
-		for(ErrorOccurrence eo: myItems)
+		for(ErrorOccurrenceImpl eo: myItems)
 		{
 			container.removeItem(eo);
 		}
 	}
 	
-	protected String buildErrorUrl(String baseUrl, ErrorOccurrence errorOccurrence)
+	protected String buildErrorUrl(String baseUrl, ErrorOccurrenceImpl errorOccurrence)
 	{
 		StringBuffer dashboardUrl = new StringBuffer(baseUrl);
 		

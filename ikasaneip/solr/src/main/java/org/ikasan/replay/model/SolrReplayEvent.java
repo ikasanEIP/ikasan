@@ -118,7 +118,7 @@ public class SolrReplayEvent implements ReplayEvent
 	/**
 	 * @param id the id to set
 	 */
-	private void setId(Long id)
+	public void setId(Long id)
 	{
 		this.id = id.toString();
 	}

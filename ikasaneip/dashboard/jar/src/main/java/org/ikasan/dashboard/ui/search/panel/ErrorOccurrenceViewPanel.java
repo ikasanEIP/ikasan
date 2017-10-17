@@ -42,36 +42,18 @@ package org.ikasan.dashboard.ui.search.panel;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.server.VaadinService;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
-import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
-import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
-import org.xwiki.component.embed.EmbeddableComponentManager;
-import org.xwiki.rendering.converter.Converter;
-import org.xwiki.rendering.renderer.printer.DefaultWikiPrinter;
-import org.xwiki.rendering.renderer.printer.WikiPrinter;
-import org.xwiki.rendering.syntax.Syntax;
 
-import java.io.StringReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 
@@ -82,7 +64,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 {
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrence errorOccurrence;
+	private ErrorOccurrenceImpl errorOccurrence;
 	private PlatformConfigurationService platformConfigurationService;
 
 	/**
@@ -91,7 +73,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 	 * @param errorOccurrence
 	 * @param platformConfigurationService
      */
-	public ErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
+	public ErrorOccurrenceViewPanel(ErrorOccurrenceImpl errorOccurrence,
                                     PlatformConfigurationService platformConfigurationService)
 	{
 		super();

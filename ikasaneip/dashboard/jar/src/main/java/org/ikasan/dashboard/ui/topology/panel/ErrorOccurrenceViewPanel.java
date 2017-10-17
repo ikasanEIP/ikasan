@@ -51,7 +51,7 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -83,7 +83,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 {
 	private static final long serialVersionUID = -3347325521531925322L;
 	
-	private ErrorOccurrence errorOccurrence;
+	private ErrorOccurrenceImpl errorOccurrence;
 	private ErrorReportingManagementService errorReportingManagementService;
 	private PlatformConfigurationService platformConfigurationService;
 
@@ -94,7 +94,7 @@ public class ErrorOccurrenceViewPanel extends Panel
 	 * @param errorReportingManagementService
 	 * @param platformConfigurationService
      */
-	public ErrorOccurrenceViewPanel(ErrorOccurrence errorOccurrence,
+	public ErrorOccurrenceViewPanel(ErrorOccurrenceImpl errorOccurrence,
 			ErrorReportingManagementService errorReportingManagementService,
 			PlatformConfigurationService platformConfigurationService)
 	{

@@ -64,7 +64,7 @@ import org.ikasan.dashboard.ui.topology.window.CategorisedErrorOccurrenceViewWin
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceCloseWindow;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorCategorisation;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
@@ -504,7 +504,7 @@ public class CategorisedErrorOccurrenceViewPanel extends Panel
 	            @SuppressWarnings("unchecked")
 				public void buttonClick(ClickEvent event) 
 	            {
-	            	ArrayList<ErrorOccurrence> errorOccurences = new ArrayList<ErrorOccurrence>();
+	            	ArrayList<ErrorOccurrenceImpl> errorOccurences = new ArrayList<ErrorOccurrenceImpl>();
 	            	errorOccurences.add(categorisedErrorOccurrence.getErrorOccurrence());
 	            	
 	            	final ErrorOccurrenceCloseWindow closeWindow = new ErrorOccurrenceCloseWindow(errorReportingManagementService,
