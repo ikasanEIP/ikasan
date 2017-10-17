@@ -83,7 +83,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker;
 
     private IkasanApplication ikasanApplication;
 
@@ -101,6 +101,7 @@ public class ApplicationTest
 
     @Before public void setup()
     {
+        broker = new EmbeddedActiveMQBroker();
         broker.start();
         // startup spring context
         String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
