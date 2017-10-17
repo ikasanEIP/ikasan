@@ -65,10 +65,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -102,9 +99,18 @@ public class ApplicationTest
     @Before public void setup()
     {
         broker = new EmbeddedActiveMQBroker();
+
+        int randomeValue = new Random(10).nextInt();
+        String brokerName = "embedded-broker"+randomeValue;
+
+        broker.setBrokerName(brokerName);
+
         broker.start();
         // startup spring context
-        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000)};
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000),
+                "--jms.broker.name="+brokerName
+        };
+
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
         System.out.println("Check is module healthy.");
 
