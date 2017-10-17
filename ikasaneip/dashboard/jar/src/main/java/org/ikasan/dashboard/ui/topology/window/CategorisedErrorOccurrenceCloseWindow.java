@@ -51,7 +51,6 @@ import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
 import org.ikasan.dashboard.ui.framework.validator.UrlStringValidator;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanSmallCellStyleGenerator;
 import org.ikasan.error.reporting.model.CategorisedErrorOccurrence;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.vaadin.teemu.VaadinIcons;

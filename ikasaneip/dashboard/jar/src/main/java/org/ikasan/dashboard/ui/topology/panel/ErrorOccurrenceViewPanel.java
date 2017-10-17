@@ -51,7 +51,7 @@ import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.framework.validator.NonZeroLengthStringValidator;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.PlatformConfigurationService;

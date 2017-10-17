@@ -40,8 +40,10 @@
  */
 package org.ikasan.error.reporting.service;
 
+import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
@@ -198,13 +200,13 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         if(event instanceof FlowEvent)
         {
             FlowEvent<String,Object> flowEvent = (FlowEvent)event;
-            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()), flowEvent.getPayload().toString());
+            ErrorOccurrence errorOccurrence = new ErrorOccurrenceImpl(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()), flowEvent.getPayload().toString());
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
             return errorOccurrence;
         }
 
-        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(event), event.toString());
+        return new ErrorOccurrenceImpl(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(event), event.toString());
     }
 
     /**
@@ -213,9 +215,9 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param throwable
      * @return
      */
-    private ErrorOccurrence newErrorOccurrence(String flowElementName, Throwable throwable)
+    private ErrorOccurrenceImpl newErrorOccurrence(String flowElementName, Throwable throwable)
     {
-        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive);
+        return new ErrorOccurrenceImpl(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive);
     }
 
     /**
@@ -246,7 +248,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 	 */
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, int size)
+                                          Date startDate, Date endDate, int size)
 	{
 		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate, size);
 	}
@@ -266,9 +268,9 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 	 */
 	@Override
 	public List<ErrorOccurrence> find(List<String> moduleName,
-			List<String> flowName, List<String> flowElementname,
-			Date startDate, Date endDate, String action, String exceptionClass,
-			int size)
+                                          List<String> flowName, List<String> flowElementname,
+                                          Date startDate, Date endDate, String action, String exceptionClass,
+                                          int size)
 	{
 		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate, action, exceptionClass, size);
 	}

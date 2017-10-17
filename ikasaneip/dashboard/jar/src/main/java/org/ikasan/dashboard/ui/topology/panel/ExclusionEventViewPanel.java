@@ -57,7 +57,7 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.hospital.model.ModuleActionedExclusionCount;
@@ -119,8 +119,8 @@ public class ExclusionEventViewPanel extends Panel
 
 
 	public ExclusionEventViewPanel(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, ExclusionEventAction action,
-			HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
-			ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
+								   HospitalManagementService<ExclusionEventAction, ModuleActionedExclusionCount> hospitalManagementService, TopologyService topologyService,
+								   ErrorReportingManagementService errorReportingManagementService, HospitalService<byte[]> hospitalService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;

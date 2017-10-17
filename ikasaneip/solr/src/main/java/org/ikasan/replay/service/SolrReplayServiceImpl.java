@@ -15,15 +15,18 @@ public class SolrReplayServiceImpl implements SolrService<ReplayEvent>, ReplayMa
 
     private ReplayDao replayDao;
 
-    public SolrReplayServiceImpl(ReplayDao replayDao) {
+    public SolrReplayServiceImpl(ReplayDao replayDao)
+    {
         this.replayDao = replayDao;
-        if (this.replayDao == null) {
+        if (this.replayDao == null)
+        {
             throw new IllegalArgumentException("replayDao cannot be null!");
         }
     }
 
     @Override
-    public void save(ReplayEvent save) {
+    public void save(ReplayEvent save)
+    {
         this.replayDao.saveOrUpdate(save);
     }
 
@@ -32,27 +35,34 @@ public class SolrReplayServiceImpl implements SolrService<ReplayEvent>, ReplayMa
      * @see org.ikasan.spec.replay.ReplayManagementService#getReplayEvents(List, List, String, String, Date, Date)
      */
     @Override
-    public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames, String eventId, String payloadContent, Date fromDate, Date toDate) {
+    public List<ReplayEvent> getReplayEvents(List<String> moduleNames, List<String> flowNames, String eventId
+            , String payloadContent, Date fromDate, Date toDate)
+    {
         return this.replayDao.getReplayEvents(moduleNames, flowNames, eventId, payloadContent, fromDate, toDate);
     }
 
     @Override
-    public List<Object> getReplayAudits(List<String> moduleNames, List<String> flowNames, String eventId, String user, Date startDate, Date endDate) {
+    public List<Object> getReplayAudits(List<String> moduleNames, List<String> flowNames, String eventId,
+                                        String user, Date startDate, Date endDate)
+    {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object getReplayAuditById(Long id) {
+    public Object getReplayAuditById(Long id)
+    {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Object> getReplayAuditEventsByAuditId(Long id) {
+    public List<Object> getReplayAuditEventsByAuditId(Long id)
+    {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Long getNumberReplayAuditEventsByAuditId(Long id) {
+    public Long getNumberReplayAuditEventsByAuditId(Long id)
+    {
         throw new UnsupportedOperationException();
     }
 

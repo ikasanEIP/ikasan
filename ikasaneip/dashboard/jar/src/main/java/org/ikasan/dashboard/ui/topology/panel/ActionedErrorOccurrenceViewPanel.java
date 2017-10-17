@@ -46,8 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.vaadin.ui.*;
-import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.dashboard.ui.framework.constants.DashboardConstants;;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -62,10 +61,10 @@ import org.xwiki.rendering.syntax.Syntax;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
 /**
  * 

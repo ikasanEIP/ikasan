@@ -55,7 +55,7 @@ import org.ikasan.dashboard.ui.framework.util.DashboardSessionValueConstants;
 import org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel;
 import org.ikasan.dashboard.ui.topology.util.FilterMap;
 import org.ikasan.dashboard.ui.topology.util.FilterUtil;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.error.reporting.model.ErrorOccurrenceNote;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
 import org.ikasan.error.reporting.model.Note;

@@ -40,19 +40,14 @@
  */
 package org.ikasan.dashboard.ui.framework.cache;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.Broadcaster;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 //import com.googlecode.wickedcharts.highcharts.jackson.JsonRenderer;
@@ -119,7 +114,7 @@ public class GraphCache
 		moduleErrorOccurrencesMap = new HashMap<String, Integer>();
 		
 		logger.debug("Synchronising topology state cache.");
-		List<ErrorOccurrence> errorOccurrences 
+		List<ErrorOccurrence> errorOccurrences
 			= errorReportingService.find(null, null, null, getMidnightToday(), getTwentyThreeFixtyNineToday(), 1000);
 		
 		for(ErrorOccurrence errorOccurrence: errorOccurrences)
