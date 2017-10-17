@@ -58,16 +58,14 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -78,11 +76,11 @@ import static org.junit.Assert.assertThat;
  * 
  * @author Ikasan Development Team
  */
-@Ignore
+
 @RunWith(SpringRunner.class)
 public class ApplicationTest
 {
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    public EmbeddedActiveMQBroker broker;
 
     private IkasanApplication ikasanApplication;
 
@@ -100,9 +98,19 @@ public class ApplicationTest
 
     @Before public void setup()
     {
+        broker = new EmbeddedActiveMQBroker();
+
+        int randomeValue = new Random(10).nextInt();
+        String brokerName = "embedded-broker"+randomeValue;
+
+        broker.setBrokerName(brokerName);
+
         broker.start();
         // startup spring context
-        String[] args = { "" };
+        String[] args = { "--server.port="+ SocketUtils.findAvailableTcpPort(8000,9000),
+                "--jms.broker.name="+brokerName
+        };
+
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
         System.out.println("Check is module healthy.");
 
@@ -143,6 +151,7 @@ public class ApplicationTest
         broker.stop();
     }
 
+    @DirtiesContext
     @Test
     public void test_successful_message_processing() throws Exception
     {
@@ -163,6 +172,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_exclusion() throws Exception
     {
@@ -196,6 +206,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_in_recovery() throws Exception
     {
@@ -233,6 +244,7 @@ public class ApplicationTest
 
     }
 
+    @DirtiesContext
     @Test
     public void test_flow_stopped_in_error() throws Exception
     {
@@ -271,10 +283,9 @@ public class ApplicationTest
     private void startFlow(){
         // start flow
         flowUUT.start();
-        pause(2000);
-        assertEquals("running",flowUUT.getState());
 
-        pause(5000);
+        pause(10000);
+        assertEquals("running",flowUUT.getState());
         flowUUT.stop();
         pause(2000);
         assertEquals("stopped",flowUUT.getState());
